@@ -1,0 +1,134 @@
+{
+  "agents": [
+    {
+      "name": "Lead Developer",
+      "description": "Senior Lead Developer for architecture decisions, project planning, and technical leadership",
+      "file": "lead-developer.md",
+      "tags": ["architecture", "planning", "leadership", "full-stack"],
+      "expertise": [
+        "Technical Architecture",
+        "Project Planning",
+        "Code Quality Standards",
+        "Decision Making",
+        "Team Leadership"
+      ]
+    },
+    {
+      "name": "Backend API Developer",
+      "description": "Expert Backend Developer for REST/GraphQL APIs, databases, and server-side architecture",
+      "file": "backend-api-developer.md",
+      "tags": ["backend", "api", "rest", "graphql", "database"],
+      "expertise": [
+        "Node.js/Express",
+        "Python/FastAPI",
+        "Database Design",
+        "API Security",
+        "Performance Optimization"
+      ]
+    },
+    {
+      "name": "Frontend Developer",
+      "description": "Senior Frontend Developer for React, Vue, Angular, and modern UI development",
+      "file": "frontend-developer.md",
+      "tags": ["frontend", "react", "vue", "angular", "ui", "ux"],
+      "expertise": [
+        "React/Vue/Angular",
+        "State Management",
+        "Component Architecture",
+        "Performance Optimization",
+        "Accessibility"
+      ]
+    },
+    {
+      "name": "Database Architect",
+      "description": "Senior Database Architect for SQL/NoSQL design, optimization, and scalability",
+      "file": "database-architect.md",
+      "tags": ["database", "sql", "nosql", "optimization", "architecture"],
+      "expertise": [
+        "PostgreSQL/MySQL",
+        "MongoDB/Redis",
+        "Query Optimization",
+        "Schema Design",
+        "Performance Monitoring"
+      ]
+    },
+    {
+      "name": "Testing & QA",
+      "description": "Senior QA Engineer for test automation, performance testing, and quality assurance",
+      "file": "testing-qa.md",
+      "tags": ["testing", "qa", "automation", "performance", "quality"],
+      "expertise": [
+        "Unit Testing",
+        "Integration Testing",
+        "E2E Testing",
+        "Performance Testing",
+        "Test Automation"
+      ]
+    },
+    {
+      "name": "DevOps & Infrastructure",
+      "description": "Senior DevOps Engineer for cloud, containers, CI/CD, and infrastructure as code",
+      "file": "devops-infrastructure.md",
+      "tags": ["devops", "cloud", "docker", "kubernetes", "cicd"],
+      "expertise": [
+        "AWS/Azure/GCP",
+        "Docker/Kubernetes",
+        "Terraform/IaC",
+        "CI/CD Pipelines",
+        "Monitoring"
+      ]
+    },
+    {
+      "name": "Code Review",
+      "description": "Senior Code Reviewer for code quality, design patterns, and best practices",
+      "file": "code-review.md",
+      "tags": ["review", "quality", "patterns", "best-practices"],
+      "expertise": [
+        "Code Quality Analysis",
+        "Security Review",
+        "Performance Review",
+        "Design Patterns",
+        "Best Practices"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "description": "Technical Documentation Specialist for clear, comprehensive project documentation",
+      "file": "documentation.md",
+      "tags": ["documentation", "api", "readme", "architecture"],
+      "expertise": [
+        "API Documentation",
+        "README Files",
+        "Architecture Docs",
+        "User Guides",
+        "Technical Writing"
+      ]
+    },
+    {
+      "name": "Security",
+      "description": "Senior Security Engineer for application security, penetration testing, and secure coding",
+      "file": "security.md",
+      "tags": ["security", "owasp", "penetration", "vulnerability"],
+      "expertise": [
+        "OWASP Top 10",
+        "Security Headers",
+        "Input Validation",
+        "Authentication",
+        "Penetration Testing"
+      ]
+    }
+  ],
+  "usage": {
+    "full-stack-feature": ["Lead Developer", "Backend API Developer", "Frontend Developer", "Database Architect"],
+    "api-development": ["Backend API Developer", "Database Architect", "Testing & QA", "Documentation"],
+    "production-deployment": ["DevOps & Infrastructure", "Security", "Testing & QA"],
+    "code-quality": ["Code Review", "Testing & QA", "Security"]
+  },
+  "project": {
+    "name": "ADSapp - WhatsApp Business Inbox SaaS",
+    "description": "Multi-Tenant WhatsApp Business Inbox SaaS Platform",
+    "tech_stack": ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "Stripe"],
+    "version": "1.0.0",
+    "created": "2025-09-25"
+  }
+}
