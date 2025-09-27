@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:[YOUR-PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:5432/postgres"
+}
+
+model Organization {
+  id                           String   @id @default(uuid()) @db.Uuid
+  name                        String
+  slug                        String   @unique
+  whatsappBusinessAccountId   String?  @map("whatsapp_business_account_id")
+  whatsappPhoneNumberId       String?  @map("whatsapp_phone_number_id")
+  subscriptionStatus          String   @default("trial") @map("subscription_status")
+  subscriptionTier            String   @default("starter") @map("subscription_tier")
+  stripeCustomerId            String?  @map("stripe_customer_id")
+  stripeSubscriptionId        String?  @map("stripe_subscription_id")
+  trialEndsAt                 DateTime @default(dbgenerated("(NOW() + INTERVAL '14 days')")) @map("trial_ends_at") @db.Timestamptz
+  createdAt                   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  profiles            Profile[]
+  contacts            Contact[]
+  conversations       Conversation[]
+  automationRules     AutomationRule[]
+  messageTemplates    MessageTemplate[]
+  webhookLogs         WebhookLog[]
+  conversationMetrics ConversationMetric[]
+
+  @@map("organizations")
+}
+
+model Profile {
+  id             String    @id @db.Uuid
+  organizationId String?   @map("organization_id") @db.Uuid
+  email          String
+  fullName       String?   @map("full_name")
+  avatarUrl      String?   @map("avatar_url")
+  role           String    @default("agent")
+  isActive       Boolean   @default(true) @map("is_active")
+  lastSeenAt     DateTime? @map("last_seen_at") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  organization         Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedConversations Conversation[]      @relation("AssignedAgent")
+  sentMessages         Message[]
+  createdAutomationRules AutomationRule[]  @relation("CreatedBy")
+  createdTemplates     MessageTemplate[]   @relation("CreatedBy")
+  conversationMetrics  ConversationMetric[]
+
+  @@map("profiles")
+}
+
+model Contact {
+  id                 String    @id @default(uuid()) @db.Uuid
+  organizationId     String    @map("organization_id") @db.Uuid
+  whatsappId         String    @map("whatsapp_id")
+  phoneNumber        String    @map("phone_number")
+  name               String?
+  profilePictureUrl  String?   @map("profile_picture_url")
+  tags               String[]  @default([])
+  notes              String?
+  isBlocked          Boolean   @default(false) @map("is_blocked")
+  lastMessageAt      DateTime? @map("last_message_at") @db.Timestamptz
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+
+  @@unique([organizationId, whatsappId])
+  @@map("contacts")
+}
+
+model Conversation {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  contactId       String    @map("contact_id") @db.Uuid
+  assignedTo      String?   @map("assigned_to") @db.Uuid
+  status          String    @default("open")
+  priority        String    @default("medium")
+  subject         String?
+  lastMessageAt   DateTime? @map("last_message_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact        Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  assignedAgent  Profile?     @relation("AssignedAgent", fields: [assignedTo], references: [id], onDelete: SetNull)
+  messages       Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id                 String    @id @default(uuid()) @db.Uuid
+  conversationId     String    @map("conversation_id") @db.Uuid
+  whatsappMessageId  String?   @map("whatsapp_message_id")
+  senderType         String    @map("sender_type")
+  senderId           String?   @map("sender_id") @db.Uuid
+  content            String
+  messageType        String    @default("text") @map("message_type")
+  mediaUrl           String?   @map("media_url")
+  mediaMimeType      String?   @map("media_mime_type")
+  isRead             Boolean   @default(false) @map("is_read")
+  deliveredAt        DateTime? @map("delivered_at") @db.Timestamptz
+  readAt             DateTime? @map("read_at") @db.Timestamptz
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       Profile?     @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  @@map("messages")
+}
+
+model AutomationRule {
+  id                String   @id @default(uuid()) @db.Uuid
+  organizationId    String   @map("organization_id") @db.Uuid
+  name              String
+  description       String?
+  triggerType       String   @map("trigger_type")
+  triggerConditions Json     @map("trigger_conditions")
+  actions           Json
+  isActive          Boolean  @default(true) @map("is_active")
+  createdBy         String?  @map("created_by") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      Profile?     @relation("CreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("automation_rules")
+}
+
+model MessageTemplate {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String
+  content        String
+  category       String?
+  variables      String[] @default([])
+  isActive       Boolean  @default(true) @map("is_active")
+  createdBy      String?  @map("created_by") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  creator      Profile?     @relation("CreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("message_templates")
+}
+
+model WebhookLog {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String?   @map("organization_id") @db.Uuid
+  webhookType    String    @map("webhook_type")
+  payload        Json
+  processedAt    DateTime? @map("processed_at") @db.Timestamptz
+  errorMessage   String?   @map("error_message")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_logs")
+}
+
+model ConversationMetric {
+  id                    String    @id @default(uuid()) @db.Uuid
+  organizationId        String    @map("organization_id") @db.Uuid
+  date                  DateTime  @db.Date
+  totalConversations    Int       @default(0) @map("total_conversations")
+  newConversations      Int       @default(0) @map("new_conversations")
+  resolvedConversations Int       @default(0) @map("resolved_conversations")
+  avgResponseTime       String?   @map("avg_response_time")
+  avgResolutionTime     String?   @map("avg_resolution_time")
+  agentId               String?   @map("agent_id") @db.Uuid
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agent        Profile?     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, date, agentId])
+  @@map("conversation_metrics")
+}

@@ -5,7 +5,14 @@
       "Read(//c/Users/info/**)",
       "Bash(mkdir:*)",
       "Bash(npx create-next-app:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Read(//c//**)",
+      "WebSearch",
+      "Bash(find:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

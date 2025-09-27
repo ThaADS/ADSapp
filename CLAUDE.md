@@ -8,11 +8,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Tech Stack:** Next.js, TypeScript, Supabase, Tailwind CSS, Stripe
 **Deployment:** Vercel + Supabase
-**Current Status:** Early planning phase with project requirements documentation
+**Current Status:** Active development with Next.js implementation, Supabase integration, and basic UI components
 
 ## Project Architecture
 
-This is currently a greenfield project in early planning stages. The core architecture will be:
+The project implements a multi-tenant SaaS architecture with:
 
 - **Frontend:** Next.js application with TypeScript and Tailwind CSS for the multi-tenant inbox interface
 - **Backend:** Supabase for database, authentication, and real-time features
@@ -28,16 +28,60 @@ Key architectural decisions documented in `prd.md`:
 
 ## Development Environment
 
-Since this is a new project, standard Next.js commands will apply once the codebase is initialized:
+Key development commands:
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
+npm run dev          # Start development server with Turbopack
+npm run build        # Build for production with Turbopack
 npm run start        # Start production server
 npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript compiler
-npm test             # Run test suite
+npm test             # Run Jest test suite
+npm run test:watch   # Run Jest in watch mode
+npm run test:coverage # Run tests with coverage report
 ```
+
+### Database Commands
+
+```bash
+# Apply Supabase migrations
+npx supabase db reset
+
+# Manual schema application
+psql -h your-supabase-host -d postgres -f supabase/migrations/001_initial_schema.sql
+
+# Alternative database setup scripts
+node setup-database.js      # Main database setup
+node setup-db-simple.js     # Simplified setup
+node apply-schema-direct.js # Direct schema application
+```
+
+### Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Landing page with features showcase
+│   ├── admin-setup/       # Admin account creation for testing
+│   └── auth/              # Authentication pages (planned)
+├── components/            # Reusable UI components (planned)
+├── lib/                   # Utility libraries (planned)
+└── types/                 # TypeScript definitions (planned)
+
+supabase/
+└── migrations/
+    └── 001_initial_schema.sql  # Database schema
+
+prisma/
+└── schema.prisma          # Prisma schema (alternative to Supabase)
+```
+
+### Testing Configuration
+
+- **Framework:** Jest with Next.js integration
+- **Environment:** jsdom for React component testing
+- **Setup:** `jest.setup.js` for test configuration
+- **Path Mapping:** `@/*` maps to `src/*`
+- **Coverage:** Configured for `src/**/*.{ts,tsx}` files
 
 ## Windsurf AI Agents
 
@@ -63,12 +107,28 @@ Use `/agent` in Windsurf IDE to access these specialized agents. Agent combinati
 
 ## Current Development Phase
 
-The project is in the initial planning and setup phase. Next steps typically involve:
+The project has a working Next.js foundation with:
 
-1. Project initialization with Next.js and TypeScript
-2. Supabase project setup and schema design
-3. WhatsApp Business API integration setup
-4. Authentication and multi-tenancy implementation
-5. Core inbox UI development
+### ✅ Completed
+- Next.js project setup with TypeScript and Tailwind CSS
+- Landing page with feature showcase (`src/app/page.tsx`)
+- Admin setup page for testing (`src/app/admin-setup/`)
+- Database schema design (`supabase/migrations/001_initial_schema.sql`)
+- Prisma schema as alternative ORM option
+- Jest testing configuration
+- ESLint and TypeScript configuration
+
+### 🚧 In Progress
+- Multi-tenant authentication system
+- WhatsApp Business API integration
+- Core inbox UI components
+- Subscription billing with Stripe
+
+### 📋 Next Steps
+1. Complete authentication pages (`/auth/signin`, `/auth/signup`)
+2. Dashboard implementation (`/dashboard`, `/dashboard/inbox`)
+3. WhatsApp Business API webhook handling
+4. Real-time message synchronization
+5. Team collaboration features
 
 When implementing features, consult the PRD for detailed requirements and use the appropriate AI agents for specialized guidance.

@@ -1,9 +1,6 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
-
 -- Organizations table
 CREATE TABLE organizations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -202,6 +199,9 @@ CREATE POLICY "Users can view profiles in their organization" ON profiles
 CREATE POLICY "Users can update their own profile" ON profiles
   FOR UPDATE USING (id = auth.uid());
 
+CREATE POLICY "Users can insert their own profile" ON profiles
+  FOR INSERT WITH CHECK (id = auth.uid());
+
 CREATE POLICY "Admins and owners can manage profiles" ON profiles
   FOR ALL USING (
     organization_id IN (
@@ -286,11 +286,12 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, email, full_name)
+  INSERT INTO profiles (id, email, full_name, organization_id)
   VALUES (
     NEW.id,
     NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', '')
+    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
+    NULL  -- organization_id will be set later by the application
   );
   RETURN NEW;
 END;
