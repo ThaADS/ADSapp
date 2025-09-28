@@ -10,12 +10,12 @@ import { SuperAdminPermissions } from '@/lib/super-admin';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(cookies());
     const permissions = new SuperAdminPermissions();
-    const { id } = params;
+    const { id } = await params;
 
     // Check if user is super admin
     const { data: { user } } = await supabase.auth.getUser();
@@ -205,12 +205,12 @@ export async function GET(
 // Update organization
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(cookies());
     const permissions = new SuperAdminPermissions();
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if user is super admin
@@ -240,8 +240,8 @@ export async function PATCH(
       'whatsapp_business_account_id', 'whatsapp_phone_number_id', 'metadata'
     ];
 
-    const updateData: any = {};
-    const changedFields: any = {};
+    const updateData: Record<string, unknown> = {};
+    const changedFields: Record<string, { old: unknown; new: unknown }> = {};
 
     // Only include allowed fields that have changed
     allowedFields.forEach(field => {

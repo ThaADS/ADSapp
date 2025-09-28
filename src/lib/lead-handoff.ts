@@ -1039,17 +1039,14 @@ export class LeadHandoffSystem {
 
   private async syncToSalesforce(data: any, config: CRMConfig): Promise<void> {
     // Salesforce API integration implementation
-    console.log('Syncing to Salesforce:', data)
   }
 
   private async syncToHubspot(data: any, config: CRMConfig): Promise<void> {
     // HubSpot API integration implementation
-    console.log('Syncing to HubSpot:', data)
   }
 
   private async syncToPipedrive(data: any, config: CRMConfig): Promise<void> {
     // Pipedrive API integration implementation
-    console.log('Syncing to Pipedrive:', data)
   }
 
   private async triggerMarketingAutomation(lead: Lead): Promise<void> {
@@ -1105,12 +1102,10 @@ export class LeadHandoffSystem {
 
   private async sendEmail(lead: Lead, parameters: any): Promise<void> {
     // Email sending implementation
-    console.log('Sending email to lead:', lead.email, parameters)
   }
 
   private async sendWorkflowEmail(lead: Lead, config: StepConfiguration): Promise<void> {
     // Workflow email implementation
-    console.log('Sending workflow email:', lead.email, config)
   }
 
   private async callWebhook(lead: Lead, config: StepConfiguration): Promise<void> {
@@ -1130,12 +1125,10 @@ export class LeadHandoffSystem {
 
   private async notifySalesRep(salesRepId: string, lead: Lead): Promise<void> {
     // Sales rep notification implementation
-    console.log('Notifying sales rep:', salesRepId, 'about lead:', lead.id)
   }
 
   private async scheduleAutomation(leadId: string, action: FollowUpAction): Promise<void> {
     // Automation scheduling implementation
-    console.log('Scheduling automation for lead:', leadId, 'action:', action.id)
   }
 }
 

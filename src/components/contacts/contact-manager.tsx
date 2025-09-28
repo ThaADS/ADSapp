@@ -37,20 +37,21 @@ interface Contact {
   id: string;
   firstName: string;
   lastName: string;
-  email?: string;
   phone: string;
+  email?: string;
+  avatar?: string;
   company?: string;
   position?: string;
   location?: string;
   website?: string;
-  avatar?: string;
+  metadata?: Record<string, unknown>;
   tags: string[];
   status: 'active' | 'inactive' | 'blocked';
   isStarred: boolean;
   lastContact: string;
   addedDate: string;
   totalMessages: number;
-  customFields: Record<string, any>;
+  customFields: Record<string, unknown>;
   notes: string;
   source: 'manual' | 'import' | 'whatsapp' | 'api';
   assignedTo?: string;
@@ -150,7 +151,11 @@ const TEAM_MEMBERS = [
   { id: 'diana', name: 'Diana Prince' }
 ];
 
-export default function ContactManager() {
+interface ContactManagerProps {
+  organizationId: string;
+}
+
+export default function ContactManager({ organizationId }: ContactManagerProps) {
   const [contacts, setContacts] = useState<Contact[]>(SAMPLE_CONTACTS);
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
@@ -248,7 +253,7 @@ export default function ContactManager() {
       ? contacts.filter(c => selectedContacts.includes(c.id))
       : filteredContacts;
 
-    console.log(`Exporting ${contactsToExport.length} contacts as ${format}`);
+    
     // In real implementation, generate and download file
     alert(`Exported ${contactsToExport.length} contacts as ${format.toUpperCase()}`);
   }, [contacts, selectedContacts, filteredContacts]);
@@ -256,7 +261,7 @@ export default function ContactManager() {
   // Import contacts
   const handleImport = useCallback((file: File) => {
     // Simulate import functionality
-    console.log('Importing contacts from file:', file.name);
+    
     // In real implementation, parse file and add contacts
     setShowImportModal(false);
     alert('Contacts imported successfully!');
@@ -269,6 +274,7 @@ export default function ContactManager() {
         <div className="flex items-center space-x-3">
           <input
             type="checkbox"
+            title={`Select contact ${contact.firstName} ${contact.lastName}`}
             checked={selectedContacts.includes(contact.id)}
             onChange={() => toggleContactSelection(contact.id)}
             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -285,6 +291,7 @@ export default function ContactManager() {
         </div>
         <div className="flex items-center space-x-1">
           <button
+            type="button"
             onClick={() => toggleStar(contact.id)}
             className="text-gray-400 hover:text-yellow-500"
             aria-label="Star contact"
@@ -295,7 +302,7 @@ export default function ContactManager() {
               <StarIcon className="w-4 h-4" />
             )}
           </button>
-          <button className="text-gray-400 hover:text-gray-600" aria-label="More options">
+          <button type="button" className="text-gray-400 hover:text-gray-600" aria-label="More options">
             <EllipsisVerticalIcon className="w-4 h-4" />
           </button>
         </div>
@@ -373,6 +380,7 @@ export default function ContactManager() {
               {/* View Toggle */}
               <div className="flex border border-gray-300 rounded-lg">
                 <button
+                  type="button"
                   onClick={() => setViewMode('table')}
                   className={`p-2 ${viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
                   aria-label="Table view"
@@ -380,6 +388,7 @@ export default function ContactManager() {
                   <TableCellsIcon className="w-4 h-4" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => setViewMode('grid')}
                   className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
                   aria-label="Grid view"
@@ -389,6 +398,7 @@ export default function ContactManager() {
               </div>
 
               <button
+                type="button"
                 onClick={() => setShowImportModal(true)}
                 className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
@@ -397,6 +407,7 @@ export default function ContactManager() {
               </button>
 
               <button
+                type="button"
                 onClick={() => exportContacts('csv')}
                 className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
@@ -405,6 +416,7 @@ export default function ContactManager() {
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   setEditingContact(null);
                   setShowContactModal(true);
@@ -431,6 +443,7 @@ export default function ContactManager() {
             </div>
 
             <button
+              type="button"
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
                 showFilters ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -446,6 +459,7 @@ export default function ContactManager() {
                   {selectedContacts.length} selected
                 </span>
                 <button
+                  type="button"
                   onClick={() => deleteContacts(selectedContacts)}
                   className="text-red-600 hover:text-red-700"
                   aria-label="Delete selected contacts"
@@ -463,6 +477,7 @@ export default function ContactManager() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                   <select
+                    title="Filter by contact status"
                     value={filters.status}
                     onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
@@ -477,6 +492,7 @@ export default function ContactManager() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
                   <select
+                    title="Filter by contact source"
                     value={filters.source}
                     onChange={(e) => setFilters(prev => ({ ...prev, source: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
@@ -492,6 +508,7 @@ export default function ContactManager() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
                   <select
+                    title="Filter by assigned team member"
                     value={filters.assignedTo}
                     onChange={(e) => setFilters(prev => ({ ...prev, assignedTo: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
@@ -508,6 +525,7 @@ export default function ContactManager() {
                   <div className="flex flex-wrap gap-2">
                     {AVAILABLE_TAGS.slice(0, 4).map(tag => (
                       <button
+                        type="button"
                         key={tag.id}
                         onClick={() => {
                           setFilters(prev => ({
@@ -547,6 +565,7 @@ export default function ContactManager() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setFilters({
                     search: '',
                     status: 'all',
@@ -577,6 +596,7 @@ export default function ContactManager() {
                   <th className="w-12 px-6 py-3">
                     <input
                       type="checkbox"
+                      title="Select all contacts"
                       checked={selectedContacts.length === filteredContacts.length && filteredContacts.length > 0}
                       onChange={toggleSelectAll}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -611,6 +631,7 @@ export default function ContactManager() {
                     <td className="px-6 py-4">
                       <input
                         type="checkbox"
+                        title={`Select ${contact.firstName} ${contact.lastName}`}
                         checked={selectedContacts.includes(contact.id)}
                         onChange={() => toggleContactSelection(contact.id)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -683,6 +704,7 @@ export default function ContactManager() {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <button
+                          type="button"
                           onClick={() => toggleStar(contact.id)}
                           className="text-gray-400 hover:text-yellow-500"
                           aria-label="Star contact"
@@ -694,6 +716,7 @@ export default function ContactManager() {
                           )}
                         </button>
                         <button
+                          type="button"
                           onClick={() => {
                             setEditingContact(contact);
                             setShowContactModal(true);
@@ -704,6 +727,7 @@ export default function ContactManager() {
                           <PencilIcon className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => deleteContacts([contact.id])}
                           className="text-gray-400 hover:text-red-600"
                           aria-label="Delete contact"
@@ -728,6 +752,7 @@ export default function ContactManager() {
                   }
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingContact(null);
                     setShowContactModal(true);
@@ -759,6 +784,7 @@ export default function ContactManager() {
                   }
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingContact(null);
                     setShowContactModal(true);
@@ -780,6 +806,7 @@ export default function ContactManager() {
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-lg font-medium text-gray-900">Import Contacts</h2>
               <button
+                type="button"
                 onClick={() => setShowImportModal(false)}
                 className="text-gray-400 hover:text-gray-600"
                 aria-label="Close import modal"
@@ -797,6 +824,7 @@ export default function ContactManager() {
                   <input
                     ref={fileInputRef}
                     type="file"
+                    title="Select CSV or Excel file to import contacts"
                     accept=".csv,.xlsx,.xls"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -827,6 +855,7 @@ export default function ContactManager() {
 
             <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
               <button
+                type="button"
                 onClick={() => setShowImportModal(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
@@ -846,6 +875,7 @@ export default function ContactManager() {
                 {editingContact ? 'Edit Contact' : 'Add New Contact'}
               </h2>
               <button
+                type="button"
                 onClick={() => setShowContactModal(false)}
                 className="text-gray-400 hover:text-gray-600"
                 aria-label="Close contact modal"
@@ -860,12 +890,14 @@ export default function ContactManager() {
 
             <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
               <button
+                type="button"
                 onClick={() => setShowContactModal(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={() => {
                   // Save logic would go here
                   setShowContactModal(false);

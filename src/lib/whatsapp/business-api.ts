@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { WhatsAppClient } from './client'
+import crypto from 'crypto'
 
 export interface WhatsAppBusinessConfig {
   accessToken: string
@@ -354,7 +355,7 @@ export class WhatsAppBusinessAPI {
    * Validate webhook signature for security
    */
   static validateWebhook(signature: string, payload: string, appSecret: string): boolean {
-    const crypto = require('crypto')
+    // crypto is now imported at the top
 
     const expectedSignature = crypto
       .createHmac('sha256', appSecret)

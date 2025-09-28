@@ -1,313 +1,232 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { OrganizationSummary } from '@/lib/super-admin'
+import { useEffect, useState } from 'react';
 import {
-  MagnifyingGlassIcon,
+  BuildingOfficeIcon,
   EyeIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  ClockIcon
-} from '@heroicons/react/24/outline'
+  PauseIcon,
+  PlayIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 
-const statusColors = {
-  active: 'text-green-700 bg-green-50 ring-green-600/20',
-  suspended: 'text-red-700 bg-red-50 ring-red-600/20',
-  cancelled: 'text-gray-700 bg-gray-50 ring-gray-600/20',
-  pending_setup: 'text-yellow-700 bg-yellow-50 ring-yellow-600/20'
-}
-
-const subscriptionColors = {
-  trial: 'text-blue-700 bg-blue-50 ring-blue-600/20',
-  active: 'text-green-700 bg-green-50 ring-green-600/20',
-  cancelled: 'text-red-700 bg-red-50 ring-red-600/20',
-  past_due: 'text-orange-700 bg-orange-50 ring-orange-600/20'
-}
-
-function StatusBadge({ status, type }: { status: string, type: 'status' | 'subscription' }) {
-  const colors = type === 'status' ? statusColors : subscriptionColors
-  const colorClass = colors[status as keyof typeof colors] || 'text-gray-700 bg-gray-50 ring-gray-600/20'
-
-  return (
-    <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${colorClass}`}>
-      {status.replace('_', ' ')}
-    </span>
-  )
+interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  status: 'active' | 'suspended' | 'cancelled' | 'pending_setup';
+  subscription_status: 'trial' | 'active' | 'cancelled' | 'past_due';
+  created_at: string;
+  user_count?: number;
+  message_count?: number;
 }
 
 export function OrganizationsManager() {
-  const [organizations, setOrganizations] = useState<OrganizationSummary[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
-  const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
-  const [limit] = useState(20)
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchOrganizations()
-  }, [page, search, statusFilter])
+    fetchOrganizations();
+  }, []);
 
   const fetchOrganizations = async () => {
     try {
-      setLoading(true)
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(search && { search }),
-        ...(statusFilter && { status: statusFilter })
-      })
-
-      const response = await fetch(`/api/admin/organizations?${params}`)
-
+      const response = await fetch('/api/admin/organizations');
       if (!response.ok) {
-        throw new Error('Failed to fetch organizations')
+        throw new Error('Failed to fetch organizations');
       }
-
-      const data = await response.json()
-      setOrganizations(data.organizations)
-      setTotal(data.total)
-    } catch (error) {
-      console.error('Error fetching organizations:', error)
-      setError('Failed to load organizations')
+      const data = await response.json();
+      setOrganizations(data.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleSuspendOrganization = async (orgId: string, reason: string) => {
+  const handleSuspend = async (orgId: string) => {
     try {
       const response = await fetch(`/api/admin/organizations/${orgId}/suspend`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
-      })
-
+      });
       if (!response.ok) {
-        throw new Error('Failed to suspend organization')
+        throw new Error('Failed to suspend organization');
       }
-
-      fetchOrganizations() // Refresh the list
-    } catch (error) {
-      console.error('Error suspending organization:', error)
-      alert('Failed to suspend organization')
+      fetchOrganizations(); // Refresh list
+    } catch (err) {
+      alert('Failed to suspend organization');
     }
-  }
+  };
 
-  const handleReactivateOrganization = async (orgId: string) => {
+  const handleActivate = async (orgId: string) => {
     try {
-      const response = await fetch(`/api/admin/organizations/${orgId}/suspend`, {
-        method: 'DELETE'
-      })
-
+      const response = await fetch(`/api/admin/organizations/${orgId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'active' }),
+      });
       if (!response.ok) {
-        throw new Error('Failed to reactivate organization')
+        throw new Error('Failed to activate organization');
       }
-
-      fetchOrganizations() // Refresh the list
-    } catch (error) {
-      console.error('Error reactivating organization:', error)
-      alert('Failed to reactivate organization')
+      fetchOrganizations(); // Refresh list
+    } catch (err) {
+      alert('Failed to activate organization');
     }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const colors = {
+      active: 'bg-green-100 text-green-800',
+      suspended: 'bg-red-100 text-red-800',
+      cancelled: 'bg-gray-100 text-gray-800',
+      pending_setup: 'bg-yellow-100 text-yellow-800',
+    };
+    
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
+        {status.replace('_', ' ')}
+      </span>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
-  const totalPages = Math.ceil(total / limit)
+  if (error) {
+    return (
+      <div className="rounded-md bg-red-50 p-4">
+        <div className="text-sm text-red-700">{error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
-        <div className="text-sm text-gray-500">
-          {total} total organizations
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search organizations..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPage(1)
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-          <div>
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value)
-                setPage(1)
-              }}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="pending_setup">Pending Setup</option>
-            </select>
+    <div className="bg-white shadow rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+            <h3 className="text-lg font-medium text-gray-900">Organizations</h3>
+            <p className="mt-2 text-sm text-gray-700">
+              A list of all organizations on the platform including their status and key metrics.
+            </p>
           </div>
         </div>
-      </div>
-
-      {/* Organizations Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-500">Loading organizations...</p>
-          </div>
-        ) : error ? (
-          <div className="p-8 text-center">
-            <div className="text-red-600 mb-2">{error}</div>
-            <button
-              onClick={fetchOrganizations}
-              className="text-blue-600 hover:text-blue-500"
-            >
-              Try again
-            </button>
-          </div>
-        ) : organizations.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No organizations found
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Organization
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Subscription
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Users
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Messages
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {organizations.map((org) => (
-                  <tr key={org.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{org.name}</div>
-                        <div className="text-sm text-gray-500">{org.slug}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge status={org.status} type="status" />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="space-y-1">
-                        <StatusBadge status={org.subscription_status} type="subscription" />
-                        <div className="text-xs text-gray-500 capitalize">{org.subscription_tier}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {org.user_count}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {org.message_count.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(org.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                      <Link
-                        href={`/admin/organizations/${org.id}`}
-                        className="text-blue-600 hover:text-blue-900"
-                        title="View Details"
-                      >
-                        <EyeIcon className="h-4 w-4" />
-                      </Link>
-                      {org.status === 'active' ? (
-                        <button
-                          onClick={() => {
-                            const reason = prompt('Reason for suspension:')
-                            if (reason) {
-                              handleSuspendOrganization(org.id, reason)
-                            }
-                          }}
-                          className="text-red-600 hover:text-red-900"
-                          title="Suspend Organization"
-                        >
-                          <ExclamationTriangleIcon className="h-4 w-4" />
-                        </button>
-                      ) : org.status === 'suspended' ? (
-                        <button
-                          onClick={() => {
-                            if (confirm('Reactivate this organization?')) {
-                              handleReactivateOrganization(org.id)
-                            }
-                          }}
-                          className="text-green-600 hover:text-green-900"
-                          title="Reactivate Organization"
-                        >
-                          <CheckCircleIcon className="h-4 w-4" />
-                        </button>
-                      ) : null}
-                    </td>
+        
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                      Organization
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Status
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Subscription
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Users
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Messages
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Created
+                    </th>
+                    <th className="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                      <span className="sr-only">Actions</span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, total)} of {total} results
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {organizations.map((org) => (
+                    <tr key={org.id}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 flex-shrink-0">
+                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                              <BuildingOfficeIcon className="h-5 w-5 text-gray-600" />
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            <div className="font-medium text-gray-900">{org.name}</div>
+                            <div className="text-gray-500">{org.slug}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {getStatusBadge(org.status)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {getStatusBadge(org.subscription_status)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {org.user_count || 0}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {org.message_count || 0}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {new Date(org.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            title="View organization details"
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </button>
+                          {org.status === 'active' ? (
+                            <button
+                              type="button"
+                              title="Suspend organization"
+                              onClick={() => handleSuspend(org.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <PauseIcon className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              title="Activate organization"
+                              onClick={() => handleActivate(org.id)}
+                              className="text-green-600 hover:text-green-900"
+                            >
+                              <PlayIcon className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {organizations.length === 0 && (
+                <div className="text-center py-12">
+                  <BuildingOfficeIcon className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">No organizations</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    No organizations have been created yet.
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-3 py-1 text-sm text-gray-700">
-                {page} of {totalPages}
-              </span>
-              <button
-                onClick={() => setPage(page + 1)}
-                disabled={page === totalPages}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
-  )
+  );
 }

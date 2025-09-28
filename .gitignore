@@ -12,17 +12,28 @@
 
 # testing
 /coverage
+/__tests__/
+/tests/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
 
 # next.js
 /.next/
 /out/
+/.swc/
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -32,9 +43,35 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# development scripts and temporary files
+/scripts/
+*.sql.backup
+*-debug.js
+*-test*.js
+*-temp*.js
+create-*.js
+fix-*.js
+debug-*.js
+setup-*.js
+validate-*.js
+test-*.js
+security-*.js
+
+# temporary documentation
+*-REPORT.md
+*-STATUS.md
+*-TODO.md
+*-CHECKLIST.md
+*-SUMMARY.md
+*-CERTIFICATION.md
+*-IMPLEMENTATION*.md
+*-COMPLETE*.md
 
 # MCP server configuration with secrets
 .windsurf/mcp.json
+.windsurf/mcp-updated.json
 
 # vercel
 .vercel
@@ -42,3 +79,57 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Storybook build outputs
+.out
+.storybook-out

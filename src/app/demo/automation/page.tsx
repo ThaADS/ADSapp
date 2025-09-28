@@ -322,7 +322,7 @@ function AutomationDemoContent() {
 
   const handleEditRule = (ruleId: string) => {
     incrementInteraction();
-    console.log('Edit rule:', ruleId);
+    
   };
 
   if (!state.isActive) {

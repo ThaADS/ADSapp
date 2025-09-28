@@ -3,18 +3,13 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   PlusIcon,
-  PlayIcon,
-  PauseIcon,
   TrashIcon,
   DocumentDuplicateIcon,
-  CogIcon,
   ArrowRightIcon,
   BoltIcon,
   ChatBubbleLeftRightIcon,
   ClockIcon,
-  UserGroupIcon,
   BeakerIcon,
-  EyeIcon,
   CodeBracketIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon
@@ -27,7 +22,7 @@ interface WorkflowNode {
   position: { x: number; y: number };
   data: {
     label: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     isConfigured: boolean;
   };
   inputs?: string[];
@@ -168,17 +163,21 @@ const NODE_TYPES = {
   }
 };
 
-export default function WorkflowBuilder() {
+interface WorkflowBuilderProps {
+  organizationId: string;
+}
+
+export default function WorkflowBuilder({ organizationId }: WorkflowBuilderProps) {
+  // Use organizationId for future API calls
+  
+  
   const [workflows, setWorkflows] = useState<WorkflowTemplate[]>([]);
   const [currentWorkflow, setCurrentWorkflow] = useState<WorkflowTemplate | null>(null);
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [draggedNodeType, setDraggedNodeType] = useState<string | null>(null);
-  const [connections, setConnections] = useState<WorkflowConnection[]>([]);
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // Initialize with templates
   useEffect(() => {
@@ -204,7 +203,6 @@ export default function WorkflowBuilder() {
   // Load workflow template
   const loadTemplate = useCallback((template: WorkflowTemplate) => {
     setCurrentWorkflow({ ...template, id: `workflow-${Date.now()}` });
-    setConnections(template.connections);
     setShowTemplates(false);
   }, []);
 
@@ -325,6 +323,7 @@ export default function WorkflowBuilder() {
 
           <div className="flex items-center space-x-3">
             <button
+              type="button"
               onClick={() => setShowTemplates(true)}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Browse templates"
@@ -333,6 +332,7 @@ export default function WorkflowBuilder() {
               Templates
             </button>
             <button
+              type="button"
               onClick={createNewWorkflow}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Create new workflow"
@@ -343,6 +343,7 @@ export default function WorkflowBuilder() {
             {currentWorkflow && (
               <>
                 <button
+                  type="button"
                   onClick={testWorkflow}
                   disabled={isRunning}
                   className={`px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
@@ -356,6 +357,7 @@ export default function WorkflowBuilder() {
                   Test
                 </button>
                 <button
+                  type="button"
                   onClick={saveWorkflow}
                   className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Save workflow"
@@ -431,9 +433,53 @@ export default function WorkflowBuilder() {
               ref={canvasRef}
               onDrop={handleCanvasDrop}
               onDragOver={(e) => e.preventDefault()}
-              className="w-full h-full bg-gray-50 relative"
-              style={{ backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)', backgroundSize: '20px 20px' }}
+              className="w-full h-full bg-gray-50 relative bg-[radial-gradient(circle,#e5e7eb_1px,transparent_1px)] bg-[length:20px_20px]"
             >
+              {/* Render connections */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-[1]">
+                {currentWorkflow.connections.map((connection) => {
+                  const sourceNode = currentWorkflow.nodes.find(n => n.id === connection.source);
+                  const targetNode = currentWorkflow.nodes.find(n => n.id === connection.target);
+
+                  if (!sourceNode || !targetNode) return null;
+
+                  const x1 = sourceNode.position.x + 75;
+                  const y1 = sourceNode.position.y + 40;
+                  const x2 = targetNode.position.x + 75;
+                  const y2 = targetNode.position.y + 40;
+
+                  return (
+                    <g key={connection.id}>
+                      <line
+                        x1={x1}
+                        y1={y1}
+                        x2={x2}
+                        y2={y2}
+                        stroke="#6b7280"
+                        strokeWidth="2"
+                        markerEnd="url(#arrowhead)"
+                      />
+                    </g>
+                  );
+                })}
+
+                <defs>
+                  <marker
+                    id="arrowhead"
+                    markerWidth="10"
+                    markerHeight="7"
+                    refX="9"
+                    refY="3.5"
+                    orient="auto"
+                  >
+                    <polygon
+                      points="0 0, 10 3.5, 0 7"
+                      fill="#6b7280"
+                    />
+                  </marker>
+                </defs>
+              </svg>
+
               {/* Render nodes */}
               {currentWorkflow.nodes.map((node) => {
                 const nodeConfig = NODE_TYPES[node.type];
@@ -442,7 +488,7 @@ export default function WorkflowBuilder() {
                 return (
                   <div
                     key={node.id}
-                    className={`absolute p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                    className={`absolute p-4 rounded-lg border-2 cursor-pointer transition-all z-[2] ${
                       selectedNode?.id === node.id
                         ? `${nodeConfig.color} ring-2 ring-blue-500`
                         : `${nodeConfig.color} hover:shadow-lg`
@@ -471,6 +517,7 @@ export default function WorkflowBuilder() {
                           <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
                         )}
                         <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             deleteNode(node.id);
@@ -483,6 +530,10 @@ export default function WorkflowBuilder() {
                       </div>
                     </div>
                     <div className="text-xs text-gray-600 capitalize">{node.type}</div>
+
+                    {/* Connection points */}
+                    <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-400 rounded-full cursor-crosshair"></div>
+                    <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-400 rounded-full"></div>
                   </div>
                 );
               })}
@@ -495,6 +546,7 @@ export default function WorkflowBuilder() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Start Building Your Workflow</h3>
                     <p className="text-gray-500 mb-4">Drag components from the sidebar to create your automation workflow</p>
                     <button
+                      type="button"
                       onClick={() => setShowTemplates(true)}
                       className="text-blue-600 hover:text-blue-700 font-medium"
                     >
@@ -512,12 +564,14 @@ export default function WorkflowBuilder() {
                 <p className="text-gray-500 mb-6">Create a new workflow or load an existing template to get started</p>
                 <div className="space-x-4">
                   <button
+                    type="button"
                     onClick={createNewWorkflow}
                     className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     Create New Workflow
                   </button>
                   <button
+                    type="button"
                     onClick={() => setShowTemplates(true)}
                     className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -535,6 +589,7 @@ export default function WorkflowBuilder() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900">Configure Node</h3>
               <button
+                type="button"
                 onClick={() => setSelectedNode(null)}
                 className="text-gray-400 hover:text-gray-600"
                 aria-label="Close configuration panel"
@@ -565,6 +620,7 @@ export default function WorkflowBuilder() {
                     }
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-describedby="node-label-description"
                 />
               </div>
 
@@ -589,6 +645,7 @@ export default function WorkflowBuilder() {
                     }
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Select node type"
                 >
                   {Object.entries(NODE_TYPES).map(([type, config]) => (
                     <option key={type} value={type}>
@@ -641,6 +698,7 @@ export default function WorkflowBuilder() {
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">Workflow Templates</h2>
               <button
+                type="button"
                 onClick={() => setShowTemplates(false)}
                 className="text-gray-400 hover:text-gray-600"
                 aria-label="Close templates modal"
@@ -665,6 +723,7 @@ export default function WorkflowBuilder() {
                         {template.nodes.length} components
                       </span>
                       <button
+                        type="button"
                         onClick={() => loadTemplate(template)}
                         className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >

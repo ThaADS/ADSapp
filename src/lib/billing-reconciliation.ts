@@ -491,7 +491,7 @@ export class BillingReconciliationEngine {
     const issues: ReconciliationIssue[] = [];
     let matched = 0;
     let pending = 0;
-    let disputed = 0;
+    const disputed = 0;
 
     const stripeRevenue = stripePayments.reduce((sum, payment) => {
       if (payment.status === 'succeeded') {

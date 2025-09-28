@@ -12,7 +12,19 @@
       "Bash(npm run lint)",
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run test:ci:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(node:*)",
+      "Bash(npm run test:security:*)",
+      "Bash(npm run test:performance:*)",
+      "Bash(npx lighthouse-ci:*)",
+      "Bash(npx supabase:*)",
+      "Bash(grep:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

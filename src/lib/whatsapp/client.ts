@@ -9,12 +9,12 @@ export class WhatsAppClient {
   }
 
   async sendMessage(to: string, message: {
-    type: 'text' | 'template' | 'media'
+    type: 'text' | 'template' | 'media' | 'image' | 'document'
     text?: { body: string }
     template?: {
       name: string
       language: { code: string }
-      components?: any[]
+      components?: Record<string, unknown>[]
     }
     image?: {
       link?: string
@@ -54,7 +54,7 @@ export class WhatsAppClient {
     })
   }
 
-  async sendTemplateMessage(to: string, templateName: string, languageCode = 'en', components: any[] = []) {
+  async sendTemplateMessage(to: string, templateName: string, languageCode = 'en', components: Record<string, unknown>[] = []) {
     return this.sendMessage(to, {
       type: 'template',
       template: {

@@ -173,7 +173,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     let updateData: any = {};
-    let results: any[] = [];
+    const results: any[] = [];
 
     switch (action) {
       case 'activate':

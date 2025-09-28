@@ -99,10 +99,10 @@ export async function POST(request: NextRequest) {
     const organizationId = sessionResult.session.organization_id
 
     // Find or create contact
-    let contact = await findOrCreateContact(supabase, organizationId, body.contact_phone, sessionResult.session.business_scenario)
+    const contact = await findOrCreateContact(supabase, organizationId, body.contact_phone, sessionResult.session.business_scenario)
 
     // Find or create conversation
-    let conversation = await findOrCreateConversation(supabase, organizationId, contact.id)
+    const conversation = await findOrCreateConversation(supabase, organizationId, contact.id)
 
     // Apply delay if specified
     if (body.delay_seconds && body.delay_seconds > 0) {

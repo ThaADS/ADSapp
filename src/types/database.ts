@@ -9,6 +9,141 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      demo_sessions: {
+        Row: {
+          id: string
+          session_id: string
+          business_scenario: string
+          user_agent: string | null
+          ip_address: string | null
+          started_at: string
+          ended_at: string | null
+          total_duration: string | null
+          completed_steps: number
+          conversion_achieved: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          business_scenario: string
+          user_agent?: string | null
+          ip_address?: string | null
+          started_at?: string
+          ended_at?: string | null
+          total_duration?: string | null
+          completed_steps?: number
+          conversion_achieved?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          business_scenario?: string
+          user_agent?: string | null
+          ip_address?: string | null
+          started_at?: string
+          ended_at?: string | null
+          total_duration?: string | null
+          completed_steps?: number
+          conversion_achieved?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      demo_session_activities: {
+        Row: {
+          id: string
+          session_id: string
+          activity_type: string
+          activity_data: Json
+          timestamp: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          activity_type: string
+          activity_data: Json
+          timestamp?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          activity_type?: string
+          activity_data?: Json
+          timestamp?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      demo_lead_scores: {
+        Row: {
+          id: string
+          session_id: string
+          score: number
+          factors: Json
+          calculated_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          score: number
+          factors: Json
+          calculated_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          score?: number
+          factors?: Json
+          calculated_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      conversion_funnels: {
+        Row: {
+          id: string
+          name: string
+          business_scenario: string
+          steps: Json
+          overall_conversion_rate: number
+          total_sessions: number
+          bottlenecks: Json
+          optimization_opportunities: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          business_scenario: string
+          steps: Json
+          overall_conversion_rate?: number
+          total_sessions?: number
+          bottlenecks?: Json
+          optimization_opportunities?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          business_scenario?: string
+          steps?: Json
+          overall_conversion_rate?: number
+          total_sessions?: number
+          bottlenecks?: Json
+          optimization_opportunities?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           id: string

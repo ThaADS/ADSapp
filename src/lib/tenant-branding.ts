@@ -9,7 +9,8 @@
  * - CSS injection and custom styling
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types for tenant branding
 export interface TenantBranding {
@@ -106,10 +107,10 @@ export interface BrandingConfig {
 }
 
 export class TenantBrandingManager {
-  private supabase;
+  private supabase: SupabaseClient;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor(supabaseClient: SupabaseClient) {
+    this.supabase = supabaseClient;
   }
 
   /**
@@ -454,8 +455,8 @@ export class TenantBrandingManager {
   /**
    * Helper function to get nested object value
    */
-  private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+    return path.split('.').reduce((current: any, key) => current?.[key], obj);
   }
 
   /**
@@ -504,12 +505,12 @@ export class TenantBrandingManager {
       border_radius: defaultConfig.layout.borderRadius,
       theme_mode: defaultConfig.theme.mode,
       hide_powered_by: defaultConfig.whiteLabel.hidePoweredBy,
-      logo_url: null,
-      logo_dark_url: null,
-      favicon_url: null,
-      custom_css: null,
-      custom_js: null,
-      custom_footer_text: null,
+      logo_url: undefined,
+      logo_dark_url: undefined,
+      favicon_url: undefined,
+      custom_css: undefined,
+      custom_js: undefined,
+      custom_footer_text: undefined,
     });
 
     return !!result;

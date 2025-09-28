@@ -123,7 +123,11 @@ const TEMPLATE_CATEGORIES = [
   { id: 'general', label: 'General', icon: Bars3Icon }
 ];
 
-export default function TemplateEditor() {
+interface TemplateEditorProps {
+  organizationId: string;
+}
+
+export default function TemplateEditor({ organizationId }: TemplateEditorProps) {
   const [templates, setTemplates] = useState<MessageTemplate[]>(SAMPLE_TEMPLATES);
   const [currentTemplate, setCurrentTemplate] = useState<MessageTemplate | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -342,6 +346,7 @@ export default function TemplateEditor() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Message Templates</h2>
             <button
+              type="button"
               onClick={createNewTemplate}
               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
               aria-label="Create new template"
@@ -414,6 +419,7 @@ export default function TemplateEditor() {
                     template.status === 'draft' ? 'bg-yellow-400' : 'bg-gray-400'
                   }`}></span>
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteTemplate(template.id);
@@ -447,6 +453,7 @@ export default function TemplateEditor() {
               <DocumentIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No templates found</p>
               <button
+                type="button"
                 onClick={createNewTemplate}
                 className="mt-2 text-blue-600 hover:text-blue-700 font-medium"
               >
@@ -467,6 +474,8 @@ export default function TemplateEditor() {
                 <div className="flex items-center space-x-4">
                   <input
                     type="text"
+                    title="Template name"
+                    placeholder="Enter template name"
                     value={currentTemplate.name}
                     onChange={(e) => setCurrentTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                     className="text-xl font-semibold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
@@ -483,6 +492,7 @@ export default function TemplateEditor() {
 
                 <div className="flex items-center space-x-3">
                   <button
+                    type="button"
                     onClick={() => setShowVariables(!showVariables)}
                     className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
                       showVariables ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -494,6 +504,7 @@ export default function TemplateEditor() {
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => setShowPreview(!showPreview)}
                     className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
                       showPreview ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -507,6 +518,7 @@ export default function TemplateEditor() {
                   {isEditing ? (
                     <div className="flex items-center space-x-2">
                       <button
+                        type="button"
                         onClick={() => {
                           setContent(currentTemplate.content);
                           setIsEditing(false);
@@ -516,6 +528,7 @@ export default function TemplateEditor() {
                         Cancel
                       </button>
                       <button
+                        type="button"
                         onClick={saveTemplate}
                         className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                       >
@@ -524,6 +537,7 @@ export default function TemplateEditor() {
                     </div>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => setIsEditing(true)}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                     >
@@ -556,6 +570,7 @@ export default function TemplateEditor() {
               {isEditing && (
                 <div className="w-12 bg-white border-r border-gray-200 flex flex-col p-2 space-y-2">
                   <button
+                    type="button"
                     onClick={() => formatText('bold')}
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Bold"
@@ -564,6 +579,7 @@ export default function TemplateEditor() {
                     <BoldIcon className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => formatText('italic')}
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Italic"
@@ -572,6 +588,7 @@ export default function TemplateEditor() {
                     <ItalicIcon className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => formatText('underline')}
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Underline"
@@ -580,6 +597,7 @@ export default function TemplateEditor() {
                     <UnderlineIcon className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => formatText('link')}
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Insert Link"
@@ -589,6 +607,7 @@ export default function TemplateEditor() {
                   </button>
                   <div className="border-t border-gray-200 my-2"></div>
                   <button
+                    type="button"
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Insert Image"
                     aria-label="Insert image"
@@ -596,6 +615,7 @@ export default function TemplateEditor() {
                     <PhotoIcon className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                     title="Attach File"
                     aria-label="Attach file"
@@ -726,6 +746,7 @@ export default function TemplateEditor() {
               <h2 className="text-xl font-medium text-gray-900 mb-2">No Template Selected</h2>
               <p className="text-gray-500 mb-6">Select a template from the sidebar or create a new one</p>
               <button
+                type="button"
                 onClick={createNewTemplate}
                 className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
               >

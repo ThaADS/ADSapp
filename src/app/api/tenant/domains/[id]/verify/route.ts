@@ -6,13 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { DomainManager, tenantUtils } from '@/middleware/tenant-routing';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // POST /api/tenant/domains/[id]/verify - Verify domain
 export async function POST(
@@ -20,6 +15,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
     if (!tenantContext) {

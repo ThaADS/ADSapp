@@ -8,13 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { DomainManager, tenantUtils } from '@/middleware/tenant-routing';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // GET /api/tenant/domains/[id] - Get domain details
 export async function GET(
@@ -22,6 +17,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
     if (!tenantContext) {
@@ -73,12 +69,9 @@ export async function GET(
     }
 
     // Get DNS records for custom domains
-    let dnsRecords = [];
+    let dnsRecords: any[] = [];
     if (domain.domain_type === 'custom' && domain.verification_token) {
-      const domainManager = new DomainManager(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
+      const domainManager = new DomainManager(supabase);
       dnsRecords = domainManager.getDNSRecords(domain.domain, domain.verification_token);
     }
 
@@ -104,6 +97,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
     if (!tenantContext) {
@@ -230,6 +224,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
     if (!tenantContext) {

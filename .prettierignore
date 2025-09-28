@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Environment variables
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+
+# Testing
+test-results/
+playwright-report/
+
+# Generated files
+*.generated.*
+*.d.ts
+
+# Configuration
+*.config.js
+*.config.ts
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

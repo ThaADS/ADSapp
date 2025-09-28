@@ -1,0 +1,82 @@
+# Docker Compose for Development
+version: '3.8'
+
+services:
+  # Development Next.js application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env.local
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - redis
+    networks:
+      - adsapp-dev-network
+    command: npm run dev
+
+  # Redis for development caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - adsapp-dev-network
+
+  # PostgreSQL for local development (optional)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: adsapp_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./database/dev-init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - adsapp-dev-network
+
+  # Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - adsapp-dev-network
+
+  # Stripe CLI for webhook testing
+  stripe:
+    image: stripe/stripe-cli:latest
+    environment:
+      - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+    command: listen --forward-to app:3000/api/webhooks/stripe
+    depends_on:
+      - app
+    networks:
+      - adsapp-dev-network
+
+volumes:
+  redis_dev_data:
+  postgres_dev_data:
+
+networks:
+  adsapp-dev-network:
+    driver: bridge

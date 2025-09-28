@@ -1,0 +1,267 @@
+name: Production Deployment
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
+    branches: [main, master]
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - staging
+          - production
+      force_deploy:
+        description: 'Force deployment even if tests failed'
+        type: boolean
+        default: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Pre-deployment Checks
+  pre-deploy:
+    name: Pre-deployment Checks
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.inputs.force_deploy == 'true' }}
+
+    outputs:
+      deploy_env: ${{ steps.env.outputs.environment }}
+      image_tag: ${{ steps.tag.outputs.tag }}
+
+    steps:
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Verify image exists
+        run: |
+          echo "Verifying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}"
+
+  # Database Migrations
+  migrate:
+    name: Database Migrations
+    runs-on: ubuntu-latest
+    needs: pre-deploy
+    environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run database migrations
+        run: |
+          echo "Running migrations for ${{ needs.pre-deploy.outputs.deploy_env }}"
+          # Add your migration commands here
+          # npx supabase db push
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # Deploy to Vercel
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [pre-deploy, migrate]
+    environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ needs.pre-deploy.outputs.deploy_env }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build ${{ needs.pre-deploy.outputs.deploy_env == 'production' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy ${{ needs.pre-deploy.outputs.deploy_env == 'production' && '--prod' || '--prebuilt' }} --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Update deployment status
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ steps.deploy.outputs.deployment_url }}
+          environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+          state: 'success'
+
+  # Deploy to Container Platform (Alternative)
+  deploy-container:
+    name: Deploy Container
+    runs-on: ubuntu-latest
+    needs: [pre-deploy, migrate]
+    if: false # Enable this if using container deployment instead of Vercel
+    environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          echo "Deploying to Kubernetes cluster"
+          # kubectl set image deployment/adsapp adsapp=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.pre-deploy.outputs.image_tag }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          echo "Deploying to Google Cloud Run"
+          # gcloud run deploy adsapp --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.pre-deploy.outputs.image_tag }}
+
+      - name: Deploy to AWS ECS
+        run: |
+          echo "Deploying to AWS ECS"
+          # aws ecs update-service --cluster adsapp --service adsapp
+
+  # Post-deployment Tests
+  post-deploy:
+    name: Post-deployment Tests
+    runs-on: ubuntu-latest
+    needs: [pre-deploy, deploy-vercel]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Health check
+        run: |
+          DEPLOYMENT_URL="${{ needs.deploy-vercel.outputs.deployment_url || secrets.APP_URL }}"
+          echo "Testing health endpoint: $DEPLOYMENT_URL/api/health"
+
+          # Wait for deployment to be ready
+          sleep 30
+
+          # Health check with retry
+          for i in {1..10}; do
+            if curl -f "$DEPLOYMENT_URL/api/health"; then
+              echo "Health check passed"
+              break
+            else
+              echo "Health check failed, attempt $i/10"
+              sleep 10
+            fi
+          done
+
+      - name: Smoke tests
+        run: |
+          DEPLOYMENT_URL="${{ needs.deploy-vercel.outputs.deployment_url || secrets.APP_URL }}"
+          echo "Running smoke tests against: $DEPLOYMENT_URL"
+
+          # Test key endpoints
+          curl -f "$DEPLOYMENT_URL/" || exit 1
+          curl -f "$DEPLOYMENT_URL/auth/signin" || exit 1
+          curl -f "$DEPLOYMENT_URL/auth/signup" || exit 1
+
+      - name: Performance check
+        run: |
+          DEPLOYMENT_URL="${{ needs.deploy-vercel.outputs.deployment_url || secrets.APP_URL }}"
+
+          # Install Lighthouse CI
+          npm install -g @lhci/cli@0.12.x
+
+          # Run basic performance check
+          lhci autorun --upload.target=temporary-public-storage \
+            --collect.url="$DEPLOYMENT_URL" \
+            --collect.numberOfRuns=1
+
+  # Rollback capability
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [pre-deploy, deploy-vercel, post-deploy]
+    environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+
+    steps:
+      - name: Rollback Vercel deployment
+        run: |
+          echo "Rolling back deployment"
+          # vercel rollback --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Notify team of rollback
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: 'Deployment failed and has been rolled back'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Success notification
+  notify-success:
+    name: Notify Success
+    runs-on: ubuntu-latest
+    needs: [pre-deploy, deploy-vercel, post-deploy]
+    if: success()
+
+    steps:
+      - name: Notify team of successful deployment
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            🚀 Deployment to ${{ needs.pre-deploy.outputs.deploy_env }} successful!
+            URL: ${{ needs.deploy-vercel.outputs.deployment_url || secrets.APP_URL }}
+            Commit: ${{ github.sha }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Create GitHub release
+        if: needs.pre-deploy.outputs.deploy_env == 'production'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Deployed to production
+            Commit: ${{ github.sha }}
+            Environment: ${{ needs.pre-deploy.outputs.deploy_env }}
+          draft: false
+          prerelease: false

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 export function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -20,75 +19,50 @@ export function SignUpForm() {
     setIsLoading(true)
     setError(null)
 
-    const supabase = createClient()
-
     try {
-      // Create user account
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-          },
+      // Use our API route instead of direct Supabase call
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          organizationName: formData.organizationName,
+        }),
       })
 
-      if (signUpError) {
-        setError(signUpError.message)
+      const result = await response.json()
+
+      if (!response.ok) {
+        setError(result.error || 'Registration failed. Please try again.')
         return
       }
 
-      if (data.user) {
-        // Create organization
-        const { data: orgData, error: orgError } = await supabase
-          .from('organizations')
-          .insert({
-            name: formData.organizationName,
-            slug: formData.organizationName
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/(^-|-$)/g, ''),
-          })
-          .select()
-          .single()
-
-        if (orgError) {
-          setError('Failed to create organization')
-          return
+      if (result.user) {
+        // Registration successful
+        if (result.confirmationRequired) {
+          setError('Please check your email to confirm your account')
+        } else {
+          // Redirect to dashboard
+          router.push('/dashboard')
         }
-
-        // Update user profile with organization
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            organization_id: orgData.id,
-            role: 'owner',
-            full_name: formData.fullName,
-          })
-          .eq('id', data.user.id)
-
-        if (profileError) {
-          setError('Failed to setup profile')
-          return
-        }
-
-        router.push('/onboarding/whatsapp')
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError('Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     })
   }
-
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       <div className="rounded-md shadow-sm space-y-4">
@@ -104,7 +78,7 @@ export function SignUpForm() {
             className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
             placeholder="Full Name"
             value={formData.fullName}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
         <div>
@@ -120,7 +94,7 @@ export function SignUpForm() {
             className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
             placeholder="Email address"
             value={formData.email}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
         <div>
@@ -137,7 +111,7 @@ export function SignUpForm() {
             className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
             placeholder="Password (min. 6 characters)"
             value={formData.password}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
         <div>
@@ -152,7 +126,7 @@ export function SignUpForm() {
             className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
             placeholder="Organization Name"
             value={formData.organizationName}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
       </div>

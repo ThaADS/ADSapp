@@ -1,71 +1,49 @@
-/**
- * Tenant Domains API Routes
- *
- * Handles tenant domain management endpoints:
- * - GET: List tenant domains
- * - POST: Add new domain (custom or subdomain)
- * - PUT: Update domain settings
- * - DELETE: Remove domain
- */
-
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { DomainManager, tenantUtils } from '@/middleware/tenant-routing';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// GET /api/tenant/domains - List domains
 export async function GET(request: NextRequest) {
   try {
-    const tenantContext = tenantUtils.getTenantContext(request.headers);
-
-    if (!tenantContext) {
-      return NextResponse.json(
-        { error: 'Tenant not found' },
-        { status: 404 }
-      );
-    }
-
-    // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      request.headers.get('authorization')?.replace('Bearer ', '') || ''
-    );
-
-    if (authError || !user) {
+    const supabase = await createClient();
+    
+    // Get organization ID from auth
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    // Check user belongs to organization
-    const { data: profile, error: profileError } = await supabase
+    // Get user's organization
+    const { data: profile } = await supabase
       .from('profiles')
-      .select('organization_id, role')
+      .select('organization_id')
       .eq('id', user.id)
       .single();
 
-    if (profileError || profile.organization_id !== tenantContext.organizationId) {
+    if (!profile?.organization_id) {
       return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
+        { error: 'No organization found' },
+        { status: 404 }
       );
     }
 
-    // Get domains
-    const domainManager = new DomainManager(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // Get domains for organization
+    const { data: domains, error } = await supabase
+      .from('tenant_domains')
+      .select('*')
+      .eq('organization_id', profile.organization_id)
+      .order('is_primary', { ascending: false });
 
-    const domains = await domainManager.listDomains(tenantContext.organizationId);
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
-      data: domains,
+      data: domains || [],
     });
   } catch (error) {
     console.error('Error fetching domains:', error);
@@ -76,124 +54,48 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/tenant/domains - Add new domain
 export async function POST(request: NextRequest) {
   try {
-    const tenantContext = tenantUtils.getTenantContext(request.headers);
-
-    if (!tenantContext) {
-      return NextResponse.json(
-        { error: 'Tenant not found' },
-        { status: 404 }
-      );
-    }
-
-    // Verify authentication and authorization
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      request.headers.get('authorization')?.replace('Bearer ', '') || ''
-    );
-
-    if (authError || !user) {
+    const supabase = await createClient();
+    const body = await request.json();
+    
+    // Get organization ID from auth
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const { data: profile, error: profileError } = await supabase
+    // Get user's organization
+    const { data: profile } = await supabase
       .from('profiles')
-      .select('organization_id, role')
+      .select('organization_id')
       .eq('id', user.id)
       .single();
 
-    if (profileError ||
-        profile.organization_id !== tenantContext.organizationId ||
-        !['owner', 'admin'].includes(profile.role)) {
+    if (!profile?.organization_id) {
       return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
+        { error: 'No organization found' },
+        { status: 404 }
       );
     }
 
-    // Parse request body
-    const { domain, subdomain, domainType, isPrimary } = await request.json();
-
-    if (!domainType || !['custom', 'subdomain'].includes(domainType)) {
-      return NextResponse.json(
-        { error: 'Invalid domain type' },
-        { status: 400 }
-      );
-    }
-
-    const domainManager = new DomainManager(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    // Create domain manager
+    const domainManager = new DomainManager(supabase);
+    
+    // Add domain
+    const domain = await domainManager.addCustomDomain(
+      profile.organization_id,
+      body.domain,
+      body.is_primary || false
     );
-
-    let newDomain;
-
-    if (domainType === 'custom') {
-      if (!domain) {
-        return NextResponse.json(
-          { error: 'Domain is required for custom domains' },
-          { status: 400 }
-        );
-      }
-
-      // Validate domain format
-      if (!tenantUtils.isValidDomain(domain)) {
-        return NextResponse.json(
-          { error: 'Invalid domain format' },
-          { status: 400 }
-        );
-      }
-
-      newDomain = await domainManager.addCustomDomain(
-        tenantContext.organizationId,
-        domain,
-        isPrimary || false
-      );
-    } else {
-      if (!subdomain) {
-        return NextResponse.json(
-          { error: 'Subdomain is required for subdomain type' },
-          { status: 400 }
-        );
-      }
-
-      // Validate subdomain format
-      if (!tenantUtils.isValidSubdomain(subdomain)) {
-        return NextResponse.json(
-          { error: 'Invalid subdomain format' },
-          { status: 400 }
-        );
-      }
-
-      newDomain = await domainManager.addSubdomain(
-        tenantContext.organizationId,
-        subdomain
-      );
-    }
-
-    if (!newDomain) {
-      return NextResponse.json(
-        { error: 'Failed to add domain' },
-        { status: 500 }
-      );
-    }
-
-    // For custom domains, provide DNS records
-    let dnsRecords = [];
-    if (domainType === 'custom') {
-      dnsRecords = domainManager.getDNSRecords(domain, newDomain.verification_token || '');
-    }
 
     return NextResponse.json({
       success: true,
-      data: {
-        domain: newDomain,
-        dnsRecords,
-      },
+      data: domain,
     });
   } catch (error) {
     console.error('Error adding domain:', error);

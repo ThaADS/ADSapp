@@ -340,7 +340,7 @@ export default function EnhancedMessageInput({
 
   const handleTemplateSelect = (template: WhatsAppTemplate, variables: Record<string, string>) => {
     // Format template with variables
-    let templateContent = JSON.stringify({
+    const templateContent = JSON.stringify({
       templateId: template.id,
       name: template.name,
       variables

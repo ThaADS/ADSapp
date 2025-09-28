@@ -311,8 +311,8 @@ export class TenantRouter {
 export class DomainManager {
   private supabase;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor(supabaseClient: ReturnType<typeof createClient>) {
+    this.supabase = supabaseClient;
   }
 
   /**

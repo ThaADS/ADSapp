@@ -565,7 +565,7 @@ export class UsageTracker {
     // Send webhook notification if configured
     // await this.sendAlertWebhook(limit, usageResult);
 
-    console.log(`Usage alert sent for ${limit.limit_type}: ${usageResult.current_usage}/${usageResult.limit}`);
+    
   }
 
   /**

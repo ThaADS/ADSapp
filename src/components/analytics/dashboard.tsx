@@ -259,7 +259,7 @@ export default function AnalyticsDashboard() {
 
     const interval = setInterval(() => {
       // Simulate data refresh
-      console.log('Refreshing dashboard data...');
+      
     }, refreshInterval * 1000);
 
     return () => clearInterval(interval);
@@ -290,7 +290,7 @@ export default function AnalyticsDashboard() {
   // Export functionality
   const exportData = (format: 'csv' | 'pdf' | 'png') => {
     // Simulate export
-    console.log(`Exporting dashboard as ${format}...`);
+    
     setShowExportModal(false);
     // In real implementation, generate and download the file
   };
