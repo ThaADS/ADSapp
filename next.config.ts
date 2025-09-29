@@ -98,7 +98,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              "connect-src 'self' https://api.stripe.com",
+              "connect-src 'self' https://api.stripe.com https://egaiyydjgeqlhthxmvbn.supabase.co",
               "frame-src https://js.stripe.com https://hooks.stripe.com",
             ].join('; '),
           },
