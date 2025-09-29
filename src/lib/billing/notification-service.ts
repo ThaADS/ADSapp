@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
+import { isBuildTime } from '@/lib/build-safe-init'
 
 export interface NotificationPreferences {
   email: boolean
@@ -33,7 +34,7 @@ export class NotificationService {
   private resend: Resend | null = null
 
   constructor() {
-    if (process.env.RESEND_API_KEY) {
+    if (process.env.RESEND_API_KEY && !isBuildTime()) {
       this.resend = new Resend(process.env.RESEND_API_KEY)
     }
   }

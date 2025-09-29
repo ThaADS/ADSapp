@@ -1,13 +1,15 @@
 import { createServerClient } from '@supabase/ssr'
+import { requireEnvVar } from '@/lib/build-safe-init'
 
 export async function createClient() {
+
   // Dynamic import to avoid issues with client-side usage
   const { cookies } = await import('next/headers')
   const cookieStore = await cookies()
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
+    requireEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
     {
       cookies: {
         getAll() {

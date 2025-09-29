@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe/server'
+import { isBuildTime, withBuildSafeCheck } from '@/lib/build-safe-init'
 
 export interface UsageMetrics {
   messages: number

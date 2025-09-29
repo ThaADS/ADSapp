@@ -45,8 +45,22 @@ export interface CancellationOptions {
 
 export class SubscriptionLifecycleManager {
   private supabase = createClient()
-  private usageTracker = new UsageTracker()
-  private notificationService = new NotificationService()
+  private usageTracker: UsageTracker | null = null
+  private notificationService: NotificationService | null = null
+
+  private getUsageTracker(): UsageTracker {
+    if (!this.usageTracker) {
+      this.usageTracker = new UsageTracker()
+    }
+    return this.usageTracker
+  }
+
+  private getNotificationService(): NotificationService {
+    if (!this.notificationService) {
+      this.notificationService = new NotificationService()
+    }
+    return this.notificationService
+  }
 
   async upgradeSubscription(
     organizationId: string,
@@ -120,10 +134,10 @@ export class SubscriptionLifecycleManager {
     })
 
     // Update usage limits
-    await this.usageTracker.updatePlanLimits(organizationId, newPlanId)
+    await this.getUsageTracker().updatePlanLimits(organizationId, newPlanId)
 
     // Send upgrade notification
-    await this.notificationService.sendPlanUpgradeNotification(organizationId, newPlanId)
+    await this.getNotificationService().sendPlanUpgradeNotification(organizationId, newPlanId)
 
     return {
       subscription: updatedSubscription,
@@ -153,8 +167,8 @@ export class SubscriptionLifecycleManager {
     const newPlan = SUBSCRIPTION_PLANS[newPlanId]
 
     // Check usage limits before downgrade
-    const currentUsage = await this.usageTracker.getCurrentUsage(organizationId)
-    const newLimits = await this.usageTracker.getPlanLimits(newPlanId)
+    const currentUsage = await this.getUsageTracker().getCurrentUsage(organizationId)
+    const newLimits = await this.getUsageTracker().getPlanLimits(newPlanId)
 
     const usageViolations = this.checkUsageViolations(currentUsage, newLimits)
     if (usageViolations.length > 0) {
@@ -206,10 +220,10 @@ export class SubscriptionLifecycleManager {
     })
 
     // Enforce new limits
-    await this.usageTracker.enforceDowngradeLimits(organizationId, newPlanId)
+    await this.getUsageTracker().enforceDowngradeLimits(organizationId, newPlanId)
 
     // Send downgrade notification
-    await this.notificationService.sendPlanDowngradeNotification(organizationId, newPlanId)
+    await this.getNotificationService().sendPlanDowngradeNotification(organizationId, newPlanId)
 
     return {
       subscription: updatedSubscription,
@@ -254,7 +268,7 @@ export class SubscriptionLifecycleManager {
 
       // Enforce free tier limits if downgrading
       if (options.downgradeToFree) {
-        await this.usageTracker.enforceDowngradeLimits(organizationId, 'starter')
+        await this.getUsageTracker().enforceDowngradeLimits(organizationId, 'starter')
       }
     } else {
       // Cancel at period end
@@ -291,7 +305,7 @@ export class SubscriptionLifecycleManager {
       })
 
     // Send cancellation notification
-    await this.notificationService.sendSubscriptionCancellation(organizationId)
+    await this.getNotificationService().sendSubscriptionCancellation(organizationId)
 
     // Offer retention if requested
     if (options.offerRetention) {
@@ -372,7 +386,7 @@ export class SubscriptionLifecycleManager {
     })
 
     // Send reactivation notification
-    await this.notificationService.sendSubscriptionReactivation(organizationId, planId)
+    await this.getNotificationService().sendSubscriptionReactivation(organizationId, planId)
 
     return subscription
   }
@@ -598,6 +612,6 @@ export class SubscriptionLifecycleManager {
       .eq('id', organizationId)
 
     // Enforce free tier limits
-    await this.usageTracker.enforceDowngradeLimits(organizationId, 'starter')
+    await this.getUsageTracker().enforceDowngradeLimits(organizationId, 'starter')
   }
 }

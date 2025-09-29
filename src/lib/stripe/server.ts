@@ -1,11 +1,15 @@
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
+import { requireEnvVar, createBuildSafeService } from '@/lib/build-safe-init'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
+// Build-safe Stripe client initialization
+const stripe = createBuildSafeService(() => {
+  return new Stripe(requireEnvVar('STRIPE_SECRET_KEY'), {
+    apiVersion: '2024-12-18.acacia',
+  })
+}, 'Stripe')
 
-// Subscription plans configuration
+// Build-safe subscription plans configuration
 export const SUBSCRIPTION_PLANS = {
   starter: {
     id: 'starter',
@@ -13,7 +17,7 @@ export const SUBSCRIPTION_PLANS = {
     description: 'Perfect for small businesses',
     price: 29,
     interval: 'month' as const,
-    stripePriceId: process.env.STRIPE_STARTER_PRICE_ID!,
+    stripePriceId: requireEnvVar('STRIPE_STARTER_PRICE_ID'),
     features: [
       '1,000 messages/month',
       '3 team members',
@@ -34,7 +38,7 @@ export const SUBSCRIPTION_PLANS = {
     description: 'For growing teams',
     price: 79,
     interval: 'month' as const,
-    stripePriceId: process.env.STRIPE_PROFESSIONAL_PRICE_ID!,
+    stripePriceId: requireEnvVar('STRIPE_PROFESSIONAL_PRICE_ID'),
     features: [
       '10,000 messages/month',
       '10 team members',
@@ -57,7 +61,7 @@ export const SUBSCRIPTION_PLANS = {
     description: 'For large organizations',
     price: 199,
     interval: 'month' as const,
-    stripePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID!,
+    stripePriceId: requireEnvVar('STRIPE_ENTERPRISE_PRICE_ID'),
     features: [
       'Unlimited messages',
       'Unlimited team members',
@@ -186,7 +190,7 @@ export class StripeService {
     rawBody: string,
     signature: string
   ): Promise<Stripe.Event> {
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
+    const endpointSecret = requireEnvVar('STRIPE_WEBHOOK_SECRET')
 
     try {
       const event = stripe.webhooks.constructEvent(
