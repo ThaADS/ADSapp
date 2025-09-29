@@ -132,4 +132,5 @@ logs
 
 # Storybook build outputs
 .out
-.storybook-out
+.storybook-out.github/workflows/
+.github/workflows/*
