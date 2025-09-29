@@ -9,10 +9,10 @@ import { ResetDemoDataRequest, ResetDemoDataResponse } from '@/types/demo'
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
 
     // Validate token
     if (!token || token.length < 10) {
@@ -103,10 +103,10 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
 
     // Validate token
     if (!token || token.length < 10) {
@@ -229,7 +229,7 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
     // This endpoint is for admin use to force-delete sessions
@@ -247,7 +247,7 @@ export async function DELETE(
       )
     }
 
-    const { token } = params
+    const { token } = await params
 
     // Special handling for bulk operations
     if (token === 'all-expired') {

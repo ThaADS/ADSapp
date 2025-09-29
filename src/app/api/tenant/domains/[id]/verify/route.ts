@@ -12,9 +12,10 @@ import { DomainManager, tenantUtils } from '@/middleware/tenant-routing';
 // POST /api/tenant/domains/[id]/verify - Verify domain
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
@@ -56,7 +57,7 @@ export async function POST(
     const { data: domain, error: domainError } = await supabase
       .from('tenant_domains')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', tenantContext.organizationId)
       .single();
 
@@ -81,13 +82,13 @@ export async function POST(
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const isVerified = await domainManager.verifyDomain(params.id);
+    const isVerified = await domainManager.verifyDomain(id);
 
     // Get updated domain data
     const { data: updatedDomain, error: updateError } = await supabase
       .from('tenant_domains')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (updateError) {

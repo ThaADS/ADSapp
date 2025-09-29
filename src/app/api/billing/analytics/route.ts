@@ -197,8 +197,14 @@ async function getPlanDetails(planId: string) {
   return plans[planId as keyof typeof plans] || plans.starter
 }
 
+interface Invoice {
+  created_at: string;
+  status: string;
+  amount: number;
+}
+
 function generateRevenueHistory(
-  invoices: any[],
+  invoices: Invoice[],
   period: string,
   startDate: Date,
   endDate: Date
@@ -238,7 +244,17 @@ function generateRevenueHistory(
   return history
 }
 
-function calculatePlanDistribution(subscriptionHistory: any[], currentPlan: any) {
+interface SubscriptionHistory {
+  plan_id: string;
+  effective_date: string;
+}
+
+interface CurrentPlan {
+  plan_id: string;
+  name: string;
+}
+
+function calculatePlanDistribution(subscriptionHistory: SubscriptionHistory[], currentPlan: CurrentPlan) {
   // Simplified for single organization
   return [
     {

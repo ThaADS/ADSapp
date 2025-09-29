@@ -4,11 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const supabase = await createClient()
 
@@ -36,7 +37,7 @@ export async function GET(
           )
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -85,11 +86,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const body = await request.json()
     const { name, email, tags, notes, metadata, is_blocked } = body
@@ -100,7 +102,7 @@ export async function PUT(
     const { data: existingContact } = await supabase
       .from('contacts')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -123,7 +125,7 @@ export async function PUT(
     }
 
     // Update contact
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString()
     }
 
@@ -138,7 +140,7 @@ export async function PUT(
       const { data: current } = await supabase
         .from('contacts')
         .select('metadata')
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
       updateData.metadata = {
@@ -152,7 +154,7 @@ export async function PUT(
     const { data: updatedContact, error } = await supabase
       .from('contacts')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .select()
       .single()
@@ -171,11 +173,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const supabase = await createClient()
 
@@ -183,7 +186,7 @@ export async function DELETE(
     const { data: contact } = await supabase
       .from('contacts')
       .select('id, phone_number')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -198,7 +201,7 @@ export async function DELETE(
     const { data: activeConversations } = await supabase
       .from('conversations')
       .select('id')
-      .eq('contact_id', params.id)
+      .eq('contact_id', id)
       .in('status', ['open', 'pending'])
 
     if (activeConversations && activeConversations.length > 0) {
@@ -212,7 +215,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('contacts')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
 
     if (error) {
@@ -220,7 +223,7 @@ export async function DELETE(
     }
 
     return createSuccessResponse({
-      id: params.id,
+      id: id,
       message: 'Contact deleted successfully'
     })
 
@@ -230,7 +233,16 @@ export async function DELETE(
   }
 }
 
-function calculateAverageResponseTime(conversations: any[]): number {
+interface ConversationMessage {
+  created_at: string;
+  sender_type: string;
+}
+
+interface ConversationWithMessages {
+  messages?: ConversationMessage[];
+}
+
+function calculateAverageResponseTime(conversations: ConversationWithMessages[]): number {
   const responseTimes = []
 
   for (const conversation of conversations) {
@@ -257,7 +269,11 @@ function calculateAverageResponseTime(conversations: any[]): number {
   return Math.round(averageMs / (1000 * 60)) // Convert to minutes
 }
 
-function calculateMessageFrequency(messages: any[]): { daily: number; weekly: number; monthly: number } {
+interface Message {
+  created_at: string;
+}
+
+function calculateMessageFrequency(messages: Message[]): { daily: number; weekly: number; monthly: number } {
   if (messages.length === 0) {
     return { daily: 0, weekly: 0, monthly: 0 }
   }

@@ -6,6 +6,53 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Common API types
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T = unknown> {
+  data: T[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
+export interface ErrorResponse {
+  error: string;
+  code?: string;
+  details?: unknown;
+}
+
+// Database table row types (extracted for easier use)
+export type Organization = Database['public']['Tables']['organizations']['Row'];
+export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Contact = Database['public']['Tables']['contacts']['Row'];
+export type Conversation = Database['public']['Tables']['conversations']['Row'];
+export type Message = Database['public']['Tables']['messages']['Row'];
+export type DemoSession = Database['public']['Tables']['demo_sessions']['Row'];
+export type DemoSessionActivity = Database['public']['Tables']['demo_session_activities']['Row'];
+export type DemoLeadScore = Database['public']['Tables']['demo_lead_scores']['Row'];
+export type ConversionFunnel = Database['public']['Tables']['conversion_funnels']['Row'];
+
+// Insert types
+export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert'];
+export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+export type ContactInsert = Database['public']['Tables']['contacts']['Insert'];
+export type ConversationInsert = Database['public']['Tables']['conversations']['Insert'];
+export type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+
+// Update types
+export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update'];
+export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+export type ContactUpdate = Database['public']['Tables']['contacts']['Update'];
+export type ConversationUpdate = Database['public']['Tables']['conversations']['Update'];
+export type MessageUpdate = Database['public']['Tables']['messages']['Update'];
+
 export type Database = {
   public: {
     Tables: {

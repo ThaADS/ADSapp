@@ -14,9 +14,10 @@ import { DomainManager, tenantUtils } from '@/middleware/tenant-routing';
 // GET /api/tenant/domains/[id] - Get domain details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
@@ -57,7 +58,7 @@ export async function GET(
     const { data: domain, error: domainError } = await supabase
       .from('tenant_domains')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', tenantContext.organizationId)
       .single();
 
@@ -94,9 +95,10 @@ export async function GET(
 // PUT /api/tenant/domains/[id] - Update domain settings
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
@@ -141,7 +143,7 @@ export async function PUT(
     const { data: existingDomain, error: domainError } = await supabase
       .from('tenant_domains')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', tenantContext.organizationId)
       .single();
 
@@ -161,7 +163,7 @@ export async function PUT(
 
       const success = await domainManager.setPrimaryDomain(
         tenantContext.organizationId,
-        params.id
+        id
       );
 
       if (!success) {
@@ -188,7 +190,7 @@ export async function PUT(
       const { data: updatedDomain, error: updateError } = await supabase
         .from('tenant_domains')
         .update(updateData)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .single();
 
@@ -221,9 +223,10 @@ export async function PUT(
 // DELETE /api/tenant/domains/[id] - Remove domain
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const tenantContext = tenantUtils.getTenantContext(request.headers);
 
@@ -265,7 +268,7 @@ export async function DELETE(
     const { data: domain, error: domainError } = await supabase
       .from('tenant_domains')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', tenantContext.organizationId)
       .single();
 
@@ -297,7 +300,7 @@ export async function DELETE(
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const success = await domainManager.removeDomain(params.id);
+    const success = await domainManager.removeDomain(id);
 
     if (!success) {
       return NextResponse.json(

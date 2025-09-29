@@ -4,9 +4,12 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createClientClient } from '@/lib/supabase/client'
 import crypto from 'crypto'
 import { Resend } from 'resend'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database'
+
+type TypedSupabaseClient = SupabaseClient<Database>
 
 // Types for invitation system
 export interface UserInvitation {
@@ -20,7 +23,7 @@ export interface UserInvitation {
   token: string
   templateId?: string
   customMessage?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
   acceptedAt?: Date
@@ -51,7 +54,7 @@ export interface BulkInvitationRequest {
     email: string
     role: 'owner' | 'admin' | 'agent'
     customMessage?: string
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   }[]
   templateId?: string
   sendImmediately: boolean
@@ -92,11 +95,11 @@ export interface InvitationSettings {
 
 // Advanced Invitation Manager
 export class UserInvitationManager {
-  private supabase: any
+  private supabase: TypedSupabaseClient
   private resend: Resend
 
   constructor() {
-    this.supabase = createClient()
+    this.supabase = createClient() as TypedSupabaseClient
     this.resend = new Resend(process.env.RESEND_API_KEY)
   }
 
@@ -110,7 +113,7 @@ export class UserInvitationManager {
       templateId?: string
       customMessage?: string
       expirationDays?: number
-      metadata?: Record<string, any>
+      metadata?: Record<string, unknown>
       sendImmediately?: boolean
     } = {}
   ): Promise<UserInvitation> {
@@ -173,7 +176,7 @@ export class UserInvitationManager {
   async acceptInvitation(token: string, userData: {
     fullName: string
     password: string
-  }): Promise<{ user: any; profile: any; invitation: UserInvitation }> {
+  }): Promise<{ user: Record<string, unknown>; profile: Record<string, unknown>; invitation: UserInvitation }> {
     // Validate token and get invitation
     const invitation = await this.validateInvitationToken(token)
 
@@ -603,7 +606,11 @@ export class UserInvitationManager {
 
     for (const invitationData of invitations) {
       const invitation = this.parseInvitation(invitationData)
-      const settings = invitationData.invitation_settings
+      const settings = invitationData.invitation_settings as {
+        auto_reminders: boolean;
+        reminder_interval_days: number;
+        max_reminders: number;
+      }
 
       // Check if reminder is due
       const lastReminderDate = invitation.lastReminderAt || invitation.createdAt
@@ -715,19 +722,22 @@ export class UserInvitationManager {
     })
   }
 
-  private async sendWelcomeEmail(user: any, profile: any): Promise<void> {
-    const subject = `Welcome to ${profile.organization?.name || 'our platform'}!`
+  private async sendWelcomeEmail(user: Record<string, unknown>, profile: Record<string, unknown>): Promise<void> {
+    const organizationName = (profile.organization as { name?: string } | null)?.name || 'our platform'
+    const subject = `Welcome to ${organizationName}!`
+    const userEmail = user.email as string
+    const profileName = profile.full_name as string
 
     await this.resend.emails.send({
       from: process.env.FROM_EMAIL || 'noreply@yourdomain.com',
-      to: [user.email],
+      to: [userEmail],
       subject,
       html: `
-        <h1>Welcome ${profile.full_name}!</h1>
+        <h1>Welcome ${profileName}!</h1>
         <p>Your account has been successfully created. You can now access the platform.</p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard">Go to Dashboard</a>
       `,
-      text: `Welcome ${profile.full_name}! Your account has been successfully created. Visit ${process.env.NEXT_PUBLIC_APP_URL}/dashboard to get started.`
+      text: `Welcome ${profileName}! Your account has been successfully created. Visit ${process.env.NEXT_PUBLIC_APP_URL}/dashboard to get started.`
     })
   }
 
@@ -810,43 +820,43 @@ export class UserInvitationManager {
       })
   }
 
-  private parseInvitation(data: any): UserInvitation {
+  private parseInvitation(data: Record<string, unknown>): UserInvitation {
     return {
-      id: data.id,
-      organizationId: data.organization_id,
-      email: data.email,
-      role: data.role,
-      invitedBy: data.invited_by,
-      status: data.status,
-      expiresAt: new Date(data.expires_at),
-      token: data.token,
-      templateId: data.template_id,
-      customMessage: data.custom_message,
-      metadata: data.metadata,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-      acceptedAt: data.accepted_at ? new Date(data.accepted_at) : undefined,
-      remindersSent: data.reminders_sent || 0,
-      lastReminderAt: data.last_reminder_at ? new Date(data.last_reminder_at) : undefined
+      id: data.id as string,
+      organizationId: data.organization_id as string,
+      email: data.email as string,
+      role: data.role as 'owner' | 'admin' | 'agent',
+      invitedBy: data.invited_by as string,
+      status: data.status as 'pending' | 'accepted' | 'expired' | 'cancelled',
+      expiresAt: new Date(data.expires_at as string),
+      token: data.token as string,
+      templateId: data.template_id as string | undefined,
+      customMessage: data.custom_message as string | undefined,
+      metadata: data.metadata as Record<string, unknown> | undefined,
+      createdAt: new Date(data.created_at as string),
+      updatedAt: new Date(data.updated_at as string),
+      acceptedAt: data.accepted_at ? new Date(data.accepted_at as string) : undefined,
+      remindersSent: (data.reminders_sent as number) || 0,
+      lastReminderAt: data.last_reminder_at ? new Date(data.last_reminder_at as string) : undefined
     }
   }
 
-  private parseTemplate(data: any): InvitationTemplate {
+  private parseTemplate(data: Record<string, unknown>): InvitationTemplate {
     return {
-      id: data.id,
-      organizationId: data.organization_id,
-      name: data.name,
-      description: data.description,
-      role: data.role,
-      subject: data.subject,
-      htmlContent: data.html_content,
-      textContent: data.text_content,
-      variables: data.variables || [],
-      isDefault: data.is_default,
-      isActive: data.is_active,
-      createdBy: data.created_by,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      id: data.id as string,
+      organizationId: data.organization_id as string,
+      name: data.name as string,
+      description: data.description as string,
+      role: data.role as 'owner' | 'admin' | 'agent',
+      subject: data.subject as string,
+      htmlContent: data.html_content as string,
+      textContent: data.text_content as string,
+      variables: (data.variables as string[]) || [],
+      isDefault: data.is_default as boolean,
+      isActive: data.is_active as boolean,
+      createdBy: data.created_by as string,
+      createdAt: new Date(data.created_at as string),
+      updatedAt: new Date(data.updated_at as string)
     }
   }
 }

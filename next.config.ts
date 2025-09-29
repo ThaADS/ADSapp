@@ -17,32 +17,34 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_DOMAIN: process.env.NEXT_PUBLIC_APP_DOMAIN,
   },
 
-  // Bundle Analyzer
-  webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
-    if (process.env.ANALYZE === 'true') {
-      // Dynamic import for bundle analyzer to avoid loading in production
-      const { BundleAnalyzerPlugin } = eval('require')('webpack-bundle-analyzer');
-      config.plugins?.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html',
-          openAnalyzer: false,
-        })
-      );
-    }
+  // Bundle Analyzer (only when not using Turbopack)
+  ...(process.env.TURBOPACK !== '1' && {
+    webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
+      if (process.env.ANALYZE === 'true') {
+        // Dynamic import for bundle analyzer to avoid loading in production
+        const { BundleAnalyzerPlugin } = eval('require')('webpack-bundle-analyzer');
+        config.plugins?.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html',
+            openAnalyzer: false,
+          })
+        );
+      }
 
-    // Performance optimizations
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
+      // Performance optimizations
+      if (!isServer) {
+        config.resolve.fallback = {
+          ...config.resolve.fallback,
+          fs: false,
+          net: false,
+          tls: false,
+        };
+      }
 
-    return config;
-  },
+      return config;
+    },
+  }),
 
   // Image optimization
   images: {
@@ -104,16 +106,19 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
+  // External packages for server components (moved from experimental)
+  serverExternalPackages: ['@supabase/supabase-js'],
+
   // Enable experimental features
   experimental: {
-    // Enable React Server Components
-    serverComponentsExternalPackages: ['@supabase/supabase-js'],
-
     // Enable optimized package imports
     optimizePackageImports: ['@heroicons/react'],
+  },
 
-    // Enable turbo mode
-    turbo: {},
+  // Turbopack configuration (moved from experimental.turbo)
+  turbopack: {
+    // Turbopack is enabled by default when using --turbopack flag
+    // Additional configuration can be added here as features become available
   },
 
   // Production optimizations

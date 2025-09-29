@@ -1,8 +1,53 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database'
 
-export async function GET(request: NextRequest) {
+type TypedSupabaseClient = SupabaseClient<Database>
+
+interface RealtimeMetrics {
+  activeConversations: number
+  todayMessages: {
+    total: number
+    inbound: number
+    outbound: number
+    conversations: number
+  }
+  activeAgents: number
+  pendingConversations: number
+  unreadMessages: number
+  averageResponseTime: number
+  medianResponseTime: number
+}
+
+interface TrendData {
+  messages: number
+  conversations: number
+  responseTime: number
+}
+
+interface HourlyData {
+  hour: number
+  count: number
+}
+
+interface AgentStats {
+  id: string
+  name: string
+  messageCount: number
+}
+
+interface ActivityItem {
+  id: string
+  type: 'incoming' | 'outgoing'
+  preview: string
+  contactName: string
+  agentName?: string
+  timestamp: string
+}
+
+export async function GET(_request: NextRequest) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
@@ -19,16 +64,16 @@ export async function GET(request: NextRequest) {
       unreadMessages,
       responseTimeData
     ] = await Promise.all([
-      getActiveConversations(supabase, profile.organization_id),
-      getTodayMessages(supabase, profile.organization_id),
-      getActiveAgents(supabase, profile.organization_id),
-      getPendingConversations(supabase, profile.organization_id),
-      getUnreadMessages(supabase, profile.organization_id),
-      getRecentResponseTimes(supabase, profile.organization_id)
+      getActiveConversations(supabase, profile.organization_id!),
+      getTodayMessages(supabase, profile.organization_id!),
+      getActiveAgents(supabase, profile.organization_id!),
+      getPendingConversations(supabase, profile.organization_id!),
+      getUnreadMessages(supabase, profile.organization_id!),
+      getRecentResponseTimes(supabase, profile.organization_id!)
     ])
 
     // Calculate trends (last 24h vs previous 24h)
-    const trends = await calculateTrends(supabase, profile.organization_id)
+    const trends = await calculateTrends(supabase, profile.organization_id!)
 
     return createSuccessResponse({
       timestamp: new Date().toISOString(),
@@ -44,9 +89,9 @@ export async function GET(request: NextRequest) {
       trends,
       liveData: {
         conversationsToday: todayMessages.conversations,
-        messagesPerHour: await getMessagesPerHour(supabase, profile.organization_id),
-        topActiveAgents: await getTopActiveAgents(supabase, profile.organization_id),
-        recentActivity: await getRecentActivity(supabase, profile.organization_id)
+        messagesPerHour: await getMessagesPerHour(supabase, profile.organization_id!),
+        topActiveAgents: await getTopActiveAgents(supabase, profile.organization_id!),
+        recentActivity: await getRecentActivity(supabase, profile.organization_id!)
       }
     })
 
@@ -56,7 +101,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function getActiveConversations(supabase: any, organizationId: string) {
+async function getActiveConversations(supabase: TypedSupabaseClient, organizationId: string): Promise<number> {
   const { data, error } = await supabase
     .from('conversations')
     .select('id')
@@ -67,7 +112,7 @@ async function getActiveConversations(supabase: any, organizationId: string) {
   return data?.length || 0
 }
 
-async function getTodayMessages(supabase: any, organizationId: string) {
+async function getTodayMessages(supabase: TypedSupabaseClient, organizationId: string): Promise<{ total: number; inbound: number; outbound: number; conversations: number }> {
   const today = new Date().toISOString().split('T')[0]
 
   const { data, error } = await supabase
@@ -90,7 +135,7 @@ async function getTodayMessages(supabase: any, organizationId: string) {
   }
 }
 
-async function getActiveAgents(supabase: any, organizationId: string) {
+async function getActiveAgents(supabase: TypedSupabaseClient, organizationId: string): Promise<number> {
   const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString()
 
   const { data, error } = await supabase
@@ -104,7 +149,7 @@ async function getActiveAgents(supabase: any, organizationId: string) {
   return data?.length || 0
 }
 
-async function getPendingConversations(supabase: any, organizationId: string) {
+async function getPendingConversations(supabase: TypedSupabaseClient, organizationId: string): Promise<number> {
   const { data, error } = await supabase
     .from('conversations')
     .select('id')
@@ -115,7 +160,7 @@ async function getPendingConversations(supabase: any, organizationId: string) {
   return data?.length || 0
 }
 
-async function getUnreadMessages(supabase: any, organizationId: string) {
+async function getUnreadMessages(supabase: TypedSupabaseClient, organizationId: string): Promise<number> {
   const { data, error } = await supabase
     .from('messages')
     .select('id')
@@ -127,7 +172,7 @@ async function getUnreadMessages(supabase: any, organizationId: string) {
   return data?.length || 0
 }
 
-async function getRecentResponseTimes(supabase: any, organizationId: string) {
+async function getRecentResponseTimes(supabase: TypedSupabaseClient, organizationId: string): Promise<{ average: number; median: number; sampleSize: number }> {
   // Get recent agent responses with their corresponding incoming messages
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
 
@@ -177,7 +222,7 @@ async function getRecentResponseTimes(supabase: any, organizationId: string) {
   }
 }
 
-async function calculateTrends(supabase: any, organizationId: string) {
+async function calculateTrends(supabase: TypedSupabaseClient, organizationId: string): Promise<TrendData> {
   const now = new Date()
   const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
   const previous24h = new Date(now.getTime() - 48 * 60 * 60 * 1000)
@@ -194,7 +239,7 @@ async function calculateTrends(supabase: any, organizationId: string) {
   }
 }
 
-async function getPeriodMetrics(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getPeriodMetrics(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<{ messages: number; conversations: number; responseTime: number }> {
   const [messagesData, conversationsData] = await Promise.all([
     supabase
       .from('messages')
@@ -226,7 +271,7 @@ function calculatePercentageChange(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100)
 }
 
-async function getMessagesPerHour(supabase: any, organizationId: string) {
+async function getMessagesPerHour(supabase: TypedSupabaseClient, organizationId: string): Promise<HourlyData[]> {
   const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
   const { data: messages } = await supabase
@@ -235,7 +280,7 @@ async function getMessagesPerHour(supabase: any, organizationId: string) {
     .eq('organization_id', organizationId)
     .gte('created_at', last24Hours.toISOString())
 
-  const hourlyData = {}
+  const hourlyData: Record<number, number> = {}
   const now = new Date()
 
   for (let i = 23; i >= 0; i--) {
@@ -251,11 +296,11 @@ async function getMessagesPerHour(supabase: any, organizationId: string) {
 
   return Object.entries(hourlyData).map(([hour, count]) => ({
     hour: parseInt(hour),
-    count
+    count: count as number
   }))
 }
 
-async function getTopActiveAgents(supabase: any, organizationId: string) {
+async function getTopActiveAgents(supabase: TypedSupabaseClient, organizationId: string): Promise<AgentStats[]> {
   const today = new Date().toISOString().split('T')[0]
 
   const { data: agents } = await supabase
@@ -271,7 +316,7 @@ async function getTopActiveAgents(supabase: any, organizationId: string) {
     .gte('messages.created_at', `${today}T00:00:00.000Z`)
     .eq('messages.sender_type', 'agent')
 
-  const agentStats = {}
+  const agentStats: Record<string, AgentStats> = {}
 
   for (const agent of agents || []) {
     if (!agentStats[agent.id]) {
@@ -281,15 +326,15 @@ async function getTopActiveAgents(supabase: any, organizationId: string) {
         messageCount: 0
       }
     }
-    agentStats[agent.id].messageCount += agent.messages.length
+    agentStats[agent.id].messageCount += (agent.messages as unknown[]).length
   }
 
   return Object.values(agentStats)
-    .sort((a: any, b: any) => b.messageCount - a.messageCount)
+    .sort((a, b) => b.messageCount - a.messageCount)
     .slice(0, 5)
 }
 
-async function getRecentActivity(supabase: any, organizationId: string) {
+async function getRecentActivity(supabase: TypedSupabaseClient, organizationId: string): Promise<ActivityItem[]> {
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
 
   const { data: activities } = await supabase
@@ -317,8 +362,8 @@ async function getRecentActivity(supabase: any, organizationId: string) {
     id: activity.id,
     type: activity.sender_type === 'contact' ? 'incoming' : 'outgoing',
     preview: activity.content.substring(0, 50) + (activity.content.length > 50 ? '...' : ''),
-    contactName: activity.conversations?.contacts?.name || 'Unknown',
-    agentName: activity.profiles?.full_name,
+    contactName: (activity.conversations as { contacts?: { name?: string } } | null)?.contacts?.name || 'Unknown',
+    agentName: (activity.profiles as { full_name?: string } | null)?.full_name,
     timestamp: activity.created_at
   }))
 }

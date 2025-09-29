@@ -7,10 +7,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { SuperAdminPermissions } from '@/lib/super-admin';
+import { Database } from '@/types/database';
+import { SupabaseClient } from '@supabase/supabase-js';
+
+type TypedSupabaseClient = SupabaseClient<Database>;
+
+interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+}
+
+interface ProfileData {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string;
+  is_active: boolean;
+  is_super_admin?: boolean;
+  organization_id: string | null;
+  organizations?: Organization | null;
+  conversations?: unknown[];
+  messages?: unknown[];
+  last_seen_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const { searchParams } = new URL(request.url);
 
@@ -78,13 +105,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data
-    const users = (data || []).map(profile => ({
+    const users = (data as ProfileData[] || []).map(profile => ({
       id: profile.id,
       email: profile.email,
       fullName: profile.full_name,
       role: profile.role,
       isActive: profile.is_active,
-      isSuperAdmin: profile.is_super_admin,
+      isSuperAdmin: profile.is_super_admin || false,
       organizationId: profile.organization_id,
       organization: profile.organizations ? {
         id: profile.organizations.id,
@@ -141,7 +168,7 @@ export async function GET(request: NextRequest) {
 // Batch user operations
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const body = await request.json();
 
@@ -172,8 +199,30 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    let updateData: any = {};
-    const results: any[] = [];
+    interface UpdateData {
+      is_active?: boolean;
+      role?: string;
+      organization_id?: string;
+      is_super_admin?: boolean;
+      updated_at: string;
+    }
+
+    interface BatchResult {
+      userId: string;
+      success: boolean;
+      error?: string;
+      user?: {
+        id: string;
+        email: string;
+        full_name: string;
+        role: string;
+        is_active: boolean;
+        is_super_admin: boolean;
+      };
+    }
+
+    let updateData: UpdateData = { updated_at: new Date().toISOString() };
+    const results: BatchResult[] = [];
 
     switch (action) {
       case 'activate':
@@ -241,7 +290,8 @@ export async function PATCH(request: NextRequest) {
             'info'
           );
         }
-      } catch (error) {
+      } catch (err) {
+        console.error('Error updating user:', err);
         results.push({
           userId,
           success: false,

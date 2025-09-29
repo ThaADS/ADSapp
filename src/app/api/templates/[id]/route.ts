@@ -5,18 +5,19 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const supabase = await createClient()
 
     const { data: template, error } = await supabase
       .from('message_templates')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -58,10 +59,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
+    const { id } = await params;
     const profile = await getUserOrganization(user.id)
 
     const body = await request.json()
@@ -81,7 +83,7 @@ export async function PUT(
     const { data: existingTemplate } = await supabase
       .from('message_templates')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -156,7 +158,7 @@ export async function PUT(
     const { data: updatedTemplate, error } = await supabase
       .from('message_templates')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .select()
       .single()
@@ -175,10 +177,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
+    const { id } = await params;
     const profile = await getUserOrganization(user.id)
 
     const supabase = await createClient()
@@ -187,7 +190,7 @@ export async function DELETE(
     const { data: template } = await supabase
       .from('message_templates')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -205,7 +208,7 @@ export async function DELETE(
       .eq('organization_id', profile.organization_id)
       .eq('type', 'bulk_message')
       .in('status', ['queued', 'processing'])
-      .contains('configuration', { templateId: params.id })
+      .contains('configuration', { templateId: id })
 
     if (bulkOps && bulkOps.length > 0) {
       return NextResponse.json(
@@ -241,7 +244,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('message_templates')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
 
     if (error) {
@@ -249,7 +252,7 @@ export async function DELETE(
     }
 
     return createSuccessResponse({
-      id: params.id,
+      id: id,
       message: 'Template deleted successfully'
     })
 

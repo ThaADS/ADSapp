@@ -5,15 +5,16 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const queue = new BulkOperationQueue()
-    const operation = await queue.getOperation(params.id, profile.organization_id)
+    const operation = await queue.getOperation(id, profile.organization_id)
 
     if (!operation) {
       return NextResponse.json(
@@ -32,12 +33,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     const body = await request.json()
     const { action } = body
@@ -52,7 +54,7 @@ export async function PATCH(
     const queue = new BulkOperationQueue()
 
     // Check if operation exists and belongs to organization
-    const operation = await queue.getOperation(params.id, profile.organization_id)
+    const operation = await queue.getOperation(id, profile.organization_id)
     if (!operation) {
       return NextResponse.json(
         { error: 'Operation not found' },
@@ -68,10 +70,10 @@ export async function PATCH(
       )
     }
 
-    await queue.cancelOperation(params.id, profile.organization_id)
+    await queue.cancelOperation(id, profile.organization_id)
 
     return createSuccessResponse({
-      id: params.id,
+      id: id,
       status: 'cancelled',
       message: 'Operation cancelled successfully'
     })
@@ -84,12 +86,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params;
 
     // Check if user has admin privileges
     if (profile.role !== 'admin' && profile.role !== 'owner') {
@@ -102,7 +105,7 @@ export async function DELETE(
     const queue = new BulkOperationQueue()
 
     // Check if operation exists and belongs to organization
-    const operation = await queue.getOperation(params.id, profile.organization_id)
+    const operation = await queue.getOperation(id, profile.organization_id)
     if (!operation) {
       return NextResponse.json(
         { error: 'Operation not found' },
@@ -123,7 +126,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('bulk_operations')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
 
     if (error) {
@@ -131,7 +134,7 @@ export async function DELETE(
     }
 
     return createSuccessResponse({
-      id: params.id,
+      id: id,
       message: 'Operation deleted successfully'
     })
 

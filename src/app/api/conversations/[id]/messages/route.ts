@@ -5,12 +5,12 @@ import { WhatsAppService } from '@/lib/whatsapp/service'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
     const supabase = await createClient()
-    const conversationId = params.id
+    const { id: conversationId } = await params;
 
     // Verify user has access to this conversation
     const { data: conversation } = await supabase
@@ -55,12 +55,12 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
     const supabase = await createClient()
-    const conversationId = params.id
+    const { id: conversationId } = await params;
 
     const body = await request.json()
     const { content, type = 'text' } = body
@@ -121,12 +121,12 @@ export async function POST(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
     const supabase = await createClient()
-    const conversationId = params.id
+    const { id: conversationId } = await params;
 
     const body = await request.json()
     const { action, messageId } = body

@@ -9,10 +9,10 @@ import { DemoStatusResponse } from '@/types/demo'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
 
     // Validate token format
     if (!token || token.length < 10) {
@@ -100,10 +100,10 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
     const body = await request.json()
 
     // Validate token
@@ -206,10 +206,10 @@ export async function PATCH(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
     const body = await request.json()
 
     // Validate token

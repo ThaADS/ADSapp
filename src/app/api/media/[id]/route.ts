@@ -5,15 +5,16 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
+    const { id } = await params;
     const profile = await getUserOrganization(user.id)
 
     const mediaStorage = new MediaStorageService()
-    const file = await mediaStorage.getFile(params.id, profile.organization_id)
+    const file = await mediaStorage.getFile(id, profile.organization_id)
 
     if (!file) {
       return NextResponse.json(
@@ -32,15 +33,16 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
+    const { id } = await params;
     const profile = await getUserOrganization(user.id)
 
     const mediaStorage = new MediaStorageService()
-    await mediaStorage.deleteFile(params.id, profile.organization_id)
+    await mediaStorage.deleteFile(id, profile.organization_id)
 
     return createSuccessResponse({ deleted: true })
 
@@ -52,11 +54,12 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate user
     const user = await requireAuthenticatedUser()
+    const { id } = await params;
     const profile = await getUserOrganization(user.id)
 
     const body = await request.json()
@@ -71,7 +74,7 @@ export async function PATCH(
 
     // Update file metadata
     const mediaStorage = new MediaStorageService()
-    const file = await mediaStorage.getFile(params.id, profile.organization_id)
+    const file = await mediaStorage.getFile(id, profile.organization_id)
 
     if (!file) {
       return NextResponse.json(
@@ -88,7 +91,7 @@ export async function PATCH(
         metadata: { ...file.metadata, ...metadata },
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .select()
       .single()

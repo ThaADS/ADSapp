@@ -4,11 +4,12 @@ import { PaymentMethodManager } from '@/lib/billing/payment-methods'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const organizationId = request.headers.get('X-Organization-ID')
     const { expiryMonth, expiryYear, metadata } = await request.json()
+    const { id } = await params;
 
     if (!organizationId) {
       return NextResponse.json(
@@ -18,7 +19,7 @@ export async function PUT(
     }
 
     const paymentMethodManager = new PaymentMethodManager()
-    await paymentMethodManager.updatePaymentMethod(organizationId, params.id, {
+    await paymentMethodManager.updatePaymentMethod(organizationId, id, {
       expiryMonth,
       expiryYear,
       metadata,
@@ -36,10 +37,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const organizationId = request.headers.get('X-Organization-ID')
+    const { id } = await params;
 
     if (!organizationId) {
       return NextResponse.json(
@@ -49,7 +51,7 @@ export async function DELETE(
     }
 
     const paymentMethodManager = new PaymentMethodManager()
-    await paymentMethodManager.detachPaymentMethod(organizationId, params.id)
+    await paymentMethodManager.detachPaymentMethod(organizationId, id)
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,6 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database'
+
+type TypedSupabaseClient = SupabaseClient<Database>
+
+interface OverviewMetrics {
+  totalMessages: number
+  inboundMessages: number
+  outboundMessages: number
+  newConversations: number
+  resolvedConversations: number
+  newContacts: number
+  activeUsers: number
+}
+
+interface ConversationMetrics {
+  total: number
+  statusDistribution: Record<string, number>
+  assigned: number
+  unassigned: number
+  assignmentRate: number
+}
+
+interface MessageTrend {
+  period: string
+  inbound: number
+  outbound: number
+  total: number
+}
+
+interface ResponseTimes {
+  averageMinutes: number
+  medianMinutes: number
+  sampleSize: number
+}
+
+interface AgentStats {
+  id: string
+  name: string
+  messageCount: number
+}
+
+interface ContactSource {
+  source: string
+  count: number
+}
+
+interface DashboardResponse {
+  timeframe: string
+  dateRange: {
+    start: string
+    end: string
+  }
+  metrics: OverviewMetrics
+  conversationMetrics: ConversationMetrics
+  messageTrends: MessageTrend[]
+  responseTimes: ResponseTimes
+  topAgents: AgentStats[]
+  contactSources: ContactSource[]
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +70,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const timeframe = searchParams.get('timeframe') || '7d'
-    const timezone = searchParams.get('timezone') || 'UTC'
+    // const timezone = searchParams.get('timezone') || 'UTC' // TODO: Implement timezone support
 
     const supabase = await createClient()
 
@@ -36,24 +96,24 @@ export async function GET(request: NextRequest) {
     }
 
     // Get overview metrics
-    const metrics = await getOverviewMetrics(supabase, profile.organization_id, startDate, endDate)
+    const metrics = await getOverviewMetrics(supabase, profile.organization_id!, startDate, endDate)
 
     // Get conversation metrics
-    const conversationMetrics = await getConversationMetrics(supabase, profile.organization_id, startDate, endDate)
+    const conversationMetrics = await getConversationMetrics(supabase, profile.organization_id!, startDate, endDate)
 
     // Get message trends
-    const messageTrends = await getMessageTrends(supabase, profile.organization_id, startDate, endDate, timeframe)
+    const messageTrends = await getMessageTrends(supabase, profile.organization_id!, startDate, endDate, timeframe)
 
     // Get response times
-    const responseTimes = await getResponseTimes(supabase, profile.organization_id, startDate, endDate)
+    const responseTimes = await getResponseTimes(supabase, profile.organization_id!, startDate, endDate)
 
     // Get top agents
-    const topAgents = await getTopAgents(supabase, profile.organization_id, startDate, endDate)
+    const topAgents = await getTopAgents(supabase, profile.organization_id!, startDate, endDate)
 
     // Get contact sources
-    const contactSources = await getContactSources(supabase, profile.organization_id, startDate, endDate)
+    const contactSources = await getContactSources(supabase, profile.organization_id!, startDate, endDate)
 
-    return createSuccessResponse({
+    return createSuccessResponse<DashboardResponse>({
       timeframe,
       dateRange: {
         start: startDate.toISOString(),
@@ -73,7 +133,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function getOverviewMetrics(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getOverviewMetrics(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<OverviewMetrics> {
   const [
     messagesResult,
     conversationsResult,
@@ -131,7 +191,7 @@ async function getOverviewMetrics(supabase: any, organizationId: string, startDa
   }
 }
 
-async function getConversationMetrics(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getConversationMetrics(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ConversationMetrics> {
   const { data: conversations } = await supabase
     .from('conversations')
     .select('status, created_at, last_message_at, assigned_to')
@@ -158,7 +218,7 @@ async function getConversationMetrics(supabase: any, organizationId: string, sta
   }
 }
 
-async function getMessageTrends(supabase: any, organizationId: string, startDate: Date, endDate: Date, timeframe: string) {
+async function getMessageTrends(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date, timeframe: string): Promise<MessageTrend[]> {
   const { data: messages } = await supabase
     .from('messages')
     .select('sender_type, created_at')
@@ -199,7 +259,7 @@ async function getMessageTrends(supabase: any, organizationId: string, startDate
     }))
 }
 
-async function getResponseTimes(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getResponseTimes(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ResponseTimes> {
   // This is a simplified version - in production, you'd want to track actual response times
   const { data: conversations } = await supabase
     .from('conversations')
@@ -234,7 +294,7 @@ async function getResponseTimes(supabase: any, organizationId: string, startDate
   }
 }
 
-async function getTopAgents(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getTopAgents(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<AgentStats[]> {
   const { data: messages } = await supabase
     .from('messages')
     .select('sender_id, profiles(full_name)')
@@ -248,23 +308,25 @@ async function getTopAgents(supabase: any, organizationId: string, startDate: Da
 
   const agentStats = msgs.reduce((acc, msg) => {
     const agentId = msg.sender_id
-    if (!acc[agentId]) {
+    if (agentId && !acc[agentId]) {
       acc[agentId] = {
         id: agentId,
-        name: msg.profiles?.full_name || 'Unknown',
+        name: (msg.profiles as { full_name?: string } | null)?.full_name || 'Unknown',
         messageCount: 0
       }
     }
-    acc[agentId].messageCount++
+    if (agentId) {
+      acc[agentId].messageCount++
+    }
     return acc
-  }, {} as Record<string, { id: string; name: string; messageCount: number }>)
+  }, {} as Record<string, AgentStats>)
 
   return Object.values(agentStats)
     .sort((a, b) => b.messageCount - a.messageCount)
     .slice(0, 10)
 }
 
-async function getContactSources(supabase: any, organizationId: string, startDate: Date, endDate: Date) {
+async function getContactSources(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ContactSource[]> {
   // This would be enhanced with actual source tracking
   const { data: contacts } = await supabase
     .from('contacts')
@@ -276,7 +338,8 @@ async function getContactSources(supabase: any, organizationId: string, startDat
   const contactList = contacts || []
 
   const sources = contactList.reduce((acc, contact) => {
-    const source = contact.metadata?.source || 'direct'
+    const metadata = contact.metadata as { source?: string } | null
+    const source = metadata?.source || 'direct'
     acc[source] = (acc[source] || 0) + 1
     return acc
   }, {} as Record<string, number>)

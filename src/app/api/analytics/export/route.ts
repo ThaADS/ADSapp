@@ -4,7 +4,7 @@ import { AnalyticsExporter } from '@/lib/export/analytics-export'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth()
+    const _user = await requireAuth() // TODO: Use user for authorization checks
     const body = await request.json()
     
     const { format, dateRange, metrics, organizationId } = body

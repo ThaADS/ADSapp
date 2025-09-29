@@ -1,6 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { WhatsAppTemplateManager } from './templates'
 import { WhatsAppClient } from './client'
+import { Database } from '@/types/database'
+import { SupabaseClient } from '@supabase/supabase-js'
+import crypto from 'crypto'
+
+type TypedSupabaseClient = SupabaseClient<Database>
+
+interface ContactData {
+  id: string
+  whatsapp_id: string
+  name: string | null
+  tags: string[] | null
+}
 
 export interface BulkCampaign {
   id: string
@@ -517,7 +529,7 @@ export class BulkMessagingEngine {
   /**
    * Get target contacts for campaign
    */
-  private async getTargetContacts(organizationId: string, targetAudience: BulkCampaign['targetAudience']): Promise<any[]> {
+  private async getTargetContacts(organizationId: string, targetAudience: BulkCampaign['targetAudience']): Promise<ContactData[]> {
     let query = this.supabase
       .from('contacts')
       .select('id, whatsapp_id, name, tags')
@@ -631,7 +643,7 @@ export class BulkMessagingEngine {
     whatsappClient: WhatsAppClient
   ): Promise<void> {
     try {
-      let messageResponse: any
+      let messageResponse: { id?: string; status?: string } | undefined
 
       // Send message based on campaign type
       if (campaign.templateId) {
@@ -783,7 +795,7 @@ export class BulkMessagingEngine {
   /**
    * Get WhatsApp configuration for organization
    */
-  private async getWhatsAppConfig(organizationId: string): Promise<any> {
+  private async getWhatsAppConfig(organizationId: string): Promise<{ phoneNumberId: string; accessToken: string }> {
     const { data: organization } = await this.supabase
       .from('organizations')
       .select('whatsapp_phone_number_id, whatsapp_business_account_id')
@@ -843,7 +855,7 @@ export class BulkMessagingEngine {
   /**
    * Map database record to campaign interface
    */
-  private mapToCampaign(data: any): BulkCampaign {
+  private mapToCampaign(data: Record<string, unknown>): BulkCampaign {
     return {
       id: data.id,
       organizationId: data.organization_id,
@@ -868,7 +880,7 @@ export class BulkMessagingEngine {
   /**
    * Map database record to message job interface
    */
-  private mapToMessageJob(data: any): BulkMessageJob {
+  private mapToMessageJob(data: Record<string, unknown>): BulkMessageJob {
     return {
       id: data.id,
       campaignId: data.campaign_id,
@@ -967,7 +979,7 @@ export class ContactListManager {
   /**
    * Map database record to contact list interface
    */
-  private mapToContactList(data: any): ContactList {
+  private mapToContactList(data: Record<string, unknown>): ContactList {
     return {
       id: data.id,
       organizationId: data.organization_id,

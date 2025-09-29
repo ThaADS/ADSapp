@@ -304,12 +304,12 @@ export async function PATCH(
 // Delete organization (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(cookies());
     const permissions = new SuperAdminPermissions();
-    const { id } = params;
+    const { id } = await params;
 
     // Check if user is super admin
     const { data: { user } } = await supabase.auth.getUser();

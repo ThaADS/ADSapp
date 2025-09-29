@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
+import { SupabaseClient } from '@supabase/supabase-js'
+
+type TypedSupabaseClient = SupabaseClient<Database>
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,7 +59,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function sendToGoogleAnalytics(data: any) {
+interface AnalyticsData {
+  user_id?: string | null;
+  session_id?: string | null;
+  ip_address?: string;
+  user_agent?: string | null;
+  timestamp: string;
+  [key: string]: unknown;
+}
+
+async function sendToGoogleAnalytics(data: AnalyticsData) {
   // Send to Google Analytics Measurement Protocol
   if (process.env.GA_MEASUREMENT_ID) {
     try {
@@ -65,9 +78,9 @@ async function sendToGoogleAnalytics(data: any) {
         cid: data.user_id || 'anonymous',
         t: 'event',
         ec: 'Performance',
-        ea: data.type || 'unknown',
-        el: data.name || '',
-        ev: Math.round(data.value || data.duration || 0),
+        ea: (data.type as string) || 'unknown',
+        el: (data.name as string) || '',
+        ev: Math.round((data.value as number) || (data.duration as number) || 0),
       })
 
       await fetch('https://www.google-analytics.com/collect', {
@@ -80,7 +93,7 @@ async function sendToGoogleAnalytics(data: any) {
   }
 }
 
-async function sendToCustomAnalytics(data: any) {
+async function sendToCustomAnalytics(data: AnalyticsData) {
   // Send to your custom analytics service
   // This could be DataDog, New Relic, etc.
 
@@ -175,8 +188,24 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function aggregateAnalytics(data: any[], timeframe: string) {
-  const aggregated: any = {
+interface AggregatedData {
+  web_vitals: {
+    cls: number[];
+    fcp: number[];
+    fid: number[];
+    lcp: number[];
+    ttfb: number[];
+  };
+  api_calls: unknown[];
+  custom_timings: unknown[];
+  errors: unknown[];
+  user_interactions: unknown[];
+  navigation_timing: unknown[];
+  [key: string]: unknown;
+}
+
+function aggregateAnalytics(data: AnalyticsData[], _timeframe: string): AggregatedData {
+  const aggregated: AggregatedData = {
     web_vitals: {
       cls: [],
       fcp: [],
@@ -194,43 +223,43 @@ function aggregateAnalytics(data: any[], timeframe: string) {
   data.forEach(record => {
     switch (record.type) {
       case 'CLS':
-        aggregated.web_vitals.cls.push(record.value)
+        aggregated.web_vitals.cls.push(record.value as number)
         break
       case 'FCP':
-        aggregated.web_vitals.fcp.push(record.value)
+        aggregated.web_vitals.fcp.push(record.value as number)
         break
       case 'FID':
-        aggregated.web_vitals.fid.push(record.value)
+        aggregated.web_vitals.fid.push(record.value as number)
         break
       case 'LCP':
-        aggregated.web_vitals.lcp.push(record.value)
+        aggregated.web_vitals.lcp.push(record.value as number)
         break
       case 'TTFB':
-        aggregated.web_vitals.ttfb.push(record.value)
+        aggregated.web_vitals.ttfb.push(record.value as number)
         break
       case 'api-call':
-        aggregated.api_calls.push(record)
+        (aggregated.api_calls as AnalyticsData[]).push(record)
         break
       case 'custom-timing':
-        aggregated.custom_timings.push(record)
+        (aggregated.custom_timings as AnalyticsData[]).push(record)
         break
       case 'error':
-        aggregated.errors.push(record)
+        (aggregated.errors as AnalyticsData[]).push(record)
         break
       case 'user-interaction':
-        aggregated.user_interactions.push(record)
+        (aggregated.user_interactions as AnalyticsData[]).push(record)
         break
       case 'navigation-timing':
-        aggregated.navigation_timing.push(record)
+        (aggregated.navigation_timing as AnalyticsData[]).push(record)
         break
     }
   })
 
   // Calculate statistics
   Object.keys(aggregated.web_vitals).forEach(key => {
-    const values = aggregated.web_vitals[key]
+    const values = aggregated.web_vitals[key as keyof typeof aggregated.web_vitals] as number[]
     if (values.length > 0) {
-      aggregated.web_vitals[key] = {
+      (aggregated.web_vitals as Record<string, unknown>)[key] = {
         avg: values.reduce((a: number, b: number) => a + b, 0) / values.length,
         p50: percentile(values, 0.5),
         p75: percentile(values, 0.75),

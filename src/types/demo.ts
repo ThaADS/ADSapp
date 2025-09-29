@@ -41,7 +41,7 @@ export interface DemoEvent {
   category: string
   label?: string
   value?: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   timestamp: string
 }
 
@@ -165,8 +165,8 @@ export interface DemoTemplate {
 export interface DemoAutomationRule {
   name: string
   trigger: string
-  conditions: Record<string, any>
-  actions: Record<string, any>
+  conditions: Record<string, unknown>
+  actions: Record<string, unknown>
   is_active: boolean
 }
 
@@ -277,7 +277,7 @@ export interface TrackAnalyticsRequest {
   category: string
   label?: string
   value?: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   page?: string
 }
 

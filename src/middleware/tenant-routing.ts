@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Types for domain routing
 export interface TenantDomain {
@@ -39,7 +39,7 @@ export interface TenantContext {
 }
 
 export class TenantRouter {
-  private supabase;
+  private supabase: SupabaseClient;
   private mainDomain: string;
 
   constructor(supabaseUrl: string, supabaseKey: string, mainDomain: string = 'adsapp.com') {

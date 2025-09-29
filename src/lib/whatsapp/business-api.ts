@@ -196,7 +196,7 @@ export class WhatsAppBusinessAPI {
   /**
    * Get phone number information and verification status
    */
-  async getPhoneNumberInfo(): Promise<any> {
+  async getPhoneNumberInfo(): Promise<{ id: string; display_phone_number: string; verified_name?: string; status?: string }> {
     try {
       const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.phoneNumberId}`, {
         headers: {
@@ -294,7 +294,7 @@ export class WhatsAppBusinessAPI {
    */
   async updateBusinessProfile(profile: Partial<BusinessProfile>): Promise<boolean> {
     try {
-      const updateData: any = {}
+      const updateData: Record<string, unknown> = {}
 
       if (profile.name) updateData.name = profile.name
       if (profile.category) updateData.vertical = profile.category
@@ -386,7 +386,7 @@ export class WhatsAppBusinessAPI {
   /**
    * Get WhatsApp Business API rate limits and usage
    */
-  async getRateLimits(): Promise<any> {
+  async getRateLimits(): Promise<{ messaging: { rate_limit: number; rate_limit_hit: boolean } }> {
     try {
       const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.phoneNumberId}/insights`, {
         headers: {

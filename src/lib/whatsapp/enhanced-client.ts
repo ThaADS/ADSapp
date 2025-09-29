@@ -191,7 +191,7 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async sendMessage(phoneNumberId: string, to: string, message: any): Promise<string> {
+  async sendMessage(phoneNumberId: string, to: string, message: Record<string, unknown>): Promise<string> {
     try {
       const response = await fetch(
         `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
@@ -249,7 +249,7 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async getBusinessProfile(phoneNumberId: string): Promise<any> {
+  async getBusinessProfile(phoneNumberId: string): Promise<Record<string, unknown>> {
     try {
       const response = await fetch(
         `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}?fields=verified_name,display_phone_number,quality_rating,messaging_limit_tier`,
@@ -271,7 +271,7 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async createTemplate(businessAccountId: string, template: any): Promise<string> {
+  async createTemplate(businessAccountId: string, template: Record<string, unknown>): Promise<string> {
     try {
       const response = await fetch(
         `${this.baseUrl}/${this.apiVersion}/${businessAccountId}/message_templates`,
@@ -298,7 +298,7 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async getTemplates(businessAccountId: string): Promise<any[]> {
+  async getTemplates(businessAccountId: string): Promise<Record<string, unknown>[]> {
     try {
       const response = await fetch(
         `${this.baseUrl}/${this.apiVersion}/${businessAccountId}/message_templates`,

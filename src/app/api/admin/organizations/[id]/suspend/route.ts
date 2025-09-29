@@ -3,10 +3,11 @@ import { suspendOrganization, reactivateOrganization } from '@/lib/super-admin'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { reason } = await request.json()
+    const { id } = await params;
 
     if (!reason || typeof reason !== 'string') {
       return NextResponse.json(
@@ -16,7 +17,7 @@ export async function POST(
     }
 
     const success = await suspendOrganization(
-      params.id,
+      id,
       reason,
       request.ip,
       request.headers.get('user-agent') || undefined
@@ -41,11 +42,12 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const success = await reactivateOrganization(
-      params.id,
+      id,
       request.ip,
       request.headers.get('user-agent') || undefined
     )

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination } from '@/lib/api-utils'
+import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database'
+
+type TypedSupabaseClient = SupabaseClient<Database>
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,23 +26,23 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = await createClient()
-    let reportData: any
+    let reportData: Record<string, unknown>
 
     switch (reportType) {
       case 'conversations':
-        reportData = await generateConversationsReport(supabase, profile.organization_id, startDate, endDate)
+        reportData = await generateConversationsReport(supabase, profile.organization_id!, startDate, endDate)
         break
       case 'messages':
-        reportData = await generateMessagesReport(supabase, profile.organization_id, startDate, endDate)
+        reportData = await generateMessagesReport(supabase, profile.organization_id!, startDate, endDate)
         break
       case 'agents':
-        reportData = await generateAgentsReport(supabase, profile.organization_id, startDate, endDate)
+        reportData = await generateAgentsReport(supabase, profile.organization_id!, startDate, endDate)
         break
       case 'contacts':
-        reportData = await generateContactsReport(supabase, profile.organization_id, startDate, endDate)
+        reportData = await generateContactsReport(supabase, profile.organization_id!, startDate, endDate)
         break
       case 'performance':
-        reportData = await generatePerformanceReport(supabase, profile.organization_id, startDate, endDate)
+        reportData = await generatePerformanceReport(supabase, profile.organization_id!, startDate, endDate)
         break
       default:
         return NextResponse.json(
@@ -92,7 +96,7 @@ export async function POST(request: NextRequest) {
     const { data: scheduledReport, error } = await supabase
       .from('scheduled_reports')
       .insert({
-        organization_id: profile.organization_id,
+        organization_id: profile.organization_id!,
         created_by: user.id,
         report_type: reportType,
         start_date: startDate,
@@ -128,7 +132,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function generateConversationsReport(supabase: any, organizationId: string, startDate: string, endDate: string) {
+async function generateConversationsReport(supabase: TypedSupabaseClient, organizationId: string, startDate: string, endDate: string): Promise<unknown[]> {
   const { data: conversations } = await supabase
     .from('conversations')
     .select(`
@@ -164,9 +168,9 @@ async function generateConversationsReport(supabase: any, organizationId: string
 
     return {
       id: conv.id,
-      contactName: conv.contacts?.name || 'Unknown',
-      contactPhone: conv.contacts?.phone_number,
-      assignedAgent: conv.profiles?.full_name || 'Unassigned',
+      contactName: (conv.contacts as { name?: string } | null)?.name || 'Unknown',
+      contactPhone: (conv.contacts as { phone_number?: string } | null)?.phone_number,
+      assignedAgent: (conv.profiles as { full_name?: string } | null)?.full_name || 'Unassigned',
       status: conv.status,
       priority: conv.priority,
       messageCount: messages.length,
@@ -177,7 +181,7 @@ async function generateConversationsReport(supabase: any, organizationId: string
   })
 }
 
-async function generateMessagesReport(supabase: any, organizationId: string, startDate: string, endDate: string) {
+async function generateMessagesReport(supabase: TypedSupabaseClient, organizationId: string, startDate: string, endDate: string): Promise<unknown[]> {
   const { data: messages } = await supabase
     .from('messages')
     .select(`
@@ -206,14 +210,14 @@ async function generateMessagesReport(supabase: any, organizationId: string, sta
     content: msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : ''),
     type: msg.message_type,
     senderType: msg.sender_type,
-    senderName: msg.profiles?.full_name || 'System',
-    contactName: msg.conversations?.contacts?.name || 'Unknown',
-    contactPhone: msg.conversations?.contacts?.phone_number,
+    senderName: (msg.profiles as { full_name?: string } | null)?.full_name || 'System',
+    contactName: (msg.conversations as { contacts?: { name?: string } } | null)?.contacts?.name || 'Unknown',
+    contactPhone: (msg.conversations as { contacts?: { phone_number?: string } } | null)?.contacts?.phone_number,
     createdAt: msg.created_at
   }))
 }
 
-async function generateAgentsReport(supabase: any, organizationId: string, startDate: string, endDate: string) {
+async function generateAgentsReport(supabase: TypedSupabaseClient, organizationId: string, startDate: string, endDate: string): Promise<unknown[]> {
   const { data: agents } = await supabase
     .from('profiles')
     .select(`
@@ -235,7 +239,7 @@ async function generateAgentsReport(supabase: any, organizationId: string, start
 
   return (agents || []).map(agent => {
     const messages = agent.messages || []
-    const conversations = new Set(messages.map(m => m.conversations?.id).filter(Boolean))
+    const conversations = new Set(messages.map(m => (m.conversations as { id?: string } | null)?.id).filter(Boolean))
 
     return {
       id: agent.id,
@@ -251,7 +255,7 @@ async function generateAgentsReport(supabase: any, organizationId: string, start
   })
 }
 
-async function generateContactsReport(supabase: any, organizationId: string, startDate: string, endDate: string) {
+async function generateContactsReport(supabase: TypedSupabaseClient, organizationId: string, startDate: string, endDate: string): Promise<unknown[]> {
   const { data: contacts } = await supabase
     .from('contacts')
     .select(`
@@ -276,7 +280,7 @@ async function generateContactsReport(supabase: any, organizationId: string, sta
 
   return (contacts || []).map(contact => {
     const conversations = contact.conversations || []
-    const totalMessages = conversations.reduce((sum, conv) => sum + (conv.messages?.length || 0), 0)
+    const totalMessages = conversations.reduce((sum, conv) => sum + ((conv.messages as unknown[])?.length || 0), 0)
 
     return {
       id: contact.id,
@@ -291,7 +295,7 @@ async function generateContactsReport(supabase: any, organizationId: string, sta
   })
 }
 
-async function generatePerformanceReport(supabase: any, organizationId: string, startDate: string, endDate: string) {
+async function generatePerformanceReport(supabase: TypedSupabaseClient, organizationId: string, startDate: string, endDate: string): Promise<{ summary: Record<string, unknown>; dailyBreakdown: unknown[] }> {
   const [messagesData, conversationsData, agentsData] = await Promise.all([
     supabase
       .from('messages')
@@ -341,7 +345,10 @@ async function generatePerformanceReport(supabase: any, organizationId: string, 
   }
 }
 
-function generateDailyBreakdown(messages: any[], conversations: any[], startDate: string, endDate: string) {
+interface MessageData { created_at: string; [key: string]: unknown; }
+interface ConversationData { created_at: string; [key: string]: unknown; }
+
+function generateDailyBreakdown(messages: MessageData[], conversations: ConversationData[], startDate: string, endDate: string): unknown[] {
   const start = new Date(startDate)
   const end = new Date(endDate)
   const breakdown = []
@@ -354,25 +361,26 @@ function generateDailyBreakdown(messages: any[], conversations: any[], startDate
     breakdown.push({
       date: dayStr,
       messages: dayMessages.length,
-      inbound: dayMessages.filter(m => m.sender_type === 'contact').length,
-      outbound: dayMessages.filter(m => m.sender_type === 'agent').length,
+      inbound: dayMessages.filter(m => (m as { sender_type?: string }).sender_type === 'contact').length,
+      outbound: dayMessages.filter(m => (m as { sender_type?: string }).sender_type === 'agent').length,
       conversations: dayConversations.length,
-      resolved: dayConversations.filter(c => c.status === 'resolved').length
+      resolved: dayConversations.filter(c => (c as { status?: string }).status === 'resolved').length
     })
   }
 
   return breakdown
 }
 
-function convertToCSV(data: any[]): string {
-  if (!data || data.length === 0) {
+function convertToCSV(data: Record<string, unknown> | Record<string, unknown>[]): string {
+  const dataArray = Array.isArray(data) ? data : [data]
+  if (!dataArray || dataArray.length === 0) {
     return ''
   }
 
-  const headers = Object.keys(data[0])
+  const headers = Object.keys(dataArray[0])
   const csvRows = [
     headers.join(','),
-    ...data.map(row =>
+    ...dataArray.map(row =>
       headers.map(header => {
         const value = row[header]
         // Escape quotes and wrap in quotes if contains comma

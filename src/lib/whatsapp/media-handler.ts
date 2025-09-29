@@ -175,7 +175,7 @@ export class WhatsAppMediaHandler {
   /**
    * Get media information from WhatsApp API
    */
-  private async getMediaInfo(mediaId: string): Promise<any> {
+  private async getMediaInfo(mediaId: string): Promise<{ url: string; mime_type: string; sha256: string; file_size: number; id: string }> {
     const response = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
       headers: {
         'Authorization': `Bearer ${this.client.accessToken}`,

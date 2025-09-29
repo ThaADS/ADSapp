@@ -53,14 +53,14 @@ export class WebSocketClient {
     }
   }
 
-  private handleNewMessage(message: any) {
+  private handleNewMessage(message: Record<string, unknown>) {
     // Dispatch custom event for new messages
     window.dispatchEvent(new CustomEvent('newMessage', {
       detail: message
     }))
   }
 
-  private handleConversationUpdate(conversation: any) {
+  private handleConversationUpdate(conversation: Record<string, unknown>) {
     // Dispatch custom event for conversation updates
     window.dispatchEvent(new CustomEvent('conversationUpdate', {
       detail: conversation
