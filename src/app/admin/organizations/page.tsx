@@ -1,6 +1,23 @@
 import { OrganizationsManager } from '@/components/admin/organizations-manager';
+import { requireAuth, getUserProfile } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export default function AdminOrganizationsPage() {
+export default async function AdminOrganizationsPage() {
+  // Ensure user is authenticated
+  await requireAuth();
+
+  // Get user profile to check super admin status
+  const profile = await getUserProfile();
+
+  // If not super admin, redirect to appropriate page
+  if (!profile?.is_super_admin) {
+    if (profile?.organization_id) {
+      redirect('/dashboard');
+    } else {
+      redirect('/onboarding');
+    }
+  }
+
   return (
     <div>
       <div className="mb-6">

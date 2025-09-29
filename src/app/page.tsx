@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { getUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "ADSapp - Professional WhatsApp Business Inbox | Multi-Tenant SaaS Platform",
@@ -138,7 +140,12 @@ const FAQ: React.FC<FAQProps> = ({ question, answer }) => (
   </div>
 );
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is logged in and redirect appropriately
+  const user = await getUser()
+  if (user) {
+    redirect('/redirect')
+  }
   const testimonials: TestimonialProps[] = [
     {
       quote: "ADSapp transformed our customer support. We've reduced response times by 60% and our customer satisfaction scores have never been higher.",

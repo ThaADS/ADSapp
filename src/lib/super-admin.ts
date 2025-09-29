@@ -169,7 +169,14 @@ export class SuperAdminPermissions {
   private supabase;
 
   constructor() {
-    this.supabase = createClient(cookies());
+    // This will be initialized in init()
+  }
+
+  private async init() {
+    if (!this.supabase) {
+      this.supabase = await createClient();
+    }
+    return this.supabase;
   }
 
   /**
@@ -177,10 +184,11 @@ export class SuperAdminPermissions {
    */
   async isSuperAdmin(userId?: string): Promise<boolean> {
     try {
-      const { data: profile } = await this.supabase
+      const supabase = await this.init();
+      const { data: profile } = await supabase
         .from('profiles')
         .select('is_super_admin')
-        .eq('id', userId || (await this.supabase.auth.getUser()).data.user?.id)
+        .eq('id', userId || (await supabase.auth.getUser()).data.user?.id)
         .single();
 
       return profile?.is_super_admin || false;
@@ -195,7 +203,8 @@ export class SuperAdminPermissions {
    */
   async hasPermission(permission: string, resource?: string): Promise<boolean> {
     try {
-      const user = await this.supabase.auth.getUser();
+      const supabase = await this.init();
+      const user = await supabase.auth.getUser();
       if (!user.data.user) return false;
 
       // Check if user is super admin first
@@ -204,7 +213,7 @@ export class SuperAdminPermissions {
       }
 
       // Check specific permissions through system roles
-      const { data: permissions } = await this.supabase
+      const { data: permissions } = await supabase
         .from('profile_system_roles')
         .select(`
           system_roles (
@@ -240,7 +249,8 @@ export class SuperAdminPermissions {
    * Get user's system roles
    */
   async getUserSystemRoles(userId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await this.init();
+    const { data, error } = await supabase
       .from('profile_system_roles')
       .select(`
         *,
@@ -257,7 +267,8 @@ export class SuperAdminPermissions {
    * Assign system role to user
    */
   async assignSystemRole(userId: string, roleId: string, assignedBy: string, expiresAt?: string) {
-    const { data, error } = await this.supabase
+    const supabase = await this.init();
+    const { data, error } = await supabase
       .from('profile_system_roles')
       .insert({
         profile_id: userId,
@@ -284,7 +295,8 @@ export class SuperAdminPermissions {
    * Revoke system role from user
    */
   async revokeSystemRole(userId: string, roleId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await this.init();
+    const { data, error } = await supabase
       .from('profile_system_roles')
       .delete()
       .eq('profile_id', userId)
@@ -314,16 +326,17 @@ export class SuperAdminPermissions {
     details: any = {},
     severity: 'info' | 'warning' | 'error' | 'critical' = 'info'
   ) {
-    const user = await this.supabase.auth.getUser();
+    const supabase = await this.init();
+    const user = await supabase.auth.getUser();
     if (!user.data.user) throw new Error('User not authenticated');
 
-    const { data: profile } = await this.supabase
+    const { data: profile } = await supabase
       .from('profiles')
       .select('email')
       .eq('id', user.data.user.id)
       .single();
 
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('system_audit_logs')
       .insert({
         actor_id: user.data.user.id,

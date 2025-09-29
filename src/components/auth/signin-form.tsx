@@ -19,15 +19,29 @@ export function SignInForm() {
     const supabase = createClient()
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
         setError(error.message)
-      } else {
-        router.push('/dashboard')
+      } else if (data.user) {
+        // Fetch user profile to determine redirect path
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_super_admin, organization_id')
+          .eq('id', data.user.id)
+          .single()
+
+        // Redirect based on user role
+        if (profile?.is_super_admin) {
+          router.push('/admin')
+        } else if (profile?.organization_id) {
+          router.push('/dashboard')
+        } else {
+          router.push('/onboarding')
+        }
         router.refresh()
       }
     } catch (err) {

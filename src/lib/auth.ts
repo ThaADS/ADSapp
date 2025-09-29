@@ -41,6 +41,28 @@ export async function requireOrganization() {
   const profile = await getUserProfile()
 
   if (!profile?.organization_id) {
+    // Check if user is super admin - they don't need an organization
+    if (profile?.is_super_admin) {
+      // Super admins should go to admin dashboard instead
+      redirect('/admin')
+    } else {
+      redirect('/onboarding')
+    }
+  }
+
+  return profile
+}
+
+export async function requireSuperAdminOrOrganization() {
+  const profile = await getUserProfile()
+
+  // If user is super admin, they can access without organization
+  if (profile?.is_super_admin) {
+    return profile
+  }
+
+  // Otherwise, require organization
+  if (!profile?.organization_id) {
     redirect('/onboarding')
   }
 
