@@ -1,0 +1,10 @@
+This file forces Vercel to deploy the latest commit.
+Timestamp: 2025-09-29T05:50:00Z
+Commit: 8f2763f
+
+All dependency fixes are included:
+- .npmrc with legacy-peer-deps=true
+- vercel.json with npm ci --legacy-peer-deps
+- package.json with @testing-library/react@14.3.1
+
+This should resolve ERESOLVE dependency conflicts.
