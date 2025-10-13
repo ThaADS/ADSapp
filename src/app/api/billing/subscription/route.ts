@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
+import { strictApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
+  // Apply strict API middleware (tenant validation + strict rate limiting)
+  const middlewareResponse = await strictApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const organizationId = request.headers.get('X-Organization-ID')
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
 
-    if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization ID is required' },
-        { status: 400 }
-      )
-    }
-
-    const supabase = await createClient()
+    const supabase = await createClient();
 
     // Get organization subscription data
     const { data: org } = await supabase

@@ -286,3 +286,57 @@ export const authMiddleware = async (request: NextRequest): Promise<NextResponse
   const rateLimit = createIpRateLimiter(rateLimitConfigs.auth);
   return rateLimit(request);
 };
+
+/**
+ * Admin Middleware
+ * Validates super admin access with strict rate limiting
+ *
+ * @example
+ * ```typescript
+ * import { adminMiddleware } from '@/lib/middleware';
+ *
+ * export async function GET(request: NextRequest) {
+ *   const response = await adminMiddleware(request);
+ *   if (response) return response;
+ *
+ *   // Continue with admin logic - user is verified super admin
+ * }
+ * ```
+ */
+export const adminMiddleware = async (request: NextRequest): Promise<NextResponse | null> => {
+  const { validateTenantAccess, isSuperAdmin } = await import('./tenant-validation');
+  const { createRateLimiter, rateLimitConfigs } = await import('./rate-limit');
+
+  // First validate tenant access (authenticates user)
+  const tenantValidation = await validateTenantAccess(request);
+  if (tenantValidation && tenantValidation.status !== 200) {
+    return tenantValidation;
+  }
+
+  // Check if user is super admin
+  if (!isSuperAdmin(request)) {
+    return NextResponse.json(
+      {
+        error: 'Forbidden: Super admin access required',
+        code: 'FORBIDDEN'
+      },
+      { status: 403 }
+    );
+  }
+
+  // Apply strict rate limiting for admin operations
+  const rateLimitMiddleware = createRateLimiter(rateLimitConfigs.strict);
+  return rateLimitMiddleware(request);
+};
+
+/**
+ * Webhook Middleware
+ * No tenant validation (for external webhooks like Stripe, WhatsApp)
+ * Applies relaxed rate limiting only
+ */
+export const webhookMiddleware = async (request: NextRequest): Promise<NextResponse | null> => {
+  const { createIpRateLimiter, rateLimitConfigs } = await import('./rate-limit');
+
+  const rateLimit = createIpRateLimiter(rateLimitConfigs.relaxed);
+  return rateLimit(request);
+};

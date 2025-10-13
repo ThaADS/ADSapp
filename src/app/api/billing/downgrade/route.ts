@@ -2,18 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { SubscriptionLifecycleManager } from '@/lib/billing/subscription-lifecycle'
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe/server'
+import { strictApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function POST(request: NextRequest) {
-  try {
-    const organizationId = request.headers.get('X-Organization-ID')
-    const { newPlanId, prorate = true } = await request.json()
+  // Apply strict API middleware (tenant validation + strict rate limiting)
+  const middlewareResponse = await strictApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
 
-    if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization ID is required' },
-        { status: 400 }
-      )
-    }
+  try {
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
+    const { newPlanId, prorate = true } = await request.json();
 
     if (!newPlanId || !SUBSCRIPTION_PLANS[newPlanId as keyof typeof SUBSCRIPTION_PLANS]) {
       return NextResponse.json(

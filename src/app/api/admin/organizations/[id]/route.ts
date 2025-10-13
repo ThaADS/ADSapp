@@ -5,28 +5,21 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 import { SuperAdminPermissions } from '@/lib/super-admin';
+import { adminMiddleware } from '@/lib/middleware';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const { id } = await params;
-
-    // Check if user is super admin
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const isSuperAdmin = await permissions.isSuperAdmin(user.id);
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Get organization details with related data
     const { data: org, error } = await supabase
@@ -207,22 +200,15 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const { id } = await params;
     const body = await request.json();
-
-    // Check if user is super admin
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const isSuperAdmin = await permissions.isSuperAdmin(user.id);
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Get current organization for comparison
     const { data: currentOrg } = await supabase
@@ -306,21 +292,14 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const { id } = await params;
-
-    // Check if user is super admin
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const isSuperAdmin = await permissions.isSuperAdmin(user.id);
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Get organization details for logging
     const { data: org } = await supabase

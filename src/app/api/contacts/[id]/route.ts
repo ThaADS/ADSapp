@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
     const { id } = await params;
 
     const supabase = await createClient()
@@ -38,7 +43,7 @@ export async function GET(
         )
       `)
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (error || !contact) {
@@ -88,9 +93,13 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId, userId } = getTenantContext(request);
     const { id } = await params;
 
     const body = await request.json()
@@ -103,7 +112,7 @@ export async function PUT(
       .from('contacts')
       .select('id')
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (!existingContact) {
@@ -146,7 +155,7 @@ export async function PUT(
       updateData.metadata = {
         ...(current?.metadata || {}),
         ...metadata,
-        updated_by: user.id,
+        updated_by: userId,
         updated_at: new Date().toISOString()
       }
     }
@@ -155,7 +164,7 @@ export async function PUT(
       .from('contacts')
       .update(updateData)
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .select()
       .single()
 
@@ -175,9 +184,13 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
     const { id } = await params;
 
     const supabase = await createClient()
@@ -187,7 +200,7 @@ export async function DELETE(
       .from('contacts')
       .select('id, phone_number')
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (!contact) {
@@ -216,7 +229,7 @@ export async function DELETE(
       .from('contacts')
       .delete()
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
 
     if (error) {
       throw error

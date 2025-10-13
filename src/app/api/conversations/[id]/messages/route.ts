@@ -2,36 +2,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { WhatsAppService } from '@/lib/whatsapp/service'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuth()
-    const supabase = await createClient()
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
+    const supabase = await createClient();
     const { id: conversationId } = await params;
 
-    // Verify user has access to this conversation
+    // Verify conversation belongs to user's organization
     const { data: conversation } = await supabase
       .from('conversations')
-      .select('*, organization:organizations(*)')
+      .select('*')
       .eq('id', conversationId)
-      .single()
+      .eq('organization_id', organizationId)
+      .single();
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
-    }
-
-    // Check if user belongs to the organization
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('organization_id')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.organization_id !== conversation.organization_id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     // Get messages for this conversation
@@ -57,9 +53,14 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + strict rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuth()
-    const supabase = await createClient()
+    // Get tenant context from middleware (already validated)
+    const { organizationId, userId } = getTenantContext(request);
+    const supabase = await createClient();
     const { id: conversationId } = await params;
 
     const body = await request.json()
@@ -69,34 +70,24 @@ export async function POST(
       return NextResponse.json({ error: 'Content is required' }, { status: 400 })
     }
 
-    // Verify user has access to this conversation
+    // Verify conversation belongs to user's organization
     const { data: conversation } = await supabase
       .from('conversations')
-      .select('*, organization:organizations(*)')
+      .select('*')
       .eq('id', conversationId)
-      .single()
+      .eq('organization_id', organizationId)
+      .single();
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
-    // Check if user belongs to the organization
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('organization_id')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.organization_id !== conversation.organization_id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-    }
-
     // Send message via WhatsApp
-    const whatsappService = await WhatsAppService.createFromOrganization(conversation.organization_id)
+    const whatsappService = await WhatsAppService.createFromOrganization(organizationId)
     const message = await whatsappService.sendMessage(
       conversationId,
       content,
-      user.id,
+      userId,
       type
     )
 
@@ -123,9 +114,14 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuth()
-    const supabase = await createClient()
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
+    const supabase = await createClient();
     const { id: conversationId } = await params;
 
     const body = await request.json()
@@ -135,30 +131,20 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid action or missing messageId' }, { status: 400 })
     }
 
-    // Verify user has access to this conversation
+    // Verify conversation belongs to user's organization
     const { data: conversation } = await supabase
       .from('conversations')
-      .select('*, organization:organizations(*)')
+      .select('*')
       .eq('id', conversationId)
-      .single()
+      .eq('organization_id', organizationId)
+      .single();
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
-    // Check if user belongs to the organization
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('organization_id')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.organization_id !== conversation.organization_id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-    }
-
     // Mark message as read via WhatsApp
-    const whatsappService = await WhatsAppService.createFromOrganization(conversation.organization_id)
+    const whatsappService = await WhatsAppService.createFromOrganization(organizationId)
     await whatsappService.markMessageAsRead(messageId)
 
     return NextResponse.json({ success: true })

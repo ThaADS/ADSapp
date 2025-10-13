@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuditLogs } from '@/lib/super-admin'
+import { adminMiddleware } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')

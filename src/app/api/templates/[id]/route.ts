@@ -2,14 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { createClient } from '@/lib/supabase/server'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
     const { id } = await params;
 
     const supabase = await createClient()
@@ -18,7 +23,7 @@ export async function GET(
       .from('message_templates')
       .select('*')
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (error || !template) {
@@ -61,10 +66,14 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
     const { id } = await params;
-    const profile = await getUserOrganization(user.id)
 
     const body = await request.json()
     const {
@@ -84,7 +93,7 @@ export async function PUT(
       .from('message_templates')
       .select('*')
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (!existingTemplate) {
@@ -107,13 +116,13 @@ export async function PUT(
     // Handle WhatsApp template updates
     if (submitToWhatsApp && whatsappTemplate) {
       try {
-        const whatsappClient = await getWhatsAppClient(profile.organization_id)
+        const whatsappClient = await getWhatsAppClient(organizationId)
 
         // Get organization's business account ID
         const { data: org } = await supabase
           .from('organizations')
           .select('whatsapp_business_account_id')
-          .eq('id', profile.organization_id)
+          .eq('id', organizationId)
           .single()
 
         if (!org?.whatsapp_business_account_id) {
@@ -159,7 +168,7 @@ export async function PUT(
       .from('message_templates')
       .update(updateData)
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .select()
       .single()
 
@@ -179,10 +188,14 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
     const { id } = await params;
-    const profile = await getUserOrganization(user.id)
 
     const supabase = await createClient()
 
@@ -191,7 +204,7 @@ export async function DELETE(
       .from('message_templates')
       .select('*')
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .single()
 
     if (!template) {
@@ -205,7 +218,7 @@ export async function DELETE(
     const { data: bulkOps } = await supabase
       .from('bulk_operations')
       .select('id')
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .eq('type', 'bulk_message')
       .in('status', ['queued', 'processing'])
       .contains('configuration', { templateId: id })
@@ -220,12 +233,12 @@ export async function DELETE(
     // Delete from WhatsApp if it exists there
     if (template.whatsapp_template_name) {
       try {
-        const whatsappClient = await getWhatsAppClient(profile.organization_id)
+        const whatsappClient = await getWhatsAppClient(organizationId)
 
         const { data: org } = await supabase
           .from('organizations')
           .select('whatsapp_business_account_id')
-          .eq('id', profile.organization_id)
+          .eq('id', organizationId)
           .single()
 
         if (org?.whatsapp_business_account_id) {
@@ -245,7 +258,7 @@ export async function DELETE(
       .from('message_templates')
       .delete()
       .eq('id', id)
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
 
     if (error) {
       throw error

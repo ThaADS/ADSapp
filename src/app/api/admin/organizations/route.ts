@@ -5,25 +5,18 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 import { SuperAdminPermissions } from '@/lib/super-admin';
+import { adminMiddleware } from '@/lib/middleware';
 
 export async function GET(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const { searchParams } = new URL(request.url);
-
-    // Check if user is super admin
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const isSuperAdmin = await permissions.isSuperAdmin(user.id);
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1');
@@ -154,21 +147,14 @@ export async function GET(request: NextRequest) {
 
 // Create new organization (super admin only)
 export async function POST(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const supabase = createClient(cookies());
+    const supabase = await createClient();
     const permissions = new SuperAdminPermissions();
     const body = await request.json();
-
-    // Check if user is super admin
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const isSuperAdmin = await permissions.isSuperAdmin(user.id);
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     const {
       name,

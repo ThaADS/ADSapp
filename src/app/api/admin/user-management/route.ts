@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { adminMiddleware } from '@/lib/middleware';
 
 // Define types
 interface UserData {
@@ -14,40 +15,15 @@ interface UserData {
   organization_id?: string;
 }
 
-// Helper function to check if user is super admin
-async function isSuperAdmin(supabase: SupabaseClient, userId: string): Promise<boolean> {
-  try {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role, is_super_admin')
-      .eq('id', userId)
-      .single();
-
-    if (!profile) return false;
-    return profile.role === 'owner' || profile.is_super_admin === true;
-  } catch (error) {
-    console.error('Error checking super admin status:', error);
-    return false;
-  }
-}
-
 // GET - List all users with filtering and pagination
 export async function GET(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
-
-    // Authentication check
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Super admin check
-    const isAdmin = await isSuperAdmin(supabase, user.id);
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1');
@@ -135,21 +111,13 @@ export async function GET(request: NextRequest) {
 
 // POST - Create new user or update existing user
 export async function POST(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const supabase = await createClient();
     const body = await request.json();
-
-    // Authentication check
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Super admin check
-    const isAdmin = await isSuperAdmin(supabase, user.id);
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     const { action, userId, userData } = body;
 

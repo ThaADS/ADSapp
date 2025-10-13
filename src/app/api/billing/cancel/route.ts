@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { SubscriptionLifecycleManager } from '@/lib/billing/subscription-lifecycle'
 import { isBuildTime } from '@/lib/build-safe-init'
+import { strictApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function POST(request: NextRequest) {
   // Check if we're in build mode and return early
@@ -11,16 +12,15 @@ export async function POST(request: NextRequest) {
       { status: 503 }
     )
   }
-  try {
-    const organizationId = request.headers.get('X-Organization-ID')
-    const { immediate = false, reason, feedback } = await request.json()
 
-    if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization ID is required' },
-        { status: 400 }
-      )
-    }
+  // Apply strict API middleware (tenant validation + strict rate limiting)
+  const middlewareResponse = await strictApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
+  try {
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
+    const { immediate = false, reason, feedback } = await request.json();
 
     if (!reason) {
       return NextResponse.json(

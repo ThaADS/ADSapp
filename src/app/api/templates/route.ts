@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination } from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
 
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
@@ -19,7 +24,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('message_templates')
       .select('*', { count: 'exact' })
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
 
     if (category) {
       query = query.eq('category', category)
@@ -73,11 +78,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
 
-    const body = await request.json()
+  try {
+    // Get tenant context from middleware (already validated)
+    const { organizationId, userId } = getTenantContext(request);
+
+    const body = await request.json();
     const {
       name,
       content,
@@ -119,13 +128,13 @@ export async function POST(request: NextRequest) {
     // Submit to WhatsApp if requested
     if (submitToWhatsApp && whatsappTemplate) {
       try {
-        const whatsappClient = await getWhatsAppClient(profile.organization_id)
+        const whatsappClient = await getWhatsAppClient(organizationId)
 
         // Get organization's business account ID
         const { data: org } = await supabase
           .from('organizations')
           .select('whatsapp_business_account_id')
-          .eq('id', profile.organization_id)
+          .eq('id', organizationId)
           .single()
 
         if (!org?.whatsapp_business_account_id) {
@@ -154,8 +163,8 @@ export async function POST(request: NextRequest) {
     const { data: template, error } = await supabase
       .from('message_templates')
       .insert({
-        organization_id: profile.organization_id,
-        created_by: user.id,
+        organization_id: organizationId,
+        created_by: userId,
         name,
         content,
         category,

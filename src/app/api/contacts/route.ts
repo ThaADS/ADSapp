@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination, validateSortOrder } from '@/lib/api-utils'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+    // Get tenant context from middleware (already validated)
+    const { organizationId } = getTenantContext(request);
 
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
@@ -27,7 +32,7 @@ export async function GET(request: NextRequest) {
           last_message_at
         )
       `, { count: 'exact' })
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
 
     // Apply filters
     if (search) {
@@ -44,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     // Apply segmentation
     if (segment) {
-      query = await applySegmentation(query, segment, profile.organization_id)
+      query = await applySegmentation(query, segment, organizationId)
     }
 
     const { data: contacts, error, count } = await query
@@ -96,11 +101,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const user = await requireAuthenticatedUser()
-    const profile = await getUserOrganization(user.id)
+  // Apply standard API middleware (tenant validation + standard rate limiting)
+  const middlewareResponse = await standardApiMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
 
-    const body = await request.json()
+  try {
+    // Get tenant context from middleware (already validated)
+    const { organizationId, userId } = getTenantContext(request);
+
+    const body = await request.json();
     const {
       phone_number,
       name,
@@ -144,7 +153,7 @@ export async function POST(request: NextRequest) {
     const { data: existingContact } = await supabase
       .from('contacts')
       .select('id, phone_number')
-      .eq('organization_id', profile.organization_id)
+      .eq('organization_id', organizationId)
       .eq('phone_number', phone_number)
       .single()
 
@@ -159,7 +168,7 @@ export async function POST(request: NextRequest) {
     const { data: contact, error } = await supabase
       .from('contacts')
       .insert({
-        organization_id: profile.organization_id,
+        organization_id: organizationId,
         phone_number,
         whatsapp_id: whatsapp_id || phone_number,
         name,
@@ -168,7 +177,7 @@ export async function POST(request: NextRequest) {
         notes,
         metadata: {
           ...metadata,
-          created_by: user.id,
+          created_by: userId,
           source: 'manual'
         }
       })

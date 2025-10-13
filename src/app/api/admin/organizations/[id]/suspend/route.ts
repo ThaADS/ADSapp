@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { suspendOrganization, reactivateOrganization } from '@/lib/super-admin'
+import { adminMiddleware } from '@/lib/middleware'
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const { reason } = await request.json()
     const { id } = await params;
@@ -44,6 +49,10 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const { id } = await params;
     const success = await reactivateOrganization(

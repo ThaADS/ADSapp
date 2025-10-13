@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSystemSettings, updateSystemSetting, logSuperAdminAction } from '@/lib/super-admin'
+import { adminMiddleware } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const settings = await getSystemSettings()
 
@@ -33,6 +38,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
+
   try {
     const { key, value, description } = await request.json()
 

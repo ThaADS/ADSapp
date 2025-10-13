@@ -3,45 +3,17 @@
  * Provides basic platform metrics for the super admin dashboard
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { adminMiddleware } from '@/lib/middleware';
 
-// Helper function to check if user is super admin
-async function isSuperAdmin(supabase: SupabaseClient, userId: string): Promise<boolean> {
-  try {
-    // Check if user has super admin role in profiles
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role, is_super_admin')
-      .eq('id', userId)
-      .single();
+export async function GET(request: NextRequest) {
+  // Apply admin middleware (validates super admin access)
+  const middlewareResponse = await adminMiddleware(request);
+  if (middlewareResponse) return middlewareResponse;
 
-    if (!profile) return false;
-
-    // Check for super admin role or is_super_admin flag
-    return profile.role === 'owner' || profile.is_super_admin === true;
-  } catch (error) {
-    console.error('Error checking super admin status:', error);
-    return false;
-  }
-}
-
-export async function GET() {
   try {
     const supabase = await createClient();
-
-    // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user is super admin
-    const isAdmin = await isSuperAdmin(supabase, user.id);
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 });
-    }
 
     // Get basic platform metrics
     const [
