@@ -38,13 +38,13 @@ export async function GET(request: NextRequest) {
         // Current month billing events
         supabase
           .from('billing_events')
-          .select('event_type, amount_cents, currency, created_at')
+          .select('event_type, amount, currency, created_at')
           .gte('created_at', startOfMonth.toISOString()),
 
         // Last month billing events
         supabase
           .from('billing_events')
-          .select('event_type, amount_cents, currency, created_at')
+          .select('event_type, amount, currency, created_at')
           .gte('created_at', startOfLastMonth.toISOString())
           .lte('created_at', endOfLastMonth.toISOString()),
 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         supabase
           .from('organizations')
           .select('subscription_tier, subscription_status')
-          .neq('status', 'deleted'),
+          .neq('status', 'cancelled' as any),
 
         // Recent billing events
         supabase
@@ -82,11 +82,11 @@ export async function GET(request: NextRequest) {
       // Calculate metrics
       const currentMonthRevenue = (currentMonthEvents.data || [])
         .filter(e => e.event_type === 'payment_succeeded')
-        .reduce((sum, e) => sum + (e.amount_cents || 0), 0) / 100;
+        .reduce((sum, e) => sum + (e.amount || 0), 0) / 100;
 
       const lastMonthRevenue = (lastMonthEvents.data || [])
         .filter(e => e.event_type === 'payment_succeeded')
-        .reduce((sum, e) => sum + (e.amount_cents || 0), 0) / 100;
+        .reduce((sum, e) => sum + (e.amount || 0), 0) / 100;
 
       const revenueGrowth = lastMonthRevenue > 0
         ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
@@ -158,6 +158,7 @@ export async function GET(request: NextRequest) {
           count: trialOrganizations.data?.length || 0,
           expiringSoon: (trialOrganizations.data || [])
             .filter(org => {
+              if (!org.trial_ends_at) return false;
               const expiryDate = new Date(org.trial_ends_at);
               const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
               return daysUntilExpiry <= 7;
@@ -167,7 +168,7 @@ export async function GET(request: NextRequest) {
           events: (recentEvents.data || []).map(event => ({
             id: event.id,
             eventType: event.event_type,
-            amount: event.amount_cents ? event.amount_cents / 100 : null,
+            amount: event.amount ? event.amount / 100 : null,
             currency: event.currency,
             organization: event.organizations ? {
               name: event.organizations.name,
@@ -237,16 +238,13 @@ export async function GET(request: NextRequest) {
       const events = (data || []).map(event => ({
         id: event.id,
         eventType: event.event_type,
-        amount: event.amount_cents ? event.amount_cents / 100 : null,
+        amount: event.amount ? event.amount / 100 : null,
         currency: event.currency,
-        stripeEventId: event.stripe_event_id,
         organization: event.organizations ? {
           id: event.organizations.id,
           name: event.organizations.name,
           slug: event.organizations.slug,
         } : null,
-        details: event.details,
-        processedAt: event.processed_at,
         createdAt: event.created_at,
       }));
 

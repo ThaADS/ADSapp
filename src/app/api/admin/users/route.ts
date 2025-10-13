@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (role) {
-      query = query.eq('role', role);
+      query = query.eq('role', role as any);
     }
 
     if (isActive !== null && isActive !== undefined) {
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
       },
       filters: {
         available: {
-          roles: ['owner', 'admin', 'agent'],
+          roles: ['owner', 'admin', 'agent', 'super_admin'],
           statuses: ['active', 'inactive'],
         },
         applied: { search, organizationId, role, isActive },
@@ -188,7 +188,7 @@ export async function PATCH(request: NextRequest) {
 
     interface UpdateData {
       is_active?: boolean;
-      role?: string;
+      role?: 'owner' | 'admin' | 'agent' | 'super_admin';
       organization_id?: string;
       is_super_admin?: boolean;
       updated_at: string;
@@ -201,8 +201,8 @@ export async function PATCH(request: NextRequest) {
       user?: {
         id: string;
         email: string;
-        full_name: string;
-        role: string;
+        full_name: string | null;
+        role: 'owner' | 'admin' | 'agent' | 'super_admin';
         is_active: boolean;
         is_super_admin: boolean;
       };
@@ -219,13 +219,13 @@ export async function PATCH(request: NextRequest) {
         updateData = { is_active: false, updated_at: new Date().toISOString() };
         break;
       case 'change_role':
-        if (!actionData?.role || !['owner', 'admin', 'agent'].includes(actionData.role)) {
+        if (!actionData?.role || !['owner', 'admin', 'agent', 'super_admin'].includes(actionData.role)) {
           return NextResponse.json(
             { error: 'Valid role is required for role change' },
             { status: 400 }
           );
         }
-        updateData = { role: actionData.role, updated_at: new Date().toISOString() };
+        updateData = { role: actionData.role as 'owner' | 'admin' | 'agent' | 'super_admin', updated_at: new Date().toISOString() };
         break;
       case 'grant_super_admin':
         updateData = { is_super_admin: true, updated_at: new Date().toISOString() };

@@ -11,7 +11,7 @@ import { adminMiddleware } from '@/lib/middleware';
 // Define types
 interface UserData {
   full_name?: string;
-  role?: string;
+  role?: 'owner' | 'admin' | 'agent' | 'super_admin';
   organization_id?: string;
 }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (role) {
-      query = query.eq('role', role);
+      query = query.eq('role', role as any);
     }
 
     if (status === 'active') {
@@ -216,15 +216,15 @@ async function activateUser(supabase: SupabaseClient, userId: string) {
 
 async function changeUserRole(supabase: SupabaseClient, userId: string, newRole: string) {
   // Validate role
-  const validRoles = ['owner', 'admin', 'agent'];
-  if (!validRoles.includes(newRole)) {
+  const validRoles = ['owner', 'admin', 'agent', 'super_admin'] as const;
+  if (!validRoles.includes(newRole as any)) {
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from('profiles')
     .update({
-      role: newRole,
+      role: newRole as 'owner' | 'admin' | 'agent' | 'super_admin',
       updated_at: new Date().toISOString()
     })
     .eq('id', userId)

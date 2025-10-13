@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       'system',
       undefined,
       {},
-      request.ip,
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
       request.headers.get('user-agent') || undefined
     )
 

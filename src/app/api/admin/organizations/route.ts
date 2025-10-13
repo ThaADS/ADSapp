@@ -35,8 +35,7 @@ export async function GET(request: NextRequest) {
         *,
         profiles(id, full_name, email, role, is_active, last_seen_at),
         conversations(id),
-        messages(id),
-        support_tickets(id, status)
+        messages(id)
       `, { count: 'exact' });
 
     // Apply filters
@@ -45,15 +44,15 @@ export async function GET(request: NextRequest) {
     }
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq('status', status as any);
     }
 
     if (subscriptionStatus) {
-      query = query.eq('subscription_status', subscriptionStatus);
+      query = query.eq('subscription_status', subscriptionStatus as any);
     }
 
     if (subscriptionTier) {
-      query = query.eq('subscription_tier', subscriptionTier);
+      query = query.eq('subscription_tier', subscriptionTier as any);
     }
 
     // Apply sorting
@@ -74,11 +73,11 @@ export async function GET(request: NextRequest) {
     // Transform the data
     const organizations = (data || []).map(org => {
       const activeUsers = org.profiles?.filter(p => p.is_active).length || 0;
-      const lastActivity = org.profiles?.reduce((latest, profile) => {
+      const lastActivity = org.profiles?.reduce((latest: string | null, profile) => {
         return !latest || (profile.last_seen_at && profile.last_seen_at > latest)
           ? profile.last_seen_at
           : latest;
-      }, null);
+      }, null as string | null);
 
       return {
         id: org.id,
@@ -92,7 +91,6 @@ export async function GET(request: NextRequest) {
         activeUserCount: activeUsers,
         messageCount: org.messages?.length || 0,
         conversationCount: org.conversations?.length || 0,
-        openTicketCount: org.support_tickets?.filter(t => t.status === 'open').length || 0,
         createdAt: org.created_at,
         updatedAt: org.updated_at,
         trialEndsAt: org.trial_ends_at,

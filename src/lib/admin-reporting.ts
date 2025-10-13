@@ -133,10 +133,13 @@ export interface ReportExecution {
 }
 
 export class AdvancedReportingSystem {
-  private supabase;
+  private supabase: ReturnType<typeof createClient> | null = null;
 
-  constructor() {
-    this.supabase = createClient(cookies());
+  private async getSupabase() {
+    if (!this.supabase) {
+      this.supabase = await createClient();
+    }
+    return this.supabase;
   }
 
   /**
@@ -148,7 +151,8 @@ export class AdvancedReportingSystem {
     granularity: 'day' | 'week' | 'month' = 'month'
   ): Promise<RevenueAnalytics[]> {
     try {
-      const { data, error } = await this.supabase.rpc('get_revenue_analytics', {
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase.rpc('get_revenue_analytics', {
         start_date: startDate,
         end_date: endDate,
         granularity
@@ -248,7 +252,8 @@ export class AdvancedReportingSystem {
     organizationId?: string
   ): Promise<UserEngagementMetrics[]> {
     try {
-      const { data, error } = await this.supabase.rpc('get_user_engagement_metrics', {
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase.rpc('get_user_engagement_metrics', {
         start_date: startDate,
         end_date: endDate,
         organization_id: organizationId
@@ -291,7 +296,8 @@ export class AdvancedReportingSystem {
     interval: 'minute' | 'hour' | 'day' = 'hour'
   ): Promise<SystemPerformanceMetrics[]> {
     try {
-      const { data, error } = await this.supabase.rpc('get_system_performance_metrics', {
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase.rpc('get_system_performance_metrics', {
         start_date: startDate,
         end_date: endDate,
         interval_type: interval
@@ -330,7 +336,8 @@ export class AdvancedReportingSystem {
    */
   async createCustomReport(config: Omit<CustomReportConfig, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('custom_report_configs')
         .insert({
           name: config.name,
@@ -358,8 +365,9 @@ export class AdvancedReportingSystem {
    */
   async executeCustomReport(reportConfigId: string): Promise<string> {
     try {
+      const supabase = await this.getSupabase();
       // Create execution record
-      const { data: execution, error: execError } = await this.supabase
+      const { data: execution, error: execError } = await supabase
         .from('report_executions')
         .insert({
           report_config_id: reportConfigId,
@@ -385,7 +393,8 @@ export class AdvancedReportingSystem {
    */
   async getReportExecution(executionId: string): Promise<ReportExecution | null> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('report_executions')
         .select('*')
         .eq('id', executionId)
@@ -404,7 +413,8 @@ export class AdvancedReportingSystem {
    */
   async getScheduledReports(): Promise<CustomReportConfig[]> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('custom_report_configs')
         .select('*')
         .eq('is_scheduled', true);
@@ -541,7 +551,8 @@ export class AdvancedReportingSystem {
   private async predictChurnRate(periodsAhead: number): Promise<number> {
     // Simplified churn prediction - in production, use ML models
     try {
-      const { data, error } = await this.supabase.rpc('predict_churn_rate', {
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase.rpc('predict_churn_rate', {
         periods_ahead: periodsAhead
       });
 
@@ -556,7 +567,8 @@ export class AdvancedReportingSystem {
   private async predictNewCustomers(periodsAhead: number): Promise<number> {
     // Simplified new customer prediction
     try {
-      const { data, error } = await this.supabase.rpc('predict_new_customers', {
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase.rpc('predict_new_customers', {
         periods_ahead: periodsAhead
       });
 
@@ -669,7 +681,8 @@ export class AdvancedReportingSystem {
     // For now, we'll simulate the process
     setTimeout(async () => {
       try {
-        await this.supabase
+        const supabase = await this.getSupabase();
+        await supabase
           .from('report_executions')
           .update({
             status: 'running',
@@ -680,7 +693,7 @@ export class AdvancedReportingSystem {
         // Simulate report processing
         await new Promise(resolve => setTimeout(resolve, 5000));
 
-        await this.supabase
+        await supabase
           .from('report_executions')
           .update({
             status: 'completed',
@@ -690,7 +703,7 @@ export class AdvancedReportingSystem {
           })
           .eq('id', executionId);
       } catch (error) {
-        await this.supabase
+        await supabase
           .from('report_executions')
           .update({
             status: 'failed',
