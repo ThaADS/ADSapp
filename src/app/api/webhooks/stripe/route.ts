@@ -1,46 +1,102 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { StripeService } from '@/lib/stripe/server'
-import { StripeWebhookProcessor } from '@/lib/billing/webhook-processor'
+/**
+ * Stripe Webhook Handler (S-003: Enhanced with Idempotency)
+ * ===========================================================
+ * Processes Stripe webhook events with idempotency guarantees,
+ * signature validation, and comprehensive error handling.
+ *
+ * POST /api/webhooks/stripe - Process Stripe webhook events
+ *
+ * Security: Signature verification required
+ * Compliance: PCI DSS webhook security requirements
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { validateStripeWebhook } from '@/lib/middleware/webhook-validator';
+import { WebhookHandler } from '@/lib/billing/webhook-handler';
+import { WEBHOOK_SECURITY_HEADERS } from '@/lib/middleware/webhook-validator';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.text()
-    const signature = request.headers.get('stripe-signature')
+    // 1. Validate webhook signature and extract event
+    const validation = await validateStripeWebhook(request);
 
-    if (!signature) {
+    if (!validation.valid || !validation.event) {
+      console.error('Webhook validation failed:', validation.error);
+
       return NextResponse.json(
-        { error: 'Missing stripe-signature header' },
-        { status: 400 }
-      )
+        {
+          error: 'Webhook validation failed',
+          code: validation.errorCode,
+        },
+        {
+          status: 400,
+          headers: WEBHOOK_SECURITY_HEADERS,
+        }
+      );
     }
 
-    // Verify the webhook signature and construct the event
-    const event = await StripeService.handleWebhook(body, signature)
+    const event = validation.event;
 
-    console.log(`[Stripe Webhook] Processing event: ${event.type} - ${event.id}`)
+    console.log(`[Stripe Webhook] Processing event: ${event.type} - ${event.id}`);
 
-    // Use the enhanced webhook processor
-    const processor = new StripeWebhookProcessor()
-    await processor.processEvent(event)
+    // 2. Process webhook with idempotency
+    const webhookHandler = new WebhookHandler();
+    const result = await webhookHandler.processWebhookWithIdempotency(
+      event,
+      request.headers.get('stripe-signature') || ''
+    );
 
-    return NextResponse.json({
-      received: true,
-      eventId: event.id,
-      eventType: event.type
-    })
+    // 3. Return result
+    if (result.success) {
+      if (result.alreadyProcessed) {
+        console.log(`[Stripe Webhook] Event already processed: ${event.id}`);
+        return NextResponse.json({
+          received: true,
+          eventId: event.id,
+          eventType: event.type,
+          alreadyProcessed: true,
+        }, {
+          status: 200,
+          headers: WEBHOOK_SECURITY_HEADERS,
+        });
+      }
+
+      return NextResponse.json({
+        received: true,
+        eventId: event.id,
+        eventType: event.type,
+        processed: result.processed,
+      }, {
+        status: 200,
+        headers: WEBHOOK_SECURITY_HEADERS,
+      });
+    } else {
+      console.error(`[Stripe Webhook] Processing failed: ${result.error}`);
+
+      return NextResponse.json({
+        received: true,
+        eventId: event.id,
+        eventType: event.type,
+        error: result.error,
+        retryable: result.retryable,
+      }, {
+        status: result.retryable ? 500 : 400,
+        headers: WEBHOOK_SECURITY_HEADERS,
+      });
+    }
   } catch (error) {
-    console.error('Stripe webhook error:', error)
-
-    if (error instanceof Error && error.message.includes('signature')) {
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      )
-    }
+    const err = error as Error;
+    console.error('Stripe webhook error:', err);
 
     return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    )
+      {
+        error: 'Webhook processing failed',
+        message: err.message,
+      },
+      {
+        status: 500,
+        headers: WEBHOOK_SECURITY_HEADERS,
+      }
+    );
   }
 }

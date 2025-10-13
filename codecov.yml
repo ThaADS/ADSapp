@@ -1,0 +1,106 @@
+# Codecov Configuration for ADSapp
+# https://docs.codecov.com/docs/codecov-yaml
+
+# Coverage thresholds
+coverage:
+  status:
+    project:
+      default:
+        target: 80%              # Overall project coverage target
+        threshold: 2%            # Allow 2% decrease before failure
+        if_ci_failed: error      # Fail if CI tests fail
+
+    patch:
+      default:
+        target: 80%              # Coverage for new code
+        threshold: 5%            # More lenient for patches
+        if_ci_failed: error
+
+# File-specific requirements
+  range: 70..100                 # Red (70%) to green (100%)
+  round: down
+  precision: 2
+
+# Comment configuration
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default              # Update existing comment
+  require_changes: false         # Always comment
+  require_base: false            # Comment on first PR
+  require_head: true             # Require head report
+
+# GitHub checks
+github_checks:
+  annotations: true              # Show annotations on GitHub
+
+# Ignore patterns
+ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/__mocks__/**"
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/coverage/**"
+  - "**/*.config.js"
+  - "**/*.config.ts"
+  - "**/next-env.d.ts"
+  - "**/middleware.ts"
+  - "**/*.stories.tsx"
+  - "**/supabase/migrations/**"
+  - "**/scripts/**"
+  - "**/docs/**"
+
+# Flags for different test types
+flags:
+  unit:
+    paths:
+      - src/
+    carryforward: true
+
+  integration:
+    paths:
+      - src/app/api/
+      - src/lib/
+    carryforward: true
+
+  e2e:
+    paths:
+      - src/app/
+    carryforward: true
+
+# Pull request comments
+pull_request:
+  target: auto
+  threshold: 2%
+
+# Component-specific coverage
+component_management:
+  individual_components:
+    - component_id: api_routes
+      name: API Routes
+      paths:
+        - src/app/api/**
+
+    - component_id: components
+      name: React Components
+      paths:
+        - src/components/**
+
+    - component_id: lib
+      name: Library Code
+      paths:
+        - src/lib/**
+
+    - component_id: hooks
+      name: Custom Hooks
+      paths:
+        - src/hooks/**
+
+# Codecov UI settings
+ui:
+  hide_project_coverage: false
+  hide_patch_coverage: false

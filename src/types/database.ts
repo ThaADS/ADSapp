@@ -38,6 +38,11 @@ export type DemoSession = Database['public']['Tables']['demo_sessions']['Row'];
 export type DemoSessionActivity = Database['public']['Tables']['demo_session_activities']['Row'];
 export type DemoLeadScore = Database['public']['Tables']['demo_lead_scores']['Row'];
 export type ConversionFunnel = Database['public']['Tables']['conversion_funnels']['Row'];
+export type WebhookEvent = Database['public']['Tables']['webhook_events']['Row'];
+export type Refund = Database['public']['Tables']['refunds']['Row'];
+export type PaymentIntent = Database['public']['Tables']['payment_intents']['Row'];
+export type BillingEvent = Database['public']['Tables']['billing_events']['Row'];
+export type Subscription = Database['public']['Tables']['subscriptions']['Row'];
 
 // Insert types
 export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert'];
@@ -45,6 +50,11 @@ export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 export type ContactInsert = Database['public']['Tables']['contacts']['Insert'];
 export type ConversationInsert = Database['public']['Tables']['conversations']['Insert'];
 export type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+export type WebhookEventInsert = Database['public']['Tables']['webhook_events']['Insert'];
+export type RefundInsert = Database['public']['Tables']['refunds']['Insert'];
+export type PaymentIntentInsert = Database['public']['Tables']['payment_intents']['Insert'];
+export type BillingEventInsert = Database['public']['Tables']['billing_events']['Insert'];
+export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert'];
 
 // Update types
 export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update'];
@@ -52,10 +62,266 @@ export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 export type ContactUpdate = Database['public']['Tables']['contacts']['Update'];
 export type ConversationUpdate = Database['public']['Tables']['conversations']['Update'];
 export type MessageUpdate = Database['public']['Tables']['messages']['Update'];
+export type WebhookEventUpdate = Database['public']['Tables']['webhook_events']['Update'];
+export type RefundUpdate = Database['public']['Tables']['refunds']['Update'];
+export type PaymentIntentUpdate = Database['public']['Tables']['payment_intents']['Update'];
+export type BillingEventUpdate = Database['public']['Tables']['billing_events']['Update'];
+export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update'];
 
 export type Database = {
   public: {
     Tables: {
+      webhook_events: {
+        Row: {
+          id: string
+          stripe_event_id: string
+          event_type: string
+          status: 'processing' | 'completed' | 'failed'
+          payload: Json
+          error_message: string | null
+          retry_count: number
+          next_retry_at: string | null
+          processed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          stripe_event_id: string
+          event_type: string
+          status?: 'processing' | 'completed' | 'failed'
+          payload: Json
+          error_message?: string | null
+          retry_count?: number
+          next_retry_at?: string | null
+          processed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          stripe_event_id?: string
+          event_type?: string
+          status?: 'processing' | 'completed' | 'failed'
+          payload?: Json
+          error_message?: string | null
+          retry_count?: number
+          next_retry_at?: string | null
+          processed_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          id: string
+          organization_id: string
+          subscription_id: string
+          stripe_refund_id: string | null
+          amount: number
+          currency: string
+          refund_type: 'full' | 'partial' | 'prorated'
+          reason: string
+          description: string | null
+          status: 'pending' | 'approved' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          cancel_subscription: boolean
+          requested_by: string
+          approved_by: string | null
+          processed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          subscription_id: string
+          stripe_refund_id?: string | null
+          amount: number
+          currency?: string
+          refund_type: 'full' | 'partial' | 'prorated'
+          reason: string
+          description?: string | null
+          status?: 'pending' | 'approved' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          cancel_subscription?: boolean
+          requested_by: string
+          approved_by?: string | null
+          processed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          subscription_id?: string
+          stripe_refund_id?: string | null
+          amount?: number
+          currency?: string
+          refund_type?: 'full' | 'partial' | 'prorated'
+          reason?: string
+          description?: string | null
+          status?: 'pending' | 'approved' | 'processing' | 'completed' | 'failed' | 'cancelled'
+          cancel_subscription?: boolean
+          requested_by?: string
+          approved_by?: string | null
+          processed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      payment_intents: {
+        Row: {
+          id: string
+          organization_id: string
+          stripe_payment_intent_id: string
+          amount: number
+          currency: string
+          status: string
+          client_secret: string
+          requires_3ds: boolean
+          authentication_status: string | null
+          authenticated_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          stripe_payment_intent_id: string
+          amount: number
+          currency?: string
+          status: string
+          client_secret: string
+          requires_3ds?: boolean
+          authentication_status?: string | null
+          authenticated_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          stripe_payment_intent_id?: string
+          amount?: number
+          currency?: string
+          status?: string
+          client_secret?: string
+          requires_3ds?: boolean
+          authentication_status?: string | null
+          authenticated_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_intents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      billing_events: {
+        Row: {
+          id: string
+          organization_id: string
+          event_type: string
+          amount: number | null
+          currency: string | null
+          subscription_id: string | null
+          invoice_id: string | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          event_type: string
+          amount?: number | null
+          currency?: string | null
+          subscription_id?: string | null
+          invoice_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          event_type?: string
+          amount?: number | null
+          currency?: string | null
+          subscription_id?: string | null
+          invoice_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      subscriptions: {
+        Row: {
+          id: string
+          organization_id: string
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status: string
+          plan_id: string
+          current_period_start: string
+          current_period_end: string
+          cancel_at_period_end: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status: string
+          plan_id: string
+          current_period_start: string
+          current_period_end: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          stripe_subscription_id?: string
+          stripe_customer_id?: string
+          status?: string
+          plan_id?: string
+          current_period_start?: string
+          current_period_end?: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       demo_sessions: {
         Row: {
           id: string
@@ -200,6 +466,16 @@ export type Database = {
           whatsapp_phone_number_id: string | null
           subscription_status: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier: 'starter' | 'professional' | 'enterprise'
+          status: 'active' | 'suspended' | 'cancelled'
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          billing_email: string | null
+          timezone: string | null
+          locale: string | null
+          suspended_at: string | null
+          suspended_by: string | null
+          suspension_reason: string | null
           created_at: string
           updated_at: string
         }
@@ -211,6 +487,16 @@ export type Database = {
           whatsapp_phone_number_id?: string | null
           subscription_status?: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier?: 'starter' | 'professional' | 'enterprise'
+          status?: 'active' | 'suspended' | 'cancelled'
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          billing_email?: string | null
+          timezone?: string | null
+          locale?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspension_reason?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -222,6 +508,16 @@ export type Database = {
           whatsapp_phone_number_id?: string | null
           subscription_status?: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier?: 'starter' | 'professional' | 'enterprise'
+          status?: 'active' | 'suspended' | 'cancelled'
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          billing_email?: string | null
+          timezone?: string | null
+          locale?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspension_reason?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -234,11 +530,17 @@ export type Database = {
           email: string
           full_name: string | null
           avatar_url: string | null
-          role: 'owner' | 'admin' | 'agent'
+          role: 'owner' | 'admin' | 'agent' | 'super_admin'
           is_active: boolean
+          is_super_admin: boolean
           last_seen_at: string | null
+          mfa_enabled: boolean | null
+          mfa_secret: string | null
+          mfa_backup_codes: string[] | null
+          mfa_enrolled_at: string | null
           created_at: string
           updated_at: string
+          organization: Organization | null
         }
         Insert: {
           id: string
@@ -246,9 +548,14 @@ export type Database = {
           email: string
           full_name?: string | null
           avatar_url?: string | null
-          role?: 'owner' | 'admin' | 'agent'
+          role?: 'owner' | 'admin' | 'agent' | 'super_admin'
           is_active?: boolean
+          is_super_admin?: boolean
           last_seen_at?: string | null
+          mfa_enabled?: boolean | null
+          mfa_secret?: string | null
+          mfa_backup_codes?: string[] | null
+          mfa_enrolled_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -258,9 +565,14 @@ export type Database = {
           email?: string
           full_name?: string | null
           avatar_url?: string | null
-          role?: 'owner' | 'admin' | 'agent'
+          role?: 'owner' | 'admin' | 'agent' | 'super_admin'
           is_active?: boolean
+          is_super_admin?: boolean
           last_seen_at?: string | null
+          mfa_enabled?: boolean | null
+          mfa_secret?: string | null
+          mfa_backup_codes?: string[] | null
+          mfa_enrolled_at?: string | null
           created_at?: string
           updated_at?: string
         }
