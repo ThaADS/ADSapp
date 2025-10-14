@@ -1,6 +1,6 @@
 import { requireOrganization } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
-import { DashboardStats } from '@/components/dashboard/stats'
+import { OptimizedDashboardStats } from '@/components/dashboard/optimized-stats'
 import { RecentConversations } from '@/components/dashboard/recent-conversations'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
 
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <DashboardStats stats={stats} />
+      <OptimizedDashboardStats stats={stats} />
 
       {/* Main content grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

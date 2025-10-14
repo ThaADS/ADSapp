@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Settings, Phone, UserPlus, MoreVertical, Star, Archive, Trash2, MessageSquare, Users, TrendingUp, Filter, Search } from 'lucide-react'
 import EnhancedConversationList from './enhanced-conversation-list'
 import EnhancedMessageList from './enhanced-message-list'
@@ -132,13 +133,18 @@ function ConversationDetails({
       <div className="p-4 bg-white border-b border-gray-200">
         <div className="flex items-center space-x-3">
           {conversation.contact.profile_picture_url ? (
-            <img
-              src={conversation.contact.profile_picture_url}
-              alt={conversation.contact.name}
-              className="w-12 h-12 rounded-full"
-            />
+            <div className="relative w-12 h-12 flex-shrink-0">
+              <Image
+                src={conversation.contact.profile_picture_url}
+                alt={conversation.contact.name}
+                fill
+                sizes="48px"
+                className="rounded-full object-cover"
+                priority={false}
+              />
+            </div>
           ) : (
-            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-lg font-medium text-white">
                 {conversation.contact.name?.charAt(0).toUpperCase() ||
                  conversation.contact.phone_number.slice(-2)}
@@ -475,13 +481,18 @@ export default function WhatsAppInbox({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     {selectedConversation.contact.profile_picture_url ? (
-                      <img
-                        src={selectedConversation.contact.profile_picture_url}
-                        alt={selectedConversation.contact.name}
-                        className="w-10 h-10 rounded-full"
-                      />
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
+                          src={selectedConversation.contact.profile_picture_url}
+                          alt={selectedConversation.contact.name}
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
+                          priority
+                        />
+                      </div>
                     ) : (
-                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                         <span className="text-sm font-medium text-white">
                           {selectedConversation.contact.name?.charAt(0).toUpperCase() ||
                            selectedConversation.contact.phone_number.slice(-2)}
