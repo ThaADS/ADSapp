@@ -69,7 +69,8 @@
       "Bash(powershell \"if (Test-Path ''tests\\security'') { Write-Output ''exists'' } else { New-Item -ItemType Directory -Path ''tests\\security'' | Out-Null; Write-Output ''created'' }\")",
       "Bash([ -f tests/utils/api-test-helpers.ts ])",
       "Bash(npm run test:*)",
-      "Bash(psql:*)"
+      "Bash(psql:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
