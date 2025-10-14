@@ -1,0 +1,125 @@
+
+> adsapp-whatsapp-inbox@0.1.0 test
+> jest
+
+  console.log
+    [QueueManager] Initializing queues and workers...
+
+      at QueueManager.log [as initialize] (src/lib/queue/queue-manager.ts:88:13)
+
+  console.log
+    [QueueManager] Initialized bulk-message
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+  console.log
+    [QueueManager] Initialized contact-import
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+  console.log
+    [QueueManager] Initialized template-processing
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+  console.log
+    [QueueManager] Initialized email-notification
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+  console.log
+    [QueueManager] All queues and workers initialized
+
+      at QueueManager.log [as initialize] (src/lib/queue/queue-manager.ts:112:15)
+
+  console.log
+    [QueueManager] Starting graceful shutdown...
+
+      at QueueManager.log [as shutdown] (src/lib/queue/queue-manager.ts:417:13)
+
+  console.log
+    [QueueManager] Graceful shutdown complete
+
+      at QueueManager.log [as shutdown] (src/lib/queue/queue-manager.ts:436:13)
+
+  console.log
+    [QueueManager] Initializing queues and workers...
+
+      at QueueManager.log [as initialize] (src/lib/queue/queue-manager.ts:88:13)
+
+  console.log
+    [QueueManager] Initialized bulk-message
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+  console.log
+    [QueueManager] Initialized contact-import
+
+      at QueueManager.log [as initializeQueue] (src/lib/queue/queue-manager.ts:139:15)
+
+FAIL tests/unit/lib/security/input-validation.test.ts
+  Input Validation - SQL Injection Prevention
+    SQL Injection Detection
+      √ should detect common SQL injection patterns (30 ms)
+      √ should allow safe text without SQL patterns (3 ms)
+      × should sanitize text input to prevent SQL injection (18 ms)
+      √ should reject text with SQL injection attempts (3 ms)
+    XSS Prevention
+      × should detect XSS patterns (4 ms)
+      × should reject text with XSS attempts (6 ms)
+      × should allow safe HTML entities (2 ms)
+    UUID Validation
+      √ should validate correct UUID format (1 ms)
+      √ should reject invalid UUID format (3 ms)
+    Email Validation
+      √ should validate correct email format (5 ms)
+      √ should reject invalid email format (4 ms)
+    Search Query Sanitization
+      × should sanitize search queries to prevent injection (3 ms)
+      √ should escape regex special characters to prevent ReDoS (1 ms)
+      √ should limit search query length (1 ms)
+    Integer Validation
+      √ should validate integer values (9 ms)
+      √ should reject non-integer values (3 ms)
+    JSON Validation & Sanitization
+      √ should validate and sanitize JSON objects (3 ms)
+      × should sanitize nested JSON structures (3 ms)
+      √ should prevent JSON nesting depth attacks (19 ms)
+    Schema Validation
+      √ should validate object against schema (4 ms)
+      √ should reject invalid data against schema (2 ms)
+
+  ● Input Validation - SQL Injection Prevention › SQL Injection Detection › should sanitize text input to prevent SQL injection
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    [0m [90m 73 |[39m
+     [90m 74 |[39m       [90m// Assert[39m
+    [31m[1m>[22m[39m[90m 75 |[39m       expect(result[33m.[39misValid)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m    |[39m                              [31m[1m^[22m[39m
+     [90m 76 |[39m       expect(result[33m.[39msanitizedValue)[33m.[39mtoBeDefined()[33m;[39m
+     [90m 77 |[39m       expect(result[33m.[39msanitizedValue)[33m.[39mnot[33m.[39mtoContain([32m"'"[39m)[33m;[39m
+     [90m 78 |[39m     })[33m;[39m[0m
+
+      at Object.toBe (tests/unit/lib/security/input-validation.test.ts:75:30)
+
+  ● Input Validation - SQL Injection Prevention › XSS Prevention › should detect XSS patterns
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    [0m [90m 106 |[39m       [90m// Act & Assert[39m
+     [90m 107 |[39m       xssInputs[33m.[39mforEach((input) [33m=>[39m {
+    [31m[1m>[22m[39m[90m 108 |[39m         expect(containsXSS(input))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m     |[39m                                    [31m[1m^[22m[39m
+     [90m 109 |[39m       })[33m;[39m
+     [90m 110 |[39m     })[33m;[39m
+     [90m 111 |[39m[0m
+
+      at toBe (tests/unit/lib/security/input-validation.test.ts:108:36)
+          at Array.for
