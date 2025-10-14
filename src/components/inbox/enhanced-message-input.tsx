@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { Send, Paperclip, Smile, Template, Image, FileText, Mic, Video, X, Plus } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Send, Paperclip, Smile, LayoutTemplate, Image, FileText, Mic, Video, X, Plus } from 'lucide-react'
 import { WhatsAppTemplateManager, WhatsAppTemplate } from '@/lib/whatsapp/templates'
 import { WhatsAppMediaHandler } from '@/lib/whatsapp/media-handler'
 
@@ -42,16 +42,22 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
     try {
       setLoading(true)
       const result = await templateManager.getTemplates(organizationId, {
-        status: 'APPROVED',
+        status: 'approved',
         limit: 50
       })
-      setTemplates(result.templates)
+      setTemplates(result)
     } catch (error) {
       console.error('Failed to load templates:', error)
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (isOpen) {
+      loadTemplates()
+    }
+  }, [isOpen, organizationId])
 
   const handleTemplateSelect = (template: WhatsAppTemplate) => {
     setSelectedTemplate(template)
@@ -94,7 +100,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
               <div className="p-4 text-center text-gray-500">Loading templates...</div>
             ) : templates.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
-                <Template className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                <LayoutTemplate className="w-8 h-8 mx-auto mb-2 text-gray-300" />
                 <p>No approved templates found</p>
               </div>
             ) : (
@@ -184,7 +190,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
               </div>
             ) : (
               <div className="text-center text-gray-500 mt-8">
-                <Template className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <LayoutTemplate className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                 <p>Select a template to preview</p>
               </div>
             )}
@@ -459,7 +465,7 @@ export default function EnhancedMessageInput({
           className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
           disabled={disabled}
         >
-          <Template className="w-5 h-5" />
+          <LayoutTemplate className="w-5 h-5" />
         </button>
 
         {/* Message Input */}

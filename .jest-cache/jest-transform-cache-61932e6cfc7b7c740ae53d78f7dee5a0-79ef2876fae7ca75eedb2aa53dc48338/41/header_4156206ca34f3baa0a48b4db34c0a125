@@ -1,0 +1,604 @@
+bda30e2fe4bdc1c67129f881469e94dc
+'use client';
+"use strict";
+
+/* istanbul ignore next */
+function cov_kebi6u9x4() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\header.tsx";
+  var hash = "6ba06976190b1dba397f43a7399d1820720fdeb0";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\header.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 3,
+          column: 0
+        },
+        end: {
+          line: 5,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 0
+        },
+        end: {
+          line: 11,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 9,
+          column: 8
+        },
+        end: {
+          line: 9,
+          column: 31
+        }
+      },
+      "3": {
+        start: {
+          line: 12,
+          column: 20
+        },
+        end: {
+          line: 12,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 15
+        },
+        end: {
+          line: 13,
+          column: 31
+        }
+      },
+      "5": {
+        start: {
+          line: 14,
+          column: 14
+        },
+        end: {
+          line: 14,
+          column: 39
+        }
+      },
+      "6": {
+        start: {
+          line: 15,
+          column: 17
+        },
+        end: {
+          line: 26,
+          column: 6
+        }
+      },
+      "7": {
+        start: {
+          line: 15,
+          column: 35
+        },
+        end: {
+          line: 26,
+          column: 6
+        }
+      },
+      "8": {
+        start: {
+          line: 27,
+          column: 17
+        },
+        end: {
+          line: 38,
+          column: 6
+        }
+      },
+      "9": {
+        start: {
+          line: 27,
+          column: 35
+        },
+        end: {
+          line: 38,
+          column: 6
+        }
+      },
+      "10": {
+        start: {
+          line: 40,
+          column: 44
+        },
+        end: {
+          line: 40,
+          column: 71
+        }
+      },
+      "11": {
+        start: {
+          line: 41,
+          column: 4
+        },
+        end: {
+          line: 164,
+          column: 7
+        }
+      },
+      "12": {
+        start: {
+          line: 108,
+          column: 53
+        },
+        end: {
+          line: 108,
+          column: 83
+        }
+      },
+      "13": {
+        start: {
+          line: 151,
+          column: 61
+        },
+        end: {
+          line: 151,
+          column: 81
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 8,
+            column: 9
+          },
+          end: {
+            line: 8,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 8,
+            column: 20
+          },
+          end: {
+            line: 10,
+            column: 5
+          }
+        },
+        line: 8
+      },
+      "1": {
+        name: "(anonymous_1)",
+        decl: {
+          start: {
+            line: 15,
+            column: 17
+          },
+          end: {
+            line: 15,
+            column: 18
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 35
+          },
+          end: {
+            line: 26,
+            column: 6
+          }
+        },
+        line: 15
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 27,
+            column: 17
+          },
+          end: {
+            line: 27,
+            column: 18
+          }
+        },
+        loc: {
+          start: {
+            line: 27,
+            column: 35
+          },
+          end: {
+            line: 38,
+            column: 6
+          }
+        },
+        line: 27
+      },
+      "3": {
+        name: "DashboardHeader",
+        decl: {
+          start: {
+            line: 39,
+            column: 9
+          },
+          end: {
+            line: 39,
+            column: 24
+          }
+        },
+        loc: {
+          start: {
+            line: 39,
+            column: 38
+          },
+          end: {
+            line: 165,
+            column: 1
+          }
+        },
+        line: 39
+      },
+      "4": {
+        name: "(anonymous_4)",
+        decl: {
+          start: {
+            line: 108,
+            column: 49
+          },
+          end: {
+            line: 108,
+            column: 50
+          }
+        },
+        loc: {
+          start: {
+            line: 108,
+            column: 53
+          },
+          end: {
+            line: 108,
+            column: 83
+          }
+        },
+        line: 108
+      },
+      "5": {
+        name: "(anonymous_5)",
+        decl: {
+          start: {
+            line: 151,
+            column: 57
+          },
+          end: {
+            line: 151,
+            column: 58
+          }
+        },
+        loc: {
+          start: {
+            line: 151,
+            column: 61
+          },
+          end: {
+            line: 151,
+            column: 81
+          }
+        },
+        line: 151
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 118,
+            column: 62
+          },
+          end: {
+            line: 118,
+            column: 111
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 118,
+            column: 62
+          },
+          end: {
+            line: 118,
+            column: 104
+          }
+        }, {
+          start: {
+            line: 118,
+            column: 108
+          },
+          end: {
+            line: 118,
+            column: 111
+          }
+        }],
+        line: 118
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 142,
+            column: 36
+          },
+          end: {
+            line: 156,
+            column: 38
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 142,
+            column: 36
+          },
+          end: {
+            line: 142,
+            column: 48
+          }
+        }, {
+          start: {
+            line: 142,
+            column: 66
+          },
+          end: {
+            line: 156,
+            column: 38
+          }
+        }],
+        line: 142
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\header.tsx"],
+      sourcesContent: ["'use client'\n\nimport { useState } from 'react'\nimport { signOut } from '@/lib/auth'\n\nconst MenuIcon = () => (\n  <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n    <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M4 6h16M4 12h16M4 18h16\" />\n  </svg>\n)\n\nconst BellIcon = () => (\n  <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n    <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\" />\n  </svg>\n)\n\ninterface DashboardHeaderProps {\n  profile: any\n}\n\nexport function DashboardHeader({ profile }: DashboardHeaderProps) {\n  const [userMenuOpen, setUserMenuOpen] = useState(false)\n\n  return (\n    <div className=\"sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8\">\n      <button\n        type=\"button\"\n        className=\"-m-2.5 p-2.5 text-gray-700 lg:hidden\"\n      >\n        <span className=\"sr-only\">Open sidebar</span>\n        <MenuIcon />\n      </button>\n\n      {/* Separator */}\n      <div className=\"h-6 w-px bg-gray-900/10 lg:hidden\" aria-hidden=\"true\" />\n\n      <div className=\"flex flex-1 gap-x-4 self-stretch lg:gap-x-6\">\n        <div className=\"flex items-center gap-x-4 lg:gap-x-6\">\n          {/* Search */}\n          <div className=\"relative flex-1\">\n            <div className=\"pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3\">\n              <svg className=\"h-5 w-5 text-gray-400\" viewBox=\"0 0 20 20\" fill=\"currentColor\">\n                <path fillRule=\"evenodd\" d=\"M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z\" clipRule=\"evenodd\" />\n              </svg>\n            </div>\n            <input\n              type=\"search\"\n              placeholder=\"Search conversations...\"\n              className=\"block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm sm:leading-6\"\n            />\n          </div>\n        </div>\n\n        <div className=\"flex items-center gap-x-4 lg:gap-x-6\">\n          <button\n            type=\"button\"\n            className=\"-m-2.5 p-2.5 text-gray-400 hover:text-gray-500\"\n          >\n            <span className=\"sr-only\">View notifications</span>\n            <BellIcon />\n          </button>\n\n          {/* Profile dropdown */}\n          <div className=\"relative\">\n            <button\n              type=\"button\"\n              className=\"-m-1.5 flex items-center p-1.5\"\n              onClick={() => setUserMenuOpen(!userMenuOpen)}\n            >\n              <span className=\"sr-only\">Open user menu</span>\n              <div className=\"h-8 w-8 rounded-full bg-green-500 flex items-center justify-center\">\n                <span className=\"text-sm font-medium text-white\">\n                  {profile.full_name?.charAt(0).toUpperCase() || 'U'}\n                </span>\n              </div>\n              <span className=\"hidden lg:flex lg:items-center\">\n                <span className=\"ml-4 text-sm font-semibold leading-6 text-gray-900\">\n                  {profile.full_name}\n                </span>\n                <svg className=\"ml-2 h-5 w-5 text-gray-400\" viewBox=\"0 0 20 20\" fill=\"currentColor\">\n                  <path fillRule=\"evenodd\" d=\"M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z\" clipRule=\"evenodd\" />\n                </svg>\n              </span>\n            </button>\n\n            {userMenuOpen && (\n              <div className=\"absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none\">\n                <a\n                  href=\"/dashboard/settings/profile\"\n                  className=\"block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50\"\n                >\n                  Profile\n                </a>\n                <button\n                  onClick={() => signOut()}\n                  className=\"block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50\"\n                >\n                  Sign out\n                </button>\n              </div>\n            )}\n          </div>\n        </div>\n      </div>\n    </div>\n  )\n}"],
+      names: ["DashboardHeader", "MenuIcon", "svg", "className", "fill", "stroke", "viewBox", "path", "strokeLinecap", "strokeLinejoin", "strokeWidth", "d", "BellIcon", "profile", "userMenuOpen", "setUserMenuOpen", "useState", "div", "button", "type", "span", "aria-hidden", "fillRule", "clipRule", "input", "placeholder", "onClick", "full_name", "charAt", "toUpperCase", "a", "href", "signOut"],
+      mappings: "AAAA;;;;;+BAqBgBA;;;eAAAA;;;;uBAnBS;sBACD;AAExB,MAAMC,WAAW,kBACf,qBAACC;QAAIC,WAAU;QAAUC,MAAK;QAAOC,QAAO;QAAeC,SAAQ;kBACjE,cAAA,qBAACC;YAAKC,eAAc;YAAQC,gBAAe;YAAQC,aAAa;YAAGC,GAAE;;;AAIzE,MAAMC,WAAW,kBACf,qBAACV;QAAIC,WAAU;QAAUC,MAAK;QAAOC,QAAO;QAAeC,SAAQ;kBACjE,cAAA,qBAACC;YAAKC,eAAc;YAAQC,gBAAe;YAAQC,aAAa;YAAGC,GAAE;;;AAQlE,SAASX,gBAAgB,EAAEa,OAAO,EAAwB;IAC/D,MAAM,CAACC,cAAcC,gBAAgB,GAAGC,IAAAA,eAAQ,EAAC;IAEjD,qBACE,sBAACC;QAAId,WAAU;;0BACb,sBAACe;gBACCC,MAAK;gBACLhB,WAAU;;kCAEV,qBAACiB;wBAAKjB,WAAU;kCAAU;;kCAC1B,qBAACF;;;0BAIH,qBAACgB;gBAAId,WAAU;gBAAoCkB,eAAY;;0BAE/D,sBAACJ;gBAAId,WAAU;;kCACb,qBAACc;wBAAId,WAAU;kCAEb,cAAA,sBAACc;4BAAId,WAAU;;8CACb,qBAACc;oCAAId,WAAU;8CACb,cAAA,qBAACD;wCAAIC,WAAU;wCAAwBG,SAAQ;wCAAYF,MAAK;kDAC9D,cAAA,qBAACG;4CAAKe,UAAS;4CAAUX,GAAE;4CAAiIY,UAAS;;;;8CAGzK,qBAACC;oCACCL,MAAK;oCACLM,aAAY;oCACZtB,WAAU;;;;;kCAKhB,sBAACc;wBAAId,WAAU;;0CACb,sBAACe;gCACCC,MAAK;gCACLhB,WAAU;;kDAEV,qBAACiB;wCAAKjB,WAAU;kDAAU;;kDAC1B,qBAACS;;;0CAIH,sBAACK;gCAAId,WAAU;;kDACb,sBAACe;wCACCC,MAAK;wCACLhB,WAAU;wCACVuB,SAAS,IAAMX,gBAAgB,CAACD;;0DAEhC,qBAACM;gDAAKjB,WAAU;0DAAU;;0DAC1B,qBAACc;gDAAId,WAAU;0DACb,cAAA,qBAACiB;oDAAKjB,WAAU;8DACbU,QAAQc,SAAS,EAAEC,OAAO,GAAGC,iBAAiB;;;0DAGnD,sBAACT;gDAAKjB,WAAU;;kEACd,qBAACiB;wDAAKjB,WAAU;kEACbU,QAAQc,SAAS;;kEAEpB,qBAACzB;wDAAIC,WAAU;wDAA6BG,SAAQ;wDAAYF,MAAK;kEACnE,cAAA,qBAACG;4DAAKe,UAAS;4DAAUX,GAAE;4DAAsIY,UAAS;;;;;;;oCAK/KT,8BACC,sBAACG;wCAAId,WAAU;;0DACb,qBAAC2B;gDACCC,MAAK;gDACL5B,WAAU;0DACX;;0DAGD,qBAACe;gDACCQ,SAAS,IAAMM,IAAAA,aAAO;gDACtB7B,WAAU;0DACX;;;;;;;;;;;;AAUjB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "6ba06976190b1dba397f43a7399d1820720fdeb0"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_kebi6u9x4 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_kebi6u9x4();
+cov_kebi6u9x4().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_kebi6u9x4().s[1]++;
+Object.defineProperty(exports, "DashboardHeader", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_kebi6u9x4().f[0]++;
+    cov_kebi6u9x4().s[2]++;
+    return DashboardHeader;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_kebi6u9x4().s[3]++, require("react/jsx-runtime"));
+const _react =
+/* istanbul ignore next */
+(cov_kebi6u9x4().s[4]++, require("react"));
+const _auth =
+/* istanbul ignore next */
+(cov_kebi6u9x4().s[5]++, require("../../lib/auth"));
+/* istanbul ignore next */
+cov_kebi6u9x4().s[6]++;
+const MenuIcon = () => {
+  /* istanbul ignore next */
+  cov_kebi6u9x4().f[1]++;
+  cov_kebi6u9x4().s[7]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+    className: "w-6 h-6",
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24",
+    children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      strokeWidth: 2,
+      d: "M4 6h16M4 12h16M4 18h16"
+    })
+  });
+};
+/* istanbul ignore next */
+cov_kebi6u9x4().s[8]++;
+const BellIcon = () => {
+  /* istanbul ignore next */
+  cov_kebi6u9x4().f[2]++;
+  cov_kebi6u9x4().s[9]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+    className: "w-6 h-6",
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24",
+    children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      strokeWidth: 2,
+      d: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+    })
+  });
+};
+function DashboardHeader({
+  profile
+}) {
+  /* istanbul ignore next */
+  cov_kebi6u9x4().f[3]++;
+  const [userMenuOpen, setUserMenuOpen] =
+  /* istanbul ignore next */
+  (cov_kebi6u9x4().s[10]++, (0, _react.useState)(false));
+  /* istanbul ignore next */
+  cov_kebi6u9x4().s[11]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+    className: "sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8",
+    children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+      type: "button",
+      className: "-m-2.5 p-2.5 text-gray-700 lg:hidden",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+        className: "sr-only",
+        children: "Open sidebar"
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)(MenuIcon, {})]
+    }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+      className: "h-6 w-px bg-gray-900/10 lg:hidden",
+      "aria-hidden": "true"
+    }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "flex flex-1 gap-x-4 self-stretch lg:gap-x-6",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+        className: "flex items-center gap-x-4 lg:gap-x-6",
+        children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+          className: "relative flex-1",
+          children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+              className: "h-5 w-5 text-gray-400",
+              viewBox: "0 0 20 20",
+              fill: "currentColor",
+              children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+                fillRule: "evenodd",
+                d: "M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z",
+                clipRule: "evenodd"
+              })
+            })
+          }), /*#__PURE__*/(0, _jsxruntime.jsx)("input", {
+            type: "search",
+            placeholder: "Search conversations...",
+            className: "block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm sm:leading-6"
+          })]
+        })
+      }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "flex items-center gap-x-4 lg:gap-x-6",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+          type: "button",
+          className: "-m-2.5 p-2.5 text-gray-400 hover:text-gray-500",
+          children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+            className: "sr-only",
+            children: "View notifications"
+          }), /*#__PURE__*/(0, _jsxruntime.jsx)(BellIcon, {})]
+        }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+          className: "relative",
+          children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+            type: "button",
+            className: "-m-1.5 flex items-center p-1.5",
+            onClick: () => {
+              /* istanbul ignore next */
+              cov_kebi6u9x4().f[4]++;
+              cov_kebi6u9x4().s[12]++;
+              return setUserMenuOpen(!userMenuOpen);
+            },
+            children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+              className: "sr-only",
+              children: "Open user menu"
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "h-8 w-8 rounded-full bg-green-500 flex items-center justify-center",
+              children: /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                className: "text-sm font-medium text-white",
+                children:
+                /* istanbul ignore next */
+                (cov_kebi6u9x4().b[0][0]++, profile.full_name?.charAt(0).toUpperCase()) ||
+                /* istanbul ignore next */
+                (cov_kebi6u9x4().b[0][1]++, 'U')
+              })
+            }), /*#__PURE__*/(0, _jsxruntime.jsxs)("span", {
+              className: "hidden lg:flex lg:items-center",
+              children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                className: "ml-4 text-sm font-semibold leading-6 text-gray-900",
+                children: profile.full_name
+              }), /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+                className: "ml-2 h-5 w-5 text-gray-400",
+                viewBox: "0 0 20 20",
+                fill: "currentColor",
+                children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+                  fillRule: "evenodd",
+                  d: "M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z",
+                  clipRule: "evenodd"
+                })
+              })]
+            })]
+          }),
+          /* istanbul ignore next */
+          (cov_kebi6u9x4().b[1][0]++, userMenuOpen) &&
+          /* istanbul ignore next */
+          (cov_kebi6u9x4().b[1][1]++, /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+            className: "absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
+            children: [/*#__PURE__*/(0, _jsxruntime.jsx)("a", {
+              href: "/dashboard/settings/profile",
+              className: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50",
+              children: "Profile"
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("button", {
+              onClick: () => {
+                /* istanbul ignore next */
+                cov_kebi6u9x4().f[5]++;
+                cov_kebi6u9x4().s[13]++;
+                return (0, _auth.signOut)();
+              },
+              className: "block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50",
+              children: "Sign out"
+            })]
+          }))]
+        })]
+      })]
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3Zfa2ViaTZ1OXg0IiwiYWN0dWFsQ292ZXJhZ2UiLCJzIiwiRGFzaGJvYXJkSGVhZGVyIiwiTWVudUljb24iLCJmIiwiX2pzeHJ1bnRpbWUiLCJqc3giLCJjbGFzc05hbWUiLCJmaWxsIiwic3Ryb2tlIiwidmlld0JveCIsInN0cm9rZUxpbmVjYXAiLCJzdHJva2VMaW5lam9pbiIsInN0cm9rZVdpZHRoIiwiZCIsIkJlbGxJY29uIiwicHJvZmlsZSIsInVzZXJNZW51T3BlbiIsInNldFVzZXJNZW51T3BlbiIsIl9yZWFjdCIsInVzZVN0YXRlIiwianN4cyIsInR5cGUiLCJmaWxsUnVsZSIsImNsaXBSdWxlIiwicGxhY2Vob2xkZXIiLCJvbkNsaWNrIiwiYiIsImZ1bGxfbmFtZSIsImNoYXJBdCIsInRvVXBwZXJDYXNlIiwiaHJlZiIsIl9hdXRoIiwic2lnbk91dCJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxjb21wb25lbnRzXFxkYXNoYm9hcmRcXGhlYWRlci50c3giXSwic291cmNlc0NvbnRlbnQiOlsiJ3VzZSBjbGllbnQnXG5cbmltcG9ydCB7IHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnXG5pbXBvcnQgeyBzaWduT3V0IH0gZnJvbSAnQC9saWIvYXV0aCdcblxuY29uc3QgTWVudUljb24gPSAoKSA9PiAoXG4gIDxzdmcgY2xhc3NOYW1lPVwidy02IGgtNlwiIGZpbGw9XCJub25lXCIgc3Ryb2tlPVwiY3VycmVudENvbG9yXCIgdmlld0JveD1cIjAgMCAyNCAyNFwiPlxuICAgIDxwYXRoIHN0cm9rZUxpbmVjYXA9XCJyb3VuZFwiIHN0cm9rZUxpbmVqb2luPVwicm91bmRcIiBzdHJva2VXaWR0aD17Mn0gZD1cIk00IDZoMTZNNCAxMmgxNk00IDE4aDE2XCIgLz5cbiAgPC9zdmc+XG4pXG5cbmNvbnN0IEJlbGxJY29uID0gKCkgPT4gKFxuICA8c3ZnIGNsYXNzTmFtZT1cInctNiBoLTZcIiBmaWxsPVwibm9uZVwiIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiIHZpZXdCb3g9XCIwIDAgMjQgMjRcIj5cbiAgICA8cGF0aCBzdHJva2VMaW5lY2FwPVwicm91bmRcIiBzdHJva2VMaW5lam9pbj1cInJvdW5kXCIgc3Ryb2tlV2lkdGg9ezJ9IGQ9XCJNMTUgMTdoNWwtMS40MDUtMS40MDVBMi4wMzIgMi4wMzIgMCAwMTE4IDE0LjE1OFYxMWE2LjAwMiA2LjAwMiAwIDAwLTQtNS42NTlWNWEyIDIgMCAxMC00IDB2LjM0MUM3LjY3IDYuMTY1IDYgOC4zODggNiAxMXYzLjE1OWMwIC41MzgtLjIxNCAxLjA1NS0uNTk1IDEuNDM2TDQgMTdoNW02IDB2MWEzIDMgMCAxMS02IDB2LTFtNiAwSDlcIiAvPlxuICA8L3N2Zz5cbilcblxuaW50ZXJmYWNlIERhc2hib2FyZEhlYWRlclByb3BzIHtcbiAgcHJvZmlsZTogYW55XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBEYXNoYm9hcmRIZWFkZXIoeyBwcm9maWxlIH06IERhc2hib2FyZEhlYWRlclByb3BzKSB7XG4gIGNvbnN0IFt1c2VyTWVudU9wZW4sIHNldFVzZXJNZW51T3Blbl0gPSB1c2VTdGF0ZShmYWxzZSlcblxuICByZXR1cm4gKFxuICAgIDxkaXYgY2xhc3NOYW1lPVwic3RpY2t5IHRvcC0wIHotNDAgZmxleCBoLTE2IHNocmluay0wIGl0ZW1zLWNlbnRlciBnYXAteC00IGJvcmRlci1iIGJvcmRlci1ncmF5LTIwMCBiZy13aGl0ZSBweC00IHNoYWRvdy1zbSBzbTpnYXAteC02IHNtOnB4LTYgbGc6cHgtOFwiPlxuICAgICAgPGJ1dHRvblxuICAgICAgICB0eXBlPVwiYnV0dG9uXCJcbiAgICAgICAgY2xhc3NOYW1lPVwiLW0tMi41IHAtMi41IHRleHQtZ3JheS03MDAgbGc6aGlkZGVuXCJcbiAgICAgID5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwic3Itb25seVwiPk9wZW4gc2lkZWJhcjwvc3Bhbj5cbiAgICAgICAgPE1lbnVJY29uIC8+XG4gICAgICA8L2J1dHRvbj5cblxuICAgICAgey8qIFNlcGFyYXRvciAqL31cbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaC02IHctcHggYmctZ3JheS05MDAvMTAgbGc6aGlkZGVuXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCIgLz5cblxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtMSBnYXAteC00IHNlbGYtc3RyZXRjaCBsZzpnYXAteC02XCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIgZ2FwLXgtNCBsZzpnYXAteC02XCI+XG4gICAgICAgICAgey8qIFNlYXJjaCAqL31cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInJlbGF0aXZlIGZsZXgtMVwiPlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJwb2ludGVyLWV2ZW50cy1ub25lIGFic29sdXRlIGluc2V0LXktMCBsZWZ0LTAgZmxleCBpdGVtcy1jZW50ZXIgcGwtM1wiPlxuICAgICAgICAgICAgICA8c3ZnIGNsYXNzTmFtZT1cImgtNSB3LTUgdGV4dC1ncmF5LTQwMFwiIHZpZXdCb3g9XCIwIDAgMjAgMjBcIiBmaWxsPVwiY3VycmVudENvbG9yXCI+XG4gICAgICAgICAgICAgICAgPHBhdGggZmlsbFJ1bGU9XCJldmVub2RkXCIgZD1cIk05IDMuNWE1LjUgNS41IDAgMTAwIDExIDUuNSA1LjUgMCAwMDAtMTF6TTIgOWE3IDcgMCAxMTEyLjQ1MiA0LjM5MWwzLjMyOCAzLjMyOWEuNzUuNzUgMCAxMS0xLjA2IDEuMDZsLTMuMzI5LTMuMzI4QTcgNyAwIDAxMiA5elwiIGNsaXBSdWxlPVwiZXZlbm9kZFwiIC8+XG4gICAgICAgICAgICAgIDwvc3ZnPlxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8aW5wdXRcbiAgICAgICAgICAgICAgdHlwZT1cInNlYXJjaFwiXG4gICAgICAgICAgICAgIHBsYWNlaG9sZGVyPVwiU2VhcmNoIGNvbnZlcnNhdGlvbnMuLi5cIlxuICAgICAgICAgICAgICBjbGFzc05hbWU9XCJibG9jayB3LWZ1bGwgcm91bmRlZC1tZCBib3JkZXItMCBweS0xLjUgcGwtMTAgcHItMyB0ZXh0LWdyYXktOTAwIHJpbmctMSByaW5nLWluc2V0IHJpbmctZ3JheS0zMDAgcGxhY2Vob2xkZXI6dGV4dC1ncmF5LTQwMCBmb2N1czpyaW5nLTIgZm9jdXM6cmluZy1pbnNldCBmb2N1czpyaW5nLWdyZWVuLTUwMCBzbTp0ZXh0LXNtIHNtOmxlYWRpbmctNlwiXG4gICAgICAgICAgICAvPlxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICA8L2Rpdj5cblxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC14LTQgbGc6Z2FwLXgtNlwiPlxuICAgICAgICAgIDxidXR0b25cbiAgICAgICAgICAgIHR5cGU9XCJidXR0b25cIlxuICAgICAgICAgICAgY2xhc3NOYW1lPVwiLW0tMi41IHAtMi41IHRleHQtZ3JheS00MDAgaG92ZXI6dGV4dC1ncmF5LTUwMFwiXG4gICAgICAgICAgPlxuICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwic3Itb25seVwiPlZpZXcgbm90aWZpY2F0aW9uczwvc3Bhbj5cbiAgICAgICAgICAgIDxCZWxsSWNvbiAvPlxuICAgICAgICAgIDwvYnV0dG9uPlxuXG4gICAgICAgICAgey8qIFByb2ZpbGUgZHJvcGRvd24gKi99XG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJyZWxhdGl2ZVwiPlxuICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICB0eXBlPVwiYnV0dG9uXCJcbiAgICAgICAgICAgICAgY2xhc3NOYW1lPVwiLW0tMS41IGZsZXggaXRlbXMtY2VudGVyIHAtMS41XCJcbiAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0VXNlck1lbnVPcGVuKCF1c2VyTWVudU9wZW4pfVxuICAgICAgICAgICAgPlxuICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJzci1vbmx5XCI+T3BlbiB1c2VyIG1lbnU8L3NwYW4+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaC04IHctOCByb3VuZGVkLWZ1bGwgYmctZ3JlZW4tNTAwIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyXCI+XG4gICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LXdoaXRlXCI+XG4gICAgICAgICAgICAgICAgICB7cHJvZmlsZS5mdWxsX25hbWU/LmNoYXJBdCgwKS50b1VwcGVyQ2FzZSgpIHx8ICdVJ31cbiAgICAgICAgICAgICAgICA8L3NwYW4+XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJoaWRkZW4gbGc6ZmxleCBsZzppdGVtcy1jZW50ZXJcIj5cbiAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJtbC00IHRleHQtc20gZm9udC1zZW1pYm9sZCBsZWFkaW5nLTYgdGV4dC1ncmF5LTkwMFwiPlxuICAgICAgICAgICAgICAgICAge3Byb2ZpbGUuZnVsbF9uYW1lfVxuICAgICAgICAgICAgICAgIDwvc3Bhbj5cbiAgICAgICAgICAgICAgICA8c3ZnIGNsYXNzTmFtZT1cIm1sLTIgaC01IHctNSB0ZXh0LWdyYXktNDAwXCIgdmlld0JveD1cIjAgMCAyMCAyMFwiIGZpbGw9XCJjdXJyZW50Q29sb3JcIj5cbiAgICAgICAgICAgICAgICAgIDxwYXRoIGZpbGxSdWxlPVwiZXZlbm9kZFwiIGQ9XCJNNS4yMyA3LjIxYS43NS43NSAwIDAxMS4wNi4wMkwxMCAxMS4xNjhsMy43MS0zLjkzOGEuNzUuNzUgMCAxMTEuMDggMS4wNGwtNC4yNSA0LjVhLjc1Ljc1IDAgMDEtMS4wOCAwbC00LjI1LTQuNWEuNzUuNzUgMCAwMS4wMi0xLjA2elwiIGNsaXBSdWxlPVwiZXZlbm9kZFwiIC8+XG4gICAgICAgICAgICAgICAgPC9zdmc+XG4gICAgICAgICAgICAgIDwvc3Bhbj5cbiAgICAgICAgICAgIDwvYnV0dG9uPlxuXG4gICAgICAgICAgICB7dXNlck1lbnVPcGVuICYmIChcbiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhYnNvbHV0ZSByaWdodC0wIHotMTAgbXQtMi41IHctMzIgb3JpZ2luLXRvcC1yaWdodCByb3VuZGVkLW1kIGJnLXdoaXRlIHB5LTIgc2hhZG93LWxnIHJpbmctMSByaW5nLWdyYXktOTAwLzUgZm9jdXM6b3V0bGluZS1ub25lXCI+XG4gICAgICAgICAgICAgICAgPGFcbiAgICAgICAgICAgICAgICAgIGhyZWY9XCIvZGFzaGJvYXJkL3NldHRpbmdzL3Byb2ZpbGVcIlxuICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPVwiYmxvY2sgcHgtMyBweS0xIHRleHQtc20gbGVhZGluZy02IHRleHQtZ3JheS05MDAgaG92ZXI6YmctZ3JheS01MFwiXG4gICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgUHJvZmlsZVxuICAgICAgICAgICAgICAgIDwvYT5cbiAgICAgICAgICAgICAgICA8YnV0dG9uXG4gICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzaWduT3V0KCl9XG4gICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJibG9jayB3LWZ1bGwgdGV4dC1sZWZ0IHB4LTMgcHktMSB0ZXh0LXNtIGxlYWRpbmctNiB0ZXh0LWdyYXktOTAwIGhvdmVyOmJnLWdyYXktNTBcIlxuICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgIFNpZ24gb3V0XG4gICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgKX1cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICA8L2Rpdj5cbiAgKVxufSJdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7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

@@ -45,13 +45,14 @@ export async function POST(request: NextRequest) {
     const result = await verifyMFAToken(userId, token);
 
     if (!result.valid) {
+      // TODO WEEK 5+: Create audit_logs table for security auditing
       // Log failed attempt
-      await supabase.from('audit_logs').insert({
-        user_id: userId,
-        action: 'mfa_login_failed',
-        details: { error: result.error },
-        timestamp: new Date().toISOString(),
-      });
+      // await supabase.from('audit_logs').insert({
+      //   user_id: userId,
+      //   action: 'mfa_login_failed',
+      //   details: { error: result.error },
+      //   timestamp: new Date().toISOString(),
+      // });
 
       return NextResponse.json(
         { error: result.error || 'Invalid verification code' },
@@ -59,12 +60,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // TODO WEEK 5+: Create audit_logs table for security auditing
     // Log successful MFA verification
-    await supabase.from('audit_logs').insert({
-      user_id: userId,
-      action: 'mfa_login_verified',
-      timestamp: new Date().toISOString(),
-    });
+    // await supabase.from('audit_logs').insert({
+    //   user_id: userId,
+    //   action: 'mfa_login_verified',
+    //   timestamp: new Date().toISOString(),
+    // });
 
     return NextResponse.json({
       success: true,

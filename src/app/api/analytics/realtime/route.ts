@@ -322,7 +322,7 @@ async function getTopActiveAgents(supabase: TypedSupabaseClient, organizationId:
     if (!agentStats[agent.id]) {
       agentStats[agent.id] = {
         id: agent.id,
-        name: agent.full_name,
+        name: agent.full_name || 'Unknown Agent',
         messageCount: 0
       }
     }

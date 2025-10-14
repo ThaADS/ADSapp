@@ -1,0 +1,351 @@
+d59e5a56deee81166f5866082e275f01
+"use strict";
+
+/* istanbul ignore next */
+function cov_11xvdlfx41() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\templates\\page.tsx";
+  var hash = "9e18909ffd58a7423c712f4f257a9e7eaca9c622";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\templates\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 29
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 14
+        },
+        end: {
+          line: 12,
+          column: 42
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 38
+        },
+        end: {
+          line: 13,
+          column: 120
+        }
+      },
+      "6": {
+        start: {
+          line: 15,
+          column: 4
+        },
+        end: {
+          line: 17,
+          column: 6
+        }
+      },
+      "7": {
+        start: {
+          line: 20,
+          column: 20
+        },
+        end: {
+          line: 20,
+          column: 58
+        }
+      },
+      "8": {
+        start: {
+          line: 21,
+          column: 4
+        },
+        end: {
+          line: 40,
+          column: 7
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "_interop_require_default",
+        decl: {
+          start: {
+            line: 14,
+            column: 9
+          },
+          end: {
+            line: 14,
+            column: 33
+          }
+        },
+        loc: {
+          start: {
+            line: 14,
+            column: 39
+          },
+          end: {
+            line: 18,
+            column: 1
+          }
+        },
+        line: 14
+      },
+      "2": {
+        name: "TemplatesPage",
+        decl: {
+          start: {
+            line: 19,
+            column: 15
+          },
+          end: {
+            line: 19,
+            column: 28
+          }
+        },
+        loc: {
+          start: {
+            line: 19,
+            column: 31
+          },
+          end: {
+            line: 41,
+            column: 1
+          }
+        },
+        line: 19
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 15,
+            column: 35
+          },
+          end: {
+            line: 15,
+            column: 38
+          }
+        }, {
+          start: {
+            line: 15,
+            column: 41
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        }],
+        line: 15
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 15,
+            column: 32
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 15,
+            column: 14
+          }
+        }, {
+          start: {
+            line: 15,
+            column: 18
+          },
+          end: {
+            line: 15,
+            column: 32
+          }
+        }],
+        line: 15
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\templates\\page.tsx"],
+      sourcesContent: ["import { requireOrganization } from '@/lib/auth'\nimport TemplateEditor from '@/components/templates/template-editor'\n\nexport default async function TemplatesPage() {\n  const profile = await requireOrganization()\n\n  return (\n    <div className=\"space-y-6\">\n      <div>\n        <h1 className=\"text-2xl font-bold text-gray-900\">Message Templates</h1>\n        <p className=\"mt-1 text-sm text-gray-600\">\n          Create and manage WhatsApp message templates for your business.\n        </p>\n      </div>\n      \n      <TemplateEditor organizationId={profile.organization_id} />\n    </div>\n  )\n}\n"],
+      names: ["TemplatesPage", "profile", "requireOrganization", "div", "className", "h1", "p", "TemplateEditor", "organizationId", "organization_id"],
+      mappings: ";;;;+BAGA;;;eAA8BA;;;;sBAHM;uEACT;;;;;;AAEZ,eAAeA;IAC5B,MAAMC,UAAU,MAAMC,IAAAA,yBAAmB;IAEzC,qBACE,sBAACC;QAAIC,WAAU;;0BACb,sBAACD;;kCACC,qBAACE;wBAAGD,WAAU;kCAAmC;;kCACjD,qBAACE;wBAAEF,WAAU;kCAA6B;;;;0BAK5C,qBAACG,uBAAc;gBAACC,gBAAgBP,QAAQQ,eAAe;;;;AAG7D"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "9e18909ffd58a7423c712f4f257a9e7eaca9c622"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_11xvdlfx41 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_11xvdlfx41();
+cov_11xvdlfx41().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_11xvdlfx41().s[1]++;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_11xvdlfx41().f[0]++;
+    cov_11xvdlfx41().s[2]++;
+    return TemplatesPage;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_11xvdlfx41().s[3]++, require("react/jsx-runtime"));
+const _auth =
+/* istanbul ignore next */
+(cov_11xvdlfx41().s[4]++, require("../../../lib/auth"));
+const _templateeditor =
+/* istanbul ignore next */
+(/*#__PURE__*/cov_11xvdlfx41().s[5]++, _interop_require_default(require("../../../components/templates/template-editor")));
+function _interop_require_default(obj) {
+  /* istanbul ignore next */
+  cov_11xvdlfx41().f[1]++;
+  cov_11xvdlfx41().s[6]++;
+  return /* istanbul ignore next */(cov_11xvdlfx41().b[1][0]++, obj) &&
+  /* istanbul ignore next */
+  (cov_11xvdlfx41().b[1][1]++, obj.__esModule) ?
+  /* istanbul ignore next */
+  (cov_11xvdlfx41().b[0][0]++, obj) :
+  /* istanbul ignore next */
+  (cov_11xvdlfx41().b[0][1]++, {
+    default: obj
+  });
+}
+async function TemplatesPage() {
+  /* istanbul ignore next */
+  cov_11xvdlfx41().f[2]++;
+  const profile =
+  /* istanbul ignore next */
+  (cov_11xvdlfx41().s[7]++, await (0, _auth.requireOrganization)());
+  /* istanbul ignore next */
+  cov_11xvdlfx41().s[8]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+    className: "space-y-6",
+    children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      children: [/*#__PURE__*/(0, _jsxruntime.jsx)("h1", {
+        className: "text-2xl font-bold text-gray-900",
+        children: "Message Templates"
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)("p", {
+        className: "mt-1 text-sm text-gray-600",
+        children: "Create and manage WhatsApp message templates for your business."
+      })]
+    }), /*#__PURE__*/(0, _jsxruntime.jsx)(_templateeditor.default, {
+      organizationId: profile.organization_id
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJUZW1wbGF0ZXNQYWdlIiwiY292XzExeHZkbGZ4NDEiLCJmIiwicHJvZmlsZSIsInMiLCJfYXV0aCIsInJlcXVpcmVPcmdhbml6YXRpb24iLCJfanN4cnVudGltZSIsImpzeHMiLCJjbGFzc05hbWUiLCJqc3giLCJfdGVtcGxhdGVlZGl0b3IiLCJkZWZhdWx0Iiwib3JnYW5pemF0aW9uSWQiLCJvcmdhbml6YXRpb25faWQiXSwic291cmNlcyI6WyJDOlxcQWkgUHJvamVjdGVuXFxBRFNhcHBcXHNyY1xcYXBwXFxkYXNoYm9hcmRcXHRlbXBsYXRlc1xccGFnZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgcmVxdWlyZU9yZ2FuaXphdGlvbiB9IGZyb20gJ0AvbGliL2F1dGgnXG5pbXBvcnQgVGVtcGxhdGVFZGl0b3IgZnJvbSAnQC9jb21wb25lbnRzL3RlbXBsYXRlcy90ZW1wbGF0ZS1lZGl0b3InXG5cbmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIFRlbXBsYXRlc1BhZ2UoKSB7XG4gIGNvbnN0IHByb2ZpbGUgPSBhd2FpdCByZXF1aXJlT3JnYW5pemF0aW9uKClcblxuICByZXR1cm4gKFxuICAgIDxkaXYgY2xhc3NOYW1lPVwic3BhY2UteS02XCI+XG4gICAgICA8ZGl2PlxuICAgICAgICA8aDEgY2xhc3NOYW1lPVwidGV4dC0yeGwgZm9udC1ib2xkIHRleHQtZ3JheS05MDBcIj5NZXNzYWdlIFRlbXBsYXRlczwvaDE+XG4gICAgICAgIDxwIGNsYXNzTmFtZT1cIm10LTEgdGV4dC1zbSB0ZXh0LWdyYXktNjAwXCI+XG4gICAgICAgICAgQ3JlYXRlIGFuZCBtYW5hZ2UgV2hhdHNBcHAgbWVzc2FnZSB0ZW1wbGF0ZXMgZm9yIHlvdXIgYnVzaW5lc3MuXG4gICAgICAgIDwvcD5cbiAgICAgIDwvZGl2PlxuICAgICAgXG4gICAgICA8VGVtcGxhdGVFZGl0b3Igb3JnYW5pemF0aW9uSWQ9e3Byb2ZpbGUub3JnYW5pemF0aW9uX2lkfSAvPlxuICAgIDwvZGl2PlxuICApXG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsrQkFHQTs7Ozs7O1dBQThCQSxhQUFBOzs7Ozs7OztrQ0FITTs7O3dFQUNUOzs7Ozs7Ozs7Ozs7Ozs7QUFFWixlQUFlQSxjQUFBO0VBQUE7RUFBQUMsY0FBQSxHQUFBQyxDQUFBO0VBQzVCLE1BQU1DLE9BQUE7RUFBQTtFQUFBLENBQUFGLGNBQUEsR0FBQUcsQ0FBQSxPQUFVLE1BQU0sSUFBQUMsS0FBQSxDQUFBQyxtQkFBbUI7RUFBQTtFQUFBTCxjQUFBLEdBQUFHLENBQUE7RUFFekMsb0JBQ0UsSUFBQUcsV0FBQSxDQUFBQyxJQUFBLEVBQUM7SUFBSUMsU0FBQSxFQUFVOzRCQUNiLElBQUFGLFdBQUEsQ0FBQUMsSUFBQSxFQUFDOzhCQUNDLElBQUFELFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1FBQUdELFNBQUEsRUFBVTtrQkFBbUM7dUJBQ2pELElBQUFGLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1FBQUVELFNBQUEsRUFBVTtrQkFBNkI7O3FCQUs1QyxJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQ0MsZUFBQSxDQUFBQyxPQUFjO01BQUNDLGNBQUEsRUFBZ0JWLE9BQUEsQ0FBUVc7OztBQUc5QyIsImlnbm9yZUxpc3QiOltdfQ==

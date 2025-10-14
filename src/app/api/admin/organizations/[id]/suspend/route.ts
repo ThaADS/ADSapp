@@ -24,7 +24,7 @@ export async function POST(
     const success = await suspendOrganization(
       id,
       reason,
-      request.ip,
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
       request.headers.get('user-agent') || undefined
     )
 
@@ -57,7 +57,7 @@ export async function DELETE(
     const { id } = await params;
     const success = await reactivateOrganization(
       id,
-      request.ip,
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
       request.headers.get('user-agent') || undefined
     )
 

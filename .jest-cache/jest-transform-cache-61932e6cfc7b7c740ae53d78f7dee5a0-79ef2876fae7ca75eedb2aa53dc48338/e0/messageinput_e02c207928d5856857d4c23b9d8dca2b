@@ -1,0 +1,1236 @@
+98ebc67b9fac02809d635149bfd6daf4
+'use client';
+"use strict";
+
+/* istanbul ignore next */
+function cov_2pcp1f2236() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\components\\inbox\\message-input.tsx";
+  var hash = "4caf0820e7f976698045540452ebbd7e9d6e05b6";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\components\\inbox\\message-input.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 3,
+          column: 0
+        },
+        end: {
+          line: 5,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 0
+        },
+        end: {
+          line: 11,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 9,
+          column: 8
+        },
+        end: {
+          line: 9,
+          column: 28
+        }
+      },
+      "3": {
+        start: {
+          line: 12,
+          column: 20
+        },
+        end: {
+          line: 12,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 15
+        },
+        end: {
+          line: 13,
+          column: 31
+        }
+      },
+      "5": {
+        start: {
+          line: 15,
+          column: 34
+        },
+        end: {
+          line: 15,
+          column: 58
+        }
+      },
+      "6": {
+        start: {
+          line: 16,
+          column: 38
+        },
+        end: {
+          line: 16,
+          column: 65
+        }
+      },
+      "7": {
+        start: {
+          line: 17,
+          column: 46
+        },
+        end: {
+          line: 17,
+          column: 73
+        }
+      },
+      "8": {
+        start: {
+          line: 18,
+          column: 24
+        },
+        end: {
+          line: 18,
+          column: 48
+        }
+      },
+      "9": {
+        start: {
+          line: 19,
+          column: 25
+        },
+        end: {
+          line: 35,
+          column: 5
+        }
+      },
+      "10": {
+        start: {
+          line: 20,
+          column: 8
+        },
+        end: {
+          line: 20,
+          column: 27
+        }
+      },
+      "11": {
+        start: {
+          line: 21,
+          column: 8
+        },
+        end: {
+          line: 21,
+          column: 49
+        }
+      },
+      "12": {
+        start: {
+          line: 21,
+          column: 42
+        },
+        end: {
+          line: 21,
+          column: 49
+        }
+      },
+      "13": {
+        start: {
+          line: 22,
+          column: 8
+        },
+        end: {
+          line: 22,
+          column: 27
+        }
+      },
+      "14": {
+        start: {
+          line: 23,
+          column: 8
+        },
+        end: {
+          line: 34,
+          column: 9
+        }
+      },
+      "15": {
+        start: {
+          line: 24,
+          column: 12
+        },
+        end: {
+          line: 24,
+          column: 48
+        }
+      },
+      "16": {
+        start: {
+          line: 25,
+          column: 12
+        },
+        end: {
+          line: 25,
+          column: 27
+        }
+      },
+      "17": {
+        start: {
+          line: 27,
+          column: 12
+        },
+        end: {
+          line: 29,
+          column: 13
+        }
+      },
+      "18": {
+        start: {
+          line: 28,
+          column: 16
+        },
+        end: {
+          line: 28,
+          column: 58
+        }
+      },
+      "19": {
+        start: {
+          line: 31,
+          column: 12
+        },
+        end: {
+          line: 31,
+          column: 60
+        }
+      },
+      "20": {
+        start: {
+          line: 33,
+          column: 12
+        },
+        end: {
+          line: 33,
+          column: 32
+        }
+      },
+      "21": {
+        start: {
+          line: 36,
+          column: 26
+        },
+        end: {
+          line: 41,
+          column: 5
+        }
+      },
+      "22": {
+        start: {
+          line: 37,
+          column: 8
+        },
+        end: {
+          line: 40,
+          column: 9
+        }
+      },
+      "23": {
+        start: {
+          line: 38,
+          column: 12
+        },
+        end: {
+          line: 38,
+          column: 31
+        }
+      },
+      "24": {
+        start: {
+          line: 39,
+          column: 12
+        },
+        end: {
+          line: 39,
+          column: 28
+        }
+      },
+      "25": {
+        start: {
+          line: 42,
+          column: 33
+        },
+        end: {
+          line: 48,
+          column: 5
+        }
+      },
+      "26": {
+        start: {
+          line: 43,
+          column: 8
+        },
+        end: {
+          line: 43,
+          column: 35
+        }
+      },
+      "27": {
+        start: {
+          line: 45,
+          column: 25
+        },
+        end: {
+          line: 45,
+          column: 33
+        }
+      },
+      "28": {
+        start: {
+          line: 46,
+          column: 8
+        },
+        end: {
+          line: 46,
+          column: 39
+        }
+      },
+      "29": {
+        start: {
+          line: 47,
+          column: 8
+        },
+        end: {
+          line: 47,
+          column: 76
+        }
+      },
+      "30": {
+        start: {
+          line: 49,
+          column: 25
+        },
+        end: {
+          line: 54,
+          column: 5
+        }
+      },
+      "31": {
+        start: {
+          line: 55,
+          column: 4
+        },
+        end: {
+          line: 166,
+          column: 7
+        }
+      },
+      "32": {
+        start: {
+          line: 62,
+          column: 77
+        },
+        end: {
+          line: 70,
+          column: 33
+        }
+      },
+      "33": {
+        start: {
+          line: 64,
+          column: 32
+        },
+        end: {
+          line: 64,
+          column: 50
+        }
+      },
+      "34": {
+        start: {
+          line: 65,
+          column: 32
+        },
+        end: {
+          line: 65,
+          column: 56
+        }
+      },
+      "35": {
+        start: {
+          line: 66,
+          column: 32
+        },
+        end: {
+          line: 66,
+          column: 61
+        }
+      },
+      "36": {
+        start: {
+          line: 99,
+          column: 45
+        },
+        end: {
+          line: 99,
+          column: 77
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 8,
+            column: 9
+          },
+          end: {
+            line: 8,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 8,
+            column: 20
+          },
+          end: {
+            line: 10,
+            column: 5
+          }
+        },
+        line: 8
+      },
+      "1": {
+        name: "MessageInput",
+        decl: {
+          start: {
+            line: 14,
+            column: 9
+          },
+          end: {
+            line: 14,
+            column: 21
+          }
+        },
+        loc: {
+          start: {
+            line: 14,
+            column: 41
+          },
+          end: {
+            line: 167,
+            column: 1
+          }
+        },
+        line: 14
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 19,
+            column: 25
+          },
+          end: {
+            line: 19,
+            column: 26
+          }
+        },
+        loc: {
+          start: {
+            line: 19,
+            column: 36
+          },
+          end: {
+            line: 35,
+            column: 5
+          }
+        },
+        line: 19
+      },
+      "3": {
+        name: "(anonymous_3)",
+        decl: {
+          start: {
+            line: 36,
+            column: 26
+          },
+          end: {
+            line: 36,
+            column: 27
+          }
+        },
+        loc: {
+          start: {
+            line: 36,
+            column: 31
+          },
+          end: {
+            line: 41,
+            column: 5
+          }
+        },
+        line: 36
+      },
+      "4": {
+        name: "(anonymous_4)",
+        decl: {
+          start: {
+            line: 42,
+            column: 33
+          },
+          end: {
+            line: 42,
+            column: 34
+          }
+        },
+        loc: {
+          start: {
+            line: 42,
+            column: 38
+          },
+          end: {
+            line: 48,
+            column: 5
+          }
+        },
+        line: 42
+      },
+      "5": {
+        name: "(anonymous_5)",
+        decl: {
+          start: {
+            line: 62,
+            column: 47
+          },
+          end: {
+            line: 62,
+            column: 48
+          }
+        },
+        loc: {
+          start: {
+            line: 62,
+            column: 77
+          },
+          end: {
+            line: 70,
+            column: 33
+          }
+        },
+        line: 62
+      },
+      "6": {
+        name: "(anonymous_6)",
+        decl: {
+          start: {
+            line: 63,
+            column: 37
+          },
+          end: {
+            line: 63,
+            column: 38
+          }
+        },
+        loc: {
+          start: {
+            line: 63,
+            column: 41
+          },
+          end: {
+            line: 67,
+            column: 29
+          }
+        },
+        line: 63
+      },
+      "7": {
+        name: "(anonymous_7)",
+        decl: {
+          start: {
+            line: 99,
+            column: 41
+          },
+          end: {
+            line: 99,
+            column: 42
+          }
+        },
+        loc: {
+          start: {
+            line: 99,
+            column: 45
+          },
+          end: {
+            line: 99,
+            column: 77
+          }
+        },
+        line: 99
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 21,
+            column: 8
+          },
+          end: {
+            line: 21,
+            column: 49
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 21,
+            column: 8
+          },
+          end: {
+            line: 21,
+            column: 49
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 21
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 21,
+            column: 12
+          },
+          end: {
+            line: 21,
+            column: 40
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 21,
+            column: 12
+          },
+          end: {
+            line: 21,
+            column: 27
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 31
+          },
+          end: {
+            line: 21,
+            column: 40
+          }
+        }],
+        line: 21
+      },
+      "2": {
+        loc: {
+          start: {
+            line: 27,
+            column: 12
+          },
+          end: {
+            line: 29,
+            column: 13
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 27,
+            column: 12
+          },
+          end: {
+            line: 29,
+            column: 13
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 27
+      },
+      "3": {
+        loc: {
+          start: {
+            line: 37,
+            column: 8
+          },
+          end: {
+            line: 40,
+            column: 9
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 37,
+            column: 8
+          },
+          end: {
+            line: 40,
+            column: 9
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 37
+      },
+      "4": {
+        loc: {
+          start: {
+            line: 37,
+            column: 12
+          },
+          end: {
+            line: 37,
+            column: 44
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 37,
+            column: 12
+          },
+          end: {
+            line: 37,
+            column: 29
+          }
+        }, {
+          start: {
+            line: 37,
+            column: 33
+          },
+          end: {
+            line: 37,
+            column: 44
+          }
+        }],
+        line: 37
+      },
+      "5": {
+        loc: {
+          start: {
+            line: 58,
+            column: 12
+          },
+          end: {
+            line: 72,
+            column: 14
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 58,
+            column: 12
+          },
+          end: {
+            line: 58,
+            column: 25
+          }
+        }, {
+          start: {
+            line: 58,
+            column: 43
+          },
+          end: {
+            line: 72,
+            column: 14
+          }
+        }],
+        line: 58
+      },
+      "6": {
+        loc: {
+          start: {
+            line: 100,
+            column: 95
+          },
+          end: {
+            line: 100,
+            column: 177
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 100,
+            column: 111
+          },
+          end: {
+            line: 100,
+            column: 139
+          }
+        }, {
+          start: {
+            line: 100,
+            column: 142
+          },
+          end: {
+            line: 100,
+            column: 177
+          }
+        }],
+        line: 100
+      },
+      "7": {
+        loc: {
+          start: {
+            line: 134,
+            column: 42
+          },
+          end: {
+            line: 134,
+            column: 70
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 134,
+            column: 42
+          },
+          end: {
+            line: 134,
+            column: 57
+          }
+        }, {
+          start: {
+            line: 134,
+            column: 61
+          },
+          end: {
+            line: 134,
+            column: 70
+          }
+        }],
+        line: 134
+      },
+      "8": {
+        loc: {
+          start: {
+            line: 137,
+            column: 42
+          },
+          end: {
+            line: 150,
+            column: 34
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 137,
+            column: 68
+          },
+          end: {
+            line: 139,
+            column: 34
+          }
+        }, {
+          start: {
+            line: 139,
+            column: 51
+          },
+          end: {
+            line: 150,
+            column: 34
+          }
+        }],
+        line: 137
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "18": 0,
+      "19": 0,
+      "20": 0,
+      "21": 0,
+      "22": 0,
+      "23": 0,
+      "24": 0,
+      "25": 0,
+      "26": 0,
+      "27": 0,
+      "28": 0,
+      "29": 0,
+      "30": 0,
+      "31": 0,
+      "32": 0,
+      "33": 0,
+      "34": 0,
+      "35": 0,
+      "36": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0],
+      "2": [0, 0],
+      "3": [0, 0],
+      "4": [0, 0],
+      "5": [0, 0],
+      "6": [0, 0],
+      "7": [0, 0],
+      "8": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\components\\inbox\\message-input.tsx"],
+      sourcesContent: ["'use client'\n\nimport { useState, useRef } from 'react'\n\ninterface MessageInputProps {\n  onSendMessage: (content: string, type?: string) => Promise<void>\n}\n\nexport function MessageInput({ onSendMessage }: MessageInputProps) {\n  const [message, setMessage] = useState('')\n  const [isLoading, setIsLoading] = useState(false)\n  const [showTemplates, setShowTemplates] = useState(false)\n  const textareaRef = useRef<HTMLTextAreaElement>(null)\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault()\n\n    if (!message.trim() || isLoading) return\n\n    setIsLoading(true)\n    try {\n      await onSendMessage(message.trim())\n      setMessage('')\n      // Reset textarea height\n      if (textareaRef.current) {\n        textareaRef.current.style.height = 'auto'\n      }\n    } catch (error) {\n      console.error('Failed to send message:', error)\n    } finally {\n      setIsLoading(false)\n    }\n  }\n\n  const handleKeyDown = (e: React.KeyboardEvent) => {\n    if (e.key === 'Enter' && !e.shiftKey) {\n      e.preventDefault()\n      handleSubmit(e)\n    }\n  }\n\n  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {\n    setMessage(e.target.value)\n\n    // Auto-resize textarea\n    const textarea = e.target\n    textarea.style.height = 'auto'\n    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'\n  }\n\n  const quickReplies = [\n    'Thank you for contacting us!',\n    'How can I help you today?',\n    'I\\'ll look into this for you.',\n    'Is there anything else I can help with?',\n  ]\n\n  return (\n    <div className=\"border-t border-gray-200 bg-white\">\n      {/* Quick Replies */}\n      {showTemplates && (\n        <div className=\"px-6 py-2 border-b border-gray-100\">\n          <div className=\"flex flex-wrap gap-2\">\n            {quickReplies.map((reply, index) => (\n              <button\n                key={index}\n                onClick={() => {\n                  setMessage(reply)\n                  setShowTemplates(false)\n                  textareaRef.current?.focus()\n                }}\n                className=\"px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors\"\n              >\n                {reply}\n              </button>\n            ))}\n          </div>\n        </div>\n      )}\n\n      {/* Message Input */}\n      <form onSubmit={handleSubmit} className=\"px-6 py-4\">\n        <div className=\"flex items-end space-x-3\">\n          {/* Attachment Button */}\n          <button\n            type=\"button\"\n            className=\"flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100\"\n            title=\"Attach file\"\n          >\n            <svg className=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n              <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13\" />\n            </svg>\n          </button>\n\n          {/* Templates Button */}\n          <button\n            type=\"button\"\n            onClick={() => setShowTemplates(!showTemplates)}\n            className={`flex-shrink-0 p-2 rounded-full hover:bg-gray-100 ${\n              showTemplates ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-gray-600'\n            }`}\n            title=\"Quick replies\"\n          >\n            <svg className=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n              <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z\" />\n            </svg>\n          </button>\n\n          {/* Text Input */}\n          <div className=\"flex-1 relative\">\n            <textarea\n              ref={textareaRef}\n              value={message}\n              onChange={handleTextareaChange}\n              onKeyDown={handleKeyDown}\n              placeholder=\"Type your message...\"\n              disabled={isLoading}\n              className=\"w-full px-4 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50\"\n              rows={1}\n              style={{ minHeight: '40px', maxHeight: '120px' }}\n            />\n          </div>\n\n          {/* Send Button */}\n          <button\n            type=\"submit\"\n            disabled={!message.trim() || isLoading}\n            className=\"flex-shrink-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors\"\n            title=\"Send message (Enter)\"\n          >\n            {isLoading ? (\n              <div className=\"w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin\"></div>\n            ) : (\n              <svg className=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n                <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M12 19l9 2-9-18-9 18 9-2zm0 0v-8\" />\n              </svg>\n            )}\n          </button>\n        </div>\n\n        {/* Character count or typing indicator */}\n        <div className=\"mt-2 flex items-center justify-between text-xs text-gray-500\">\n          <div>\n            {/* Typing indicator would go here */}\n          </div>\n          <div>\n            Press Enter to send, Shift+Enter for new line\n          </div>\n        </div>\n      </form>\n    </div>\n  )\n}"],
+      names: ["MessageInput", "onSendMessage", "message", "setMessage", "useState", "isLoading", "setIsLoading", "showTemplates", "setShowTemplates", "textareaRef", "useRef", "handleSubmit", "e", "preventDefault", "trim", "current", "style", "height", "error", "console", "handleKeyDown", "key", "shiftKey", "handleTextareaChange", "target", "value", "textarea", "Math", "min", "scrollHeight", "quickReplies", "div", "className", "map", "reply", "index", "button", "onClick", "focus", "form", "onSubmit", "type", "title", "svg", "fill", "stroke", "viewBox", "path", "strokeLinecap", "strokeLinejoin", "strokeWidth", "d", "ref", "onChange", "onKeyDown", "placeholder", "disabled", "rows", "minHeight", "maxHeight"],
+      mappings: "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"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "4caf0820e7f976698045540452ebbd7e9d6e05b6"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_2pcp1f2236 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_2pcp1f2236();
+cov_2pcp1f2236().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_2pcp1f2236().s[1]++;
+Object.defineProperty(exports, "MessageInput", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_2pcp1f2236().f[0]++;
+    cov_2pcp1f2236().s[2]++;
+    return MessageInput;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_2pcp1f2236().s[3]++, require("react/jsx-runtime"));
+const _react =
+/* istanbul ignore next */
+(cov_2pcp1f2236().s[4]++, require("react"));
+function MessageInput({
+  onSendMessage
+}) {
+  /* istanbul ignore next */
+  cov_2pcp1f2236().f[1]++;
+  const [message, setMessage] =
+  /* istanbul ignore next */
+  (cov_2pcp1f2236().s[5]++, (0, _react.useState)(''));
+  const [isLoading, setIsLoading] =
+  /* istanbul ignore next */
+  (cov_2pcp1f2236().s[6]++, (0, _react.useState)(false));
+  const [showTemplates, setShowTemplates] =
+  /* istanbul ignore next */
+  (cov_2pcp1f2236().s[7]++, (0, _react.useState)(false));
+  const textareaRef =
+  /* istanbul ignore next */
+  (cov_2pcp1f2236().s[8]++, (0, _react.useRef)(null));
+  /* istanbul ignore next */
+  cov_2pcp1f2236().s[9]++;
+  const handleSubmit = async e => {
+    /* istanbul ignore next */
+    cov_2pcp1f2236().f[2]++;
+    cov_2pcp1f2236().s[10]++;
+    e.preventDefault();
+    /* istanbul ignore next */
+    cov_2pcp1f2236().s[11]++;
+    if (
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[1][0]++, !message.trim()) ||
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[1][1]++, isLoading)) {
+      /* istanbul ignore next */
+      cov_2pcp1f2236().b[0][0]++;
+      cov_2pcp1f2236().s[12]++;
+      return;
+    } else
+    /* istanbul ignore next */
+    {
+      cov_2pcp1f2236().b[0][1]++;
+    }
+    cov_2pcp1f2236().s[13]++;
+    setIsLoading(true);
+    /* istanbul ignore next */
+    cov_2pcp1f2236().s[14]++;
+    try {
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[15]++;
+      await onSendMessage(message.trim());
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[16]++;
+      setMessage('');
+      // Reset textarea height
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[17]++;
+      if (textareaRef.current) {
+        /* istanbul ignore next */
+        cov_2pcp1f2236().b[2][0]++;
+        cov_2pcp1f2236().s[18]++;
+        textareaRef.current.style.height = 'auto';
+      } else
+      /* istanbul ignore next */
+      {
+        cov_2pcp1f2236().b[2][1]++;
+      }
+    } catch (error) {
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[19]++;
+      console.error('Failed to send message:', error);
+    } finally {
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[20]++;
+      setIsLoading(false);
+    }
+  };
+  /* istanbul ignore next */
+  cov_2pcp1f2236().s[21]++;
+  const handleKeyDown = e => {
+    /* istanbul ignore next */
+    cov_2pcp1f2236().f[3]++;
+    cov_2pcp1f2236().s[22]++;
+    if (
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[4][0]++, e.key === 'Enter') &&
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[4][1]++, !e.shiftKey)) {
+      /* istanbul ignore next */
+      cov_2pcp1f2236().b[3][0]++;
+      cov_2pcp1f2236().s[23]++;
+      e.preventDefault();
+      /* istanbul ignore next */
+      cov_2pcp1f2236().s[24]++;
+      handleSubmit(e);
+    } else
+    /* istanbul ignore next */
+    {
+      cov_2pcp1f2236().b[3][1]++;
+    }
+  };
+  /* istanbul ignore next */
+  cov_2pcp1f2236().s[25]++;
+  const handleTextareaChange = e => {
+    /* istanbul ignore next */
+    cov_2pcp1f2236().f[4]++;
+    cov_2pcp1f2236().s[26]++;
+    setMessage(e.target.value);
+    // Auto-resize textarea
+    const textarea =
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().s[27]++, e.target);
+    /* istanbul ignore next */
+    cov_2pcp1f2236().s[28]++;
+    textarea.style.height = 'auto';
+    /* istanbul ignore next */
+    cov_2pcp1f2236().s[29]++;
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  };
+  const quickReplies =
+  /* istanbul ignore next */
+  (cov_2pcp1f2236().s[30]++, ['Thank you for contacting us!', 'How can I help you today?', 'I\'ll look into this for you.', 'Is there anything else I can help with?']);
+  /* istanbul ignore next */
+  cov_2pcp1f2236().s[31]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+    className: "border-t border-gray-200 bg-white",
+    children: [
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[5][0]++, showTemplates) &&
+    /* istanbul ignore next */
+    (cov_2pcp1f2236().b[5][1]++, /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+      className: "px-6 py-2 border-b border-gray-100",
+      children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+        className: "flex flex-wrap gap-2",
+        children: quickReplies.map((reply, index) => {
+          /* istanbul ignore next */
+          cov_2pcp1f2236().f[5]++;
+          cov_2pcp1f2236().s[32]++;
+          return /*#__PURE__*/(0, _jsxruntime.jsx)("button", {
+            onClick: () => {
+              /* istanbul ignore next */
+              cov_2pcp1f2236().f[6]++;
+              cov_2pcp1f2236().s[33]++;
+              setMessage(reply);
+              /* istanbul ignore next */
+              cov_2pcp1f2236().s[34]++;
+              setShowTemplates(false);
+              /* istanbul ignore next */
+              cov_2pcp1f2236().s[35]++;
+              textareaRef.current?.focus();
+            },
+            className: "px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors",
+            children: reply
+          }, index);
+        })
+      })
+    })), /*#__PURE__*/(0, _jsxruntime.jsxs)("form", {
+      onSubmit: handleSubmit,
+      className: "px-6 py-4",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "flex items-end space-x-3",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("button", {
+          type: "button",
+          className: "flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100",
+          title: "Attach file",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+            className: "w-5 h-5",
+            fill: "none",
+            stroke: "currentColor",
+            viewBox: "0 0 24 24",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: 2,
+              d: "M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+            })
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("button", {
+          type: "button",
+          onClick: () => {
+            /* istanbul ignore next */
+            cov_2pcp1f2236().f[7]++;
+            cov_2pcp1f2236().s[36]++;
+            return setShowTemplates(!showTemplates);
+          },
+          className: `flex-shrink-0 p-2 rounded-full hover:bg-gray-100 ${showTemplates ?
+          /* istanbul ignore next */
+          (cov_2pcp1f2236().b[6][0]++, 'text-green-600 bg-green-50') :
+          /* istanbul ignore next */
+          (cov_2pcp1f2236().b[6][1]++, 'text-gray-400 hover:text-gray-600')}`,
+          title: "Quick replies",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+            className: "w-5 h-5",
+            fill: "none",
+            stroke: "currentColor",
+            viewBox: "0 0 24 24",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: 2,
+              d: "M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+            })
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "flex-1 relative",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("textarea", {
+            ref: textareaRef,
+            value: message,
+            onChange: handleTextareaChange,
+            onKeyDown: handleKeyDown,
+            placeholder: "Type your message...",
+            disabled: isLoading,
+            className: "w-full px-4 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50",
+            rows: 1,
+            style: {
+              minHeight: '40px',
+              maxHeight: '120px'
+            }
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("button", {
+          type: "submit",
+          disabled:
+          /* istanbul ignore next */
+          (cov_2pcp1f2236().b[7][0]++, !message.trim()) ||
+          /* istanbul ignore next */
+          (cov_2pcp1f2236().b[7][1]++, isLoading),
+          className: "flex-shrink-0 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors",
+          title: "Send message (Enter)",
+          children: isLoading ?
+          /* istanbul ignore next */
+          (/*#__PURE__*/cov_2pcp1f2236().b[8][0]++, (0, _jsxruntime.jsx)("div", {
+            className: "w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+          })) :
+          /* istanbul ignore next */
+          (/*#__PURE__*/cov_2pcp1f2236().b[8][1]++, (0, _jsxruntime.jsx)("svg", {
+            className: "w-5 h-5",
+            fill: "none",
+            stroke: "currentColor",
+            viewBox: "0 0 24 24",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: 2,
+              d: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            })
+          }))
+        })]
+      }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "mt-2 flex items-center justify-between text-xs text-gray-500",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {}), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          children: "Press Enter to send, Shift+Enter for new line"
+        })]
+      })]
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMnBjcDFmMjIzNiIsImFjdHVhbENvdmVyYWdlIiwicyIsIk1lc3NhZ2VJbnB1dCIsIm9uU2VuZE1lc3NhZ2UiLCJmIiwibWVzc2FnZSIsInNldE1lc3NhZ2UiLCJfcmVhY3QiLCJ1c2VTdGF0ZSIsImlzTG9hZGluZyIsInNldElzTG9hZGluZyIsInNob3dUZW1wbGF0ZXMiLCJzZXRTaG93VGVtcGxhdGVzIiwidGV4dGFyZWFSZWYiLCJ1c2VSZWYiLCJoYW5kbGVTdWJtaXQiLCJlIiwicHJldmVudERlZmF1bHQiLCJiIiwidHJpbSIsImN1cnJlbnQiLCJzdHlsZSIsImhlaWdodCIsImVycm9yIiwiY29uc29sZSIsImhhbmRsZUtleURvd24iLCJrZXkiLCJzaGlmdEtleSIsImhhbmRsZVRleHRhcmVhQ2hhbmdlIiwidGFyZ2V0IiwidmFsdWUiLCJ0ZXh0YXJlYSIsIk1hdGgiLCJtaW4iLCJzY3JvbGxIZWlnaHQiLCJxdWlja1JlcGxpZXMiLCJfanN4cnVudGltZSIsImpzeHMiLCJjbGFzc05hbWUiLCJqc3giLCJtYXAiLCJyZXBseSIsImluZGV4Iiwib25DbGljayIsImZvY3VzIiwib25TdWJtaXQiLCJ0eXBlIiwidGl0bGUiLCJmaWxsIiwic3Ryb2tlIiwidmlld0JveCIsInN0cm9rZUxpbmVjYXAiLCJzdHJva2VMaW5lam9pbiIsInN0cm9rZVdpZHRoIiwiZCIsInJlZiIsIm9uQ2hhbmdlIiwib25LZXlEb3duIiwicGxhY2Vob2xkZXIiLCJkaXNhYmxlZCIsInJvd3MiLCJtaW5IZWlnaHQiLCJtYXhIZWlnaHQiXSwic291cmNlcyI6WyJDOlxcQWkgUHJvamVjdGVuXFxBRFNhcHBcXHNyY1xcY29tcG9uZW50c1xcaW5ib3hcXG1lc3NhZ2UtaW5wdXQudHN4Il0sInNvdXJjZXNDb250ZW50IjpbIid1c2UgY2xpZW50J1xuXG5pbXBvcnQgeyB1c2VTdGF0ZSwgdXNlUmVmIH0gZnJvbSAncmVhY3QnXG5cbmludGVyZmFjZSBNZXNzYWdlSW5wdXRQcm9wcyB7XG4gIG9uU2VuZE1lc3NhZ2U6IChjb250ZW50OiBzdHJpbmcsIHR5cGU/OiBzdHJpbmcpID0+IFByb21pc2U8dm9pZD5cbn1cblxuZXhwb3J0IGZ1bmN0aW9uIE1lc3NhZ2VJbnB1dCh7IG9uU2VuZE1lc3NhZ2UgfTogTWVzc2FnZUlucHV0UHJvcHMpIHtcbiAgY29uc3QgW21lc3NhZ2UsIHNldE1lc3NhZ2VdID0gdXNlU3RhdGUoJycpXG4gIGNvbnN0IFtpc0xvYWRpbmcsIHNldElzTG9hZGluZ10gPSB1c2VTdGF0ZShmYWxzZSlcbiAgY29uc3QgW3Nob3dUZW1wbGF0ZXMsIHNldFNob3dUZW1wbGF0ZXNdID0gdXNlU3RhdGUoZmFsc2UpXG4gIGNvbnN0IHRleHRhcmVhUmVmID0gdXNlUmVmPEhUTUxUZXh0QXJlYUVsZW1lbnQ+KG51bGwpXG5cbiAgY29uc3QgaGFuZGxlU3VibWl0ID0gYXN5bmMgKGU6IFJlYWN0LkZvcm1FdmVudCkgPT4ge1xuICAgIGUucHJldmVudERlZmF1bHQoKVxuXG4gICAgaWYgKCFtZXNzYWdlLnRyaW0oKSB8fCBpc0xvYWRpbmcpIHJldHVyblxuXG4gICAgc2V0SXNMb2FkaW5nKHRydWUpXG4gICAgdHJ5IHtcbiAgICAgIGF3YWl0IG9uU2VuZE1lc3NhZ2UobWVzc2FnZS50cmltKCkpXG4gICAgICBzZXRNZXNzYWdlKCcnKVxuICAgICAgLy8gUmVzZXQgdGV4dGFyZWEgaGVpZ2h0XG4gICAgICBpZiAodGV4dGFyZWFSZWYuY3VycmVudCkge1xuICAgICAgICB0ZXh0YXJlYVJlZi5jdXJyZW50LnN0eWxlLmhlaWdodCA9ICdhdXRvJ1xuICAgICAgfVxuICAgIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgICBjb25zb2xlLmVycm9yKCdGYWlsZWQgdG8gc2VuZCBtZXNzYWdlOicsIGVycm9yKVxuICAgIH0gZmluYWxseSB7XG4gICAgICBzZXRJc0xvYWRpbmcoZmFsc2UpXG4gICAgfVxuICB9XG5cbiAgY29uc3QgaGFuZGxlS2V5RG93biA9IChlOiBSZWFjdC5LZXlib2FyZEV2ZW50KSA9PiB7XG4gICAgaWYgKGUua2V5ID09PSAnRW50ZXInICYmICFlLnNoaWZ0S2V5KSB7XG4gICAgICBlLnByZXZlbnREZWZhdWx0KClcbiAgICAgIGhhbmRsZVN1Ym1pdChlKVxuICAgIH1cbiAgfVxuXG4gIGNvbnN0IGhhbmRsZVRleHRhcmVhQ2hhbmdlID0gKGU6IFJlYWN0LkNoYW5nZUV2ZW50PEhUTUxUZXh0QXJlYUVsZW1lbnQ+KSA9PiB7XG4gICAgc2V0TWVzc2FnZShlLnRhcmdldC52YWx1ZSlcblxuICAgIC8vIEF1dG8tcmVzaXplIHRleHRhcmVhXG4gICAgY29uc3QgdGV4dGFyZWEgPSBlLnRhcmdldFxuICAgIHRleHRhcmVhLnN0eWxlLmhlaWdodCA9ICdhdXRvJ1xuICAgIHRleHRhcmVhLnN0eWxlLmhlaWdodCA9IE1hdGgubWluKHRleHRhcmVhLnNjcm9sbEhlaWdodCwgMTIwKSArICdweCdcbiAgfVxuXG4gIGNvbnN0IHF1aWNrUmVwbGllcyA9IFtcbiAgICAnVGhhbmsgeW91IGZvciBjb250YWN0aW5nIHVzIScsXG4gICAgJ0hvdyBjYW4gSSBoZWxwIHlvdSB0b2RheT8nLFxuICAgICdJXFwnbGwgbG9vayBpbnRvIHRoaXMgZm9yIHlvdS4nLFxuICAgICdJcyB0aGVyZSBhbnl0aGluZyBlbHNlIEkgY2FuIGhlbHAgd2l0aD8nLFxuICBdXG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2IGNsYXNzTmFtZT1cImJvcmRlci10IGJvcmRlci1ncmF5LTIwMCBiZy13aGl0ZVwiPlxuICAgICAgey8qIFF1aWNrIFJlcGxpZXMgKi99XG4gICAgICB7c2hvd1RlbXBsYXRlcyAmJiAoXG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicHgtNiBweS0yIGJvcmRlci1iIGJvcmRlci1ncmF5LTEwMFwiPlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBmbGV4LXdyYXAgZ2FwLTJcIj5cbiAgICAgICAgICAgIHtxdWlja1JlcGxpZXMubWFwKChyZXBseSwgaW5kZXgpID0+IChcbiAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgIGtleT17aW5kZXh9XG4gICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4ge1xuICAgICAgICAgICAgICAgICAgc2V0TWVzc2FnZShyZXBseSlcbiAgICAgICAgICAgICAgICAgIHNldFNob3dUZW1wbGF0ZXMoZmFsc2UpXG4gICAgICAgICAgICAgICAgICB0ZXh0YXJlYVJlZi5jdXJyZW50Py5mb2N1cygpXG4gICAgICAgICAgICAgICAgfX1cbiAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJweC0zIHB5LTEgdGV4dC1zbSBiZy1ncmF5LTEwMCBob3ZlcjpiZy1ncmF5LTIwMCByb3VuZGVkLWZ1bGwgdHJhbnNpdGlvbi1jb2xvcnNcIlxuICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAge3JlcGx5fVxuICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICkpfVxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICA8L2Rpdj5cbiAgICAgICl9XG5cbiAgICAgIHsvKiBNZXNzYWdlIElucHV0ICovfVxuICAgICAgPGZvcm0gb25TdWJtaXQ9e2hhbmRsZVN1Ym1pdH0gY2xhc3NOYW1lPVwicHgtNiBweS00XCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1lbmQgc3BhY2UteC0zXCI+XG4gICAgICAgICAgey8qIEF0dGFjaG1lbnQgQnV0dG9uICovfVxuICAgICAgICAgIDxidXR0b25cbiAgICAgICAgICAgIHR5cGU9XCJidXR0b25cIlxuICAgICAgICAgICAgY2xhc3NOYW1lPVwiZmxleC1zaHJpbmstMCBwLTIgdGV4dC1ncmF5LTQwMCBob3Zlcjp0ZXh0LWdyYXktNjAwIHJvdW5kZWQtZnVsbCBob3ZlcjpiZy1ncmF5LTEwMFwiXG4gICAgICAgICAgICB0aXRsZT1cIkF0dGFjaCBmaWxlXCJcbiAgICAgICAgICA+XG4gICAgICAgICAgICA8c3ZnIGNsYXNzTmFtZT1cInctNSBoLTVcIiBmaWxsPVwibm9uZVwiIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiIHZpZXdCb3g9XCIwIDAgMjQgMjRcIj5cbiAgICAgICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTE1LjE3MiA3bC02LjU4NiA2LjU4NmEyIDIgMCAxMDIuODI4IDIuODI4bDYuNDE0LTYuNTg2YTQgNCAwIDAwLTUuNjU2LTUuNjU2bC02LjQxNSA2LjU4NWE2IDYgMCAxMDguNDg2IDguNDg2TDIwLjUgMTNcIiAvPlxuICAgICAgICAgICAgPC9zdmc+XG4gICAgICAgICAgPC9idXR0b24+XG5cbiAgICAgICAgICB7LyogVGVtcGxhdGVzIEJ1dHRvbiAqL31cbiAgICAgICAgICA8YnV0dG9uXG4gICAgICAgICAgICB0eXBlPVwiYnV0dG9uXCJcbiAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldFNob3dUZW1wbGF0ZXMoIXNob3dUZW1wbGF0ZXMpfVxuICAgICAgICAgICAgY2xhc3NOYW1lPXtgZmxleC1zaHJpbmstMCBwLTIgcm91bmRlZC1mdWxsIGhvdmVyOmJnLWdyYXktMTAwICR7XG4gICAgICAgICAgICAgIHNob3dUZW1wbGF0ZXMgPyAndGV4dC1ncmVlbi02MDAgYmctZ3JlZW4tNTAnIDogJ3RleHQtZ3JheS00MDAgaG92ZXI6dGV4dC1ncmF5LTYwMCdcbiAgICAgICAgICAgIH1gfVxuICAgICAgICAgICAgdGl0bGU9XCJRdWljayByZXBsaWVzXCJcbiAgICAgICAgICA+XG4gICAgICAgICAgICA8c3ZnIGNsYXNzTmFtZT1cInctNSBoLTVcIiBmaWxsPVwibm9uZVwiIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiIHZpZXdCb3g9XCIwIDAgMjQgMjRcIj5cbiAgICAgICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTcgOGgxME03IDEyaDRtMSA4bC00LTRINWEyIDIgMCAwMS0yLTJWNmEyIDIgMCAwMTItMmgxNGEyIDIgMCAwMTIgMnY4YTIgMiAwIDAxLTIgMmgtM2wtNCA0elwiIC8+XG4gICAgICAgICAgICA8L3N2Zz5cbiAgICAgICAgICA8L2J1dHRvbj5cblxuICAgICAgICAgIHsvKiBUZXh0IElucHV0ICovfVxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleC0xIHJlbGF0aXZlXCI+XG4gICAgICAgICAgICA8dGV4dGFyZWFcbiAgICAgICAgICAgICAgcmVmPXt0ZXh0YXJlYVJlZn1cbiAgICAgICAgICAgICAgdmFsdWU9e21lc3NhZ2V9XG4gICAgICAgICAgICAgIG9uQ2hhbmdlPXtoYW5kbGVUZXh0YXJlYUNoYW5nZX1cbiAgICAgICAgICAgICAgb25LZXlEb3duPXtoYW5kbGVLZXlEb3dufVxuICAgICAgICAgICAgICBwbGFjZWhvbGRlcj1cIlR5cGUgeW91ciBtZXNzYWdlLi4uXCJcbiAgICAgICAgICAgICAgZGlzYWJsZWQ9e2lzTG9hZGluZ31cbiAgICAgICAgICAgICAgY2xhc3NOYW1lPVwidy1mdWxsIHB4LTQgcHktMiBib3JkZXIgYm9yZGVyLWdyYXktMzAwIHJvdW5kZWQtbGcgcmVzaXplLW5vbmUgZm9jdXM6b3V0bGluZS1ub25lIGZvY3VzOnJpbmctMiBmb2N1czpyaW5nLWdyZWVuLTUwMCBmb2N1czpib3JkZXItdHJhbnNwYXJlbnQgZGlzYWJsZWQ6b3BhY2l0eS01MFwiXG4gICAgICAgICAgICAgIHJvd3M9ezF9XG4gICAgICAgICAgICAgIHN0eWxlPXt7IG1pbkhlaWdodDogJzQwcHgnLCBtYXhIZWlnaHQ6ICcxMjBweCcgfX1cbiAgICAgICAgICAgIC8+XG4gICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICB7LyogU2VuZCBCdXR0b24gKi99XG4gICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgdHlwZT1cInN1Ym1pdFwiXG4gICAgICAgICAgICBkaXNhYmxlZD17IW1lc3NhZ2UudHJpbSgpIHx8IGlzTG9hZGluZ31cbiAgICAgICAgICAgIGNsYXNzTmFtZT1cImZsZXgtc2hyaW5rLTAgcC0yIGJnLWdyZWVuLTYwMCB0ZXh0LXdoaXRlIHJvdW5kZWQtZnVsbCBob3ZlcjpiZy1ncmVlbi03MDAgZm9jdXM6b3V0bGluZS1ub25lIGZvY3VzOnJpbmctMiBmb2N1czpyaW5nLWdyZWVuLTUwMCBmb2N1czpyaW5nLW9mZnNldC0yIGRpc2FibGVkOm9wYWNpdHktNTAgZGlzYWJsZWQ6Y3Vyc29yLW5vdC1hbGxvd2VkIHRyYW5zaXRpb24tY29sb3JzXCJcbiAgICAgICAgICAgIHRpdGxlPVwiU2VuZCBtZXNzYWdlIChFbnRlcilcIlxuICAgICAgICAgID5cbiAgICAgICAgICAgIHtpc0xvYWRpbmcgPyAoXG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy01IGgtNSBib3JkZXItMiBib3JkZXItd2hpdGUgYm9yZGVyLXQtdHJhbnNwYXJlbnQgcm91bmRlZC1mdWxsIGFuaW1hdGUtc3BpblwiPjwvZGl2PlxuICAgICAgICAgICAgKSA6IChcbiAgICAgICAgICAgICAgPHN2ZyBjbGFzc05hbWU9XCJ3LTUgaC01XCIgZmlsbD1cIm5vbmVcIiBzdHJva2U9XCJjdXJyZW50Q29sb3JcIiB2aWV3Qm94PVwiMCAwIDI0IDI0XCI+XG4gICAgICAgICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTEyIDE5bDkgMi05LTE4LTkgMTggOS0yem0wIDB2LThcIiAvPlxuICAgICAgICAgICAgICA8L3N2Zz5cbiAgICAgICAgICAgICl9XG4gICAgICAgICAgPC9idXR0b24+XG4gICAgICAgIDwvZGl2PlxuXG4gICAgICAgIHsvKiBDaGFyYWN0ZXIgY291bnQgb3IgdHlwaW5nIGluZGljYXRvciAqL31cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtdC0yIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiB0ZXh0LXhzIHRleHQtZ3JheS01MDBcIj5cbiAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgey8qIFR5cGluZyBpbmRpY2F0b3Igd291bGQgZ28gaGVyZSAqL31cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgUHJlc3MgRW50ZXIgdG8gc2VuZCwgU2hpZnQrRW50ZXIgZm9yIG5ldyBsaW5lXG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvZGl2PlxuICAgICAgPC9mb3JtPlxuICAgIDwvZGl2PlxuICApXG59Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQVVTO0lBQUFBLGNBQUEsWUFBQUEsQ0FBQTtNQUFBLE9BQUFDLGNBQUE7SUFBQTtFQUFBO0VBQUEsT0FBQUEsY0FBQTtBQUFBO0FBQUFELGNBQUE7QUFBQUEsY0FBQSxHQUFBRSxDQUFBOzs7Ozs7K0JBRk87Ozs7OztXQUFBQyxZQUFBOzs7Ozs7OztrQ0FOaUI7QUFNMUIsU0FBU0EsYUFBYTtFQUFFQztBQUFhLENBQXFCO0VBQUE7RUFBQUosY0FBQSxHQUFBSyxDQUFBO0VBQy9ELE1BQU0sQ0FBQ0MsT0FBQSxFQUFTQyxVQUFBLENBQVc7RUFBQTtFQUFBLENBQUFQLGNBQUEsR0FBQUUsQ0FBQSxPQUFHLElBQUFNLE1BQUEsQ0FBQUMsUUFBUSxFQUFDO0VBQ3ZDLE1BQU0sQ0FBQ0MsU0FBQSxFQUFXQyxZQUFBLENBQWE7RUFBQTtFQUFBLENBQUFYLGNBQUEsR0FBQUUsQ0FBQSxPQUFHLElBQUFNLE1BQUEsQ0FBQUMsUUFBUSxFQUFDO0VBQzNDLE1BQU0sQ0FBQ0csYUFBQSxFQUFlQyxnQkFBQSxDQUFpQjtFQUFBO0VBQUEsQ0FBQWIsY0FBQSxHQUFBRSxDQUFBLE9BQUcsSUFBQU0sTUFBQSxDQUFBQyxRQUFRLEVBQUM7RUFDbkQsTUFBTUssV0FBQTtFQUFBO0VBQUEsQ0FBQWQsY0FBQSxHQUFBRSxDQUFBLE9BQWMsSUFBQU0sTUFBQSxDQUFBTyxNQUFNLEVBQXNCO0VBQUE7RUFBQWYsY0FBQSxHQUFBRSxDQUFBO0VBRWhELE1BQU1jLFlBQUEsR0FBZSxNQUFPQyxDQUFBO0lBQUE7SUFBQWpCLGNBQUEsR0FBQUssQ0FBQTtJQUFBTCxjQUFBLEdBQUFFLENBQUE7SUFDMUJlLENBQUEsQ0FBRUMsY0FBYztJQUFBO0lBQUFsQixjQUFBLEdBQUFFLENBQUE7SUFFaEI7SUFBSTtJQUFBLENBQUFGLGNBQUEsR0FBQW1CLENBQUEsV0FBQ2IsT0FBQSxDQUFRYyxJQUFJO0lBQUE7SUFBQSxDQUFBcEIsY0FBQSxHQUFBbUIsQ0FBQSxVQUFNVCxTQUFBLEdBQVc7TUFBQTtNQUFBVixjQUFBLEdBQUFtQixDQUFBO01BQUFuQixjQUFBLEdBQUFFLENBQUE7TUFBQTtJQUFBO0lBQUE7SUFBQTtNQUFBRixjQUFBLEdBQUFtQixDQUFBO0lBQUE7SUFBQW5CLGNBQUEsR0FBQUUsQ0FBQTtJQUVsQ1MsWUFBQSxDQUFhO0lBQUE7SUFBQVgsY0FBQSxHQUFBRSxDQUFBO0lBQ2IsSUFBSTtNQUFBO01BQUFGLGNBQUEsR0FBQUUsQ0FBQTtNQUNGLE1BQU1FLGFBQUEsQ0FBY0UsT0FBQSxDQUFRYyxJQUFJO01BQUE7TUFBQXBCLGNBQUEsR0FBQUUsQ0FBQTtNQUNoQ0ssVUFBQSxDQUFXO01BQ1g7TUFBQTtNQUFBUCxjQUFBLEdBQUFFLENBQUE7TUFDQSxJQUFJWSxXQUFBLENBQVlPLE9BQU8sRUFBRTtRQUFBO1FBQUFyQixjQUFBLEdBQUFtQixDQUFBO1FBQUFuQixjQUFBLEdBQUFFLENBQUE7UUFDdkJZLFdBQUEsQ0FBWU8sT0FBTyxDQUFDQyxLQUFLLENBQUNDLE1BQU0sR0FBRztNQUNyQztNQUFBO01BQUE7UUFBQXZCLGNBQUEsR0FBQW1CLENBQUE7TUFBQTtJQUNGLEVBQUUsT0FBT0ssS0FBQSxFQUFPO01BQUE7TUFBQXhCLGNBQUEsR0FBQUUsQ0FBQTtNQUNkdUIsT0FBQSxDQUFRRCxLQUFLLENBQUMsMkJBQTJCQSxLQUFBO0lBQzNDLFVBQVU7TUFBQTtNQUFBeEIsY0FBQSxHQUFBRSxDQUFBO01BQ1JTLFlBQUEsQ0FBYTtJQUNmO0VBQ0Y7RUFBQTtFQUFBWCxjQUFBLEdBQUFFLENBQUE7RUFFQSxNQUFNd0IsYUFBQSxHQUFpQlQsQ0FBQTtJQUFBO0lBQUFqQixjQUFBLEdBQUFLLENBQUE7SUFBQUwsY0FBQSxHQUFBRSxDQUFBO0lBQ3JCO0lBQUk7SUFBQSxDQUFBRixjQUFBLEdBQUFtQixDQUFBLFVBQUFGLENBQUEsQ0FBRVUsR0FBRyxLQUFLO0lBQUE7SUFBQSxDQUFBM0IsY0FBQSxHQUFBbUIsQ0FBQSxVQUFXLENBQUNGLENBQUEsQ0FBRVcsUUFBUSxHQUFFO01BQUE7TUFBQTVCLGNBQUEsR0FBQW1CLENBQUE7TUFBQW5CLGNBQUEsR0FBQUUsQ0FBQTtNQUNwQ2UsQ0FBQSxDQUFFQyxjQUFjO01BQUE7TUFBQWxCLGNBQUEsR0FBQUUsQ0FBQTtNQUNoQmMsWUFBQSxDQUFhQyxDQUFBO0lBQ2Y7SUFBQTtJQUFBO01BQUFqQixjQUFBLEdBQUFtQixDQUFBO0lBQUE7RUFDRjtFQUFBO0VBQUFuQixjQUFBLEdBQUFFLENBQUE7RUFFQSxNQUFNMkIsb0JBQUEsR0FBd0JaLENBQUE7SUFBQTtJQUFBakIsY0FBQSxHQUFBSyxDQUFBO0lBQUFMLGNBQUEsR0FBQUUsQ0FBQTtJQUM1QkssVUFBQSxDQUFXVSxDQUFBLENBQUVhLE1BQU0sQ0FBQ0MsS0FBSztJQUV6QjtJQUNBLE1BQU1DLFFBQUE7SUFBQTtJQUFBLENBQUFoQyxjQUFBLEdBQUFFLENBQUEsUUFBV2UsQ0FBQSxDQUFFYSxNQUFNO0lBQUE7SUFBQTlCLGNBQUEsR0FBQUUsQ0FBQTtJQUN6QjhCLFFBQUEsQ0FBU1YsS0FBSyxDQUFDQyxNQUFNLEdBQUc7SUFBQTtJQUFBdkIsY0FBQSxHQUFBRSxDQUFBO0lBQ3hCOEIsUUFBQSxDQUFTVixLQUFLLENBQUNDLE1BQU0sR0FBR1UsSUFBQSxDQUFLQyxHQUFHLENBQUNGLFFBQUEsQ0FBU0csWUFBWSxFQUFFLE9BQU87RUFDakU7RUFFQSxNQUFNQyxZQUFBO0VBQUE7RUFBQSxDQUFBcEMsY0FBQSxHQUFBRSxDQUFBLFFBQWUsQ0FDbkIsZ0NBQ0EsNkJBQ0EsaUNBQ0EsMENBQ0Q7RUFBQTtFQUFBRixjQUFBLEdBQUFFLENBQUE7RUFFRCxvQkFDRSxJQUFBbUMsV0FBQSxDQUFBQyxJQUFBLEVBQUM7SUFBSUMsU0FBQSxFQUFVOztJQUVaO0lBQUEsQ0FBQXZDLGNBQUEsR0FBQW1CLENBQUEsVUFBQVAsYUFBQTtJQUFBO0lBQUEsQ0FBQVosY0FBQSxHQUFBbUIsQ0FBQSx1QkFDQyxJQUFBa0IsV0FBQSxDQUFBRyxHQUFBLEVBQUM7TUFBSUQsU0FBQSxFQUFVO2dCQUNiLGlCQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztRQUFJRCxTQUFBLEVBQVU7a0JBQ1pILFlBQUEsQ0FBYUssR0FBRyxDQUFDLENBQUNDLEtBQUEsRUFBT0MsS0FBQSxLQUN4QjtVQUFBO1VBQUEzQyxjQUFBLEdBQUFLLENBQUE7VUFBQUwsY0FBQSxHQUFBRSxDQUFBO1VBQUEsT0FEd0IsYUFDeEIsSUFBQW1DLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1lBRUNJLE9BQUEsRUFBU0EsQ0FBQTtjQUFBO2NBQUE1QyxjQUFBLEdBQUFLLENBQUE7Y0FBQUwsY0FBQSxHQUFBRSxDQUFBO2NBQ1BLLFVBQUEsQ0FBV21DLEtBQUE7Y0FBQTtjQUFBMUMsY0FBQSxHQUFBRSxDQUFBO2NBQ1hXLGdCQUFBLENBQWlCO2NBQUE7Y0FBQWIsY0FBQSxHQUFBRSxDQUFBO2NBQ2pCWSxXQUFBLENBQVlPLE9BQU8sRUFBRXdCLEtBQUE7WUFDdkI7WUFDQU4sU0FBQSxFQUFVO3NCQUVURzthQVJJQyxLQUFBO1FBQUE7O3NCQWdCZixJQUFBTixXQUFBLENBQUFDLElBQUEsRUFBQztNQUFLUSxRQUFBLEVBQVU5QixZQUFBO01BQWN1QixTQUFBLEVBQVU7OEJBQ3RDLElBQUFGLFdBQUEsQ0FBQUMsSUFBQSxFQUFDO1FBQUlDLFNBQUEsRUFBVTtnQ0FFYixJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztVQUNDTyxJQUFBLEVBQUs7VUFDTFIsU0FBQSxFQUFVO1VBQ1ZTLEtBQUEsRUFBTTtvQkFFTixpQkFBQVgsV0FBQSxDQUFBRyxHQUFBLEVBQUM7WUFBSUQsU0FBQSxFQUFVO1lBQVVVLElBQUEsRUFBSztZQUFPQyxNQUFBLEVBQU87WUFBZUMsT0FBQSxFQUFRO3NCQUNqRSxpQkFBQWQsV0FBQSxDQUFBRyxHQUFBLEVBQUM7Y0FBS1ksYUFBQSxFQUFjO2NBQVFDLGNBQUEsRUFBZTtjQUFRQyxXQUFBLEVBQWE7Y0FBR0MsQ0FBQSxFQUFFOzs7eUJBS3pFLElBQUFsQixXQUFBLENBQUFHLEdBQUEsRUFBQztVQUNDTyxJQUFBLEVBQUs7VUFDTEgsT0FBQSxFQUFTQSxDQUFBLEtBQU07WUFBQTtZQUFBNUMsY0FBQSxHQUFBSyxDQUFBO1lBQUFMLGNBQUEsR0FBQUUsQ0FBQTtZQUFBLE9BQUFXLGdCQUFBLENBQWlCLENBQUNELGFBQUE7VUFBQTtVQUNqQzJCLFNBQUEsRUFBVyxvREFDVDNCLGFBQUE7VUFBQTtVQUFBLENBQUFaLGNBQUEsR0FBQW1CLENBQUEsVUFBZ0I7VUFBQTtVQUFBLENBQUFuQixjQUFBLEdBQUFtQixDQUFBLFVBQStCLHNDQUMvQztVQUNGNkIsS0FBQSxFQUFNO29CQUVOLGlCQUFBWCxXQUFBLENBQUFHLEdBQUEsRUFBQztZQUFJRCxTQUFBLEVBQVU7WUFBVVUsSUFBQSxFQUFLO1lBQU9DLE1BQUEsRUFBTztZQUFlQyxPQUFBLEVBQVE7c0JBQ2pFLGlCQUFBZCxXQUFBLENBQUFHLEdBQUEsRUFBQztjQUFLWSxhQUFBLEVBQWM7Y0FBUUMsY0FBQSxFQUFlO2NBQVFDLFdBQUEsRUFBYTtjQUFHQyxDQUFBLEVBQUU7Ozt5QkFLekUsSUFBQWxCLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1VBQUlELFNBQUEsRUFBVTtvQkFDYixpQkFBQUYsV0FBQSxDQUFBRyxHQUFBLEVBQUM7WUFDQ2dCLEdBQUEsRUFBSzFDLFdBQUE7WUFDTGlCLEtBQUEsRUFBT3pCLE9BQUE7WUFDUG1ELFFBQUEsRUFBVTVCLG9CQUFBO1lBQ1Y2QixTQUFBLEVBQVdoQyxhQUFBO1lBQ1hpQyxXQUFBLEVBQVk7WUFDWkMsUUFBQSxFQUFVbEQsU0FBQTtZQUNWNkIsU0FBQSxFQUFVO1lBQ1ZzQixJQUFBLEVBQU07WUFDTnZDLEtBQUEsRUFBTztjQUFFd0MsU0FBQSxFQUFXO2NBQVFDLFNBQUEsRUFBVztZQUFROzt5QkFLbkQsSUFBQTFCLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1VBQ0NPLElBQUEsRUFBSztVQUNMYSxRQUFBO1VBQVU7VUFBQSxDQUFBNUQsY0FBQSxHQUFBbUIsQ0FBQSxXQUFDYixPQUFBLENBQVFjLElBQUk7VUFBQTtVQUFBLENBQUFwQixjQUFBLEdBQUFtQixDQUFBLFVBQU1ULFNBQUE7VUFDN0I2QixTQUFBLEVBQVU7VUFDVlMsS0FBQSxFQUFNO29CQUVMdEMsU0FBQTtVQUFBO1VBQUEsY0FBQVYsY0FBQSxHQUFBbUIsQ0FBQSxVQUNDLElBQUFrQixXQUFBLENBQUFHLEdBQUEsRUFBQztZQUFJRCxTQUFBLEVBQVU7OztvREFFZixJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztZQUFJRCxTQUFBLEVBQVU7WUFBVVUsSUFBQSxFQUFLO1lBQU9DLE1BQUEsRUFBTztZQUFlQyxPQUFBLEVBQVE7c0JBQ2pFLGlCQUFBZCxXQUFBLENBQUFHLEdBQUEsRUFBQztjQUFLWSxhQUFBLEVBQWM7Y0FBUUMsY0FBQSxFQUFlO2NBQVFDLFdBQUEsRUFBYTtjQUFHQyxDQUFBLEVBQUU7Ozs7dUJBTzdFLElBQUFsQixXQUFBLENBQUFDLElBQUEsRUFBQztRQUFJQyxTQUFBLEVBQVU7Z0NBQ2IsSUFBQUYsV0FBQSxDQUFBRyxHQUFBLEVBQUMsWSxhQUdELElBQUFILFdBQUEsQ0FBQUcsR0FBQSxFQUFDO29CQUFJOzs7OztBQU9mIiwiaWdub3JlTGlzdCI6W119

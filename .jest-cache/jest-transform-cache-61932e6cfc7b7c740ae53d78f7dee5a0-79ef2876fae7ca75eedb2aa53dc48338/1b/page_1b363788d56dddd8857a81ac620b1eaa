@@ -1,0 +1,538 @@
+8883b6b4762aadb33401f9cc8580db4c
+"use strict";
+
+/* istanbul ignore next */
+function cov_9u7sb1bzn() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\inbox\\page.tsx";
+  var hash = "b1a40bf317d8ad78e87dad380720287b85292cae";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\inbox\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 25
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 14
+        },
+        end: {
+          line: 12,
+          column: 42
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 16
+        },
+        end: {
+          line: 13,
+          column: 55
+        }
+      },
+      "6": {
+        start: {
+          line: 14,
+          column: 21
+        },
+        end: {
+          line: 14,
+          column: 70
+        }
+      },
+      "7": {
+        start: {
+          line: 16,
+          column: 20
+        },
+        end: {
+          line: 16,
+          column: 58
+        }
+      },
+      "8": {
+        start: {
+          line: 17,
+          column: 21
+        },
+        end: {
+          line: 17,
+          column: 54
+        }
+      },
+      "9": {
+        start: {
+          line: 19,
+          column: 36
+        },
+        end: {
+          line: 32,
+          column: 6
+        }
+      },
+      "10": {
+        start: {
+          line: 34,
+          column: 36
+        },
+        end: {
+          line: 38,
+          column: 17
+        }
+      },
+      "11": {
+        start: {
+          line: 34,
+          column: 64
+        },
+        end: {
+          line: 38,
+          column: 9
+        }
+      },
+      "12": {
+        start: {
+          line: 36,
+          column: 55
+        },
+        end: {
+          line: 36,
+          column: 100
+        }
+      },
+      "13": {
+        start: {
+          line: 37,
+          column: 54
+        },
+        end: {
+          line: 37,
+          column: 121
+        }
+      },
+      "14": {
+        start: {
+          line: 39,
+          column: 4
+        },
+        end: {
+          line: 45,
+          column: 7
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "InboxPage",
+        decl: {
+          start: {
+            line: 15,
+            column: 15
+          },
+          end: {
+            line: 15,
+            column: 24
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 27
+          },
+          end: {
+            line: 46,
+            column: 1
+          }
+        },
+        line: 15
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 34,
+            column: 55
+          },
+          end: {
+            line: 34,
+            column: 56
+          }
+        },
+        loc: {
+          start: {
+            line: 34,
+            column: 64
+          },
+          end: {
+            line: 38,
+            column: 9
+          }
+        },
+        line: 34
+      },
+      "3": {
+        name: "(anonymous_3)",
+        decl: {
+          start: {
+            line: 36,
+            column: 48
+          },
+          end: {
+            line: 36,
+            column: 49
+          }
+        },
+        loc: {
+          start: {
+            line: 36,
+            column: 55
+          },
+          end: {
+            line: 36,
+            column: 100
+          }
+        },
+        line: 36
+      },
+      "4": {
+        name: "(anonymous_4)",
+        decl: {
+          start: {
+            line: 37,
+            column: 46
+          },
+          end: {
+            line: 37,
+            column: 47
+          }
+        },
+        loc: {
+          start: {
+            line: 37,
+            column: 54
+          },
+          end: {
+            line: 37,
+            column: 121
+          }
+        },
+        line: 37
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 34,
+            column: 36
+          },
+          end: {
+            line: 38,
+            column: 17
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 34,
+            column: 36
+          },
+          end: {
+            line: 38,
+            column: 11
+          }
+        }, {
+          start: {
+            line: 38,
+            column: 15
+          },
+          end: {
+            line: 38,
+            column: 17
+          }
+        }],
+        line: 34
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 36,
+            column: 26
+          },
+          end: {
+            line: 36,
+            column: 113
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 36,
+            column: 26
+          },
+          end: {
+            line: 36,
+            column: 108
+          }
+        }, {
+          start: {
+            line: 36,
+            column: 112
+          },
+          end: {
+            line: 36,
+            column: 113
+          }
+        }],
+        line: 36
+      },
+      "2": {
+        loc: {
+          start: {
+            line: 36,
+            column: 55
+          },
+          end: {
+            line: 36,
+            column: 100
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 36,
+            column: 55
+          },
+          end: {
+            line: 36,
+            column: 84
+          }
+        }, {
+          start: {
+            line: 36,
+            column: 88
+          },
+          end: {
+            line: 36,
+            column: 100
+          }
+        }],
+        line: 36
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0],
+      "2": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\inbox\\page.tsx"],
+      sourcesContent: ["import { requireOrganization } from '@/lib/auth'\nimport { createClient } from '@/lib/supabase/server'\nimport { InboxLayout } from '@/components/inbox/inbox-layout'\n\nexport default async function InboxPage() {\n  const profile = await requireOrganization()\n  const supabase = await createClient()\n\n  // Fetch conversations with contact details and unread counts\n  const { data: conversations } = await supabase\n    .from('conversations')\n    .select(`\n      *,\n      contact:contacts(*),\n      assigned_agent:profiles(full_name, avatar_url),\n      messages!inner(\n        id,\n        content,\n        sender_type,\n        is_read,\n        created_at\n      )\n    `)\n    .eq('organization_id', profile.organization_id)\n    .order('last_message_at', { ascending: false })\n\n  // Transform conversations with unread counts\n  const conversationsWithUnread = conversations?.map(conv => ({\n    ...conv,\n    unread_count: conv.messages?.filter((msg: any) =>\n      msg.sender_type === 'contact' && !msg.is_read\n    ).length || 0,\n    last_message: conv.messages?.sort((a: any, b: any) =>\n      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()\n    )[0]\n  })) || []\n\n  return (\n    <div className=\"h-[calc(100vh-4rem)]\">\n      <InboxLayout\n        conversations={conversationsWithUnread}\n        profile={profile}\n      />\n    </div>\n  )\n}"],
+      names: ["InboxPage", "profile", "requireOrganization", "supabase", "createClient", "data", "conversations", "from", "select", "eq", "organization_id", "order", "ascending", "conversationsWithUnread", "map", "conv", "unread_count", "messages", "filter", "msg", "sender_type", "is_read", "length", "last_message", "sort", "a", "b", "Date", "created_at", "getTime", "div", "className", "InboxLayout"],
+      mappings: ";;;;+BAIA;;;eAA8BA;;;;sBAJM;wBACP;6BACD;AAEb,eAAeA;IAC5B,MAAMC,UAAU,MAAMC,IAAAA,yBAAmB;IACzC,MAAMC,WAAW,MAAMC,IAAAA,oBAAY;IAEnC,6DAA6D;IAC7D,MAAM,EAAEC,MAAMC,aAAa,EAAE,GAAG,MAAMH,SACnCI,IAAI,CAAC,iBACLC,MAAM,CAAC,CAAC;;;;;;;;;;;IAWT,CAAC,EACAC,EAAE,CAAC,mBAAmBR,QAAQS,eAAe,EAC7CC,KAAK,CAAC,mBAAmB;QAAEC,WAAW;IAAM;IAE/C,6CAA6C;IAC7C,MAAMC,0BAA0BP,eAAeQ,IAAIC,CAAAA,OAAS,CAAA;YAC1D,GAAGA,IAAI;YACPC,cAAcD,KAAKE,QAAQ,EAAEC,OAAO,CAACC,MACnCA,IAAIC,WAAW,KAAK,aAAa,CAACD,IAAIE,OAAO,EAC7CC,UAAU;YACZC,cAAcR,KAAKE,QAAQ,EAAEO,KAAK,CAACC,GAAQC,IACzC,IAAIC,KAAKD,EAAEE,UAAU,EAAEC,OAAO,KAAK,IAAIF,KAAKF,EAAEG,UAAU,EAAEC,OAAO,GAClE,CAAC,EAAE;QACN,CAAA,MAAO,EAAE;IAET,qBACE,qBAACC;QAAIC,WAAU;kBACb,cAAA,qBAACC,wBAAW;YACV1B,eAAeO;YACfZ,SAASA;;;AAIjB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "b1a40bf317d8ad78e87dad380720287b85292cae"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_9u7sb1bzn = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_9u7sb1bzn();
+cov_9u7sb1bzn().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_9u7sb1bzn().s[1]++;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_9u7sb1bzn().f[0]++;
+    cov_9u7sb1bzn().s[2]++;
+    return InboxPage;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_9u7sb1bzn().s[3]++, require("react/jsx-runtime"));
+const _auth =
+/* istanbul ignore next */
+(cov_9u7sb1bzn().s[4]++, require("../../../lib/auth"));
+const _server =
+/* istanbul ignore next */
+(cov_9u7sb1bzn().s[5]++, require("../../../lib/supabase/server"));
+const _inboxlayout =
+/* istanbul ignore next */
+(cov_9u7sb1bzn().s[6]++, require("../../../components/inbox/inbox-layout"));
+async function InboxPage() {
+  /* istanbul ignore next */
+  cov_9u7sb1bzn().f[1]++;
+  const profile =
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().s[7]++, await (0, _auth.requireOrganization)());
+  const supabase =
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().s[8]++, await (0, _server.createClient)());
+  // Fetch conversations with contact details and unread counts
+  const {
+    data: conversations
+  } =
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().s[9]++, await supabase.from('conversations').select(`
+      *,
+      contact:contacts(*),
+      assigned_agent:profiles(full_name, avatar_url),
+      messages!inner(
+        id,
+        content,
+        sender_type,
+        is_read,
+        created_at
+      )
+    `).eq('organization_id', profile.organization_id).order('last_message_at', {
+    ascending: false
+  }));
+  // Transform conversations with unread counts
+  const conversationsWithUnread =
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().s[10]++,
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().b[0][0]++, conversations?.map(conv => {
+    /* istanbul ignore next */
+    cov_9u7sb1bzn().f[2]++;
+    cov_9u7sb1bzn().s[11]++;
+    return {
+      ...conv,
+      unread_count:
+      /* istanbul ignore next */
+      (cov_9u7sb1bzn().b[1][0]++, conv.messages?.filter(msg => {
+        /* istanbul ignore next */
+        cov_9u7sb1bzn().f[3]++;
+        cov_9u7sb1bzn().s[12]++;
+        return /* istanbul ignore next */(cov_9u7sb1bzn().b[2][0]++, msg.sender_type === 'contact') &&
+        /* istanbul ignore next */
+        (cov_9u7sb1bzn().b[2][1]++, !msg.is_read);
+      }).length) ||
+      /* istanbul ignore next */
+      (cov_9u7sb1bzn().b[1][1]++, 0),
+      last_message: conv.messages?.sort((a, b) => {
+        /* istanbul ignore next */
+        cov_9u7sb1bzn().f[4]++;
+        cov_9u7sb1bzn().s[13]++;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      })[0]
+    };
+  })) ||
+  /* istanbul ignore next */
+  (cov_9u7sb1bzn().b[0][1]++, []));
+  /* istanbul ignore next */
+  cov_9u7sb1bzn().s[14]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+    className: "h-[calc(100vh-4rem)]",
+    children: /*#__PURE__*/(0, _jsxruntime.jsx)(_inboxlayout.InboxLayout, {
+      conversations: conversationsWithUnread,
+      profile: profile
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfOXU3c2IxYnpuIiwiYWN0dWFsQ292ZXJhZ2UiLCJzIiwiSW5ib3hQYWdlIiwiZiIsInByb2ZpbGUiLCJfYXV0aCIsInJlcXVpcmVPcmdhbml6YXRpb24iLCJzdXBhYmFzZSIsIl9zZXJ2ZXIiLCJjcmVhdGVDbGllbnQiLCJkYXRhIiwiY29udmVyc2F0aW9ucyIsImZyb20iLCJzZWxlY3QiLCJlcSIsIm9yZ2FuaXphdGlvbl9pZCIsIm9yZGVyIiwiYXNjZW5kaW5nIiwiY29udmVyc2F0aW9uc1dpdGhVbnJlYWQiLCJiIiwibWFwIiwiY29udiIsInVucmVhZF9jb3VudCIsIm1lc3NhZ2VzIiwiZmlsdGVyIiwibXNnIiwic2VuZGVyX3R5cGUiLCJpc19yZWFkIiwibGVuZ3RoIiwibGFzdF9tZXNzYWdlIiwic29ydCIsImEiLCJEYXRlIiwiY3JlYXRlZF9hdCIsImdldFRpbWUiLCJfanN4cnVudGltZSIsImpzeCIsImNsYXNzTmFtZSIsIl9pbmJveGxheW91dCIsIkluYm94TGF5b3V0Il0sInNvdXJjZXMiOlsiQzpcXEFpIFByb2plY3RlblxcQURTYXBwXFxzcmNcXGFwcFxcZGFzaGJvYXJkXFxpbmJveFxccGFnZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgcmVxdWlyZU9yZ2FuaXphdGlvbiB9IGZyb20gJ0AvbGliL2F1dGgnXG5pbXBvcnQgeyBjcmVhdGVDbGllbnQgfSBmcm9tICdAL2xpYi9zdXBhYmFzZS9zZXJ2ZXInXG5pbXBvcnQgeyBJbmJveExheW91dCB9IGZyb20gJ0AvY29tcG9uZW50cy9pbmJveC9pbmJveC1sYXlvdXQnXG5cbmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIEluYm94UGFnZSgpIHtcbiAgY29uc3QgcHJvZmlsZSA9IGF3YWl0IHJlcXVpcmVPcmdhbml6YXRpb24oKVxuICBjb25zdCBzdXBhYmFzZSA9IGF3YWl0IGNyZWF0ZUNsaWVudCgpXG5cbiAgLy8gRmV0Y2ggY29udmVyc2F0aW9ucyB3aXRoIGNvbnRhY3QgZGV0YWlscyBhbmQgdW5yZWFkIGNvdW50c1xuICBjb25zdCB7IGRhdGE6IGNvbnZlcnNhdGlvbnMgfSA9IGF3YWl0IHN1cGFiYXNlXG4gICAgLmZyb20oJ2NvbnZlcnNhdGlvbnMnKVxuICAgIC5zZWxlY3QoYFxuICAgICAgKixcbiAgICAgIGNvbnRhY3Q6Y29udGFjdHMoKiksXG4gICAgICBhc3NpZ25lZF9hZ2VudDpwcm9maWxlcyhmdWxsX25hbWUsIGF2YXRhcl91cmwpLFxuICAgICAgbWVzc2FnZXMhaW5uZXIoXG4gICAgICAgIGlkLFxuICAgICAgICBjb250ZW50LFxuICAgICAgICBzZW5kZXJfdHlwZSxcbiAgICAgICAgaXNfcmVhZCxcbiAgICAgICAgY3JlYXRlZF9hdFxuICAgICAgKVxuICAgIGApXG4gICAgLmVxKCdvcmdhbml6YXRpb25faWQnLCBwcm9maWxlLm9yZ2FuaXphdGlvbl9pZClcbiAgICAub3JkZXIoJ2xhc3RfbWVzc2FnZV9hdCcsIHsgYXNjZW5kaW5nOiBmYWxzZSB9KVxuXG4gIC8vIFRyYW5zZm9ybSBjb252ZXJzYXRpb25zIHdpdGggdW5yZWFkIGNvdW50c1xuICBjb25zdCBjb252ZXJzYXRpb25zV2l0aFVucmVhZCA9IGNvbnZlcnNhdGlvbnM/Lm1hcChjb252ID0+ICh7XG4gICAgLi4uY29udixcbiAgICB1bnJlYWRfY291bnQ6IGNvbnYubWVzc2FnZXM/LmZpbHRlcigobXNnOiBhbnkpID0+XG4gICAgICBtc2cuc2VuZGVyX3R5cGUgPT09ICdjb250YWN0JyAmJiAhbXNnLmlzX3JlYWRcbiAgICApLmxlbmd0aCB8fCAwLFxuICAgIGxhc3RfbWVzc2FnZTogY29udi5tZXNzYWdlcz8uc29ydCgoYTogYW55LCBiOiBhbnkpID0+XG4gICAgICBuZXcgRGF0ZShiLmNyZWF0ZWRfYXQpLmdldFRpbWUoKSAtIG5ldyBEYXRlKGEuY3JlYXRlZF9hdCkuZ2V0VGltZSgpXG4gICAgKVswXVxuICB9KSkgfHwgW11cblxuICByZXR1cm4gKFxuICAgIDxkaXYgY2xhc3NOYW1lPVwiaC1bY2FsYygxMDB2aC00cmVtKV1cIj5cbiAgICAgIDxJbmJveExheW91dFxuICAgICAgICBjb252ZXJzYXRpb25zPXtjb252ZXJzYXRpb25zV2l0aFVucmVhZH1cbiAgICAgICAgcHJvZmlsZT17cHJvZmlsZX1cbiAgICAgIC8+XG4gICAgPC9kaXY+XG4gIClcbn0iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFLUTtJQUFBQSxhQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxhQUFBO0FBQUFBLGFBQUEsR0FBQUUsQ0FBQTs7Ozs7OytCQURSOzs7Ozs7V0FBOEJDLFNBQUE7Ozs7Ozs7O2lDQUpNOzs7aUNBQ1A7OztpQ0FDRDtBQUViLGVBQWVBLFVBQUE7RUFBQTtFQUFBSCxhQUFBLEdBQUFJLENBQUE7RUFDNUIsTUFBTUMsT0FBQTtFQUFBO0VBQUEsQ0FBQUwsYUFBQSxHQUFBRSxDQUFBLE9BQVUsTUFBTSxJQUFBSSxLQUFBLENBQUFDLG1CQUFtQjtFQUN6QyxNQUFNQyxRQUFBO0VBQUE7RUFBQSxDQUFBUixhQUFBLEdBQUFFLENBQUEsT0FBVyxNQUFNLElBQUFPLE9BQUEsQ0FBQUMsWUFBWTtFQUVuQztFQUNBLE1BQU07SUFBRUMsSUFBQSxFQUFNQztFQUFhLENBQUU7RUFBQTtFQUFBLENBQUFaLGFBQUEsR0FBQUUsQ0FBQSxPQUFHLE1BQU1NLFFBQUEsQ0FDbkNLLElBQUksQ0FBQyxpQkFDTEMsTUFBTSxDQUFDOzs7Ozs7Ozs7OztLQVdQLEVBQ0FDLEVBQUUsQ0FBQyxtQkFBbUJWLE9BQUEsQ0FBUVcsZUFBZSxFQUM3Q0MsS0FBSyxDQUFDLG1CQUFtQjtJQUFFQyxTQUFBLEVBQVc7RUFBTTtFQUUvQztFQUNBLE1BQU1DLHVCQUFBO0VBQUE7RUFBQSxDQUFBbkIsYUFBQSxHQUFBRSxDQUFBO0VBQTBCO0VBQUEsQ0FBQUYsYUFBQSxHQUFBb0IsQ0FBQSxVQUFBUixhQUFBLEVBQWVTLEdBQUEsQ0FBSUMsSUFBQSxJQUFTO0lBQUE7SUFBQXRCLGFBQUEsR0FBQUksQ0FBQTtJQUFBSixhQUFBLEdBQUFFLENBQUE7SUFBQTtNQUMxRCxHQUFHb0IsSUFBSTtNQUNQQyxZQUFBO01BQWM7TUFBQSxDQUFBdkIsYUFBQSxHQUFBb0IsQ0FBQSxVQUFBRSxJQUFBLENBQUtFLFFBQVEsRUFBRUMsTUFBQSxDQUFRQyxHQUFBLElBQ25DO1FBQUE7UUFBQTFCLGFBQUEsR0FBQUksQ0FBQTtRQUFBSixhQUFBLEdBQUFFLENBQUE7UUFBQSxrQ0FBQUYsYUFBQSxHQUFBb0IsQ0FBQSxVQUFBTSxHQUFBLENBQUlDLFdBQVcsS0FBSztRQUFBO1FBQUEsQ0FBQTNCLGFBQUEsR0FBQW9CLENBQUEsVUFBYSxDQUFDTSxHQUFBLENBQUlFLE9BQU87TUFBUCxDQUFPLEVBQzdDQyxNQUFBO01BQUE7TUFBQSxDQUFBN0IsYUFBQSxHQUFBb0IsQ0FBQSxVQUFVO01BQ1pVLFlBQUEsRUFBY1IsSUFBQSxDQUFLRSxRQUFRLEVBQUVPLElBQUEsQ0FBSyxDQUFDQyxDQUFBLEVBQVFaLENBQUEsS0FDekM7UUFBQTtRQUFBcEIsYUFBQSxHQUFBSSxDQUFBO1FBQUFKLGFBQUEsR0FBQUUsQ0FBQTtRQUFBLFdBQUkrQixJQUFBLENBQUtiLENBQUEsQ0FBRWMsVUFBVSxFQUFFQyxPQUFPLEtBQUssSUFBSUYsSUFBQSxDQUFLRCxDQUFBLENBQUVFLFVBQVUsRUFBRUMsT0FBTztNQUFBLEVBQ2xFLENBQUM7SUFDSjtFQUFBO0VBQUE7RUFBQSxDQUFBbkMsYUFBQSxHQUFBb0IsQ0FBQSxVQUFPLEVBQUU7RUFBQTtFQUFBcEIsYUFBQSxHQUFBRSxDQUFBO0VBRVQsb0JBQ0UsSUFBQWtDLFdBQUEsQ0FBQUMsR0FBQSxFQUFDO0lBQUlDLFNBQUEsRUFBVTtjQUNiLGlCQUFBRixXQUFBLENBQUFDLEdBQUEsRUFBQ0UsWUFBQSxDQUFBQyxXQUFXO01BQ1Y1QixhQUFBLEVBQWVPLHVCQUFBO01BQ2ZkLE9BQUEsRUFBU0E7OztBQUlqQiIsImlnbm9yZUxpc3QiOltdfQ==

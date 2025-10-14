@@ -1,0 +1,328 @@
+3aa5167459793ba97035608d13e5d34a
+"use strict";
+
+/* istanbul ignore next */
+function cov_17mws2o3u8() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\stats.tsx";
+  var hash = "77c40880da745cc6369aaeb1402f9933cfad4576";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\stats.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 30
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 22
+        },
+        end: {
+          line: 82,
+          column: 5
+        }
+      },
+      "5": {
+        start: {
+          line: 83,
+          column: 4
+        },
+        end: {
+          line: 120,
+          column: 7
+        }
+      },
+      "6": {
+        start: {
+          line: 85,
+          column: 54
+        },
+        end: {
+          line: 119,
+          column: 25
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "DashboardStats",
+        decl: {
+          start: {
+            line: 12,
+            column: 9
+          },
+          end: {
+            line: 12,
+            column: 23
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 35
+          },
+          end: {
+            line: 121,
+            column: 1
+          }
+        },
+        line: 12
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 85,
+            column: 32
+          },
+          end: {
+            line: 85,
+            column: 33
+          }
+        },
+        loc: {
+          start: {
+            line: 85,
+            column: 54
+          },
+          end: {
+            line: 119,
+            column: 25
+          }
+        },
+        line: 85
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0
+    },
+    b: {},
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\components\\dashboard\\stats.tsx"],
+      sourcesContent: ["interface DashboardStatsProps {\n  stats: {\n    totalConversations: number\n    todayMessages: number\n    totalContacts: number\n    openConversations: number\n  }\n}\n\nexport function DashboardStats({ stats }: DashboardStatsProps) {\n  const statItems = [\n    {\n      name: 'Total Conversations',\n      value: stats.totalConversations,\n      icon: (\n        <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z\" />\n        </svg>\n      ),\n      color: 'text-blue-600 bg-blue-100',\n    },\n    {\n      name: 'Messages Today',\n      value: stats.todayMessages,\n      icon: (\n        <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z\" />\n        </svg>\n      ),\n      color: 'text-green-600 bg-green-100',\n    },\n    {\n      name: 'Total Contacts',\n      value: stats.totalContacts,\n      icon: (\n        <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z\" />\n        </svg>\n      ),\n      color: 'text-purple-600 bg-purple-100',\n    },\n    {\n      name: 'Open Conversations',\n      value: stats.openConversations,\n      icon: (\n        <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4\" />\n        </svg>\n      ),\n      color: 'text-orange-600 bg-orange-100',\n    },\n  ]\n\n  return (\n    <div className=\"grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4\">\n      {statItems.map((item) => (\n        <div\n          key={item.name}\n          className=\"bg-white overflow-hidden shadow rounded-lg\"\n        >\n          <div className=\"p-5\">\n            <div className=\"flex items-center\">\n              <div className=\"flex-shrink-0\">\n                <div className={`p-3 rounded-md ${item.color}`}>\n                  {item.icon}\n                </div>\n              </div>\n              <div className=\"ml-5 w-0 flex-1\">\n                <dl>\n                  <dt className=\"text-sm font-medium text-gray-500 truncate\">\n                    {item.name}\n                  </dt>\n                  <dd>\n                    <div className=\"text-lg font-medium text-gray-900\">\n                      {item.value.toLocaleString()}\n                    </div>\n                  </dd>\n                </dl>\n              </div>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  )\n}"],
+      names: ["DashboardStats", "stats", "statItems", "name", "value", "totalConversations", "icon", "svg", "className", "fill", "stroke", "viewBox", "path", "strokeLinecap", "strokeLinejoin", "strokeWidth", "d", "color", "todayMessages", "totalContacts", "openConversations", "div", "map", "item", "dl", "dt", "dd", "toLocaleString"],
+      mappings: ";;;;+BASgBA;;;eAAAA;;;;AAAT,SAASA,eAAe,EAAEC,KAAK,EAAuB;IAC3D,MAAMC,YAAY;QAChB;YACEC,MAAM;YACNC,OAAOH,MAAMI,kBAAkB;YAC/BC,oBACE,qBAACC;gBAAIC,WAAU;gBAAUC,MAAK;gBAAOC,QAAO;gBAAeC,SAAQ;0BACjE,cAAA,qBAACC;oBAAKC,eAAc;oBAAQC,gBAAe;oBAAQC,aAAa;oBAAGC,GAAE;;;YAGzEC,OAAO;QACT;QACA;YACEd,MAAM;YACNC,OAAOH,MAAMiB,aAAa;YAC1BZ,oBACE,qBAACC;gBAAIC,WAAU;gBAAUC,MAAK;gBAAOC,QAAO;gBAAeC,SAAQ;0BACjE,cAAA,qBAACC;oBAAKC,eAAc;oBAAQC,gBAAe;oBAAQC,aAAa;oBAAGC,GAAE;;;YAGzEC,OAAO;QACT;QACA;YACEd,MAAM;YACNC,OAAOH,MAAMkB,aAAa;YAC1Bb,oBACE,qBAACC;gBAAIC,WAAU;gBAAUC,MAAK;gBAAOC,QAAO;gBAAeC,SAAQ;0BACjE,cAAA,qBAACC;oBAAKC,eAAc;oBAAQC,gBAAe;oBAAQC,aAAa;oBAAGC,GAAE;;;YAGzEC,OAAO;QACT;QACA;YACEd,MAAM;YACNC,OAAOH,MAAMmB,iBAAiB;YAC9Bd,oBACE,qBAACC;gBAAIC,WAAU;gBAAUC,MAAK;gBAAOC,QAAO;gBAAeC,SAAQ;0BACjE,cAAA,qBAACC;oBAAKC,eAAc;oBAAQC,gBAAe;oBAAQC,aAAa;oBAAGC,GAAE;;;YAGzEC,OAAO;QACT;KACD;IAED,qBACE,qBAACI;QAAIb,WAAU;kBACZN,UAAUoB,GAAG,CAAC,CAACC,qBACd,qBAACF;gBAECb,WAAU;0BAEV,cAAA,qBAACa;oBAAIb,WAAU;8BACb,cAAA,sBAACa;wBAAIb,WAAU;;0CACb,qBAACa;gCAAIb,WAAU;0CACb,cAAA,qBAACa;oCAAIb,WAAW,CAAC,eAAe,EAAEe,KAAKN,KAAK,EAAE;8CAC3CM,KAAKjB,IAAI;;;0CAGd,qBAACe;gCAAIb,WAAU;0CACb,cAAA,sBAACgB;;sDACC,qBAACC;4CAAGjB,WAAU;sDACXe,KAAKpB,IAAI;;sDAEZ,qBAACuB;sDACC,cAAA,qBAACL;gDAAIb,WAAU;0DACZe,KAAKnB,KAAK,CAACuB,cAAc;;;;;;;;;eAjBjCJ,KAAKpB,IAAI;;AA4BxB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "77c40880da745cc6369aaeb1402f9933cfad4576"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_17mws2o3u8 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_17mws2o3u8();
+cov_17mws2o3u8().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_17mws2o3u8().s[1]++;
+Object.defineProperty(exports, "DashboardStats", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_17mws2o3u8().f[0]++;
+    cov_17mws2o3u8().s[2]++;
+    return DashboardStats;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_17mws2o3u8().s[3]++, require("react/jsx-runtime"));
+function DashboardStats({
+  stats
+}) {
+  /* istanbul ignore next */
+  cov_17mws2o3u8().f[1]++;
+  const statItems =
+  /* istanbul ignore next */
+  (cov_17mws2o3u8().s[4]++, [{
+    name: 'Total Conversations',
+    value: stats.totalConversations,
+    icon: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+      className: "w-6 h-6",
+      fill: "none",
+      stroke: "currentColor",
+      viewBox: "0 0 24 24",
+      children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+      })
+    }),
+    color: 'text-blue-600 bg-blue-100'
+  }, {
+    name: 'Messages Today',
+    value: stats.todayMessages,
+    icon: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+      className: "w-6 h-6",
+      fill: "none",
+      stroke: "currentColor",
+      viewBox: "0 0 24 24",
+      children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+      })
+    }),
+    color: 'text-green-600 bg-green-100'
+  }, {
+    name: 'Total Contacts',
+    value: stats.totalContacts,
+    icon: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+      className: "w-6 h-6",
+      fill: "none",
+      stroke: "currentColor",
+      viewBox: "0 0 24 24",
+      children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z"
+      })
+    }),
+    color: 'text-purple-600 bg-purple-100'
+  }, {
+    name: 'Open Conversations',
+    value: stats.openConversations,
+    icon: /*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+      className: "w-6 h-6",
+      fill: "none",
+      stroke: "currentColor",
+      viewBox: "0 0 24 24",
+      children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        d: "M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+      })
+    }),
+    color: 'text-orange-600 bg-orange-100'
+  }]);
+  /* istanbul ignore next */
+  cov_17mws2o3u8().s[5]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+    className: "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4",
+    children: statItems.map(item => {
+      /* istanbul ignore next */
+      cov_17mws2o3u8().f[2]++;
+      cov_17mws2o3u8().s[6]++;
+      return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+        className: "bg-white overflow-hidden shadow rounded-lg",
+        children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "p-5",
+          children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+            className: "flex items-center",
+            children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "flex-shrink-0",
+              children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                className: `p-3 rounded-md ${item.color}`,
+                children: item.icon
+              })
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "ml-5 w-0 flex-1",
+              children: /*#__PURE__*/(0, _jsxruntime.jsxs)("dl", {
+                children: [/*#__PURE__*/(0, _jsxruntime.jsx)("dt", {
+                  className: "text-sm font-medium text-gray-500 truncate",
+                  children: item.name
+                }), /*#__PURE__*/(0, _jsxruntime.jsx)("dd", {
+                  children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                    className: "text-lg font-medium text-gray-900",
+                    children: item.value.toLocaleString()
+                  })
+                })]
+              })
+            })]
+          })
+        })
+      }, item.name);
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMTdtd3MybzN1OCIsImFjdHVhbENvdmVyYWdlIiwicyIsIkRhc2hib2FyZFN0YXRzIiwic3RhdHMiLCJmIiwic3RhdEl0ZW1zIiwibmFtZSIsInZhbHVlIiwidG90YWxDb252ZXJzYXRpb25zIiwiaWNvbiIsIl9qc3hydW50aW1lIiwianN4IiwiY2xhc3NOYW1lIiwiZmlsbCIsInN0cm9rZSIsInZpZXdCb3giLCJzdHJva2VMaW5lY2FwIiwic3Ryb2tlTGluZWpvaW4iLCJzdHJva2VXaWR0aCIsImQiLCJjb2xvciIsInRvZGF5TWVzc2FnZXMiLCJ0b3RhbENvbnRhY3RzIiwib3BlbkNvbnZlcnNhdGlvbnMiLCJtYXAiLCJpdGVtIiwianN4cyIsInRvTG9jYWxlU3RyaW5nIl0sInNvdXJjZXMiOlsiQzpcXEFpIFByb2plY3RlblxcQURTYXBwXFxzcmNcXGNvbXBvbmVudHNcXGRhc2hib2FyZFxcc3RhdHMudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBEYXNoYm9hcmRTdGF0c1Byb3BzIHtcbiAgc3RhdHM6IHtcbiAgICB0b3RhbENvbnZlcnNhdGlvbnM6IG51bWJlclxuICAgIHRvZGF5TWVzc2FnZXM6IG51bWJlclxuICAgIHRvdGFsQ29udGFjdHM6IG51bWJlclxuICAgIG9wZW5Db252ZXJzYXRpb25zOiBudW1iZXJcbiAgfVxufVxuXG5leHBvcnQgZnVuY3Rpb24gRGFzaGJvYXJkU3RhdHMoeyBzdGF0cyB9OiBEYXNoYm9hcmRTdGF0c1Byb3BzKSB7XG4gIGNvbnN0IHN0YXRJdGVtcyA9IFtcbiAgICB7XG4gICAgICBuYW1lOiAnVG90YWwgQ29udmVyc2F0aW9ucycsXG4gICAgICB2YWx1ZTogc3RhdHMudG90YWxDb252ZXJzYXRpb25zLFxuICAgICAgaWNvbjogKFxuICAgICAgICA8c3ZnIGNsYXNzTmFtZT1cInctNiBoLTZcIiBmaWxsPVwibm9uZVwiIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiIHZpZXdCb3g9XCIwIDAgMjQgMjRcIj5cbiAgICAgICAgICA8cGF0aCBzdHJva2VMaW5lY2FwPVwicm91bmRcIiBzdHJva2VMaW5lam9pbj1cInJvdW5kXCIgc3Ryb2tlV2lkdGg9ezJ9IGQ9XCJNOCAxMmguMDFNMTIgMTJoLjAxTTE2IDEyaC4wMU0yMSAxMmMwIDQuNDE4LTQuMDMgOC05IDhhOS44NjMgOS44NjMgMCAwMS00LjI1NS0uOTQ5TDMgMjBsMS4zOTUtMy43MkMzLjUxMiAxNS4wNDIgMyAxMy41NzQgMyAxMmMwLTQuNDE4IDQuMDMtOCA5LThzOSAzLjU4MiA5IDh6XCIgLz5cbiAgICAgICAgPC9zdmc+XG4gICAgICApLFxuICAgICAgY29sb3I6ICd0ZXh0LWJsdWUtNjAwIGJnLWJsdWUtMTAwJyxcbiAgICB9LFxuICAgIHtcbiAgICAgIG5hbWU6ICdNZXNzYWdlcyBUb2RheScsXG4gICAgICB2YWx1ZTogc3RhdHMudG9kYXlNZXNzYWdlcyxcbiAgICAgIGljb246IChcbiAgICAgICAgPHN2ZyBjbGFzc05hbWU9XCJ3LTYgaC02XCIgZmlsbD1cIm5vbmVcIiBzdHJva2U9XCJjdXJyZW50Q29sb3JcIiB2aWV3Qm94PVwiMCAwIDI0IDI0XCI+XG4gICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTcgOGgxME03IDEyaDRtMSA4bC00LTRINWEyIDIgMCAwMS0yLTJWNmEyIDIgMCAwMTItMmgxNGEyIDIgMCAwMTIgMnY4YTIgMiAwIDAxLTIgMmgtM2wtNCA0elwiIC8+XG4gICAgICAgIDwvc3ZnPlxuICAgICAgKSxcbiAgICAgIGNvbG9yOiAndGV4dC1ncmVlbi02MDAgYmctZ3JlZW4tMTAwJyxcbiAgICB9LFxuICAgIHtcbiAgICAgIG5hbWU6ICdUb3RhbCBDb250YWN0cycsXG4gICAgICB2YWx1ZTogc3RhdHMudG90YWxDb250YWN0cyxcbiAgICAgIGljb246IChcbiAgICAgICAgPHN2ZyBjbGFzc05hbWU9XCJ3LTYgaC02XCIgZmlsbD1cIm5vbmVcIiBzdHJva2U9XCJjdXJyZW50Q29sb3JcIiB2aWV3Qm94PVwiMCAwIDI0IDI0XCI+XG4gICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTEyIDQuMzU0YTQgNCAwIDExMCA1LjI5Mk0xNSAyMUgzdi0xYTYgNiAwIDAxMTIgMHYxem0wIDBoNnYtMWE2IDYgMCAwMC05LTUuMTk3bTEzLjUtOWE0IDQgMCAxMS04IDAgNCA0IDAgMDE4IDB6XCIgLz5cbiAgICAgICAgPC9zdmc+XG4gICAgICApLFxuICAgICAgY29sb3I6ICd0ZXh0LXB1cnBsZS02MDAgYmctcHVycGxlLTEwMCcsXG4gICAgfSxcbiAgICB7XG4gICAgICBuYW1lOiAnT3BlbiBDb252ZXJzYXRpb25zJyxcbiAgICAgIHZhbHVlOiBzdGF0cy5vcGVuQ29udmVyc2F0aW9ucyxcbiAgICAgIGljb246IChcbiAgICAgICAgPHN2ZyBjbGFzc05hbWU9XCJ3LTYgaC02XCIgZmlsbD1cIm5vbmVcIiBzdHJva2U9XCJjdXJyZW50Q29sb3JcIiB2aWV3Qm94PVwiMCAwIDI0IDI0XCI+XG4gICAgICAgICAgPHBhdGggc3Ryb2tlTGluZWNhcD1cInJvdW5kXCIgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiIHN0cm9rZVdpZHRoPXsyfSBkPVwiTTIwIDEzVjZhMiAyIDAgMDAtMi0ySDZhMiAyIDAgMDAtMiAydjdtMTYgMHY1YTIgMiAwIDAxLTIgMkg2YTIgMiAwIDAxLTItMnYtNW0xNiAwaC0yLjU4NmExIDEgMCAwMC0uNzA3LjI5M2wtMi40MTQgMi40MTRhMSAxIDAgMDEtLjcwNy4yOTNoLTMuMTcyYTEgMSAwIDAxLS43MDctLjI5M2wtMi40MTQtMi40MTRBMSAxIDAgMDA2LjU4NiAxM0g0XCIgLz5cbiAgICAgICAgPC9zdmc+XG4gICAgICApLFxuICAgICAgY29sb3I6ICd0ZXh0LW9yYW5nZS02MDAgYmctb3JhbmdlLTEwMCcsXG4gICAgfSxcbiAgXVxuXG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJncmlkIGdyaWQtY29scy0xIGdhcC01IHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy00XCI+XG4gICAgICB7c3RhdEl0ZW1zLm1hcCgoaXRlbSkgPT4gKFxuICAgICAgICA8ZGl2XG4gICAgICAgICAga2V5PXtpdGVtLm5hbWV9XG4gICAgICAgICAgY2xhc3NOYW1lPVwiYmctd2hpdGUgb3ZlcmZsb3ctaGlkZGVuIHNoYWRvdyByb3VuZGVkLWxnXCJcbiAgICAgICAgPlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicC01XCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyXCI+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleC1zaHJpbmstMFwiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPXtgcC0zIHJvdW5kZWQtbWQgJHtpdGVtLmNvbG9yfWB9PlxuICAgICAgICAgICAgICAgICAge2l0ZW0uaWNvbn1cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibWwtNSB3LTAgZmxleC0xXCI+XG4gICAgICAgICAgICAgICAgPGRsPlxuICAgICAgICAgICAgICAgICAgPGR0IGNsYXNzTmFtZT1cInRleHQtc20gZm9udC1tZWRpdW0gdGV4dC1ncmF5LTUwMCB0cnVuY2F0ZVwiPlxuICAgICAgICAgICAgICAgICAgICB7aXRlbS5uYW1lfVxuICAgICAgICAgICAgICAgICAgPC9kdD5cbiAgICAgICAgICAgICAgICAgIDxkZD5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LWxnIGZvbnQtbWVkaXVtIHRleHQtZ3JheS05MDBcIj5cbiAgICAgICAgICAgICAgICAgICAgICB7aXRlbS52YWx1ZS50b0xvY2FsZVN0cmluZygpfVxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgIDwvZGQ+XG4gICAgICAgICAgICAgICAgPC9kbD5cbiAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgPC9kaXY+XG4gICAgICApKX1cbiAgICA8L2Rpdj5cbiAgKVxufSJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFhTTtJQUFBQSxjQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxjQUFBO0FBQUFBLGNBQUEsR0FBQUUsQ0FBQTs7Ozs7OytCQUpVOzs7Ozs7V0FBQUMsY0FBQTs7Ozs7O0FBQVQsU0FBU0EsZUFBZTtFQUFFQztBQUFLLENBQXVCO0VBQUE7RUFBQUosY0FBQSxHQUFBSyxDQUFBO0VBQzNELE1BQU1DLFNBQUE7RUFBQTtFQUFBLENBQUFOLGNBQUEsR0FBQUUsQ0FBQSxPQUFZLENBQ2hCO0lBQ0VLLElBQUEsRUFBTTtJQUNOQyxLQUFBLEVBQU9KLEtBQUEsQ0FBTUssa0JBQWtCO0lBQy9CQyxJQUFBLGVBQ0UsSUFBQUMsV0FBQSxDQUFBQyxHQUFBLEVBQUM7TUFBSUMsU0FBQSxFQUFVO01BQVVDLElBQUEsRUFBSztNQUFPQyxNQUFBLEVBQU87TUFBZUMsT0FBQSxFQUFRO2dCQUNqRSxpQkFBQUwsV0FBQSxDQUFBQyxHQUFBLEVBQUM7UUFBS0ssYUFBQSxFQUFjO1FBQVFDLGNBQUEsRUFBZTtRQUFRQyxXQUFBLEVBQWE7UUFBR0MsQ0FBQSxFQUFF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

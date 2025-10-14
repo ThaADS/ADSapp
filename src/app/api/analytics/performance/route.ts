@@ -33,15 +33,16 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     }
 
+    // TODO WEEK 5+: Create performance_analytics table for advanced analytics
     // Store in database (you might want to use a separate analytics DB)
-    const { error: dbError } = await supabase
-      .from('performance_analytics')
-      .insert(analyticsData)
+    // const { error: dbError } = await supabase
+    //   .from('performance_analytics')
+    //   .insert(analyticsData)
 
-    if (dbError) {
-      console.error('Failed to store performance analytics:', dbError)
-      // Don't fail the request for analytics errors
-    }
+    // if (dbError) {
+    //   console.error('Failed to store performance analytics:', dbError)
+    //   // Don't fail the request for analytics errors
+    // }
 
     // Send to external analytics services
     await Promise.allSettled([
@@ -80,7 +81,7 @@ async function sendToGoogleAnalytics(data: AnalyticsData) {
         ec: 'Performance',
         ea: (data.type as string) || 'unknown',
         el: (data.name as string) || '',
-        ev: Math.round((data.value as number) || (data.duration as number) || 0),
+        ev: String(Math.round((data.value as number) || (data.duration as number) || 0)),
       })
 
       await fetch('https://www.google-analytics.com/collect', {
@@ -150,34 +151,57 @@ export async function GET(request: NextRequest) {
         startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000)
     }
 
-    // Build query
-    let query = supabase
-      .from('performance_analytics')
-      .select('*')
-      .gte('timestamp', startTime.toISOString())
-      .lte('timestamp', now.toISOString())
-
-    if (metric) {
-      query = query.eq('type', metric)
-    }
-
-    const { data: analytics, error } = await query
-      .order('timestamp', { ascending: false })
-      .limit(1000)
-
-    if (error) {
-      throw error
-    }
-
-    // Aggregate the data
-    const aggregatedData = aggregateAnalytics(analytics || [], timeframe)
-
+    // TODO WEEK 5+: Implement performance_analytics table for GET endpoint
+    // For now, return mock data structure until table is created
     return NextResponse.json({
-      data: aggregatedData,
+      data: {
+        web_vitals: {
+          cls: { avg: 0, p50: 0, p75: 0, p90: 0, p95: 0, count: 0 },
+          fcp: { avg: 0, p50: 0, p75: 0, p90: 0, p95: 0, count: 0 },
+          fid: { avg: 0, p50: 0, p75: 0, p90: 0, p95: 0, count: 0 },
+          lcp: { avg: 0, p50: 0, p75: 0, p90: 0, p95: 0, count: 0 },
+          ttfb: { avg: 0, p50: 0, p75: 0, p90: 0, p95: 0, count: 0 },
+        },
+        api_calls: [],
+        custom_timings: [],
+        errors: [],
+        user_interactions: [],
+        navigation_timing: [],
+      },
       timeframe,
       metric,
-      total_records: analytics?.length || 0,
+      total_records: 0,
+      note: 'Performance analytics table not yet created - returning placeholder data'
     })
+
+    // Build query - COMMENTED OUT until performance_analytics table is created
+    // let query = supabase
+    //   .from('performance_analytics')
+    //   .select('*')
+    //   .gte('timestamp', startTime.toISOString())
+    //   .lte('timestamp', now.toISOString())
+
+    // if (metric) {
+    //   query = query.eq('type', metric)
+    // }
+
+    // const { data: analytics, error } = await query
+    //   .order('timestamp', { ascending: false })
+    //   .limit(1000)
+
+    // if (error) {
+    //   throw error
+    // }
+
+    // // Aggregate the data
+    // const aggregatedData = aggregateAnalytics(analytics || [], timeframe)
+
+    // return NextResponse.json({
+    //   data: aggregatedData,
+    //   timeframe,
+    //   metric,
+    //   total_records: analytics?.length || 0,
+    // })
 
   } catch (error) {
     console.error('Analytics fetch error:', error)

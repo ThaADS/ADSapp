@@ -1,0 +1,548 @@
+8602506a6783af5abf2bdd55d3ba7d00
+"use strict";
+
+/* istanbul ignore next */
+function cov_17c1b8yras() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\api\\analytics\\export\\route.ts";
+  var hash = "d31056efeea891cdda7af19864802e233437d339";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\api\\analytics\\export\\route.ts",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 20
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 16
+        },
+        end: {
+          line: 11,
+          column: 38
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 14
+        },
+        end: {
+          line: 12,
+          column: 45
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 25
+        },
+        end: {
+          line: 13,
+          column: 75
+        }
+      },
+      "6": {
+        start: {
+          line: 15,
+          column: 4
+        },
+        end: {
+          line: 64,
+          column: 5
+        }
+      },
+      "7": {
+        start: {
+          line: 16,
+          column: 22
+        },
+        end: {
+          line: 16,
+          column: 52
+        }
+      },
+      "8": {
+        start: {
+          line: 18,
+          column: 21
+        },
+        end: {
+          line: 18,
+          column: 41
+        }
+      },
+      "9": {
+        start: {
+          line: 19,
+          column: 63
+        },
+        end: {
+          line: 19,
+          column: 67
+        }
+      },
+      "10": {
+        start: {
+          line: 21,
+          column: 8
+        },
+        end: {
+          line: 27,
+          column: 9
+        }
+      },
+      "11": {
+        start: {
+          line: 22,
+          column: 12
+        },
+        end: {
+          line: 26,
+          column: 15
+        }
+      },
+      "12": {
+        start: {
+          line: 29,
+          column: 8
+        },
+        end: {
+          line: 39,
+          column: 9
+        }
+      },
+      "13": {
+        start: {
+          line: 34,
+          column: 12
+        },
+        end: {
+          line: 38,
+          column: 15
+        }
+      },
+      "14": {
+        start: {
+          line: 41,
+          column: 25
+        },
+        end: {
+          line: 41,
+          column: 65
+        }
+      },
+      "15": {
+        start: {
+          line: 42,
+          column: 29
+        },
+        end: {
+          line: 47,
+          column: 10
+        }
+      },
+      "16": {
+        start: {
+          line: 49,
+          column: 8
+        },
+        end: {
+          line: 56,
+          column: 11
+        }
+      },
+      "17": {
+        start: {
+          line: 58,
+          column: 8
+        },
+        end: {
+          line: 58,
+          column: 46
+        }
+      },
+      "18": {
+        start: {
+          line: 59,
+          column: 8
+        },
+        end: {
+          line: 63,
+          column: 11
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "POST",
+        decl: {
+          start: {
+            line: 14,
+            column: 15
+          },
+          end: {
+            line: 14,
+            column: 19
+          }
+        },
+        loc: {
+          start: {
+            line: 14,
+            column: 29
+          },
+          end: {
+            line: 65,
+            column: 1
+          }
+        },
+        line: 14
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 21,
+            column: 8
+          },
+          end: {
+            line: 27,
+            column: 9
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 21,
+            column: 8
+          },
+          end: {
+            line: 27,
+            column: 9
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 21
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 21,
+            column: 12
+          },
+          end: {
+            line: 21,
+            column: 64
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 21,
+            column: 12
+          },
+          end: {
+            line: 21,
+            column: 19
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 23
+          },
+          end: {
+            line: 21,
+            column: 33
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 37
+          },
+          end: {
+            line: 21,
+            column: 45
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 49
+          },
+          end: {
+            line: 21,
+            column: 64
+          }
+        }],
+        line: 21
+      },
+      "2": {
+        loc: {
+          start: {
+            line: 29,
+            column: 8
+          },
+          end: {
+            line: 39,
+            column: 9
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 29,
+            column: 8
+          },
+          end: {
+            line: 39,
+            column: 9
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 29
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "18": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0, 0, 0],
+      "2": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\api\\analytics\\export\\route.ts"],
+      sourcesContent: ["import { NextRequest, NextResponse } from 'next/server'\nimport { requireAuth } from '@/lib/auth'\nimport { AnalyticsExporter } from '@/lib/export/analytics-export'\n\nexport async function POST(request: NextRequest) {\n  try {\n    const _user = await requireAuth() // TODO: Use user for authorization checks\n    const body = await request.json()\n    \n    const { format, dateRange, metrics, organizationId } = body\n\n    // Validate required fields\n    if (!format || !dateRange || !metrics || !organizationId) {\n      return NextResponse.json(\n        { error: 'Missing required fields' },\n        { status: 400 }\n      )\n    }\n\n    // Validate format\n    if (!['csv', 'excel', 'pdf'].includes(format)) {\n      return NextResponse.json(\n        { error: 'Invalid export format' },\n        { status: 400 }\n      )\n    }\n\n    // Create exporter and export data\n    const exporter = new AnalyticsExporter()\n    const exportResult = await exporter.exportData({\n      format,\n      dateRange,\n      metrics,\n      organizationId\n    })\n\n    // Return file download response\n    return new NextResponse(exportResult.content, {\n      status: 200,\n      headers: {\n        'Content-Type': exportResult.mimeType,\n        'Content-Disposition': `attachment; filename=\"${exportResult.filename}\"`,\n        'Cache-Control': 'no-cache'\n      }\n    })\n\n  } catch (error) {\n    console.error('Export error:', error)\n    return NextResponse.json(\n      { error: 'Export failed' },\n      { status: 500 }\n    )\n  }\n}\n"],
+      names: ["POST", "request", "_user", "requireAuth", "body", "json", "format", "dateRange", "metrics", "organizationId", "NextResponse", "error", "status", "includes", "exporter", "AnalyticsExporter", "exportResult", "exportData", "content", "headers", "mimeType", "filename", "console"],
+      mappings: ";;;;+BAIsBA;;;eAAAA;;;wBAJoB;sBACd;iCACM;AAE3B,eAAeA,KAAKC,OAAoB;IAC7C,IAAI;QACF,MAAMC,QAAQ,MAAMC,IAAAA,iBAAW,IAAG,0CAA0C;;QAC5E,MAAMC,OAAO,MAAMH,QAAQI,IAAI;QAE/B,MAAM,EAAEC,MAAM,EAAEC,SAAS,EAAEC,OAAO,EAAEC,cAAc,EAAE,GAAGL;QAEvD,2BAA2B;QAC3B,IAAI,CAACE,UAAU,CAACC,aAAa,CAACC,WAAW,CAACC,gBAAgB;YACxD,OAAOC,oBAAY,CAACL,IAAI,CACtB;gBAAEM,OAAO;YAA0B,GACnC;gBAAEC,QAAQ;YAAI;QAElB;QAEA,kBAAkB;QAClB,IAAI,CAAC;YAAC;YAAO;YAAS;SAAM,CAACC,QAAQ,CAACP,SAAS;YAC7C,OAAOI,oBAAY,CAACL,IAAI,CACtB;gBAAEM,OAAO;YAAwB,GACjC;gBAAEC,QAAQ;YAAI;QAElB;QAEA,kCAAkC;QAClC,MAAME,WAAW,IAAIC,kCAAiB;QACtC,MAAMC,eAAe,MAAMF,SAASG,UAAU,CAAC;YAC7CX;YACAC;YACAC;YACAC;QACF;QAEA,gCAAgC;QAChC,OAAO,IAAIC,oBAAY,CAACM,aAAaE,OAAO,EAAE;YAC5CN,QAAQ;YACRO,SAAS;gBACP,gBAAgBH,aAAaI,QAAQ;gBACrC,uBAAuB,CAAC,sBAAsB,EAAEJ,aAAaK,QAAQ,CAAC,CAAC,CAAC;gBACxE,iBAAiB;YACnB;QACF;IAEF,EAAE,OAAOV,OAAO;QACdW,QAAQX,KAAK,CAAC,iBAAiBA;QAC/B,OAAOD,oBAAY,CAACL,IAAI,CACtB;YAAEM,OAAO;QAAgB,GACzB;YAAEC,QAAQ;QAAI;IAElB;AACF"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "d31056efeea891cdda7af19864802e233437d339"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_17c1b8yras = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_17c1b8yras();
+cov_17c1b8yras().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_17c1b8yras().s[1]++;
+Object.defineProperty(exports, "POST", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_17c1b8yras().f[0]++;
+    cov_17c1b8yras().s[2]++;
+    return POST;
+  }
+});
+const _server =
+/* istanbul ignore next */
+(cov_17c1b8yras().s[3]++, require("next/server"));
+const _auth =
+/* istanbul ignore next */
+(cov_17c1b8yras().s[4]++, require("../../../../lib/auth"));
+const _analyticsexport =
+/* istanbul ignore next */
+(cov_17c1b8yras().s[5]++, require("../../../../lib/export/analytics-export"));
+async function POST(request) {
+  /* istanbul ignore next */
+  cov_17c1b8yras().f[1]++;
+  cov_17c1b8yras().s[6]++;
+  try {
+    const _user =
+    /* istanbul ignore next */
+    (cov_17c1b8yras().s[7]++, await (0, _auth.requireAuth)()) // TODO: Use user for authorization checks
+    ;
+    const body =
+    /* istanbul ignore next */
+    (cov_17c1b8yras().s[8]++, await request.json());
+    const {
+      format,
+      dateRange,
+      metrics,
+      organizationId
+    } =
+    /* istanbul ignore next */
+    (cov_17c1b8yras().s[9]++, body);
+    // Validate required fields
+    /* istanbul ignore next */
+    cov_17c1b8yras().s[10]++;
+    if (
+    /* istanbul ignore next */
+    (cov_17c1b8yras().b[1][0]++, !format) ||
+    /* istanbul ignore next */
+    (cov_17c1b8yras().b[1][1]++, !dateRange) ||
+    /* istanbul ignore next */
+    (cov_17c1b8yras().b[1][2]++, !metrics) ||
+    /* istanbul ignore next */
+    (cov_17c1b8yras().b[1][3]++, !organizationId)) {
+      /* istanbul ignore next */
+      cov_17c1b8yras().b[0][0]++;
+      cov_17c1b8yras().s[11]++;
+      return _server.NextResponse.json({
+        error: 'Missing required fields'
+      }, {
+        status: 400
+      });
+    } else
+    /* istanbul ignore next */
+    {
+      cov_17c1b8yras().b[0][1]++;
+    }
+    // Validate format
+    cov_17c1b8yras().s[12]++;
+    if (!['csv', 'excel', 'pdf'].includes(format)) {
+      /* istanbul ignore next */
+      cov_17c1b8yras().b[2][0]++;
+      cov_17c1b8yras().s[13]++;
+      return _server.NextResponse.json({
+        error: 'Invalid export format'
+      }, {
+        status: 400
+      });
+    } else
+    /* istanbul ignore next */
+    {
+      cov_17c1b8yras().b[2][1]++;
+    }
+    // Create exporter and export data
+    const exporter =
+    /* istanbul ignore next */
+    (cov_17c1b8yras().s[14]++, new _analyticsexport.AnalyticsExporter());
+    const exportResult =
+    /* istanbul ignore next */
+    (cov_17c1b8yras().s[15]++, await exporter.exportData({
+      format,
+      dateRange,
+      metrics,
+      organizationId
+    }));
+    // Return file download response
+    /* istanbul ignore next */
+    cov_17c1b8yras().s[16]++;
+    return new _server.NextResponse(exportResult.content, {
+      status: 200,
+      headers: {
+        'Content-Type': exportResult.mimeType,
+        'Content-Disposition': `attachment; filename="${exportResult.filename}"`,
+        'Cache-Control': 'no-cache'
+      }
+    });
+  } catch (error) {
+    /* istanbul ignore next */
+    cov_17c1b8yras().s[17]++;
+    console.error('Export error:', error);
+    /* istanbul ignore next */
+    cov_17c1b8yras().s[18]++;
+    return _server.NextResponse.json({
+      error: 'Export failed'
+    }, {
+      status: 500
+    });
+  }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMTdjMWI4eXJhcyIsImFjdHVhbENvdmVyYWdlIiwicyIsIlBPU1QiLCJyZXF1ZXN0IiwiZiIsIl91c2VyIiwiX2F1dGgiLCJyZXF1aXJlQXV0aCIsImJvZHkiLCJqc29uIiwiZm9ybWF0IiwiZGF0ZVJhbmdlIiwibWV0cmljcyIsIm9yZ2FuaXphdGlvbklkIiwiYiIsIl9zZXJ2ZXIiLCJOZXh0UmVzcG9uc2UiLCJlcnJvciIsInN0YXR1cyIsImluY2x1ZGVzIiwiZXhwb3J0ZXIiLCJfYW5hbHl0aWNzZXhwb3J0IiwiQW5hbHl0aWNzRXhwb3J0ZXIiLCJleHBvcnRSZXN1bHQiLCJleHBvcnREYXRhIiwiY29udGVudCIsImhlYWRlcnMiLCJtaW1lVHlwZSIsImZpbGVuYW1lIiwiY29uc29sZSJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxhcHBcXGFwaVxcYW5hbHl0aWNzXFxleHBvcnRcXHJvdXRlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IE5leHRSZXF1ZXN0LCBOZXh0UmVzcG9uc2UgfSBmcm9tICduZXh0L3NlcnZlcidcbmltcG9ydCB7IHJlcXVpcmVBdXRoIH0gZnJvbSAnQC9saWIvYXV0aCdcbmltcG9ydCB7IEFuYWx5dGljc0V4cG9ydGVyIH0gZnJvbSAnQC9saWIvZXhwb3J0L2FuYWx5dGljcy1leHBvcnQnXG5cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiBQT1NUKHJlcXVlc3Q6IE5leHRSZXF1ZXN0KSB7XG4gIHRyeSB7XG4gICAgY29uc3QgX3VzZXIgPSBhd2FpdCByZXF1aXJlQXV0aCgpIC8vIFRPRE86IFVzZSB1c2VyIGZvciBhdXRob3JpemF0aW9uIGNoZWNrc1xuICAgIGNvbnN0IGJvZHkgPSBhd2FpdCByZXF1ZXN0Lmpzb24oKVxuICAgIFxuICAgIGNvbnN0IHsgZm9ybWF0LCBkYXRlUmFuZ2UsIG1ldHJpY3MsIG9yZ2FuaXphdGlvbklkIH0gPSBib2R5XG5cbiAgICAvLyBWYWxpZGF0ZSByZXF1aXJlZCBmaWVsZHNcbiAgICBpZiAoIWZvcm1hdCB8fCAhZGF0ZVJhbmdlIHx8ICFtZXRyaWNzIHx8ICFvcmdhbml6YXRpb25JZCkge1xuICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKFxuICAgICAgICB7IGVycm9yOiAnTWlzc2luZyByZXF1aXJlZCBmaWVsZHMnIH0sXG4gICAgICAgIHsgc3RhdHVzOiA0MDAgfVxuICAgICAgKVxuICAgIH1cblxuICAgIC8vIFZhbGlkYXRlIGZvcm1hdFxuICAgIGlmICghWydjc3YnLCAnZXhjZWwnLCAncGRmJ10uaW5jbHVkZXMoZm9ybWF0KSkge1xuICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKFxuICAgICAgICB7IGVycm9yOiAnSW52YWxpZCBleHBvcnQgZm9ybWF0JyB9LFxuICAgICAgICB7IHN0YXR1czogNDAwIH1cbiAgICAgIClcbiAgICB9XG5cbiAgICAvLyBDcmVhdGUgZXhwb3J0ZXIgYW5kIGV4cG9ydCBkYXRhXG4gICAgY29uc3QgZXhwb3J0ZXIgPSBuZXcgQW5hbHl0aWNzRXhwb3J0ZXIoKVxuICAgIGNvbnN0IGV4cG9ydFJlc3VsdCA9IGF3YWl0IGV4cG9ydGVyLmV4cG9ydERhdGEoe1xuICAgICAgZm9ybWF0LFxuICAgICAgZGF0ZVJhbmdlLFxuICAgICAgbWV0cmljcyxcbiAgICAgIG9yZ2FuaXphdGlvbklkXG4gICAgfSlcblxuICAgIC8vIFJldHVybiBmaWxlIGRvd25sb2FkIHJlc3BvbnNlXG4gICAgcmV0dXJuIG5ldyBOZXh0UmVzcG9uc2UoZXhwb3J0UmVzdWx0LmNvbnRlbnQsIHtcbiAgICAgIHN0YXR1czogMjAwLFxuICAgICAgaGVhZGVyczoge1xuICAgICAgICAnQ29udGVudC1UeXBlJzogZXhwb3J0UmVzdWx0Lm1pbWVUeXBlLFxuICAgICAgICAnQ29udGVudC1EaXNwb3NpdGlvbic6IGBhdHRhY2htZW50OyBmaWxlbmFtZT1cIiR7ZXhwb3J0UmVzdWx0LmZpbGVuYW1lfVwiYCxcbiAgICAgICAgJ0NhY2hlLUNvbnRyb2wnOiAnbm8tY2FjaGUnXG4gICAgICB9XG4gICAgfSlcblxuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUuZXJyb3IoJ0V4cG9ydCBlcnJvcjonLCBlcnJvcilcbiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oXG4gICAgICB7IGVycm9yOiAnRXhwb3J0IGZhaWxlZCcgfSxcbiAgICAgIHsgc3RhdHVzOiA1MDAgfVxuICAgIClcbiAgfVxufVxuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFNSTtJQUFBQSxjQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxjQUFBO0FBQUFBLGNBQUEsR0FBQUUsQ0FBQTs7Ozs7OytCQUZrQjs7Ozs7O1dBQUFDLElBQUE7Ozs7O2tDQUpvQjs7O2tDQUNkOzs7a0NBQ007QUFFM0IsZUFBZUEsS0FBS0MsT0FBb0I7RUFBQTtFQUFBSixjQUFBLEdBQUFLLENBQUE7RUFBQUwsY0FBQSxHQUFBRSxDQUFBO0VBQzdDLElBQUk7SUFDRixNQUFN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

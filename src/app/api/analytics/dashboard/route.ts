@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
     // Get contact sources
     const contactSources = await getContactSources(supabase, profile.organization_id!, startDate, endDate)
 
-    return createSuccessResponse<DashboardResponse>({
+    return createSuccessResponse({
       timeframe,
       dateRange: {
         start: startDate.toISOString(),
@@ -272,9 +272,10 @@ async function getResponseTimes(supabase: TypedSupabaseClient, organizationId: s
   const convs = conversations || []
 
   const responseTimes = convs
+    .filter(conv => conv.last_message_at) // Filter out null values
     .map(conv => {
       const created = new Date(conv.created_at).getTime()
-      const lastMessage = new Date(conv.last_message_at).getTime()
+      const lastMessage = new Date(conv.last_message_at!).getTime()
       return lastMessage - created
     })
     .filter(time => time > 0)
@@ -327,24 +328,17 @@ async function getTopAgents(supabase: TypedSupabaseClient, organizationId: strin
 }
 
 async function getContactSources(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ContactSource[]> {
-  // This would be enhanced with actual source tracking
+  // TODO: Phase 3 - Add metadata column to contacts table for source tracking
+  // For now, return count of all contacts as 'direct' source
   const { data: contacts } = await supabase
     .from('contacts')
-    .select('metadata')
+    .select('id')
     .eq('organization_id', organizationId)
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString())
 
-  const contactList = contacts || []
+  const totalCount = contacts?.length || 0
 
-  const sources = contactList.reduce((acc, contact) => {
-    const metadata = contact.metadata as { source?: string } | null
-    const source = metadata?.source || 'direct'
-    acc[source] = (acc[source] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
-
-  return Object.entries(sources)
-    .map(([source, count]) => ({ source, count }))
-    .sort((a, b) => b.count - a.count)
+  // Return all contacts as 'direct' source until metadata tracking is implemented
+  return totalCount > 0 ? [{ source: 'direct', count: totalCount }] : []
 }

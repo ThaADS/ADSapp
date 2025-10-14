@@ -1,0 +1,380 @@
+46eb9cc169ce0fde5b030acd19d9d65c
+"use strict";
+
+/* istanbul ignore next */
+function cov_go1353j4p() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\users\\page.tsx";
+  var hash = "13c59eea4608de8f6776eab0b36c66dd9a5b8ad0";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\users\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 30
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 22
+        },
+        end: {
+          line: 12,
+          column: 72
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 14
+        },
+        end: {
+          line: 13,
+          column: 42
+        }
+      },
+      "6": {
+        start: {
+          line: 14,
+          column: 20
+        },
+        end: {
+          line: 14,
+          column: 46
+        }
+      },
+      "7": {
+        start: {
+          line: 16,
+          column: 4
+        },
+        end: {
+          line: 16,
+          column: 35
+        }
+      },
+      "8": {
+        start: {
+          line: 17,
+          column: 20
+        },
+        end: {
+          line: 17,
+          column: 53
+        }
+      },
+      "9": {
+        start: {
+          line: 18,
+          column: 4
+        },
+        end: {
+          line: 24,
+          column: 5
+        }
+      },
+      "10": {
+        start: {
+          line: 19,
+          column: 8
+        },
+        end: {
+          line: 23,
+          column: 9
+        }
+      },
+      "11": {
+        start: {
+          line: 20,
+          column: 12
+        },
+        end: {
+          line: 20,
+          column: 52
+        }
+      },
+      "12": {
+        start: {
+          line: 22,
+          column: 12
+        },
+        end: {
+          line: 22,
+          column: 53
+        }
+      },
+      "13": {
+        start: {
+          line: 25,
+          column: 4
+        },
+        end: {
+          line: 25,
+          column: 78
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "AdminUsersPage",
+        decl: {
+          start: {
+            line: 15,
+            column: 15
+          },
+          end: {
+            line: 15,
+            column: 29
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 32
+          },
+          end: {
+            line: 26,
+            column: 1
+          }
+        },
+        line: 15
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 18,
+            column: 4
+          },
+          end: {
+            line: 24,
+            column: 5
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 18,
+            column: 4
+          },
+          end: {
+            line: 24,
+            column: 5
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 18
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 19,
+            column: 8
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 19,
+            column: 8
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 15
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        }],
+        line: 19
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\users\\page.tsx"],
+      sourcesContent: ["import { UsersManager } from '@/components/admin/users-manager';\nimport { requireAuth, getUserProfile } from '@/lib/auth';\nimport { redirect } from 'next/navigation';\n\nexport default async function AdminUsersPage() {\n  await requireAuth();\n\n  const profile = await getUserProfile();\n\n  if (!profile?.is_super_admin) {\n    if (profile?.organization_id) {\n      redirect('/dashboard');\n    } else {\n      redirect('/onboarding');\n    }\n  }\n\n  return <UsersManager />;\n}\n"],
+      names: ["AdminUsersPage", "requireAuth", "profile", "getUserProfile", "is_super_admin", "organization_id", "redirect", "UsersManager"],
+      mappings: ";;;;+BAIA;;;eAA8BA;;;;8BAJD;sBACe;4BACnB;AAEV,eAAeA;IAC5B,MAAMC,IAAAA,iBAAW;IAEjB,MAAMC,UAAU,MAAMC,IAAAA,oBAAc;IAEpC,IAAI,CAACD,SAASE,gBAAgB;QAC5B,IAAIF,SAASG,iBAAiB;YAC5BC,IAAAA,oBAAQ,EAAC;QACX,OAAO;YACLA,IAAAA,oBAAQ,EAAC;QACX;IACF;IAEA,qBAAO,qBAACC,0BAAY;AACtB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "13c59eea4608de8f6776eab0b36c66dd9a5b8ad0"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_go1353j4p = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_go1353j4p();
+cov_go1353j4p().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_go1353j4p().s[1]++;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_go1353j4p().f[0]++;
+    cov_go1353j4p().s[2]++;
+    return AdminUsersPage;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_go1353j4p().s[3]++, require("react/jsx-runtime"));
+const _usersmanager =
+/* istanbul ignore next */
+(cov_go1353j4p().s[4]++, require("../../../components/admin/users-manager"));
+const _auth =
+/* istanbul ignore next */
+(cov_go1353j4p().s[5]++, require("../../../lib/auth"));
+const _navigation =
+/* istanbul ignore next */
+(cov_go1353j4p().s[6]++, require("next/navigation"));
+async function AdminUsersPage() {
+  /* istanbul ignore next */
+  cov_go1353j4p().f[1]++;
+  cov_go1353j4p().s[7]++;
+  await (0, _auth.requireAuth)();
+  const profile =
+  /* istanbul ignore next */
+  (cov_go1353j4p().s[8]++, await (0, _auth.getUserProfile)());
+  /* istanbul ignore next */
+  cov_go1353j4p().s[9]++;
+  if (!profile?.is_super_admin) {
+    /* istanbul ignore next */
+    cov_go1353j4p().b[0][0]++;
+    cov_go1353j4p().s[10]++;
+    if (profile?.organization_id) {
+      /* istanbul ignore next */
+      cov_go1353j4p().b[1][0]++;
+      cov_go1353j4p().s[11]++;
+      (0, _navigation.redirect)('/dashboard');
+    } else {
+      /* istanbul ignore next */
+      cov_go1353j4p().b[1][1]++;
+      cov_go1353j4p().s[12]++;
+      (0, _navigation.redirect)('/onboarding');
+    }
+  } else
+  /* istanbul ignore next */
+  {
+    cov_go1353j4p().b[0][1]++;
+  }
+  cov_go1353j4p().s[13]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)(_usersmanager.UsersManager, {});
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfZ28xMzUzajRwIiwiYWN0dWFsQ292ZXJhZ2UiLCJzIiwiQWRtaW5Vc2Vyc1BhZ2UiLCJmIiwiX2F1dGgiLCJyZXF1aXJlQXV0aCIsInByb2ZpbGUiLCJnZXRVc2VyUHJvZmlsZSIsImlzX3N1cGVyX2FkbWluIiwiYiIsIm9yZ2FuaXphdGlvbl9pZCIsIl9uYXZpZ2F0aW9uIiwicmVkaXJlY3QiLCJfanN4cnVudGltZSIsImpzeCIsIl91c2Vyc21hbmFnZXIiLCJVc2Vyc01hbmFnZXIiXSwic291cmNlcyI6WyJDOlxcQWkgUHJvamVjdGVuXFxBRFNhcHBcXHNyY1xcYXBwXFxhZG1pblxcdXNlcnNcXHBhZ2UudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFVzZXJzTWFuYWdlciB9IGZyb20gJ0AvY29tcG9uZW50cy9hZG1pbi91c2Vycy1tYW5hZ2VyJztcbmltcG9ydCB7IHJlcXVpcmVBdXRoLCBnZXRVc2VyUHJvZmlsZSB9IGZyb20gJ0AvbGliL2F1dGgnO1xuaW1wb3J0IHsgcmVkaXJlY3QgfSBmcm9tICduZXh0L25hdmlnYXRpb24nO1xuXG5leHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBBZG1pblVzZXJzUGFnZSgpIHtcbiAgYXdhaXQgcmVxdWlyZUF1dGgoKTtcblxuICBjb25zdCBwcm9maWxlID0gYXdhaXQgZ2V0VXNlclByb2ZpbGUoKTtcblxuICBpZiAoIXByb2ZpbGU/LmlzX3N1cGVyX2FkbWluKSB7XG4gICAgaWYgKHByb2ZpbGU/Lm9yZ2FuaXphdGlvbl9pZCkge1xuICAgICAgcmVkaXJlY3QoJy9kYXNoYm9hcmQnKTtcbiAgICB9IGVsc2Uge1xuICAgICAgcmVkaXJlY3QoJy9vbmJvYXJkaW5nJyk7XG4gICAgfVxuICB9XG5cbiAgcmV0dXJuIDxVc2Vyc01hbmFnZXIgLz47XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFLUTtJQUFBQSxhQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxhQUFBO0FBQUFBLGFBQUEsR0FBQUUsQ0FBQTs7Ozs7OytCQURSOzs7Ozs7V0FBOEJDLGNBQUE7Ozs7Ozs7O2lDQUpEOzs7aUNBQ2U7OztpQ0FDbkI7QUFFVixlQUFlQSxlQUFBO0VBQUE7RUFBQUgsYUFBQSxHQUFBSSxDQUFBO0VBQUFKLGFBQUEsR0FBQUUsQ0FBQTtFQUM1QixNQUFNLElBQUFHLEtBQUEsQ0FBQUMsV0FBVztFQUVqQixNQUFNQyxPQUFBO0VBQUE7RUFBQSxDQUFBUCxhQUFBLEdBQUFFLENBQUEsT0FBVSxNQUFNLElBQUFHLEtBQUEsQ0FBQUcsY0FBYztFQUFBO0VBQUFSLGFBQUEsR0FBQUUsQ0FBQTtFQUVwQyxJQUFJLENBQUNLLE9BQUEsRUFBU0UsY0FBQSxFQUFnQjtJQUFBO0lBQUFULGFBQUEsR0FBQVUsQ0FBQTtJQUFBVixhQUFBLEdBQUFFLENBQUE7SUFDNUIsSUFBSUssT0FBQSxFQUFTSSxlQUFBLEVBQWlCO01BQUE7TUFBQVgsYUFBQSxHQUFBVSxDQUFBO01BQUFWLGFBQUEsR0FBQUUsQ0FBQTtNQUM1QixJQUFBVSxXQUFBLENBQUFDLFFBQVEsRUFBQztJQUNYLE9BQU87TUFBQTtNQUFBYixhQUFBLEdBQUFVLENBQUE7TUFBQVYsYUFBQSxHQUFBRSxDQUFBO01BQ0wsSUFBQVUsV0FBQSxDQUFBQyxRQUFRLEVBQUM7SUFDWDtFQUNGO0VBQUE7RUFBQTtJQUFBYixhQUFBLEdBQUFVLENBQUE7RUFBQTtFQUFBVixhQUFBLEdBQUFFLENBQUE7RUFFQSxvQkFBTyxJQUFBWSxXQUFBLENBQUFDLEdBQUEsRUFBQ0MsYUFBQSxDQUFBQyxZQUFZO0FBQ3RCIiwiaWdub3JlTGlzdCI6W119

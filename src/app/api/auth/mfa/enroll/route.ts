@@ -50,12 +50,13 @@ export async function POST(request: NextRequest) {
     // Generate MFA enrollment data
     const enrollmentData = await generateMFAEnrollment(user.id);
 
+    // TODO WEEK 5+: Create audit_logs table for security auditing
     // Log enrollment initiation
-    await supabase.from('audit_logs').insert({
-      user_id: user.id,
-      action: 'mfa_enrollment_initiated',
-      timestamp: new Date().toISOString(),
-    });
+    // await supabase.from('audit_logs').insert({
+    //   user_id: user.id,
+    //   action: 'mfa_enrollment_initiated',
+    //   timestamp: new Date().toISOString(),
+    // });
 
     return NextResponse.json({
       success: true,

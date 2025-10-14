@@ -1,0 +1,558 @@
+9882691e5c6ff48334e7041308f00ec0
+"use strict";
+
+/* istanbul ignore next */
+function cov_1wp1dgcfjg() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\components\\billing\\pricing-plans.tsx";
+  var hash = "1d9e3137917a320596a94386c41a683cf366cc98";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\components\\billing\\pricing-plans.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 28
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 4
+        },
+        end: {
+          line: 138,
+          column: 7
+        }
+      },
+      "5": {
+        start: {
+          line: 35,
+          column: 46
+        },
+        end: {
+          line: 35,
+          column: 68
+        }
+      },
+      "6": {
+        start: {
+          line: 36,
+          column: 28
+        },
+        end: {
+          line: 113,
+          column: 39
+        }
+      },
+      "7": {
+        start: {
+          line: 77,
+          column: 100
+        },
+        end: {
+          line: 97,
+          column: 53
+        }
+      },
+      "8": {
+        start: {
+          line: 106,
+          column: 57
+        },
+        end: {
+          line: 106,
+          column: 74
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "PricingPlans",
+        decl: {
+          start: {
+            line: 12,
+            column: 9
+          },
+          end: {
+            line: 12,
+            column: 21
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 68
+          },
+          end: {
+            line: 139,
+            column: 1
+          }
+        },
+        line: 12
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 34,
+            column: 60
+          },
+          end: {
+            line: 34,
+            column: 61
+          }
+        },
+        loc: {
+          start: {
+            line: 34,
+            column: 78
+          },
+          end: {
+            line: 114,
+            column: 25
+          }
+        },
+        line: 34
+      },
+      "3": {
+        name: "(anonymous_3)",
+        decl: {
+          start: {
+            line: 77,
+            column: 68
+          },
+          end: {
+            line: 77,
+            column: 69
+          }
+        },
+        loc: {
+          start: {
+            line: 77,
+            column: 100
+          },
+          end: {
+            line: 97,
+            column: 53
+          }
+        },
+        line: 77
+      },
+      "4": {
+        name: "(anonymous_4)",
+        decl: {
+          start: {
+            line: 106,
+            column: 53
+          },
+          end: {
+            line: 106,
+            column: 54
+          }
+        },
+        loc: {
+          start: {
+            line: 106,
+            column: 57
+          },
+          end: {
+            line: 106,
+            column: 74
+          }
+        },
+        line: 106
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 37,
+            column: 77
+          },
+          end: {
+            line: 37,
+            column: 161
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 37,
+            column: 89
+          },
+          end: {
+            line: 37,
+            column: 119
+          }
+        }, {
+          start: {
+            line: 37,
+            column: 122
+          },
+          end: {
+            line: 37,
+            column: 161
+          }
+        }],
+        line: 37
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 39,
+            column: 36
+          },
+          end: {
+            line: 42,
+            column: 38
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 39,
+            column: 36
+          },
+          end: {
+            line: 39,
+            column: 45
+          }
+        }, {
+          start: {
+            line: 39,
+            column: 63
+          },
+          end: {
+            line: 42,
+            column: 38
+          }
+        }],
+        line: 39
+      },
+      "2": {
+        loc: {
+          start: {
+            line: 101,
+            column: 50
+          },
+          end: {
+            line: 110,
+            column: 42
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 101,
+            column: 76
+          },
+          end: {
+            line: 105,
+            column: 42
+          }
+        }, {
+          start: {
+            line: 105,
+            column: 59
+          },
+          end: {
+            line: 110,
+            column: 42
+          }
+        }],
+        line: 101
+      },
+      "3": {
+        loc: {
+          start: {
+            line: 109,
+            column: 54
+          },
+          end: {
+            line: 109,
+            column: 90
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 109,
+            column: 66
+          },
+          end: {
+            line: 109,
+            column: 78
+          }
+        }, {
+          start: {
+            line: 109,
+            column: 81
+          },
+          end: {
+            line: 109,
+            column: 90
+          }
+        }],
+        line: 109
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0],
+      "2": [0, 0],
+      "3": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\components\\billing\\pricing-plans.tsx"],
+      sourcesContent: ["interface PricingPlansProps {\n  plans: any\n  currentPlan: string\n  onUpgrade: (planId: string) => void\n  isLoading: boolean\n}\n\nexport function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: PricingPlansProps) {\n  return (\n    <div className=\"bg-white shadow rounded-lg\">\n      <div className=\"px-6 py-4 border-b border-gray-200\">\n        <h2 className=\"text-lg font-medium text-gray-900\">Available Plans</h2>\n        <p className=\"text-sm text-gray-500\">Choose the plan that fits your needs</p>\n      </div>\n      <div className=\"p-6\">\n        <div className=\"grid grid-cols-1 gap-6 md:grid-cols-3\">\n          {Object.entries(plans).map(([planId, plan]: [string, any]) => {\n            const isCurrent = planId === currentPlan\n\n            return (\n              <div\n                key={planId}\n                className={`border rounded-lg p-6 relative ${\n                  isCurrent\n                    ? 'border-green-500 bg-green-50'\n                    : 'border-gray-200 hover:border-gray-300'\n                }`}\n              >\n                {isCurrent && (\n                  <span className=\"absolute top-0 right-0 -mt-2 -mr-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full\">\n                    Current\n                  </span>\n                )}\n\n                <div className=\"text-center\">\n                  <h3 className=\"text-lg font-semibold text-gray-900\">{plan.name}</h3>\n                  <p className=\"text-sm text-gray-500 mt-1\">{plan.description}</p>\n\n                  <div className=\"mt-4\">\n                    <span className=\"text-4xl font-bold text-gray-900\">${plan.price}</span>\n                    <span className=\"text-gray-500\">/{plan.interval}</span>\n                  </div>\n                </div>\n\n                <ul className=\"mt-6 space-y-3\">\n                  {plan.features.map((feature: string, index: number) => (\n                    <li key={index} className=\"flex items-start\">\n                      <svg\n                        className=\"h-5 w-5 text-green-500 mr-3 flex-shrink-0\"\n                        fill=\"none\"\n                        stroke=\"currentColor\"\n                        viewBox=\"0 0 24 24\"\n                      >\n                        <path\n                          strokeLinecap=\"round\"\n                          strokeLinejoin=\"round\"\n                          strokeWidth={2}\n                          d=\"M5 13l4 4L19 7\"\n                        />\n                      </svg>\n                      <span className=\"text-sm text-gray-600\">{feature}</span>\n                    </li>\n                  ))}\n                </ul>\n\n                <div className=\"mt-6\">\n                  {isCurrent ? (\n                    <button\n                      disabled\n                      className=\"w-full py-2 px-4 border border-green-300 rounded-md text-sm font-medium text-green-700 bg-green-50 cursor-not-allowed\"\n                    >\n                      Current Plan\n                    </button>\n                  ) : (\n                    <button\n                      onClick={() => onUpgrade(planId)}\n                      disabled={isLoading}\n                      className=\"w-full py-2 px-4 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors\"\n                    >\n                      {isLoading ? 'Loading...' : 'Upgrade'}\n                    </button>\n                  )}\n                </div>\n              </div>\n            )\n          })}\n        </div>\n\n        <div className=\"mt-8 text-center text-sm text-gray-500\">\n          <p>All plans include a 14-day free trial. Cancel anytime.</p>\n          <p className=\"mt-1\">Need a custom plan? <a href=\"mailto:sales@adsapp.com\" className=\"text-green-600 hover:text-green-500\">Contact us</a></p>\n        </div>\n      </div>\n    </div>\n  )\n}"],
+      names: ["PricingPlans", "plans", "currentPlan", "onUpgrade", "isLoading", "div", "className", "h2", "p", "Object", "entries", "map", "planId", "plan", "isCurrent", "span", "h3", "name", "description", "price", "interval", "ul", "features", "feature", "index", "li", "svg", "fill", "stroke", "viewBox", "path", "strokeLinecap", "strokeLinejoin", "strokeWidth", "d", "button", "disabled", "onClick", "a", "href"],
+      mappings: ";;;;+BAOgBA;;;eAAAA;;;;AAAT,SAASA,aAAa,EAAEC,KAAK,EAAEC,WAAW,EAAEC,SAAS,EAAEC,SAAS,EAAqB;IAC1F,qBACE,sBAACC;QAAIC,WAAU;;0BACb,sBAACD;gBAAIC,WAAU;;kCACb,qBAACC;wBAAGD,WAAU;kCAAoC;;kCAClD,qBAACE;wBAAEF,WAAU;kCAAwB;;;;0BAEvC,sBAACD;gBAAIC,WAAU;;kCACb,qBAACD;wBAAIC,WAAU;kCACZG,OAAOC,OAAO,CAACT,OAAOU,GAAG,CAAC,CAAC,CAACC,QAAQC,KAAoB;4BACvD,MAAMC,YAAYF,WAAWV;4BAE7B,qBACE,sBAACG;gCAECC,WAAW,CAAC,+BAA+B,EACzCQ,YACI,iCACA,yCACJ;;oCAEDA,2BACC,qBAACC;wCAAKT,WAAU;kDAA4F;;kDAK9G,sBAACD;wCAAIC,WAAU;;0DACb,qBAACU;gDAAGV,WAAU;0DAAuCO,KAAKI,IAAI;;0DAC9D,qBAACT;gDAAEF,WAAU;0DAA8BO,KAAKK,WAAW;;0DAE3D,sBAACb;gDAAIC,WAAU;;kEACb,sBAACS;wDAAKT,WAAU;;4DAAmC;4DAAEO,KAAKM,KAAK;;;kEAC/D,sBAACJ;wDAAKT,WAAU;;4DAAgB;4DAAEO,KAAKO,QAAQ;;;;;;;kDAInD,qBAACC;wCAAGf,WAAU;kDACXO,KAAKS,QAAQ,CAACX,GAAG,CAAC,CAACY,SAAiBC,sBACnC,sBAACC;gDAAenB,WAAU;;kEACxB,qBAACoB;wDACCpB,WAAU;wDACVqB,MAAK;wDACLC,QAAO;wDACPC,SAAQ;kEAER,cAAA,qBAACC;4DACCC,eAAc;4DACdC,gBAAe;4DACfC,aAAa;4DACbC,GAAE;;;kEAGN,qBAACnB;wDAAKT,WAAU;kEAAyBiB;;;+CAdlCC;;kDAmBb,qBAACnB;wCAAIC,WAAU;kDACZQ,0BACC,qBAACqB;4CACCC,QAAQ;4CACR9B,WAAU;sDACX;2DAID,qBAAC6B;4CACCE,SAAS,IAAMlC,UAAUS;4CACzBwB,UAAUhC;4CACVE,WAAU;sDAETF,YAAY,eAAe;;;;+BA1D7BQ;wBAgEX;;kCAGF,sBAACP;wBAAIC,WAAU;;0CACb,qBAACE;0CAAE;;0CACH,sBAACA;gCAAEF,WAAU;;oCAAO;kDAAoB,qBAACgC;wCAAEC,MAAK;wCAA0BjC,WAAU;kDAAsC;;;;;;;;;;AAKpI"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "1d9e3137917a320596a94386c41a683cf366cc98"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1wp1dgcfjg = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1wp1dgcfjg();
+cov_1wp1dgcfjg().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_1wp1dgcfjg().s[1]++;
+Object.defineProperty(exports, "PricingPlans", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_1wp1dgcfjg().f[0]++;
+    cov_1wp1dgcfjg().s[2]++;
+    return PricingPlans;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_1wp1dgcfjg().s[3]++, require("react/jsx-runtime"));
+function PricingPlans({
+  plans,
+  currentPlan,
+  onUpgrade,
+  isLoading
+}) {
+  /* istanbul ignore next */
+  cov_1wp1dgcfjg().f[1]++;
+  cov_1wp1dgcfjg().s[4]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+    className: "bg-white shadow rounded-lg",
+    children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "px-6 py-4 border-b border-gray-200",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsx)("h2", {
+        className: "text-lg font-medium text-gray-900",
+        children: "Available Plans"
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)("p", {
+        className: "text-sm text-gray-500",
+        children: "Choose the plan that fits your needs"
+      })]
+    }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "p-6",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+        className: "grid grid-cols-1 gap-6 md:grid-cols-3",
+        children: Object.entries(plans).map(([planId, plan]) => {
+          /* istanbul ignore next */
+          cov_1wp1dgcfjg().f[2]++;
+          const isCurrent =
+          /* istanbul ignore next */
+          (cov_1wp1dgcfjg().s[5]++, planId === currentPlan);
+          /* istanbul ignore next */
+          cov_1wp1dgcfjg().s[6]++;
+          return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+            className: `border rounded-lg p-6 relative ${isCurrent ?
+            /* istanbul ignore next */
+            (cov_1wp1dgcfjg().b[0][0]++, 'border-green-500 bg-green-50') :
+            /* istanbul ignore next */
+            (cov_1wp1dgcfjg().b[0][1]++, 'border-gray-200 hover:border-gray-300')}`,
+            children: [
+            /* istanbul ignore next */
+            (cov_1wp1dgcfjg().b[1][0]++, isCurrent) &&
+            /* istanbul ignore next */
+            (cov_1wp1dgcfjg().b[1][1]++, /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+              className: "absolute top-0 right-0 -mt-2 -mr-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full",
+              children: "Current"
+            })), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+              className: "text-center",
+              children: [/*#__PURE__*/(0, _jsxruntime.jsx)("h3", {
+                className: "text-lg font-semibold text-gray-900",
+                children: plan.name
+              }), /*#__PURE__*/(0, _jsxruntime.jsx)("p", {
+                className: "text-sm text-gray-500 mt-1",
+                children: plan.description
+              }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+                className: "mt-4",
+                children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("span", {
+                  className: "text-4xl font-bold text-gray-900",
+                  children: ["$", plan.price]
+                }), /*#__PURE__*/(0, _jsxruntime.jsxs)("span", {
+                  className: "text-gray-500",
+                  children: ["/", plan.interval]
+                })]
+              })]
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("ul", {
+              className: "mt-6 space-y-3",
+              children: plan.features.map((feature, index) => {
+                /* istanbul ignore next */
+                cov_1wp1dgcfjg().f[3]++;
+                cov_1wp1dgcfjg().s[7]++;
+                return /*#__PURE__*/(0, _jsxruntime.jsxs)("li", {
+                  className: "flex items-start",
+                  children: [/*#__PURE__*/(0, _jsxruntime.jsx)("svg", {
+                    className: "h-5 w-5 text-green-500 mr-3 flex-shrink-0",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24",
+                    children: /*#__PURE__*/(0, _jsxruntime.jsx)("path", {
+                      strokeLinecap: "round",
+                      strokeLinejoin: "round",
+                      strokeWidth: 2,
+                      d: "M5 13l4 4L19 7"
+                    })
+                  }), /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                    className: "text-sm text-gray-600",
+                    children: feature
+                  })]
+                }, index);
+              })
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "mt-6",
+              children: isCurrent ?
+              /* istanbul ignore next */
+              (/*#__PURE__*/cov_1wp1dgcfjg().b[2][0]++, (0, _jsxruntime.jsx)("button", {
+                disabled: true,
+                className: "w-full py-2 px-4 border border-green-300 rounded-md text-sm font-medium text-green-700 bg-green-50 cursor-not-allowed",
+                children: "Current Plan"
+              })) :
+              /* istanbul ignore next */
+              (/*#__PURE__*/cov_1wp1dgcfjg().b[2][1]++, (0, _jsxruntime.jsx)("button", {
+                onClick: () => {
+                  /* istanbul ignore next */
+                  cov_1wp1dgcfjg().f[4]++;
+                  cov_1wp1dgcfjg().s[8]++;
+                  return onUpgrade(planId);
+                },
+                disabled: isLoading,
+                className: "w-full py-2 px-4 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors",
+                children: isLoading ?
+                /* istanbul ignore next */
+                (cov_1wp1dgcfjg().b[3][0]++, 'Loading...') :
+                /* istanbul ignore next */
+                (cov_1wp1dgcfjg().b[3][1]++, 'Upgrade')
+              }))
+            })]
+          }, planId);
+        })
+      }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "mt-8 text-center text-sm text-gray-500",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("p", {
+          children: "All plans include a 14-day free trial. Cancel anytime."
+        }), /*#__PURE__*/(0, _jsxruntime.jsxs)("p", {
+          className: "mt-1",
+          children: ["Need a custom plan? ", /*#__PURE__*/(0, _jsxruntime.jsx)("a", {
+            href: "mailto:sales@adsapp.com",
+            className: "text-green-600 hover:text-green-500",
+            children: "Contact us"
+          })]
+        })]
+      })]
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJQcmljaW5nUGxhbnMiLCJwbGFucyIsImN1cnJlbnRQbGFuIiwib25VcGdyYWRlIiwiaXNMb2FkaW5nIiwiY292XzF3cDFkZ2NmamciLCJmIiwicyIsIl9qc3hydW50aW1lIiwianN4cyIsImNsYXNzTmFtZSIsImpzeCIsIk9iamVjdCIsImVudHJpZXMiLCJtYXAiLCJwbGFuSWQiLCJwbGFuIiwiaXNDdXJyZW50IiwiYiIsIm5hbWUiLCJkZXNjcmlwdGlvbiIsInByaWNlIiwiaW50ZXJ2YWwiLCJmZWF0dXJlcyIsImZlYXR1cmUiLCJpbmRleCIsImZpbGwiLCJzdHJva2UiLCJ2aWV3Qm94Iiwic3Ryb2tlTGluZWNhcCIsInN0cm9rZUxpbmVqb2luIiwic3Ryb2tlV2lkdGgiLCJkIiwiZGlzYWJsZWQiLCJvbkNsaWNrIiwiaHJlZiJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxjb21wb25lbnRzXFxiaWxsaW5nXFxwcmljaW5nLXBsYW5zLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbnRlcmZhY2UgUHJpY2luZ1BsYW5zUHJvcHMge1xuICBwbGFuczogYW55XG4gIGN1cnJlbnRQbGFuOiBzdHJpbmdcbiAgb25VcGdyYWRlOiAocGxhbklkOiBzdHJpbmcpID0+IHZvaWRcbiAgaXNMb2FkaW5nOiBib29sZWFuXG59XG5cbmV4cG9ydCBmdW5jdGlvbiBQcmljaW5nUGxhbnMoeyBwbGFucywgY3VycmVudFBsYW4sIG9uVXBncmFkZSwgaXNMb2FkaW5nIH06IFByaWNpbmdQbGFuc1Byb3BzKSB7XG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJiZy13aGl0ZSBzaGFkb3cgcm91bmRlZC1sZ1wiPlxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJweC02IHB5LTQgYm9yZGVyLWIgYm9yZGVyLWdyYXktMjAwXCI+XG4gICAgICAgIDxoMiBjbGFzc05hbWU9XCJ0ZXh0LWxnIGZvbnQtbWVkaXVtIHRleHQtZ3JheS05MDBcIj5BdmFpbGFibGUgUGxhbnM8L2gyPlxuICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtZ3JheS01MDBcIj5DaG9vc2UgdGhlIHBsYW4gdGhhdCBmaXRzIHlvdXIgbmVlZHM8L3A+XG4gICAgICA8L2Rpdj5cbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwicC02XCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3JpZCBncmlkLWNvbHMtMSBnYXAtNiBtZDpncmlkLWNvbHMtM1wiPlxuICAgICAgICAgIHtPYmplY3QuZW50cmllcyhwbGFucykubWFwKChbcGxhbklkLCBwbGFuXTogW3N0cmluZywgYW55XSkgPT4ge1xuICAgICAgICAgICAgY29uc3QgaXNDdXJyZW50ID0gcGxhbklkID09PSBjdXJyZW50UGxhblxuXG4gICAgICAgICAgICByZXR1cm4gKFxuICAgICAgICAgICAgICA8ZGl2XG4gICAgICAgICAgICAgICAga2V5PXtwbGFuSWR9XG4gICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgYm9yZGVyIHJvdW5kZWQtbGcgcC02IHJlbGF0aXZlICR7XG4gICAgICAgICAgICAgICAgICBpc0N1cnJlbnRcbiAgICAgICAgICAgICAgICAgICAgPyAnYm9yZGVyLWdyZWVuLTUwMCBiZy1ncmVlbi01MCdcbiAgICAgICAgICAgICAgICAgICAgOiAnYm9yZGVyLWdyYXktMjAwIGhvdmVyOmJvcmRlci1ncmF5LTMwMCdcbiAgICAgICAgICAgICAgICB9YH1cbiAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgIHtpc0N1cnJlbnQgJiYgKFxuICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiYWJzb2x1dGUgdG9wLTAgcmlnaHQtMCAtbXQtMiAtbXItMiBiZy1ncmVlbi01MDAgdGV4dC13aGl0ZSB0ZXh0LXhzIHB4LTIgcHktMSByb3VuZGVkLWZ1bGxcIj5cbiAgICAgICAgICAgICAgICAgICAgQ3VycmVudFxuICAgICAgICAgICAgICAgICAgPC9zcGFuPlxuICAgICAgICAgICAgICAgICl9XG5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInRleHQtY2VudGVyXCI+XG4gICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC1sZyBmb250LXNlbWlib2xkIHRleHQtZ3JheS05MDBcIj57cGxhbi5uYW1lfTwvaDM+XG4gICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtZ3JheS01MDAgbXQtMVwiPntwbGFuLmRlc2NyaXB0aW9ufTwvcD5cblxuICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtdC00XCI+XG4gICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtNHhsIGZvbnQtYm9sZCB0ZXh0LWdyYXktOTAwXCI+JHtwbGFuLnByaWNlfTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1ncmF5LTUwMFwiPi97cGxhbi5pbnRlcnZhbH08L3NwYW4+XG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICAgIDx1bCBjbGFzc05hbWU9XCJtdC02IHNwYWNlLXktM1wiPlxuICAgICAgICAgICAgICAgICAge3BsYW4uZmVhdHVyZXMubWFwKChmZWF0dXJlOiBzdHJpbmcsIGluZGV4OiBudW1iZXIpID0+IChcbiAgICAgICAgICAgICAgICAgICAgPGxpIGtleT17aW5kZXh9IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtc3RhcnRcIj5cbiAgICAgICAgICAgICAgICAgICAgICA8c3ZnXG4gICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJoLTUgdy01IHRleHQtZ3JlZW4tNTAwIG1yLTMgZmxleC1zaHJpbmstMFwiXG4gICAgICAgICAgICAgICAgICAgICAgICBmaWxsPVwibm9uZVwiXG4gICAgICAgICAgICAgICAgICAgICAgICBzdHJva2U9XCJjdXJyZW50Q29sb3JcIlxuICAgICAgICAgICAgICAgICAgICAgICAgdmlld0JveD1cIjAgMCAyNCAyNFwiXG4gICAgICAgICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGhcbiAgICAgICAgICAgICAgICAgICAgICAgICAgc3Ryb2tlTGluZWNhcD1cInJvdW5kXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZVdpZHRoPXsyfVxuICAgICAgICAgICAgICAgICAgICAgICAgICBkPVwiTTUgMTNsNCA0TDE5IDdcIlxuICAgICAgICAgICAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgICAgICAgICA8L3N2Zz5cbiAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtZ3JheS02MDBcIj57ZmVhdHVyZX08L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgIDwvbGk+XG4gICAgICAgICAgICAgICAgICApKX1cbiAgICAgICAgICAgICAgICA8L3VsPlxuXG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtdC02XCI+XG4gICAgICAgICAgICAgICAgICB7aXNDdXJyZW50ID8gKFxuICAgICAgICAgICAgICAgICAgICA8YnV0dG9uXG4gICAgICAgICAgICAgICAgICAgICAgZGlzYWJsZWRcbiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJ3LWZ1bGwgcHktMiBweC00IGJvcmRlciBib3JkZXItZ3JlZW4tMzAwIHJvdW5kZWQtbWQgdGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LWdyZWVuLTcwMCBiZy1ncmVlbi01MCBjdXJzb3Itbm90LWFsbG93ZWRcIlxuICAgICAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICAgICAgQ3VycmVudCBQbGFuXG4gICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgICAgKSA6IChcbiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IG9uVXBncmFkZShwbGFuSWQpfVxuICAgICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtpc0xvYWRpbmd9XG4gICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPVwidy1mdWxsIHB5LTIgcHgtNCBiZy1ncmVlbi02MDAgdGV4dC13aGl0ZSByb3VuZGVkLW1kIHRleHQtc20gZm9udC1tZWRpdW0gaG92ZXI6YmctZ3JlZW4tNzAwIGZvY3VzOm91dGxpbmUtbm9uZSBmb2N1czpyaW5nLTIgZm9jdXM6cmluZy1ncmVlbi01MDAgZGlzYWJsZWQ6b3BhY2l0eS01MCBkaXNhYmxlZDpjdXJzb3Itbm90LWFsbG93ZWQgdHJhbnNpdGlvbi1jb2xvcnNcIlxuICAgICAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICAgICAge2lzTG9hZGluZyA/ICdMb2FkaW5nLi4uJyA6ICdVcGdyYWRlJ31cbiAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIClcbiAgICAgICAgICB9KX1cbiAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtdC04IHRleHQtY2VudGVyIHRleHQtc20gdGV4dC1ncmF5LTUwMFwiPlxuICAgICAgICAgIDxwPkFsbCBwbGFucyBpbmNsdWRlIGEgMTQtZGF5IGZyZWUgdHJpYWwuIENhbmNlbCBhbnl0aW1lLjwvcD5cbiAgICAgICAgICA8cCBjbGFzc05hbWU9XCJtdC0xXCI+TmVlZCBhIGN1c3RvbSBwbGFuPyA8YSBocmVmPVwibWFpbHRvOnNhbGVzQGFkc2FwcC5jb21cIiBjbGFzc05hbWU9XCJ0ZXh0LWdyZWVuLTYwMCBob3Zlcjp0ZXh0LWdyZWVuLTUwMFwiPkNvbnRhY3QgdXM8L2E+PC9wPlxuICAgICAgICA8L2Rpdj5cbiAgICAgIDwvZGl2PlxuICAgIDwvZGl2PlxuICApXG59Il0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OytCQU9nQjs7Ozs7O1dBQUFBLFlBQUE7Ozs7OztBQUFULFNBQVNBLGFBQWE7RUFBRUMsS0FBSztFQUFFQyxXQUFXO0VBQUVDLFNBQVM7RUFBRUM7QUFBUyxDQUFxQjtFQUFBO0VBQUFDLGNBQUEsR0FBQUMsQ0FBQTtFQUFBRCxjQUFBLEdBQUFFLENBQUE7RUFDMUYsb0JBQ0UsSUFBQUMsV0FBQSxDQUFBQyxJQUFBLEVBQUM7SUFBSUMsU0FBQSxFQUFVOzRCQUNiLElBQUFGLFdBQUEsQ0FBQUMsSUFBQSxFQUFDO01BQUlDLFNBQUEsRUFBVTs4QkFDYixJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztRQUFHRCxTQUFBLEVBQVU7a0JBQW9DO3VCQUNsRCxJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztRQUFFRCxTQUFBLEVBQVU7a0JBQXdCOztxQkFFdkMsSUFBQUYsV0FBQSxDQUFBQyxJQUFBLEVBQUM7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

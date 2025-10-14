@@ -1,0 +1,435 @@
+887ee621918c7be49fb5c89b71196dd2
+"use strict";
+
+/* istanbul ignore next */
+function cov_1h13ytp140() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\api\\tenant\\settings\\route.ts";
+  var hash = "a58b5ccf4d14af9e80c50d36f323438836a6690b";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\api\\tenant\\settings\\route.ts",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 4
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "2": {
+        start: {
+          line: 6,
+          column: 24
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 0
+        },
+        end: {
+          line: 18,
+          column: 3
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 8
+        },
+        end: {
+          line: 13,
+          column: 19
+        }
+      },
+      "5": {
+        start: {
+          line: 16,
+          column: 8
+        },
+        end: {
+          line: 16,
+          column: 19
+        }
+      },
+      "6": {
+        start: {
+          line: 19,
+          column: 16
+        },
+        end: {
+          line: 19,
+          column: 38
+        }
+      },
+      "7": {
+        start: {
+          line: 20,
+          column: 17
+        },
+        end: {
+          line: 20,
+          column: 59
+        }
+      },
+      "8": {
+        start: {
+          line: 22,
+          column: 4
+        },
+        end: {
+          line: 36,
+          column: 5
+        }
+      },
+      "9": {
+        start: {
+          line: 23,
+          column: 25
+        },
+        end: {
+          line: 23,
+          column: 59
+        }
+      },
+      "10": {
+        start: {
+          line: 24,
+          column: 8
+        },
+        end: {
+          line: 29,
+          column: 11
+        }
+      },
+      "11": {
+        start: {
+          line: 31,
+          column: 8
+        },
+        end: {
+          line: 35,
+          column: 11
+        }
+      },
+      "12": {
+        start: {
+          line: 39,
+          column: 4
+        },
+        end: {
+          line: 50,
+          column: 5
+        }
+      },
+      "13": {
+        start: {
+          line: 40,
+          column: 25
+        },
+        end: {
+          line: 40,
+          column: 59
+        }
+      },
+      "14": {
+        start: {
+          line: 41,
+          column: 8
+        },
+        end: {
+          line: 43,
+          column: 11
+        }
+      },
+      "15": {
+        start: {
+          line: 45,
+          column: 8
+        },
+        end: {
+          line: 49,
+          column: 11
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "_export",
+        decl: {
+          start: {
+            line: 5,
+            column: 9
+          },
+          end: {
+            line: 5,
+            column: 16
+          }
+        },
+        loc: {
+          start: {
+            line: 5,
+            column: 30
+          },
+          end: {
+            line: 10,
+            column: 1
+          }
+        },
+        line: 5
+      },
+      "1": {
+        name: "(anonymous_1)",
+        decl: {
+          start: {
+            line: 12,
+            column: 4
+          },
+          end: {
+            line: 12,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 15
+          },
+          end: {
+            line: 14,
+            column: 5
+          }
+        },
+        line: 12
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 15,
+            column: 4
+          },
+          end: {
+            line: 15,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 15
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        },
+        line: 15
+      },
+      "3": {
+        name: "GET",
+        decl: {
+          start: {
+            line: 21,
+            column: 15
+          },
+          end: {
+            line: 21,
+            column: 18
+          }
+        },
+        loc: {
+          start: {
+            line: 21,
+            column: 28
+          },
+          end: {
+            line: 37,
+            column: 1
+          }
+        },
+        line: 21
+      },
+      "4": {
+        name: "PUT",
+        decl: {
+          start: {
+            line: 38,
+            column: 15
+          },
+          end: {
+            line: 38,
+            column: 18
+          }
+        },
+        loc: {
+          start: {
+            line: 38,
+            column: 28
+          },
+          end: {
+            line: 51,
+            column: 1
+          }
+        },
+        line: 38
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    b: {},
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\api\\tenant\\settings\\route.ts"],
+      sourcesContent: ["import { NextRequest, NextResponse } from 'next/server';\nimport { createClient } from '@/lib/supabase/server';\n\nexport async function GET(request: NextRequest) {\n  try {\n    const supabase = await createClient();\n    \n    return NextResponse.json({\n      success: true,\n      data: { message: 'Settings endpoint' },\n    });\n  } catch (error) {\n    return NextResponse.json(\n      { error: 'Internal server error' },\n      { status: 500 }\n    );\n  }\n}\n\nexport async function PUT(request: NextRequest) {\n  try {\n    const supabase = await createClient();\n    \n    return NextResponse.json({ success: true });\n  } catch (error) {\n    return NextResponse.json(\n      { error: 'Internal server error' },\n      { status: 500 }\n    );\n  }\n}\n"],
+      names: ["GET", "PUT", "request", "supabase", "createClient", "NextResponse", "json", "success", "data", "message", "error", "status"],
+      mappings: ";;;;;;;;;;;QAGsBA;eAAAA;;QAgBAC;eAAAA;;;wBAnBoB;yBACb;AAEtB,eAAeD,IAAIE,OAAoB;IAC5C,IAAI;QACF,MAAMC,WAAW,MAAMC,IAAAA,qBAAY;QAEnC,OAAOC,oBAAY,CAACC,IAAI,CAAC;YACvBC,SAAS;YACTC,MAAM;gBAAEC,SAAS;YAAoB;QACvC;IACF,EAAE,OAAOC,OAAO;QACd,OAAOL,oBAAY,CAACC,IAAI,CACtB;YAAEI,OAAO;QAAwB,GACjC;YAAEC,QAAQ;QAAI;IAElB;AACF;AAEO,eAAeV,IAAIC,OAAoB;IAC5C,IAAI;QACF,MAAMC,WAAW,MAAMC,IAAAA,qBAAY;QAEnC,OAAOC,oBAAY,CAACC,IAAI,CAAC;YAAEC,SAAS;QAAK;IAC3C,EAAE,OAAOG,OAAO;QACd,OAAOL,oBAAY,CAACC,IAAI,CACtB;YAAEI,OAAO;QAAwB,GACjC;YAAEC,QAAQ;QAAI;IAElB;AACF"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "a58b5ccf4d14af9e80c50d36f323438836a6690b"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1h13ytp140 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1h13ytp140();
+cov_1h13ytp140().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function _export(target, all) {
+  /* istanbul ignore next */
+  cov_1h13ytp140().f[0]++;
+  cov_1h13ytp140().s[1]++;
+  for (var name in all) {
+    /* istanbul ignore next */
+    cov_1h13ytp140().s[2]++;
+    Object.defineProperty(target, name, {
+      enumerable: true,
+      get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+  }
+}
+/* istanbul ignore next */
+cov_1h13ytp140().s[3]++;
+_export(exports, {
+  get GET() {
+    /* istanbul ignore next */
+    cov_1h13ytp140().f[1]++;
+    cov_1h13ytp140().s[4]++;
+    return GET;
+  },
+  get PUT() {
+    /* istanbul ignore next */
+    cov_1h13ytp140().f[2]++;
+    cov_1h13ytp140().s[5]++;
+    return PUT;
+  }
+});
+const _server =
+/* istanbul ignore next */
+(cov_1h13ytp140().s[6]++, require("next/server"));
+const _server1 =
+/* istanbul ignore next */
+(cov_1h13ytp140().s[7]++, require("../../../../lib/supabase/server"));
+async function GET(request) {
+  /* istanbul ignore next */
+  cov_1h13ytp140().f[3]++;
+  cov_1h13ytp140().s[8]++;
+  try {
+    const supabase =
+    /* istanbul ignore next */
+    (cov_1h13ytp140().s[9]++, await (0, _server1.createClient)());
+    /* istanbul ignore next */
+    cov_1h13ytp140().s[10]++;
+    return _server.NextResponse.json({
+      success: true,
+      data: {
+        message: 'Settings endpoint'
+      }
+    });
+  } catch (error) {
+    /* istanbul ignore next */
+    cov_1h13ytp140().s[11]++;
+    return _server.NextResponse.json({
+      error: 'Internal server error'
+    }, {
+      status: 500
+    });
+  }
+}
+async function PUT(request) {
+  /* istanbul ignore next */
+  cov_1h13ytp140().f[4]++;
+  cov_1h13ytp140().s[12]++;
+  try {
+    const supabase =
+    /* istanbul ignore next */
+    (cov_1h13ytp140().s[13]++, await (0, _server1.createClient)());
+    /* istanbul ignore next */
+    cov_1h13ytp140().s[14]++;
+    return _server.NextResponse.json({
+      success: true
+    });
+  } catch (error) {
+    /* istanbul ignore next */
+    cov_1h13ytp140().s[15]++;
+    return _server.NextResponse.json({
+      error: 'Internal server error'
+    }, {
+      status: 500
+    });
+  }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJHRVQiLCJjb3ZfMWgxM3l0cDE0MCIsImYiLCJzIiwiUFVUIiwicmVxdWVzdCIsInN1cGFiYXNlIiwiX3NlcnZlcjEiLCJjcmVhdGVDbGllbnQiLCJfc2VydmVyIiwiTmV4dFJlc3BvbnNlIiwianNvbiIsInN1Y2Nlc3MiLCJkYXRhIiwibWVzc2FnZSIsImVycm9yIiwic3RhdHVzIl0sInNvdXJjZXMiOlsiQzpcXEFpIFByb2plY3RlblxcQURTYXBwXFxzcmNcXGFwcFxcYXBpXFx0ZW5hbnRcXHNldHRpbmdzXFxyb3V0ZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBOZXh0UmVxdWVzdCwgTmV4dFJlc3BvbnNlIH0gZnJvbSAnbmV4dC9zZXJ2ZXInO1xuaW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAnQC9saWIvc3VwYWJhc2Uvc2VydmVyJztcblxuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIEdFVChyZXF1ZXN0OiBOZXh0UmVxdWVzdCkge1xuICB0cnkge1xuICAgIGNvbnN0IHN1cGFiYXNlID0gYXdhaXQgY3JlYXRlQ2xpZW50KCk7XG4gICAgXG4gICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHtcbiAgICAgIHN1Y2Nlc3M6IHRydWUsXG4gICAgICBkYXRhOiB7IG1lc3NhZ2U6ICdTZXR0aW5ncyBlbmRwb2ludCcgfSxcbiAgICB9KTtcbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oXG4gICAgICB7IGVycm9yOiAnSW50ZXJuYWwgc2VydmVyIGVycm9yJyB9LFxuICAgICAgeyBzdGF0dXM6IDUwMCB9XG4gICAgKTtcbiAgfVxufVxuXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24gUFVUKHJlcXVlc3Q6IE5leHRSZXF1ZXN0KSB7XG4gIHRyeSB7XG4gICAgY29uc3Qgc3VwYWJhc2UgPSBhd2FpdCBjcmVhdGVDbGllbnQoKTtcbiAgICBcbiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBzdWNjZXNzOiB0cnVlIH0pO1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbihcbiAgICAgIHsgZXJyb3I6ICdJbnRlcm5hbCBzZXJ2ZXIgZXJyb3InIH0sXG4gICAgICB7IHN0YXR1czogNTAwIH1cbiAgICApO1xuICB9XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O01BR3NCQSxJQUFBO0lBQUE7SUFBQUMsY0FBQSxHQUFBQyxDQUFBO0lBQUFELGNBQUEsR0FBQUUsQ0FBQTtXQUFBSCxHQUFBOztNQWdCQUksSUFBQTtJQUFBO0lBQUFILGNBQUEsR0FBQUMsQ0FBQTtJQUFBRCxjQUFBLEdBQUFFLENBQUE7V0FBQUMsR0FBQTs7Ozs7a0NBbkJvQjs7O2tDQUNiO0FBRXRCLGVBQWVKLElBQUlLLE9BQW9CO0VBQUE7RUFBQUosY0FBQSxHQUFBQyxDQUFBO0VBQUFELGNBQUEsR0FBQUUsQ0FBQTtFQUM1QyxJQUFJO0lBQ0YsTUFBTUcsUUFBQTtJQUFBO0lBQUEsQ0FBQUwsY0FBQSxHQUFBRSxDQUFBLE9BQVcsTUFBTSxJQUFBSSxRQUFBLENBQUFDLFlBQVk7SUFBQTtJQUFBUCxjQUFBLEdBQUFFLENBQUE7SUFFbkMsT0FBT00sT0FBQSxDQUFBQyxZQUFZLENBQUNDLElBQUksQ0FBQztNQUN2QkMsT0FBQSxFQUFTO01BQ1RDLElBQUEsRUFBTTtRQUFFQyxPQUFBLEVBQVM7TUFBb0I7SUFDdkM7RUFDRixFQUFFLE9BQU9DLEtBQUEsRUFBTztJQUFBO0lBQUFkLGNBQUEsR0FBQUUsQ0FBQTtJQUNkLE9BQU9NLE9BQUEsQ0FBQUMsWUFBWSxDQUFDQyxJQUFJLENBQ3RCO01BQUVJLEtBQUEsRUFBTztJQUF3QixHQUNqQztNQUFFQyxNQUFBLEVBQVE7SUFBSTtFQUVsQjtBQUNGO0FBRU8sZUFBZVosSUFBSUMsT0FBb0I7RUFBQTtFQUFBSixjQUFBLEdBQUFDLENBQUE7RUFBQUQsY0FBQSxHQUFBRSxDQUFBO0VBQzVDLElBQUk7SUFDRixNQUFNRyxRQUFBO0lBQUE7SUFBQSxDQUFBTCxjQUFBLEdBQUFFLENBQUEsUUFBVyxNQUFNLElBQUFJLFFBQUEsQ0FBQUMsWUFBWTtJQUFBO0lBQUFQLGNBQUEsR0FBQUUsQ0FBQTtJQUVuQyxPQUFPTSxPQUFBLENBQUFDLFlBQVksQ0FBQ0MsSUFBSSxDQUFDO01BQUVDLE9BQUEsRUFBUztJQUFLO0VBQzNDLEVBQUUsT0FBT0csS0FBQSxFQUFPO0lBQUE7SUFBQWQsY0FBQSxHQUFBRSxDQUFBO0lBQ2QsT0FBT00sT0FBQSxDQUFBQyxZQUFZLENBQUNDLElBQUksQ0FDdEI7TUFBRUksS0FBQSxFQUFPO0lBQXdCLEdBQ2pDO01BQUVDLE1BQUEsRUFBUTtJQUFJO0VBRWxCO0FBQ0YiLCJpZ25vcmVMaXN0IjpbXX0=

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="12" failures="12" errors="0" time="2.873">
+  <testsuite name="POST /api/auth/signin" errors="0" failures="12" skipped="0" timestamp="2025-10-14T05:38:48" time="1.347" tests="12">
+    <testcase classname="POST /api/auth/signin" name="should authenticate valid user and return session" time="0.006">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:56:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signin" name="should reject invalid credentials" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:78:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signin" name="should validate email format" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:91:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signin" name="should require password field" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:104:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signup" name="should create new user with organization" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:149:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signup" name="should reject duplicate email" time="0.002">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:167:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signup" name="should validate password strength" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:182:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/signup" name="should require organization name" time="0">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:197:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/forgot-password" name="should send password reset email for valid email" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:225:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/forgot-password" name="should return success even for non-existent email (security)" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:243:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/reset-password" name="should reset password with valid token" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:270:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="POST /api/auth/reset-password" name="should reject expired or invalid token" time="0.001">
+      <failure>TypeError: (0 , _apitesthelpers.createMockRequest) is not a function
+    at Object.&lt;anonymous&gt; (C:\Ai Projecten\ADSapp\tests\integration\api\auth.test.ts:288:38)
+    at Promise.then.completed (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:316:40)
+    at _runTest (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Ai Projecten\ADSapp\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Ai Projecten\ADSapp\node_modules\jest-runner\build\runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

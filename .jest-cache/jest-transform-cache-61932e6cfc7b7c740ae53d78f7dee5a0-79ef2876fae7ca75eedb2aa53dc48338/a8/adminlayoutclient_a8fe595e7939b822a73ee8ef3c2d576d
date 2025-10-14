@@ -1,0 +1,992 @@
+e9885e9cff0f124ef8a3db1d3e66563e
+'use client';
+"use strict";
+
+/* istanbul ignore next */
+function cov_211bud5wxz() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\components\\admin\\admin-layout-client.tsx";
+  var hash = "1a6a4a668cf64dcbba4bb6fae8e446171f63a5bf";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\components\\admin\\admin-layout-client.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 3,
+          column: 0
+        },
+        end: {
+          line: 5,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 0
+        },
+        end: {
+          line: 11,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 9,
+          column: 8
+        },
+        end: {
+          line: 9,
+          column: 33
+        }
+      },
+      "3": {
+        start: {
+          line: 12,
+          column: 20
+        },
+        end: {
+          line: 12,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 15
+        },
+        end: {
+          line: 13,
+          column: 31
+        }
+      },
+      "5": {
+        start: {
+          line: 14,
+          column: 20
+        },
+        end: {
+          line: 14,
+          column: 46
+        }
+      },
+      "6": {
+        start: {
+          line: 15,
+          column: 16
+        },
+        end: {
+          line: 15,
+          column: 44
+        }
+      },
+      "7": {
+        start: {
+          line: 16,
+          column: 17
+        },
+        end: {
+          line: 16,
+          column: 55
+        }
+      },
+      "8": {
+        start: {
+          line: 17,
+          column: 19
+        },
+        end: {
+          line: 58,
+          column: 1
+        }
+      },
+      "9": {
+        start: {
+          line: 60,
+          column: 4
+        },
+        end: {
+          line: 60,
+          column: 45
+        }
+      },
+      "10": {
+        start: {
+          line: 63,
+          column: 42
+        },
+        end: {
+          line: 63,
+          column: 69
+        }
+      },
+      "11": {
+        start: {
+          line: 64,
+          column: 21
+        },
+        end: {
+          line: 64,
+          column: 51
+        }
+      },
+      "12": {
+        start: {
+          line: 65,
+          column: 19
+        },
+        end: {
+          line: 65,
+          column: 47
+        }
+      },
+      "13": {
+        start: {
+          line: 66,
+          column: 26
+        },
+        end: {
+          line: 75,
+          column: 5
+        }
+      },
+      "14": {
+        start: {
+          line: 67,
+          column: 8
+        },
+        end: {
+          line: 74,
+          column: 9
+        }
+      },
+      "15": {
+        start: {
+          line: 68,
+          column: 12
+        },
+        end: {
+          line: 70,
+          column: 15
+        }
+      },
+      "16": {
+        start: {
+          line: 71,
+          column: 12
+        },
+        end: {
+          line: 71,
+          column: 40
+        }
+      },
+      "17": {
+        start: {
+          line: 73,
+          column: 12
+        },
+        end: {
+          line: 73,
+          column: 55
+        }
+      },
+      "18": {
+        start: {
+          line: 76,
+          column: 4
+        },
+        end: {
+          line: 340,
+          column: 7
+        }
+      },
+      "19": {
+        start: {
+          line: 125,
+          column: 65
+        },
+        end: {
+          line: 125,
+          column: 86
+        }
+      },
+      "20": {
+        start: {
+          line: 170,
+          column: 111
+        },
+        end: {
+          line: 182,
+          column: 81
+        }
+      },
+      "21": {
+        start: {
+          line: 238,
+          column: 91
+        },
+        end: {
+          line: 250,
+          column: 61
+        }
+      },
+      "22": {
+        start: {
+          line: 282,
+          column: 45
+        },
+        end: {
+          line: 282,
+          column: 65
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 8,
+            column: 9
+          },
+          end: {
+            line: 8,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 8,
+            column: 20
+          },
+          end: {
+            line: 10,
+            column: 5
+          }
+        },
+        line: 8
+      },
+      "1": {
+        name: "classNames",
+        decl: {
+          start: {
+            line: 59,
+            column: 9
+          },
+          end: {
+            line: 59,
+            column: 19
+          }
+        },
+        loc: {
+          start: {
+            line: 59,
+            column: 32
+          },
+          end: {
+            line: 61,
+            column: 1
+          }
+        },
+        line: 59
+      },
+      "2": {
+        name: "AdminLayoutClient",
+        decl: {
+          start: {
+            line: 62,
+            column: 9
+          },
+          end: {
+            line: 62,
+            column: 26
+          }
+        },
+        loc: {
+          start: {
+            line: 62,
+            column: 41
+          },
+          end: {
+            line: 341,
+            column: 1
+          }
+        },
+        line: 62
+      },
+      "3": {
+        name: "(anonymous_3)",
+        decl: {
+          start: {
+            line: 66,
+            column: 26
+          },
+          end: {
+            line: 66,
+            column: 27
+          }
+        },
+        loc: {
+          start: {
+            line: 66,
+            column: 36
+          },
+          end: {
+            line: 75,
+            column: 5
+          }
+        },
+        line: 66
+      },
+      "4": {
+        name: "(anonymous_4)",
+        decl: {
+          start: {
+            line: 125,
+            column: 61
+          },
+          end: {
+            line: 125,
+            column: 62
+          }
+        },
+        loc: {
+          start: {
+            line: 125,
+            column: 65
+          },
+          end: {
+            line: 125,
+            column: 86
+          }
+        },
+        line: 125
+      },
+      "5": {
+        name: "(anonymous_5)",
+        decl: {
+          start: {
+            line: 170,
+            column: 89
+          },
+          end: {
+            line: 170,
+            column: 90
+          }
+        },
+        loc: {
+          start: {
+            line: 170,
+            column: 111
+          },
+          end: {
+            line: 182,
+            column: 81
+          }
+        },
+        line: 170
+      },
+      "6": {
+        name: "(anonymous_6)",
+        decl: {
+          start: {
+            line: 238,
+            column: 69
+          },
+          end: {
+            line: 238,
+            column: 70
+          }
+        },
+        loc: {
+          start: {
+            line: 238,
+            column: 91
+          },
+          end: {
+            line: 250,
+            column: 61
+          }
+        },
+        line: 238
+      },
+      "7": {
+        name: "(anonymous_7)",
+        decl: {
+          start: {
+            line: 282,
+            column: 41
+          },
+          end: {
+            line: 282,
+            column: 42
+          }
+        },
+        loc: {
+          start: {
+            line: 282,
+            column: 45
+          },
+          end: {
+            line: 282,
+            column: 65
+          }
+        },
+        line: 282
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 173,
+            column: 98
+          },
+          end: {
+            line: 173,
+            column: 215
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 173,
+            column: 123
+          },
+          end: {
+            line: 173,
+            column: 155
+          }
+        }, {
+          start: {
+            line: 173,
+            column: 158
+          },
+          end: {
+            line: 173,
+            column: 215
+          }
+        }],
+        line: 173
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 176,
+            column: 106
+          },
+          end: {
+            line: 176,
+            column: 197
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 176,
+            column: 131
+          },
+          end: {
+            line: 176,
+            column: 149
+          }
+        }, {
+          start: {
+            line: 176,
+            column: 152
+          },
+          end: {
+            line: 176,
+            column: 197
+          }
+        }],
+        line: 176
+      },
+      "2": {
+        loc: {
+          start: {
+            line: 241,
+            column: 78
+          },
+          end: {
+            line: 241,
+            column: 205
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 241,
+            column: 103
+          },
+          end: {
+            line: 241,
+            column: 145
+          }
+        }, {
+          start: {
+            line: 241,
+            column: 148
+          },
+          end: {
+            line: 241,
+            column: 205
+          }
+        }],
+        line: 241
+      },
+      "3": {
+        loc: {
+          start: {
+            line: 244,
+            column: 86
+          },
+          end: {
+            line: 244,
+            column: 177
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 244,
+            column: 111
+          },
+          end: {
+            line: 244,
+            column: 129
+          }
+        }, {
+          start: {
+            line: 244,
+            column: 132
+          },
+          end: {
+            line: 244,
+            column: 177
+          }
+        }],
+        line: 244
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "18": 0,
+      "19": 0,
+      "20": 0,
+      "21": 0,
+      "22": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0],
+      "2": [0, 0],
+      "3": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\components\\admin\\admin-layout-client.tsx"],
+      sourcesContent: ["'use client';\n\nimport { useState, Fragment } from 'react';\nimport { usePathname, useRouter } from 'next/navigation';\nimport { Dialog, Transition } from '@headlessui/react';\nimport {\n  Bars3Icon,\n  XMarkIcon,\n  HomeIcon,\n  BuildingOfficeIcon,\n  UsersIcon,\n  ChartBarIcon,\n  CreditCardIcon,\n  DocumentTextIcon,\n  CogIcon,\n  BellIcon,\n  ArrowRightOnRectangleIcon,\n} from '@heroicons/react/24/outline';\n\ninterface NavigationItem {\n  name: string;\n  href: string;\n  icon: React.ElementType;\n}\n\nconst navigation: NavigationItem[] = [\n  { name: 'Dashboard', href: '/admin', icon: HomeIcon },\n  { name: 'Organizations', href: '/admin/organizations', icon: BuildingOfficeIcon },\n  { name: 'Users', href: '/admin/users', icon: UsersIcon },\n  { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },\n  { name: 'Billing', href: '/admin/billing', icon: CreditCardIcon },\n  { name: 'Audit Logs', href: '/admin/audit-logs', icon: DocumentTextIcon },\n  { name: 'Webhooks', href: '/admin/webhooks', icon: BellIcon },\n  { name: 'Settings', href: '/admin/settings', icon: CogIcon },\n];\n\nfunction classNames(...classes: string[]) {\n  return classes.filter(Boolean).join(' ');\n}\n\nexport function AdminLayoutClient({ children }: { children: React.ReactNode }) {\n  const [sidebarOpen, setSidebarOpen] = useState(false);\n  const pathname = usePathname();\n  const router = useRouter();\n\n  const handleSignOut = async () => {\n    try {\n      await fetch('/api/auth/signout', { method: 'POST' });\n      router.push('/auth/signin');\n    } catch (error) {\n      console.error('Error signing out:', error);\n    }\n  };\n\n  return (\n    <div className=\"min-h-screen bg-slate-50\">\n      {/* Mobile sidebar */}\n      <Transition.Root show={sidebarOpen} as={Fragment}>\n        <Dialog as=\"div\" className=\"relative z-50 lg:hidden\" onClose={setSidebarOpen}>\n          <Transition.Child\n            as={Fragment}\n            enter=\"transition-opacity ease-linear duration-300\"\n            enterFrom=\"opacity-0\"\n            enterTo=\"opacity-100\"\n            leave=\"transition-opacity ease-linear duration-300\"\n            leaveFrom=\"opacity-100\"\n            leaveTo=\"opacity-0\"\n          >\n            <div className=\"fixed inset-0 bg-slate-900/80\" />\n          </Transition.Child>\n\n          <div className=\"fixed inset-0 flex\">\n            <Transition.Child\n              as={Fragment}\n              enter=\"transition ease-in-out duration-300 transform\"\n              enterFrom=\"-translate-x-full\"\n              enterTo=\"translate-x-0\"\n              leave=\"transition ease-in-out duration-300 transform\"\n              leaveFrom=\"translate-x-0\"\n              leaveTo=\"-translate-x-full\"\n            >\n              <Dialog.Panel className=\"relative mr-16 flex w-full max-w-xs flex-1\">\n                <Transition.Child\n                  as={Fragment}\n                  enter=\"ease-in-out duration-300\"\n                  enterFrom=\"opacity-0\"\n                  enterTo=\"opacity-100\"\n                  leave=\"ease-in-out duration-300\"\n                  leaveFrom=\"opacity-100\"\n                  leaveTo=\"opacity-0\"\n                >\n                  <div className=\"absolute left-full top-0 flex w-16 justify-center pt-5\">\n                    <button type=\"button\" className=\"-m-2.5 p-2.5\" onClick={() => setSidebarOpen(false)}>\n                      <span className=\"sr-only\">Close sidebar</span>\n                      <XMarkIcon className=\"h-6 w-6 text-white\" aria-hidden=\"true\" />\n                    </button>\n                  </div>\n                </Transition.Child>\n                {/* Mobile sidebar content */}\n                <div className=\"flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4\">\n                  <div className=\"flex h-16 shrink-0 items-center border-b border-slate-200\">\n                    <div className=\"flex items-center gap-3\">\n                      <div className=\"h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center\">\n                        <span className=\"text-white text-sm font-bold\">SA</span>\n                      </div>\n                      <span className=\"text-lg font-semibold text-slate-900\">Admin Panel</span>\n                    </div>\n                  </div>\n                  <nav className=\"flex flex-1 flex-col\">\n                    <ul role=\"list\" className=\"flex flex-1 flex-col gap-y-7\">\n                      <li>\n                        <ul role=\"list\" className=\"-mx-2 space-y-1\">\n                          {navigation.map((item) => (\n                            <li key={item.name}>\n                              <a\n                                href={item.href}\n                                className={classNames(\n                                  pathname === item.href\n                                    ? 'bg-emerald-50 text-emerald-600'\n                                    : 'text-slate-700 hover:text-emerald-600 hover:bg-slate-50',\n                                  'group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all'\n                                )}\n                              >\n                                <item.icon\n                                  className={classNames(\n                                    pathname === item.href ? 'text-emerald-600' : 'text-slate-400 group-hover:text-emerald-600',\n                                    'h-6 w-6 shrink-0 transition-colors'\n                                  )}\n                                  aria-hidden=\"true\"\n                                />\n                                {item.name}\n                              </a>\n                            </li>\n                          ))}\n                        </ul>\n                      </li>\n                    </ul>\n                  </nav>\n                </div>\n              </Dialog.Panel>\n            </Transition.Child>\n          </div>\n        </Dialog>\n      </Transition.Root>\n\n      {/* Static sidebar for desktop */}\n      <div className=\"hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col\">\n        <div className=\"flex grow flex-col gap-y-5 overflow-y-auto bg-white border-r border-slate-200 px-6 pb-4\">\n          <div className=\"flex h-16 shrink-0 items-center border-b border-slate-200\">\n            <div className=\"flex items-center gap-3\">\n              <div className=\"h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30\">\n                <span className=\"text-white text-base font-bold\">SA</span>\n              </div>\n              <div>\n                <div className=\"text-lg font-semibold text-slate-900\">Admin Panel</div>\n                <div className=\"text-xs text-slate-500\">Super Administrator</div>\n              </div>\n            </div>\n          </div>\n          <nav className=\"flex flex-1 flex-col\">\n            <ul role=\"list\" className=\"flex flex-1 flex-col gap-y-7\">\n              <li>\n                <ul role=\"list\" className=\"-mx-2 space-y-1\">\n                  {navigation.map((item) => (\n                    <li key={item.name}>\n                      <a\n                        href={item.href}\n                        className={classNames(\n                          pathname === item.href\n                            ? 'bg-emerald-50 text-emerald-600 shadow-sm'\n                            : 'text-slate-700 hover:text-emerald-600 hover:bg-slate-50',\n                          'group flex gap-x-3 rounded-xl p-3 text-sm leading-6 font-semibold transition-all'\n                        )}\n                      >\n                        <item.icon\n                          className={classNames(\n                            pathname === item.href ? 'text-emerald-600' : 'text-slate-400 group-hover:text-emerald-600',\n                            'h-6 w-6 shrink-0 transition-colors'\n                          )}\n                          aria-hidden=\"true\"\n                        />\n                        {item.name}\n                      </a>\n                    </li>\n                  ))}\n                </ul>\n              </li>\n              <li className=\"mt-auto\">\n                <button\n                  onClick={handleSignOut}\n                  className=\"group -mx-2 flex w-full gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 text-slate-700 hover:bg-slate-50 hover:text-red-600 transition-all\"\n                >\n                  <ArrowRightOnRectangleIcon\n                    className=\"h-6 w-6 shrink-0 text-slate-400 group-hover:text-red-600 transition-colors\"\n                    aria-hidden=\"true\"\n                  />\n                  Sign out\n                </button>\n              </li>\n            </ul>\n          </nav>\n        </div>\n      </div>\n\n      {/* Main content area */}\n      <div className=\"lg:pl-72\">\n        {/* Top bar for mobile */}\n        <div className=\"sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8\">\n          <button\n            type=\"button\"\n            className=\"-m-2.5 p-2.5 text-slate-700 lg:hidden\"\n            onClick={() => setSidebarOpen(true)}\n          >\n            <span className=\"sr-only\">Open sidebar</span>\n            <Bars3Icon className=\"h-6 w-6\" aria-hidden=\"true\" />\n          </button>\n\n          {/* Separator */}\n          <div className=\"h-6 w-px bg-slate-200 lg:hidden\" aria-hidden=\"true\" />\n\n          <div className=\"flex flex-1 gap-x-4 self-stretch lg:gap-x-6\">\n            <div className=\"flex flex-1 items-center\">\n              <h1 className=\"text-lg font-semibold text-slate-900 lg:hidden\">Admin Panel</h1>\n            </div>\n            <div className=\"flex items-center gap-x-4 lg:gap-x-6\">\n              {/* User menu for mobile */}\n              <div className=\"flex items-center gap-x-3 lg:hidden\">\n                <button\n                  onClick={handleSignOut}\n                  className=\"flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors\"\n                >\n                  <ArrowRightOnRectangleIcon className=\"h-5 w-5\" />\n                  <span>Sign out</span>\n                </button>\n              </div>\n            </div>\n          </div>\n        </div>\n\n        <main className=\"py-8 px-4 sm:px-6 lg:px-8\">\n          <div className=\"mx-auto max-w-7xl\">{children}</div>\n        </main>\n      </div>\n    </div>\n  );\n}"],
+      names: ["AdminLayoutClient", "navigation", "name", "href", "icon", "HomeIcon", "BuildingOfficeIcon", "UsersIcon", "ChartBarIcon", "CreditCardIcon", "DocumentTextIcon", "BellIcon", "CogIcon", "classNames", "classes", "filter", "Boolean", "join", "children", "sidebarOpen", "setSidebarOpen", "useState", "pathname", "usePathname", "router", "useRouter", "handleSignOut", "fetch", "method", "push", "error", "console", "div", "className", "Transition", "Root", "show", "as", "Fragment", "Dialog", "onClose", "Child", "enter", "enterFrom", "enterTo", "leave", "leaveFrom", "leaveTo", "Panel", "button", "type", "onClick", "span", "XMarkIcon", "aria-hidden", "nav", "ul", "role", "li", "map", "item", "a", "ArrowRightOnRectangleIcon", "Bars3Icon", "h1", "main"],
+      mappings: "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"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "1a6a4a668cf64dcbba4bb6fae8e446171f63a5bf"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_211bud5wxz = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_211bud5wxz();
+cov_211bud5wxz().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_211bud5wxz().s[1]++;
+Object.defineProperty(exports, "AdminLayoutClient", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_211bud5wxz().f[0]++;
+    cov_211bud5wxz().s[2]++;
+    return AdminLayoutClient;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[3]++, require("react/jsx-runtime"));
+const _react =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[4]++, require("react"));
+const _navigation =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[5]++, require("next/navigation"));
+const _react1 =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[6]++, require("@headlessui/react"));
+const _outline =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[7]++, require("@heroicons/react/24/outline"));
+const navigation =
+/* istanbul ignore next */
+(cov_211bud5wxz().s[8]++, [{
+  name: 'Dashboard',
+  href: '/admin',
+  icon: _outline.HomeIcon
+}, {
+  name: 'Organizations',
+  href: '/admin/organizations',
+  icon: _outline.BuildingOfficeIcon
+}, {
+  name: 'Users',
+  href: '/admin/users',
+  icon: _outline.UsersIcon
+}, {
+  name: 'Analytics',
+  href: '/admin/analytics',
+  icon: _outline.ChartBarIcon
+}, {
+  name: 'Billing',
+  href: '/admin/billing',
+  icon: _outline.CreditCardIcon
+}, {
+  name: 'Audit Logs',
+  href: '/admin/audit-logs',
+  icon: _outline.DocumentTextIcon
+}, {
+  name: 'Webhooks',
+  href: '/admin/webhooks',
+  icon: _outline.BellIcon
+}, {
+  name: 'Settings',
+  href: '/admin/settings',
+  icon: _outline.CogIcon
+}]);
+function classNames(...classes) {
+  /* istanbul ignore next */
+  cov_211bud5wxz().f[1]++;
+  cov_211bud5wxz().s[9]++;
+  return classes.filter(Boolean).join(' ');
+}
+function AdminLayoutClient({
+  children
+}) {
+  /* istanbul ignore next */
+  cov_211bud5wxz().f[2]++;
+  const [sidebarOpen, setSidebarOpen] =
+  /* istanbul ignore next */
+  (cov_211bud5wxz().s[10]++, (0, _react.useState)(false));
+  const pathname =
+  /* istanbul ignore next */
+  (cov_211bud5wxz().s[11]++, (0, _navigation.usePathname)());
+  const router =
+  /* istanbul ignore next */
+  (cov_211bud5wxz().s[12]++, (0, _navigation.useRouter)());
+  /* istanbul ignore next */
+  cov_211bud5wxz().s[13]++;
+  const handleSignOut = async () => {
+    /* istanbul ignore next */
+    cov_211bud5wxz().f[3]++;
+    cov_211bud5wxz().s[14]++;
+    try {
+      /* istanbul ignore next */
+      cov_211bud5wxz().s[15]++;
+      await fetch('/api/auth/signout', {
+        method: 'POST'
+      });
+      /* istanbul ignore next */
+      cov_211bud5wxz().s[16]++;
+      router.push('/auth/signin');
+    } catch (error) {
+      /* istanbul ignore next */
+      cov_211bud5wxz().s[17]++;
+      console.error('Error signing out:', error);
+    }
+  };
+  /* istanbul ignore next */
+  cov_211bud5wxz().s[18]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+    className: "min-h-screen bg-slate-50",
+    children: [/*#__PURE__*/(0, _jsxruntime.jsx)(_react1.Transition.Root, {
+      show: sidebarOpen,
+      as: _react.Fragment,
+      children: /*#__PURE__*/(0, _jsxruntime.jsxs)(_react1.Dialog, {
+        as: "div",
+        className: "relative z-50 lg:hidden",
+        onClose: setSidebarOpen,
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)(_react1.Transition.Child, {
+          as: _react.Fragment,
+          enter: "transition-opacity ease-linear duration-300",
+          enterFrom: "opacity-0",
+          enterTo: "opacity-100",
+          leave: "transition-opacity ease-linear duration-300",
+          leaveFrom: "opacity-100",
+          leaveTo: "opacity-0",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "fixed inset-0 bg-slate-900/80"
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "fixed inset-0 flex",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)(_react1.Transition.Child, {
+            as: _react.Fragment,
+            enter: "transition ease-in-out duration-300 transform",
+            enterFrom: "-translate-x-full",
+            enterTo: "translate-x-0",
+            leave: "transition ease-in-out duration-300 transform",
+            leaveFrom: "translate-x-0",
+            leaveTo: "-translate-x-full",
+            children: /*#__PURE__*/(0, _jsxruntime.jsxs)(_react1.Dialog.Panel, {
+              className: "relative mr-16 flex w-full max-w-xs flex-1",
+              children: [/*#__PURE__*/(0, _jsxruntime.jsx)(_react1.Transition.Child, {
+                as: _react.Fragment,
+                enter: "ease-in-out duration-300",
+                enterFrom: "opacity-0",
+                enterTo: "opacity-100",
+                leave: "ease-in-out duration-300",
+                leaveFrom: "opacity-100",
+                leaveTo: "opacity-0",
+                children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                  className: "absolute left-full top-0 flex w-16 justify-center pt-5",
+                  children: /*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+                    type: "button",
+                    className: "-m-2.5 p-2.5",
+                    onClick: () => {
+                      /* istanbul ignore next */
+                      cov_211bud5wxz().f[4]++;
+                      cov_211bud5wxz().s[19]++;
+                      return setSidebarOpen(false);
+                    },
+                    children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                      className: "sr-only",
+                      children: "Close sidebar"
+                    }), /*#__PURE__*/(0, _jsxruntime.jsx)(_outline.XMarkIcon, {
+                      className: "h-6 w-6 text-white",
+                      "aria-hidden": "true"
+                    })]
+                  })
+                })
+              }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+                className: "flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4",
+                children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                  className: "flex h-16 shrink-0 items-center border-b border-slate-200",
+                  children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+                    className: "flex items-center gap-3",
+                    children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                      className: "h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center",
+                      children: /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                        className: "text-white text-sm font-bold",
+                        children: "SA"
+                      })
+                    }), /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                      className: "text-lg font-semibold text-slate-900",
+                      children: "Admin Panel"
+                    })]
+                  })
+                }), /*#__PURE__*/(0, _jsxruntime.jsx)("nav", {
+                  className: "flex flex-1 flex-col",
+                  children: /*#__PURE__*/(0, _jsxruntime.jsx)("ul", {
+                    role: "list",
+                    className: "flex flex-1 flex-col gap-y-7",
+                    children: /*#__PURE__*/(0, _jsxruntime.jsx)("li", {
+                      children: /*#__PURE__*/(0, _jsxruntime.jsx)("ul", {
+                        role: "list",
+                        className: "-mx-2 space-y-1",
+                        children: navigation.map(item => {
+                          /* istanbul ignore next */
+                          cov_211bud5wxz().f[5]++;
+                          cov_211bud5wxz().s[20]++;
+                          return /*#__PURE__*/(0, _jsxruntime.jsx)("li", {
+                            children: /*#__PURE__*/(0, _jsxruntime.jsxs)("a", {
+                              href: item.href,
+                              className: classNames(pathname === item.href ?
+                              /* istanbul ignore next */
+                              (cov_211bud5wxz().b[0][0]++, 'bg-emerald-50 text-emerald-600') :
+                              /* istanbul ignore next */
+                              (cov_211bud5wxz().b[0][1]++, 'text-slate-700 hover:text-emerald-600 hover:bg-slate-50'), 'group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all'),
+                              children: [/*#__PURE__*/(0, _jsxruntime.jsx)(item.icon, {
+                                className: classNames(pathname === item.href ?
+                                /* istanbul ignore next */
+                                (cov_211bud5wxz().b[1][0]++, 'text-emerald-600') :
+                                /* istanbul ignore next */
+                                (cov_211bud5wxz().b[1][1]++, 'text-slate-400 group-hover:text-emerald-600'), 'h-6 w-6 shrink-0 transition-colors'),
+                                "aria-hidden": "true"
+                              }), item.name]
+                            })
+                          }, item.name);
+                        })
+                      })
+                    })
+                  })
+                })]
+              })]
+            })
+          })
+        })]
+      })
+    }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+      className: "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col",
+      children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "flex grow flex-col gap-y-5 overflow-y-auto bg-white border-r border-slate-200 px-6 pb-4",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "flex h-16 shrink-0 items-center border-b border-slate-200",
+          children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+            className: "flex items-center gap-3",
+            children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30",
+              children: /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                className: "text-white text-base font-bold",
+                children: "SA"
+              })
+            }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+              children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                className: "text-lg font-semibold text-slate-900",
+                children: "Admin Panel"
+              }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+                className: "text-xs text-slate-500",
+                children: "Super Administrator"
+              })]
+            })]
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("nav", {
+          className: "flex flex-1 flex-col",
+          children: /*#__PURE__*/(0, _jsxruntime.jsxs)("ul", {
+            role: "list",
+            className: "flex flex-1 flex-col gap-y-7",
+            children: [/*#__PURE__*/(0, _jsxruntime.jsx)("li", {
+              children: /*#__PURE__*/(0, _jsxruntime.jsx)("ul", {
+                role: "list",
+                className: "-mx-2 space-y-1",
+                children: navigation.map(item => {
+                  /* istanbul ignore next */
+                  cov_211bud5wxz().f[6]++;
+                  cov_211bud5wxz().s[21]++;
+                  return /*#__PURE__*/(0, _jsxruntime.jsx)("li", {
+                    children: /*#__PURE__*/(0, _jsxruntime.jsxs)("a", {
+                      href: item.href,
+                      className: classNames(pathname === item.href ?
+                      /* istanbul ignore next */
+                      (cov_211bud5wxz().b[2][0]++, 'bg-emerald-50 text-emerald-600 shadow-sm') :
+                      /* istanbul ignore next */
+                      (cov_211bud5wxz().b[2][1]++, 'text-slate-700 hover:text-emerald-600 hover:bg-slate-50'), 'group flex gap-x-3 rounded-xl p-3 text-sm leading-6 font-semibold transition-all'),
+                      children: [/*#__PURE__*/(0, _jsxruntime.jsx)(item.icon, {
+                        className: classNames(pathname === item.href ?
+                        /* istanbul ignore next */
+                        (cov_211bud5wxz().b[3][0]++, 'text-emerald-600') :
+                        /* istanbul ignore next */
+                        (cov_211bud5wxz().b[3][1]++, 'text-slate-400 group-hover:text-emerald-600'), 'h-6 w-6 shrink-0 transition-colors'),
+                        "aria-hidden": "true"
+                      }), item.name]
+                    })
+                  }, item.name);
+                })
+              })
+            }), /*#__PURE__*/(0, _jsxruntime.jsx)("li", {
+              className: "mt-auto",
+              children: /*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+                onClick: handleSignOut,
+                className: "group -mx-2 flex w-full gap-x-3 rounded-xl p-3 text-sm font-semibold leading-6 text-slate-700 hover:bg-slate-50 hover:text-red-600 transition-all",
+                children: [/*#__PURE__*/(0, _jsxruntime.jsx)(_outline.ArrowRightOnRectangleIcon, {
+                  className: "h-6 w-6 shrink-0 text-slate-400 group-hover:text-red-600 transition-colors",
+                  "aria-hidden": "true"
+                }), "Sign out"]
+              })
+            })]
+          })
+        })]
+      })
+    }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "lg:pl-72",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        className: "sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8",
+        children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+          type: "button",
+          className: "-m-2.5 p-2.5 text-slate-700 lg:hidden",
+          onClick: () => {
+            /* istanbul ignore next */
+            cov_211bud5wxz().f[7]++;
+            cov_211bud5wxz().s[22]++;
+            return setSidebarOpen(true);
+          },
+          children: [/*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+            className: "sr-only",
+            children: "Open sidebar"
+          }), /*#__PURE__*/(0, _jsxruntime.jsx)(_outline.Bars3Icon, {
+            className: "h-6 w-6",
+            "aria-hidden": "true"
+          })]
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "h-6 w-px bg-slate-200 lg:hidden",
+          "aria-hidden": "true"
+        }), /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+          className: "flex flex-1 gap-x-4 self-stretch lg:gap-x-6",
+          children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "flex flex-1 items-center",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("h1", {
+              className: "text-lg font-semibold text-slate-900 lg:hidden",
+              children: "Admin Panel"
+            })
+          }), /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "flex items-center gap-x-4 lg:gap-x-6",
+            children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+              className: "flex items-center gap-x-3 lg:hidden",
+              children: /*#__PURE__*/(0, _jsxruntime.jsxs)("button", {
+                onClick: handleSignOut,
+                className: "flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors",
+                children: [/*#__PURE__*/(0, _jsxruntime.jsx)(_outline.ArrowRightOnRectangleIcon, {
+                  className: "h-5 w-5"
+                }), /*#__PURE__*/(0, _jsxruntime.jsx)("span", {
+                  children: "Sign out"
+                })]
+              })
+            })
+          })]
+        })]
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)("main", {
+        className: "py-8 px-4 sm:px-6 lg:px-8",
+        children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "mx-auto max-w-7xl",
+          children: children
+        })
+      })]
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJBZG1pbkxheW91dENsaWVudCIsIm5hdmlnYXRpb24iLCJjb3ZfMjExYnVkNXd4eiIsInMiLCJuYW1lIiwiaHJlZiIsImljb24iLCJfb3V0bGluZSIsIkhvbWVJY29uIiwiQnVpbGRpbmdPZmZpY2VJY29uIiwiVXNlcnNJY29uIiwiQ2hhcnRCYXJJY29uIiwiQ3JlZGl0Q2FyZEljb24iLCJEb2N1bWVudFRleHRJY29uIiwiQmVsbEljb24iLCJDb2dJY29uIiwiY2xhc3NOYW1lcyIsImNsYXNzZXMiLCJmIiwiZmlsdGVyIiwiQm9vbGVhbiIsImpvaW4iLCJjaGlsZHJlbiIsInNpZGViYXJPcGVuIiwic2V0U2lkZWJhck9wZW4iLCJfcmVhY3QiLCJ1c2VTdGF0ZSIsInBhdGhuYW1lIiwiX25hdmlnYXRpb24iLCJ1c2VQYXRobmFtZSIsInJvdXRlciIsInVzZVJvdXRlciIsImhhbmRsZVNpZ25PdXQiLCJmZXRjaCIsIm1ldGhvZCIsInB1c2giLCJlcnJvciIsImNvbnNvbGUiLCJfanN4cnVudGltZSIsImpzeHMiLCJjbGFzc05hbWUiLCJqc3giLCJfcmVhY3QxIiwiVHJhbnNpdGlvbiIsIlJvb3QiLCJzaG93IiwiYXMiLCJGcmFnbWVudCIsIkRpYWxvZyIsIm9uQ2xvc2UiLCJDaGlsZCIsImVudGVyIiwiZW50ZXJGcm9tIiwiZW50ZXJUbyIsImxlYXZlIiwibGVhdmVGcm9tIiwibGVhdmVUbyIsIlBhbmVsIiwidHlwZSIsIm9uQ2xpY2siLCJYTWFya0ljb24iLCJyb2xlIiwibWFwIiwiaXRlbSIsImIiLCJBcnJvd1JpZ2h0T25SZWN0YW5nbGVJY29uIiwiQmFyczNJY29uIl0sInNvdXJjZXMiOlsiQzpcXEFpIFByb2plY3RlblxcQURTYXBwXFxzcmNcXGNvbXBvbmVudHNcXGFkbWluXFxhZG1pbi1sYXlvdXQtY2xpZW50LnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyIndXNlIGNsaWVudCc7XG5cbmltcG9ydCB7IHVzZVN0YXRlLCBGcmFnbWVudCB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IHVzZVBhdGhuYW1lLCB1c2VSb3V0ZXIgfSBmcm9tICduZXh0L25hdmlnYXRpb24nO1xuaW1wb3J0IHsgRGlhbG9nLCBUcmFuc2l0aW9uIH0gZnJvbSAnQGhlYWRsZXNzdWkvcmVhY3QnO1xuaW1wb3J0IHtcbiAgQmFyczNJY29uLFxuICBYTWFya0ljb24sXG4gIEhvbWVJY29uLFxuICBCdWlsZGluZ09mZmljZUljb24sXG4gIFVzZXJzSWNvbixcbiAgQ2hhcnRCYXJJY29uLFxuICBDcmVkaXRDYXJkSWNvbixcbiAgRG9jdW1lbnRUZXh0SWNvbixcbiAgQ29nSWNvbixcbiAgQmVsbEljb24sXG4gIEFycm93UmlnaHRPblJlY3RhbmdsZUljb24sXG59IGZyb20gJ0BoZXJvaWNvbnMvcmVhY3QvMjQvb3V0bGluZSc7XG5cbmludGVyZmFjZSBOYXZpZ2F0aW9uSXRlbSB7XG4gIG5hbWU6IHN0cmluZztcbiAgaHJlZjogc3RyaW5nO1xuICBpY29uOiBSZWFjdC5FbGVtZW50VHlwZTtcbn1cblxuY29uc3QgbmF2aWdhdGlvbjogTmF2aWdhdGlvbkl0ZW1bXSA9IFtcbiAgeyBuYW1lOiAnRGFzaGJvYXJkJywgaHJlZjogJy9hZG1pbicsIGljb246IEhvbWVJY29uIH0sXG4gIHsgbmFtZTogJ09yZ2FuaXphdGlvbnMnLCBocmVmOiAnL2FkbWluL29yZ2FuaXphdGlvbnMnLCBpY29uOiBCdWlsZGluZ09mZmljZUljb24gfSxcbiAgeyBuYW1lOiAnVXNlcnMnLCBocmVmOiAnL2FkbWluL3VzZXJzJywgaWNvbjogVXNlcnNJY29uIH0sXG4gIHsgbmFtZTogJ0FuYWx5dGljcycsIGhyZWY6ICcvYWRtaW4vYW5hbHl0aWNzJywgaWNvbjogQ2hhcnRCYXJJY29uIH0sXG4gIHsgbmFtZTogJ0JpbGxpbmcnLCBocmVmOiAnL2FkbWluL2JpbGxpbmcnLCBpY29uOiBDcmVkaXRDYXJkSWNvbiB9LFxuICB7IG5hbWU6ICdBdWRpdCBMb2dzJywgaHJlZjogJy9hZG1pbi9hdWRpdC1sb2dzJywgaWNvbjogRG9jdW1lbnRUZXh0SWNvbiB9LFxuICB7IG5hbWU6ICdXZWJob29rcycsIGhyZWY6ICcvYWRtaW4vd2ViaG9va3MnLCBpY29uOiBCZWxsSWNvbiB9LFxuICB7IG5hbWU6ICdTZXR0aW5ncycsIGhyZWY6ICcvYWRtaW4vc2V0dGluZ3MnLCBpY29uOiBDb2dJY29uIH0sXG5dO1xuXG5mdW5jdGlvbiBjbGFzc05hbWVzKC4uLmNsYXNzZXM6IHN0cmluZ1tdKSB7XG4gIHJldHVybiBjbGFzc2VzLmZpbHRlcihCb29sZWFuKS5qb2luKCcgJyk7XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBBZG1pbkxheW91dENsaWVudCh7IGNoaWxkcmVuIH06IHsgY2hpbGRyZW46IFJlYWN0LlJlYWN0Tm9kZSB9KSB7XG4gIGNvbnN0IFtzaWRlYmFyT3Blbiwgc2V0U2lkZWJhck9wZW5dID0gdXNlU3RhdGUoZmFsc2UpO1xuICBjb25zdCBwYXRobmFtZSA9IHVzZVBhdGhuYW1lKCk7XG4gIGNvbnN0IHJvdXRlciA9IHVzZVJvdXRlcigpO1xuXG4gIGNvbnN0IGhhbmRsZVNpZ25PdXQgPSBhc3luYyAoKSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIGF3YWl0IGZldGNoKCcvYXBpL2F1dGgvc2lnbm91dCcsIHsgbWV0aG9kOiAnUE9TVCcgfSk7XG4gICAgICByb3V0ZXIucHVzaCgnL2F1dGgvc2lnbmluJyk7XG4gICAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIHNpZ25pbmcgb3V0OicsIGVycm9yKTtcbiAgICB9XG4gIH07XG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2IGNsYXNzTmFtZT1cIm1pbi1oLXNjcmVlbiBiZy1zbGF0ZS01MFwiPlxuICAgICAgey8qIE1vYmlsZSBzaWRlYmFyICovfVxuICAgICAgPFRyYW5zaXRpb24uUm9vdCBzaG93PXtzaWRlYmFyT3Blbn0gYXM9e0ZyYWdtZW50fT5cbiAgICAgICAgPERpYWxvZyBhcz1cImRpdlwiIGNsYXNzTmFtZT1cInJlbGF0aXZlIHotNTAgbGc6aGlkZGVuXCIgb25DbG9zZT17c2V0U2lkZWJhck9wZW59PlxuICAgICAgICAgIDxUcmFuc2l0aW9uLkNoaWxkXG4gICAgICAgICAgICBhcz17RnJhZ21lbnR9XG4gICAgICAgICAgICBlbnRlcj1cInRyYW5zaXRpb24tb3BhY2l0eSBlYXNlLWxpbmVhciBkdXJhdGlvbi0zMDBcIlxuICAgICAgICAgICAgZW50ZXJGcm9tPVwib3BhY2l0eS0wXCJcbiAgICAgICAgICAgIGVudGVyVG89XCJvcGFjaXR5LTEwMFwiXG4gICAgICAgICAgICBsZWF2ZT1cInRyYW5zaXRpb24tb3BhY2l0eSBlYXNlLWxpbmVhciBkdXJhdGlvbi0zMDBcIlxuICAgICAgICAgICAgbGVhdmVGcm9tPVwib3BhY2l0eS0xMDBcIlxuICAgICAgICAgICAgbGVhdmVUbz1cIm9wYWNpdHktMFwiXG4gICAgICAgICAgPlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmaXhlZCBpbnNldC0wIGJnLXNsYXRlLTkwMC84MFwiIC8+XG4gICAgICAgICAgPC9UcmFuc2l0aW9uLkNoaWxkPlxuXG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmaXhlZCBpbnNldC0wIGZsZXhcIj5cbiAgICAgICAgICAgIDxUcmFuc2l0aW9uLkNoaWxkXG4gICAgICAgICAgICAgIGFzPXtGcmFnbWVudH1cbiAgICAgICAgICAgICAgZW50ZXI9XCJ0cmFuc2l0aW9uIGVhc2UtaW4tb3V0IGR1cmF0aW9uLTMwMCB0cmFuc2Zvcm1cIlxuICAgICAgICAgICAgICBlbnRlckZyb209XCItdHJhbnNsYXRlLXgtZnVsbFwiXG4gICAgICAgICAgICAgIGVudGVyVG89XCJ0cmFuc2xhdGUteC0wXCJcbiAgICAgICAgICAgICAgbGVhdmU9XCJ0cmFuc2l0aW9uIGVhc2UtaW4tb3V0IGR1cmF0aW9uLTMwMCB0cmFuc2Zvcm1cIlxuICAgICAgICAgICAgICBsZWF2ZUZyb209XCJ0cmFuc2xhdGUteC0wXCJcbiAgICAgICAgICAgICAgbGVhdmVUbz1cIi10cmFuc2xhdGUteC1mdWxsXCJcbiAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgPERpYWxvZy5QYW5lbCBjbGFzc05hbWU9XCJyZWxhdGl2ZSBtci0xNiBmbGV4IHctZnVsbCBtYXgtdy14cyBmbGV4LTFcIj5cbiAgICAgICAgICAgICAgICA8VHJhbnNpdGlvbi5DaGlsZFxuICAgICAgICAgICAgICAgICAgYXM9e0ZyYWdtZW50fVxuICAgICAgICAgICAgICAgICAgZW50ZXI9XCJlYXNlLWluLW91dCBkdXJhdGlvbi0zMDBcIlxuICAgICAgICAgICAgICAgICAgZW50ZXJGcm9tPVwib3BhY2l0eS0wXCJcbiAgICAgICAgICAgICAgICAgIGVudGVyVG89XCJvcGFjaXR5LTEwMFwiXG4gICAgICAgICAgICAgICAgICBsZWF2ZT1cImVhc2UtaW4tb3V0IGR1cmF0aW9uLTMwMFwiXG4gICAgICAgICAgICAgICAgICBsZWF2ZUZyb209XCJvcGFjaXR5LTEwMFwiXG4gICAgICAgICAgICAgICAgICBsZWF2ZVRvPVwib3BhY2l0eS0wXCJcbiAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFic29sdXRlIGxlZnQtZnVsbCB0b3AtMCBmbGV4IHctMTYganVzdGlmeS1jZW50ZXIgcHQtNVwiPlxuICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9XCJidXR0b25cIiBjbGFzc05hbWU9XCItbS0yLjUgcC0yLjVcIiBvbkNsaWNrPXsoKSA9PiBzZXRTaWRlYmFyT3BlbihmYWxzZSl9PlxuICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInNyLW9ubHlcIj5DbG9zZSBzaWRlYmFyPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgIDxYTWFya0ljb24gY2xhc3NOYW1lPVwiaC02IHctNiB0ZXh0LXdoaXRlXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCIgLz5cbiAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L1RyYW5zaXRpb24uQ2hpbGQ+XG4gICAgICAgICAgICAgICAgey8qIE1vYmlsZSBzaWRlYmFyIGNvbnRlbnQgKi99XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGdyb3cgZmxleC1jb2wgZ2FwLXktNSBvdmVyZmxvdy15LWF1dG8gYmctd2hpdGUgcHgtNiBwYi00XCI+XG4gICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaC0xNiBzaHJpbmstMCBpdGVtcy1jZW50ZXIgYm9yZGVyLWIgYm9yZGVyLXNsYXRlLTIwMFwiPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC0zXCI+XG4gICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJoLTggdy04IHJvdW5kZWQtbGcgYmctZ3JhZGllbnQtdG8tYnIgZnJvbS1lbWVyYWxkLTUwMCB0by1lbWVyYWxkLTYwMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlclwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC13aGl0ZSB0ZXh0LXNtIGZvbnQtYm9sZFwiPlNBPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtbGcgZm9udC1zZW1pYm9sZCB0ZXh0LXNsYXRlLTkwMFwiPkFkbWluIFBhbmVsPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgPG5hdiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtMSBmbGV4LWNvbFwiPlxuICAgICAgICAgICAgICAgICAgICA8dWwgcm9sZT1cImxpc3RcIiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtMSBmbGV4LWNvbCBnYXAteS03XCI+XG4gICAgICAgICAgICAgICAgICAgICAgPGxpPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHVsIHJvbGU9XCJsaXN0XCIgY2xhc3NOYW1lPVwiLW14LTIgc3BhY2UteS0xXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIHtuYXZpZ2F0aW9uLm1hcCgoaXRlbSkgPT4gKFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxsaSBrZXk9e2l0ZW0ubmFtZX0+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8YVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBocmVmPXtpdGVtLmhyZWZ9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17Y2xhc3NOYW1lcyhcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYXRobmFtZSA9PT0gaXRlbS5ocmVmXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA/ICdiZy1lbWVyYWxkLTUwIHRleHQtZW1lcmFsZC02MDAnXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA6ICd0ZXh0LXNsYXRlLTcwMCBob3Zlcjp0ZXh0LWVtZXJhbGQtNjAwIGhvdmVyOmJnLXNsYXRlLTUwJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnZ3JvdXAgZmxleCBnYXAteC0zIHJvdW5kZWQtbGcgcC0zIHRleHQtc20gbGVhZGluZy02IGZvbnQtc2VtaWJvbGQgdHJhbnNpdGlvbi1hbGwnXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpdGVtLmljb25cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2NsYXNzTmFtZXMoXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYXRobmFtZSA9PT0gaXRlbS5ocmVmID8gJ3RleHQtZW1lcmFsZC02MDAnIDogJ3RleHQtc2xhdGUtNDAwIGdyb3VwLWhvdmVyOnRleHQtZW1lcmFsZC02MDAnLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ2gtNiB3LTYgc2hyaW5rLTAgdHJhbnNpdGlvbi1jb2xvcnMnXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKX1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhcmlhLWhpZGRlbj1cInRydWVcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB7aXRlbS5uYW1lfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9hPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvbGk+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgICAgICAgICAgPC91bD5cbiAgICAgICAgICAgICAgICAgICAgICA8L2xpPlxuICAgICAgICAgICAgICAgICAgICA8L3VsPlxuICAgICAgICAgICAgICAgICAgPC9uYXY+XG4gICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgIDwvRGlhbG9nLlBhbmVsPlxuICAgICAgICAgICAgPC9UcmFuc2l0aW9uLkNoaWxkPlxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICA8L0RpYWxvZz5cbiAgICAgIDwvVHJhbnNpdGlvbi5Sb290PlxuXG4gICAgICB7LyogU3RhdGljIHNpZGViYXIgZm9yIGRlc2t0b3AgKi99XG4gICAgICA8ZGl2IGNsYXNzTmFtZT1cImhpZGRlbiBsZzpmaXhlZCBsZzppbnNldC15LTAgbGc6ei01MCBsZzpmbGV4IGxnOnctNzIgbGc6ZmxleC1jb2xcIj5cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGdyb3cgZmxleC1jb2wgZ2FwLXktNSBvdmVyZmxvdy15LWF1dG8gYmctd2hpdGUgYm9yZGVyLXIgYm9yZGVyLXNsYXRlLTIwMCBweC02IHBiLTRcIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaC0xNiBzaHJpbmstMCBpdGVtcy1jZW50ZXIgYm9yZGVyLWIgYm9yZGVyLXNsYXRlLTIwMFwiPlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtM1wiPlxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImgtMTAgdy0xMCByb3VuZGVkLXhsIGJnLWdyYWRpZW50LXRvLWJyIGZyb20tZW1lcmFsZC01MDAgdG8tZW1lcmFsZC02MDAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hhZG93LWxnIHNoYWRvdy1lbWVyYWxkLTUwMC8zMFwiPlxuICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQtd2hpdGUgdGV4dC1iYXNlIGZvbnQtYm9sZFwiPlNBPC9zcGFuPlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInRleHQtbGcgZm9udC1zZW1pYm9sZCB0ZXh0LXNsYXRlLTkwMFwiPkFkbWluIFBhbmVsPC9kaXY+XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LXhzIHRleHQtc2xhdGUtNTAwXCI+U3VwZXIgQWRtaW5pc3RyYXRvcjwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDxuYXYgY2xhc3NOYW1lPVwiZmxleCBmbGV4LTEgZmxleC1jb2xcIj5cbiAgICAgICAgICAgIDx1bCByb2xlPVwibGlzdFwiIGNsYXNzTmFtZT1cImZsZXggZmxleC0xIGZsZXgtY29sIGdhcC15LTdcIj5cbiAgICAgICAgICAgICAgPGxpPlxuICAgICAgICAgICAgICAgIDx1bCByb2xlPVwibGlzdFwiIGNsYXNzTmFtZT1cIi1teC0yIHNwYWNlLXktMVwiPlxuICAgICAgICAgICAgICAgICAge25hdmlnYXRpb24ubWFwKChpdGVtKSA9PiAoXG4gICAgICAgICAgICAgICAgICAgIDxsaSBrZXk9e2l0ZW0ubmFtZX0+XG4gICAgICAgICAgICAgICAgICAgICAgPGFcbiAgICAgICAgICAgICAgICAgICAgICAgIGhyZWY9e2l0ZW0uaHJlZn1cbiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17Y2xhc3NOYW1lcyhcbiAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aG5hbWUgPT09IGl0ZW0uaHJlZlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgID8gJ2JnLWVtZXJhbGQtNTAgdGV4dC1lbWVyYWxkLTYwMCBzaGFkb3ctc20nXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgOiAndGV4dC1zbGF0ZS03MDAgaG92ZXI6dGV4dC1lbWVyYWxkLTYwMCBob3ZlcjpiZy1zbGF0ZS01MCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICdncm91cCBmbGV4IGdhcC14LTMgcm91bmRlZC14bCBwLTMgdGV4dC1zbSBsZWFkaW5nLTYgZm9udC1zZW1pYm9sZCB0cmFuc2l0aW9uLWFsbCdcbiAgICAgICAgICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGl0ZW0uaWNvblxuICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2NsYXNzTmFtZXMoXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aG5hbWUgPT09IGl0ZW0uaHJlZiA/ICd0ZXh0LWVtZXJhbGQtNjAwJyA6ICd0ZXh0LXNsYXRlLTQwMCBncm91cC1ob3Zlcjp0ZXh0LWVtZXJhbGQtNjAwJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAnaC02IHctNiBzaHJpbmstMCB0cmFuc2l0aW9uLWNvbG9ycydcbiAgICAgICAgICAgICAgICAgICAgICAgICAgKX1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgYXJpYS1oaWRkZW49XCJ0cnVlXCJcbiAgICAgICAgICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICB7aXRlbS5uYW1lfVxuICAgICAgICAgICAgICAgICAgICAgIDwvYT5cbiAgICAgICAgICAgICAgICAgICAgPC9saT5cbiAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgIDwvdWw+XG4gICAgICAgICAgICAgIDwvbGk+XG4gICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9XCJtdC1hdXRvXCI+XG4gICAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgICAgb25DbGljaz17aGFuZGxlU2lnbk91dH1cbiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImdyb3VwIC1teC0yIGZsZXggdy1mdWxsIGdhcC14LTMgcm91bmRlZC14bCBwLTMgdGV4dC1zbSBmb250LXNlbWlib2xkIGxlYWRpbmctNiB0ZXh0LXNsYXRlLTcwMCBob3ZlcjpiZy1zbGF0ZS01MCBob3Zlcjp0ZXh0LXJlZC02MDAgdHJhbnNpdGlvbi1hbGxcIlxuICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgIDxBcnJvd1JpZ2h0T25SZWN0YW5nbGVJY29uXG4gICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImgtNiB3LTYgc2hyaW5rLTAgdGV4dC1zbGF0ZS00MDAgZ3JvdXAtaG92ZXI6dGV4dC1yZWQtNjAwIHRyYW5zaXRpb24tY29sb3JzXCJcbiAgICAgICAgICAgICAgICAgICAgYXJpYS1oaWRkZW49XCJ0cnVlXCJcbiAgICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICAgICBTaWduIG91dFxuICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICA8L2xpPlxuICAgICAgICAgICAgPC91bD5cbiAgICAgICAgICA8L25hdj5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cblxuICAgICAgey8qIE1haW4gY29udGVudCBhcmVhICovfVxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJsZzpwbC03MlwiPlxuICAgICAgICB7LyogVG9wIGJhciBmb3IgbW9iaWxlICovfVxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInN0aWNreSB0b3AtMCB6LTQwIGZsZXggaC0xNiBzaHJpbmstMCBpdGVtcy1jZW50ZXIgZ2FwLXgtNCBib3JkZXItYiBib3JkZXItc2xhdGUtMjAwIGJnLXdoaXRlIHB4LTQgc2hhZG93LXNtIHNtOmdhcC14LTYgc206cHgtNiBsZzpweC04XCI+XG4gICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgdHlwZT1cImJ1dHRvblwiXG4gICAgICAgICAgICBjbGFzc05hbWU9XCItbS0yLjUgcC0yLjUgdGV4dC1zbGF0ZS03MDAgbGc6aGlkZGVuXCJcbiAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldFNpZGViYXJPcGVuKHRydWUpfVxuICAgICAgICAgID5cbiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInNyLW9ubHlcIj5PcGVuIHNpZGViYXI8L3NwYW4+XG4gICAgICAgICAgICA8QmFyczNJY29uIGNsYXNzTmFtZT1cImgtNiB3LTZcIiBhcmlhLWhpZGRlbj1cInRydWVcIiAvPlxuICAgICAgICAgIDwvYnV0dG9uPlxuXG4gICAgICAgICAgey8qIFNlcGFyYXRvciAqL31cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImgtNiB3LXB4IGJnLXNsYXRlLTIwMCBsZzpoaWRkZW5cIiBhcmlhLWhpZGRlbj1cInRydWVcIiAvPlxuXG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGZsZXgtMSBnYXAteC00IHNlbGYtc3RyZXRjaCBsZzpnYXAteC02XCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZmxleC0xIGl0ZW1zLWNlbnRlclwiPlxuICAgICAgICAgICAgICA8aDEgY2xhc3NOYW1lPVwidGV4dC1sZyBmb250LXNlbWlib2xkIHRleHQtc2xhdGUtOTAwIGxnOmhpZGRlblwiPkFkbWluIFBhbmVsPC9oMT5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBnYXAteC00IGxnOmdhcC14LTZcIj5cbiAgICAgICAgICAgICAgey8qIFVzZXIgbWVudSBmb3IgbW9iaWxlICovfVxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC14LTMgbGc6aGlkZGVuXCI+XG4gICAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgICAgb25DbGljaz17aGFuZGxlU2lnbk91dH1cbiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC14LTIgcm91bmRlZC1sZyBweC0zIHB5LTIgdGV4dC1zbSBmb250LW1lZGl1bSB0ZXh0LXNsYXRlLTcwMCBob3ZlcjpiZy1zbGF0ZS0xMDAgdHJhbnNpdGlvbi1jb2xvcnNcIlxuICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgIDxBcnJvd1JpZ2h0T25SZWN0YW5nbGVJY29uIGNsYXNzTmFtZT1cImgtNSB3LTVcIiAvPlxuICAgICAgICAgICAgICAgICAgPHNwYW4+U2lnbiBvdXQ8L3NwYW4+XG4gICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvZGl2PlxuXG4gICAgICAgIDxtYWluIGNsYXNzTmFtZT1cInB5LTggcHgtNCBzbTpweC02IGxnOnB4LThcIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm14LWF1dG8gbWF4LXctN3hsXCI+e2NoaWxkcmVufTwvZGl2PlxuICAgICAgICA8L21haW4+XG4gICAgICA8L2Rpdj5cbiAgICA8L2Rpdj5cbiAgKTtcbn0iXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7K0JBd0NnQjs7Ozs7O1dBQUFBLGlCQUFBOzs7Ozs7OztrQ0F0Q21COzs7a0NBQ0k7OztrQ0FDSjs7O2tDQWE1QjtBQVFQLE1BQU1DLFVBQUE7QUFBQTtBQUFBLENBQUFDLGNBQUEsR0FBQUMsQ0FBQSxPQUErQixDQUNuQztFQUFFQyxJQUFBLEVBQU07RUFBYUMsSUFBQSxFQUFNO0VBQVVDLElBQUEsRUFBTUMsUUFBQSxDQUFBQztBQUFTLEdBQ3BEO0VBQUVKLElB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QkFDVFEsU0FBQSxFQUFVO3dDQUVWLElBQUFGLFdBQUEsQ0FBQUcsR0FBQSxFQUFDbEMsUUFBQSxDQUFBMEQseUJBQXlCO2tCQUN4QnpCLFNBQUEsRUFBVTtrQkFDVixlQUFZO29CQUNaOzs7Ozs7cUJBVWQsSUFBQUYsV0FBQSxDQUFBQyxJQUFBLEVBQUM7TUFBSUMsU0FBQSxFQUFVOzhCQUViLElBQUFGLFdBQUEsQ0FBQUMsSUFBQSxFQUFDO1FBQUlDLFNBQUEsRUFBVTtnQ0FDYixJQUFBRixXQUFBLENBQUFDLElBQUEsRUFBQztVQUNDbUIsSUFBQSxFQUFLO1VBQ0xsQixTQUFBLEVBQVU7VUFDVm1CLE9BQUEsRUFBU0EsQ0FBQSxLQUFNO1lBQUE7WUFBQXpELGNBQUEsR0FBQWdCLENBQUE7WUFBQWhCLGNBQUEsR0FBQUMsQ0FBQTtZQUFBLE9BQUFxQixjQUFBLENBQWU7VUFBQTtrQ0FFOUIsSUFBQWMsV0FBQSxDQUFBRyxHQUFBLEVBQUM7WUFBS0QsU0FBQSxFQUFVO3NCQUFVOzJCQUMxQixJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQ2xDLFFBQUEsQ0FBQTJELFNBQVM7WUFBQzFCLFNBQUEsRUFBVTtZQUFVLGVBQVk7O3lCQUk3QyxJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztVQUFJRCxTQUFBLEVBQVU7VUFBa0MsZUFBWTt5QkFFN0QsSUFBQUYsV0FBQSxDQUFBQyxJQUFBLEVBQUM7VUFBSUMsU0FBQSxFQUFVO2tDQUNiLElBQUFGLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1lBQUlELFNBQUEsRUFBVTtzQkFDYixpQkFBQUYsV0FBQSxDQUFBRyxHQUFBLEVBQUM7Y0FBR0QsU0FBQSxFQUFVO3dCQUFpRDs7MkJBRWpFLElBQUFGLFdBQUEsQ0FBQUcsR0FBQSxFQUFDO1lBQUlELFNBQUEsRUFBVTtzQkFFYixpQkFBQUYsV0FBQSxDQUFBRyxHQUFBLEVBQUM7Y0FBSUQsU0FBQSxFQUFVO3dCQUNiLGlCQUFBRixXQUFBLENBQUFDLElBQUEsRUFBQztnQkFDQ29CLE9BQUEsRUFBUzNCLGFBQUE7Z0JBQ1RRLFNBQUEsRUFBVTt3Q0FFVixJQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQ2xDLFFBQUEsQ0FBQTBELHlCQUF5QjtrQkFBQ3pCLFNBQUEsRUFBVTtpQ0FDckMsSUFBQUYsV0FBQSxDQUFBRyxHQUFBLEVBQUM7NEJBQUs7Ozs7Ozt1QkFPaEIsSUFBQUgsV0FBQSxDQUFBRyxHQUFBLEVBQUM7UUFBS0QsU0FBQSxFQUFVO2tCQUNkLGlCQUFBRixXQUFBLENBQUFHLEdBQUEsRUFBQztVQUFJRCxTQUFBLEVBQVU7b0JBQXFCbEI7Ozs7O0FBSzlDIiwiaWdub3JlTGlzdCI6W119

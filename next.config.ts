@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import type { Configuration } from "webpack";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -25,7 +24,7 @@ const nextConfig: NextConfig = {
 
   // Bundle Analyzer (only when not using Turbopack)
   ...(process.env.TURBOPACK !== '1' && {
-    webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
+    webpack: (config: any, { isServer }: { isServer: boolean }) => {
       if (process.env.ANALYZE === 'true') {
         // Dynamic import for bundle analyzer to avoid loading in production
         const { BundleAnalyzerPlugin } = eval('require')('webpack-bundle-analyzer');

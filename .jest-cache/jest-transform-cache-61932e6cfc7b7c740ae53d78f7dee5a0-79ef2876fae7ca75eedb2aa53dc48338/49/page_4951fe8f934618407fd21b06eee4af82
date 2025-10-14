@@ -1,0 +1,345 @@
+29f8f77c2e6947024828772755e752fb
+"use strict";
+
+/* istanbul ignore next */
+function cov_13ohpv6rha() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\conversations\\page.tsx";
+  var hash = "677d2a53cf0ed245853cbe0831641dbc187a8167";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\conversations\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 33
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 14
+        },
+        end: {
+          line: 12,
+          column: 42
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 37
+        },
+        end: {
+          line: 13,
+          column: 114
+        }
+      },
+      "6": {
+        start: {
+          line: 15,
+          column: 4
+        },
+        end: {
+          line: 17,
+          column: 6
+        }
+      },
+      "7": {
+        start: {
+          line: 20,
+          column: 20
+        },
+        end: {
+          line: 20,
+          column: 58
+        }
+      },
+      "8": {
+        start: {
+          line: 21,
+          column: 4
+        },
+        end: {
+          line: 28,
+          column: 7
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "_interop_require_default",
+        decl: {
+          start: {
+            line: 14,
+            column: 9
+          },
+          end: {
+            line: 14,
+            column: 33
+          }
+        },
+        loc: {
+          start: {
+            line: 14,
+            column: 39
+          },
+          end: {
+            line: 18,
+            column: 1
+          }
+        },
+        line: 14
+      },
+      "2": {
+        name: "ConversationsPage",
+        decl: {
+          start: {
+            line: 19,
+            column: 15
+          },
+          end: {
+            line: 19,
+            column: 32
+          }
+        },
+        loc: {
+          start: {
+            line: 19,
+            column: 35
+          },
+          end: {
+            line: 29,
+            column: 1
+          }
+        },
+        line: 19
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 15,
+            column: 35
+          },
+          end: {
+            line: 15,
+            column: 38
+          }
+        }, {
+          start: {
+            line: 15,
+            column: 41
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        }],
+        line: 15
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 15,
+            column: 32
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 15,
+            column: 11
+          },
+          end: {
+            line: 15,
+            column: 14
+          }
+        }, {
+          start: {
+            line: 15,
+            column: 18
+          },
+          end: {
+            line: 15,
+            column: 32
+          }
+        }],
+        line: 15
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\dashboard\\conversations\\page.tsx"],
+      sourcesContent: ["import { requireOrganization } from '@/lib/auth'\nimport WhatsAppInbox from '@/components/inbox/whatsapp-inbox'\n\nexport default async function ConversationsPage() {\n  const profile = await requireOrganization()\n\n  return (\n    <div className=\"h-[calc(100vh-4rem)]\">\n      <WhatsAppInbox\n        organizationId={profile.organization_id!}\n        currentUserId={profile.id}\n        userRole={profile.role as 'owner' | 'admin' | 'agent'}\n      />\n    </div>\n  )\n}"],
+      names: ["ConversationsPage", "profile", "requireOrganization", "div", "className", "WhatsAppInbox", "organizationId", "organization_id", "currentUserId", "id", "userRole", "role"],
+      mappings: ";;;;+BAGA;;;eAA8BA;;;;sBAHM;sEACV;;;;;;AAEX,eAAeA;IAC5B,MAAMC,UAAU,MAAMC,IAAAA,yBAAmB;IAEzC,qBACE,qBAACC;QAAIC,WAAU;kBACb,cAAA,qBAACC,sBAAa;YACZC,gBAAgBL,QAAQM,eAAe;YACvCC,eAAeP,QAAQQ,EAAE;YACzBC,UAAUT,QAAQU,IAAI;;;AAI9B"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "677d2a53cf0ed245853cbe0831641dbc187a8167"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_13ohpv6rha = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_13ohpv6rha();
+cov_13ohpv6rha().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_13ohpv6rha().s[1]++;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_13ohpv6rha().f[0]++;
+    cov_13ohpv6rha().s[2]++;
+    return ConversationsPage;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_13ohpv6rha().s[3]++, require("react/jsx-runtime"));
+const _auth =
+/* istanbul ignore next */
+(cov_13ohpv6rha().s[4]++, require("../../../lib/auth"));
+const _whatsappinbox =
+/* istanbul ignore next */
+(/*#__PURE__*/cov_13ohpv6rha().s[5]++, _interop_require_default(require("../../../components/inbox/whatsapp-inbox")));
+function _interop_require_default(obj) {
+  /* istanbul ignore next */
+  cov_13ohpv6rha().f[1]++;
+  cov_13ohpv6rha().s[6]++;
+  return /* istanbul ignore next */(cov_13ohpv6rha().b[1][0]++, obj) &&
+  /* istanbul ignore next */
+  (cov_13ohpv6rha().b[1][1]++, obj.__esModule) ?
+  /* istanbul ignore next */
+  (cov_13ohpv6rha().b[0][0]++, obj) :
+  /* istanbul ignore next */
+  (cov_13ohpv6rha().b[0][1]++, {
+    default: obj
+  });
+}
+async function ConversationsPage() {
+  /* istanbul ignore next */
+  cov_13ohpv6rha().f[2]++;
+  const profile =
+  /* istanbul ignore next */
+  (cov_13ohpv6rha().s[7]++, await (0, _auth.requireOrganization)());
+  /* istanbul ignore next */
+  cov_13ohpv6rha().s[8]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+    className: "h-[calc(100vh-4rem)]",
+    children: /*#__PURE__*/(0, _jsxruntime.jsx)(_whatsappinbox.default, {
+      organizationId: profile.organization_id,
+      currentUserId: profile.id,
+      userRole: profile.role
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJDb252ZXJzYXRpb25zUGFnZSIsImNvdl8xM29ocHY2cmhhIiwiZiIsInByb2ZpbGUiLCJzIiwiX2F1dGgiLCJyZXF1aXJlT3JnYW5pemF0aW9uIiwiX2pzeHJ1bnRpbWUiLCJqc3giLCJjbGFzc05hbWUiLCJfd2hhdHNhcHBpbmJveCIsImRlZmF1bHQiLCJvcmdhbml6YXRpb25JZCIsIm9yZ2FuaXphdGlvbl9pZCIsImN1cnJlbnRVc2VySWQiLCJpZCIsInVzZXJSb2xlIiwicm9sZSJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxhcHBcXGRhc2hib2FyZFxcY29udmVyc2F0aW9uc1xccGFnZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgcmVxdWlyZU9yZ2FuaXphdGlvbiB9IGZyb20gJ0AvbGliL2F1dGgnXG5pbXBvcnQgV2hhdHNBcHBJbmJveCBmcm9tICdAL2NvbXBvbmVudHMvaW5ib3gvd2hhdHNhcHAtaW5ib3gnXG5cbmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIENvbnZlcnNhdGlvbnNQYWdlKCkge1xuICBjb25zdCBwcm9maWxlID0gYXdhaXQgcmVxdWlyZU9yZ2FuaXphdGlvbigpXG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2IGNsYXNzTmFtZT1cImgtW2NhbGMoMTAwdmgtNHJlbSldXCI+XG4gICAgICA8V2hhdHNBcHBJbmJveFxuICAgICAgICBvcmdhbml6YXRpb25JZD17cHJvZmlsZS5vcmdhbml6YXRpb25faWQhfVxuICAgICAgICBjdXJyZW50VXNlcklkPXtwcm9maWxlLmlkfVxuICAgICAgICB1c2VyUm9sZT17cHJvZmlsZS5yb2xlIGFzICdvd25lcicgfCAnYWRtaW4nIHwgJ2FnZW50J31cbiAgICAgIC8+XG4gICAgPC9kaXY+XG4gIClcbn0iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsrQkFHQTs7Ozs7O1dBQThCQSxpQkFBQTs7Ozs7Ozs7a0NBSE07Ozt3RUFDVjs7Ozs7Ozs7Ozs7Ozs7O0FBRVgsZUFBZUEsa0JBQUE7RUFBQTtFQUFBQyxjQUFBLEdBQUFDLENBQUE7RUFDNUIsTUFBTUMsT0FBQTtFQUFBO0VBQUEsQ0FBQUYsY0FBQSxHQUFBRyxDQUFBLE9BQVUsTUFBTSxJQUFBQyxLQUFBLENBQUFDLG1CQUFtQjtFQUFBO0VBQUFMLGNBQUEsR0FBQUcsQ0FBQTtFQUV6QyxvQkFDRSxJQUFBRyxXQUFBLENBQUFDLEdBQUEsRUFBQztJQUFJQyxTQUFBLEVBQVU7Y0FDYixpQkFBQUYsV0FBQSxDQUFBQyxHQUFBLEVBQUNFLGNBQUEsQ0FBQUMsT0FBYTtNQUNaQyxjQUFBLEVBQWdCVCxPQUFBLENBQVFVLGVBQWU7TUFDdkNDLGFBQUEsRUFBZVgsT0FBQSxDQUFRWSxFQUFFO01BQ3pCQyxRQUFBLEVBQVViLE9BQUEsQ0FBUWM7OztBQUkxQiIsImlnbm9yZUxpc3QiOltdfQ==

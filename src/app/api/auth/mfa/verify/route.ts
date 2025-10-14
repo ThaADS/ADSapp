@@ -62,12 +62,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // TODO WEEK 5+: Create audit_logs table for security auditing
     // Log successful MFA enablement
-    await supabase.from('audit_logs').insert({
-      user_id: user.id,
-      action: 'mfa_enabled',
-      timestamp: new Date().toISOString(),
-    });
+    // await supabase.from('audit_logs').insert({
+    //   user_id: user.id,
+    //   action: 'mfa_enabled',
+    //   timestamp: new Date().toISOString(),
+    // });
 
     return NextResponse.json({
       success: true,

@@ -52,30 +52,36 @@ export async function GET(request: NextRequest) {
         startDate.setDate(endDate.getDate() - 30)
     }
 
-    // Get invoice data
-    const { data: invoices } = await supabase
-      .from('invoices')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .gte('created_at', startDate.toISOString())
-      .lte('created_at', endDate.toISOString())
+    // TODO WEEK 5+: Create invoices, subscription_changes, usage_tracking tables
+    // For now, return placeholder data until advanced billing tables are created
+    const invoices: any[] = []
+    const subscriptionHistory: any[] = []
+    const usageData: any[] = []
 
-    // Get subscription data
-    const { data: subscriptionHistory } = await supabase
-      .from('subscription_changes')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .gte('effective_date', startDate.toISOString())
-      .lte('effective_date', endDate.toISOString())
-      .order('effective_date', { ascending: true })
+    // Get invoice data - COMMENTED OUT until invoices table is created
+    // const { data: invoices } = await supabase
+    //   .from('invoices')
+    //   .select('*')
+    //   .eq('organization_id', organizationId)
+    //   .gte('created_at', startDate.toISOString())
+    //   .lte('created_at', endDate.toISOString())
 
-    // Get usage data
-    const { data: usageData } = await supabase
-      .from('usage_tracking')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .gte('period_start', startDate.toISOString())
-      .order('period_start', { ascending: true })
+    // Get subscription data - COMMENTED OUT until subscription_changes table is created
+    // const { data: subscriptionHistory } = await supabase
+    //   .from('subscription_changes')
+    //   .select('*')
+    //   .eq('organization_id', organizationId)
+    //   .gte('effective_date', startDate.toISOString())
+    //   .lte('effective_date', endDate.toISOString())
+    //   .order('effective_date', { ascending: true })
+
+    // Get usage data - COMMENTED OUT until usage_tracking table is created
+    // const { data: usageData } = await supabase
+    //   .from('usage_tracking')
+    //   .select('*')
+    //   .eq('organization_id', organizationId)
+    //   .gte('period_start', startDate.toISOString())
+    //   .order('period_start', { ascending: true })
 
     // Calculate revenue metrics
     const paidInvoices = invoices?.filter(inv => inv.status === 'paid') || []
@@ -102,13 +108,15 @@ export async function GET(request: NextRequest) {
     const periodDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
     previousStartDate.setDate(previousStartDate.getDate() - periodDays)
 
-    const { data: previousInvoices } = await supabase
-      .from('invoices')
-      .select('amount, status')
-      .eq('organization_id', organizationId)
-      .gte('created_at', previousStartDate.toISOString())
-      .lte('created_at', previousEndDate.toISOString())
+    // COMMENTED OUT until invoices table is created
+    // const { data: previousInvoices } = await supabase
+    //   .from('invoices')
+    //   .select('amount, status')
+    //   .eq('organization_id', organizationId)
+    //   .gte('created_at', previousStartDate.toISOString())
+    //   .lte('created_at', previousEndDate.toISOString())
 
+    const previousInvoices: any[] = []
     const previousRevenue = previousInvoices?.filter(inv => inv.status === 'paid')
       .reduce((sum, inv) => sum + inv.amount, 0) || 0
 
@@ -158,7 +166,7 @@ export async function GET(request: NextRequest) {
       annualRecurringRevenue,
       revenueGrowth,
       totalSubscriptions: 1, // Single organization
-      activeSubscriptions: org.subscription_tier !== 'cancelled' ? 1 : 0,
+      activeSubscriptions: org.subscription_tier === 'cancelled' ? 0 : 1,
       newSubscriptions: subscriptionHistory?.filter(s => s.reason === 'upgrade').length || 0,
       churnedSubscriptions: subscriptionHistory?.filter(s => s.reason === 'cancellation').length || 0,
       churnRate: 0, // Would need more historical data to calculate properly
@@ -250,11 +258,10 @@ interface SubscriptionHistory {
 }
 
 interface CurrentPlan {
-  plan_id: string;
-  name: string;
+  price: number;
 }
 
-function calculatePlanDistribution(subscriptionHistory: SubscriptionHistory[], currentPlan: CurrentPlan) {
+function calculatePlanDistribution(subscriptionHistory: SubscriptionHistory[], currentPlan: CurrentPlan | undefined) {
   // Simplified for single organization
   return [
     {

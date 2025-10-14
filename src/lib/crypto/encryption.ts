@@ -38,8 +38,10 @@ const DEFAULT_CONFIG: Partial<EncryptionConfig> = {
 };
 
 /**
- * Load encryption key from environment variable
+ * Load encryption key from environment variable (legacy method)
+ * For KMS-managed keys, use getKeyManager().getEncryptionKey() instead
  *
+ * @deprecated Use KMS-managed keys via KeyManager for production
  * @throws {KeyManagementError} If ENCRYPTION_KEY is not set or invalid
  * @returns Master encryption key as Buffer
  */
@@ -51,7 +53,7 @@ export function loadEncryptionKey(): Buffer {
       'ENCRYPTION_KEY environment variable is not set',
       'MISSING_KEY',
       {
-        hint: 'Run: npm run generate-encryption-key to create a new key',
+        hint: 'For production, use AWS KMS-managed keys. For development, run: npm run generate-encryption-key',
       }
     );
   }
@@ -79,6 +81,34 @@ export function loadEncryptionKey(): Buffer {
       { originalError: error }
     );
   }
+}
+
+/**
+ * Load encryption key with KMS support
+ * Automatically uses KMS-managed keys if AWS_KMS_KEY_ID is configured,
+ * otherwise falls back to environment variable
+ *
+ * @param tenantId - Tenant identifier for KMS key retrieval
+ * @returns Master encryption key as Buffer
+ */
+export async function loadEncryptionKeyWithKMS(tenantId?: string): Promise<Buffer> {
+  // Check if KMS is configured
+  const useKMS = !!process.env.AWS_KMS_KEY_ID;
+
+  if (useKMS && tenantId) {
+    // Use KMS-managed keys for production
+    try {
+      const { getKeyManager } = await import('@/lib/security/key-manager');
+      const keyManager = getKeyManager();
+      return await keyManager.getEncryptionKey(tenantId);
+    } catch (error) {
+      console.error('Failed to load KMS key, falling back to environment key:', error);
+      // Fall through to legacy method
+    }
+  }
+
+  // Fall back to environment variable (development/testing)
+  return loadEncryptionKey();
 }
 
 /**
@@ -485,6 +515,100 @@ export function clearBuffer(buffer: Buffer): void {
   if (buffer && buffer.length > 0) {
     crypto.randomFillSync(buffer);
   }
+}
+
+/**
+ * Encrypt with KMS-managed key (recommended for production)
+ *
+ * @param plaintext - Data to encrypt
+ * @param tenantId - Tenant identifier for key retrieval
+ * @param config - Optional encryption configuration
+ * @returns Encryption result with encrypted data and metadata
+ * @throws {EncryptionError} If encryption fails
+ */
+export async function encryptWithKMS(
+  plaintext: string,
+  tenantId: string,
+  config?: Partial<Omit<EncryptionConfig, 'key'>>
+): Promise<EncryptionResult> {
+  try {
+    const key = await loadEncryptionKeyWithKMS(tenantId);
+    return encrypt(plaintext, { ...config, key });
+  } catch (error) {
+    throw new EncryptionError(
+      'KMS encryption failed',
+      'KMS_ENCRYPTION_FAILED',
+      {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      }
+    );
+  }
+}
+
+/**
+ * Decrypt with KMS-managed key (recommended for production)
+ *
+ * @param encryptedData - Base64 encoded encrypted data
+ * @param version - Key version used for encryption
+ * @param tenantId - Tenant identifier for key retrieval
+ * @param config - Optional decryption configuration
+ * @returns Decryption result with plaintext and metadata
+ * @throws {DecryptionError} If decryption fails
+ */
+export async function decryptWithKMS(
+  encryptedData: string,
+  version: string,
+  tenantId: string,
+  config?: Partial<Omit<EncryptionConfig, 'key'>>
+): Promise<DecryptionResult> {
+  try {
+    const key = await loadEncryptionKeyWithKMS(tenantId);
+    return decrypt(encryptedData, version, { ...config, key });
+  } catch (error) {
+    throw new DecryptionError(
+      'KMS decryption failed',
+      'KMS_DECRYPTION_FAILED',
+      {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      }
+    );
+  }
+}
+
+/**
+ * Batch encrypt with KMS-managed keys
+ *
+ * @param values - Array of plaintext values to encrypt
+ * @param tenantId - Tenant identifier
+ * @param config - Optional encryption configuration
+ * @returns Array of encryption results
+ */
+export async function encryptBatchWithKMS(
+  values: string[],
+  tenantId: string,
+  config?: Partial<Omit<EncryptionConfig, 'key'>>
+): Promise<EncryptionResult[]> {
+  const key = await loadEncryptionKeyWithKMS(tenantId);
+  return values.map((value) => encrypt(value, { ...config, key }));
+}
+
+/**
+ * Batch decrypt with KMS-managed keys
+ *
+ * @param encryptedValues - Array of encrypted values
+ * @param tenantId - Tenant identifier
+ * @param config - Optional decryption configuration
+ * @returns Array of decryption results
+ */
+export async function decryptBatchWithKMS(
+  encryptedValues: Array<{ data: string; version: string }>,
+  tenantId: string,
+  config?: Partial<Omit<EncryptionConfig, 'key'>>
+): Promise<DecryptionResult[]> {
+  const key = await loadEncryptionKeyWithKMS(tenantId);
+  return encryptedValues.map((item) => decrypt(item.data, item.version, { ...config, key }));
 }
 
 /**

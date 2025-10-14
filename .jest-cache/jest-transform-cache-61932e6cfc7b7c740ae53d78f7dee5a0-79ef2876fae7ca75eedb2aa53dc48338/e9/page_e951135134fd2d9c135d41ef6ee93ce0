@@ -1,0 +1,465 @@
+250154c4149671884ccc164f50d80585
+"use strict";
+
+/* istanbul ignore next */
+function cov_r4is0z04d() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\signup\\page.tsx";
+  var hash = "17dbca1787d89bd7e23a01c15a43badc14add0f1";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\signup\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 4
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "2": {
+        start: {
+          line: 6,
+          column: 24
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 0
+        },
+        end: {
+          line: 18,
+          column: 3
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 8
+        },
+        end: {
+          line: 13,
+          column: 26
+        }
+      },
+      "5": {
+        start: {
+          line: 16,
+          column: 8
+        },
+        end: {
+          line: 16,
+          column: 24
+        }
+      },
+      "6": {
+        start: {
+          line: 19,
+          column: 20
+        },
+        end: {
+          line: 19,
+          column: 48
+        }
+      },
+      "7": {
+        start: {
+          line: 20,
+          column: 28
+        },
+        end: {
+          line: 20,
+          column: 74
+        }
+      },
+      "8": {
+        start: {
+          line: 21,
+          column: 20
+        },
+        end: {
+          line: 21,
+          column: 67
+        }
+      },
+      "9": {
+        start: {
+          line: 23,
+          column: 4
+        },
+        end: {
+          line: 25,
+          column: 6
+        }
+      },
+      "10": {
+        start: {
+          line: 27,
+          column: 17
+        },
+        end: {
+          line: 30,
+          column: 1
+        }
+      },
+      "11": {
+        start: {
+          line: 32,
+          column: 4
+        },
+        end: {
+          line: 67,
+          column: 7
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "_export",
+        decl: {
+          start: {
+            line: 5,
+            column: 9
+          },
+          end: {
+            line: 5,
+            column: 16
+          }
+        },
+        loc: {
+          start: {
+            line: 5,
+            column: 30
+          },
+          end: {
+            line: 10,
+            column: 1
+          }
+        },
+        line: 5
+      },
+      "1": {
+        name: "(anonymous_1)",
+        decl: {
+          start: {
+            line: 12,
+            column: 4
+          },
+          end: {
+            line: 12,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 19
+          },
+          end: {
+            line: 14,
+            column: 5
+          }
+        },
+        line: 12
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 15,
+            column: 4
+          },
+          end: {
+            line: 15,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 20
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        },
+        line: 15
+      },
+      "3": {
+        name: "_interop_require_default",
+        decl: {
+          start: {
+            line: 22,
+            column: 9
+          },
+          end: {
+            line: 22,
+            column: 33
+          }
+        },
+        loc: {
+          start: {
+            line: 22,
+            column: 39
+          },
+          end: {
+            line: 26,
+            column: 1
+          }
+        },
+        line: 22
+      },
+      "4": {
+        name: "SignUpPage",
+        decl: {
+          start: {
+            line: 31,
+            column: 9
+          },
+          end: {
+            line: 31,
+            column: 19
+          }
+        },
+        loc: {
+          start: {
+            line: 31,
+            column: 22
+          },
+          end: {
+            line: 68,
+            column: 1
+          }
+        },
+        line: 31
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 23,
+            column: 11
+          },
+          end: {
+            line: 25,
+            column: 5
+          }
+        },
+        type: "cond-expr",
+        locations: [{
+          start: {
+            line: 23,
+            column: 35
+          },
+          end: {
+            line: 23,
+            column: 38
+          }
+        }, {
+          start: {
+            line: 23,
+            column: 41
+          },
+          end: {
+            line: 25,
+            column: 5
+          }
+        }],
+        line: 23
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 23,
+            column: 11
+          },
+          end: {
+            line: 23,
+            column: 32
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 23,
+            column: 11
+          },
+          end: {
+            line: 23,
+            column: 14
+          }
+        }, {
+          start: {
+            line: 23,
+            column: 18
+          },
+          end: {
+            line: 23,
+            column: 32
+          }
+        }],
+        line: 23
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\signup\\page.tsx"],
+      sourcesContent: ["import { Metadata } from 'next'\nimport Link from 'next/link'\nimport { SignUpForm } from '@/components/auth/signup-form'\n\nexport const metadata: Metadata = {\n  title: 'Sign Up - ADSapp',\n  description: 'Create your WhatsApp Business Inbox account',\n}\n\nexport default function SignUpPage() {\n  return (\n    <div className=\"min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8\">\n      <div className=\"max-w-md w-full space-y-8\">\n        <div>\n          <div className=\"mx-auto h-12 w-auto flex items-center justify-center\">\n            <div className=\"text-2xl font-bold text-green-600\">ADSapp</div>\n          </div>\n          <h2 className=\"mt-6 text-center text-3xl font-extrabold text-gray-900\">\n            Create your account\n          </h2>\n          <p className=\"mt-2 text-center text-sm text-gray-600\">\n            Or{' '}\n            <Link\n              href=\"/auth/signin\"\n              className=\"font-medium text-green-600 hover:text-green-500\"\n            >\n              sign in to your existing account\n            </Link>\n          </p>\n        </div>\n        <SignUpForm />\n      </div>\n    </div>\n  )\n}"],
+      names: ["SignUpPage", "metadata", "title", "description", "div", "className", "h2", "p", "Link", "href", "SignUpForm"],
+      mappings: ";;;;;;;;;;;QASA;eAAwBA;;QALXC;eAAAA;;;;6DAHI;4BACU;;;;;;AAEpB,MAAMA,WAAqB;IAChCC,OAAO;IACPC,aAAa;AACf;AAEe,SAASH;IACtB,qBACE,qBAACI;QAAIC,WAAU;kBACb,cAAA,sBAACD;YAAIC,WAAU;;8BACb,sBAACD;;sCACC,qBAACA;4BAAIC,WAAU;sCACb,cAAA,qBAACD;gCAAIC,WAAU;0CAAoC;;;sCAErD,qBAACC;4BAAGD,WAAU;sCAAyD;;sCAGvE,sBAACE;4BAAEF,WAAU;;gCAAyC;gCACjD;8CACH,qBAACG,aAAI;oCACHC,MAAK;oCACLJ,WAAU;8CACX;;;;;;8BAKL,qBAACK,sBAAU;;;;AAInB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "17dbca1787d89bd7e23a01c15a43badc14add0f1"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_r4is0z04d = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_r4is0z04d();
+cov_r4is0z04d().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function _export(target, all) {
+  /* istanbul ignore next */
+  cov_r4is0z04d().f[0]++;
+  cov_r4is0z04d().s[1]++;
+  for (var name in all) {
+    /* istanbul ignore next */
+    cov_r4is0z04d().s[2]++;
+    Object.defineProperty(target, name, {
+      enumerable: true,
+      get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+  }
+}
+/* istanbul ignore next */
+cov_r4is0z04d().s[3]++;
+_export(exports, {
+  get default() {
+    /* istanbul ignore next */
+    cov_r4is0z04d().f[1]++;
+    cov_r4is0z04d().s[4]++;
+    return SignUpPage;
+  },
+  get metadata() {
+    /* istanbul ignore next */
+    cov_r4is0z04d().f[2]++;
+    cov_r4is0z04d().s[5]++;
+    return metadata;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_r4is0z04d().s[6]++, require("react/jsx-runtime"));
+const _link =
+/* istanbul ignore next */
+(/*#__PURE__*/cov_r4is0z04d().s[7]++, _interop_require_default(require("next/link")));
+const _signupform =
+/* istanbul ignore next */
+(cov_r4is0z04d().s[8]++, require("../../../components/auth/signup-form"));
+function _interop_require_default(obj) {
+  /* istanbul ignore next */
+  cov_r4is0z04d().f[3]++;
+  cov_r4is0z04d().s[9]++;
+  return /* istanbul ignore next */(cov_r4is0z04d().b[1][0]++, obj) &&
+  /* istanbul ignore next */
+  (cov_r4is0z04d().b[1][1]++, obj.__esModule) ?
+  /* istanbul ignore next */
+  (cov_r4is0z04d().b[0][0]++, obj) :
+  /* istanbul ignore next */
+  (cov_r4is0z04d().b[0][1]++, {
+    default: obj
+  });
+}
+const metadata =
+/* istanbul ignore next */
+(cov_r4is0z04d().s[10]++, {
+  title: 'Sign Up - ADSapp',
+  description: 'Create your WhatsApp Business Inbox account'
+});
+function SignUpPage() {
+  /* istanbul ignore next */
+  cov_r4is0z04d().f[4]++;
+  cov_r4is0z04d().s[11]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+    className: "min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8",
+    children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "max-w-md w-full space-y-8",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "mx-auto h-12 w-auto flex items-center justify-center",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "text-2xl font-bold text-green-600",
+            children: "ADSapp"
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("h2", {
+          className: "mt-6 text-center text-3xl font-extrabold text-gray-900",
+          children: "Create your account"
+        }), /*#__PURE__*/(0, _jsxruntime.jsxs)("p", {
+          className: "mt-2 text-center text-sm text-gray-600",
+          children: ["Or", ' ', /*#__PURE__*/(0, _jsxruntime.jsx)(_link.default, {
+            href: "/auth/signin",
+            className: "font-medium text-green-600 hover:text-green-500",
+            children: "sign in to your existing account"
+          })]
+        })]
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)(_signupform.SignUpForm, {})]
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJkZWZhdWx0IiwiY292X3I0aXMwejA0ZCIsImYiLCJzIiwiU2lnblVwUGFnZSIsIm1ldGFkYXRhIiwidGl0bGUiLCJkZXNjcmlwdGlvbiIsIl9qc3hydW50aW1lIiwianN4IiwiY2xhc3NOYW1lIiwianN4cyIsIl9saW5rIiwiaHJlZiIsIl9zaWdudXBmb3JtIiwiU2lnblVwRm9ybSJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxhcHBcXGF1dGhcXHNpZ251cFxccGFnZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgTWV0YWRhdGEgfSBmcm9tICduZXh0J1xuaW1wb3J0IExpbmsgZnJvbSAnbmV4dC9saW5rJ1xuaW1wb3J0IHsgU2lnblVwRm9ybSB9IGZyb20gJ0AvY29tcG9uZW50cy9hdXRoL3NpZ251cC1mb3JtJ1xuXG5leHBvcnQgY29uc3QgbWV0YWRhdGE6IE1ldGFkYXRhID0ge1xuICB0aXRsZTogJ1NpZ24gVXAgLSBBRFNhcHAnLFxuICBkZXNjcmlwdGlvbjogJ0NyZWF0ZSB5b3VyIFdoYXRzQXBwIEJ1c2luZXNzIEluYm94IGFjY291bnQnLFxufVxuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBTaWduVXBQYWdlKCkge1xuICByZXR1cm4gKFxuICAgIDxkaXYgY2xhc3NOYW1lPVwibWluLWgtc2NyZWVuIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGJnLWdyYXktNTAgcHktMTIgcHgtNCBzbTpweC02IGxnOnB4LThcIj5cbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwibWF4LXctbWQgdy1mdWxsIHNwYWNlLXktOFwiPlxuICAgICAgICA8ZGl2PlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibXgtYXV0byBoLTEyIHctYXV0byBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlclwiPlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LTJ4bCBmb250LWJvbGQgdGV4dC1ncmVlbi02MDBcIj5BRFNhcHA8L2Rpdj5cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8aDIgY2xhc3NOYW1lPVwibXQtNiB0ZXh0LWNlbnRlciB0ZXh0LTN4bCBmb250LWV4dHJhYm9sZCB0ZXh0LWdyYXktOTAwXCI+XG4gICAgICAgICAgICBDcmVhdGUgeW91ciBhY2NvdW50XG4gICAgICAgICAgPC9oMj5cbiAgICAgICAgICA8cCBjbGFzc05hbWU9XCJtdC0yIHRleHQtY2VudGVyIHRleHQtc20gdGV4dC1ncmF5LTYwMFwiPlxuICAgICAgICAgICAgT3J7JyAnfVxuICAgICAgICAgICAgPExpbmtcbiAgICAgICAgICAgICAgaHJlZj1cIi9hdXRoL3NpZ25pblwiXG4gICAgICAgICAgICAgIGNsYXNzTmFtZT1cImZvbnQtbWVkaXVtIHRleHQtZ3JlZW4tNjAwIGhvdmVyOnRleHQtZ3JlZW4tNTAwXCJcbiAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgc2lnbiBpbiB0byB5b3VyIGV4aXN0aW5nIGFjY291bnRcbiAgICAgICAgICAgIDwvTGluaz5cbiAgICAgICAgICA8L3A+XG4gICAgICAgIDwvZGl2PlxuICAgICAgICA8U2lnblVwRm9ybSAvPlxuICAgICAgPC9kaXY+XG4gICAgPC9kaXY+XG4gIClcbn0iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7TUFTQUEsUUFBQTtJQUFBO0lBQUFDLGFBQUEsR0FBQUMsQ0FBQTtJQUFBRCxhQUFBLEdBQUFFLENBQUE7V0FBd0JDLFVBQUE7O01BTFhDLFNBQUE7SUFBQTtJQUFBSixhQUFBLEdBQUFDLENBQUE7SUFBQUQsYUFBQSxHQUFBRSxDQUFBO1dBQUFFLFFBQUE7Ozs7Ozs7O3VFQUhJOzs7aUNBQ1U7Ozs7Ozs7Ozs7Ozs7OztBQUVwQixNQUFNQSxRQUFBO0FBQUE7QUFBQSxDQUFBSixhQUFBLEdBQUFFLENBQUEsUUFBcUI7RUFDaENHLEtBQUEsRUFBTztFQUNQQyxXQUFBLEVBQWE7QUFDZjtBQUVlLFNBQVNILFdBQUE7RUFBQTtFQUFBSCxhQUFBLEdBQUFDLENBQUE7RUFBQUQsYUFBQSxHQUFBRSxDQUFBO0VBQ3RCLG9CQUNFLElBQUFLLFdBQUEsQ0FBQUMsR0FBQSxFQUFDO0lBQUlDLFNBQUEsRUFBVTtjQUNiLGlCQUFBRixXQUFBLENBQUFHLElBQUEsRUFBQztNQUFJRCxTQUFBLEVBQVU7OEJBQ2IsSUFBQUYsV0FBQSxDQUFBRyxJQUFBLEVBQUM7Z0NBQ0MsSUFBQUgsV0FBQSxDQUFBQyxHQUFBLEVBQUM7VUFBSUMsU0FBQSxFQUFVO29CQUNiLGlCQUFBRixXQUFBLENBQUFDLEdBQUEsRUFBQztZQUFJQyxTQUFBLEVBQVU7c0JBQW9DOzt5QkFFckQsSUFBQUYsV0FBQSxDQUFBQyxHQUFBLEVBQUM7VUFBR0MsU0FBQSxFQUFVO29CQUF5RDt5QkFHdkUsSUFBQUYsV0FBQSxDQUFBRyxJQUFBLEVBQUM7VUFBRUQsU0FBQSxFQUFVO3FCQUF5QyxNQUNqRCxLLGFBQ0gsSUFBQUYsV0FBQSxDQUFBQyxHQUFBLEVBQUNHLEtBQUEsQ0FBQVosT0FBSTtZQUNIYSxJQUFBLEVBQUs7WUFDTEgsU0FBQSxFQUFVO3NCQUNYOzs7dUJBS0wsSUFBQUYsV0FBQSxDQUFBQyxHQUFBLEVBQUNLLFdBQUEsQ0FBQUMsVUFBVTs7O0FBSW5CIiwiaWdub3JlTGlzdCI6W119

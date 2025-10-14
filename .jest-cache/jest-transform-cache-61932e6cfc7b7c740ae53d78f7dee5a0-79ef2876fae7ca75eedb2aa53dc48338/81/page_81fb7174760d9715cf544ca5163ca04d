@@ -1,0 +1,324 @@
+d05c4afaf5f46777335c50cb53e5d594
+"use strict";
+
+/* istanbul ignore next */
+function cov_16vfdykd3u() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\reset-password\\page.tsx";
+  var hash = "5acc60530c275622ad450d8f1efab81c8834c6ee";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\reset-password\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 6,
+          column: 4
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "2": {
+        start: {
+          line: 6,
+          column: 24
+        },
+        end: {
+          line: 9,
+          column: 7
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 0
+        },
+        end: {
+          line: 18,
+          column: 3
+        }
+      },
+      "4": {
+        start: {
+          line: 13,
+          column: 8
+        },
+        end: {
+          line: 13,
+          column: 33
+        }
+      },
+      "5": {
+        start: {
+          line: 16,
+          column: 8
+        },
+        end: {
+          line: 16,
+          column: 24
+        }
+      },
+      "6": {
+        start: {
+          line: 19,
+          column: 20
+        },
+        end: {
+          line: 19,
+          column: 48
+        }
+      },
+      "7": {
+        start: {
+          line: 20,
+          column: 27
+        },
+        end: {
+          line: 20,
+          column: 82
+        }
+      },
+      "8": {
+        start: {
+          line: 21,
+          column: 17
+        },
+        end: {
+          line: 24,
+          column: 1
+        }
+      },
+      "9": {
+        start: {
+          line: 26,
+          column: 4
+        },
+        end: {
+          line: 49,
+          column: 7
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "_export",
+        decl: {
+          start: {
+            line: 5,
+            column: 9
+          },
+          end: {
+            line: 5,
+            column: 16
+          }
+        },
+        loc: {
+          start: {
+            line: 5,
+            column: 30
+          },
+          end: {
+            line: 10,
+            column: 1
+          }
+        },
+        line: 5
+      },
+      "1": {
+        name: "(anonymous_1)",
+        decl: {
+          start: {
+            line: 12,
+            column: 4
+          },
+          end: {
+            line: 12,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 19
+          },
+          end: {
+            line: 14,
+            column: 5
+          }
+        },
+        line: 12
+      },
+      "2": {
+        name: "(anonymous_2)",
+        decl: {
+          start: {
+            line: 15,
+            column: 4
+          },
+          end: {
+            line: 15,
+            column: 5
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 20
+          },
+          end: {
+            line: 17,
+            column: 5
+          }
+        },
+        line: 15
+      },
+      "3": {
+        name: "ResetPasswordPage",
+        decl: {
+          start: {
+            line: 25,
+            column: 9
+          },
+          end: {
+            line: 25,
+            column: 26
+          }
+        },
+        loc: {
+          start: {
+            line: 25,
+            column: 29
+          },
+          end: {
+            line: 50,
+            column: 1
+          }
+        },
+        line: 25
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    b: {},
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\auth\\reset-password\\page.tsx"],
+      sourcesContent: ["import { Metadata } from 'next'\nimport { ResetPasswordForm } from '@/components/auth/reset-password-form'\n\nexport const metadata: Metadata = {\n  title: 'Reset Password - ADSapp',\n  description: 'Set your new password',\n}\n\nexport default function ResetPasswordPage() {\n  return (\n    <div className=\"min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8\">\n      <div className=\"max-w-md w-full space-y-8\">\n        <div>\n          <div className=\"mx-auto h-12 w-auto flex items-center justify-center\">\n            <div className=\"text-2xl font-bold text-green-600\">ADSapp</div>\n          </div>\n          <h2 className=\"mt-6 text-center text-3xl font-extrabold text-gray-900\">\n            Set new password\n          </h2>\n        </div>\n        <ResetPasswordForm />\n      </div>\n    </div>\n  )\n}\n"],
+      names: ["ResetPasswordPage", "metadata", "title", "description", "div", "className", "h2", "ResetPasswordForm"],
+      mappings: ";;;;;;;;;;;QAQA;eAAwBA;;QALXC;eAAAA;;;;mCAFqB;AAE3B,MAAMA,WAAqB;IAChCC,OAAO;IACPC,aAAa;AACf;AAEe,SAASH;IACtB,qBACE,qBAACI;QAAIC,WAAU;kBACb,cAAA,sBAACD;YAAIC,WAAU;;8BACb,sBAACD;;sCACC,qBAACA;4BAAIC,WAAU;sCACb,cAAA,qBAACD;gCAAIC,WAAU;0CAAoC;;;sCAErD,qBAACC;4BAAGD,WAAU;sCAAyD;;;;8BAIzE,qBAACE,oCAAiB;;;;AAI1B"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "5acc60530c275622ad450d8f1efab81c8834c6ee"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_16vfdykd3u = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_16vfdykd3u();
+cov_16vfdykd3u().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function _export(target, all) {
+  /* istanbul ignore next */
+  cov_16vfdykd3u().f[0]++;
+  cov_16vfdykd3u().s[1]++;
+  for (var name in all) {
+    /* istanbul ignore next */
+    cov_16vfdykd3u().s[2]++;
+    Object.defineProperty(target, name, {
+      enumerable: true,
+      get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+  }
+}
+/* istanbul ignore next */
+cov_16vfdykd3u().s[3]++;
+_export(exports, {
+  get default() {
+    /* istanbul ignore next */
+    cov_16vfdykd3u().f[1]++;
+    cov_16vfdykd3u().s[4]++;
+    return ResetPasswordPage;
+  },
+  get metadata() {
+    /* istanbul ignore next */
+    cov_16vfdykd3u().f[2]++;
+    cov_16vfdykd3u().s[5]++;
+    return metadata;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_16vfdykd3u().s[6]++, require("react/jsx-runtime"));
+const _resetpasswordform =
+/* istanbul ignore next */
+(cov_16vfdykd3u().s[7]++, require("../../../components/auth/reset-password-form"));
+const metadata =
+/* istanbul ignore next */
+(cov_16vfdykd3u().s[8]++, {
+  title: 'Reset Password - ADSapp',
+  description: 'Set your new password'
+});
+function ResetPasswordPage() {
+  /* istanbul ignore next */
+  cov_16vfdykd3u().f[3]++;
+  cov_16vfdykd3u().s[9]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+    className: "min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8",
+    children: /*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+      className: "max-w-md w-full space-y-8",
+      children: [/*#__PURE__*/(0, _jsxruntime.jsxs)("div", {
+        children: [/*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+          className: "mx-auto h-12 w-auto flex items-center justify-center",
+          children: /*#__PURE__*/(0, _jsxruntime.jsx)("div", {
+            className: "text-2xl font-bold text-green-600",
+            children: "ADSapp"
+          })
+        }), /*#__PURE__*/(0, _jsxruntime.jsx)("h2", {
+          className: "mt-6 text-center text-3xl font-extrabold text-gray-900",
+          children: "Set new password"
+        })]
+      }), /*#__PURE__*/(0, _jsxruntime.jsx)(_resetpasswordform.ResetPasswordForm, {})]
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJkZWZhdWx0IiwiY292XzE2dmZkeWtkM3UiLCJmIiwicyIsIlJlc2V0UGFzc3dvcmRQYWdlIiwibWV0YWRhdGEiLCJ0aXRsZSIsImRlc2NyaXB0aW9uIiwiX2pzeHJ1bnRpbWUiLCJqc3giLCJjbGFzc05hbWUiLCJqc3hzIiwiX3Jlc2V0cGFzc3dvcmRmb3JtIiwiUmVzZXRQYXNzd29yZEZvcm0iXSwic291cmNlcyI6WyJDOlxcQWkgUHJvamVjdGVuXFxBRFNhcHBcXHNyY1xcYXBwXFxhdXRoXFxyZXNldC1wYXNzd29yZFxccGFnZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgTWV0YWRhdGEgfSBmcm9tICduZXh0J1xuaW1wb3J0IHsgUmVzZXRQYXNzd29yZEZvcm0gfSBmcm9tICdAL2NvbXBvbmVudHMvYXV0aC9yZXNldC1wYXNzd29yZC1mb3JtJ1xuXG5leHBvcnQgY29uc3QgbWV0YWRhdGE6IE1ldGFkYXRhID0ge1xuICB0aXRsZTogJ1Jlc2V0IFBhc3N3b3JkIC0gQURTYXBwJyxcbiAgZGVzY3JpcHRpb246ICdTZXQgeW91ciBuZXcgcGFzc3dvcmQnLFxufVxuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBSZXNldFBhc3N3b3JkUGFnZSgpIHtcbiAgcmV0dXJuIChcbiAgICA8ZGl2IGNsYXNzTmFtZT1cIm1pbi1oLXNjcmVlbiBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBiZy1ncmF5LTUwIHB5LTEyIHB4LTQgc206cHgtNiBsZzpweC04XCI+XG4gICAgICA8ZGl2IGNsYXNzTmFtZT1cIm1heC13LW1kIHctZnVsbCBzcGFjZS15LThcIj5cbiAgICAgICAgPGRpdj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm14LWF1dG8gaC0xMiB3LWF1dG8gZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXJcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidGV4dC0yeGwgZm9udC1ib2xkIHRleHQtZ3JlZW4tNjAwXCI+QURTYXBwPC9kaXY+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgPGgyIGNsYXNzTmFtZT1cIm10LTYgdGV4dC1jZW50ZXIgdGV4dC0zeGwgZm9udC1leHRyYWJvbGQgdGV4dC1ncmF5LTkwMFwiPlxuICAgICAgICAgICAgU2V0IG5ldyBwYXNzd29yZFxuICAgICAgICAgIDwvaDI+XG4gICAgICAgIDwvZGl2PlxuICAgICAgICA8UmVzZXRQYXNzd29yZEZvcm0gLz5cbiAgICAgIDwvZGl2PlxuICAgIDwvZGl2PlxuICApXG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7TUFRQUEsUUFBQTtJQUFBO0lBQUFDLGNBQUEsR0FBQUMsQ0FBQTtJQUFBRCxjQUFBLEdBQUFFLENBQUE7V0FBd0JDLGlCQUFBOztNQUxYQyxTQUFBO0lBQUE7SUFBQUosY0FBQSxHQUFBQyxDQUFBO0lBQUFELGNBQUEsR0FBQUUsQ0FBQTtXQUFBRSxRQUFBOzs7Ozs7OztrQ0FGcUI7QUFFM0IsTUFBTUEsUUFBQTtBQUFBO0FBQUEsQ0FBQUosY0FBQSxHQUFBRSxDQUFBLE9BQXFCO0VBQ2hDRyxLQUFBLEVBQU87RUFDUEMsV0FBQSxFQUFhO0FBQ2Y7QUFFZSxTQUFTSCxrQkFBQTtFQUFBO0VBQUFILGNBQUEsR0FBQUMsQ0FBQTtFQUFBRCxjQUFBLEdBQUFFLENBQUE7RUFDdEIsb0JBQ0UsSUFBQUssV0FBQSxDQUFBQyxHQUFBLEVBQUM7SUFBSUMsU0FBQSxFQUFVO2NBQ2IsaUJBQUFGLFdBQUEsQ0FBQUcsSUFBQSxFQUFDO01BQUlELFNBQUEsRUFBVTs4QkFDYixJQUFBRixXQUFBLENBQUFHLElBQUEsRUFBQztnQ0FDQyxJQUFBSCxXQUFBLENBQUFDLEdBQUEsRUFBQztVQUFJQyxTQUFBLEVBQVU7b0JBQ2IsaUJBQUFGLFdBQUEsQ0FBQUMsR0FBQSxFQUFDO1lBQUlDLFNBQUEsRUFBVTtzQkFBb0M7O3lCQUVyRCxJQUFBRixXQUFBLENBQUFDLEdBQUEsRUFBQztVQUFHQyxTQUFBLEVBQVU7b0JBQXlEOzt1QkFJekUsSUFBQUYsV0FBQSxDQUFBQyxHQUFBLEVBQUNHLGtCQUFBLENBQUFDLGlCQUFpQjs7O0FBSTFCIiwiaWdub3JlTGlzdCI6W119

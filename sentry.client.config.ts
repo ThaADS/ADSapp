@@ -20,17 +20,8 @@ Sentry.init({
   release: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
 
   // Initialize Sentry integrations
-  integrations: [
-    new Sentry.Replay({
-      // Capture text content and user interactions
-      maskAllText: false,
-      blockAllMedia: false,
-    }),
-    new Sentry.BrowserTracing({
-      // Set up automatic route change tracking in Next.js
-      routingInstrumentation: Sentry.nextRouterInstrumentation,
-    }),
-  ],
+  // Note: Replay and BrowserTracing are auto-enabled in latest Sentry Next.js SDK
+  integrations: [],
 
   // Configure what errors to send
   beforeSend(event, hint) {

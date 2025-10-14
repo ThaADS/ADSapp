@@ -1,0 +1,380 @@
+49620db75adeb35eebd1c76ea6126c1b
+"use strict";
+
+/* istanbul ignore next */
+function cov_1gzotxwjzz() {
+  var path = "C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\audit-logs\\page.tsx";
+  var hash = "8cbc72c904db7cbd48c0716e54553cecd7f23154";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\audit-logs\\page.tsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 2,
+          column: 0
+        },
+        end: {
+          line: 4,
+          column: 3
+        }
+      },
+      "1": {
+        start: {
+          line: 5,
+          column: 0
+        },
+        end: {
+          line: 10,
+          column: 3
+        }
+      },
+      "2": {
+        start: {
+          line: 8,
+          column: 8
+        },
+        end: {
+          line: 8,
+          column: 34
+        }
+      },
+      "3": {
+        start: {
+          line: 11,
+          column: 20
+        },
+        end: {
+          line: 11,
+          column: 48
+        }
+      },
+      "4": {
+        start: {
+          line: 12,
+          column: 19
+        },
+        end: {
+          line: 12,
+          column: 66
+        }
+      },
+      "5": {
+        start: {
+          line: 13,
+          column: 14
+        },
+        end: {
+          line: 13,
+          column: 42
+        }
+      },
+      "6": {
+        start: {
+          line: 14,
+          column: 20
+        },
+        end: {
+          line: 14,
+          column: 46
+        }
+      },
+      "7": {
+        start: {
+          line: 16,
+          column: 4
+        },
+        end: {
+          line: 16,
+          column: 35
+        }
+      },
+      "8": {
+        start: {
+          line: 17,
+          column: 20
+        },
+        end: {
+          line: 17,
+          column: 53
+        }
+      },
+      "9": {
+        start: {
+          line: 18,
+          column: 4
+        },
+        end: {
+          line: 24,
+          column: 5
+        }
+      },
+      "10": {
+        start: {
+          line: 19,
+          column: 8
+        },
+        end: {
+          line: 23,
+          column: 9
+        }
+      },
+      "11": {
+        start: {
+          line: 20,
+          column: 12
+        },
+        end: {
+          line: 20,
+          column: 52
+        }
+      },
+      "12": {
+        start: {
+          line: 22,
+          column: 12
+        },
+        end: {
+          line: 22,
+          column: 53
+        }
+      },
+      "13": {
+        start: {
+          line: 25,
+          column: 4
+        },
+        end: {
+          line: 25,
+          column: 72
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "(anonymous_0)",
+        decl: {
+          start: {
+            line: 7,
+            column: 9
+          },
+          end: {
+            line: 7,
+            column: 10
+          }
+        },
+        loc: {
+          start: {
+            line: 7,
+            column: 20
+          },
+          end: {
+            line: 9,
+            column: 5
+          }
+        },
+        line: 7
+      },
+      "1": {
+        name: "AdminAuditLogsPage",
+        decl: {
+          start: {
+            line: 15,
+            column: 15
+          },
+          end: {
+            line: 15,
+            column: 33
+          }
+        },
+        loc: {
+          start: {
+            line: 15,
+            column: 36
+          },
+          end: {
+            line: 26,
+            column: 1
+          }
+        },
+        line: 15
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 18,
+            column: 4
+          },
+          end: {
+            line: 24,
+            column: 5
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 18,
+            column: 4
+          },
+          end: {
+            line: 24,
+            column: 5
+          }
+        }, {
+          start: {
+            line: undefined,
+            column: undefined
+          },
+          end: {
+            line: undefined,
+            column: undefined
+          }
+        }],
+        line: 18
+      },
+      "1": {
+        loc: {
+          start: {
+            line: 19,
+            column: 8
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        },
+        type: "if",
+        locations: [{
+          start: {
+            line: 19,
+            column: 8
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        }, {
+          start: {
+            line: 21,
+            column: 15
+          },
+          end: {
+            line: 23,
+            column: 9
+          }
+        }],
+        line: 19
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0
+    },
+    b: {
+      "0": [0, 0],
+      "1": [0, 0]
+    },
+    inputSourceMap: {
+      version: 3,
+      sources: ["C:\\Ai Projecten\\ADSapp\\src\\app\\admin\\audit-logs\\page.tsx"],
+      sourcesContent: ["import { AuditLogs } from '@/components/admin/audit-logs';\nimport { requireAuth, getUserProfile } from '@/lib/auth';\nimport { redirect } from 'next/navigation';\n\nexport default async function AdminAuditLogsPage() {\n  await requireAuth();\n\n  const profile = await getUserProfile();\n\n  if (!profile?.is_super_admin) {\n    if (profile?.organization_id) {\n      redirect('/dashboard');\n    } else {\n      redirect('/onboarding');\n    }\n  }\n\n  return <AuditLogs />;\n}"],
+      names: ["AdminAuditLogsPage", "requireAuth", "profile", "getUserProfile", "is_super_admin", "organization_id", "redirect", "AuditLogs"],
+      mappings: ";;;;+BAIA;;;eAA8BA;;;;2BAJJ;sBACkB;4BACnB;AAEV,eAAeA;IAC5B,MAAMC,IAAAA,iBAAW;IAEjB,MAAMC,UAAU,MAAMC,IAAAA,oBAAc;IAEpC,IAAI,CAACD,SAASE,gBAAgB;QAC5B,IAAIF,SAASG,iBAAiB;YAC5BC,IAAAA,oBAAQ,EAAC;QACX,OAAO;YACLA,IAAAA,oBAAQ,EAAC;QACX;IACF;IAEA,qBAAO,qBAACC,oBAAS;AACnB"
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "8cbc72c904db7cbd48c0716e54553cecd7f23154"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1gzotxwjzz = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1gzotxwjzz();
+cov_1gzotxwjzz().s[0]++;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* istanbul ignore next */
+cov_1gzotxwjzz().s[1]++;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    /* istanbul ignore next */
+    cov_1gzotxwjzz().f[0]++;
+    cov_1gzotxwjzz().s[2]++;
+    return AdminAuditLogsPage;
+  }
+});
+const _jsxruntime =
+/* istanbul ignore next */
+(cov_1gzotxwjzz().s[3]++, require("react/jsx-runtime"));
+const _auditlogs =
+/* istanbul ignore next */
+(cov_1gzotxwjzz().s[4]++, require("../../../components/admin/audit-logs"));
+const _auth =
+/* istanbul ignore next */
+(cov_1gzotxwjzz().s[5]++, require("../../../lib/auth"));
+const _navigation =
+/* istanbul ignore next */
+(cov_1gzotxwjzz().s[6]++, require("next/navigation"));
+async function AdminAuditLogsPage() {
+  /* istanbul ignore next */
+  cov_1gzotxwjzz().f[1]++;
+  cov_1gzotxwjzz().s[7]++;
+  await (0, _auth.requireAuth)();
+  const profile =
+  /* istanbul ignore next */
+  (cov_1gzotxwjzz().s[8]++, await (0, _auth.getUserProfile)());
+  /* istanbul ignore next */
+  cov_1gzotxwjzz().s[9]++;
+  if (!profile?.is_super_admin) {
+    /* istanbul ignore next */
+    cov_1gzotxwjzz().b[0][0]++;
+    cov_1gzotxwjzz().s[10]++;
+    if (profile?.organization_id) {
+      /* istanbul ignore next */
+      cov_1gzotxwjzz().b[1][0]++;
+      cov_1gzotxwjzz().s[11]++;
+      (0, _navigation.redirect)('/dashboard');
+    } else {
+      /* istanbul ignore next */
+      cov_1gzotxwjzz().b[1][1]++;
+      cov_1gzotxwjzz().s[12]++;
+      (0, _navigation.redirect)('/onboarding');
+    }
+  } else
+  /* istanbul ignore next */
+  {
+    cov_1gzotxwjzz().b[0][1]++;
+  }
+  cov_1gzotxwjzz().s[13]++;
+  return /*#__PURE__*/(0, _jsxruntime.jsx)(_auditlogs.AuditLogs, {});
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMWd6b3R4d2p6eiIsImFjdHVhbENvdmVyYWdlIiwicyIsIkFkbWluQXVkaXRMb2dzUGFnZSIsImYiLCJfYXV0aCIsInJlcXVpcmVBdXRoIiwicHJvZmlsZSIsImdldFVzZXJQcm9maWxlIiwiaXNfc3VwZXJfYWRtaW4iLCJiIiwib3JnYW5pemF0aW9uX2lkIiwiX25hdmlnYXRpb24iLCJyZWRpcmVjdCIsIl9qc3hydW50aW1lIiwianN4IiwiX2F1ZGl0bG9ncyIsIkF1ZGl0TG9ncyJdLCJzb3VyY2VzIjpbIkM6XFxBaSBQcm9qZWN0ZW5cXEFEU2FwcFxcc3JjXFxhcHBcXGFkbWluXFxhdWRpdC1sb2dzXFxwYWdlLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBBdWRpdExvZ3MgfSBmcm9tICdAL2NvbXBvbmVudHMvYWRtaW4vYXVkaXQtbG9ncyc7XG5pbXBvcnQgeyByZXF1aXJlQXV0aCwgZ2V0VXNlclByb2ZpbGUgfSBmcm9tICdAL2xpYi9hdXRoJztcbmltcG9ydCB7IHJlZGlyZWN0IH0gZnJvbSAnbmV4dC9uYXZpZ2F0aW9uJztcblxuZXhwb3J0IGRlZmF1bHQgYXN5bmMgZnVuY3Rpb24gQWRtaW5BdWRpdExvZ3NQYWdlKCkge1xuICBhd2FpdCByZXF1aXJlQXV0aCgpO1xuXG4gIGNvbnN0IHByb2ZpbGUgPSBhd2FpdCBnZXRVc2VyUHJvZmlsZSgpO1xuXG4gIGlmICghcHJvZmlsZT8uaXNfc3VwZXJfYWRtaW4pIHtcbiAgICBpZiAocHJvZmlsZT8ub3JnYW5pemF0aW9uX2lkKSB7XG4gICAgICByZWRpcmVjdCgnL2Rhc2hib2FyZCcpO1xuICAgIH0gZWxzZSB7XG4gICAgICByZWRpcmVjdCgnL29uYm9hcmRpbmcnKTtcbiAgICB9XG4gIH1cblxuICByZXR1cm4gPEF1ZGl0TG9ncyAvPjtcbn0iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFLUTtJQUFBQSxjQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxjQUFBO0FBQUFBLGNBQUEsR0FBQUUsQ0FBQTs7Ozs7OytCQURSOzs7Ozs7V0FBOEJDLGtCQUFBOzs7Ozs7OztrQ0FKSjs7O2tDQUNrQjs7O2tDQUNuQjtBQUVWLGVBQWVBLG1CQUFBO0VBQUE7RUFBQUgsY0FBQSxHQUFBSSxDQUFBO0VBQUFKLGNBQUEsR0FBQUUsQ0FBQTtFQUM1QixNQUFNLElBQUFHLEtBQUEsQ0FBQUMsV0FBVztFQUVqQixNQUFNQyxPQUFBO0VBQUE7RUFBQSxDQUFBUCxjQUFBLEdBQUFFLENBQUEsT0FBVSxNQUFNLElBQUFHLEtBQUEsQ0FBQUcsY0FBYztFQUFBO0VBQUFSLGNBQUEsR0FBQUUsQ0FBQTtFQUVwQyxJQUFJLENBQUNLLE9BQUEsRUFBU0UsY0FBQSxFQUFnQjtJQUFBO0lBQUFULGNBQUEsR0FBQVUsQ0FBQTtJQUFBVixjQUFBLEdBQUFFLENBQUE7SUFDNUIsSUFBSUssT0FBQSxFQUFTSSxlQUFBLEVBQWlCO01BQUE7TUFBQVgsY0FBQSxHQUFBVSxDQUFBO01BQUFWLGNBQUEsR0FBQUUsQ0FBQTtNQUM1QixJQUFBVSxXQUFBLENBQUFDLFFBQVEsRUFBQztJQUNYLE9BQU87TUFBQTtNQUFBYixjQUFBLEdBQUFVLENBQUE7TUFBQVYsY0FBQSxHQUFBRSxDQUFBO01BQ0wsSUFBQVUsV0FBQSxDQUFBQyxRQUFRLEVBQUM7SUFDWDtFQUNGO0VBQUE7RUFBQTtJQUFBYixjQUFBLEdBQUFVLENBQUE7RUFBQTtFQUFBVixjQUFBLEdBQUFFLENBQUE7RUFFQSxvQkFBTyxJQUFBWSxXQUFBLENBQUFDLEdBQUEsRUFBQ0MsVUFBQSxDQUFBQyxTQUFTO0FBQ25CIiwiaWdub3JlTGlzdCI6W119
