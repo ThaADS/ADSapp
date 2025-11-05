@@ -10,13 +10,12 @@ import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
-  // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
-
   try {
-    // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    // 🔧 FIX: Query organization directly instead of relying on middleware headers
+    // Root cause: Next.js 15 doesn't propagate headers when middleware returns null
+    const user = await requireAuthenticatedUser();
+    const userOrg = await getUserOrganization(user.id);
+    const organizationId = userOrg.organization_id;
 
     const supabase = await createClient()
 
@@ -76,13 +75,12 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
-
   try {
-    // Get tenant context from middleware (already validated)
-    const { organizationId, userId} = getTenantContext(request);
+    // 🔧 FIX: Query organization directly instead of relying on middleware headers
+    const user = await requireAuthenticatedUser();
+    const userOrg = await getUserOrganization(user.id);
+    const organizationId = userOrg.organization_id;
+    const userId = user.id;
 
     const supabase = await createClient()
 
