@@ -16,6 +16,7 @@ import {
   BellIcon,
   ArrowRightOnRectangleIcon,
   TagIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavigationItem {
@@ -29,6 +30,7 @@ const navigation: NavigationItem[] = [
   { name: 'Organizations', href: '/admin/organizations', icon: BuildingOfficeIcon },
   { name: 'Users', href: '/admin/users', icon: UsersIcon },
   { name: 'Tags', href: '/admin/tags', icon: TagIcon },
+  { name: 'Security', href: '/admin/security', icon: ShieldCheckIcon },
   { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },
   { name: 'Billing', href: '/admin/billing', icon: CreditCardIcon },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: DocumentTextIcon },
