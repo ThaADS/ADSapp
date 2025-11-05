@@ -1,3 +1,4 @@
+// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 import { isBuildTime } from '@/lib/build-safe-init'

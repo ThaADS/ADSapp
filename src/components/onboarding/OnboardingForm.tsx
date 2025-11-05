@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { WhatsAppSetupWizard } from './WhatsAppSetupWizard'
 
 interface OnboardingData {
   // Step 1: Organization
@@ -9,8 +10,11 @@ interface OnboardingData {
   subdomain: string
 
   // Step 2: WhatsApp Business
-  whatsappPhoneNumber: string
+  whatsappPhoneNumberId: string
   whatsappBusinessAccountId: string
+  whatsappAccessToken: string
+  whatsappWebhookVerifyToken: string
+  whatsappSkipped: boolean
 
   // Step 3: Profile
   fullName: string
@@ -32,8 +36,11 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
   const [formData, setFormData] = useState<OnboardingData>({
     organizationName: '',
     subdomain: '',
-    whatsappPhoneNumber: '',
+    whatsappPhoneNumberId: '',
     whatsappBusinessAccountId: '',
+    whatsappAccessToken: '',
+    whatsappWebhookVerifyToken: '',
+    whatsappSkipped: false,
     fullName: '',
     role: 'owner',
   })
@@ -89,9 +96,8 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
     }
 
     if (step === 2) {
-      if (formData.whatsappPhoneNumber && !/^\+?[1-9]\d{1,14}$/.test(formData.whatsappPhoneNumber)) {
-        errors.whatsappPhoneNumber = 'Please enter a valid phone number with country code'
-      }
+      // Step 2 validation is handled by WhatsAppSetupWizard component
+      // Allow skip, so no required fields
     }
 
     if (step === 3) {
@@ -270,75 +276,26 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
         {/* Step 2: WhatsApp Business Setup */}
         {currentStep === 2 && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">WhatsApp Business Setup</h2>
-              <p className="text-gray-600">
-                Connect your WhatsApp Business account (optional - you can set this up later)
-              </p>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-blue-700">
-                    You can skip this step and configure WhatsApp Business later in your dashboard settings.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="whatsappPhoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                WhatsApp Phone Number
-              </label>
-              <input
-                type="tel"
-                id="whatsappPhoneNumber"
-                name="whatsappPhoneNumber"
-                value={formData.whatsappPhoneNumber}
-                onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border ${
-                  validationErrors.whatsappPhoneNumber ? 'border-red-300' : 'border-gray-300'
-                } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                placeholder="+1234567890"
-              />
-              {validationErrors.whatsappPhoneNumber && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.whatsappPhoneNumber}</p>
-              )}
-              <p className="mt-1 text-sm text-gray-500">Include country code (e.g., +1 for US)</p>
-            </div>
-
-            <div>
-              <label
-                htmlFor="whatsappBusinessAccountId"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                WhatsApp Business Account ID
-              </label>
-              <input
-                type="text"
-                id="whatsappBusinessAccountId"
-                name="whatsappBusinessAccountId"
-                value={formData.whatsappBusinessAccountId}
-                onChange={handleInputChange}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="123456789012345"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Find this in your Facebook Business Manager
-              </p>
-            </div>
-          </div>
+          <WhatsAppSetupWizard
+            onComplete={(credentials) => {
+              setFormData(prev => ({
+                ...prev,
+                whatsappPhoneNumberId: credentials.phoneNumberId,
+                whatsappBusinessAccountId: credentials.businessAccountId,
+                whatsappAccessToken: credentials.accessToken,
+                whatsappWebhookVerifyToken: credentials.webhookVerifyToken,
+                whatsappSkipped: false,
+              }));
+              setCurrentStep(3);
+            }}
+            onSkip={() => {
+              setFormData(prev => ({
+                ...prev,
+                whatsappSkipped: true,
+              }));
+              setCurrentStep(3);
+            }}
+          />
         )}
 
         {/* Step 3: Profile Completion */}

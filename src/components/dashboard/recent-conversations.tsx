@@ -40,7 +40,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open':
-        return 'bg-green-100 text-green-800'
+        return 'bg-emerald-100 text-emerald-800'
       case 'pending':
         return 'bg-yellow-100 text-yellow-800'
       case 'resolved':
@@ -83,10 +83,10 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
           <li key={conversation.id} className="py-4 px-6">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
                     {conversation.contact.name?.charAt(0).toUpperCase() ||
-                     conversation.contact.phone_number.charAt(-2).toUpperCase()}
+                     conversation.contact.phone_number.slice(-2, -1).toUpperCase() || 'U'}
                   </span>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
                 </span>
                 <Link
                   href={`/dashboard/conversations/${conversation.id}`}
-                  className="text-green-600 hover:text-green-900 text-sm font-medium"
+                  className="text-emerald-600 hover:text-emerald-900 text-sm font-medium"
                 >
                   View
                 </Link>
@@ -125,7 +125,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
       <div className="px-6 py-3 border-t border-gray-200">
         <Link
           href="/dashboard/conversations"
-          className="text-sm font-medium text-green-600 hover:text-green-500"
+          className="text-sm font-medium text-emerald-600 hover:text-emerald-500"
         >
           View all conversations →
         </Link>

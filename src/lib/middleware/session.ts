@@ -62,21 +62,23 @@ export interface SessionMiddlewareConfig {
 }
 
 /**
- * Default configuration
+ * Get default configuration (lazy initialization to avoid circular dependencies)
  */
-const DEFAULT_CONFIG: Required<SessionMiddlewareConfig> = {
-  cookieName: 'adsapp_session',
-  excludePaths: [
-    '/api/auth/signin',
-    '/api/auth/signup',
-    '/api/auth/forgot-password',
-    '/api/auth/reset-password',
-    '/api/health',
-    '/api/webhooks'
-  ],
-  detectPrivilegeChanges: true,
-  sessionManager: getSessionManager()
-};
+function getDefaultConfig(): Required<Omit<SessionMiddlewareConfig, 'sessionManager'>> & { sessionManager: undefined } {
+  return {
+    cookieName: 'adsapp_session',
+    excludePaths: [
+      '/api/auth/signin',
+      '/api/auth/signup',
+      '/api/auth/forgot-password',
+      '/api/auth/reset-password',
+      '/api/health',
+      '/api/webhooks'
+    ],
+    detectPrivilegeChanges: true,
+    sessionManager: undefined  // Lazy initialize to avoid circular dependency
+  };
+}
 
 /**
  * Validate and refresh session
@@ -109,7 +111,7 @@ export async function validateSession(
   request: NextRequest,
   config: SessionMiddlewareConfig = {}
 ): Promise<NextResponse | null> {
-  const fullConfig = { ...DEFAULT_CONFIG, ...config };
+  const fullConfig = { ...getDefaultConfig(), ...config };
   const pathname = request.nextUrl.pathname;
 
   // Check if path is excluded from session validation
@@ -118,6 +120,9 @@ export async function validateSession(
   }
 
   try {
+    // Lazy initialize session manager to avoid circular dependencies
+    const sessionManager = fullConfig.sessionManager || getSessionManager();
+
     // Extract session token from cookies
     const sessionToken = extractSessionToken(request, fullConfig.cookieName);
 
@@ -133,7 +138,6 @@ export async function validateSession(
     }
 
     // Validate session
-    const sessionManager = fullConfig.sessionManager;
     const validation = await sessionManager.validateSession(userId, sessionToken);
 
     if (!validation.valid) {
@@ -525,6 +529,15 @@ export async function checkSessionHealth(): Promise<{
   try {
     const manager = getSessionManager();
     const store = manager.getStore();
+
+    if (!store) {
+      return {
+        healthy: false,
+        latency: -1,
+        error: 'Redis store not initialized'
+      };
+    }
+
     return await store.getHealthStatus();
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';

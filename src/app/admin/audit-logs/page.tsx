@@ -2,6 +2,8 @@ import { AuditLogs } from '@/components/admin/audit-logs';
 import { requireAuth, getUserProfile } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminAuditLogsPage() {
   await requireAuth();
 

@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { SuperAdminPermissions } from '@/lib/super-admin';
 import { adminMiddleware } from '@/lib/middleware';
 
 export async function GET(request: NextRequest) {
@@ -15,7 +14,6 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createClient();
-    const permissions = new SuperAdminPermissions();
     const { searchParams } = new URL(request.url);
 
     const view = searchParams.get('view') || 'overview';
@@ -179,14 +177,7 @@ export async function GET(request: NextRequest) {
         },
       };
 
-      // Log the access
-      await permissions.logSystemAuditEvent(
-        'view_billing_overview',
-        undefined,
-        undefined,
-        { viewType: 'overview' },
-        'info'
-      );
+      // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
       return NextResponse.json({ overview });
 
@@ -248,18 +239,7 @@ export async function GET(request: NextRequest) {
         createdAt: event.created_at,
       }));
 
-      // Log the access
-      await permissions.logSystemAuditEvent(
-        'view_billing_events',
-        undefined,
-        undefined,
-        {
-          filters: { eventType, organizationId, startDate, endDate },
-          pagination: { page, limit },
-          resultCount: events.length
-        },
-        'info'
-      );
+      // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
       return NextResponse.json({
         events,

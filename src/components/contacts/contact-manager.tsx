@@ -31,6 +31,8 @@ import {
   TableCellsIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+import ContactForm from './contact-form';
+import { useToast } from '@/components/ui/toast';
 
 // Contact interface
 interface Contact {
@@ -68,101 +70,24 @@ interface FilterOptions {
   isStarred: boolean | null;
 }
 
-// Sample contacts data
-const SAMPLE_CONTACTS: Contact[] = [
-  {
-    id: '1',
-    firstName: 'John',
-    lastName: 'Smith',
-    email: 'john.smith@example.com',
-    phone: '+1234567890',
-    company: 'Tech Corp',
-    position: 'CEO',
-    location: 'New York, NY',
-    website: 'https://techcorp.com',
-    tags: ['vip', 'potential-client'],
-    status: 'active',
-    isStarred: true,
-    lastContact: '2024-01-25',
-    addedDate: '2024-01-15',
-    totalMessages: 24,
-    customFields: { budget: '$50,000', interest: 'Enterprise' },
-    notes: 'Interested in enterprise solution. Follow up next week.',
-    source: 'whatsapp',
-    assignedTo: 'Alice Johnson'
-  },
-  {
-    id: '2',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    email: 'sarah.j@business.com',
-    phone: '+1987654321',
-    company: 'Business Solutions',
-    position: 'Marketing Director',
-    location: 'Los Angeles, CA',
-    tags: ['marketing', 'active-lead'],
-    status: 'active',
-    isStarred: false,
-    lastContact: '2024-01-24',
-    addedDate: '2024-01-10',
-    totalMessages: 12,
-    customFields: { budget: '$25,000', interest: 'Marketing Tools' },
-    notes: 'Needs marketing automation features.',
-    source: 'manual',
-    assignedTo: 'Bob Wilson'
-  },
-  {
-    id: '3',
-    firstName: 'Mike',
-    lastName: 'Chen',
-    phone: '+1555123456',
-    company: 'Startup Inc',
-    position: 'Founder',
-    location: 'San Francisco, CA',
-    tags: ['startup', 'tech'],
-    status: 'inactive',
-    isStarred: false,
-    lastContact: '2024-01-20',
-    addedDate: '2024-01-05',
-    totalMessages: 8,
-    customFields: { budget: '$10,000', interest: 'Basic Plan' },
-    notes: 'Small startup, price sensitive.',
-    source: 'import',
-    assignedTo: 'Charlie Brown'
-  }
-];
-
-// Available tags
-const AVAILABLE_TAGS = [
-  { id: 'vip', label: 'VIP', color: 'bg-purple-100 text-purple-800' },
-  { id: 'potential-client', label: 'Potential Client', color: 'bg-blue-100 text-blue-800' },
-  { id: 'active-lead', label: 'Active Lead', color: 'bg-green-100 text-green-800' },
-  { id: 'marketing', label: 'Marketing', color: 'bg-orange-100 text-orange-800' },
-  { id: 'startup', label: 'Startup', color: 'bg-pink-100 text-pink-800' },
-  { id: 'tech', label: 'Tech', color: 'bg-indigo-100 text-indigo-800' },
-  { id: 'enterprise', label: 'Enterprise', color: 'bg-gray-100 text-gray-800' }
-];
-
-// Team members for assignment
-const TEAM_MEMBERS = [
-  { id: 'alice', name: 'Alice Johnson' },
-  { id: 'bob', name: 'Bob Wilson' },
-  { id: 'charlie', name: 'Charlie Brown' },
-  { id: 'diana', name: 'Diana Prince' }
-];
+// No more mock data - all loaded from API
 
 interface ContactManagerProps {
   organizationId: string;
 }
 
 export default function ContactManager({ organizationId }: ContactManagerProps) {
-  const [contacts, setContacts] = useState<Contact[]>(SAMPLE_CONTACTS);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [tags, setTags] = useState<Array<{ id: string; label: string; color: string }>>([]);
+  const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [showFilters, setShowFilters] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
     status: 'all',
@@ -174,6 +99,90 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { addToast } = useToast();
+
+  // Load data on mount
+  React.useEffect(() => {
+    Promise.all([loadContacts(), loadTags(), loadTeamMembers()])
+      .finally(() => setIsLoading(false));
+  }, [organizationId]);
+
+  // Load contacts from API
+  const loadContacts = async () => {
+    try {
+      const res = await fetch(`/api/contacts?organization_id=${organizationId}`);
+      const data = await res.json();
+
+      if (data.contacts) {
+        const formattedContacts = data.contacts.map((c: any) => ({
+          id: c.id,
+          firstName: c.name?.split(' ')[0] || '',
+          lastName: c.name?.split(' ').slice(1).join(' ') || '',
+          phone: c.phone_number,
+          email: c.email,
+          tags: c.tags || [],
+          status: c.is_blocked ? 'blocked' : 'active',
+          isStarred: c.is_starred || false,
+          lastContact: c.last_contact_at || c.created_at,
+          addedDate: c.created_at,
+          totalMessages: c.total_messages || 0,
+          customFields: c.metadata || {},
+          notes: c.notes || '',
+          source: c.source || 'manual',
+          company: c.metadata?.company,
+          position: c.metadata?.position,
+          location: c.metadata?.location,
+          website: c.metadata?.website,
+          assignedTo: c.assigned_to
+        }));
+        setContacts(formattedContacts);
+      }
+    } catch (error) {
+      console.error('Error loading contacts:', error);
+      addToast({
+        type: 'error',
+        title: 'Error loading contacts',
+        message: 'Failed to load contacts from server'
+      });
+    }
+  };
+
+  // Load tags from API
+  const loadTags = async () => {
+    try {
+      const res = await fetch(`/api/tags?organization_id=${organizationId}`);
+      const data = await res.json();
+
+      if (data.tags) {
+        const formattedTags = data.tags.map((t: any) => ({
+          id: t.name.toLowerCase().replace(/\s+/g, '-'),
+          label: t.name,
+          color: t.color_class || 'bg-gray-100 text-gray-800'
+        }));
+        setTags(formattedTags);
+      }
+    } catch (error) {
+      console.error('Error loading tags:', error);
+    }
+  };
+
+  // Load team members from API
+  const loadTeamMembers = async () => {
+    try {
+      const res = await fetch(`/api/admin/users?organization_id=${organizationId}`);
+      const data = await res.json();
+
+      if (data.users) {
+        const formattedMembers = data.users.map((u: any) => ({
+          id: u.id,
+          name: u.full_name
+        }));
+        setTeamMembers(formattedMembers);
+      }
+    } catch (error) {
+      console.error('Error loading team members:', error);
+    }
+  };
 
   // Filter contacts based on current filters
   const filteredContacts = useMemo(() => {
@@ -261,11 +270,106 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
   // Import contacts
   const handleImport = useCallback((file: File) => {
     // Simulate import functionality
-    
+
     // In real implementation, parse file and add contacts
     setShowImportModal(false);
     alert('Contacts imported successfully!');
   }, []);
+
+  // Handle contact form submission
+  const handleContactSubmit = useCallback(async (formData: {
+    name: string;
+    phone_number: string;
+    email: string;
+    tags: string[];
+    notes: string;
+    metadata: Record<string, string>;
+  }, contactId?: string) => {
+    setIsLoadingForm(true);
+
+    try {
+      const url = contactId ? `/api/contacts/${contactId}` : '/api/contacts';
+      const method = contactId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save contact');
+      }
+
+      // Update contacts list
+      if (contactId) {
+        // Update existing contact in the list
+        setContacts(prev => prev.map(c => {
+          if (c.id === contactId) {
+            return {
+              ...c,
+              firstName: formData.name.split(' ')[0] || '',
+              lastName: formData.name.split(' ').slice(1).join(' ') || '',
+              email: formData.email || undefined,
+              tags: formData.tags,
+              notes: formData.notes,
+              customFields: formData.metadata,
+            };
+          }
+          return c;
+        }));
+
+        addToast({
+          type: 'success',
+          title: 'Contact updated',
+          message: 'Contact has been updated successfully',
+        });
+      } else {
+        // Add new contact to the list
+        const newContact: Contact = {
+          id: data.id || Date.now().toString(),
+          firstName: formData.name.split(' ')[0] || '',
+          lastName: formData.name.split(' ').slice(1).join(' ') || '',
+          phone: formData.phone_number,
+          email: formData.email || undefined,
+          tags: formData.tags,
+          notes: formData.notes,
+          customFields: formData.metadata,
+          status: 'active',
+          isStarred: false,
+          lastContact: new Date().toISOString().split('T')[0],
+          addedDate: new Date().toISOString().split('T')[0],
+          totalMessages: 0,
+          source: 'manual',
+        };
+
+        setContacts(prev => [newContact, ...prev]);
+
+        addToast({
+          type: 'success',
+          title: 'Contact created',
+          message: 'New contact has been added successfully',
+        });
+      }
+
+      // Close modal
+      setShowContactModal(false);
+      setEditingContact(null);
+    } catch (error) {
+      console.error('Error saving contact:', error);
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: error instanceof Error ? error.message : 'Failed to save contact',
+      });
+    } finally {
+      setIsLoadingForm(false);
+    }
+  }, [addToast]);
 
   // Contact card component for grid view
   const ContactCard: React.FC<{ contact: Contact }> = ({ contact }) => (
@@ -342,7 +446,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
       <div className="flex flex-wrap gap-1 mb-3">
         {contact.tags.slice(0, 3).map(tagId => {
-          const tag = AVAILABLE_TAGS.find(t => t.id === tagId);
+          const tag = tags.find(t => t.id === tagId);
           return tag ? (
             <span key={tagId} className={`px-2 py-1 text-xs rounded-full ${tag.color}`}>
               {tag.label}
@@ -514,7 +618,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   >
                     <option value="all">All Team Members</option>
-                    {TEAM_MEMBERS.map(member => (
+                    {teamMembers.map(member => (
                       <option key={member.id} value={member.name}>{member.name}</option>
                     ))}
                   </select>
@@ -523,7 +627,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
                   <div className="flex flex-wrap gap-2">
-                    {AVAILABLE_TAGS.slice(0, 4).map(tag => (
+                    {tags.slice(0, 4).map(tag => (
                       <button
                         type="button"
                         key={tag.id}
@@ -675,7 +779,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
                         {contact.tags.slice(0, 2).map(tagId => {
-                          const tag = AVAILABLE_TAGS.find(t => t.id === tagId);
+                          const tag = tags.find(t => t.id === tagId);
                           return tag ? (
                             <span key={tagId} className={`px-2 py-1 text-xs rounded-full ${tag.color}`}>
                               {tag.label}
@@ -866,46 +970,46 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
         </div>
       )}
 
-      {/* Contact Modal (Add/Edit) - Simplified placeholder */}
+      {/* Contact Modal (Add/Edit) */}
       {showContactModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
               <h2 className="text-lg font-medium text-gray-900">
                 {editingContact ? 'Edit Contact' : 'Add New Contact'}
               </h2>
               <button
                 type="button"
-                onClick={() => setShowContactModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                onClick={() => {
+                  setShowContactModal(false);
+                  setEditingContact(null);
+                }}
+                disabled={isLoadingForm}
+                className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
                 aria-label="Close contact modal"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6">
-              <p className="text-gray-600">Contact form would be implemented here...</p>
-            </div>
-
-            <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={() => setShowContactModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  // Save logic would go here
+            <div className="p-6 overflow-y-auto flex-1">
+              <ContactForm
+                contact={editingContact ? {
+                  id: editingContact.id,
+                  name: `${editingContact.firstName} ${editingContact.lastName}`,
+                  phone_number: editingContact.phone,
+                  email: editingContact.email,
+                  tags: editingContact.tags,
+                  notes: editingContact.notes,
+                  metadata: editingContact.customFields,
+                } : null}
+                onSubmit={handleContactSubmit}
+                onCancel={() => {
                   setShowContactModal(false);
+                  setEditingContact(null);
                 }}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-              >
-                {editingContact ? 'Save Changes' : 'Add Contact'}
-              </button>
+                isLoading={isLoadingForm}
+              />
             </div>
           </div>
         </div>

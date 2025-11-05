@@ -15,6 +15,7 @@ import {
   CogIcon,
   BellIcon,
   ArrowRightOnRectangleIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavigationItem {
@@ -27,6 +28,7 @@ const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/admin', icon: HomeIcon },
   { name: 'Organizations', href: '/admin/organizations', icon: BuildingOfficeIcon },
   { name: 'Users', href: '/admin/users', icon: UsersIcon },
+  { name: 'Tags', href: '/admin/tags', icon: TagIcon },
   { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },
   { name: 'Billing', href: '/admin/billing', icon: CreditCardIcon },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: DocumentTextIcon },
@@ -46,7 +48,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const handleSignOut = async () => {
     try {
       await fetch('/api/auth/signout', { method: 'POST' });
-      router.push('/auth/signin');
+      router.push('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }

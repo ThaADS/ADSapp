@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
         data: {
           full_name: fullName || '',
           organization_name: organizationName || ''
-        }
+        },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback`
       }
     }
     
@@ -64,11 +65,13 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Success - user is created and logged in
+    // Success - user is created and logged in (no email confirmation required)
+    // In this case, redirect directly to onboarding
     return NextResponse.json({
       message: 'Account created successfully',
       user: authData.user,
-      session: authData.session
+      session: authData.session,
+      redirectTo: '/onboarding'
     })
 
   } catch (error) {

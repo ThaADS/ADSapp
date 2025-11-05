@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { MessageList } from './message-list'
 import { MessageInput } from './message-input'
+import { QuickActionsButton } from './quick-actions-menu'
+import { useToast } from '@/components/ui/toast'
 import type { ConversationWithDetails, MessageWithSender } from '@/types'
 
 interface ChatWindowProps {
@@ -10,11 +12,13 @@ interface ChatWindowProps {
   profile: any
   onShowDetails: () => void
   showDetails: boolean
+  onConversationUpdate?: () => void
 }
 
-export function ChatWindow({ conversation, profile, onShowDetails, showDetails }: ChatWindowProps) {
+export function ChatWindow({ conversation, profile, onShowDetails, showDetails, onConversationUpdate }: ChatWindowProps) {
   const [messages, setMessages] = useState<MessageWithSender[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const { addToast } = useToast()
 
   // Fetch messages for the conversation
   useEffect(() => {
@@ -58,6 +62,33 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails }
     } catch (error) {
       console.error('Failed to send message:', error)
       // TODO: Show error toast
+    }
+  }
+
+  const handleActionComplete = (action: string, success: boolean) => {
+    if (success) {
+      const messages: Record<string, string> = {
+        mark_as_read: 'Conversation marked as read',
+        assign_to_me: 'Conversation assigned to you',
+        status_closed: 'Conversation archived',
+        delete: 'Conversation deleted',
+        block: 'Contact blocked successfully',
+        export: 'Conversation exported successfully',
+      }
+
+      addToast({
+        type: 'success',
+        title: messages[action] || 'Action completed',
+      })
+
+      // Trigger refresh
+      onConversationUpdate?.()
+    } else {
+      addToast({
+        type: 'error',
+        title: 'Action failed',
+        message: 'Please try again',
+      })
     }
   }
 
@@ -133,6 +164,12 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails }
                 : 'Assign'
               }
             </button>
+
+            {/* Quick Actions */}
+            <QuickActionsButton
+              conversation={conversation}
+              onActionComplete={handleActionComplete}
+            />
 
             {/* Details Toggle */}
             <button

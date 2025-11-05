@@ -645,7 +645,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   // Auto-save demo progress
   useEffect(() => {
-    if (state.isActive) {
+    // Only access localStorage in browser environment
+    if (typeof window !== 'undefined' && state.isActive) {
       const demoData = {
         scenario: state.scenario,
         currentStep: state.currentStep,
@@ -658,6 +659,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   // Load demo progress on mount
   useEffect(() => {
+    // Only access localStorage in browser environment
+    if (typeof window === 'undefined') return;
+
     const savedProgress = localStorage.getItem('adsapp-demo-progress');
     if (savedProgress) {
       try {

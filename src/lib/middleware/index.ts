@@ -304,29 +304,55 @@ export const authMiddleware = async (request: NextRequest): Promise<NextResponse
  * ```
  */
 export const adminMiddleware = async (request: NextRequest): Promise<NextResponse | null> => {
-  const { validateTenantAccess, isSuperAdmin } = await import('./tenant-validation');
-  const { createRateLimiter, rateLimitConfigs } = await import('./rate-limit');
+  const { isSuperAdmin } = await import('./tenant-validation');
+  const { createClient } = await import('@/lib/supabase/server');
 
-  // First validate tenant access (authenticates user)
-  const tenantValidation = await validateTenantAccess(request);
-  if (tenantValidation && tenantValidation.status !== 200) {
-    return tenantValidation;
-  }
+  try {
+    const supabase = await createClient();
 
-  // Check if user is super admin
-  if (!isSuperAdmin(request)) {
+    // Verify user authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        {
+          error: 'Authentication required',
+          code: 'UNAUTHORIZED'
+        },
+        { status: 401 }
+      );
+    }
+
+    // Check if user is super admin directly from database
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_super_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_super_admin) {
+      return NextResponse.json(
+        {
+          error: 'Forbidden: Super admin access required',
+          code: 'FORBIDDEN'
+        },
+        { status: 403 }
+      );
+    }
+
+    // Super admin verified - allow access
+    return null;
+
+  } catch (error) {
+    console.error('[ADMIN_MIDDLEWARE] Error:', error);
     return NextResponse.json(
       {
-        error: 'Forbidden: Super admin access required',
-        code: 'FORBIDDEN'
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR'
       },
-      { status: 403 }
+      { status: 500 }
     );
   }
-
-  // Apply strict rate limiting for admin operations
-  const rateLimitMiddleware = createRateLimiter(rateLimitConfigs.strict);
-  return rateLimitMiddleware(request);
 };
 
 /**

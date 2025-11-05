@@ -505,6 +505,8 @@ function AutomationDemoContent() {
   );
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function AutomationDemoPage() {
   return (
     <DemoProvider>

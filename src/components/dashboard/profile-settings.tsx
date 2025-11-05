@@ -68,8 +68,8 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
   return (
     <div className="space-y-6">
       {/* Profile Overview */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
+        <div className="p-6">
           <div className="flex items-center space-x-5">
             <div className="flex-shrink-0">
               <div className="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center">
@@ -106,9 +106,9 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
       </div>
 
       {/* Edit Profile Form */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Personal Information
           </h3>
           
@@ -124,7 +124,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
                   id="full_name"
                   value={formData.full_name}
                   onChange={handleChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -139,7 +139,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
                   id="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -154,7 +154,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
                   id="email"
                   value={profile.email || ''}
                   disabled
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 rounded-lg bg-gray-50 text-gray-500 sm:text-sm px-3 py-2"
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   Email cannot be changed. Contact support if you need to update your email.
@@ -163,14 +163,14 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             </div>
 
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
+              <div className="rounded-lg bg-red-50 border border-red-200 p-4">
                 <div className="text-sm text-red-700">{error}</div>
               </div>
             )}
 
             {message && (
-              <div className="rounded-md bg-green-50 p-4">
-                <div className="text-sm text-green-700">{message}</div>
+              <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
+                <div className="text-sm text-emerald-700">{message}</div>
               </div>
             )}
 
@@ -178,7 +178,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>
@@ -188,9 +188,9 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
       </div>
 
       {/* Security Settings */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Security
           </h3>
           
@@ -204,7 +204,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
               </div>
               <a
                 href="/auth/forgot-password"
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
               >
                 Change Password
               </a>

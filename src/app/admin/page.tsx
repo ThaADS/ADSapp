@@ -2,6 +2,8 @@ import { SuperAdminDashboard } from '@/components/admin/super-admin-dashboard';
 import { requireAuth, getUserProfile } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboardPage() {
   // Ensure user is authenticated
   await requireAuth();

@@ -56,7 +56,6 @@ const SettingsIcon = () => (
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
   { name: 'Inbox', href: '/dashboard/inbox', icon: InboxIcon },
-  { name: 'Conversations', href: '/dashboard/conversations', icon: ChatIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UsersIcon },
   { name: 'Templates', href: '/dashboard/templates', icon: DocumentIcon },
   { name: 'Automation', href: '/dashboard/automation', icon: BoltIcon },
@@ -75,7 +74,7 @@ export function DashboardNav({ profile }: DashboardNavProps) {
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
       <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
         <div className="flex h-16 shrink-0 items-center">
-          <div className="text-xl font-bold text-green-600">ADSapp</div>
+          <div className="text-xl font-bold text-emerald-600">ADSapp</div>
         </div>
 
         <div className="text-sm">
@@ -99,8 +98,8 @@ export function DashboardNav({ profile }: DashboardNavProps) {
                         className={`
                           group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold
                           ${isActive
-                            ? 'bg-green-50 text-green-700'
-                            : 'text-gray-700 hover:text-green-700 hover:bg-green-50'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'text-gray-700 hover:text-emerald-700 hover:bg-emerald-50'
                           }
                         `}
                       >

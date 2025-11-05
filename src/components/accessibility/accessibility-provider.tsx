@@ -44,7 +44,7 @@ type AccessibilityAction =
   | { type: 'TOGGLE_AUTO_FOCUS' }
   | { type: 'LOAD_PREFERENCES'; payload: Partial<AccessibilityState> };
 
-// Initial state
+// Initial state - Default to light theme for professional SaaS appearance
 const initialState: AccessibilityState = {
   highContrast: false,
   reducedMotion: false,
@@ -55,7 +55,7 @@ const initialState: AccessibilityState = {
   announcements: [],
   liveRegionPolite: '',
   liveRegionAssertive: '',
-  theme: 'auto',
+  theme: 'light', // Changed from 'auto' to 'light' for consistent professional appearance
   fontSize: 'medium',
   autoFocus: true,
   tabTrapEnabled: false,
@@ -328,7 +328,26 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     toggleAutoFocus: useCallback(() => dispatch({ type: 'TOGGLE_AUTO_FOCUS' }), [])
   };
 
-  // Utility functions
+  // Helper function to get focusable elements (no dependencies, pure function)
+  const getFocusableElementsHelper = useCallback((container: Element = document.body): Element[] => {
+    const focusableSelectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+      '[contenteditable="true"]'
+    ].join(', ');
+
+    return Array.from(container.querySelectorAll(focusableSelectors))
+      .filter(el => {
+        const style = window.getComputedStyle(el);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      });
+  }, []);
+
+  // Utility functions - no circular dependencies
   const utils = {
     getAriaLabel: useCallback((base: string, context?: string): string => {
       const contextPart = context ? ` ${context}` : '';
@@ -336,26 +355,10 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       return `${base}${contextPart}${statusPart}`;
     }, [state.highContrast]),
 
-    getFocusableElements: useCallback((container: Element = document.body): Element[] => {
-      const focusableSelectors = [
-        'a[href]',
-        'button:not([disabled])',
-        'input:not([disabled])',
-        'select:not([disabled])',
-        'textarea:not([disabled])',
-        '[tabindex]:not([tabindex="-1"])',
-        '[contenteditable="true"]'
-      ].join(', ');
-
-      return Array.from(container.querySelectorAll(focusableSelectors))
-        .filter(el => {
-          const style = window.getComputedStyle(el);
-          return style.display !== 'none' && style.visibility !== 'hidden';
-        });
-    }, []),
+    getFocusableElements: getFocusableElementsHelper,
 
     trapFocus: useCallback((container: Element) => {
-      const focusableElements = utils.getFocusableElements(container);
+      const focusableElements = getFocusableElementsHelper(container);
       const firstElement = focusableElements[0] as HTMLElement;
       const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
@@ -385,10 +388,10 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       return () => {
         container.removeEventListener('keydown', handleKeyDown);
       };
-    }, [state.autoFocus, utils.getFocusableElements]),
+    }, [state.autoFocus, getFocusableElementsHelper]),
 
     manageFocus: useCallback((direction: 'next' | 'previous' | 'first' | 'last', container: Element = document.body) => {
-      const focusableElements = utils.getFocusableElements(container);
+      const focusableElements = getFocusableElementsHelper(container);
       const currentIndex = focusableElements.indexOf(document.activeElement as Element);
 
       let nextIndex: number;
@@ -411,7 +414,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       }
 
       (focusableElements[nextIndex] as HTMLElement)?.focus();
-    }, [utils.getFocusableElements])
+    }, [getFocusableElementsHelper])
   };
 
   const value: AccessibilityContextType = {

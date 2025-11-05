@@ -645,14 +645,13 @@ export class RedisSessionStore {
  */
 export function createRedisSessionStore(
   config?: Partial<RedisStoreConfig>
-): RedisSessionStore {
+): RedisSessionStore | null {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    throw new Error(
-      'Redis configuration missing. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN'
-    );
+    console.warn('[RedisStore] Redis credentials not configured - sessions will use fallback storage');
+    return null;
   }
 
   const fullConfig: RedisStoreConfig = {

@@ -27,7 +27,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
         </svg>
       ),
-      color: 'text-green-600 bg-green-100',
+      color: 'text-emerald-600 bg-emerald-100',
     },
     {
       name: 'Total Contacts',
@@ -56,7 +56,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       {statItems.map((item) => (
         <div
           key={item.name}
-          className="bg-white overflow-hidden shadow rounded-lg"
+          className="bg-white overflow-hidden shadow-sm rounded-lg"
         >
           <div className="p-5">
             <div className="flex items-center">

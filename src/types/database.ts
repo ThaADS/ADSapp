@@ -71,6 +71,333 @@ export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['
 export type Database = {
   public: {
     Tables: {
+      ai_settings: {
+        Row: {
+          id: string
+          organization_id: string
+          enabled: boolean
+          features_enabled: Json
+          default_model: string
+          fallback_model: string
+          max_tokens: number
+          temperature: number
+          monthly_budget_usd: number
+          alert_threshold: number
+          auto_response_conditions: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          enabled?: boolean
+          features_enabled?: Json
+          default_model?: string
+          fallback_model?: string
+          max_tokens?: number
+          temperature?: number
+          monthly_budget_usd?: number
+          alert_threshold?: number
+          auto_response_conditions?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          enabled?: boolean
+          features_enabled?: Json
+          default_model?: string
+          fallback_model?: string
+          max_tokens?: number
+          temperature?: number
+          monthly_budget_usd?: number
+          alert_threshold?: number
+          auto_response_conditions?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      ai_responses: {
+        Row: {
+          id: string
+          organization_id: string
+          conversation_id: string | null
+          feature: 'draft' | 'auto_response' | 'sentiment' | 'summary' | 'template' | 'translation'
+          model_used: string
+          prompt_tokens: number
+          completion_tokens: number
+          total_tokens: number
+          response_data: Json
+          latency_ms: number
+          cost_usd: number
+          confidence_score: number | null
+          user_feedback: 'accepted' | 'rejected' | 'modified' | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          conversation_id?: string | null
+          feature: 'draft' | 'auto_response' | 'sentiment' | 'summary' | 'template' | 'translation'
+          model_used: string
+          prompt_tokens: number
+          completion_tokens: number
+          total_tokens: number
+          response_data: Json
+          latency_ms: number
+          cost_usd: number
+          confidence_score?: number | null
+          user_feedback?: 'accepted' | 'rejected' | 'modified' | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          conversation_id?: string | null
+          feature?: 'draft' | 'auto_response' | 'sentiment' | 'summary' | 'template' | 'translation'
+          model_used?: string
+          prompt_tokens?: number
+          completion_tokens?: number
+          total_tokens?: number
+          response_data?: Json
+          latency_ms?: number
+          cost_usd?: number
+          confidence_score?: number | null
+          user_feedback?: 'accepted' | 'rejected' | 'modified' | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_responses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_responses_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      conversation_ai_metadata: {
+        Row: {
+          conversation_id: string
+          organization_id: string
+          sentiment: 'positive' | 'neutral' | 'negative' | null
+          sentiment_score: number | null
+          sentiment_confidence: number | null
+          urgency_level: 'low' | 'medium' | 'high' | 'critical' | null
+          summary: string | null
+          key_points: string[] | null
+          next_steps: string[] | null
+          topics: string[] | null
+          auto_response_count: number
+          last_auto_response_at: string | null
+          last_analyzed_at: string
+          updated_at: string
+        }
+        Insert: {
+          conversation_id: string
+          organization_id: string
+          sentiment?: 'positive' | 'neutral' | 'negative' | null
+          sentiment_score?: number | null
+          sentiment_confidence?: number | null
+          urgency_level?: 'low' | 'medium' | 'high' | 'critical' | null
+          summary?: string | null
+          key_points?: string[] | null
+          next_steps?: string[] | null
+          topics?: string[] | null
+          auto_response_count?: number
+          last_auto_response_at?: string | null
+          last_analyzed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string
+          organization_id?: string
+          sentiment?: 'positive' | 'neutral' | 'negative' | null
+          sentiment_score?: number | null
+          sentiment_confidence?: number | null
+          urgency_level?: 'low' | 'medium' | 'high' | 'critical' | null
+          summary?: string | null
+          key_points?: string[] | null
+          next_steps?: string[] | null
+          topics?: string[] | null
+          auto_response_count?: number
+          last_auto_response_at?: string | null
+          last_analyzed_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_ai_metadata_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_ai_metadata_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      team_invitations: {
+        Row: {
+          id: string
+          organization_id: string
+          email: string
+          role: 'admin' | 'member'
+          invited_by: string
+          status: 'pending' | 'accepted' | 'expired' | 'revoked'
+          token: string
+          expires_at: string
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          email: string
+          role: 'admin' | 'member'
+          invited_by: string
+          status?: 'pending' | 'accepted' | 'expired' | 'revoked'
+          token: string
+          expires_at?: string
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          email?: string
+          role?: 'admin' | 'member'
+          invited_by?: string
+          status?: 'pending' | 'accepted' | 'expired' | 'revoked'
+          token?: string
+          expires_at?: string
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_invitations_accepted_by_fkey"
+            columns: ["accepted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      message_templates: {
+        Row: {
+          id: string
+          organization_id: string
+          name: string
+          content: string
+          variables: string[] | null
+          category: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          language: string
+          ai_generated: boolean
+          ai_prompt: string | null
+          ai_model: string | null
+          effectiveness_score: number | null
+          usage_count: number
+          last_used_at: string | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          name: string
+          content: string
+          variables?: string[] | null
+          category?: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          language?: string
+          ai_generated?: boolean
+          ai_prompt?: string | null
+          ai_model?: string | null
+          effectiveness_score?: number | null
+          usage_count?: number
+          last_used_at?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          name?: string
+          content?: string
+          variables?: string[] | null
+          category?: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          language?: string
+          ai_generated?: boolean
+          ai_prompt?: string | null
+          ai_model?: string | null
+          effectiveness_score?: number | null
+          usage_count?: number
+          last_used_at?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       webhook_events: {
         Row: {
           id: string
@@ -464,6 +791,8 @@ export type Database = {
           slug: string
           whatsapp_business_account_id: string | null
           whatsapp_phone_number_id: string | null
+          whatsapp_access_token: string | null
+          whatsapp_webhook_verify_token: string | null
           subscription_status: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier: 'starter' | 'professional' | 'enterprise'
           status: 'active' | 'suspended' | 'cancelled'
@@ -485,6 +814,8 @@ export type Database = {
           slug: string
           whatsapp_business_account_id?: string | null
           whatsapp_phone_number_id?: string | null
+          whatsapp_access_token?: string | null
+          whatsapp_webhook_verify_token?: string | null
           subscription_status?: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier?: 'starter' | 'professional' | 'enterprise'
           status?: 'active' | 'suspended' | 'cancelled'
@@ -506,6 +837,8 @@ export type Database = {
           slug?: string
           whatsapp_business_account_id?: string | null
           whatsapp_phone_number_id?: string | null
+          whatsapp_access_token?: string | null
+          whatsapp_webhook_verify_token?: string | null
           subscription_status?: 'trial' | 'active' | 'cancelled' | 'past_due'
           subscription_tier?: 'starter' | 'professional' | 'enterprise'
           status?: 'active' | 'suspended' | 'cancelled'

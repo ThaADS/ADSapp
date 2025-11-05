@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,8 +9,11 @@ export async function POST(request: NextRequest) {
     const {
       organizationName,
       subdomain,
-      whatsappPhoneNumber,
+      whatsappPhoneNumberId,
       whatsappBusinessAccountId,
+      whatsappAccessToken,
+      whatsappWebhookVerifyToken,
+      whatsappSkipped,
       fullName,
       role,
     } = body
@@ -94,14 +97,17 @@ export async function POST(request: NextRequest) {
     // Start transaction: Create organization and update profile
     console.log('Creating organization...')
 
-    // Step 1: Create organization
-    const { data: newOrganization, error: orgError } = await supabase
+    // Step 1: Create organization using service role client (bypasses RLS)
+    const serviceSupabase = createServiceRoleClient()
+    const { data: newOrganization, error: orgError } = await serviceSupabase
       .from('organizations')
       .insert({
         name: organizationName,
         slug: subdomain,
-        whatsapp_phone_number_id: whatsappPhoneNumber || null,
+        whatsapp_phone_number_id: whatsappPhoneNumberId || null,
         whatsapp_business_account_id: whatsappBusinessAccountId || null,
+        whatsapp_access_token: whatsappAccessToken || null,
+        whatsapp_webhook_verify_token: whatsappWebhookVerifyToken || null,
         subscription_status: 'trial',
         subscription_tier: 'starter',
       })
@@ -118,24 +124,25 @@ export async function POST(request: NextRequest) {
 
     console.log('Organization created:', newOrganization.id)
 
-    // Step 2: Update user profile
-    const { data: updatedProfile, error: profileError } = await supabase
+    // Step 2: Create or update user profile using UPSERT
+    const { data: updatedProfile, error: profileError } = await serviceSupabase
       .from('profiles')
-      .update({
+      .upsert({
+        id: user.id,
         organization_id: newOrganization.id,
+        email: user.email,
         full_name: fullName,
         role: role,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', user.id)
       .select()
       .single()
 
     if (profileError) {
       console.error('Profile update error:', profileError)
 
-      // Rollback: Delete the created organization
-      await supabase
+      // Rollback: Delete the created organization using service role client
+      await serviceSupabase
         .from('organizations')
         .delete()
         .eq('id', newOrganization.id)

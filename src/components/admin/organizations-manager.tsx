@@ -36,7 +36,7 @@ export function OrganizationsManager() {
         throw new Error('Failed to fetch organizations');
       }
       const data = await response.json();
-      setOrganizations(data.data || []);
+      setOrganizations(data.organizations || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -83,10 +83,13 @@ export function OrganizationsManager() {
       cancelled: 'bg-gray-100 text-gray-800',
       pending_setup: 'bg-yellow-100 text-yellow-800',
     };
-    
+
+    // Handle null/undefined status
+    const statusText = status ? status.replace('_', ' ') : 'unknown';
+
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'}`}>
-        {status.replace('_', ' ')}
+        {statusText}
       </span>
     );
   };

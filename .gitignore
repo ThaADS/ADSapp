@@ -13,13 +13,19 @@
 # testing
 /coverage
 /__tests__/
-/tests/
 *.test.js
 *.test.ts
 *.test.tsx
 *.spec.js
 *.spec.ts
 *.spec.tsx
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/.auth/
+server.log
 
 # next.js
 /.next/

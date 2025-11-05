@@ -285,21 +285,24 @@ function DemoControls() {
 
 function InboxDemoContent() {
   const { state } = useDemo();
+  const { startDemo } = useDemoActions();
   const router = useRouter();
+  const [isInitialized, setIsInitialized] = React.useState(false);
 
   useEffect(() => {
-    // Redirect if demo is not active
-    if (!state.isActive) {
-      router.push('/demo');
+    // Auto-start demo if not active
+    if (!state.isActive && !isInitialized) {
+      startDemo('ecommerce'); // Default to ecommerce scenario
+      setIsInitialized(true);
     }
-  }, [state.isActive, router]);
+  }, [state.isActive, isInitialized, startDemo]);
 
   if (!state.isActive) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading demo...</p>
+          <p className="text-gray-600">Initializing demo...</p>
         </div>
       </div>
     );

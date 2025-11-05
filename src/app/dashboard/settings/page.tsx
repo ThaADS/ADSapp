@@ -118,7 +118,7 @@ export default async function SettingsPage() {
               title="Organization"
               description="Manage organization details, branding, and general settings."
               roleRequired={['Owner', 'Admin']}
-              available={false}
+              available={true}
             />
 
             <SettingCard
@@ -127,7 +127,7 @@ export default async function SettingsPage() {
               title="Team Management"
               description="Invite team members, manage roles, and set permissions."
               roleRequired={['Owner', 'Admin']}
-              available={false}
+              available={true}
             />
           </div>
         </div>
@@ -154,7 +154,7 @@ export default async function SettingsPage() {
             icon={<Plug className="w-6 h-6" />}
             title="Integrations"
             description="Connect third-party apps and manage API integrations."
-            available={false}
+            available={true}
           />
         </div>
       </div>

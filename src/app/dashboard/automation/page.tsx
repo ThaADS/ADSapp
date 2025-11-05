@@ -1,6 +1,8 @@
 import { requireOrganization } from '@/lib/auth'
 import WorkflowBuilder from '@/components/automation/workflow-builder'
 
+export const dynamic = 'force-dynamic';
+
 export default async function AutomationPage() {
   const profile = await requireOrganization()
 

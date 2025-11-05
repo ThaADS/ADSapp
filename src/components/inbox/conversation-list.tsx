@@ -1,4 +1,9 @@
+'use client'
+
+import { useState } from 'react'
 import type { ConversationWithDetails } from '@/types'
+import { QuickActionsMenu } from './quick-actions-menu'
+import { useToast } from '@/components/ui/toast'
 
 // Simple time formatter
 function formatTime(date: Date) {
@@ -24,13 +29,57 @@ interface ConversationListProps {
   conversations: ConversationWithDetails[]
   selectedConversationId: string | null
   onSelectConversation: (id: string) => void
+  onConversationUpdate?: () => void
 }
 
 export function ConversationList({
   conversations,
   selectedConversationId,
   onSelectConversation,
+  onConversationUpdate,
 }: ConversationListProps) {
+  const [contextMenu, setContextMenu] = useState<{
+    conversation: ConversationWithDetails
+    x: number
+    y: number
+  } | null>(null)
+  const { addToast } = useToast()
+  const handleContextMenu = (e: React.MouseEvent, conversation: ConversationWithDetails) => {
+    e.preventDefault()
+    setContextMenu({
+      conversation,
+      x: e.clientX,
+      y: e.clientY,
+    })
+  }
+
+  const handleActionComplete = (action: string, success: boolean) => {
+    if (success) {
+      const messages: Record<string, string> = {
+        mark_as_read: 'Conversation marked as read',
+        assign_to_me: 'Conversation assigned to you',
+        status_closed: 'Conversation archived',
+        delete: 'Conversation deleted',
+        block: 'Contact blocked successfully',
+        export: 'Conversation exported successfully',
+      }
+
+      addToast({
+        type: 'success',
+        title: messages[action] || 'Action completed',
+      })
+
+      // Trigger refresh
+      onConversationUpdate?.()
+    } else {
+      addToast({
+        type: 'error',
+        title: 'Action failed',
+        message: 'Please try again',
+      })
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open':
@@ -73,21 +122,23 @@ export function ConversationList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="divide-y divide-gray-200">
-        {conversations.map((conversation) => {
-          const isSelected = conversation.id === selectedConversationId
-          const hasUnread = conversation.unread_count > 0
+    <>
+      <div className="flex-1 overflow-y-auto">
+        <div className="divide-y divide-gray-200">
+          {conversations.map((conversation) => {
+            const isSelected = conversation.id === selectedConversationId
+            const hasUnread = conversation.unread_count > 0
 
-          return (
-            <div
-              key={conversation.id}
-              className={`
-                p-4 cursor-pointer hover:bg-gray-50 transition-colors
-                ${isSelected ? 'bg-green-50 border-r-2 border-green-500' : ''}
-              `}
-              onClick={() => onSelectConversation(conversation.id)}
-            >
+            return (
+              <div
+                key={conversation.id}
+                className={`
+                  p-4 cursor-pointer hover:bg-gray-50 transition-colors
+                  ${isSelected ? 'bg-green-50 border-r-2 border-green-500' : ''}
+                `}
+                onClick={() => onSelectConversation(conversation.id)}
+                onContextMenu={(e) => handleContextMenu(e, conversation)}
+              >
               <div className="flex items-start space-x-3">
                 {/* Contact Avatar */}
                 <div className="flex-shrink-0">
@@ -98,6 +149,25 @@ export function ConversationList({
                     </span>
                   </div>
                 </div>
+
+                {/* Quick Actions Button (Mobile/Accessibility) */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    setContextMenu({
+                      conversation,
+                      x: rect.left,
+                      y: rect.bottom + 5,
+                    })
+                  }}
+                  className="md:hidden p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                  aria-label="Quick actions"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                  </svg>
+                </button>
 
                 {/* Conversation Content */}
                 <div className="flex-1 min-w-0">
@@ -152,7 +222,19 @@ export function ConversationList({
             </div>
           )
         })}
+        </div>
       </div>
-    </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <QuickActionsMenu
+          conversation={contextMenu.conversation}
+          isOpen={true}
+          onClose={() => setContextMenu(null)}
+          position={{ x: contextMenu.x, y: contextMenu.y }}
+          onActionComplete={handleActionComplete}
+        />
+      )}
+    </>
   )
 }

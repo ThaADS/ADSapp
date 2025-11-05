@@ -18,17 +18,49 @@ export default async function BillingPage() {
     throw new Error('Organization not found')
   }
 
-  // Get current usage data
-  const usageResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/billing/usage`, {
-    headers: {
-      'Authorization': `Bearer ${profile.id}`, // This would need proper auth
-    },
-  })
+  // Get current usage data directly from database (server-side)
+  // Get plan limits based on subscription tier
+  const planLimits = {
+    starter: { users: 5, contacts: 1000, messages: 5000 },
+    professional: { users: 20, contacts: 10000, messages: 50000 },
+    enterprise: { users: -1, contacts: -1, messages: -1 }, // unlimited
+  }
 
-  let usage = null
-  if (usageResponse.ok) {
-    const data = await usageResponse.json()
-    usage = data.usage
+  const currentPlan = organization.subscription_tier || 'starter'
+  const limits = planLimits[currentPlan as keyof typeof planLimits] || planLimits.starter
+
+  // Fetch actual usage counts
+  const [usersCount, contactsCount, messagesCount] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', profile.organization_id),
+    supabase
+      .from('contacts')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', profile.organization_id),
+    supabase
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', profile.organization_id),
+  ])
+
+  const usage = {
+    users: {
+      current: usersCount.count || 0,
+      limit: limits.users,
+      unlimited: limits.users === -1,
+    },
+    contacts: {
+      current: contactsCount.count || 0,
+      limit: limits.contacts,
+      unlimited: limits.contacts === -1,
+    },
+    messages: {
+      current: messagesCount.count || 0,
+      limit: limits.messages,
+      unlimited: limits.messages === -1,
+    },
   }
 
   return (

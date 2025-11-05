@@ -1,10 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { ConversationList } from './conversation-list'
 import { ChatWindow } from './chat-window'
 import { ConversationDetails } from './conversation-details'
+import { InboxFilters } from './inbox-filters'
 import type { ConversationWithDetails } from '@/types'
+
+type StatusFilter = 'all' | 'open' | 'assigned' | 'unread'
 
 interface InboxLayoutProps {
   conversations: ConversationWithDetails[]
@@ -17,7 +20,121 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
   )
   const [showDetails, setShowDetails] = useState(false)
 
-  const selectedConversation = conversations.find(c => c.id === selectedConversationId)
+  // Filter state
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
+  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({
+    start: null,
+    end: null,
+  })
+
+  // Apply all filters to conversations
+  const filteredConversations = useMemo(() => {
+    let filtered = [...conversations]
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(conv => {
+        switch (statusFilter) {
+          case 'open':
+            return conv.status === 'open' || conv.status === 'pending'
+          case 'assigned':
+            return conv.assigned_to !== null
+          case 'unread':
+            return conv.unread_count > 0
+          default:
+            return true
+        }
+      })
+    }
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(conv => {
+        const contactName = conv.contact.name?.toLowerCase() || ''
+        const contactPhone = conv.contact.phone_number.toLowerCase()
+        const lastMessage = conv.last_message?.content.toLowerCase() || ''
+        return contactName.includes(query) || contactPhone.includes(query) || lastMessage.includes(query)
+      })
+    }
+
+    // Tag filter
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(conv => {
+        const contactTags = conv.contact.tags || []
+        return selectedTags.some(tag => contactTags.includes(tag))
+      })
+    }
+
+    // Agent filter
+    if (selectedAgent) {
+      filtered = filtered.filter(conv => conv.assigned_to === selectedAgent)
+    }
+
+    // Date range filter
+    if (dateRange.start || dateRange.end) {
+      filtered = filtered.filter(conv => {
+        if (!conv.last_message_at) return false
+        const messageDate = new Date(conv.last_message_at)
+
+        if (dateRange.start && messageDate < dateRange.start) return false
+        if (dateRange.end && messageDate > dateRange.end) return false
+
+        return true
+      })
+    }
+
+    return filtered
+  }, [conversations, statusFilter, searchQuery, selectedTags, selectedAgent, dateRange])
+
+  // Get active filter count
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (statusFilter !== 'all') count++
+    if (searchQuery.trim()) count++
+    if (selectedTags.length > 0) count++
+    if (selectedAgent) count++
+    if (dateRange.start || dateRange.end) count++
+    return count
+  }, [statusFilter, searchQuery, selectedTags, selectedAgent, dateRange])
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setStatusFilter('all')
+    setSearchQuery('')
+    setSelectedTags([])
+    setSelectedAgent(null)
+    setDateRange({ start: null, end: null })
+    setShowSearch(false)
+    setShowFilters(false)
+  }
+
+  // Get all unique tags from contacts
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    conversations.forEach(conv => {
+      conv.contact.tags?.forEach(tag => tags.add(tag))
+    })
+    return Array.from(tags).sort()
+  }, [conversations])
+
+  // Get all agents
+  const allAgents = useMemo(() => {
+    const agents = new Map<string, string>()
+    conversations.forEach(conv => {
+      if (conv.assigned_agent && conv.assigned_to) {
+        agents.set(conv.assigned_to, conv.assigned_agent.full_name || 'Unknown')
+      }
+    })
+    return Array.from(agents.entries()).map(([id, name]) => ({ id, name }))
+  }, [conversations])
+
+  const selectedConversation = filteredConversations.find(c => c.id === selectedConversationId)
 
   return (
     <div className="flex h-full bg-white">
@@ -25,15 +142,31 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
       <div className="w-80 border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-gray-900">Inbox</h1>
+            <h1 className="text-lg font-semibold text-gray-900">
+              Inbox
+              {activeFilterCount > 0 && (
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  {activeFilterCount}
+                </span>
+              )}
+            </h1>
             <div className="flex items-center space-x-2">
-              {/* Filter buttons */}
-              <button className="p-2 text-gray-400 hover:text-gray-600">
+              {/* Advanced filter button */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-2 ${showFilters ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
+                title="Advanced filters"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
               </button>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
+              {/* Search button */}
+              <button
+                onClick={() => setShowSearch(!showSearch)}
+                className={`p-2 ${showSearch ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
+                title="Search conversations"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -41,25 +174,116 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
             </div>
           </div>
 
+          {/* Search input */}
+          {showSearch && (
+            <div className="mt-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by name, phone, or message..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                <svg
+                  className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Advanced filters */}
+          {showFilters && (
+            <InboxFilters
+              selectedTags={selectedTags}
+              onTagsChange={setSelectedTags}
+              selectedAgent={selectedAgent}
+              onAgentChange={setSelectedAgent}
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+              allTags={allTags}
+              allAgents={allAgents}
+              onClearAll={clearAllFilters}
+            />
+          )}
+
           {/* Status filter tabs */}
           <div className="mt-4 flex space-x-1 bg-gray-100 rounded-lg p-1">
-            <button className="flex-1 text-xs font-medium text-white bg-green-600 rounded-md py-1">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+                statusFilter === 'all'
+                  ? 'text-white bg-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
               All
             </button>
-            <button className="flex-1 text-xs font-medium text-gray-600 hover:text-gray-900 py-1">
+            <button
+              onClick={() => setStatusFilter('open')}
+              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+                statusFilter === 'open'
+                  ? 'text-white bg-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
               Open
             </button>
-            <button className="flex-1 text-xs font-medium text-gray-600 hover:text-gray-900 py-1">
+            <button
+              onClick={() => setStatusFilter('assigned')}
+              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+                statusFilter === 'assigned'
+                  ? 'text-white bg-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
               Assigned
             </button>
-            <button className="flex-1 text-xs font-medium text-gray-600 hover:text-gray-900 py-1">
+            <button
+              onClick={() => setStatusFilter('unread')}
+              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+                statusFilter === 'unread'
+                  ? 'text-white bg-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
               Unread
             </button>
           </div>
+
+          {/* Active filters indicator */}
+          {activeFilterCount > 0 && (
+            <div className="mt-3 flex items-center justify-between text-xs text-gray-600">
+              <span>
+                {filteredConversations.length} of {conversations.length} conversations
+              </span>
+              <button
+                onClick={clearAllFilters}
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
         </div>
 
         <ConversationList
-          conversations={conversations}
+          conversations={filteredConversations}
           selectedConversationId={selectedConversationId}
           onSelectConversation={setSelectedConversationId}
         />

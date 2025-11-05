@@ -413,6 +413,8 @@ function AnalyticsDemoContent() {
   );
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function AnalyticsDemoPage() {
   return (
     <DemoProvider>

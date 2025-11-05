@@ -63,43 +63,65 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
 
-  // Security headers
+  // Security headers - Enterprise-grade protection
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: [
+          // DNS Prefetch Control
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
           },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
+          // Strict Transport Security (HSTS)
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
+            value: 'max-age=63072000; includeSubDomains; preload'
           },
+          // Frame Options - Prevent Clickjacking
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          // Content Type Options - Prevent MIME sniffing
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          // XSS Protection
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          // Referrer Policy
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          // Permissions Policy - Control browser features
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+          },
+          // Content Security Policy - Comprehensive XSS protection
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://vercel.live",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "font-src 'self'",
-              "connect-src 'self' https://api.stripe.com https://egaiyydjgeqlhthxmvbn.supabase.co",
-              "frame-src https://js.stripe.com https://hooks.stripe.com",
-            ].join('; '),
+              "img-src 'self' data: https: blob:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://vercel.live wss://ws-*.pusher.com",
+              "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+              "frame-ancestors 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "object-src 'none'",
+              "media-src 'self'",
+              "worker-src 'self' blob:",
+            ].join('; ')
           },
         ],
       },

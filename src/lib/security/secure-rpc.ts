@@ -575,7 +575,7 @@ export async function secureRpc<T = any>(
 
     // Step 4: Validate and sanitize parameters
     let sanitizedParams = params;
-    let validationErrors: Record<string, string> = {};
+    const validationErrors: Record<string, string> = {};
 
     if (!options.skipValidation) {
       const validationResult = InputValidator.validateSchema(params, functionConfig.parameterSchema);

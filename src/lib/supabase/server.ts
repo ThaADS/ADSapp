@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { requireEnvVar } from '@/lib/build-safe-init'
 import type { Database } from '@/types/database'
 import { secureRpc, type SecureRpcOptions, type SecureRpcResult } from '@/lib/security/secure-rpc'
@@ -45,10 +46,48 @@ export async function createClient() {
 }
 
 /**
+ * Creates a Supabase server client with service role key that bypasses RLS.
+ * Use this ONLY for administrative operations like organization creation.
+ * NEVER expose this client to the frontend or use for regular user operations.
+ *
+ * @example
+ * ```typescript
+ * // In API routes for admin operations:
+ * const serviceSupabase = createServiceRoleClient()
+ * const { data } = await serviceSupabase.from('organizations').insert({...})
+ * ```
+ */
+export function createServiceRoleClient() {
+  const url = requireEnvVar('NEXT_PUBLIC_SUPABASE_URL')
+  const serviceKey = requireEnvVar('SUPABASE_SERVICE_ROLE_KEY')
+
+  // Debug logging to verify correct credentials
+  console.log('🔑 Creating Service Role Client:', {
+    url,
+    keyPrefix: serviceKey.substring(0, 25) + '...',
+    keyLength: serviceKey.length,
+    isServiceRole: serviceKey.includes('service_role') || serviceKey.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+  })
+
+  return createSupabaseClient<Database>(url, serviceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  })
+}
+
+/**
  * Type-safe helper for server-side Supabase client.
  * Use this type when passing the client as a parameter.
  */
 export type ServerSupabaseClient = Awaited<ReturnType<typeof createClient>>
+
+/**
+ * Type-safe helper for service role Supabase client.
+ * Use this type when passing the service role client as a parameter.
+ */
+export type ServiceRoleSupabaseClient = ReturnType<typeof createServiceRoleClient>
 
 // ============================================================================
 // SECURE RPC WRAPPER FUNCTIONS

@@ -2,6 +2,8 @@ import { OrganizationsManager } from '@/components/admin/organizations-manager';
 import { requireAuth, getUserProfile } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminOrganizationsPage() {
   // Ensure user is authenticated
   await requireAuth();
@@ -18,15 +20,5 @@ export default async function AdminOrganizationsPage() {
     }
   }
 
-  return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Organizations</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Manage all tenant organizations on the platform
-        </p>
-      </div>
-      <OrganizationsManager />
-    </div>
-  );
+  return <OrganizationsManager />;
 }

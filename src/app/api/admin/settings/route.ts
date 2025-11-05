@@ -17,15 +17,19 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Log settings access
-    await logSuperAdminAction(
-      'view_system_settings',
-      'system',
-      undefined,
-      {},
-      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
-      request.headers.get('user-agent') || undefined
-    )
+    // Log settings access (optional - don't fail if audit log fails)
+    try {
+      await logSuperAdminAction(
+        'view_system_settings',
+        'system',
+        undefined,
+        {},
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+        request.headers.get('user-agent') || undefined
+      );
+    } catch (auditError) {
+      console.warn('Failed to log audit event:', auditError);
+    }
 
     return NextResponse.json({ settings })
   } catch (error) {

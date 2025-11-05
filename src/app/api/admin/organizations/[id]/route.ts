@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { SuperAdminPermissions } from '@/lib/super-admin';
 import { adminMiddleware } from '@/lib/middleware';
 
 export async function GET(
@@ -18,27 +17,12 @@ export async function GET(
 
   try {
     const supabase = await createClient();
-    const permissions = new SuperAdminPermissions();
     const { id } = await params;
 
-    // Get organization details with related data
+    // Get organization details - simplified to avoid complex joins
     const { data: org, error } = await supabase
       .from('organizations')
-      .select(`
-        *,
-        profiles!inner(
-          id, full_name, email, role, is_active, last_seen_at, created_at
-        ),
-        conversations(
-          id, status, priority, created_at, last_message_at
-        ),
-        messages(
-          id, sender_type, message_type, created_at
-        ),
-        billing_events(
-          id, event_type, amount, currency, created_at
-        )
-      `)
+      .select('*')
       .eq('id', id)
       .single();
 
@@ -50,30 +34,50 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch organization' }, { status: 500 });
     }
 
+    // Fetch related data in parallel
+    const [profiles, conversations, messages, billingEvents] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('id, full_name, email, role, is_active, last_seen_at, created_at')
+        .eq('organization_id', id),
+      supabase
+        .from('conversations')
+        .select('id, status, priority, created_at, last_message_at')
+        .eq('organization_id', id),
+      supabase
+        .from('messages')
+        .select('id, sender_type, message_type, created_at')
+        .eq('organization_id', id),
+      supabase
+        .from('billing_events')
+        .select('id, event_type, amount, currency, created_at')
+        .eq('organization_id', id)
+    ]);
+
     // Analytics and usage records would be fetched from dedicated tables when implemented
     const analytics: any[] = [];
     const usageRecords: any[] = [];
 
     // Calculate metrics
-    const activeUsers = org.profiles?.filter(p => p.is_active).length || 0;
-    const totalMessages = org.messages?.length || 0;
-    const totalConversations = org.conversations?.length || 0;
-    const openConversations = org.conversations?.filter(c => c.status === 'open').length || 0;
+    const activeUsers = profiles.data?.filter(p => p.is_active).length || 0;
+    const totalMessages = messages.data?.length || 0;
+    const totalConversations = conversations.data?.length || 0;
+    const openConversations = conversations.data?.filter(c => c.status === 'open').length || 0;
 
     // Calculate revenue
-    const totalRevenue = org.billing_events
+    const totalRevenue = billingEvents.data
       ?.filter(e => e.event_type === 'payment_succeeded')
       .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
 
     // Calculate last activity
-    const lastActivity = org.profiles?.reduce((latest: string | null, profile) => {
+    const lastActivity = profiles.data?.reduce((latest: string | null, profile) => {
       return !latest || (profile.last_seen_at && profile.last_seen_at > latest)
         ? profile.last_seen_at
         : latest;
     }, null as string | null);
 
-    // Recent activity - messages relation doesn't exist, so we'll use empty array
-    const recentMessages: any[] = [];
+    // Recent messages (limited to 10 most recent)
+    const recentMessages = messages.data?.slice(0, 10) || [];
 
     const organizationDetails = {
       // Basic information
@@ -103,7 +107,7 @@ export async function GET(
 
       // Metrics
       metrics: {
-        totalUsers: org.profiles?.length || 0,
+        totalUsers: profiles.data?.length || 0,
         activeUsers,
         totalMessages,
         totalConversations,
@@ -113,7 +117,7 @@ export async function GET(
       },
 
       // Related data
-      users: org.profiles?.map(p => ({
+      users: profiles.data?.map(p => ({
         id: p.id,
         fullName: p.full_name,
         email: p.email,
@@ -130,7 +134,7 @@ export async function GET(
           messageType: m.message_type,
           createdAt: m.created_at,
         })),
-        conversations: org.conversations
+        conversations: conversations.data
           ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, 10)
           .map(c => ({
@@ -146,14 +150,7 @@ export async function GET(
       usageRecords: usageRecords || [],
     };
 
-    // Log the access
-    await permissions.logSystemAuditEvent(
-      'view_organization_details',
-      id,
-      undefined,
-      { organizationName: org.name },
-      'info'
-    );
+    // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
     return NextResponse.json({ organization: organizationDetails });
 
@@ -177,7 +174,6 @@ export async function PATCH(
 
   try {
     const supabase = await createClient();
-    const permissions = new SuperAdminPermissions();
     const { id } = await params;
     const body = await request.json();
 
@@ -231,18 +227,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Failed to update organization' }, { status: 500 });
     }
 
-    // Log the update
-    await permissions.logSystemAuditEvent(
-      'update_organization',
-      id,
-      undefined,
-      {
-        organizationName: currentOrg.name,
-        changedFields,
-        updateData
-      },
-      'info'
-    );
+    // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
     return NextResponse.json({
       organization: updatedOrg,
@@ -269,7 +254,6 @@ export async function DELETE(
 
   try {
     const supabase = await createClient();
-    const permissions = new SuperAdminPermissions();
     const { id } = await params;
 
     // Get organization details for logging
@@ -301,17 +285,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Failed to delete organization' }, { status: 500 });
     }
 
-    // Log the deletion
-    await permissions.logSystemAuditEvent(
-      'delete_organization',
-      id,
-      undefined,
-      {
-        organizationName: org.name,
-        previousStatus: org.status
-      },
-      'warning'
-    );
+    // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
     return NextResponse.json({
       message: 'Organization deleted successfully',

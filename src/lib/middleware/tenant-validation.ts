@@ -81,15 +81,8 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
 
       if (profile?.is_super_admin) {
         // Super admins bypass organization requirements
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.set('x-user-id', user.id);
-        requestHeaders.set('x-user-role', 'super_admin');
-        requestHeaders.set('x-is-super-admin', 'true');
-        requestHeaders.set('x-user-email', user.email || '');
-
-        return NextResponse.next({
-          request: { headers: requestHeaders }
-        });
+        // Note: Headers can't be set in API routes, return null to allow access
+        return null;
       }
 
       return NextResponse.json(
@@ -170,10 +163,9 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
     requestHeaders.set('x-user-email', user.email || '');
     requestHeaders.set('x-is-super-admin', 'false');
 
-    // Return modified request with tenant context
-    return NextResponse.next({
-      request: { headers: requestHeaders }
-    });
+    // Return null for API routes (headers are passed via context)
+    // Note: NextResponse.next() is only for middleware, not API route handlers
+    return null;
 
   } catch (error) {
     console.error('[TENANT_VALIDATION] Error:', error);

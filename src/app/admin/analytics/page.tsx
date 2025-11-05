@@ -2,6 +2,8 @@ import { AnalyticsDashboard } from '@/components/admin/analytics-dashboard';
 import { requireAuth, getUserProfile } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminAnalyticsPage() {
   await requireAuth();
 

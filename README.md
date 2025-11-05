@@ -81,6 +81,8 @@ Password: ADSapp2024!SuperSecure#Admin
 
 #### 💬 WhatsApp Business Integration
 - **✅ Cloud API Integration** - Full WhatsApp Business Cloud API
+- **✅ Enhanced Onboarding** - 3-step wizard with live credential validation
+- **✅ Visual Setup Guide** - Annotated screenshots and tutorial video
 - **✅ Webhook Processing** - Real-time message handling
 - **✅ Media Support** - Images, documents, voice, video
 - **✅ Template Management** - Business template system
@@ -113,6 +115,14 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ Usage Tracking** - Accurate billing based on usage
 - **✅ Invoice Management** - Automated billing and receipts
 - **✅ Payment Analytics** - Revenue tracking and forecasting
+
+#### 👥 Team Management & License System
+- **✅ Team Invitations** - Email-based team member invitations with expiration
+- **✅ License Management** - Automatic seat counting and limit enforcement
+- **✅ Role-Based Invites** - Admin and member role assignment
+- **✅ Duplicate Prevention** - Smart detection of pending invitations
+- **✅ Auto-Expiration** - Invitations expire after 7 days automatically
+- **✅ License Tracking** - Real-time available/used seat monitoring
 
 #### 🔒 Enterprise Security & Compliance
 - **✅ Multi-Tenant Architecture** - Complete tenant isolation
@@ -192,14 +202,27 @@ RESEND_API_KEY=re_...your-resend-api-key
 ### 3. Database Setup
 
 ```bash
-# Apply Supabase migrations
+# Apply Supabase migrations (in order)
 npx supabase db reset
 
-# Alternative: Manual schema application
-psql -h your-supabase-host -d postgres -f supabase/migrations/001_initial_schema.sql
+# Alternative: Manual schema application via Supabase Dashboard
+# 1. Team Invitations Table
+supabase/migrations/20251105_team_invitations_ABSOLUTE_MINIMAL.sql
 
-# Verify setup
-npm run db:verify
+# 2. Constraints and RLS
+supabase/migrations/20251105_team_invitations_ADD_CONSTRAINTS.sql
+
+# 3. Functions and Triggers
+supabase/migrations/20251105_team_invitations_part2_functions.sql
+
+# 4. WhatsApp Credentials
+supabase/migrations/20251105_whatsapp_credentials_enhancement.sql
+
+# Verify migrations
+node scripts/test-team-invitation-api.mjs
+
+# Check database structure
+# Run: supabase/migrations/VERIFICATION_QUERIES.sql (Query #13)
 ```
 
 ### 4. Development Server
@@ -395,6 +418,23 @@ erDiagram
 | `POST` | `/api/contacts` | Create contact | ✅ |
 | `GET` | `/api/templates` | List message templates | ✅ |
 | `POST` | `/api/templates` | Create template | ✅ |
+
+### Team Management Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/team/invitations` | Create team invitation | ✅ (Admin) |
+| `GET` | `/api/team/invitations` | List team invitations | ✅ |
+| `DELETE` | `/api/team/invitations/[id]` | Revoke invitation | ✅ (Admin) |
+| `POST` | `/api/team/invitations/[token]/accept` | Accept invitation | ✅ |
+| `GET` | `/api/team/licenses` | Check available licenses | ✅ |
+
+### Onboarding Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/onboarding/validate-whatsapp` | Validate WhatsApp credentials | ✅ |
+| `POST` | `/api/onboarding` | Complete onboarding process | ✅ |
 
 ### Analytics & Reporting
 

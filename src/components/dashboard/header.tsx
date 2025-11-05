@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signOut } from '@/lib/auth'
+import { useRouter } from 'next/navigation'
 
 const MenuIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,6 +21,23 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ profile }: DashboardHeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        // Redirect to homepage
+        router.push('/')
+        router.refresh()
+      }
+    } catch (error) {
+      console.error('Signout error:', error)
+    }
+  }
 
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -47,7 +64,7 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
             <input
               type="search"
               placeholder="Search conversations..."
-              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-500 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
@@ -69,7 +86,7 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
               onClick={() => setUserMenuOpen(!userMenuOpen)}
             >
               <span className="sr-only">Open user menu</span>
-              <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center">
                 <span className="text-sm font-medium text-white">
                   {profile.full_name?.charAt(0).toUpperCase() || 'U'}
                 </span>
@@ -93,7 +110,7 @@ export function DashboardHeader({ profile }: DashboardHeaderProps) {
                   Profile
                 </a>
                 <button
-                  onClick={() => signOut()}
+                  onClick={handleSignOut}
                   className="block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
                 >
                   Sign out
