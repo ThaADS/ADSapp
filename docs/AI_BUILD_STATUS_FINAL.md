@@ -115,8 +115,9 @@
 
 ### Environment Variables for Vercel
 ```env
-# Already configured in .env.local
-OPENROUTER_API_KEY=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
+# ⚠️ SECURITY: Never commit actual API keys to git!
+# Configure these in Vercel dashboard or .env.local (gitignored)
+OPENROUTER_API_KEY=your_openrouter_key_here
 OPENROUTER_DEFAULT_MODEL=anthropic/claude-3.5-sonnet
 OPENROUTER_FALLBACK_MODEL=anthropic/claude-3-haiku
 OPENROUTER_MAX_TOKENS=1000

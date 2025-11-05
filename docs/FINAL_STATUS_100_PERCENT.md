@@ -11,7 +11,7 @@
 ### 🏗️ Foundation & Infrastructure (100%)
 
 1. **Environment Configuration** ✅
-   - OpenRouter API key: `sk-or-v1-b08...` configured
+   - OpenRouter API key configured (see .env.local - never commit!)
    - All environment variables set
    - Model configuration: Claude 3.5 Sonnet (primary), Claude 3 Haiku (fallback)
 

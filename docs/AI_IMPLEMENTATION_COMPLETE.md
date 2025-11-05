@@ -19,7 +19,7 @@ De volledige AI-integratie met OpenRouter is succesvol geïmplementeerd in ADSap
 ### 1. Foundation & Infrastructure (100%)
 
 #### Environment Configuration
-- ✅ OpenRouter API key configured: `sk-or-v1-b08...`
+- ✅ OpenRouter API key configured (see .env.local - never commit!)
 - ✅ Model configuration: Claude 3.5 Sonnet (primary), Claude 3 Haiku (fallback)
 - ✅ All environment variables properly set
 

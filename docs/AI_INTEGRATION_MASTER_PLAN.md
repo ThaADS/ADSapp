@@ -298,8 +298,8 @@ git clean -fd     # Actually delete untracked files
 
 **Step 3: Environment Configuration**
 ```env
-# Add to .env.local
-OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Add to .env.local (NEVER commit this file!)
+OPENROUTER_API_KEY=your_key_here
 OPENROUTER_DEFAULT_MODEL=anthropic/claude-3.5-sonnet  # or openai/gpt-4-turbo
 OPENROUTER_FALLBACK_MODEL=anthropic/claude-3-haiku    # Cheaper fallback
 OPENROUTER_MAX_TOKENS=1000
