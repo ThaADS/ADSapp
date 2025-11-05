@@ -1,6 +1,9 @@
 import { requireOrganization } from '@/lib/auth'
 import { ProfileSettings } from '@/components/dashboard/profile-settings'
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function ProfileSettingsPage() {
   const profile = await requireOrganization()
 

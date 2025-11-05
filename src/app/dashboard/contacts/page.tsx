@@ -1,6 +1,9 @@
 import { requireOrganization } from '@/lib/auth'
 import ContactManager from '@/components/contacts/contact-manager'
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 60
+
 export default async function ContactsPage() {
   const profile = await requireOrganization()
 

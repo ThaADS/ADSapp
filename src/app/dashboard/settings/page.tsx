@@ -68,6 +68,9 @@ function SettingCard({ href, icon, title, description, available = true, roleReq
   return card
 }
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function SettingsPage() {
   const profile = await requireOrganization()
   const isOwnerOrAdmin = profile.role === 'owner' || profile.role === 'admin'

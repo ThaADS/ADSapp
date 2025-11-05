@@ -3,6 +3,9 @@ import WorkflowBuilder from '@/components/automation/workflow-builder'
 
 export const dynamic = 'force-dynamic';
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function AutomationPage() {
   const profile = await requireOrganization()
 

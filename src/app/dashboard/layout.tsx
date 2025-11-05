@@ -17,6 +17,9 @@ function PageLoadingSkeleton() {
   )
 }
 
+// ⚡ PERFORMANCE: Cache layout for 5 minutes to avoid re-renders on tab switches
+export const revalidate = 300
+
 export default async function DashboardLayout({
   children,
 }: {

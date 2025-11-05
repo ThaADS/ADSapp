@@ -1,6 +1,9 @@
 import { requireOrganization } from '@/lib/auth'
 import TemplateEditor from '@/components/templates/template-editor'
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function TemplatesPage() {
   const profile = await requireOrganization()
 

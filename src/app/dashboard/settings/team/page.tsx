@@ -3,6 +3,9 @@ import { TeamManagement } from '@/components/dashboard/team-management'
 import { SettingsErrorBoundary } from '@/components/error-boundary'
 import { redirect } from 'next/navigation'
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function TeamManagementPage() {
   const profile = await requireOrganization()
 

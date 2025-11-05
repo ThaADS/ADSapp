@@ -149,8 +149,8 @@ const nextConfig: NextConfig = {
   },
 
   // Production optimizations
-  ...(process.env.NODE_ENV === 'production' && {
-    output: 'standalone',
+  ...(process.env.NODE_ENV === 'production' && process.env.VERCEL === '1' && {
+    output: 'standalone', // Only for Vercel deployment, not local testing
     poweredByHeader: false,
 
     // Compression

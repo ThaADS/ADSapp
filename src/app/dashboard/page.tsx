@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { DashboardDemoWrapper } from '@/components/dashboard/dashboard-demo-wrapper'
 import { QuickActions } from '@/components/dashboard/quick-actions'
 
+// ⚡ PERFORMANCE: Cache dashboard data for 30 seconds
+export const revalidate = 30
+
 export default async function DashboardPage() {
   const profile = await requireOrganization()
   const supabase = await createClient()

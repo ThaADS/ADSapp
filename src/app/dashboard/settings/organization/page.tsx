@@ -3,6 +3,9 @@ import { OrganizationSettings } from '@/components/dashboard/organization-settin
 import { SettingsErrorBoundary } from '@/components/error-boundary'
 import { redirect } from 'next/navigation'
 
+// ⚡ PERFORMANCE: Cache page for faster tab switches
+export const revalidate = 300
+
 export default async function OrganizationSettingsPage() {
   const profile = await requireOrganization()
 
