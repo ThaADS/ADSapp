@@ -1,5 +1,6 @@
 import { requireOrganization } from '@/lib/auth'
 import { OrganizationSettings } from '@/components/dashboard/organization-settings'
+import WhiteLabelBranding from '@/components/dashboard/white-label-branding'
 import { SettingsErrorBoundary } from '@/components/error-boundary'
 import { redirect } from 'next/navigation'
 
@@ -15,7 +16,7 @@ export default async function OrganizationSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Organization Settings</h1>
         <p className="mt-1 text-sm text-gray-600">
@@ -26,6 +27,19 @@ export default async function OrganizationSettingsPage() {
       <SettingsErrorBoundary>
         <OrganizationSettings profile={profile} />
       </SettingsErrorBoundary>
+
+      {/* White-Label Branding Section */}
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">White-Label Branding</h2>
+        <SettingsErrorBoundary>
+          <WhiteLabelBranding
+            organizationId={profile.organization_id!}
+            currentLogoUrl={profile.organization?.logo_url}
+            primaryColor={profile.organization?.branding?.primaryColor}
+            secondaryColor={profile.organization?.branding?.secondaryColor}
+          />
+        </SettingsErrorBoundary>
+      </div>
     </div>
   )
 }
