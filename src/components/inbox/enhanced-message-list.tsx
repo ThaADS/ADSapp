@@ -53,6 +53,11 @@ interface MessageListProps {
   onLoadMore?: () => void
   hasMore?: boolean
   loading?: boolean
+  // Customizable bubble colors
+  agentBubbleColor?: string
+  contactBubbleColor?: string
+  agentTextColor?: string
+  contactTextColor?: string
 }
 
 interface MediaMessageProps {
@@ -267,6 +272,10 @@ export default function EnhancedMessageList({
   onLoadMore,
   hasMore,
   loading,
+  agentBubbleColor = 'bg-emerald-500',
+  contactBubbleColor = 'bg-white',
+  agentTextColor = 'text-white',
+  contactTextColor = 'text-gray-900',
 }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const mediaHandler = new WhatsAppMediaHandler('', '') // Would be initialized with proper tokens
@@ -443,8 +452,8 @@ export default function EnhancedMessageList({
                         <div
                           className={`rounded-lg shadow-sm ${
                             isFromCurrentUser
-                              ? 'rounded-tr-none bg-emerald-500 text-white'
-                              : 'rounded-tl-none bg-white text-gray-900'
+                              ? `rounded-tr-none ${agentBubbleColor} ${agentTextColor}`
+                              : `rounded-tl-none ${contactBubbleColor} ${contactTextColor}`
                           }`}
                           style={{
                             padding: message.message_type === 'text' ? '10px 14px' : '6px',
