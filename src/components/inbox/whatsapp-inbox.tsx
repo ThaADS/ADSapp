@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -18,13 +15,13 @@ import {
   TrendingUp,
   Filter,
   Search,
+  Sparkles,
 } from 'lucide-react'
 import EnhancedConversationList from './enhanced-conversation-list'
 import EnhancedMessageList from './enhanced-message-list'
 import EnhancedMessageInput from './enhanced-message-input'
 import { WhatsAppService } from '@/lib/whatsapp/service'
-import { WhatsAppBusinessAPI } from '@/lib/whatsapp/business-api'
-import { WhatsAppSearchEngine } from '@/lib/whatsapp/search'
+import ConversationSummary from '@/components/ai/conversation-summary'
 
 interface Conversation {
   id: string
@@ -294,14 +291,11 @@ function ConversationDetails({
   )
 }
 
-export default function WhatsAppInbox({
-  organizationId,
-  currentUserId,
-  userRole,
-}: WhatsAppInboxProps) {
+export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAppInboxProps) {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [showDetails, setShowDetails] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
   const [stats, setStats] = useState<InboxStats>({
     totalConversations: 0,
     unreadConversations: 0,
@@ -316,11 +310,12 @@ export default function WhatsAppInbox({
 
   useEffect(() => {
     loadStats()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationId])
 
   useEffect(() => {
     if (selectedConversation) {
-      loadMessages(selectedConversation.id)
+      loadMessages()
     }
   }, [selectedConversation])
 
@@ -360,7 +355,7 @@ export default function WhatsAppInbox({
     }
   }
 
-  const loadMessages = async (conversationId: string) => {
+  const loadMessages = async () => {
     try {
       setIsLoading(true)
       // Load messages for the conversation
@@ -380,16 +375,24 @@ export default function WhatsAppInbox({
 
   const handleSendMessage = async (
     content: string,
-    type: 'text' | 'template' | 'image' | 'document' | 'audio' | 'video',
-    attachments?: any[]
+    type: 'text' | 'template' | 'image' | 'document' | 'audio' | 'video'
   ) => {
     if (!selectedConversation) return
 
     try {
-      await whatsappService.sendMessage(selectedConversation.id, content, currentUserId, type)
+      // WhatsAppService currently only supports text, template, image, document
+      // Map audio/video to document for now
+      const supportedType = type === 'audio' || type === 'video' ? 'document' : type
+
+      await whatsappService.sendMessage(
+        selectedConversation.id,
+        content,
+        currentUserId,
+        supportedType as 'text' | 'template' | 'image' | 'document'
+      )
 
       // Reload messages
-      loadMessages(selectedConversation.id)
+      loadMessages()
     } catch (error) {
       console.error('Failed to send message:', error)
     }
@@ -404,7 +407,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      status: status as any,
+      status: status as 'open' | 'pending' | 'resolved' | 'closed',
     })
   }
 
@@ -412,7 +415,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      priority: priority as any,
+      priority: priority as 'low' | 'medium' | 'high' | 'urgent',
     })
   }
 
@@ -547,6 +550,17 @@ export default function WhatsAppInbox({
                     >
                       {selectedConversation.status}
                     </span>
+
+                    {/* AI Summary Button */}
+                    <button
+                      onClick={() => setShowSummary(true)}
+                      className='flex items-center space-x-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100'
+                      title='AI Summary'
+                    >
+                      <Sparkles className='h-4 w-4' />
+                      <span>Summarize</span>
+                    </button>
+
                     <button
                       onClick={() => setShowDetails(!showDetails)}
                       className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
@@ -573,6 +587,7 @@ export default function WhatsAppInbox({
                 conversationId={selectedConversation.id}
                 organizationId={organizationId}
                 currentUserId={currentUserId}
+                contactName={selectedConversation.contact.name || 'Contact'}
                 onSendMessage={handleSendMessage}
               />
             </>
@@ -605,6 +620,17 @@ export default function WhatsAppInbox({
           />
         )}
       </div>
+
+      {/* AI Conversation Summary Modal */}
+      {selectedConversation && (
+        <ConversationSummary
+          conversationId={selectedConversation.id}
+          organizationId={organizationId}
+          contactName={selectedConversation.contact.name || 'Contact'}
+          isOpen={showSummary}
+          onClose={() => setShowSummary(false)}
+        />
+      )}
     </div>
   )
 }

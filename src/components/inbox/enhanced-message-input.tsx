@@ -4,26 +4,27 @@ import { useState, useRef, useEffect } from 'react'
 import {
   Send,
   Paperclip,
-  Smile,
   LayoutTemplate,
   Image,
   FileText,
   Mic,
   Video,
   X,
-  Plus,
+  Sparkles,
 } from 'lucide-react'
 import { WhatsAppTemplateManager, WhatsAppTemplate } from '@/lib/whatsapp/templates'
 import { WhatsAppMediaHandler } from '@/lib/whatsapp/media-handler'
+import DraftSuggestions from '@/components/ai/draft-suggestions'
 
 interface MessageInputProps {
   conversationId: string
   organizationId: string
   currentUserId: string
+  contactName?: string
   onSendMessage: (
     content: string,
     type: 'text' | 'template' | 'image' | 'document' | 'audio' | 'video',
-    attachments?: any[]
+    attachments?: File[]
   ) => void
   onStartTyping?: () => void
   onStopTyping?: () => void
@@ -53,25 +54,26 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
 
   const templateManager = new WhatsAppTemplateManager()
 
-  const loadTemplates = async () => {
-    try {
-      setLoading(true)
-      const result = await templateManager.getTemplates(organizationId, {
-        status: 'approved',
-        limit: 50,
-      })
-      setTemplates(result)
-    } catch (error) {
-      console.error('Failed to load templates:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        setLoading(true)
+        const result = await templateManager.getTemplates(organizationId, {
+          status: 'approved',
+          limit: 50,
+        })
+        setTemplates(result)
+      } catch (error) {
+        console.error('Failed to load templates:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (isOpen) {
       loadTemplates()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, organizationId])
 
   const handleTemplateSelect = (template: WhatsAppTemplate) => {
@@ -220,7 +222,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
 export default function EnhancedMessageInput({
   conversationId,
   organizationId,
-  currentUserId,
+  contactName = 'Contact',
   onSendMessage,
   onStartTyping,
   onStopTyping,
@@ -230,11 +232,11 @@ export default function EnhancedMessageInput({
   const [message, setMessage] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
   const [showAttachments, setShowAttachments] = useState(false)
+  const [showAIDrafts, setShowAIDrafts] = useState(false)
   const [attachments, setAttachments] = useState<AttachmentPreview[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [typingTimer, setTypingTimer] = useState<NodeJS.Timeout | null>(null)
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleInputChange = (value: string) => {
@@ -377,6 +379,12 @@ export default function EnhancedMessageInput({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
+  const handleSelectAIDraft = (draft: string) => {
+    setMessage(draft)
+    setShowAIDrafts(false)
+    textareaRef.current?.focus()
+  }
+
   return (
     <div className='border-t border-gray-200 bg-white'>
       {/* Attachment Previews */}
@@ -387,6 +395,7 @@ export default function EnhancedMessageInput({
               <div key={attachment.id} className='group relative'>
                 {attachment.type === 'image' && attachment.preview ? (
                   <div className='relative'>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={attachment.preview}
                       alt={attachment.file.name}
@@ -428,6 +437,18 @@ export default function EnhancedMessageInput({
         </div>
       )}
 
+      {/* AI Draft Suggestions */}
+      {showAIDrafts && (
+        <div className='border-b border-gray-200 p-4'>
+          <DraftSuggestions
+            conversationId={conversationId}
+            organizationId={organizationId}
+            contactName={contactName}
+            onSelectDraft={handleSelectAIDraft}
+          />
+        </div>
+      )}
+
       {/* Message Input */}
       <div className='flex items-end space-x-3 p-4'>
         {/* Attachment Button */}
@@ -447,6 +468,7 @@ export default function EnhancedMessageInput({
                 onClick={() => handleFileSelect('image')}
                 className='flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
               >
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image className='h-4 w-4 text-blue-500' />
                 <span>Image</span>
               </button>
@@ -482,6 +504,20 @@ export default function EnhancedMessageInput({
           disabled={disabled}
         >
           <LayoutTemplate className='h-5 w-5' />
+        </button>
+
+        {/* AI Drafts Button */}
+        <button
+          onClick={() => setShowAIDrafts(!showAIDrafts)}
+          className={`rounded-full p-2 transition-colors ${
+            showAIDrafts
+              ? 'bg-emerald-100 text-emerald-600'
+              : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+          }`}
+          disabled={disabled}
+          title='AI Draft Suggestions'
+        >
+          <Sparkles className='h-5 w-5' />
         </button>
 
         {/* Message Input */}
