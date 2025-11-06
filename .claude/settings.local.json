@@ -48,7 +48,10 @@
       "Bash(powershell -Command:*)",
       "Bash(git commit:*)",
       "Bash(leaked-key.txt)",
-      "Bash(git filter-branch:*)"
+      "Bash(git filter-branch:*)",
+      "Bash(npm run lint:*)",
+      "Bash(src/types/database-routing.ts)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

@@ -12,9 +12,9 @@ export default async function AutomationPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Automation</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Intelligent Automation</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Create automated workflows and responses for your WhatsApp business.
+          Create powerful automated workflows with visual drag-and-drop builder. Route conversations intelligently and manage escalations.
         </p>
       </div>
       
