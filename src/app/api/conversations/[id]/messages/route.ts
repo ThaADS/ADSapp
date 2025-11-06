@@ -5,15 +5,32 @@ import { WhatsAppService } from '@/lib/whatsapp/service'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request)
-  if (middlewareResponse) return middlewareResponse
-
   try {
-    // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request)
     const supabase = await createClient()
     const { id: conversationId } = await params
+
+    // Get authenticated user
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user's organization
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'No organization found' }, { status: 403 })
+    }
+
+    const organizationId = profile.organization_id
 
     // Verify conversation belongs to user's organization
     const { data: conversation } = await supabase
@@ -47,15 +64,33 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  // Apply standard API middleware (tenant validation + strict rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request)
-  if (middlewareResponse) return middlewareResponse
-
   try {
-    // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request)
     const supabase = await createClient()
     const { id: conversationId } = await params
+
+    // Get authenticated user
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user's organization
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'No organization found' }, { status: 403 })
+    }
+
+    const organizationId = profile.organization_id
+    const userId = user.id
 
     const body = await request.json()
     const { content, type = 'text' } = body
@@ -100,15 +135,32 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request)
-  if (middlewareResponse) return middlewareResponse
-
   try {
-    // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request)
     const supabase = await createClient()
     const { id: conversationId } = await params
+
+    // Get authenticated user
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user's organization
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'No organization found' }, { status: 403 })
+    }
+
+    const organizationId = profile.organization_id
 
     const body = await request.json()
     const { action, messageId } = body
