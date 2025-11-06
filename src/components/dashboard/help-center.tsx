@@ -18,7 +18,7 @@ import {
   Filter,
 } from 'lucide-react'
 
-type UserRole = 'agent' | 'manager' | 'admin' | 'super_admin'
+type UserRole = 'owner' | 'agent' | 'manager' | 'admin' | 'super_admin'
 
 interface FAQItem {
   id: string
@@ -39,7 +39,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe verstuur ik een bericht naar een contact?',
     answer:
       'Selecteer een conversatie in de linker sidebar, of klik op &quot;Nieuw Bericht&quot; rechtsboven. Type je bericht in het tekstveld onderaan en klik op de verzend-knop of druk op Enter. Je kunt ook bijlagen toevoegen met het paperclip-icoon.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['inbox', 'messaging', 'basics'],
   },
   {
@@ -49,7 +49,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe gebruik ik AI Draft Suggestions?',
     answer:
       'Klik op het Sparkles-icoon (✨) in het message input veld. Het systeem genereert automatisch 3 antwoordopties in verschillende tonen (professioneel, vriendelijk, empathisch). Klik op een suggestie om deze over te nemen, of pas aan naar wens. De AI analyseert de volledige conversatie-context voor relevante antwoorden.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['ai', 'drafts', 'suggestions'],
   },
   {
@@ -59,7 +59,7 @@ const faqData: FAQItem[] = [
     question: 'Wat betekenen de sentiment badges?',
     answer:
       'Sentiment badges tonen de emotionele toon van conversaties: 😊 Positief (tevreden klant), 😐 Neutraal (informatief), 😠 Negatief (ontevreden), 🤔 Gemengd. Urgency levels (Laag/Medium/Hoog/Kritiek) geven prioriteit aan. Gebruik deze voor proactieve escalatie van kritieke gesprekken.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['ai', 'sentiment', 'priority'],
   },
   {
@@ -69,7 +69,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe maak ik een conversatie-samenvatting?',
     answer:
       'Klik op &quot;Summarize&quot; in de conversation header (rechtsboven). Het systeem genereert automatisch: executive summary, key points, next steps, resolved issues, open questions, en gespreksstatistieken. Perfect voor overdracht aan collega\'s of management rapportage.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['ai', 'summary', 'reporting'],
   },
   {
@@ -79,7 +79,7 @@ const faqData: FAQItem[] = [
     question: 'Kan ik berichten taggen of labelen?',
     answer:
       'Ja, gebruik de tag selector in het message detail panel. Standaard tags: vraag, klacht, compliment, sales, support. Admins kunnen custom tags toevoegen in Settings → Tags. Tags zijn doorzoekbaar en helpen bij analytics.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['inbox', 'tags', 'organization'],
   },
 
@@ -91,7 +91,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe voeg ik handmatig contacten toe?',
     answer:
       'Ga naar Contacten → Nieuw Contact. Vul minimaal telefoonnummer in (internationaal formaat: +31612345678). Optioneel: naam, email, bedrijf, notities, custom velden. Contacten worden ook automatisch aangemaakt bij binnenkomende berichten.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['contacts', 'crud'],
   },
   {
@@ -101,7 +101,7 @@ const faqData: FAQItem[] = [
     question: 'Kan ik contacten importeren vanuit CSV/Excel?',
     answer:
       'Ja (Manager+ rol). Ga naar Contacten → Import. Upload CSV met kolommen: phone (verplicht), name, email, company, notes. Het systeem valideert telefoonnummers automatisch en dupliceert niet. Max 10.000 contacten per import.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['contacts', 'import', 'bulk'],
   },
   {
@@ -111,7 +111,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe segmenteer ik contacten voor gerichte campaigns?',
     answer:
       'Gebruik filters (Manager+ rol): Tags, custom velden, conversatie-geschiedenis, sentiment score, laatste interactie datum. Sla filters op als segments voor hergebruik. Exporteer geselecteerde contacten of start broadcast direct vanuit segment.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['contacts', 'segmentation', 'campaigns'],
   },
 
@@ -123,7 +123,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe stel ik auto-replies in?',
     answer:
       'Ga naar Automation → Auto-Replies (Manager+ rol). Klik op &quot;Nieuwe Regel&quot;. Definieer trigger (keywords, tijd, sentiment), conditie (businesshours, contact tags), en actie (stuur template, tag conversatie, assign agent, escaleer). Test regel met simulator voordat je activeert.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['automation', 'auto-reply', 'setup'],
   },
   {
@@ -133,7 +133,7 @@ const faqData: FAQItem[] = [
     question: 'Wat is de escalatie flow?',
     answer:
       'Escalatie regels monitoren real-time voor triggers: negatief sentiment, keywords (&quot;manager&quot;, &quot;klacht&quot;), urgency level, response tijd. Bij trigger: notificeer manager, auto-assign naar senior agent, tag conversatie, log escalatie. Configureer in Automation → Escalatie.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['automation', 'escalation', 'workflows'],
   },
   {
@@ -143,7 +143,7 @@ const faqData: FAQItem[] = [
     question: 'Kan ik out-of-office berichten instellen?',
     answer:
       'Ja. Automation → Business Hours → Out of Office. Stel actieve tijden in (bijv. ma-vr 9-17u), selecteer auto-reply template voor buiten kantooruren. Optioneel: verschillende templates voor weekend vs avond, urgency-based doorschakeling naar on-call agent.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['automation', 'business-hours', 'ooo'],
   },
 
@@ -155,7 +155,7 @@ const faqData: FAQItem[] = [
     question: 'Welke metrics zie ik in het dashboard?',
     answer:
       'Manager rol: eigen team metrics (response tijd, resolution rate, conversatie volume, sentiment trends). Admin rol: organisatie-breed (alle agents, teams, channels, kosten). Key metrics: First Response Time, Resolution Time, Customer Satisfaction, Message Volume, Agent Performance.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['analytics', 'metrics', 'kpi'],
   },
   {
@@ -165,7 +165,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe exporteer ik rapporten?',
     answer:
       'Analytics → Export (rechtsboven). Kies periode (vandaag/week/maand/custom), metrics, format (CSV/Excel/PDF). Automated reports: Admin → Reports → Schedule, kies frequentie (dagelijks/wekelijks/maandelijks) en email ontvangers. Rapporten worden automatisch verstuurd.',
-    roles: ['manager', 'admin', 'super_admin'],
+    roles: ['owner', 'manager', 'admin', 'super_admin'],
     tags: ['analytics', 'export', 'reports'],
   },
   {
@@ -175,7 +175,7 @@ const faqData: FAQItem[] = [
     question: 'Wat betekent de AI Cost Tracking grafiek?',
     answer:
       'AI Analytics → Kosten (Admin+ rol). Toont: totale AI costs per dag/week/maand, breakdown per feature (drafts/sentiment/summaries), per model (Claude Opus/Sonnet/Haiku), per agent. Budget alerts waarschuwen bij 80% en 100% van maandbudget. Gebruik voor ROI berekening en cost optimization.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['analytics', 'ai', 'costs', 'budget'],
   },
 
@@ -187,7 +187,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe schakel ik specifieke AI features in/uit?',
     answer:
       'Settings → AI (Admin+ rol). Toggle switches voor: Draft Suggestions, Auto-Response, Sentiment Analysis, Summarization, Template Suggestions. Wijzigingen zijn instant actief voor alle agents. Monitoring: check AI Analytics voor adoption rates per feature.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['ai', 'settings', 'features'],
   },
   {
@@ -197,7 +197,7 @@ const faqData: FAQItem[] = [
     question: 'Welk AI model moet ik kiezen?',
     answer:
       'Claude Opus: Hoogste kwaliteit, complexe taken, €15/M tokens. Claude Sonnet (recommended): Balans kwaliteit/snelheid/kosten, €3/M tokens. Claude Haiku: Snelste, simpele taken, €0.25/M tokens. Default: Sonnet. Test verschillende models in AI Settings → Model Preferences om kosten vs kwaliteit te optimaliseren.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['ai', 'models', 'costs'],
   },
   {
@@ -207,7 +207,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe stel ik een AI budget in?',
     answer:
       'Settings → AI → Budget Management (Admin rol). Stel monthly budget in (€ per maand). Configureer alerts: 80% = waarschuwing, 100% = stop AI features (optioneel). Real-time tracking in AI Analytics. Budget resets automatisch elke maand. Historische data blijft beschikbaar voor trends.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['ai', 'budget', 'cost-control'],
   },
 
@@ -219,7 +219,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe voeg ik nieuwe teamleden toe?',
     answer:
       'Settings → Team → Invite User (Admin+ rol). Vul email in, selecteer rol (Agent/Manager/Admin), optioneel: assign naar team. User ontvangt invite email met onboarding link. Acceptatie binnen 7 dagen vereist, anders verloopt invite. Track pending invites in Team → Invitations.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['team', 'users', 'invites'],
   },
   {
@@ -229,7 +229,7 @@ const faqData: FAQItem[] = [
     question: 'Wat is het verschil tussen Agent, Manager en Admin rollen?',
     answer:
       'Agent: Inbox, contacten, messaging, basic analytics (eigen performance). Manager: + team analytics, automation, broadcasts, contact import/export. Admin: + billing, AI settings, team management, organisatie instellingen. Super Admin: + cross-tenant access, system configuration.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['team', 'roles', 'permissions'],
   },
   {
@@ -239,7 +239,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe configureer ik teams voor round-robin assignment?',
     answer:
       'Settings → Teams → Create Team (Admin rol). Voeg agents toe, selecteer assignment mode: Round-robin (eerlijk verdeeld), Load-based (minste open conversations), Skill-based (match tags). Configureer availability schedule per agent. Test assignment met simulator.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['team', 'assignment', 'routing'],
   },
 
@@ -251,7 +251,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe upgrade ik mijn plan?',
     answer:
       'Settings → Billing → Change Plan (Admin+ rol). Vergelijk plannen: Starter (€49/maand, 3 users), Growth (€149/maand, 10 users), Business (€399/maand, 25 users), Enterprise (custom). Upgrade instant actief, pro-rata berekening. Downgrade ingangsdatum volgend facturatie-cycle.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['billing', 'subscription', 'plans'],
   },
   {
@@ -261,7 +261,7 @@ const faqData: FAQItem[] = [
     question: 'Wat zijn de AI kosten bovenop mijn subscription?',
     answer:
       'AI features hebben usage-based pricing bovenop je subscription: Drafts €0.01/request, Sentiment €0.005/analysis, Summaries €0.02/summary. Gemiddeld €50-200/maand voor 10 agents bij normaal gebruik. Exact tracking in AI Analytics. Maandbudget configureerbaar om overschrijding te voorkomen.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['billing', 'ai', 'costs'],
   },
 
@@ -273,7 +273,7 @@ const faqData: FAQItem[] = [
     question: 'Hoe werkt multi-factor authentication (MFA)?',
     answer:
       'Settings → Security → Enable MFA (alle rollen). Scan QR code met authenticator app (Google Authenticator, Authy). Voer 6-digit code in bij login. Backup codes downloaden voor noodgeval. Admin kan MFA verplichten voor alle users: Settings → Security → Enforce MFA.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['security', 'mfa', '2fa'],
   },
   {
@@ -283,7 +283,7 @@ const faqData: FAQItem[] = [
     question: 'Waar worden mijn gegevens opgeslagen?',
     answer:
       'Data opslag: EU (AWS Frankfurt) voor GDPR compliance. End-to-end encryptie voor berichten in transit (TLS 1.3). Data at rest: AES-256 encryptie. WhatsApp media: tijdelijk cached (24u), daarna verwijderd. Backup: dagelijks, 30 dagen retentie. Data export: Settings → Privacy → Download Data.',
-    roles: ['admin', 'super_admin'],
+    roles: ['owner', 'admin', 'super_admin'],
     tags: ['security', 'privacy', 'gdpr'],
   },
 
@@ -295,7 +295,7 @@ const faqData: FAQItem[] = [
     question: 'Berichten worden niet verzonden, wat te doen?',
     answer:
       'Check: 1) WhatsApp Business nummer actief? (Settings → WhatsApp). 2) Geen rate limit bereikt? (max 1000 berichten/24u per nummer). 3) Contact heeft je niet geblokkeerd? 4) Telefoonnummer correct formaat? (+31612345678). Persistent probleem: contact support met conversatie ID.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['troubleshooting', 'messaging', 'errors'],
   },
   {
@@ -305,7 +305,7 @@ const faqData: FAQItem[] = [
     question: 'AI Draft Suggestions laden niet, waarom?',
     answer:
       'Mogelijke oorzaken: 1) AI feature uitgeschakeld (Admin: check Settings → AI). 2) Budget limiet bereikt (Admin: check AI Analytics → Budget). 3) Conversatie te kort (min 2 berichten nodig). 4) API rate limit (max 60 requests/min). Wait 1 minuut en probeer opnieuw. Persistent: check Status Page.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['troubleshooting', 'ai', 'errors'],
   },
   {
@@ -315,7 +315,7 @@ const faqData: FAQItem[] = [
     question: 'Dashboard laadt traag, hoe optimaliseer ik?',
     answer:
       'Tips: 1) Filter conversaties op datum (default: laatste 7 dagen). 2) Disable real-time updates tijdelijk (toggle in header). 3) Clear browser cache (Ctrl+Shift+Del). 4) Check internet snelheid (min 5 Mbps). 5) Browser up-to-date? (Chrome/Firefox/Safari recommended). Contact support bij aanhoudende issues.',
-    roles: ['agent', 'manager', 'admin', 'super_admin'],
+    roles: ['owner', 'agent', 'manager', 'admin', 'super_admin'],
     tags: ['troubleshooting', 'performance', 'optimization'],
   },
 ]

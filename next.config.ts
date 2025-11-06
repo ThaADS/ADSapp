@@ -58,6 +58,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'localhost',
       },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+      },
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
