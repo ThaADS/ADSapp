@@ -18,11 +18,11 @@ interface Message {
   content: string
   sender_type: string
   created_at: string
-  conversation: {
+  conversation?: {
     id: string
-    contact: {
+    contact?: {
       name?: string
-      phone_number: string
+      phone_number?: string
     }
   }
 }
@@ -113,8 +113,9 @@ export function ActivityFeed({ messages }: ActivityFeedProps) {
                     <p className='text-sm text-gray-500'>
                       {message.sender_type === 'contact' ? 'New message from' : 'Agent replied to'}{' '}
                       <span className='font-medium text-gray-900'>
-                        {message.conversation.contact.name ||
-                          message.conversation.contact.phone_number}
+                        {message.conversation?.contact?.name ||
+                          message.conversation?.contact?.phone_number ||
+                          'Unknown'}
                       </span>
                     </p>
                     <p className='mt-1 line-clamp-2 text-sm text-gray-600'>{message.content}</p>
