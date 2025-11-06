@@ -140,3 +140,47 @@ logs
 .out
 .storybook-out.github/workflows/
 .github/workflows/*
+
+# ===============================================
+# SECURITY: Never commit these files
+# ===============================================
+
+# Credentials and Secrets
+*.local.json
+*.backup
+.env
+.env.*
+!.env.example
+**/secrets/**
+leaked-*
+credential-*
+
+# Status/Completion Files (often contain credentials)
+FINAL_STATUS_*.md
+ADMIN_*_COMPLETE*.md
+SUPER-ADMIN-*.md
+*_BREACH_*.md
+*_SECURITY_*.md
+STATUS_*_PERCENT.md
+
+# Scripts with embedded credentials
+setup-db-simple.js
+apply-schema.js
+*-with-credentials.*
+add-env-vars.ps1
+setup-stripe-env.ps1
+
+# Docker files with secrets
+docker-compose.test.yml
+docker-compose.local.yml
+
+# Temporary and cache directories
+.jest-cache/
+temp-docs/
+.cursor/
+
+# Test files with real credentials
+*.test.backup
+.env.test.backup
+auth.setup.ts.bak
+
