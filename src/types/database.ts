@@ -41,6 +41,7 @@ export type AgentCapacity = Database['public']['Tables']['agent_capacity']['Row'
 export type ConversationQueue = Database['public']['Tables']['conversation_queue']['Row']
 export type RoutingHistory = Database['public']['Tables']['routing_history']['Row']
 export type RoutingRule = Database['public']['Tables']['routing_rules']['Row']
+export type EscalationRule = Database['public']['Tables']['escalation_rules']['Row']
 
 // Insert types
 export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert']
@@ -57,6 +58,7 @@ export type AgentCapacityInsert = Database['public']['Tables']['agent_capacity']
 export type ConversationQueueInsert = Database['public']['Tables']['conversation_queue']['Insert']
 export type RoutingHistoryInsert = Database['public']['Tables']['routing_history']['Insert']
 export type RoutingRuleInsert = Database['public']['Tables']['routing_rules']['Insert']
+export type EscalationRuleInsert = Database['public']['Tables']['escalation_rules']['Insert']
 
 // Update types
 export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update']
@@ -73,6 +75,7 @@ export type AgentCapacityUpdate = Database['public']['Tables']['agent_capacity']
 export type ConversationQueueUpdate = Database['public']['Tables']['conversation_queue']['Update']
 export type RoutingHistoryUpdate = Database['public']['Tables']['routing_history']['Update']
 export type RoutingRuleUpdate = Database['public']['Tables']['routing_rules']['Update']
+export type EscalationRuleUpdate = Database['public']['Tables']['escalation_rules']['Update']
 
 export type Database = {
   public: {
@@ -806,6 +809,66 @@ export type Database = {
           },
           {
             foreignKeyName: 'routing_rules_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      escalation_rules: {
+        Row: {
+          id: string
+          organization_id: string
+          rule_name: string
+          is_active: boolean
+          priority: number
+          sla_threshold_minutes: number
+          escalation_target: 'manager' | 'team_lead' | 'senior_agent' | 'custom'
+          notification_channels: string[]
+          conditions: Json
+          created_at: string
+          updated_at: string
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          rule_name: string
+          is_active?: boolean
+          priority?: number
+          sla_threshold_minutes?: number
+          escalation_target?: 'manager' | 'team_lead' | 'senior_agent' | 'custom'
+          notification_channels?: string[]
+          conditions?: Json
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          rule_name?: string
+          is_active?: boolean
+          priority?: number
+          sla_threshold_minutes?: number
+          escalation_target?: 'manager' | 'team_lead' | 'senior_agent' | 'custom'
+          notification_channels?: string[]
+          conditions?: Json
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'escalation_rules_organization_id_fkey'
+            columns: ['organization_id']
+            isOneToOne: false
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'escalation_rules_created_by_fkey'
             columns: ['created_by']
             isOneToOne: false
             referencedRelation: 'profiles'

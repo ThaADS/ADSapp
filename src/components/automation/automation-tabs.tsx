@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { Squares2X2Icon, UsersIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import WorkflowBuilder from './workflow-builder'
 import CapacityDashboard from './capacity-dashboard'
+import EscalationRules from './escalation-rules'
 
 interface AutomationTabsProps {
   organizationId: string
@@ -89,18 +90,7 @@ export default function AutomationTabs({ organizationId }: AutomationTabsProps) 
 
         {activeTab === 'capacity' && <CapacityDashboard organizationId={organizationId} />}
 
-        {activeTab === 'escalations' && (
-          <div className='rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm'>
-            <ExclamationTriangleIcon className='mx-auto mb-4 h-16 w-16 text-gray-400' />
-            <h3 className='mb-2 text-lg font-medium text-gray-900'>Escalation Rules Manager</h3>
-            <p className='mb-4 text-sm text-gray-600'>
-              Define escalation policies based on response time, priority, and agent availability
-            </p>
-            <div className='inline-flex items-center rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700'>
-              🚧 Coming Soon - SLA Monitoring & Escalation Policies
-            </div>
-          </div>
-        )}
+        {activeTab === 'escalations' && <EscalationRules organizationId={organizationId} />}
       </div>
     </div>
   )
