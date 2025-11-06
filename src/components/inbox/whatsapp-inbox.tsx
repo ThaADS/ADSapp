@@ -236,7 +236,7 @@ function ConversationDetails({
 
           {/* Existing Tags */}
           <div className='mb-3 flex flex-wrap gap-1'>
-            {conversation.tags.map(tag => (
+            {conversation.tags && conversation.tags.map(tag => (
               <span
                 key={tag}
                 className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800'
@@ -252,22 +252,71 @@ function ConversationDetails({
             ))}
           </div>
 
-          {/* Add New Tag */}
-          <div className='flex space-x-2'>
-            <input
-              type='text'
-              value={newTag}
-              onChange={e => setNewTag(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleAddTag()}
-              placeholder='Add tag...'
-              className='flex-1 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-blue-500'
-            />
-            <button
-              onClick={handleAddTag}
-              className='rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
-            >
-              Add
-            </button>
+          {/* Predefined Tags */}
+          <div className='mb-3'>
+            <p className='mb-2 text-xs font-medium text-gray-600'>Categorie</p>
+            <div className='flex flex-wrap gap-1'>
+              {['sales', 'leads', 'follow-up', 'service', 'backoffice', 'administratie'].map(tag => {
+                const isSelected = conversation.tags?.includes(tag)
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => isSelected ? onRemoveTag(tag) : onAddTag(tag)}
+                    className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+                      isSelected
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Team Member Tags */}
+          <div className='mb-3'>
+            <p className='mb-2 text-xs font-medium text-gray-600'>Team</p>
+            <div className='flex flex-wrap gap-1'>
+              {['agent-1', 'agent-2', 'agent-3'].map(tag => {
+                const isSelected = conversation.tags?.includes(tag)
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => isSelected ? onRemoveTag(tag) : onAddTag(tag)}
+                    className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+                      isSelected
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Custom Tag Input */}
+          <div>
+            <p className='mb-2 text-xs font-medium text-gray-600'>Custom</p>
+            <div className='flex space-x-2'>
+              <input
+                type='text'
+                value={newTag}
+                onChange={e => setNewTag(e.target.value)}
+                onKeyPress={e => e.key === 'Enter' && handleAddTag()}
+                placeholder='Custom tag...'
+                className='flex-1 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-blue-500'
+              />
+              <button
+                onClick={handleAddTag}
+                className='rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
+              >
+                Add
+              </button>
+            </div>
           </div>
         </div>
 
@@ -332,14 +381,18 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
 
       const data = await response.json()
 
-      // Use real data from API, default to 0 if not available
+      // Calculate stats from the data
+      const activeCount = data.conversations?.filter((c: any) => c.status === 'open' || c.status === 'pending').length || 0
+      const unreadCount = data.conversations?.filter((c: any) => c.unread_count > 0).length || 0
+      const totalMessages = data.conversations?.reduce((sum: number, c: any) => sum + (c.unread_count || 0), 0) || 0
+
       setStats({
-        totalConversations: data.pagination?.total || 0,
-        unreadConversations: data.aggregations?.unread_count || 0,
-        activeConversations: data.aggregations?.active_count || 0,
-        averageResponseTime: data.aggregations?.avg_response_time || 0,
-        messagesThisWeek: data.aggregations?.messages_this_week || 0,
-        responseRate: data.aggregations?.response_rate || 0,
+        totalConversations: data.totalCount || 0,
+        unreadConversations: unreadCount,
+        activeConversations: activeCount,
+        averageResponseTime: 0, // TODO: Calculate from message timestamps
+        messagesThisWeek: totalMessages,
+        responseRate: totalMessages > 0 ? Math.round((activeCount / totalMessages) * 100) : 0,
       })
     } catch (error) {
       console.error('Failed to load stats:', error)
@@ -356,13 +409,21 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
   }
 
   const loadMessages = async () => {
+    if (!selectedConversation) return
+
     try {
       setIsLoading(true)
-      // Load messages for the conversation
-      // This would connect to your message service
-      setMessages([])
+      const response = await fetch(`/api/messages?conversation_id=${selectedConversation.id}`)
+
+      if (!response.ok) {
+        throw new Error('Failed to load messages')
+      }
+
+      const data = await response.json()
+      setMessages(data.messages || [])
     } catch (error) {
       console.error('Failed to load messages:', error)
+      setMessages([])
     } finally {
       setIsLoading(false)
     }
