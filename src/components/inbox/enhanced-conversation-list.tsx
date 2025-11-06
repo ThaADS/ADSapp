@@ -38,7 +38,7 @@ interface Conversation {
     avatar_url?: string
   }
   subject?: string
-  tags: string[]
+  tags?: string[]
   unread_count: number
   last_message_at: string
   last_message?: {
@@ -567,7 +567,7 @@ export default function EnhancedConversationList({
                     {/* Tags and Assignment */}
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-2'>
-                        {conversation.tags.length > 0 && (
+                        {conversation.tags && conversation.tags.length > 0 && (
                           <div className='flex space-x-1'>
                             {conversation.tags.slice(0, 2).map(tag => (
                               <span
