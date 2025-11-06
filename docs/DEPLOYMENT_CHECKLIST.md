@@ -346,27 +346,27 @@ DROP TRIGGER IF EXISTS trigger_queue_event_for_webhooks ON event_store;
 
 **Database Migration**:
 
-- [ ] Reviewed by: ******\_\_\_******
-- [ ] Tested on staging: ******\_\_\_******
-- [ ] Approved by: ******\_\_\_******
+- [ ] Reviewed by: **\*\***\_\_\_**\*\***
+- [ ] Tested on staging: **\*\***\_\_\_**\*\***
+- [ ] Approved by: **\*\***\_\_\_**\*\***
 
 **Application Deployment**:
 
-- [ ] Code reviewed: ******\_\_\_******
-- [ ] Tests passing: ******\_\_\_******
-- [ ] Approved by: ******\_\_\_******
+- [ ] Code reviewed: **\*\***\_\_\_**\*\***
+- [ ] Tests passing: **\*\***\_\_\_**\*\***
+- [ ] Approved by: **\*\***\_\_\_**\*\***
 
 **Go/No-Go Decision**:
 
-- [ ] All checks passed: ******\_\_\_******
-- [ ] Rollback plan ready: ******\_\_\_******
-- [ ] Monitoring configured: ******\_\_\_******
-- [ ] **APPROVED FOR PRODUCTION**: ******\_\_\_******
+- [ ] All checks passed: **\*\***\_\_\_**\*\***
+- [ ] Rollback plan ready: **\*\***\_\_\_**\*\***
+- [ ] Monitoring configured: **\*\***\_\_\_**\*\***
+- [ ] **APPROVED FOR PRODUCTION**: **\*\***\_\_\_**\*\***
 
-**Deployment Date**: ******\_\_\_******
-**Deployed By**: ******\_\_\_******
-**Deployment Time**: ******\_\_\_******
-**Completion Time**: ******\_\_\_******
+**Deployment Date**: **\*\***\_\_\_**\*\***
+**Deployed By**: **\*\***\_\_\_**\*\***
+**Deployment Time**: **\*\***\_\_\_**\*\***
+**Completion Time**: **\*\***\_\_\_**\*\***
 
 ---
 

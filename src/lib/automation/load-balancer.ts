@@ -4,7 +4,6 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import type { AgentCapacity, RoutingRule, ConversationQueue, RoutingHistory } from '@/types/database'
 
 export type RoutingStrategy =
   | 'round_robin' // Rotate through available agents

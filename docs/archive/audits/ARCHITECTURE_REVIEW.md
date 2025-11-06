@@ -2895,6 +2895,7 @@ src/
    - **Cost**: Variable (per enterprise customer)
 
 2. **Horizontal Sharding for Shared Database** (if needed)
+
    ```
    Shard 1: Organizations A-F
    Shard 2: Organizations G-M

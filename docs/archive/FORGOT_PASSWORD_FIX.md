@@ -30,7 +30,6 @@ The "Forgot your password?" link on the signin page (`/auth/signin`) was not cli
 
 ```tsx
 import Link from 'next/link'
-
 ;<Link href='/auth/forgot-password' className='font-medium text-green-600 hover:text-green-500'>
   Forgot your password?
 </Link>

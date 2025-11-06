@@ -1,6 +1,7 @@
 # Apply Migration 045: Escalation Rules Table
 
 ## Overview
+
 This migration creates the `escalation_rules` table for SLA monitoring and automated escalation policies. This completes the Intelligent Automation system to 100%.
 
 ---
@@ -8,18 +9,22 @@ This migration creates the `escalation_rules` table for SLA monitoring and autom
 ## Method 1: Via Supabase Dashboard SQL Editor (Recommended)
 
 ### Step 1: Open SQL Editor
+
 1. Go to: https://app.supabase.com/project/egaiyydjgeqlhthxmvbn/sql
 2. Click "New query"
 
 ### Step 2: Copy Migration SQL
+
 Copy the contents of: `supabase/migrations/045_escalation_rules_table.sql`
 
 ### Step 3: Execute Migration
+
 1. Paste the SQL into the editor
 2. Click "Run" button
 3. Verify: "Success. No rows returned"
 
 ### Step 4: Verify Table Created
+
 Run this query to verify:
 
 ```sql
@@ -30,11 +35,13 @@ AND table_name = 'escalation_rules';
 ```
 
 Expected output:
+
 ```
 escalation_rules
 ```
 
 ### Step 5: Verify RLS Policy
+
 ```sql
 SELECT tablename, policyname
 FROM pg_policies
@@ -49,6 +56,7 @@ Expected: 1 row (`tenant_isolation_escalation_rules`)
 ## Method 2: Via Supabase CLI (If Logged In)
 
 ### Prerequisites
+
 ```bash
 # Login to Supabase (opens browser)
 npx supabase login
@@ -58,6 +66,7 @@ npx supabase link --project-ref egaiyydjgeqlhthxmvbn
 ```
 
 ### Apply Migration
+
 ```bash
 # Push migration to remote database
 npx supabase db push
@@ -68,6 +77,7 @@ npx supabase db push
 ## Method 3: Direct PostgreSQL Connection
 
 ### Connection String
+
 ```
 postgresql://postgres:[DATABASE_PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:5432/postgres
 ```
@@ -75,6 +85,7 @@ postgresql://postgres:[DATABASE_PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:54
 Replace `[DATABASE_PASSWORD]` with your database password.
 
 ### Apply with psql
+
 ```bash
 psql "postgresql://postgres:[PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:5432/postgres" < supabase/migrations/045_escalation_rules_table.sql
 ```
@@ -129,6 +140,7 @@ DROP FUNCTION IF EXISTS update_escalation_rules_updated_at() CASCADE;
 ## Migration Impact
 
 ### New Capabilities
+
 ✅ SLA threshold monitoring
 ✅ Automated escalation policies
 ✅ Multi-channel notifications (email, SMS, in-app, webhook)
@@ -136,9 +148,11 @@ DROP FUNCTION IF EXISTS update_escalation_rules_updated_at() CASCADE;
 ✅ Business hours filtering
 
 ### Breaking Changes
+
 ❌ None - all new table, no existing schema changes
 
 ### Performance Impact
+
 🟢 Minimal - indexes created for all common queries
 🟢 RLS policies use efficient organization_id lookups
 
@@ -147,11 +161,13 @@ DROP FUNCTION IF EXISTS update_escalation_rules_updated_at() CASCADE;
 ## UI Component Already Created
 
 The Escalation Rules Manager UI is already implemented in:
+
 - Component: `src/components/automation/escalation-rules.tsx`
 - Integration: `src/components/automation/automation-tabs.tsx`
 - Route: `/dashboard/automation` → "Escalation Rules" tab
 
 **Features Included**:
+
 - Create/edit/delete escalation rules
 - SLA threshold configuration (minutes)
 - Escalation target selection (manager, team lead, senior agent, custom)
@@ -234,6 +250,7 @@ ON CONFLICT (organization_id, rule_name) DO NOTHING;
 ### Integration Testing
 
 The escalation system integrates with:
+
 - **Agent Capacity Dashboard**: Escalates when agents are at capacity
 - **Conversation Queue**: Monitors queue wait times for SLA breaches
 - **Routing History**: Logs escalation decisions for analytics
@@ -244,15 +261,15 @@ The escalation system integrates with:
 
 This migration brings the **Intelligent Automation** system from **80% → 100%**:
 
-| Component | Status Before | Status After |
-|-----------|--------------|--------------|
-| Database Tables | 80% (4/5 tables) | 100% (5/5 tables) |
-| TypeScript Types | 80% | 100% |
-| Load Balancer Logic | 100% | 100% |
-| Workflow Builder UI | 100% | 100% |
-| Capacity Dashboard | 100% | 100% |
+| Component              | Status Before         | Status After                 |
+| ---------------------- | --------------------- | ---------------------------- |
+| Database Tables        | 80% (4/5 tables)      | 100% (5/5 tables)            |
+| TypeScript Types       | 80%                   | 100%                         |
+| Load Balancer Logic    | 100%                  | 100%                         |
+| Workflow Builder UI    | 100%                  | 100%                         |
+| Capacity Dashboard     | 100%                  | 100%                         |
 | **Escalation Manager** | **20% (placeholder)** | **100% (fully implemented)** |
-| **OVERALL** | **80%** | **🎉 100% COMPLETE** |
+| **OVERALL**            | **80%**               | **🎉 100% COMPLETE**         |
 
 ---
 

@@ -349,8 +349,8 @@ Before marking deployment complete:
 ---
 
 **Deployment Status:** [ ] Complete
-**Deployed By:** ******\_\_\_******
-**Deployment Date:** ******\_\_\_******
+**Deployed By:** **\*\***\_\_\_**\*\***
+**Deployment Date:** **\*\***\_\_\_**\*\***
 **Post-Deployment Notes:**
 
 ```

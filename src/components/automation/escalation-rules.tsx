@@ -74,6 +74,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
     return () => {
       channel.unsubscribe()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationId])
 
   async function loadRules() {
@@ -196,7 +197,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                 value={newRule.rule_name}
                 onChange={e => setNewRule({ ...newRule, rule_name: e.target.value })}
                 placeholder='e.g., VIP Customer 15-min SLA'
-                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none'
               />
             </div>
 
@@ -214,7 +215,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                 }
                 min='1'
                 max='1440'
-                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none'
               />
               <p className='mt-1 text-xs text-gray-500'>Escalate if no response within this time</p>
             </div>
@@ -228,7 +229,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                 onChange={e => setNewRule({ ...newRule, priority: parseInt(e.target.value) || 1 })}
                 min='1'
                 max='10'
-                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none'
               />
               <p className='mt-1 text-xs text-gray-500'>Lower number = higher priority</p>
             </div>
@@ -244,7 +245,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                     escalation_target: e.target.value as EscalationRule['escalation_target'],
                   })
                 }
-                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none'
               >
                 <option value='manager'>Manager</option>
                 <option value='team_lead'>Team Lead</option>
@@ -281,7 +282,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                       }}
                       className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                     />
-                    <span className='ml-2 text-sm capitalize text-gray-700'>
+                    <span className='ml-2 text-sm text-gray-700 capitalize'>
                       {channel.replace('_', ' ')}
                     </span>
                   </label>
@@ -350,9 +351,7 @@ export default function EscalationRules({ organizationId }: EscalationRulesProps
                     <h4 className='text-base font-medium text-gray-900'>{rule.rule_name}</h4>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        rule.is_active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
+                        rule.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                       }`}
                     >
                       {rule.is_active ? (

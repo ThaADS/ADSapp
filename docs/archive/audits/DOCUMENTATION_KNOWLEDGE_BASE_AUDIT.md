@@ -1758,7 +1758,7 @@ interface LocalizedArticle {
 
 **Writing Guidelines**:
 
-````markdown
+```markdown
 ## ADSapp Documentation Style Guide
 
 ### Voice & Tone
@@ -1793,7 +1793,7 @@ interface LocalizedArticle {
 5. Next steps (related articles, advanced features)
 6. Troubleshooting (common issues)
 7. Related articles (3-5 relevant links)
-````
+```
 
 **Content Review Checklist**:
 

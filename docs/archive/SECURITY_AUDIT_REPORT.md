@@ -1866,6 +1866,7 @@
    - **Time:** 1 day (mostly setup and testing)
 
 3. **Comprehensive Security Headers**
+
    ```typescript
    // next.config.ts update
    async headers() {

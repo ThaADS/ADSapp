@@ -240,7 +240,6 @@ import { AccessibilityPreferences } from '@/components/accessibility/accessibili
 
 ```tsx
 import { AccessibleModal } from '@/components/accessibility/accessible-modal'
-
 ;<AccessibleModal
   isOpen={isOpen}
   onClose={handleClose}
@@ -256,7 +255,6 @@ import { AccessibleModal } from '@/components/accessibility/accessible-modal'
 
 ```tsx
 import { AccessibleDropdown } from '@/components/accessibility/accessible-dropdown'
-
 ;<AccessibleDropdown
   label='Country'
   options={countries}
@@ -270,7 +268,6 @@ import { AccessibleDropdown } from '@/components/accessibility/accessible-dropdo
 
 ```tsx
 import { AccessibleInput } from '@/components/accessibility/accessible-form'
-
 ;<AccessibleInput
   label='Email Address'
   type='email'
@@ -285,7 +282,6 @@ import { AccessibleInput } from '@/components/accessibility/accessible-form'
 
 ```tsx
 import { AccessibleCheckbox } from '@/components/accessibility/accessible-form'
-
 ;<AccessibleCheckbox
   label='Accept Terms and Conditions'
   name='terms'

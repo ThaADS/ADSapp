@@ -3,18 +3,22 @@
 ## Method 1: Via Supabase Dashboard SQL Editor (Recommended)
 
 ### Step 1: Open SQL Editor
+
 1. Go to: https://app.supabase.com/project/egaiyydjgeqlhthxmvbn/sql
 2. Click "New query"
 
 ### Step 2: Copy Migration SQL
+
 Copy the contents of: `supabase/migrations/044_automation_routing_tables.sql`
 
 ### Step 3: Execute Migration
+
 1. Paste the SQL into the editor
 2. Click "Run" button
 3. Verify: "Success. No rows returned"
 
 ### Step 4: Verify Tables Created
+
 Run this query to verify:
 
 ```sql
@@ -26,6 +30,7 @@ ORDER BY table_name;
 ```
 
 Expected output:
+
 ```
 agent_capacity
 conversation_queue
@@ -34,6 +39,7 @@ routing_rules
 ```
 
 ### Step 5: Verify RLS Policies
+
 ```sql
 SELECT tablename, policyname
 FROM pg_policies
@@ -48,6 +54,7 @@ Expected: 4 rows (one policy per table)
 ## Method 2: Via Supabase CLI (If Logged In)
 
 ### Prerequisites
+
 ```bash
 # Login to Supabase (opens browser)
 npx supabase login
@@ -57,6 +64,7 @@ npx supabase link --project-ref egaiyydjgeqlhthxmvbn
 ```
 
 ### Apply Migration
+
 ```bash
 # Push migration to remote database
 npx supabase db push
@@ -70,6 +78,7 @@ npx supabase migration up --db-url "postgresql://postgres:[PASSWORD]@db.egaiyydj
 ## Method 3: Direct PostgreSQL Connection
 
 ### Connection String
+
 ```
 postgresql://postgres:[DATABASE_PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:5432/postgres
 ```
@@ -77,6 +86,7 @@ postgresql://postgres:[DATABASE_PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:54
 Replace `[DATABASE_PASSWORD]` with your database password.
 
 ### Apply with psql
+
 ```bash
 psql "postgresql://postgres:[PASSWORD]@db.egaiyydjgeqlhthxmvbn.supabase.co:5432/postgres" < supabase/migrations/044_automation_routing_tables.sql
 ```
@@ -92,6 +102,7 @@ npx supabase gen types typescript --project-id egaiyydjgeqlhthxmvbn > src/types/
 ```
 
 Or manually via dashboard:
+
 1. Go to: https://app.supabase.com/project/egaiyydjgeqlhthxmvbn/api
 2. Scroll to "Generate Types"
 3. Copy TypeScript types
@@ -132,6 +143,7 @@ DROP FUNCTION IF EXISTS update_conversation_queue_updated_at() CASCADE;
 ## Migration Impact
 
 ### New Capabilities
+
 ✅ Intelligent conversation routing
 ✅ Agent capacity tracking
 ✅ Load balancing
@@ -139,9 +151,11 @@ DROP FUNCTION IF EXISTS update_conversation_queue_updated_at() CASCADE;
 ✅ Routing analytics
 
 ### Breaking Changes
+
 ❌ None - all new tables, no existing schema changes
 
 ### Performance Impact
+
 🟢 Minimal - indexes created for all common queries
 🟢 RLS policies use efficient organization_id lookups
 
