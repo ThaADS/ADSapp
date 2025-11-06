@@ -73,19 +73,23 @@ Hoofdschakelaar voor alle AI-functionaliteit. Als dit uit staat, worden geen AI-
 #### Model Configuratie
 
 **Primair Model**: Het AI-model dat standaard gebruikt wordt
+
 - **Claude 3.5 Sonnet** (Aanbevolen): Beste balans tussen kwaliteit en kosten
 - **Claude 3 Opus**: Hoogste kwaliteit, duurder
 - **Claude 3 Haiku**: Snelste en goedkoopste optie
 
 **Fallback Model**: Gebruikt als primair model niet beschikbaar is
+
 - **Claude 3 Haiku** (Aanbevolen): Snelle en betrouwbare backup
 
 **Max Tokens**: Maximale lengte van AI-antwoorden (100-4000)
+
 - Lager = goedkoper maar kortere antwoorden
 - Hoger = langere, gedetailleerde antwoorden maar duurder
 - **Aanbevolen**: 1000 tokens
 
 **Temperature**: Creativiteit van AI (0-2)
+
 - Laag (0.3-0.5): Consistente, voorspelbare antwoorden
 - Normaal (0.7): Gebalanceerd
 - Hoog (1.0-2.0): Creatieve, gevarieerde antwoorden
@@ -103,12 +107,14 @@ Stel een budget in om onverwachte kosten te voorkomen:
 4. Klik **Instellingen Opslaan**
 
 Voorbeeld:
+
 ```
 Maandelijks Budget: $50.00
 Budget Waarschuwing: 80%
 ```
 
 **Wat gebeurt er bij budget overschrijding?**
+
 - Bij 80%: Je ontvangt een waarschuwing via email
 - Bij 100%: AI-functies worden automatisch uitgeschakeld
 - Begin volgende maand: Budget reset en functies worden weer ingeschakeld
@@ -120,6 +126,7 @@ Bekijk je huidige verbruik in real-time:
 Dashboard → **Analytics** → **AI Analytics**
 
 Hier zie je:
+
 - 📊 Totaal aantal verzoeken
 - 💰 Totale kosten deze maand
 - ⚡ Gemiddelde response tijd
@@ -149,9 +156,11 @@ AI genereert automatisch 3 verschillende antwoord suggesties op basis van de con
 **AI Suggesties**:
 
 1. **Professioneel** (95% vertrouwen)
+
    > Goededag, bedankt voor uw bericht. Ik ga direct voor u controleren wat de status is van ordernummer #12345. Een moment geduld alstublieft.
 
 2. **Vriendelijk** (92% vertrouwen)
+
    > Hey! Dank je wel dat je contact opneemt. Ik snap dat je graag wilt weten of alles goed is gegaan. Laat me even je order #12345 opzoeken voor je! ⏳
 
 3. **Empathisch** (90% vertrouwen)
@@ -205,6 +214,7 @@ Automatische AI-gegenereerde antwoorden die verstuurd worden als aan bepaalde vo
 **Klant** (om 23:30): "Is mijn bestelling al verzonden?"
 
 **Auto-Antwoord** (Professioneel toon):
+
 > Goedenavond! Bedankt voor je bericht. Momenteel zijn we gesloten, maar we zijn morgen weer beschikbaar vanaf 09:00 uur. We zullen je vraag over je bestelling dan direct beantwoorden. Voor dringende zaken kun je ons bereiken via [telefoonnummer].
 
 > Fijne avond gewenst!
@@ -257,9 +267,11 @@ AI analyseert automatisch de emotie en urgentie van klantgesprekken, zodat je pr
 ### Voorbeeld
 
 **Conversatie**:
+
 > Klant: "Ik ben echt teleurgesteld, al 3 keer gebeld en nog steeds geen oplossing!"
 
 **Sentiment Analyse**:
+
 - **Sentiment**: 😞 Negatief
 - **Score**: -0.75 (75% negatief)
 - **Vertrouwen**: 92%
@@ -270,12 +282,14 @@ AI analyseert automatisch de emotie en urgentie van klantgesprekken, zodat je pr
 ### Acties op basis van Sentiment
 
 **Negatief Sentiment + Hoge Urgentie**:
+
 1. Prioriteer dit gesprek
 2. Wijs toe aan ervaren agent
 3. Reageer binnen 5 minuten
 4. Escaleer naar manager indien nodig
 
 **Positief Sentiment**:
+
 1. Vraag om review/testimonial
 2. Bied cross-sell mogelijkheden
 3. Deel positieve feedback met team
@@ -316,35 +330,42 @@ AI genereert automatisch een beknopte samenvatting van een volledig gesprek, inc
 **Origineel Gesprek** (15 berichten over 45 minuten):
 
 **Samenvatting**:
+
 > Klant heeft vragen over de levering van bestelling #12345. Na controle blijkt verzending vertraagd door logistiek probleem. Track & trace code is gedeeld en bezorging wordt verwacht morgen voor 17:00. Klant is geïnformeerd en tevreden met oplossing.
 
 **Belangrijkste Punten**:
+
 - Bestelling #12345 vertraagd
 - Logistiek probleem bij transporteur
 - Track & trace: ABC123XYZ
 - Verwachte levering: morgen voor 17:00
 
 **Volgende Stappen**:
+
 - Monitor levering morgen
 - Stuur bevestiging na succesvolle bezorging
 - Evalueer incident met logistiek team
 
 **Opgeloste Problemen**:
+
 - Onduidelijkheid over leverstatus
 - Gebrek aan track & trace informatie
 
 **Open Vragen**:
+
 - Geen openstaande vragen
 
 ### Samenvattingen Genereren
 
 **Handmatig**:
+
 1. Open conversatie
 2. Klik op menu **(...)**
 3. Selecteer **"Samenvatten met AI"**
 4. AI genereert samenvatting binnen 5 seconden
 
 **Automatisch**:
+
 - Samenvattingen worden automatisch gegenereerd na afsluiten gesprek
 - Bekijk in conversatie details onder **"AI Samenvatting"**
 
@@ -355,6 +376,7 @@ Voor management: overzicht van meerdere gesprekken tegelijk.
 Dashboard → **Analytics** → **Samenvattingen** → **Executive Summary**
 
 Kies periode en ontvang:
+
 - Totaal aantal gesprekken
 - Meest voorkomende problemen
 - Algemene klant sentiment
@@ -389,11 +411,13 @@ AI genereert professionele WhatsApp Business templates die voldoen aan alle What
 ### Voorbeeld
 
 **Input**:
+
 - Doel: "Herinnering voor geplande afspraak morgen"
 - Toon: Vriendelijk
 - Taal: Nederlands
 
 **Gegenereerd Template**:
+
 ```
 Hoi {{1}}! 👋
 
@@ -404,6 +428,7 @@ Afzeggen? Reageer met STOP.
 ```
 
 **Variabelen**:
+
 - {{1}}: Klant naam
 - {{2}}: Afspraak tijd
 - {{3}}: Locatie
@@ -434,6 +459,7 @@ Test welke template het beste werkt:
 5. Gebruik de best presterende versie
 
 **Variaties kunnen verschillen in**:
+
 - Opening (vraag vs statement)
 - Emoji gebruik
 - Call-to-action formulering
@@ -501,6 +527,7 @@ Bekijk gedetailleerde kosten breakdown:
 Dashboard → **AI Analytics**
 
 Hier zie je:
+
 - 💰 Kosten per feature
 - 📊 Gebruik over tijd
 - 🎯 Kosten per model

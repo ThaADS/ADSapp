@@ -65,6 +65,7 @@ Business Hours allow you to define when your organization is available to respon
 3. Select the **"Organization"** tab at the top of the settings page
 
 **Visual Guide:**
+
 ```
 Dashboard → Left Sidebar → Settings → Organization Tab
 ```
@@ -81,6 +82,7 @@ For each day of the week, you can control whether your organization is available
 2. **To Close on a Day**: Toggle the switch to the **OFF** position (usually shown in gray)
 
 **Example:**
+
 - Monday: **ON** → Your organization is open on Mondays
 - Sunday: **OFF** → Your organization is closed on Sundays
 
@@ -97,6 +99,7 @@ For each day that is enabled (toggled ON):
    - Ensure the end time is later than the start time
 
 **Time Format:**
+
 - Times are displayed in 12-hour format (AM/PM)
 - You can select times in 15-minute intervals (9:00 AM, 9:15 AM, 9:30 AM, etc.)
 
@@ -104,15 +107,15 @@ For each day that is enabled (toggled ON):
 
 Before saving, review your complete weekly schedule:
 
-| Day | Status | Hours |
-|-----|--------|-------|
-| Monday | Open | 9:00 AM - 5:00 PM |
-| Tuesday | Open | 9:00 AM - 5:00 PM |
-| Wednesday | Open | 9:00 AM - 5:00 PM |
-| Thursday | Open | 9:00 AM - 5:00 PM |
-| Friday | Open | 9:00 AM - 5:00 PM |
-| Saturday | Closed | - |
-| Sunday | Closed | - |
+| Day       | Status | Hours             |
+| --------- | ------ | ----------------- |
+| Monday    | Open   | 9:00 AM - 5:00 PM |
+| Tuesday   | Open   | 9:00 AM - 5:00 PM |
+| Wednesday | Open   | 9:00 AM - 5:00 PM |
+| Thursday  | Open   | 9:00 AM - 5:00 PM |
+| Friday    | Open   | 9:00 AM - 5:00 PM |
+| Saturday  | Closed | -                 |
+| Sunday    | Closed | -                 |
 
 #### Step 6: Save Your Changes
 
@@ -131,11 +134,13 @@ Before saving, review your complete weekly schedule:
 Choose hours that accurately reflect when your team can respond to messages:
 
 ✅ **Good Practice:**
+
 - Set hours: 9:00 AM - 5:00 PM
 - Team actually available: 9:00 AM - 5:00 PM
 - Result: Customers get timely responses, expectations are met
 
 ❌ **Avoid:**
+
 - Set hours: 8:00 AM - 8:00 PM
 - Team actually available: 9:00 AM - 5:00 PM
 - Result: Customers expect responses but don't receive them, leading to frustration
@@ -145,11 +150,13 @@ Choose hours that accurately reflect when your team can respond to messages:
 If your team takes a lunch break and cannot respond during that time, consider:
 
 **Option A: Split Hours**
+
 - Morning: 9:00 AM - 12:00 PM
 - Afternoon: 1:00 PM - 5:00 PM
 - (Future feature: Multiple time slots per day)
 
 **Option B: Continuous Hours with Note**
+
 - Hours: 9:00 AM - 5:00 PM
 - Add automation: "Reduced availability 12:00 PM - 1:00 PM"
 
@@ -186,6 +193,7 @@ If you use automation rules that reference business hours:
 #### Problem: Changes Not Saving
 
 **Symptoms:**
+
 - Clicking "Save Changes" doesn't update the schedule
 - Page refreshes but old settings remain
 - Error message appears
@@ -214,6 +222,7 @@ If you use automation rules that reference business hours:
 #### Problem: Automation Not Respecting Business Hours
 
 **Symptoms:**
+
 - Auto-replies sent during business hours
 - Messages not being routed correctly
 
@@ -235,6 +244,7 @@ If you use automation rules that reference business hours:
 #### Problem: Cannot Access Business Hours Settings
 
 **Symptoms:**
+
 - Business Hours section not visible
 - Settings page shows limited options
 
@@ -262,6 +272,7 @@ The Logo Upload feature allows you to add your company logo to your ADSapp organ
 - **Enhance Professionalism**: Present a polished, branded experience
 
 **Who Can Upload Logos:**
+
 - Organization Owners
 - Organization Administrators
 
@@ -274,21 +285,25 @@ The Logo Upload feature allows you to add your company logo to your ADSapp organ
 Before uploading, ensure your logo meets these requirements:
 
 **Supported Formats:**
+
 - JPEG (.jpg, .jpeg)
 - PNG (.png) - recommended for logos with transparency
 - WebP (.webp) - modern format with excellent compression
 - SVG (.svg) - vector format, scalable without quality loss
 
 **File Size Limit:**
+
 - Maximum: 5 MB (5,120 KB)
 - Recommended: Under 500 KB for optimal performance
 
 **Recommended Dimensions:**
+
 - Minimum: 200 × 200 pixels
 - Recommended: 512 × 512 pixels or 1000 × 1000 pixels
 - Aspect Ratio: Square (1:1) or horizontal rectangle (2:1, 3:1)
 
 **Image Quality:**
+
 - Use high-resolution images
 - Ensure good contrast against light and dark backgrounds
 - Test visibility at small sizes
@@ -300,6 +315,7 @@ Before uploading, ensure your logo meets these requirements:
 3. Select the **"Organization"** tab
 
 **Navigation Path:**
+
 ```
 Dashboard → Settings → Organization
 ```
@@ -336,6 +352,7 @@ After upload:
 3. **Test Scaling**: The logo should look good at different sizes
 
 **Success Indicator:**
+
 - Your logo appears in the preview box
 - No error messages are displayed
 
@@ -361,12 +378,12 @@ After saving, verify your logo appears correctly:
 
 #### Supported File Formats
 
-| Format | Extension | Best For | Transparency | Notes |
-|--------|-----------|----------|--------------|-------|
-| **PNG** | .png | Logos with transparency | Yes | Most versatile format |
-| **JPEG** | .jpg, .jpeg | Photographs, complex images | No | Smaller file sizes |
-| **WebP** | .webp | Modern web applications | Yes | Excellent compression |
-| **SVG** | .svg | Vector logos, icons | Yes | Scalable, but automatic security sanitization applied |
+| Format   | Extension   | Best For                    | Transparency | Notes                                                 |
+| -------- | ----------- | --------------------------- | ------------ | ----------------------------------------------------- |
+| **PNG**  | .png        | Logos with transparency     | Yes          | Most versatile format                                 |
+| **JPEG** | .jpg, .jpeg | Photographs, complex images | No           | Smaller file sizes                                    |
+| **WebP** | .webp       | Modern web applications     | Yes          | Excellent compression                                 |
+| **SVG**  | .svg        | Vector logos, icons         | Yes          | Scalable, but automatic security sanitization applied |
 
 **Recommended Format:** PNG for logos with transparent backgrounds
 
@@ -376,13 +393,14 @@ After saving, verify your logo appears correctly:
 
 **Size Recommendations:**
 
-| Image Type | Recommended Size | Reason |
-|------------|------------------|--------|
-| Simple Logo | 50-200 KB | Fast loading, sufficient quality |
-| Detailed Logo | 200-500 KB | Good balance of quality and performance |
-| Photo-based Logo | 500 KB - 1 MB | Higher detail, acceptable load time |
+| Image Type       | Recommended Size | Reason                                  |
+| ---------------- | ---------------- | --------------------------------------- |
+| Simple Logo      | 50-200 KB        | Fast loading, sufficient quality        |
+| Detailed Logo    | 200-500 KB       | Good balance of quality and performance |
+| Photo-based Logo | 500 KB - 1 MB    | Higher detail, acceptable load time     |
 
 **Why Size Matters:**
+
 - Smaller files load faster
 - Better performance on mobile devices
 - Reduced bandwidth usage
@@ -414,18 +432,21 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 - Security vulnerabilities
 
 **What Gets Removed:**
+
 - JavaScript code (`<script>` tags)
 - Event handlers (`onclick`, `onload`, etc.)
 - External references to potentially harmful resources
 - Embedded objects and foreign elements
 
 **What Stays:**
+
 - Visual elements (paths, shapes, text)
 - Colors and styling (fill, stroke, gradients)
 - Transformations and animations (safe CSS animations)
 - Metadata (title, description)
 
 **Result:**
+
 - Your logo displays correctly
 - All security risks are eliminated
 - No action required from you
@@ -462,6 +483,7 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 #### Problem: File Upload Fails
 
 **Symptoms:**
+
 - Error message: "Failed to upload logo"
 - Upload progress bar stalls
 - File doesn't appear in preview
@@ -493,6 +515,7 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 #### Problem: Logo Appears Distorted or Stretched
 
 **Symptoms:**
+
 - Logo looks squished or stretched
 - Aspect ratio doesn't match original
 - Logo appears pixelated or blurry
@@ -515,6 +538,7 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 #### Problem: Logo Not Displaying After Upload
 
 **Symptoms:**
+
 - Upload succeeds but logo doesn't appear
 - Placeholder image still showing
 - Logo visible in settings but not in dashboard
@@ -540,6 +564,7 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 #### Problem: SVG Upload Rejected
 
 **Symptoms:**
+
 - Error: "SVG file contains unsafe content"
 - Upload fails with security warning
 
@@ -560,6 +585,7 @@ SVG (Scalable Vector Graphics) files can contain scripts that pose security risk
 #### Problem: Logo Too Large or Too Small in Display
 
 **Symptoms:**
+
 - Logo appears tiny or oversized
 - Logo doesn't fit properly in header
 
@@ -608,6 +634,7 @@ The Integration Status Monitoring feature provides real-time visibility into the
 3. Click the **"Integrations"** tab at the top of the settings page
 
 **Navigation Path:**
+
 ```
 Dashboard → Settings → Integrations
 ```
@@ -617,6 +644,7 @@ Dashboard → Settings → Integrations
 The Integrations page displays a status card for each connected service:
 
 **Status Card Layout:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ 🟢 WhatsApp Business API                │
@@ -644,16 +672,19 @@ The Integrations page displays a status card for each connected service:
 Each integration shows one of three status levels:
 
 **🟢 Connected (Green Check)**
+
 - Service is fully operational
 - Connection is active and healthy
 - No action required
 
 **🔴 Error (Red X)**
+
 - Service is not responding or misconfigured
 - Connection failed or credentials invalid
 - Immediate action required
 
 **🟡 Checking... (Yellow Warning)**
+
 - Status check in progress
 - Temporary state during verification
 - Wait for check to complete
@@ -669,6 +700,7 @@ To manually check the current status of integrations:
 5. Status updates to "Connected" or "Error"
 
 **Automatic Refresh:**
+
 - Status is automatically checked when you visit the Integrations page
 - Background checks run every 5 minutes while page is open
 
@@ -677,6 +709,7 @@ To manually check the current status of integrations:
 Scan all four integration cards to ensure everything is operational:
 
 **Healthy System Example:**
+
 ```
 ✅ WhatsApp Business API - Connected
 ✅ Stripe Payment System - Connected
@@ -685,6 +718,7 @@ Scan all four integration cards to ensure everything is operational:
 ```
 
 **Issue Detected Example:**
+
 ```
 ✅ WhatsApp Business API - Connected
 ❌ Stripe Payment System - Error: Invalid API key
@@ -699,110 +733,122 @@ Scan all four integration cards to ensure everything is operational:
 #### WhatsApp Business API Status
 
 **What It Checks:**
+
 - WhatsApp API endpoint connectivity
 - Access token validity
 - Phone number ID configuration
 - Webhook configuration
 
 **🟢 Connected Means:**
+
 - Can send and receive WhatsApp messages
 - Webhooks are receiving message notifications
 - API credentials are valid
 
 **🔴 Error Means:**
+
 - Cannot send WhatsApp messages
 - Messages from customers may not be received
 - Immediate troubleshooting required
 
 **Common Error Messages:**
 
-| Error Message | Meaning | Action Required |
-|--------------|---------|-----------------|
-| "Invalid access token" | WhatsApp credentials expired | Update access token in settings |
-| "Phone number not found" | Phone ID misconfigured | Verify phone number ID |
-| "Connection timeout" | WhatsApp API unreachable | Check internet, try again later |
-| "Rate limit exceeded" | Too many API requests | Wait 10 minutes, reduce message volume |
+| Error Message            | Meaning                      | Action Required                        |
+| ------------------------ | ---------------------------- | -------------------------------------- |
+| "Invalid access token"   | WhatsApp credentials expired | Update access token in settings        |
+| "Phone number not found" | Phone ID misconfigured       | Verify phone number ID                 |
+| "Connection timeout"     | WhatsApp API unreachable     | Check internet, try again later        |
+| "Rate limit exceeded"    | Too many API requests        | Wait 10 minutes, reduce message volume |
 
 #### Stripe Payment System Status
 
 **What It Checks:**
+
 - Stripe API endpoint connectivity
 - Stripe API key validity
 - Webhook endpoint configuration
 - Account status
 
 **🟢 Connected Means:**
+
 - Can process subscription payments
 - Can create customer accounts
 - Webhooks receiving payment notifications
 
 **🔴 Error Means:**
+
 - Cannot process new subscriptions
 - Payment updates may not be received
 - Customer billing may be affected
 
 **Common Error Messages:**
 
-| Error Message | Meaning | Action Required |
-|--------------|---------|-----------------|
-| "Invalid API key" | Stripe credentials incorrect | Update Stripe API key |
-| "Account not active" | Stripe account suspended | Contact Stripe support |
-| "Webhook verification failed" | Webhook secret mismatch | Update webhook secret key |
-| "Test mode active" | Using test keys in production | Switch to live API keys |
+| Error Message                 | Meaning                       | Action Required           |
+| ----------------------------- | ----------------------------- | ------------------------- |
+| "Invalid API key"             | Stripe credentials incorrect  | Update Stripe API key     |
+| "Account not active"          | Stripe account suspended      | Contact Stripe support    |
+| "Webhook verification failed" | Webhook secret mismatch       | Update webhook secret key |
+| "Test mode active"            | Using test keys in production | Switch to live API keys   |
 
 #### Email Service (Resend) Status
 
 **What It Checks:**
+
 - Resend API endpoint connectivity
 - Resend API key validity
 - Domain verification status
 - Email sending capability
 
 **🟢 Connected Means:**
+
 - Can send transactional emails
 - Password reset emails will be delivered
 - Notification emails functioning
 
 **🔴 Error Means:**
+
 - Cannot send emails to users
 - Password resets won't work
 - Notifications won't be delivered
 
 **Common Error Messages:**
 
-| Error Message | Meaning | Action Required |
-|--------------|---------|-----------------|
-| "Invalid API key" | Resend credentials incorrect | Update Resend API key |
-| "Domain not verified" | Email domain not configured | Verify domain in Resend dashboard |
-| "Rate limit exceeded" | Sending too many emails | Wait or upgrade Resend plan |
-| "From address not allowed" | Invalid sender email | Configure authorized sender |
+| Error Message              | Meaning                      | Action Required                   |
+| -------------------------- | ---------------------------- | --------------------------------- |
+| "Invalid API key"          | Resend credentials incorrect | Update Resend API key             |
+| "Domain not verified"      | Email domain not configured  | Verify domain in Resend dashboard |
+| "Rate limit exceeded"      | Sending too many emails      | Wait or upgrade Resend plan       |
+| "From address not allowed" | Invalid sender email         | Configure authorized sender       |
 
 #### Database (Supabase) Status
 
 **What It Checks:**
+
 - Database connection health
 - Supabase API endpoint connectivity
 - Authentication service status
 - Real-time features functionality
 
 **🟢 Connected Means:**
+
 - Database queries working normally
 - Real-time updates functioning
 - User authentication operational
 
 **🔴 Error Means:**
+
 - Cannot access stored data
 - Real-time features not working
 - May prevent user login
 
 **Common Error Messages:**
 
-| Error Message | Meaning | Action Required |
-|--------------|---------|-----------------|
-| "Connection refused" | Database unreachable | Check Supabase status, verify credentials |
-| "Invalid project URL" | Supabase URL misconfigured | Update project URL in settings |
-| "Anonymous key invalid" | Anon key expired or wrong | Update Supabase anon key |
-| "Service unavailable" | Supabase maintenance | Wait for Supabase to restore service |
+| Error Message           | Meaning                    | Action Required                           |
+| ----------------------- | -------------------------- | ----------------------------------------- |
+| "Connection refused"    | Database unreachable       | Check Supabase status, verify credentials |
+| "Invalid project URL"   | Supabase URL misconfigured | Update project URL in settings            |
+| "Anonymous key invalid" | Anon key expired or wrong  | Update Supabase anon key                  |
+| "Service unavailable"   | Supabase maintenance       | Wait for Supabase to restore service      |
 
 ---
 
@@ -813,21 +859,25 @@ Scan all four integration cards to ensure everything is operational:
 When you see an error status on any integration:
 
 **Step 1: Identify the Problem**
+
 - Note the exact error message displayed
 - Check "Last Checked" timestamp to see when error started
 - Review details section for additional information
 
 **Step 2: Try Quick Fixes**
+
 1. Click **"Refresh Status"** button to recheck
 2. Refresh your web browser (F5)
 3. Wait 1-2 minutes and check again (temporary network issues may resolve)
 
 **Step 3: Verify Credentials**
+
 - Check that API keys and tokens are correct
 - Ensure credentials haven't expired
 - Verify you're using production keys (not test keys) in production
 
 **Step 4: Check Service Status**
+
 - Visit the service's status page:
   - WhatsApp: https://developers.facebook.com/status
   - Stripe: https://status.stripe.com
@@ -835,6 +885,7 @@ When you see an error status on any integration:
   - Supabase: https://status.supabase.com
 
 **Step 5: Contact Support**
+
 - If issue persists after 30 minutes, contact ADSapp support
 - Provide error message and screenshot of integration status
 - Include approximate time when error started
@@ -846,6 +897,7 @@ When you see an error status on any integration:
 **Problem: "Invalid access token"**
 
 **Solution:**
+
 1. Access Meta Business Manager (business.facebook.com)
 2. Navigate to WhatsApp Manager
 3. Generate a new access token
@@ -855,6 +907,7 @@ When you see an error status on any integration:
 **Problem: "Phone number not found"**
 
 **Solution:**
+
 1. Verify phone number ID in Meta Business Manager
 2. Ensure phone number is verified and active
 3. Update phone number ID in ADSapp settings
@@ -863,6 +916,7 @@ When you see an error status on any integration:
 **Problem: Messages not being received**
 
 **Solution:**
+
 1. Check webhook configuration in Meta Business Manager
 2. Verify webhook URL: `https://your-domain.com/api/webhooks/whatsapp`
 3. Ensure webhook verify token matches ADSapp configuration
@@ -873,6 +927,7 @@ When you see an error status on any integration:
 **Problem: "Invalid API key"**
 
 **Solution:**
+
 1. Log in to Stripe Dashboard (dashboard.stripe.com)
 2. Navigate to Developers → API Keys
 3. Reveal and copy the secret key (starts with `sk_live_` for production)
@@ -882,6 +937,7 @@ When you see an error status on any integration:
 **Problem: "Webhook verification failed"**
 
 **Solution:**
+
 1. Log in to Stripe Dashboard
 2. Navigate to Developers → Webhooks
 3. Locate the webhook endpoint for ADSapp
@@ -892,6 +948,7 @@ When you see an error status on any integration:
 **Problem: Test mode in production**
 
 **Solution:**
+
 1. Verify you're using live API keys (start with `sk_live_`)
 2. Replace test keys (`sk_test_`) with live keys
 3. Update webhook endpoints to use live mode
@@ -902,6 +959,7 @@ When you see an error status on any integration:
 **Problem: "Invalid API key"**
 
 **Solution:**
+
 1. Log in to Resend Dashboard (resend.com/dashboard)
 2. Navigate to API Keys section
 3. Create a new API key if needed
@@ -911,6 +969,7 @@ When you see an error status on any integration:
 **Problem: "Domain not verified"**
 
 **Solution:**
+
 1. Log in to Resend Dashboard
 2. Navigate to Domains section
 3. Add your domain if not present
@@ -923,6 +982,7 @@ When you see an error status on any integration:
 **Problem: Emails not arriving**
 
 **Solution:**
+
 1. Check spam/junk folder
 2. Verify sender email address is authorized in Resend
 3. Check Resend dashboard for delivery logs
@@ -934,6 +994,7 @@ When you see an error status on any integration:
 **Problem: "Connection refused"**
 
 **Solution:**
+
 1. Check Supabase status page: status.supabase.com
 2. Log in to Supabase Dashboard (app.supabase.com)
 3. Verify project is active (not paused)
@@ -943,6 +1004,7 @@ When you see an error status on any integration:
 **Problem: "Invalid project URL"**
 
 **Solution:**
+
 1. Log in to Supabase Dashboard
 2. Select your project
 3. Navigate to Settings → API
@@ -953,6 +1015,7 @@ When you see an error status on any integration:
 **Problem: Real-time features not working**
 
 **Solution:**
+
 1. Verify real-time is enabled in Supabase project settings
 2. Check browser console for connection errors
 3. Ensure WebSocket connections are not blocked by firewall
@@ -992,11 +1055,13 @@ Contact ADSapp Support if:
 Establish a routine for checking integration status:
 
 **Daily (Start of Business Day):**
+
 - Quick scan of all integration status indicators
 - Takes 30 seconds
 - Ensures all systems operational before customers arrive
 
 **Weekly (Monday Morning):**
+
 - Full integration status review
 - Test key functionality:
   - Send test WhatsApp message
@@ -1005,6 +1070,7 @@ Establish a routine for checking integration status:
 - Review any warning messages or degraded performance
 
 **Monthly (First of Month):**
+
 - Comprehensive system health check
 - Review integration logs for patterns
 - Update API keys/tokens if nearing expiration
@@ -1013,11 +1079,13 @@ Establish a routine for checking integration status:
 ### Proactive Maintenance
 
 **Keep Credentials Updated:**
+
 - Set calendar reminders for token expiration dates
 - Rotate API keys quarterly for security
 - Document all credential changes
 
 **Monitor Service Announcements:**
+
 - Subscribe to status updates from:
   - WhatsApp Business Platform updates
   - Stripe API changelog
@@ -1026,6 +1094,7 @@ Establish a routine for checking integration status:
 - Review breaking changes that may require configuration updates
 
 **Test Integrations After Changes:**
+
 - After updating any credentials, verify status immediately
 - Test actual functionality (send message, process payment, etc.)
 - Document what was changed and when
@@ -1033,16 +1102,19 @@ Establish a routine for checking integration status:
 ### Team Communication
 
 **Notify Team of Issues:**
+
 - When integration error detected, inform relevant team members immediately
 - Use internal communication channels (Slack, Teams, etc.)
 - Provide ETA for resolution if known
 
 **Document Resolutions:**
+
 - Keep log of integration issues and how they were resolved
 - Build internal knowledge base for faster future troubleshooting
 - Share learnings with team to prevent recurrence
 
 **Escalation Procedures:**
+
 - Define who to contact for each integration issue
 - Establish escalation timeline (e.g., if not resolved in 2 hours, escalate)
 - Maintain list of support contacts for each service
@@ -1053,27 +1125,27 @@ Establish a routine for checking integration status:
 
 ### Business Hours Configuration
 
-| Task | Steps |
-|------|-------|
-| **Set hours** | Settings → Organization → Business Hours → Toggle day ON → Set times → Save |
-| **Close a day** | Settings → Organization → Business Hours → Toggle day OFF → Save |
-| **Update schedule** | Settings → Organization → Business Hours → Modify times → Save |
+| Task                | Steps                                                                       |
+| ------------------- | --------------------------------------------------------------------------- |
+| **Set hours**       | Settings → Organization → Business Hours → Toggle day ON → Set times → Save |
+| **Close a day**     | Settings → Organization → Business Hours → Toggle day OFF → Save            |
+| **Update schedule** | Settings → Organization → Business Hours → Modify times → Save              |
 
 ### Logo Upload
 
-| Task | Steps |
-|------|-------|
-| **Upload logo** | Settings → Organization → Upload Logo → Select file → Save Changes |
-| **Change logo** | Settings → Organization → Upload Logo (replaces current) → Save Changes |
-| **Requirements** | PNG/JPEG/WebP/SVG, max 5MB, recommended 512×512px |
+| Task             | Steps                                                                   |
+| ---------------- | ----------------------------------------------------------------------- |
+| **Upload logo**  | Settings → Organization → Upload Logo → Select file → Save Changes      |
+| **Change logo**  | Settings → Organization → Upload Logo (replaces current) → Save Changes |
+| **Requirements** | PNG/JPEG/WebP/SVG, max 5MB, recommended 512×512px                       |
 
 ### Integration Status
 
-| Task | Steps |
-|------|-------|
-| **Check status** | Settings → Integrations → View all status cards |
-| **Refresh status** | Settings → Integrations → Click "Refresh Status" on card |
-| **Troubleshoot** | Note error → Try refresh → Check service status → Update credentials → Contact support |
+| Task               | Steps                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| **Check status**   | Settings → Integrations → View all status cards                                        |
+| **Refresh status** | Settings → Integrations → Click "Refresh Status" on card                               |
+| **Troubleshoot**   | Note error → Try refresh → Check service status → Update credentials → Contact support |
 
 ---
 
@@ -1129,6 +1201,7 @@ A: The status check may be failing while the core service works. This can happen
 
 **Q: How do I know if an integration issue is affecting customers?**
 A: Check the specific integration details:
+
 - **WhatsApp Error**: Customers cannot send/receive messages
 - **Stripe Error**: New subscriptions cannot be processed
 - **Email Error**: Password resets and notifications won't send
@@ -1141,16 +1214,19 @@ A: Check the specific integration details:
 This update introduces three powerful features to enhance your ADSapp administration experience:
 
 ✅ **Business Hours Management**
+
 - Control your availability schedule
 - Improve customer expectations
 - Enable time-based automation
 
 ✅ **Logo Upload**
+
 - Customize your organization branding
 - Professional appearance
 - Secure, automatic SVG sanitization
 
 ✅ **Integration Status Monitoring**
+
 - Real-time health monitoring
 - Proactive issue detection
 - Simplified troubleshooting
@@ -1176,4 +1252,4 @@ This update introduces three powerful features to enhance your ADSapp administra
 **Last Updated:** October 20, 2025
 **Next Review:** January 20, 2026
 
-*This document is maintained by the ADSapp team and updated regularly as new features are released.*
+_This document is maintained by the ADSapp team and updated regularly as new features are released._

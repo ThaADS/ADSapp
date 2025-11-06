@@ -51,7 +51,7 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
   enableClickTracking = true,
   enableTimeTracking = true,
   onConversion,
-  onEngagementMilestone
+  onEngagementMilestone,
 }) => {
   const [analytics] = useState(() => new AdvancedDemoAnalytics(supabase))
   const [abTesting] = useState(() => new ABTestingFramework(supabase))
@@ -74,8 +74,8 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
       { name: 'first_minute', threshold: 60000, type: 'time', achieved: false },
       { name: 'active_engagement', threshold: 5, type: 'clicks', achieved: false },
       { name: 'deep_exploration', threshold: 3, type: 'features', achieved: false },
-      { name: 'scroll_engagement', threshold: 10, type: 'scrolls', achieved: false }
-    ] as EngagementMilestone[]
+      { name: 'scroll_engagement', threshold: 10, type: 'scrolls', achieved: false },
+    ] as EngagementMilestone[],
   })
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -97,7 +97,6 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
 
         // Calculate initial lead score
         await updateLeadScore()
-
       } catch (error) {
         console.error('Error initializing demo tracking:', error)
       }
@@ -122,9 +121,9 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
           referrer: document.referrer,
           viewport: {
             width: window.innerWidth,
-            height: window.innerHeight
-          }
-        }
+            height: window.innerHeight,
+          },
+        },
       })
 
       // Update engagement score
@@ -135,104 +134,109 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
   }, [sessionId, analytics])
 
   // Track click events
-  const trackClick = useCallback(async (event: MouseEvent) => {
-    if (!enableClickTracking || !isTracking) return
+  const trackClick = useCallback(
+    async (event: MouseEvent) => {
+      if (!enableClickTracking || !isTracking) return
 
-    const target = event.target as HTMLElement
-    const elementId = target.id || target.className || target.tagName
-    const position = { x: event.clientX, y: event.clientY }
+      const target = event.target as HTMLElement
+      const elementId = target.id || target.className || target.tagName
+      const position = { x: event.clientX, y: event.clientY }
 
-    trackingData.current.totalClicks++
-    trackingData.current.lastActivity = Date.now()
+      trackingData.current.totalClicks++
+      trackingData.current.lastActivity = Date.now()
 
-    try {
-      // Track heat map data
-      if (enableHeatMapping) {
-        await analytics.trackHeatMapInteraction(
-          sessionId,
-          elementId,
-          trackingData.current.currentPage,
-          position,
-          'click',
-          0,
-          {
-            type: target.tagName.toLowerCase(),
-            text: target.textContent?.substring(0, 100),
-            tagName: target.tagName,
-            className: target.className
-          },
-          { width: window.innerWidth, height: window.innerHeight }
-        )
+      try {
+        // Track heat map data
+        if (enableHeatMapping) {
+          await analytics.trackHeatMapInteraction(
+            sessionId,
+            elementId,
+            trackingData.current.currentPage,
+            position,
+            'click',
+            0,
+            {
+              type: target.tagName.toLowerCase(),
+              text: target.textContent?.substring(0, 100),
+              tagName: target.tagName,
+              className: target.className,
+            },
+            { width: window.innerWidth, height: window.innerHeight }
+          )
+        }
+
+        // Track feature interaction
+        const featureName = getFeatureName(target)
+        if (featureName) {
+          trackingData.current.featuresUsed.add(featureName)
+
+          await analytics.trackEvent(sessionId, {
+            event_type: 'feature_interaction',
+            action: 'feature_clicked',
+            category: 'demo',
+            label: featureName,
+            metadata: {
+              element_id: elementId,
+              element_text: target.textContent?.substring(0, 100),
+              position,
+            },
+          })
+        }
+
+        // Check for conversion events
+        if (isConversionElement(target)) {
+          await trackConversion(target)
+        }
+
+        // Update engagement score
+        updateEngagementScore()
+        checkEngagementMilestones()
+      } catch (error) {
+        console.error('Error tracking click:', error)
       }
-
-      // Track feature interaction
-      const featureName = getFeatureName(target)
-      if (featureName) {
-        trackingData.current.featuresUsed.add(featureName)
-
-        await analytics.trackEvent(sessionId, {
-          event_type: 'feature_interaction',
-          action: 'feature_clicked',
-          category: 'demo',
-          label: featureName,
-          metadata: {
-            element_id: elementId,
-            element_text: target.textContent?.substring(0, 100),
-            position
-          }
-        })
-      }
-
-      // Check for conversion events
-      if (isConversionElement(target)) {
-        await trackConversion(target)
-      }
-
-      // Update engagement score
-      updateEngagementScore()
-      checkEngagementMilestones()
-
-    } catch (error) {
-      console.error('Error tracking click:', error)
-    }
-  }, [enableClickTracking, enableHeatMapping, isTracking, sessionId, analytics])
+    },
+    [enableClickTracking, enableHeatMapping, isTracking, sessionId, analytics]
+  )
 
   // Track hover events
-  const trackHover = useCallback(async (event: MouseEvent) => {
-    if (!enableHeatMapping || !isTracking) return
+  const trackHover = useCallback(
+    async (event: MouseEvent) => {
+      if (!enableHeatMapping || !isTracking) return
 
-    const target = event.target as HTMLElement
-    const elementId = target.id || target.className || target.tagName
-    const position = { x: event.clientX, y: event.clientY }
+      const target = event.target as HTMLElement
+      const elementId = target.id || target.className || target.tagName
+      const position = { x: event.clientX, y: event.clientY }
 
-    // Clear existing timeout for this element
-    const existingTimeout = hoverTimeouts.current.get(elementId)
-    if (existingTimeout) {
-      clearTimeout(existingTimeout)
-    }
-
-    // Set new timeout to track hover duration
-    const timeout = setTimeout(async () => {
-      try {
-        await analytics.trackHeatMapInteraction(
-          sessionId,
-          elementId,
-          trackingData.current.currentPage,
-          position,
-          'hover',
-          1000, // 1 second hover
-          {
-            type: target.tagName.toLowerCase(),
-            text: target.textContent?.substring(0, 100)
-          }
-        )
-      } catch (error) {
-        console.error('Error tracking hover:', error)
+      // Clear existing timeout for this element
+      const existingTimeout = hoverTimeouts.current.get(elementId)
+      if (existingTimeout) {
+        clearTimeout(existingTimeout)
       }
-    }, 1000)
 
-    hoverTimeouts.current.set(elementId, timeout)
-  }, [enableHeatMapping, isTracking, sessionId, analytics])
+      // Set new timeout to track hover duration
+      const timeout = setTimeout(async () => {
+        try {
+          await analytics.trackHeatMapInteraction(
+            sessionId,
+            elementId,
+            trackingData.current.currentPage,
+            position,
+            'hover',
+            1000, // 1 second hover
+            {
+              type: target.tagName.toLowerCase(),
+              text: target.textContent?.substring(0, 100),
+            }
+          )
+        } catch (error) {
+          console.error('Error tracking hover:', error)
+        }
+      }, 1000)
+
+      hoverTimeouts.current.set(elementId, timeout)
+    },
+    [enableHeatMapping, isTracking, sessionId, analytics]
+  )
 
   // Track scroll events
   const trackScroll = useCallback(async () => {
@@ -254,90 +258,93 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
         metadata: {
           scroll_y: window.scrollY,
           page_height: document.documentElement.scrollHeight,
-          viewport_height: window.innerHeight
-        }
+          viewport_height: window.innerHeight,
+        },
       })
 
       updateEngagementScore()
       checkEngagementMilestones()
-
     } catch (error) {
       console.error('Error tracking scroll:', error)
     }
   }, [enableScrollTracking, isTracking, sessionId, analytics])
 
   // Track form interactions
-  const trackFormInteraction = useCallback(async (event: Event) => {
-    if (!enableFormTracking || !isTracking) return
+  const trackFormInteraction = useCallback(
+    async (event: Event) => {
+      if (!enableFormTracking || !isTracking) return
 
-    const target = event.target as HTMLInputElement
-    const formElement = target.closest('form')
-    const fieldName = target.name || target.id || 'unknown_field'
+      const target = event.target as HTMLInputElement
+      const formElement = target.closest('form')
+      const fieldName = target.name || target.id || 'unknown_field'
 
-    try {
-      await analytics.trackEvent(sessionId, {
-        event_type: 'form_interaction',
-        action: event.type,
-        category: 'form',
-        label: fieldName,
-        metadata: {
-          form_id: formElement?.id,
-          field_type: target.type,
-          field_name: fieldName,
-          has_value: !!target.value
+      try {
+        await analytics.trackEvent(sessionId, {
+          event_type: 'form_interaction',
+          action: event.type,
+          category: 'form',
+          label: fieldName,
+          metadata: {
+            form_id: formElement?.id,
+            field_type: target.type,
+            field_name: fieldName,
+            has_value: !!target.value,
+          },
+        })
+
+        if (event.type === 'submit') {
+          await trackConversion(target)
         }
-      })
-
-      if (event.type === 'submit') {
-        await trackConversion(target)
+      } catch (error) {
+        console.error('Error tracking form interaction:', error)
       }
-
-    } catch (error) {
-      console.error('Error tracking form interaction:', error)
-    }
-  }, [enableFormTracking, isTracking, sessionId, analytics])
+    },
+    [enableFormTracking, isTracking, sessionId, analytics]
+  )
 
   // Track conversion
-  const trackConversion = useCallback(async (element: HTMLElement) => {
-    try {
-      const conversionData = {
-        element_type: element.tagName.toLowerCase(),
-        element_id: element.id,
-        element_text: element.textContent?.substring(0, 100),
-        page_path: trackingData.current.currentPage,
-        session_duration: Date.now() - trackingData.current.startTime,
-        total_clicks: trackingData.current.totalClicks,
-        features_used: Array.from(trackingData.current.featuresUsed)
+  const trackConversion = useCallback(
+    async (element: HTMLElement) => {
+      try {
+        const conversionData = {
+          element_type: element.tagName.toLowerCase(),
+          element_id: element.id,
+          element_text: element.textContent?.substring(0, 100),
+          page_path: trackingData.current.currentPage,
+          session_duration: Date.now() - trackingData.current.startTime,
+          total_clicks: trackingData.current.totalClicks,
+          features_used: Array.from(trackingData.current.featuresUsed),
+        }
+
+        await analytics.trackEvent(sessionId, {
+          event_type: 'conversion',
+          action: 'conversion_completed',
+          category: 'demo',
+          label: 'signup_clicked',
+          metadata: conversionData,
+        })
+
+        // Track conversion in A/B testing framework
+        await abTesting.trackConversion(sessionId, undefined, {
+          engagement_score: engagementScore,
+          time_spent: Date.now() - trackingData.current.startTime,
+          features_explored: trackingData.current.featuresUsed.size,
+        })
+
+        // Track conversion in optimization engine
+        await conversionEngine.trackConversion(sessionId, undefined, {
+          engagement_score: engagementScore,
+          page_views: trackingData.current.sessionEvents.filter(e => e.type === 'page_view').length,
+          total_interactions: trackingData.current.totalClicks,
+        })
+
+        onConversion?.(conversionData)
+      } catch (error) {
+        console.error('Error tracking conversion:', error)
       }
-
-      await analytics.trackEvent(sessionId, {
-        event_type: 'conversion',
-        action: 'conversion_completed',
-        category: 'demo',
-        label: 'signup_clicked',
-        metadata: conversionData
-      })
-
-      // Track conversion in A/B testing framework
-      await abTesting.trackConversion(sessionId, undefined, {
-        engagement_score: engagementScore,
-        time_spent: Date.now() - trackingData.current.startTime,
-        features_explored: trackingData.current.featuresUsed.size
-      })
-
-      // Track conversion in optimization engine
-      await conversionEngine.trackConversion(sessionId, undefined, {
-        engagement_score: engagementScore,
-        page_views: trackingData.current.sessionEvents.filter(e => e.type === 'page_view').length,
-        total_interactions: trackingData.current.totalClicks
-      })
-
-      onConversion?.(conversionData)
-
-    } catch (error) {
-      console.error('Error tracking conversion:', error)
-    }
-  }, [sessionId, analytics, abTesting, conversionEngine, engagementScore, onConversion])
+    },
+    [sessionId, analytics, abTesting, conversionEngine, engagementScore, onConversion]
+  )
 
   // Update engagement score
   const updateEngagementScore = useCallback(() => {
@@ -383,7 +390,7 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
           threshold: milestone.threshold,
           type: milestone.type,
           engagement_score: engagementScore,
-          time_spent: timeSpent
+          time_spent: timeSpent,
         })
 
         // Track milestone achievement
@@ -395,8 +402,8 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
           metadata: {
             milestone_type: milestone.type,
             threshold: milestone.threshold,
-            time_to_achieve: timeSpent
-          }
+            time_to_achieve: timeSpent,
+          },
         })
       }
     })
@@ -416,10 +423,9 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
         metadata: {
           sales_readiness: leadScore.sales_readiness,
           conversion_probability: leadScore.conversion_probability,
-          category_scores: leadScore.category_scores
-        }
+          category_scores: leadScore.category_scores,
+        },
       })
-
     } catch (error) {
       console.error('Error updating lead score:', error)
     }
@@ -462,7 +468,15 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
       hoverTimeouts.current.forEach(timeout => clearTimeout(timeout))
       hoverTimeouts.current.clear()
     }
-  }, [isTracking, trackClick, trackHover, trackScroll, trackFormInteraction, updateLeadScore, checkEngagementMilestones])
+  }, [
+    isTracking,
+    trackClick,
+    trackHover,
+    trackScroll,
+    trackFormInteraction,
+    updateLeadScore,
+    checkEngagementMilestones,
+  ])
 
   // Track page visibility changes
   useEffect(() => {
@@ -475,8 +489,8 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
           category: 'demo',
           metadata: {
             time_spent: Date.now() - trackingData.current.startTime,
-            engagement_score: engagementScore
-          }
+            engagement_score: engagementScore,
+          },
         })
       } else {
         // Page visible - track session resume
@@ -484,7 +498,7 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
         await analytics.trackEvent(sessionId, {
           event_type: 'session',
           action: 'session_resumed',
-          category: 'demo'
+          category: 'demo',
         })
       }
     }
@@ -525,11 +539,11 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
       '.cta-button',
       'input[type="submit"]',
       '.demo-to-trial',
-      '.get-started'
+      '.get-started',
     ]
 
-    return conversionSelectors.some(selector =>
-      element.matches(selector) || element.closest(selector)
+    return conversionSelectors.some(
+      selector => element.matches(selector) || element.closest(selector)
     )
   }
 
@@ -538,7 +552,7 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
     if (config.cta_button_color) {
       const ctaButtons = document.querySelectorAll('.cta-button, .signup-button')
       ctaButtons.forEach(button => {
-        (button as HTMLElement).style.backgroundColor = config.cta_button_color!
+        ;(button as HTMLElement).style.backgroundColor = config.cta_button_color!
       })
     }
 
@@ -555,12 +569,12 @@ export const DemoTracker: React.FC<DemoTrackerProps> = ({
   }
 
   return (
-    <div ref={containerRef} className="demo-tracker-container">
+    <div ref={containerRef} className='demo-tracker-container'>
       {children}
 
       {/* Optional: Show tracking indicators for debugging */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
+        <div className='bg-opacity-75 fixed right-4 bottom-4 rounded bg-black p-2 text-xs text-white'>
           <div>Tracking: {isTracking ? 'ON' : 'OFF'}</div>
           <div>Engagement: {engagementScore}/100</div>
           <div>Clicks: {trackingData.current.totalClicks}</div>
@@ -581,16 +595,16 @@ interface HeatMapOverlayProps {
 export const HeatMapOverlay: React.FC<HeatMapOverlayProps> = ({
   heatMapData,
   isVisible,
-  onToggle
+  onToggle,
 }) => {
   if (!isVisible) return null
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50">
+    <div className='pointer-events-none fixed inset-0 z-50'>
       {heatMapData.map((data, index) => (
         <div
           key={index}
-          className="absolute pointer-events-none"
+          className='pointer-events-none absolute'
           style={{
             left: data.x_position,
             top: data.y_position,
@@ -598,7 +612,7 @@ export const HeatMapOverlay: React.FC<HeatMapOverlayProps> = ({
             height: '10px',
             backgroundColor: `rgba(255, 0, 0, ${Math.min(data.click_count / 10, 0.8)})`,
             borderRadius: '50%',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
           }}
           title={`${data.click_count} clicks`}
         />
@@ -606,7 +620,7 @@ export const HeatMapOverlay: React.FC<HeatMapOverlayProps> = ({
 
       <button
         onClick={onToggle}
-        className="fixed top-4 right-4 bg-red-500 text-white px-3 py-1 rounded pointer-events-auto"
+        className='pointer-events-auto fixed top-4 right-4 rounded bg-red-500 px-3 py-1 text-white'
       >
         Hide Heat Map
       </button>
@@ -626,7 +640,7 @@ export const EngagementWidget: React.FC<EngagementWidgetProps> = ({
   sessionId,
   engagementScore,
   milestones,
-  onMilestoneClick
+  onMilestoneClick,
 }) => {
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600'
@@ -643,29 +657,23 @@ export const EngagementWidget: React.FC<EngagementWidgetProps> = ({
   }
 
   return (
-    <div className="fixed bottom-4 left-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-xs">
-      <div className="text-sm font-medium text-gray-700 mb-2">
-        Engagement Score
-      </div>
+    <div className='fixed bottom-4 left-4 max-w-xs rounded-lg border border-gray-200 bg-white p-4 shadow-lg'>
+      <div className='mb-2 text-sm font-medium text-gray-700'>Engagement Score</div>
 
       <div className={`text-2xl font-bold ${getScoreColor(engagementScore)} mb-1`}>
         {engagementScore}/100
       </div>
 
-      <div className="text-xs text-gray-500 mb-3">
-        {getScoreLabel(engagementScore)}
-      </div>
+      <div className='mb-3 text-xs text-gray-500'>{getScoreLabel(engagementScore)}</div>
 
       {milestones.length > 0 && (
         <div>
-          <div className="text-xs font-medium text-gray-600 mb-2">
-            Milestones Achieved
-          </div>
-          <div className="space-y-1">
+          <div className='mb-2 text-xs font-medium text-gray-600'>Milestones Achieved</div>
+          <div className='space-y-1'>
             {milestones.map((milestone, index) => (
               <div
                 key={index}
-                className="text-xs text-green-600 cursor-pointer hover:text-green-700"
+                className='cursor-pointer text-xs text-green-600 hover:text-green-700'
                 onClick={() => onMilestoneClick?.(milestone)}
               >
                 ✓ {milestone.replace('_', ' ').toUpperCase()}

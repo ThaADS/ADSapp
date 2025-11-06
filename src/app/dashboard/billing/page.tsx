@@ -22,8 +22,8 @@ const DEFAULT_PLANS = {
       'Up to 500 contacts',
       'Up to 1,000 messages/month',
       'Basic automation',
-      'Email support'
-    ]
+      'Email support',
+    ],
   },
   professional: {
     name: 'Professional',
@@ -37,8 +37,8 @@ const DEFAULT_PLANS = {
       'Advanced automation',
       'Custom templates',
       'Priority support',
-      'Analytics dashboard'
-    ]
+      'Analytics dashboard',
+    ],
   },
   enterprise: {
     name: 'Enterprise',
@@ -53,12 +53,15 @@ const DEFAULT_PLANS = {
       'Dedicated support',
       'Custom branding',
       'Advanced analytics',
-      'SLA guarantees'
-    ]
-  }
+      'SLA guarantees',
+    ],
+  },
 }
 
-export default function BillingPage({ organization: propOrganization, profile: propProfile }: BillingPageProps) {
+export default function BillingPage({
+  organization: propOrganization,
+  profile: propProfile,
+}: BillingPageProps) {
   const [organization, setOrganization] = useState<Organization | null>(propOrganization || null)
   const [profile, setProfile] = useState<Profile | null>(propProfile || null)
   const [usage, setUsage] = useState(null)
@@ -71,7 +74,9 @@ export default function BillingPage({ organization: propOrganization, profile: p
 
         // Get current user if not provided via props
         if (!profile) {
-          const { data: { user } } = await supabase.auth.getUser()
+          const {
+            data: { user },
+          } = await supabase.auth.getUser()
           if (user) {
             const { data: userProfile } = await supabase
               .from('profiles')
@@ -117,14 +122,14 @@ export default function BillingPage({ organization: propOrganization, profile: p
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="bg-white rounded-lg p-6 space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+      <div className='min-h-screen bg-gray-50'>
+        <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+          <div className='animate-pulse space-y-6'>
+            <div className='h-8 w-1/4 rounded bg-gray-200'></div>
+            <div className='space-y-4 rounded-lg bg-white p-6'>
+              <div className='h-4 w-3/4 rounded bg-gray-200'></div>
+              <div className='h-4 w-1/2 rounded bg-gray-200'></div>
+              <div className='h-4 w-2/3 rounded bg-gray-200'></div>
             </div>
           </div>
         </div>
@@ -134,11 +139,11 @@ export default function BillingPage({ organization: propOrganization, profile: p
 
   if (!organization || !profile) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
-            <p className="mt-2 text-gray-600">Please log in to access billing information.</p>
+      <div className='min-h-screen bg-gray-50'>
+        <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+          <div className='text-center'>
+            <h1 className='text-2xl font-bold text-gray-900'>Access Denied</h1>
+            <p className='mt-2 text-gray-600'>Please log in to access billing information.</p>
           </div>
         </div>
       </div>
@@ -147,11 +152,11 @@ export default function BillingPage({ organization: propOrganization, profile: p
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Billing & Subscription</h1>
-            <p className="mt-2 text-gray-600">
+      <div className='min-h-screen bg-gray-50'>
+        <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+          <div className='mb-8'>
+            <h1 className='text-3xl font-bold text-gray-900'>Billing & Subscription</h1>
+            <p className='mt-2 text-gray-600'>
               Manage your subscription, view usage metrics, and download invoices.
             </p>
           </div>

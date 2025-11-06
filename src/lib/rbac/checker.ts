@@ -7,7 +7,13 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { Permission, Resource, Action, PermissionConditions, permissionMatches } from './permissions'
+import {
+  Permission,
+  Resource,
+  Action,
+  PermissionConditions,
+  permissionMatches,
+} from './permissions'
 import { recordRbacEvent } from '@/lib/telemetry/metrics'
 
 export interface PermissionCheckContext {
@@ -22,9 +28,7 @@ export interface PermissionCheckContext {
 /**
  * Check if user has permission for a resource/action
  */
-export async function hasPermission(
-  context: PermissionCheckContext
-): Promise<boolean> {
+export async function hasPermission(context: PermissionCheckContext): Promise<boolean> {
   const startTime = Date.now()
 
   try {
@@ -89,10 +93,7 @@ export async function hasPermission(
       for (const permission of permissions) {
         if (permissionMatches(permission, context.resource, context.action)) {
           // Check conditions
-          const conditionsMet = await checkConditions(
-            permission.conditions,
-            context
-          )
+          const conditionsMet = await checkConditions(permission.conditions, context)
 
           if (conditionsMet) {
             return true
@@ -121,9 +122,7 @@ export async function hasPermission(
  * Check permission override
  * Returns: true (allowed), false (denied), null (no override)
  */
-async function checkPermissionOverride(
-  context: PermissionCheckContext
-): Promise<boolean | null> {
+async function checkPermissionOverride(context: PermissionCheckContext): Promise<boolean | null> {
   const supabase = await createClient()
 
   const { data: override } = await supabase
@@ -156,7 +155,10 @@ async function checkConditions(
 
   // Check ownership condition
   if (conditions.own && context.resourceId && context.resourceData) {
-    const ownerId = context.resourceData.user_id || context.resourceData.created_by || context.resourceData.assigned_to
+    const ownerId =
+      context.resourceData.user_id ||
+      context.resourceData.created_by ||
+      context.resourceData.assigned_to
     if (ownerId !== context.userId) {
       return false
     }
@@ -290,14 +292,10 @@ export async function hasAllPermissions(
 /**
  * Require permission (throws if not allowed)
  */
-export async function requirePermission(
-  context: PermissionCheckContext
-): Promise<void> {
+export async function requirePermission(context: PermissionCheckContext): Promise<void> {
   const allowed = await hasPermission(context)
 
   if (!allowed) {
-    throw new Error(
-      `Permission denied: ${context.action} on ${context.resource}`
-    )
+    throw new Error(`Permission denied: ${context.action} on ${context.resource}`)
   }
 }

@@ -7,6 +7,7 @@
 ## 🎯 Wat ga je bereiken?
 
 Na deze guide kun je:
+
 - ✅ AI features inschakelen en configureren
 - ✅ Eerste concept suggestie genereren
 - ✅ Sentiment van conversatie analyseren
@@ -70,6 +71,7 @@ Budget Waarschuwing (%): 80
 ```
 
 **Wat betekent dit?**
+
 - Je betaalt max $50 per maand
 - Bij $40 (80%) krijg je een waarschuwing
 - Bij $50 worden AI features gepauzeerd
@@ -90,6 +92,7 @@ Klik **"Instellingen Opslaan"**.
 Ga naar **Inbox** → Selecteer een actieve conversatie met minimaal 3 berichten.
 
 **Geen conversatie beschikbaar?** Gebruik test conversatie:
+
 ```
 Dashboard → Demo Mode → Inbox
 ```
@@ -128,12 +131,14 @@ Je ziet 3 verschillende suggesties:
 ### 3.5 Experimenteer (Optioneel)
 
 **Verbeteren**: Klik op potlood icoon 🖊️ bij suggestie
+
 ```
 Feedback: "Maak het formeler" of "Voeg meer emoji's toe"
 → AI past suggestie aan
 ```
 
 **Nieuwe suggesties**: Klik **"🔄 Nieuwe Suggesties"**
+
 ```
 → 3 totaal nieuwe varianten
 ```
@@ -155,6 +160,7 @@ In de inbox zie je bij elke conversatie een sentiment badge:
 Klik op een conversatie → Rechterkant zie je **"Sentiment Analyse"**
 
 **Details**:
+
 ```
 Sentiment: 😊 Positief
 Score: +0.75 (75% positief)
@@ -172,6 +178,7 @@ Onderwerpen:
 **Negatief + Hoge Urgentie** = Direct actie!
 
 Filter inbox:
+
 ```
 Inbox → Filter (🔍) → Sentiment: Negatief → Urgentie: Hoog
 ```
@@ -204,6 +211,7 @@ Max Lengte: 160
 Klik **"Genereren"** → Wacht 3-5 seconden
 
 **Resultaat**:
+
 ```
 Hoi {{1}}! 🎉
 
@@ -216,6 +224,7 @@ Vragen? Reageer op dit bericht!
 ```
 
 **Variabelen**:
+
 - {{1}}: Klant naam
 - {{2}}: Order nummer
 - {{3}}: Track & trace link
@@ -238,21 +247,25 @@ Vragen? Reageer op dit bericht!
 ### Wat nu?
 
 **Dag 1-7: Verken & Leer**
+
 - Gebruik concept suggesties voor elke conversatie
 - Monitor sentiment van alle klanten
 - Experimenteer met verschillende tones
 
 **Week 2: Optimaliseren**
+
 - Bekijk AI Analytics voor gebruik patterns
 - Verfijn instellingen op basis van ervaring
 - Train je team in beste practices
 
 **Week 3: Geavanceerd**
+
 - Schakel Auto-Antwoorden in (met review)
 - Maak conversatie samenvattingen
 - A/B test templates
 
 **Week 4: Mastery**
+
 - Optimaliseer kosten (gebruik Haiku waar mogelijk)
 - Automatiseer workflows met auto-antwoorden
 - Export analytics voor management rapportage
@@ -268,6 +281,7 @@ Dashboard → Analytics → AI Analytics
 ```
 
 **Wat je zou moeten zien na Week 1**:
+
 - ✅ 10-50+ AI verzoeken
 - ✅ $2-5 kosten (afhankelijk van volume)
 - ✅ 80%+ acceptatie rate voor suggesties
@@ -280,6 +294,7 @@ AI Instellingen → Budget Beheer
 ```
 
 **Gezonde status**:
+
 ```
 Budget: $50.00
 Verbruik: $8.23 (16.5%)
@@ -294,6 +309,7 @@ Status: ✅ Binnen budget
 ### "Geen AI suggesties beschikbaar"
 
 **Oplossing**:
+
 1. Check of conversatie minimaal 3 berichten heeft
 2. Ververs pagina (Ctrl + F5)
 3. Check AI Instellingen → Concept Suggesties is aan
@@ -301,6 +317,7 @@ Status: ✅ Binnen budget
 ### "Sentiment analyse faalt"
 
 **Oplossing**:
+
 1. Check of conversatie tekst berichten bevat (niet alleen emoji)
 2. Probeer handmatig: (...) menu → "Sentiment Analyseren"
 3. Wacht 30 sec en probeer opnieuw
@@ -308,11 +325,13 @@ Status: ✅ Binnen budget
 ### "Budget waarschuwing na 1 dag"
 
 **Mogelijke oorzaken**:
+
 - Budget te laag ingesteld voor je volume
 - Verkeerde model gekozen (Opus is 5x duurder dan Sonnet)
 - Team members gebruiken AI intensief
 
 **Oplossing**:
+
 1. Check AI Analytics → Kosten breakdown
 2. Verhoog budget of switch naar Haiku model
 3. Beperk max_tokens in instellingen
@@ -324,25 +343,30 @@ Status: ✅ Binnen budget
 ### Dieper Duiken
 
 **Complete Documentatie**:
+
 - 📖 [AI Features Gebruikershandleiding](./AI_FEATURES_GEBRUIKERSHANDLEIDING.md)
 - ❓ [FAQ - Veelgestelde Vragen](./AI_FAQ_NEDERLANDS.md)
 - 🔧 [Technische Documentatie](./AI_TECHNICAL_DOCUMENTATION.md)
 
 **Video Tutorials**:
+
 - 🎥 Dashboard walkthrough: `dashboard.adsapp.nl/training/ai-basics`
 - 🎥 Best practices: `dashboard.adsapp.nl/training/ai-advanced`
 
 **Live Training**:
+
 - 👥 Wekelijkse webinars: Elke dinsdag 14:00 CET
 - 📧 Inschrijven: training@adsapp.nl
 
 ### Community
 
 **Vraag & Antwoord**:
+
 - 💬 Forum: `community.adsapp.nl`
 - 💬 Discord: `discord.gg/adsapp`
 
 **Tips & Tricks**:
+
 - 📰 Blog: `blog.adsapp.nl/ai-tips`
 - 📱 Newsletter: Wekelijkse AI updates
 
@@ -424,6 +448,7 @@ Ctrl + K    = Open AI Analytics
 ### Tip 2: Bulk Operaties
 
 Samenvattingen van meerdere gesprekken tegelijk:
+
 ```
 Inbox → Selecteer 5-10 gesprekken (Ctrl + Click)
 → Bulk Acties → "Samenvatten met AI"
@@ -433,6 +458,7 @@ Inbox → Selecteer 5-10 gesprekken (Ctrl + Click)
 ### Tip 3: API Integratie
 
 Geavanceerd? Gebruik AI via API:
+
 ```bash
 # Concept suggestie genereren
 curl -X POST https://api.adsapp.nl/ai/drafts \

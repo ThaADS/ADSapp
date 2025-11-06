@@ -52,7 +52,7 @@ class AlertManager {
         description: 'API response time is above acceptable threshold',
         enabled: true,
         cooldown: 5,
-        condition: (metrics) => metrics.averageResponseTime > 2000
+        condition: metrics => metrics.averageResponseTime > 2000,
       },
       {
         id: 'high-error-rate',
@@ -62,7 +62,7 @@ class AlertManager {
         description: 'Error rate is above 5%',
         enabled: true,
         cooldown: 2,
-        condition: (metrics) => metrics.errorRate > 0.05
+        condition: metrics => metrics.errorRate > 0.05,
       },
       {
         id: 'memory-usage-high',
@@ -72,7 +72,7 @@ class AlertManager {
         description: 'Memory usage is above 85%',
         enabled: true,
         cooldown: 10,
-        condition: (metrics) => metrics.memoryUsage > 0.85
+        condition: metrics => metrics.memoryUsage > 0.85,
       },
       {
         id: 'database-connection-failure',
@@ -82,7 +82,7 @@ class AlertManager {
         description: 'Database connection has failed',
         enabled: true,
         cooldown: 1,
-        condition: (metrics) => metrics.databaseStatus === 'down'
+        condition: metrics => metrics.databaseStatus === 'down',
       },
       {
         id: 'failed-logins-spike',
@@ -92,7 +92,7 @@ class AlertManager {
         description: 'Unusual number of failed login attempts',
         enabled: true,
         cooldown: 5,
-        condition: (metrics) => metrics.failedLogins > 10
+        condition: metrics => metrics.failedLogins > 10,
       },
       {
         id: 'subscription-failures',
@@ -102,8 +102,8 @@ class AlertManager {
         description: 'High number of subscription payment failures',
         enabled: true,
         cooldown: 15,
-        condition: (metrics) => metrics.paymentFailures > 5
-      }
+        condition: metrics => metrics.paymentFailures > 5,
+      },
     ]
   }
 
@@ -176,7 +176,7 @@ class AlertManager {
       metadata: {
         ruleId: rule.id,
         metrics: this.sanitizeMetrics(metrics),
-      }
+      },
     }
 
     this.alerts.push(alert)
@@ -453,9 +453,7 @@ class AlertManager {
 
   // Public methods
   public getAlerts(resolved?: boolean): Alert[] {
-    return this.alerts.filter(alert =>
-      resolved === undefined || alert.resolved === resolved
-    )
+    return this.alerts.filter(alert => resolved === undefined || alert.resolved === resolved)
   }
 
   public resolveAlert(alertId: string) {

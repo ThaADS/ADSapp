@@ -1,21 +1,26 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+  validatePagination,
+} from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
@@ -42,9 +47,11 @@ export async function GET(request: NextRequest) {
       query = query.eq('whatsapp_status', whatsappStatus)
     }
 
-    const { data: templates, error, count } = await query
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
+    const {
+      data: templates,
+      error,
+      count,
+    } = await query.order('created_at', { ascending: false }).range(offset, offset + limit - 1)
 
     if (error) {
       throw error
@@ -52,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     // Get usage statistics for each template
     const templatesWithStats = await Promise.all(
-      (templates || []).map(async (template) => {
+      (templates || []).map(async template => {
         const { data: usage } = await supabase
           .from('messages')
           .select('id')
@@ -60,7 +67,7 @@ export async function GET(request: NextRequest) {
 
         return {
           ...template,
-          usageCount: usage?.length || 0
+          usageCount: usage?.length || 0,
         }
       })
     )
@@ -71,10 +78,9 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: count || 0,
-        hasMore: offset + limit < (count || 0)
-      }
+        hasMore: offset + limit < (count || 0),
+      },
     })
-
   } catch (error) {
     console.error('Error fetching templates:', error)
     return createErrorResponse(error)
@@ -83,38 +89,32 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
+    const { organizationId, userId } = getTenantContext(request)
 
-    const body = await request.json();
+    const body = await request.json()
     const {
       name,
       content,
       category = 'general',
       variables = [],
       whatsappTemplate,
-      submitToWhatsApp = false
+      submitToWhatsApp = false,
     } = body
 
     if (!name || !content) {
-      return NextResponse.json(
-        { error: 'Name and content are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Name and content are required' }, { status: 400 })
     }
 
     const supabase = await createClient()
 
     // Validate variables format
     if (!Array.isArray(variables)) {
-      return NextResponse.json(
-        { error: 'Variables must be an array' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Variables must be an array' }, { status: 400 })
     }
 
     for (const variable of variables) {
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
         whatsapp_template_name: whatsappTemplate?.name,
         whatsapp_status: whatsappStatus,
         whatsapp_template_data: whatsappTemplate,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single()
@@ -187,7 +187,6 @@ export async function POST(request: NextRequest) {
     }
 
     return createSuccessResponse(template, 201)
-
   } catch (error) {
     console.error('Error creating template:', error)
     return createErrorResponse(error)

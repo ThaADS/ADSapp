@@ -13,32 +13,32 @@ export default async function DebugProfilePage() {
     .single()
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Debug Profile Information</h1>
-        
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">User Information</h2>
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+    <div className='min-h-screen bg-gray-50 p-8'>
+      <div className='mx-auto max-w-4xl'>
+        <h1 className='mb-6 text-2xl font-bold'>Debug Profile Information</h1>
+
+        <div className='mb-6 rounded-lg bg-white p-6 shadow'>
+          <h2 className='mb-4 text-lg font-semibold'>User Information</h2>
+          <pre className='overflow-auto rounded bg-gray-100 p-4 text-sm'>
             {JSON.stringify(user, null, 2)}
           </pre>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Profile Information</h2>
+        <div className='mb-6 rounded-lg bg-white p-6 shadow'>
+          <h2 className='mb-4 text-lg font-semibold'>Profile Information</h2>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div className='mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700'>
               <strong>Error:</strong> {error.message}
             </div>
           )}
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+          <pre className='overflow-auto rounded bg-gray-100 p-4 text-sm'>
             {JSON.stringify(profile, null, 2)}
           </pre>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Key Checks</h2>
-          <ul className="space-y-2">
+        <div className='rounded-lg bg-white p-6 shadow'>
+          <h2 className='mb-4 text-lg font-semibold'>Key Checks</h2>
+          <ul className='space-y-2'>
             <li>
               <strong>User ID:</strong> {user.id}
             </li>

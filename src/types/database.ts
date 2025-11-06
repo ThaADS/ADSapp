@@ -1,72 +1,66 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 // Common API types
 export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
 }
 
 export interface PaginatedResponse<T = unknown> {
-  data: T[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  hasMore: boolean;
+  data: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+  hasMore: boolean
 }
 
 export interface ErrorResponse {
-  error: string;
-  code?: string;
-  details?: unknown;
+  error: string
+  code?: string
+  details?: unknown
 }
 
 // Database table row types (extracted for easier use)
-export type Organization = Database['public']['Tables']['organizations']['Row'];
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Contact = Database['public']['Tables']['contacts']['Row'];
-export type Conversation = Database['public']['Tables']['conversations']['Row'];
-export type Message = Database['public']['Tables']['messages']['Row'];
-export type DemoSession = Database['public']['Tables']['demo_sessions']['Row'];
-export type DemoSessionActivity = Database['public']['Tables']['demo_session_activities']['Row'];
-export type DemoLeadScore = Database['public']['Tables']['demo_lead_scores']['Row'];
-export type ConversionFunnel = Database['public']['Tables']['conversion_funnels']['Row'];
-export type WebhookEvent = Database['public']['Tables']['webhook_events']['Row'];
-export type Refund = Database['public']['Tables']['refunds']['Row'];
-export type PaymentIntent = Database['public']['Tables']['payment_intents']['Row'];
-export type BillingEvent = Database['public']['Tables']['billing_events']['Row'];
-export type Subscription = Database['public']['Tables']['subscriptions']['Row'];
+export type Organization = Database['public']['Tables']['organizations']['Row']
+export type Profile = Database['public']['Tables']['profiles']['Row']
+export type Contact = Database['public']['Tables']['contacts']['Row']
+export type Conversation = Database['public']['Tables']['conversations']['Row']
+export type Message = Database['public']['Tables']['messages']['Row']
+export type DemoSession = Database['public']['Tables']['demo_sessions']['Row']
+export type DemoSessionActivity = Database['public']['Tables']['demo_session_activities']['Row']
+export type DemoLeadScore = Database['public']['Tables']['demo_lead_scores']['Row']
+export type ConversionFunnel = Database['public']['Tables']['conversion_funnels']['Row']
+export type WebhookEvent = Database['public']['Tables']['webhook_events']['Row']
+export type Refund = Database['public']['Tables']['refunds']['Row']
+export type PaymentIntent = Database['public']['Tables']['payment_intents']['Row']
+export type BillingEvent = Database['public']['Tables']['billing_events']['Row']
+export type Subscription = Database['public']['Tables']['subscriptions']['Row']
 
 // Insert types
-export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert'];
-export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
-export type ContactInsert = Database['public']['Tables']['contacts']['Insert'];
-export type ConversationInsert = Database['public']['Tables']['conversations']['Insert'];
-export type MessageInsert = Database['public']['Tables']['messages']['Insert'];
-export type WebhookEventInsert = Database['public']['Tables']['webhook_events']['Insert'];
-export type RefundInsert = Database['public']['Tables']['refunds']['Insert'];
-export type PaymentIntentInsert = Database['public']['Tables']['payment_intents']['Insert'];
-export type BillingEventInsert = Database['public']['Tables']['billing_events']['Insert'];
-export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert'];
+export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert']
+export type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+export type ContactInsert = Database['public']['Tables']['contacts']['Insert']
+export type ConversationInsert = Database['public']['Tables']['conversations']['Insert']
+export type MessageInsert = Database['public']['Tables']['messages']['Insert']
+export type WebhookEventInsert = Database['public']['Tables']['webhook_events']['Insert']
+export type RefundInsert = Database['public']['Tables']['refunds']['Insert']
+export type PaymentIntentInsert = Database['public']['Tables']['payment_intents']['Insert']
+export type BillingEventInsert = Database['public']['Tables']['billing_events']['Insert']
+export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert']
 
 // Update types
-export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update'];
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
-export type ContactUpdate = Database['public']['Tables']['contacts']['Update'];
-export type ConversationUpdate = Database['public']['Tables']['conversations']['Update'];
-export type MessageUpdate = Database['public']['Tables']['messages']['Update'];
-export type WebhookEventUpdate = Database['public']['Tables']['webhook_events']['Update'];
-export type RefundUpdate = Database['public']['Tables']['refunds']['Update'];
-export type PaymentIntentUpdate = Database['public']['Tables']['payment_intents']['Update'];
-export type BillingEventUpdate = Database['public']['Tables']['billing_events']['Update'];
-export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update'];
+export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update']
+export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+export type ContactUpdate = Database['public']['Tables']['contacts']['Update']
+export type ConversationUpdate = Database['public']['Tables']['conversations']['Update']
+export type MessageUpdate = Database['public']['Tables']['messages']['Update']
+export type WebhookEventUpdate = Database['public']['Tables']['webhook_events']['Update']
+export type RefundUpdate = Database['public']['Tables']['refunds']['Update']
+export type PaymentIntentUpdate = Database['public']['Tables']['payment_intents']['Update']
+export type BillingEventUpdate = Database['public']['Tables']['billing_events']['Update']
+export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update']
 
 export type Database = {
   public: {
@@ -119,12 +113,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "ai_settings_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'ai_settings_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: true
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       ai_responses: {
@@ -178,19 +172,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "ai_responses_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'ai_responses_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "ai_responses_conversation_id_fkey"
-            columns: ["conversation_id"]
+            foreignKeyName: 'ai_responses_conversation_id_fkey'
+            columns: ['conversation_id']
             isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
+          },
         ]
       }
       conversation_ai_metadata: {
@@ -244,19 +238,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "conversation_ai_metadata_conversation_id_fkey"
-            columns: ["conversation_id"]
+            foreignKeyName: 'conversation_ai_metadata_conversation_id_fkey'
+            columns: ['conversation_id']
             isOneToOne: true
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "conversation_ai_metadata_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'conversation_ai_metadata_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       team_invitations: {
@@ -304,26 +298,26 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "team_invitations_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'team_invitations_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "team_invitations_invited_by_fkey"
-            columns: ["invited_by"]
+            foreignKeyName: 'team_invitations_invited_by_fkey'
+            columns: ['invited_by']
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "team_invitations_accepted_by_fkey"
-            columns: ["accepted_by"]
+            foreignKeyName: 'team_invitations_accepted_by_fkey'
+            columns: ['accepted_by']
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
         ]
       }
       message_templates: {
@@ -333,7 +327,13 @@ export type Database = {
           name: string
           content: string
           variables: string[] | null
-          category: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          category:
+            | 'quick_reply'
+            | 'greeting'
+            | 'away_message'
+            | 'appointment'
+            | 'follow_up'
+            | 'custom'
           language: string
           ai_generated: boolean
           ai_prompt: string | null
@@ -351,7 +351,13 @@ export type Database = {
           name: string
           content: string
           variables?: string[] | null
-          category?: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          category?:
+            | 'quick_reply'
+            | 'greeting'
+            | 'away_message'
+            | 'appointment'
+            | 'follow_up'
+            | 'custom'
           language?: string
           ai_generated?: boolean
           ai_prompt?: string | null
@@ -369,7 +375,13 @@ export type Database = {
           name?: string
           content?: string
           variables?: string[] | null
-          category?: 'quick_reply' | 'greeting' | 'away_message' | 'appointment' | 'follow_up' | 'custom'
+          category?:
+            | 'quick_reply'
+            | 'greeting'
+            | 'away_message'
+            | 'appointment'
+            | 'follow_up'
+            | 'custom'
           language?: string
           ai_generated?: boolean
           ai_prompt?: string | null
@@ -383,19 +395,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "message_templates_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'message_templates_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "message_templates_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: 'message_templates_created_by_fkey'
+            columns: ['created_by']
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
         ]
       }
       webhook_events: {
@@ -494,12 +506,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "refunds_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'refunds_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       payment_intents: {
@@ -547,12 +559,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "payment_intents_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'payment_intents_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       billing_events: {
@@ -591,12 +603,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "billing_events_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'billing_events_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       subscriptions: {
@@ -641,12 +653,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'subscriptions_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       demo_sessions: {
@@ -911,12 +923,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'profiles_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       contacts: {
@@ -964,12 +976,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "contacts_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'contacts_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       conversations: {
@@ -1011,26 +1023,26 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "conversations_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: 'conversations_organization_id_fkey'
+            columns: ['organization_id']
             isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "conversations_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: 'conversations_contact_id_fkey'
+            columns: ['contact_id']
             isOneToOne: false
-            referencedRelation: "contacts"
-            referencedColumns: ["id"]
+            referencedRelation: 'contacts'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "conversations_assigned_to_fkey"
-            columns: ["assigned_to"]
+            foreignKeyName: 'conversations_assigned_to_fkey'
+            columns: ['assigned_to']
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
         ]
       }
       messages: {
@@ -1081,19 +1093,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "messages_conversation_id_fkey"
-            columns: ["conversation_id"]
+            foreignKeyName: 'messages_conversation_id_fkey'
+            columns: ['conversation_id']
             isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
+            foreignKeyName: 'messages_sender_id_fkey'
+            columns: ['sender_id']
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
         ]
       }
     }

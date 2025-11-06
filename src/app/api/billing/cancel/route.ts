@@ -14,19 +14,16 @@ export async function POST(request: NextRequest) {
   }
 
   // Apply strict API middleware (tenant validation + strict rate limiting)
-  const middlewareResponse = await strictApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await strictApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { immediate = false, reason, feedback } = await request.json();
+    const { organizationId } = getTenantContext(request)
+    const { immediate = false, reason, feedback } = await request.json()
 
     if (!reason) {
-      return NextResponse.json(
-        { error: 'Cancellation reason is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Cancellation reason is required' }, { status: 400 })
     }
 
     const lifecycleManager = new SubscriptionLifecycleManager()

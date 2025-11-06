@@ -1,12 +1,24 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 'use client'
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Settings, Phone, UserPlus, MoreVertical, Star, Archive, Trash2, MessageSquare, Users, TrendingUp, Filter, Search } from 'lucide-react'
+import {
+  Settings,
+  Phone,
+  UserPlus,
+  MoreVertical,
+  Star,
+  Archive,
+  Trash2,
+  MessageSquare,
+  Users,
+  TrendingUp,
+  Filter,
+  Search,
+} from 'lucide-react'
 import EnhancedConversationList from './enhanced-conversation-list'
 import EnhancedMessageList from './enhanced-message-list'
 import EnhancedMessageInput from './enhanced-message-input'
@@ -103,12 +115,12 @@ function ConversationDetails({
   onPriorityChange,
   onAssigneeChange,
   onAddTag,
-  onRemoveTag
+  onRemoveTag,
 }: ConversationDetailsProps) {
   const [newTag, setNewTag] = useState('')
   const [agents] = useState([
     { id: '1', name: 'John Doe' },
-    { id: '2', name: 'Jane Smith' }
+    { id: '2', name: 'Jane Smith' },
   ])
 
   const handleAddTag = () => {
@@ -119,104 +131,101 @@ function ConversationDetails({
   }
 
   return (
-    <div className="w-80 bg-gray-50 border-l border-gray-200 flex flex-col">
+    <div className='flex w-80 flex-col border-l border-gray-200 bg-gray-50'>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900">Contact Details</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <MoreVertical className="w-5 h-5" />
+      <div className='border-b border-gray-200 bg-white p-4'>
+        <div className='flex items-center justify-between'>
+          <h3 className='text-lg font-medium text-gray-900'>Contact Details</h3>
+          <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
+            <MoreVertical className='h-5 w-5' />
           </button>
         </div>
       </div>
 
       {/* Contact Info */}
-      <div className="p-4 bg-white border-b border-gray-200">
-        <div className="flex items-center space-x-3">
+      <div className='border-b border-gray-200 bg-white p-4'>
+        <div className='flex items-center space-x-3'>
           {conversation.contact.profile_picture_url ? (
-            <div className="relative w-12 h-12 flex-shrink-0">
+            <div className='relative h-12 w-12 flex-shrink-0'>
               <Image
                 src={conversation.contact.profile_picture_url}
                 alt={conversation.contact.name}
                 fill
-                sizes="48px"
-                className="rounded-full object-cover"
+                sizes='48px'
+                className='rounded-full object-cover'
                 priority={false}
               />
             </div>
           ) : (
-            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-lg font-medium text-white">
+            <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-500'>
+              <span className='text-lg font-medium text-white'>
                 {conversation.contact.name?.charAt(0).toUpperCase() ||
-                 conversation.contact.phone_number.slice(-2)}
+                  conversation.contact.phone_number.slice(-2)}
               </span>
             </div>
           )}
           <div>
-            <h4 className="text-sm font-medium text-gray-900">
+            <h4 className='text-sm font-medium text-gray-900'>
               {conversation.contact.name || 'Unknown Contact'}
             </h4>
-            <p className="text-sm text-gray-500">{conversation.contact.phone_number}</p>
+            <p className='text-sm text-gray-500'>{conversation.contact.phone_number}</p>
           </div>
         </div>
 
-        <div className="mt-4 flex space-x-2">
-          <button className="flex items-center justify-center w-full py-2 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-            <Phone className="w-4 h-4 mr-2" />
+        <div className='mt-4 flex space-x-2'>
+          <button className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
+            <Phone className='mr-2 h-4 w-4' />
             Call
           </button>
-          <button className="flex items-center justify-center w-full py-2 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-            <UserPlus className="w-4 h-4 mr-2" />
+          <button className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
+            <UserPlus className='mr-2 h-4 w-4' />
             Profile
           </button>
         </div>
       </div>
 
       {/* Conversation Settings */}
-      <div className="flex-1 overflow-y-auto">
+      <div className='flex-1 overflow-y-auto'>
         {/* Status */}
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <div className='border-b border-gray-200 bg-white p-4'>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>Status</label>
           <select
             value={conversation.status}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+            onChange={e => onStatusChange(e.target.value)}
+            className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value="open">Open</option>
-            <option value="pending">Pending</option>
-            <option value="resolved">Resolved</option>
-            <option value="closed">Closed</option>
+            <option value='open'>Open</option>
+            <option value='pending'>Pending</option>
+            <option value='resolved'>Resolved</option>
+            <option value='closed'>Closed</option>
           </select>
         </div>
 
         {/* Priority */}
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+        <div className='border-b border-gray-200 bg-white p-4'>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>Priority</label>
           <select
             value={conversation.priority}
-            onChange={(e) => onPriorityChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+            onChange={e => onPriorityChange(e.target.value)}
+            className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
+            <option value='low'>Low</option>
+            <option value='medium'>Medium</option>
+            <option value='high'>High</option>
+            <option value='urgent'>Urgent</option>
           </select>
         </div>
 
         {/* Assignment */}
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Assigned to</label>
+        <div className='border-b border-gray-200 bg-white p-4'>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>Assigned to</label>
           <select
             value={conversation.assigned_to || ''}
-            onChange={(e) => onAssigneeChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+            onChange={e => onAssigneeChange(e.target.value)}
+            className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value="">Unassigned</option>
-            {agents.map((agent) => (
+            <option value=''>Unassigned</option>
+            {agents.map(agent => (
               <option key={agent.id} value={agent.id}>
                 {agent.name}
               </option>
@@ -225,20 +234,20 @@ function ConversationDetails({
         </div>
 
         {/* Tags */}
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+        <div className='border-b border-gray-200 bg-white p-4'>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>Tags</label>
 
           {/* Existing Tags */}
-          <div className="flex flex-wrap gap-1 mb-3">
-            {conversation.tags.map((tag) => (
+          <div className='mb-3 flex flex-wrap gap-1'>
+            {conversation.tags.map(tag => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800'
               >
                 {tag}
                 <button
                   onClick={() => onRemoveTag(tag)}
-                  className="ml-1 text-blue-600 hover:text-blue-800"
+                  className='ml-1 text-blue-600 hover:text-blue-800'
                 >
                   ×
                 </button>
@@ -247,18 +256,18 @@ function ConversationDetails({
           </div>
 
           {/* Add New Tag */}
-          <div className="flex space-x-2">
+          <div className='flex space-x-2'>
             <input
-              type="text"
+              type='text'
               value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-              placeholder="Add tag..."
-              className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              onChange={e => setNewTag(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && handleAddTag()}
+              placeholder='Add tag...'
+              className='flex-1 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-blue-500'
             />
             <button
               onClick={handleAddTag}
-              className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+              className='rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
             >
               Add
             </button>
@@ -266,17 +275,17 @@ function ConversationDetails({
         </div>
 
         {/* Actions */}
-        <div className="p-4 space-y-2">
-          <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-            <Star className="w-4 h-4 mr-3" />
+        <div className='space-y-2 p-4'>
+          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
+            <Star className='mr-3 h-4 w-4' />
             Add to favorites
           </button>
-          <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-            <Archive className="w-4 h-4 mr-3" />
+          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
+            <Archive className='mr-3 h-4 w-4' />
             Archive conversation
           </button>
-          <button className="flex items-center w-full px-3 py-2 text-sm text-red-700 hover:bg-red-50 rounded-md">
-            <Trash2 className="w-4 h-4 mr-3" />
+          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-red-700 hover:bg-red-50'>
+            <Trash2 className='mr-3 h-4 w-4' />
             Delete conversation
           </button>
         </div>
@@ -288,7 +297,7 @@ function ConversationDetails({
 export default function WhatsAppInbox({
   organizationId,
   currentUserId,
-  userRole
+  userRole,
 }: WhatsAppInboxProps) {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -299,7 +308,7 @@ export default function WhatsAppInbox({
     activeConversations: 0,
     averageResponseTime: 0,
     messagesThisWeek: 0,
-    responseRate: 0
+    responseRate: 0,
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -318,7 +327,9 @@ export default function WhatsAppInbox({
   const loadStats = async () => {
     try {
       // Load real inbox statistics from API
-      const response = await fetch(`/api/conversations/filter?organization_id=${organizationId}&include_aggregations=true&limit=1`)
+      const response = await fetch(
+        `/api/conversations/filter?organization_id=${organizationId}&include_aggregations=true&limit=1`
+      )
 
       if (!response.ok) {
         throw new Error('Failed to load stats')
@@ -333,7 +344,7 @@ export default function WhatsAppInbox({
         activeConversations: data.aggregations?.active_count || 0,
         averageResponseTime: data.aggregations?.avg_response_time || 0,
         messagesThisWeek: data.aggregations?.messages_this_week || 0,
-        responseRate: data.aggregations?.response_rate || 0
+        responseRate: data.aggregations?.response_rate || 0,
       })
     } catch (error) {
       console.error('Failed to load stats:', error)
@@ -344,7 +355,7 @@ export default function WhatsAppInbox({
         activeConversations: 0,
         averageResponseTime: 0,
         messagesThisWeek: 0,
-        responseRate: 0
+        responseRate: 0,
       })
     }
   }
@@ -375,12 +386,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
 
     try {
-      await whatsappService.sendMessage(
-        selectedConversation.id,
-        content,
-        currentUserId,
-        type
-      )
+      await whatsappService.sendMessage(selectedConversation.id, content, currentUserId, type)
 
       // Reload messages
       loadMessages(selectedConversation.id)
@@ -391,18 +397,14 @@ export default function WhatsAppInbox({
 
   const handleMessageRead = (messageId: string) => {
     // Mark message as read
-    setMessages(prev =>
-      prev.map(msg =>
-        msg.id === messageId ? { ...msg, is_read: true } : msg
-      )
-    )
+    setMessages(prev => prev.map(msg => (msg.id === messageId ? { ...msg, is_read: true } : msg)))
   }
 
   const handleStatusChange = (status: string) => {
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      status: status as any
+      status: status as any,
     })
   }
 
@@ -410,7 +412,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      priority: priority as any
+      priority: priority as any,
     })
   }
 
@@ -418,7 +420,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      assigned_to: assigneeId || undefined
+      assigned_to: assigneeId || undefined,
     })
   }
 
@@ -426,7 +428,7 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      tags: [...selectedConversation.tags, tag]
+      tags: [...selectedConversation.tags, tag],
     })
   }
 
@@ -434,57 +436,57 @@ export default function WhatsAppInbox({
     if (!selectedConversation) return
     setSelectedConversation({
       ...selectedConversation,
-      tags: selectedConversation.tags.filter(t => t !== tag)
+      tags: selectedConversation.tags.filter(t => t !== tag),
     })
   }
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col">
+    <div className='flex h-screen flex-col bg-gray-100'>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-gray-900">WhatsApp Inbox</h1>
+      <div className='border-b border-gray-200 bg-white px-6 py-4'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center space-x-4'>
+            <h1 className='text-2xl font-bold text-gray-900'>WhatsApp Inbox</h1>
 
             {/* Stats */}
-            <div className="hidden lg:flex items-center space-x-6 text-sm text-gray-600">
-              <div className="flex items-center space-x-1">
-                <MessageSquare className="w-4 h-4" />
+            <div className='hidden items-center space-x-6 text-sm text-gray-600 lg:flex'>
+              <div className='flex items-center space-x-1'>
+                <MessageSquare className='h-4 w-4' />
                 <span>{stats.totalConversations} conversations</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className='flex items-center space-x-1'>
+                <div className='h-2 w-2 rounded-full bg-blue-500'></div>
                 <span>{stats.unreadConversations} unread</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <Users className="w-4 h-4" />
+              <div className='flex items-center space-x-1'>
+                <Users className='h-4 w-4' />
                 <span>{stats.activeConversations} active</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <TrendingUp className="w-4 h-4" />
+              <div className='flex items-center space-x-1'>
+                <TrendingUp className='h-4 w-4' />
                 <span>{stats.responseRate}% response rate</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100">
-              <Search className="w-5 h-5" />
+          <div className='flex items-center space-x-3'>
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+              <Search className='h-5 w-5' />
             </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100">
-              <Filter className="w-5 h-5" />
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+              <Filter className='h-5 w-5' />
             </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100">
-              <Settings className="w-5 h-5" />
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+              <Settings className='h-5 w-5' />
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className='flex flex-1 overflow-hidden'>
         {/* Conversation List */}
-        <div className="w-80 flex-shrink-0">
+        <div className='w-80 flex-shrink-0'>
           <EnhancedConversationList
             organizationId={organizationId}
             currentUserId={currentUserId}
@@ -494,63 +496,69 @@ export default function WhatsAppInbox({
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
+        <div className='flex flex-1 flex-col'>
           {selectedConversation ? (
             <>
               {/* Chat Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+              <div className='border-b border-gray-200 bg-white px-6 py-4'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-3'>
                     {selectedConversation.contact.profile_picture_url ? (
-                      <div className="relative w-10 h-10 flex-shrink-0">
+                      <div className='relative h-10 w-10 flex-shrink-0'>
                         <Image
                           src={selectedConversation.contact.profile_picture_url}
                           alt={selectedConversation.contact.name}
                           fill
-                          sizes="40px"
-                          className="rounded-full object-cover"
+                          sizes='40px'
+                          className='rounded-full object-cover'
                           priority
                         />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-medium text-white">
+                      <div className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-500'>
+                        <span className='text-sm font-medium text-white'>
                           {selectedConversation.contact.name?.charAt(0).toUpperCase() ||
-                           selectedConversation.contact.phone_number.slice(-2)}
+                            selectedConversation.contact.phone_number.slice(-2)}
                         </span>
                       </div>
                     )}
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {selectedConversation.contact.name || selectedConversation.contact.phone_number}
+                      <h3 className='text-lg font-medium text-gray-900'>
+                        {selectedConversation.contact.name ||
+                          selectedConversation.contact.phone_number}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className='text-sm text-gray-500'>
                         {selectedConversation.contact.phone_number}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      selectedConversation.status === 'open' ? 'bg-green-100 text-green-800' :
-                      selectedConversation.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      selectedConversation.status === 'resolved' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                  <div className='flex items-center space-x-2'>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${
+                        selectedConversation.status === 'open'
+                          ? 'bg-green-100 text-green-800'
+                          : selectedConversation.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : selectedConversation.status === 'resolved'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {selectedConversation.status}
                     </span>
                     <button
                       onClick={() => setShowDetails(!showDetails)}
-                      className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100"
+                      className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
                     >
-                      <MoreVertical className="w-5 h-5" />
+                      <MoreVertical className='h-5 w-5' />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-hidden">
+              <div className='flex-1 overflow-hidden'>
                 <EnhancedMessageList
                   conversationId={selectedConversation.id}
                   messages={messages}
@@ -570,11 +578,13 @@ export default function WhatsAppInbox({
             </>
           ) : (
             /* No Conversation Selected */
-            <div className="flex-1 flex items-center justify-center bg-gray-50">
-              <div className="text-center">
-                <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Welcome to WhatsApp Inbox</h3>
-                <p className="text-gray-500 max-w-sm">
+            <div className='flex flex-1 items-center justify-center bg-gray-50'>
+              <div className='text-center'>
+                <MessageSquare className='mx-auto mb-4 h-16 w-16 text-gray-300' />
+                <h3 className='mb-2 text-lg font-medium text-gray-900'>
+                  Welcome to WhatsApp Inbox
+                </h3>
+                <p className='max-w-sm text-gray-500'>
                   Select a conversation from the list to start messaging with your customers
                 </p>
               </div>

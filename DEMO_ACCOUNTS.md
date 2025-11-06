@@ -11,6 +11,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 **Subscription Tier:** Professional
 
 **WhatsApp Configuration:**
+
 - Business Account ID: `123456789012345`
 - Phone Number ID: `123456789012345`
 
@@ -27,6 +28,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 **User ID:** `57820ee9-4f7e-4408-82d6-37e4df8ba6e7`
 
 **Permissions:**
+
 - Full access to all organization settings
 - Manage users and assign roles
 - Access billing and subscription settings
@@ -37,6 +39,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 - Export data and generate reports
 
 **Testing Use Cases:**
+
 - Organization-wide settings configuration
 - User management and role assignment
 - Billing and subscription management
@@ -53,6 +56,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 **User ID:** `36314967-c013-4211-b90e-1cdb8d103519`
 
 **Permissions:**
+
 - Manage team members (agents)
 - View and modify all conversations
 - Create and manage automation rules
@@ -63,6 +67,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 - Configure automation workflows
 
 **Testing Use Cases:**
+
 - Team management (add/remove agents)
 - Conversation assignment and routing
 - Template and automation configuration
@@ -79,6 +84,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 **User ID:** `73cc5e53-28a6-4878-8713-c81f311d0409`
 
 **Permissions:**
+
 - View assigned conversations
 - Send and receive WhatsApp messages
 - Access contact information
@@ -88,6 +94,7 @@ This document contains login credentials for all demo accounts in the ADSapp app
 - Basic analytics (personal metrics only)
 
 **Testing Use Cases:**
+
 - Message handling and responses
 - Template usage
 - Conversation status updates
@@ -104,6 +111,7 @@ For super admin access (managing all organizations):
 **Role:** Super Admin
 
 **Permissions:**
+
 - Access to admin dashboard (`/admin`)
 - Manage all organizations
 - View system-wide statistics
@@ -115,25 +123,26 @@ For super admin access (managing all organizations):
 
 ## Role Comparison Matrix
 
-| Feature | Owner | Admin | Agent |
-|---------|-------|-------|-------|
-| Manage conversations | ✅ All | ✅ All | ✅ Assigned only |
-| Send messages | ✅ | ✅ | ✅ |
-| Manage users | ✅ | ✅ Add agents | ❌ |
-| Organization settings | ✅ | ❌ | ❌ |
-| Billing & subscription | ✅ | ❌ | ❌ |
-| Create templates | ✅ | ✅ | ❌ |
-| Automation rules | ✅ | ✅ | ❌ |
-| Analytics (all) | ✅ | ✅ | ❌ |
-| Analytics (personal) | ✅ | ✅ | ✅ |
-| Contact management | ✅ | ✅ | ✅ View only |
-| WhatsApp config | ✅ | ❌ | ❌ |
+| Feature                | Owner  | Admin         | Agent            |
+| ---------------------- | ------ | ------------- | ---------------- |
+| Manage conversations   | ✅ All | ✅ All        | ✅ Assigned only |
+| Send messages          | ✅     | ✅            | ✅               |
+| Manage users           | ✅     | ✅ Add agents | ❌               |
+| Organization settings  | ✅     | ❌            | ❌               |
+| Billing & subscription | ✅     | ❌            | ❌               |
+| Create templates       | ✅     | ✅            | ❌               |
+| Automation rules       | ✅     | ✅            | ❌               |
+| Analytics (all)        | ✅     | ✅            | ❌               |
+| Analytics (personal)   | ✅     | ✅            | ✅               |
+| Contact management     | ✅     | ✅            | ✅ View only     |
+| WhatsApp config        | ✅     | ❌            | ❌               |
 
 ---
 
 ## Testing Scenarios
 
 ### Scenario 1: Organization Setup (Owner)
+
 1. Log in as owner@demo-company.com
 2. Navigate to Settings → Organization
 3. Configure WhatsApp Business API credentials
@@ -141,6 +150,7 @@ For super admin access (managing all organizations):
 5. Configure branding and customization
 
 ### Scenario 2: Team Management (Admin)
+
 1. Log in as admin@demo-company.com
 2. Navigate to Settings → Team
 3. View existing team members (owner, admin, agent)
@@ -148,6 +158,7 @@ For super admin access (managing all organizations):
 5. Create automation rules for conversation routing
 
 ### Scenario 3: Message Handling (Agent)
+
 1. Log in as agent@demo-company.com
 2. View assigned conversations in inbox
 3. Test sending messages using templates
@@ -155,6 +166,7 @@ For super admin access (managing all organizations):
 5. Add notes to contacts
 
 ### Scenario 4: Role Permissions Testing
+
 1. Test each role's access to different sections
 2. Verify permission restrictions:
    - Agent cannot access Settings → Organization
@@ -162,6 +174,7 @@ For super admin access (managing all organizations):
    - Only Owner can modify subscription
 
 ### Scenario 5: Multi-User Collaboration
+
 1. Log in with multiple accounts simultaneously (different browsers)
 2. Assign a conversation from admin to agent
 3. Agent handles the conversation
@@ -175,10 +188,12 @@ For super admin access (managing all organizations):
 All accounts are linked to the same organization for multi-tenant testing:
 
 **Table:** `organizations`
+
 - ID: `d6c6e3de-cab8-42d0-b478-69818f9773e9`
 - All users share the same `organization_id` in their profiles
 
 **Row Level Security (RLS):**
+
 - Each user can only access data from their own organization
 - Permissions are enforced at the database level
 - All queries automatically filter by `organization_id`
@@ -190,6 +205,7 @@ All accounts are linked to the same organization for multi-tenant testing:
 You can use these accounts to test API endpoints:
 
 ### Authentication
+
 ```bash
 POST /api/auth/signin
 {
@@ -199,12 +215,14 @@ POST /api/auth/signin
 ```
 
 ### Get Conversations (authenticated)
+
 ```bash
 GET /api/conversations
 Authorization: Bearer <token>
 ```
 
 ### Send Message
+
 ```bash
 POST /api/conversations/{id}/messages
 Authorization: Bearer <token>
@@ -231,17 +249,20 @@ Authorization: Bearer <token>
 ## Troubleshooting
 
 ### Cannot Log In
+
 - Verify the email and password are correct (case-sensitive)
 - Check that the account is active in the database
 - Clear browser cache and cookies
 - Try a different browser or incognito mode
 
 ### Missing Organization Data
+
 - Verify `organization_id` is set in the user's profile
 - Check that the organization exists in the database
 - Review RLS policies in Supabase
 
 ### Permission Errors
+
 - Confirm the user's role matches expected permissions
 - Check RLS policies in the Supabase dashboard
 - Verify the user is accessing routes appropriate for their role
@@ -267,6 +288,7 @@ Both scripts are located in the root directory of the project and use the Supaba
 ## Support
 
 For issues or questions about demo accounts:
+
 1. Check the console logs in the browser developer tools
 2. Review Supabase logs in the dashboard
 3. Verify environment variables in `.env.local`

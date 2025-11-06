@@ -72,12 +72,14 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 ### Required Accounts and Services
 
 #### 1. Vercel Account
+
 - **Sign up**: https://vercel.com
 - **Plan**: Pro or Team (for production features)
 - **Features needed**: Environment variables, preview deployments, analytics
 - **Cost**: $20/month per user (Pro plan)
 
 #### 2. Supabase Project
+
 - **Sign up**: https://supabase.com
 - **Plan**: Pro or higher (for production databases)
 - **Features needed**: PostgreSQL, Row Level Security, Real-time, Storage
@@ -85,6 +87,7 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 - **Setup Time**: 10 minutes
 
 #### 3. Stripe Account
+
 - **Sign up**: https://stripe.com
 - **Account type**: Live mode enabled
 - **Features needed**: Subscriptions, webhooks, payment intents
@@ -92,6 +95,7 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 - **Setup Time**: 30-60 minutes (account verification)
 
 #### 4. WhatsApp Business API
+
 - **Provider**: Meta Business (https://business.facebook.com)
 - **Requirements**: Business verification, phone number
 - **Features needed**: WhatsApp Business Cloud API
@@ -99,6 +103,7 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 - **Setup Time**: 24-48 hours (verification)
 
 #### 5. Resend Account
+
 - **Sign up**: https://resend.com
 - **Plan**: Free or Pro
 - **Features needed**: Email sending, domain verification
@@ -106,6 +111,7 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 - **Setup Time**: 15 minutes
 
 #### 6. Optional: Sentry Account
+
 - **Sign up**: https://sentry.io
 - **Plan**: Free or Team
 - **Features needed**: Error tracking, performance monitoring
@@ -115,6 +121,7 @@ ADSapp is an enterprise-grade Multi-Tenant WhatsApp Business Inbox SaaS platform
 ### Development Environment
 
 #### Required Software
+
 ```bash
 # Node.js 20 or higher
 node --version  # Should output v20.x.x or higher
@@ -130,6 +137,7 @@ npm install -g vercel
 ```
 
 #### Local Testing Requirements
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/adsapp.git
@@ -148,17 +156,20 @@ npm run dev
 ### Access Requirements
 
 #### Domain Name
+
 - **Requirement**: Custom domain for production
 - **Recommended**: `app.yourdomain.com` or `yourdomain.com`
 - **DNS Access**: Ability to add DNS records (CNAME, A, TXT)
 - **SSL**: Automatic via Vercel (Let's Encrypt)
 
 #### Database Access
+
 - **Supabase Dashboard**: Full admin access
 - **PostgreSQL**: Direct database access (psql or GUI client)
 - **Connection String**: Service role key for migrations
 
 #### API Credentials
+
 - **Stripe**: Secret key, publishable key, webhook secret
 - **WhatsApp**: Access token, phone number ID, webhook verify token
 - **Resend**: API key, verified domain
@@ -249,6 +260,7 @@ Serverless:
 ### 1. Code Quality Verification
 
 #### Run Complete Test Suite
+
 ```bash
 # TypeScript type checking
 npm run type-check
@@ -270,6 +282,7 @@ npm run build
 ```
 
 **Expected Output**:
+
 ```
 ✓ Type checking: 0 errors
 ✓ Linting: 0 errors, 0 warnings
@@ -284,6 +297,7 @@ npm run build
 Create a comprehensive environment variable checklist:
 
 #### Critical Variables (Required)
+
 ```bash
 # Application
 NEXT_PUBLIC_APP_URL=https://app.yourdomain.com
@@ -314,6 +328,7 @@ RESEND_FROM_EMAIL=noreply@yourdomain.com
 ```
 
 #### Optional Variables (Recommended)
+
 ```bash
 # Monitoring
 SENTRY_DSN=https://...@sentry.io/...
@@ -407,6 +422,7 @@ Vercel is the recommended deployment platform for ADSapp, providing optimal perf
 ### Step 1: Connect GitHub Repository
 
 #### 1.1 Create Vercel Account
+
 ```bash
 # Visit https://vercel.com
 # Sign up with GitHub account
@@ -414,12 +430,14 @@ Vercel is the recommended deployment platform for ADSapp, providing optimal perf
 ```
 
 #### 1.2 Import Project
+
 1. Navigate to Vercel Dashboard
 2. Click "Add New Project"
 3. Select your GitHub repository: `your-org/adsapp`
 4. Click "Import"
 
 #### 1.3 Configure Project Settings
+
 ```yaml
 Framework Preset: Next.js
 Root Directory: ./
@@ -432,6 +450,7 @@ Development Command: npm run dev
 ### Step 2: Configure Environment Variables
 
 #### 2.1 Access Environment Variables
+
 1. In Vercel project settings
 2. Navigate to "Settings" → "Environment Variables"
 3. Add all required variables
@@ -439,6 +458,7 @@ Development Command: npm run dev
 #### 2.2 Add Variables Systematically
 
 **Application Configuration**:
+
 ```bash
 NEXT_PUBLIC_APP_URL=https://app.yourdomain.com
 NEXT_PUBLIC_APP_NAME=ADSapp
@@ -447,6 +467,7 @@ NODE_ENV=production
 ```
 
 **Supabase Configuration**:
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
@@ -455,6 +476,7 @@ SUPABASE_JWT_SECRET=your-jwt-secret
 ```
 
 **Stripe Configuration**:
+
 ```bash
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_SECRET_KEY=sk_live_...
@@ -465,6 +487,7 @@ STRIPE_ENTERPRISE_PRICE_ID=price_xxxxx
 ```
 
 **WhatsApp Configuration**:
+
 ```bash
 WHATSAPP_ACCESS_TOKEN=EAAb...
 WHATSAPP_PHONE_NUMBER_ID=123456789012345
@@ -473,12 +496,14 @@ WHATSAPP_WEBHOOK_VERIFY_TOKEN=your-secure-token
 ```
 
 **Email Configuration**:
+
 ```bash
 RESEND_API_KEY=re_...
 RESEND_FROM_EMAIL=noreply@yourdomain.com
 ```
 
 **Optional Monitoring**:
+
 ```bash
 SENTRY_DSN=https://...@sentry.io/...
 NEXT_PUBLIC_SENTRY_DSN=https://...@sentry.io/...
@@ -490,11 +515,13 @@ SENTRY_AUTH_TOKEN=your-auth-token
 #### 2.3 Environment Scope
 
 For each variable, select appropriate scope:
+
 - **Production**: Live production environment
 - **Preview**: Pull request preview deployments
 - **Development**: Local development (not typically needed)
 
 **Recommended Scope**:
+
 - All `NEXT_PUBLIC_*` variables: Production + Preview
 - Secrets (`STRIPE_SECRET_KEY`, etc.): Production only
 - Test credentials: Preview + Development
@@ -502,6 +529,7 @@ For each variable, select appropriate scope:
 ### Step 3: Configure Vercel Project Settings
 
 #### 3.1 Build & Development Settings
+
 ```json
 {
   "buildCommand": "npm run build",
@@ -564,6 +592,7 @@ Create or verify `vercel.json` in project root:
    - Choose "Add" or "Buy domain"
 
 2. **Configure DNS**:
+
    ```
    Type: CNAME
    Name: app
@@ -581,6 +610,7 @@ Create or verify `vercel.json` in project root:
 #### 4.1 Initial Deployment
 
 **Option A: Automatic Deployment** (Recommended)
+
 ```bash
 # Push to main branch
 git checkout main
@@ -593,6 +623,7 @@ git push origin main
 ```
 
 **Option B: Manual Deployment via CLI**
+
 ```bash
 # Install Vercel CLI
 npm install -g vercel
@@ -615,6 +646,7 @@ vercel --prod
 #### 4.2 Monitor Deployment
 
 **Deployment Process**:
+
 ```
 1. Building... (2-5 minutes)
    - Installing dependencies
@@ -634,6 +666,7 @@ vercel --prod
 ```
 
 **Check Deployment Status**:
+
 ```bash
 # Via Vercel Dashboard
 # https://vercel.com/your-team/adsapp/deployments
@@ -648,12 +681,14 @@ vercel ls
 ### Step 5: Post-Deployment Vercel Configuration
 
 #### 5.1 Enable Analytics
+
 1. Navigate to project settings
 2. Go to "Analytics"
 3. Enable "Web Analytics"
 4. Configure data retention: 90 days
 
 #### 5.2 Configure Speed Insights
+
 1. Go to "Speed Insights"
 2. Enable performance monitoring
 3. Set performance budgets:
@@ -663,12 +698,14 @@ vercel ls
    - Cumulative Layout Shift (CLS): < 0.1
 
 #### 5.3 Set Up Deployment Protection
+
 1. Navigate to "Settings" → "Deployment Protection"
 2. Enable "Vercel Authentication"
 3. Configure allowed emails/domains
 4. Add team members
 
 #### 5.4 Configure Preview Deployments
+
 1. Go to "Settings" → "Git"
 2. Enable "Automatically create Preview Deployments"
 3. Configure preview URL format: `pr-{number}.app.yourdomain.com`
@@ -771,6 +808,7 @@ DATA_RETENTION_DAYS=365
 ### Environment Variable Security Best Practices
 
 #### Secret Rotation Schedule
+
 ```yaml
 Critical Secrets (Rotate Every 30 Days):
   - STRIPE_SECRET_KEY
@@ -789,6 +827,7 @@ Low-Risk Secrets (Rotate Every 180 Days):
 ```
 
 #### Secret Management
+
 ```bash
 # Generate secure random secrets
 openssl rand -base64 32
@@ -813,6 +852,7 @@ openssl rand -base64 48 | tr -d "=+/" | cut -c1-32
    - Click "New Project"
 
 2. **Configure Project**:
+
    ```yaml
    Project Name: adsapp-production
    Database Password: [Generate strong password]
@@ -937,6 +977,7 @@ ORDER BY routine_name;
 #### Step 4: Configure Database Settings
 
 **Connection Pooling**:
+
 ```sql
 -- Supabase automatically configures connection pooling
 -- Verify in Supabase Dashboard:
@@ -949,6 +990,7 @@ ORDER BY routine_name;
 ```
 
 **Performance Optimization**:
+
 ```sql
 -- Enable query logging (for monitoring)
 ALTER DATABASE postgres SET log_statement = 'mod';
@@ -963,6 +1005,7 @@ ALTER DATABASE postgres SET autovacuum = on;
 #### Step 5: Set Up Database Backups
 
 **Automated Backups** (Supabase Pro):
+
 ```yaml
 Configuration:
   - Daily backups: Enabled
@@ -972,6 +1015,7 @@ Configuration:
 ```
 
 **Manual Backup Script**:
+
 ```bash
 #!/bin/bash
 # save as: scripts/backup-database.sh
@@ -1012,11 +1056,13 @@ fi
 #### Step 6: Database Monitoring Setup
 
 **Enable Query Performance Insights**:
+
 1. Supabase Dashboard → Database → Query Performance
 2. Enable "pg_stat_statements"
 3. Configure slow query threshold: 100ms
 
 **Create Monitoring Queries**:
+
 ```sql
 -- Save as: sql/monitoring/database-health.sql
 
@@ -1069,6 +1115,7 @@ FROM pg_stat_replication;
 #### 1. Health Check Endpoints
 
 **Overall Health**:
+
 ```bash
 # Check overall application health
 curl https://app.yourdomain.com/api/health
@@ -1110,6 +1157,7 @@ curl https://app.yourdomain.com/api/health
 ```
 
 **Component Health Checks**:
+
 ```bash
 # Database connectivity
 curl https://app.yourdomain.com/api/health
@@ -1125,6 +1173,7 @@ curl https://app.yourdomain.com/api/health
 #### 2. Authentication Flow Verification
 
 **Test Sign Up**:
+
 ```bash
 # Via browser:
 https://app.yourdomain.com/auth/signup
@@ -1139,6 +1188,7 @@ https://app.yourdomain.com/auth/signup
 ```
 
 **Test Sign In**:
+
 ```bash
 # Via browser:
 https://app.yourdomain.com/auth/signin
@@ -1153,6 +1203,7 @@ https://app.yourdomain.com/auth/signin
 #### 3. Database Connectivity
 
 **Test RLS Policies**:
+
 ```sql
 -- Connect as authenticated user
 SET LOCAL jwt.claims.sub = 'user-uuid-here';
@@ -1167,6 +1218,7 @@ SELECT * FROM organizations WHERE id = 'other-org-id';
 ```
 
 **Test Multi-Tenant Isolation**:
+
 ```sql
 -- Create test organizations
 INSERT INTO organizations (name, subdomain)
@@ -1188,6 +1240,7 @@ VALUES
 #### 4. Payment Integration Verification
 
 **Stripe Webhook Test**:
+
 ```bash
 # Install Stripe CLI
 brew install stripe/stripe-cli/stripe
@@ -1203,6 +1256,7 @@ stripe trigger payment_intent.succeeded
 ```
 
 **Test Subscription Flow**:
+
 ```bash
 # Via browser:
 https://app.yourdomain.com/dashboard/billing
@@ -1219,6 +1273,7 @@ https://app.yourdomain.com/dashboard/billing
 #### 5. WhatsApp Integration Verification
 
 **Webhook Verification**:
+
 ```bash
 # WhatsApp will verify webhook during setup
 # Endpoint: https://app.yourdomain.com/api/webhooks/whatsapp
@@ -1230,6 +1285,7 @@ curl -X GET "https://app.yourdomain.com/api/webhooks/whatsapp?hub.mode=subscribe
 ```
 
 **Test Message Sending**:
+
 ```bash
 # Via browser:
 https://app.yourdomain.com/dashboard/inbox
@@ -1245,6 +1301,7 @@ https://app.yourdomain.com/dashboard/inbox
 #### 6. Email Delivery Verification
 
 **Test Welcome Email**:
+
 ```bash
 # Trigger by creating new account
 # Email should be sent via Resend
@@ -1261,6 +1318,7 @@ https://resend.com/emails
 #### 7. Performance Verification
 
 **Core Web Vitals**:
+
 ```bash
 # Use Google PageSpeed Insights
 https://pagespeed.web.dev/
@@ -1281,6 +1339,7 @@ https://pagespeed.web.dev/
 ```
 
 **API Response Times**:
+
 ```bash
 # Test critical API endpoints
 time curl https://app.yourdomain.com/api/health
@@ -1293,6 +1352,7 @@ time curl -H "Authorization: Bearer token" https://app.yourdomain.com/api/conver
 #### 8. Security Verification
 
 **SSL Certificate**:
+
 ```bash
 # Check SSL certificate
 curl -vI https://app.yourdomain.com 2>&1 | grep -A 5 "SSL"
@@ -1305,6 +1365,7 @@ curl -vI https://app.yourdomain.com 2>&1 | grep -A 5 "SSL"
 ```
 
 **Security Headers**:
+
 ```bash
 # Check security headers
 curl -I https://app.yourdomain.com
@@ -1317,6 +1378,7 @@ curl -I https://app.yourdomain.com
 ```
 
 **OWASP Compliance**:
+
 ```bash
 # Run security audit
 npm run test:security
@@ -1408,6 +1470,7 @@ fi
 ```
 
 Run verification:
+
 ```bash
 chmod +x scripts/verify-deployment.sh
 ./scripts/verify-deployment.sh
@@ -1422,6 +1485,7 @@ For self-hosted deployments or alternative platforms, ADSapp can be deployed usi
 ### Docker Deployment Guide
 
 #### Prerequisites
+
 ```bash
 # Docker and Docker Compose installed
 docker --version  # Should be 20.10+
@@ -1453,7 +1517,7 @@ services:
     image: adsapp:latest
     container_name: adsapp-production
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_APP_URL=https://app.yourdomain.com
@@ -1465,7 +1529,7 @@ services:
       - RESEND_API_KEY=${RESEND_API_KEY}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -1553,6 +1617,7 @@ server {
 ```
 
 Enable and restart Nginx:
+
 ```bash
 # Enable site
 sudo ln -s /etc/nginx/sites-available/adsapp /etc/nginx/sites-enabled/
@@ -1574,6 +1639,7 @@ sudo certbot --nginx -d app.yourdomain.com
 ### When to Rollback
 
 Trigger rollback if:
+
 - Critical functionality is broken
 - Security vulnerability discovered
 - Data corruption detected
@@ -1701,12 +1767,14 @@ vercel env add VARIABLE_NAME production
 #### Issue 1: Build Failure
 
 **Symptoms**:
+
 ```
 Error: Build failed with exit code 1
 Module not found: Can't resolve '@/lib/...'
 ```
 
 **Solution**:
+
 ```bash
 # 1. Verify all dependencies installed
 npm install --legacy-peer-deps
@@ -1731,12 +1799,14 @@ npm run build
 #### Issue 2: Database Connection Failure
 
 **Symptoms**:
+
 ```
 Error: Connection to database failed
 ECONNREFUSED or timeout errors
 ```
 
 **Solution**:
+
 ```bash
 # 1. Verify database credentials
 # Check Supabase Dashboard → Settings → Database
@@ -1760,12 +1830,14 @@ ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
 #### Issue 3: Stripe Webhook Failures
 
 **Symptoms**:
+
 ```
 Stripe webhook endpoint returning 401 or 500
 Webhooks showing failed in Stripe Dashboard
 ```
 
 **Solution**:
+
 ```bash
 # 1. Verify webhook secret
 # Stripe Dashboard → Developers → Webhooks
@@ -1790,12 +1862,14 @@ console.log('Webhook signature:', request.headers['stripe-signature']);
 #### Issue 4: WhatsApp Webhook Not Receiving Messages
 
 **Symptoms**:
+
 ```
 WhatsApp messages sent but not appearing in ADSapp
 Webhook endpoint not being called
 ```
 
 **Solution**:
+
 ```bash
 # 1. Verify webhook URL configured
 # Meta Business → WhatsApp → Configuration
@@ -1819,6 +1893,7 @@ curl -X GET "https://app.yourdomain.com/api/webhooks/whatsapp?hub.mode=subscribe
 #### Issue 5: Environment Variables Not Working
 
 **Symptoms**:
+
 ```
 Application behavior inconsistent
 Features not working in production
@@ -1826,6 +1901,7 @@ undefined errors for environment variables
 ```
 
 **Solution**:
+
 ```bash
 # 1. Verify all variables set in Vercel
 # Settings → Environment Variables
@@ -1850,6 +1926,7 @@ grep -r "process.env" src/
 #### Slow API Response Times
 
 **Diagnosis**:
+
 ```bash
 # 1. Check API response times
 time curl https://app.yourdomain.com/api/health
@@ -1868,6 +1945,7 @@ LIMIT 10;
 ```
 
 **Solutions**:
+
 ```sql
 -- Add missing indexes
 CREATE INDEX IF NOT EXISTS idx_conversations_organization_id
@@ -1887,6 +1965,7 @@ LIMIT 50;
 #### High Database CPU Usage
 
 **Diagnosis**:
+
 ```sql
 -- Check active queries
 SELECT
@@ -1913,6 +1992,7 @@ ORDER BY duration DESC;
 ```
 
 **Solutions**:
+
 ```bash
 # 1. Terminate long-running queries
 SELECT pg_terminate_backend(pid)
@@ -1934,6 +2014,7 @@ WHERE pid = <process_id>;
 #### SSL Certificate Problems
 
 **Diagnosis**:
+
 ```bash
 # Check certificate status
 echo | openssl s_client -servername app.yourdomain.com \
@@ -1942,6 +2023,7 @@ echo | openssl s_client -servername app.yourdomain.com \
 ```
 
 **Solution**:
+
 ```bash
 # Vercel automatically manages SSL certificates
 # If issues occur:
@@ -1959,6 +2041,7 @@ echo | openssl s_client -servername app.yourdomain.com \
 #### Unauthorized Access Attempts
 
 **Detection**:
+
 ```sql
 -- Check for suspicious login attempts
 SELECT
@@ -1974,6 +2057,7 @@ ORDER BY failed_attempts DESC;
 ```
 
 **Response**:
+
 ```sql
 -- Temporarily lock account
 UPDATE profiles
@@ -2034,6 +2118,7 @@ All 39 database migrations in order:
 ### B. Environment Variables Quick Reference
 
 **Critical Production Variables**:
+
 ```bash
 NEXT_PUBLIC_APP_URL=https://app.yourdomain.com
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
@@ -2048,6 +2133,7 @@ RESEND_API_KEY=re_...
 ### C. Support Resources
 
 **Documentation**:
+
 - Next.js: https://nextjs.org/docs
 - Supabase: https://supabase.com/docs
 - Stripe: https://stripe.com/docs
@@ -2055,6 +2141,7 @@ RESEND_API_KEY=re_...
 - Vercel: https://vercel.com/docs
 
 **Community**:
+
 - GitHub Issues: https://github.com/your-org/adsapp/issues
 - Discord: [Your Discord Server]
 - Email Support: support@yourdomain.com

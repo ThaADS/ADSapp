@@ -8,7 +8,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 import type {
   Organization,
@@ -67,9 +66,7 @@ export interface TestMessage extends Partial<Message> {
 /**
  * Create a test organization with default values
  */
-export async function createTestOrganization(
-  data: TestOrganization = {}
-): Promise<Organization> {
+export async function createTestOrganization(data: TestOrganization = {}): Promise<Organization> {
   const supabase = await createClient()
 
   const organizationData = {
@@ -191,11 +188,7 @@ export async function createTestUser(data: TestUser = {}): Promise<Profile> {
     ...data,
   }
 
-  const { data: user, error } = await supabase
-    .from('profiles')
-    .insert(userData)
-    .select()
-    .single()
+  const { data: user, error } = await supabase.from('profiles').insert(userData).select().single()
 
   if (error) {
     throw new Error(`Failed to create test user: ${error.message}`)
@@ -207,9 +200,7 @@ export async function createTestUser(data: TestUser = {}): Promise<Profile> {
 /**
  * Create an admin user
  */
-export async function createTestAdminUser(
-  organizationId?: string
-): Promise<Profile> {
+export async function createTestAdminUser(organizationId?: string): Promise<Profile> {
   return createTestUser({
     role: 'admin',
     organization_id: organizationId,
@@ -261,9 +252,7 @@ export async function deleteTestUser(id: string): Promise<void> {
 /**
  * Create a test contact
  */
-export async function createTestContact(
-  data: TestContact = {}
-): Promise<Contact> {
+export async function createTestContact(data: TestContact = {}): Promise<Contact> {
   const supabase = await createClient()
 
   // Create organization if not provided
@@ -355,9 +344,7 @@ export async function deleteTestContact(id: string): Promise<void> {
 /**
  * Create a test conversation
  */
-export async function createTestConversation(
-  data: TestConversation = {}
-): Promise<Conversation> {
+export async function createTestConversation(data: TestConversation = {}): Promise<Conversation> {
   const supabase = await createClient()
 
   // Create contact if not provided
@@ -421,9 +408,7 @@ export async function deleteTestConversation(id: string): Promise<void> {
 /**
  * Create a test message
  */
-export async function createTestMessage(
-  data: TestMessage = {}
-): Promise<Message> {
+export async function createTestMessage(data: TestMessage = {}): Promise<Message> {
   const supabase = await createClient()
 
   // Create conversation if not provided
@@ -487,9 +472,7 @@ export async function createTestMessages(
 /**
  * Create a test message template
  */
-export async function createTestTemplate(
-  organizationId?: string
-): Promise<MessageTemplate> {
+export async function createTestTemplate(organizationId?: string): Promise<MessageTemplate> {
   const supabase = await createClient()
 
   // Create organization if not provided
@@ -549,9 +532,7 @@ export async function cleanupAllTestData(): Promise<void> {
 /**
  * Clean up test data for a specific organization
  */
-export async function cleanupOrganizationData(
-  organizationId: string
-): Promise<void> {
+export async function cleanupOrganizationData(organizationId: string): Promise<void> {
   await deleteTestOrganization(organizationId)
 }
 
@@ -562,9 +543,7 @@ export async function cleanupOrganizationData(
 /**
  * Execute a function within a test transaction context
  */
-export async function withTestTransaction<T>(
-  fn: () => Promise<T>
-): Promise<T> {
+export async function withTestTransaction<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn()
   } catch (error) {

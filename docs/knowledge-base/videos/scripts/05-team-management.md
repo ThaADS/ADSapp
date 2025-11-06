@@ -3,6 +3,7 @@
 **Duration**: 5-6 minutes
 **Target Audience**: Administrators setting up team access
 **Learning Objectives**:
+
 - Successfully invite team members to ADSapp
 - Understand role-based permissions system
 - Configure appropriate access levels for different team roles
@@ -28,21 +29,25 @@
 **CALLOUT**: "Four Roles | Increasing Access Levels"
 
 ### Owner
+
 **NARRATION**: "Owners have complete control - billing, team management, all settings, and full conversation access. That's you, the account creator."
 
 **CALLOUT**: "Owner: Full Control | Billing | Settings | All Conversations"
 
 ### Admin
+
 **NARRATION**: "Admins can manage team members, configure workflows, and access all conversations. They can't change billing or delete the account."
 
 **CALLOUT**: "Admin: Team Management | Workflows | All Conversations | No Billing"
 
 ### Agent
+
 **NARRATION**: "Agents handle customer conversations. They can see conversations assigned to them or their team, use templates, and update contact information."
 
 **CALLOUT**: "Agent: Assigned Conversations | Templates | Contact Updates"
 
 ### Viewer
+
 **NARRATION**: "Viewers have read-only access to analytics and conversations. Perfect for managers who need oversight without message handling."
 
 **CALLOUT**: "Viewer: Read-Only | Analytics | No Messaging"
@@ -66,6 +71,7 @@
 **SCREEN ACTION**: Click role dropdown, select "Agent"
 
 **CALLOUT**: Role options displayed:
+
 - Owner (1) - You
 - Admin
 - Agent (Selected)
@@ -105,6 +111,7 @@
 **NARRATION**: "When Sarah clicks the invitation link, she'll create her ADSapp account. She'll set her password, complete her profile, and immediately get access based on her assigned role."
 
 **SCREEN ACTION**: Split screen simulation:
+
 - Left: Email invitation received
 - Right: Registration flow
 
@@ -127,21 +134,25 @@
 **CALLOUT**: "Advanced Permissions Configuration"
 
 ### Conversation Access
+
 **NARRATION**: "First, decide what conversations Sarah can see. 'Assigned only' means she only sees chats assigned to her. 'Team conversations' includes all conversations assigned to any team member. 'All conversations' gives her full inbox access."
 
 **SCREEN ACTION**: Show conversation access options
 
 **CALLOUT**: Options:
+
 - ⚪ Assigned only (Most Restrictive)
 - ⚫ Team conversations (Recommended)
 - ⚪ All conversations (Full Access)
 
 ### Feature Access
+
 **NARRATION**: "Next, control which features Sarah can use. Can she create templates? Manage contacts? Export data? Toggle these permissions based on her responsibilities."
 
 **SCREEN ACTION**: Show feature permissions toggles
 
 **CALLOUT**: Feature Permissions:
+
 - ✓ Send messages
 - ✓ Create templates
 - ✓ Edit contacts
@@ -151,6 +162,7 @@
 - ✗ Access billing
 
 ### Working Hours
+
 **NARRATION**: "Optionally, set Sarah's working hours. This helps with automatic assignment and ensures conversations route to available team members."
 
 **SCREEN ACTION**: Configure working hours calendar
@@ -189,6 +201,7 @@ robert@adsappstore.com"
 **SCREEN ACTION**: Pan across team members list showing various stats
 
 **CALLOUT**: Team Member Columns:
+
 - Name & Avatar
 - Role
 - Status (Online/Offline)
@@ -217,6 +230,7 @@ robert@adsappstore.com"
 **CALLOUT**: "✓ Team Invited | ✓ Permissions Set | ✓ Ready to Collaborate"
 
 **CTA TEXT ON SCREEN**:
+
 - "Next: Inbox Management - Team Collaboration"
 - "Best Practice: Start with restrictive permissions, increase as needed"
 - "Help: docs.adsapp.com/team-management"
@@ -232,6 +246,7 @@ robert@adsappstore.com"
 **Graphics**: Role hierarchy diagram, permissions comparison table
 
 **Key Visuals Needed**:
+
 - Team members list with various statuses
 - Invitation flow from both perspectives
 - Permissions configuration panels
@@ -239,6 +254,7 @@ robert@adsappstore.com"
 - Bulk invite demonstration
 
 **Accessibility**:
+
 - Clearly describe all permission options
 - Read status indicators verbally
 - Explain security implications of each role

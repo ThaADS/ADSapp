@@ -289,7 +289,7 @@ export async function waitForElement(
     if (element) {
       return element as HTMLElement
     }
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await new Promise(resolve => setTimeout(resolve, 50))
   }
 
   throw new Error(`Element with selector "${selector}" not found within ${timeout}ms`)
@@ -310,7 +310,7 @@ export async function waitForElementToBeRemoved(
     if (!element) {
       return
     }
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await new Promise(resolve => setTimeout(resolve, 50))
   }
 
   throw new Error(`Element with selector "${selector}" still present after ${timeout}ms`)
@@ -434,7 +434,7 @@ export function getFormErrors(container: HTMLElement): Record<string, string> {
   const errors: Record<string, string> = {}
   const errorElements = container.querySelectorAll('[data-error]')
 
-  errorElements.forEach((element) => {
+  errorElements.forEach(element => {
     const name = element.getAttribute('data-field')
     const error = element.textContent
     if (name && error) {
@@ -452,11 +452,7 @@ export function getFormErrors(container: HTMLElement): Record<string, string> {
 /**
  * Creates a mock file for testing
  */
-export function createMockFile(
-  name = 'test.jpg',
-  size = 1024,
-  type = 'image/jpeg'
-): File {
+export function createMockFile(name = 'test.jpg', size = 1024, type = 'image/jpeg'): File {
   const blob = new Blob(['x'.repeat(size)], { type })
   return new File([blob], name, { type })
 }

@@ -12,33 +12,33 @@
  */
 
 // @ts-nocheck - Type definitions need review
-import { createClient } from '@/lib/supabase/server';
-import { getKMSClient, KMSClient, DataKeyResult } from './kms-client';
-import { KeyManagementError } from '@/lib/crypto/types';
-import * as crypto from 'crypto';
+import { createClient } from '@/lib/supabase/server'
+import { getKMSClient, KMSClient, DataKeyResult } from './kms-client'
+import { KeyManagementError } from '@/lib/crypto/types'
+import * as crypto from 'crypto'
 
 /**
  * Key version information
  */
 export interface KeyVersion {
   /** Version ID */
-  id: string;
+  id: string
   /** Tenant ID this key belongs to */
-  tenantId: string;
+  tenantId: string
   /** KMS Key ID used */
-  kmsKeyId: string;
+  kmsKeyId: string
   /** Encrypted data key (ciphertext) */
-  encryptedDataKey: string;
+  encryptedDataKey: string
   /** Key version number */
-  version: number;
+  version: number
   /** Whether this is the current/active key */
-  isActive: boolean;
+  isActive: boolean
   /** When the key was created */
-  createdAt: Date;
+  createdAt: Date
   /** When the key was rotated (null if still active) */
-  rotatedAt?: Date;
+  rotatedAt?: Date
   /** When the key expires (90 days from creation) */
-  expiresAt: Date;
+  expiresAt: Date
 }
 
 /**
@@ -46,11 +46,11 @@ export interface KeyVersion {
  */
 export interface KeyRetrievalOptions {
   /** Force refresh from KMS (skip cache) */
-  forceRefresh?: boolean;
+  forceRefresh?: boolean
   /** Specific key version to retrieve */
-  version?: number;
+  version?: number
   /** Include expired keys */
-  includeExpired?: boolean;
+  includeExpired?: boolean
 }
 
 /**
@@ -58,15 +58,15 @@ export interface KeyRetrievalOptions {
  */
 export interface KeyRotationResult {
   /** Number of keys successfully rotated */
-  rotated: number;
+  rotated: number
   /** Number of keys that failed rotation */
-  failed: number;
+  failed: number
   /** List of tenant IDs that were rotated */
-  tenantIds: string[];
+  tenantIds: string[]
   /** List of errors that occurred */
-  errors: Array<{ tenantId: string; error: string }>;
+  errors: Array<{ tenantId: string; error: string }>
   /** Duration of rotation in milliseconds */
-  duration: number;
+  duration: number
 }
 
 /**
@@ -74,30 +74,30 @@ export interface KeyRotationResult {
  */
 export interface KeyStats {
   /** Total keys managed */
-  totalKeys: number;
+  totalKeys: number
   /** Active keys */
-  activeKeys: number;
+  activeKeys: number
   /** Expired keys */
-  expiredKeys: number;
+  expiredKeys: number
   /** Keys pending rotation */
-  pendingRotation: number;
+  pendingRotation: number
   /** Average key age in days */
-  averageKeyAge: number;
+  averageKeyAge: number
 }
 
 /**
  * Key Manager for encryption key lifecycle management
  */
 export class KeyManager {
-  private kmsClient: KMSClient;
-  private keyCache: Map<string, { key: Buffer; timestamp: number; version: number }>;
-  private readonly CACHE_TTL = 3600000; // 1 hour
-  private readonly KEY_ROTATION_DAYS = 90;
-  private readonly KEY_ROTATION_WARNING_DAYS = 7;
+  private kmsClient: KMSClient
+  private keyCache: Map<string, { key: Buffer; timestamp: number; version: number }>
+  private readonly CACHE_TTL = 3600000 // 1 hour
+  private readonly KEY_ROTATION_DAYS = 90
+  private readonly KEY_ROTATION_WARNING_DAYS = 7
 
   constructor(kmsClient?: KMSClient) {
-    this.kmsClient = kmsClient || getKMSClient();
-    this.keyCache = new Map();
+    this.kmsClient = kmsClient || getKMSClient()
+    this.keyCache = new Map()
   }
 
   /**
@@ -109,52 +109,46 @@ export class KeyManager {
    * @returns Decrypted encryption key
    * @throws {KeyManagementError} If key retrieval fails
    */
-  async getEncryptionKey(
-    tenantId: string,
-    options: KeyRetrievalOptions = {}
-  ): Promise<Buffer> {
+  async getEncryptionKey(tenantId: string, options: KeyRetrievalOptions = {}): Promise<Buffer> {
     try {
       // Check cache first unless force refresh
       if (!options.forceRefresh) {
-        const cached = this.getCachedKey(tenantId);
+        const cached = this.getCachedKey(tenantId)
         if (cached) {
-          return cached;
+          return cached
         }
       }
 
       // Get active key from database
-      const keyVersion = await this.getActiveKeyVersion(tenantId);
+      const keyVersion = await this.getActiveKeyVersion(tenantId)
 
       if (!keyVersion) {
         // No key exists, create one
-        return await this.createKey(tenantId);
+        return await this.createKey(tenantId)
       }
 
       // Check if key is expired and needs rotation
       if (this.isKeyExpired(keyVersion.expiresAt)) {
-        console.warn(`Key for tenant ${tenantId} has expired, rotating...`);
-        return await this.rotateKey(tenantId);
+        console.warn(`Key for tenant ${tenantId} has expired, rotating...`)
+        return await this.rotateKey(tenantId)
       }
 
       // Check if key is approaching expiration
       if (this.isKeyNearExpiration(keyVersion.expiresAt)) {
-        console.info(`Key for tenant ${tenantId} is approaching expiration`);
+        console.info(`Key for tenant ${tenantId} is approaching expiration`)
         // Trigger async rotation in background (don't wait)
-        this.rotateKey(tenantId).catch((error) => {
-          console.error(`Background key rotation failed for ${tenantId}:`, error);
-        });
+        this.rotateKey(tenantId).catch(error => {
+          console.error(`Background key rotation failed for ${tenantId}:`, error)
+        })
       }
 
       // Decrypt the data key using KMS
-      const decrypted = await this.kmsClient.decryptDataKey(
-        keyVersion.encryptedDataKey,
-        tenantId
-      );
+      const decrypted = await this.kmsClient.decryptDataKey(keyVersion.encryptedDataKey, tenantId)
 
       // Cache the decrypted key
-      this.cacheKey(tenantId, decrypted.plaintext, keyVersion.version);
+      this.cacheKey(tenantId, decrypted.plaintext, keyVersion.version)
 
-      return decrypted.plaintext;
+      return decrypted.plaintext
     } catch (error) {
       throw new KeyManagementError(
         `Failed to get encryption key for tenant ${tenantId}`,
@@ -163,7 +157,7 @@ export class KeyManager {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -177,17 +171,17 @@ export class KeyManager {
   async createKey(tenantId: string): Promise<Buffer> {
     try {
       // Generate data key from KMS
-      const dataKey = await this.kmsClient.generateDataKey(tenantId);
+      const dataKey = await this.kmsClient.generateDataKey(tenantId)
 
       // Get the next version number
-      const version = await this.getNextVersion(tenantId);
+      const version = await this.getNextVersion(tenantId)
 
       // Calculate expiration date (90 days from now)
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + this.KEY_ROTATION_DAYS);
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + this.KEY_ROTATION_DAYS)
 
       // Store in database
-      const supabase = await createClient();
+      const supabase = await createClient()
       const { error } = await supabase.from('encryption_keys').insert({
         tenant_id: tenantId,
         kms_key_id: dataKey.keyId,
@@ -196,21 +190,21 @@ export class KeyManager {
         is_active: true,
         created_at: new Date().toISOString(),
         expires_at: expiresAt.toISOString(),
-      });
+      })
 
       if (error) {
-        throw new Error(`Database insert failed: ${error.message}`);
+        throw new Error(`Database insert failed: ${error.message}`)
       }
 
       // Log key creation
-      await this.logKeyOperation('create', tenantId, version, true);
+      await this.logKeyOperation('create', tenantId, version, true)
 
       // Cache the key
-      this.cacheKey(tenantId, dataKey.plaintext, version);
+      this.cacheKey(tenantId, dataKey.plaintext, version)
 
-      return dataKey.plaintext;
+      return dataKey.plaintext
     } catch (error) {
-      await this.logKeyOperation('create', tenantId, 0, false, error);
+      await this.logKeyOperation('create', tenantId, 0, false, error)
 
       throw new KeyManagementError(
         `Failed to create key for tenant ${tenantId}`,
@@ -219,7 +213,7 @@ export class KeyManager {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -232,12 +226,12 @@ export class KeyManager {
    */
   async rotateKey(tenantId: string): Promise<Buffer> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       // Get current active key
-      const currentKey = await this.getActiveKeyVersion(tenantId);
+      const currentKey = await this.getActiveKeyVersion(tenantId)
       if (!currentKey) {
-        throw new Error('No active key found to rotate');
+        throw new Error('No active key found to rotate')
       }
 
       // Mark current key as inactive and set rotated_at
@@ -247,22 +241,22 @@ export class KeyManager {
           is_active: false,
           rotated_at: new Date().toISOString(),
         })
-        .eq('id', currentKey.id);
+        .eq('id', currentKey.id)
 
       if (updateError) {
-        throw new Error(`Failed to deactivate old key: ${updateError.message}`);
+        throw new Error(`Failed to deactivate old key: ${updateError.message}`)
       }
 
       // Create new key
-      const newKey = await this.createKey(tenantId);
+      const newKey = await this.createKey(tenantId)
 
       // Log rotation
-      await this.logKeyRotation(tenantId, currentKey.version, currentKey.version + 1);
+      await this.logKeyRotation(tenantId, currentKey.version, currentKey.version + 1)
 
       // Clear cache to force refresh
-      this.clearCache(tenantId);
+      this.clearCache(tenantId)
 
-      return newKey;
+      return newKey
     } catch (error) {
       throw new KeyManagementError(
         `Failed to rotate key for tenant ${tenantId}`,
@@ -271,7 +265,7 @@ export class KeyManager {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -282,47 +276,41 @@ export class KeyManager {
    * @returns Rotation results
    */
   async rotateKeys(tenantId?: string): Promise<KeyRotationResult> {
-    const startTime = Date.now();
+    const startTime = Date.now()
     const result: KeyRotationResult = {
       rotated: 0,
       failed: 0,
       tenantIds: [],
       errors: [],
       duration: 0,
-    };
+    }
 
     try {
       // Get tenants that need rotation
-      const tenantsToRotate = tenantId
-        ? [tenantId]
-        : await this.getTenantsNeedingRotation();
+      const tenantsToRotate = tenantId ? [tenantId] : await this.getTenantsNeedingRotation()
 
       for (const tid of tenantsToRotate) {
         try {
-          await this.rotateKey(tid);
-          result.rotated++;
-          result.tenantIds.push(tid);
+          await this.rotateKey(tid)
+          result.rotated++
+          result.tenantIds.push(tid)
         } catch (error) {
-          result.failed++;
+          result.failed++
           result.errors.push({
             tenantId: tid,
             error: error instanceof Error ? error.message : String(error),
-          });
+          })
         }
       }
 
-      result.duration = Date.now() - startTime;
-      return result;
+      result.duration = Date.now() - startTime
+      return result
     } catch (error) {
-      result.duration = Date.now() - startTime;
-      throw new KeyManagementError(
-        'Batch key rotation failed',
-        'BATCH_ROTATION_FAILED',
-        {
-          result,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      result.duration = Date.now() - startTime
+      throw new KeyManagementError('Batch key rotation failed', 'BATCH_ROTATION_FAILED', {
+        result,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -334,28 +322,26 @@ export class KeyManager {
    */
   async scheduleRotation(): Promise<void> {
     try {
-      const tenantsNeedingRotation = await this.getTenantsNeedingRotation();
+      const tenantsNeedingRotation = await this.getTenantsNeedingRotation()
 
       if (tenantsNeedingRotation.length === 0) {
-        console.info('No tenants need key rotation at this time');
-        return;
+        console.info('No tenants need key rotation at this time')
+        return
       }
 
-      console.info(`Scheduling rotation for ${tenantsNeedingRotation.length} tenants`);
+      console.info(`Scheduling rotation for ${tenantsNeedingRotation.length} tenants`)
 
       // Rotate keys in batches to avoid overwhelming the system
-      const batchSize = 10;
+      const batchSize = 10
       for (let i = 0; i < tenantsNeedingRotation.length; i += batchSize) {
-        const batch = tenantsNeedingRotation.slice(i, i + batchSize);
-        await Promise.allSettled(
-          batch.map((tenantId) => this.rotateKey(tenantId))
-        );
+        const batch = tenantsNeedingRotation.slice(i, i + batchSize)
+        await Promise.allSettled(batch.map(tenantId => this.rotateKey(tenantId)))
       }
 
-      console.info('Key rotation scheduling completed');
+      console.info('Key rotation scheduling completed')
     } catch (error) {
-      console.error('Failed to schedule key rotation:', error);
-      throw error;
+      console.error('Failed to schedule key rotation:', error)
+      throw error
     }
   }
 
@@ -367,59 +353,51 @@ export class KeyManager {
    */
   async getKeyStats(tenantId?: string): Promise<KeyStats> {
     try {
-      const supabase = await createClient();
-      let query = supabase.from('encryption_keys').select('*');
+      const supabase = await createClient()
+      let query = supabase.from('encryption_keys').select('*')
 
       if (tenantId) {
-        query = query.eq('tenant_id', tenantId);
+        query = query.eq('tenant_id', tenantId)
       }
 
-      const { data: keys, error } = await query;
+      const { data: keys, error } = await query
 
       if (error) {
-        throw new Error(`Failed to fetch key stats: ${error.message}`);
+        throw new Error(`Failed to fetch key stats: ${error.message}`)
       }
 
-      const now = new Date();
+      const now = new Date()
       const stats: KeyStats = {
         totalKeys: keys?.length || 0,
-        activeKeys: keys?.filter((k) => k.is_active).length || 0,
-        expiredKeys:
-          keys?.filter((k) => new Date(k.expires_at) < now).length || 0,
+        activeKeys: keys?.filter(k => k.is_active).length || 0,
+        expiredKeys: keys?.filter(k => new Date(k.expires_at) < now).length || 0,
         pendingRotation: 0,
         averageKeyAge: 0,
-      };
+      }
 
       // Calculate pending rotation
-      const warningDate = new Date();
-      warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS);
+      const warningDate = new Date()
+      warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS)
       stats.pendingRotation =
         keys?.filter(
-          (k) =>
-            k.is_active &&
-            new Date(k.expires_at) <= warningDate &&
-            new Date(k.expires_at) > now
-        ).length || 0;
+          k => k.is_active && new Date(k.expires_at) <= warningDate && new Date(k.expires_at) > now
+        ).length || 0
 
       // Calculate average key age
       if (keys && keys.length > 0) {
         const totalAge = keys.reduce((sum, k) => {
-          const age = now.getTime() - new Date(k.created_at).getTime();
-          return sum + age / (1000 * 60 * 60 * 24); // Convert to days
-        }, 0);
-        stats.averageKeyAge = totalAge / keys.length;
+          const age = now.getTime() - new Date(k.created_at).getTime()
+          return sum + age / (1000 * 60 * 60 * 24) // Convert to days
+        }, 0)
+        stats.averageKeyAge = totalAge / keys.length
       }
 
-      return stats;
+      return stats
     } catch (error) {
-      throw new KeyManagementError(
-        'Failed to get key statistics',
-        'GET_STATS_FAILED',
-        {
-          tenantId,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      throw new KeyManagementError('Failed to get key statistics', 'GET_STATS_FAILED', {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -431,19 +409,19 @@ export class KeyManager {
    */
   async getKeyHistory(tenantId: string): Promise<KeyVersion[]> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
       const { data, error } = await supabase
         .from('encryption_keys')
         .select('*')
         .eq('tenant_id', tenantId)
-        .order('version', { ascending: false });
+        .order('version', { ascending: false })
 
       if (error) {
-        throw new Error(`Failed to fetch key history: ${error.message}`);
+        throw new Error(`Failed to fetch key history: ${error.message}`)
       }
 
       return (
-        data?.map((row) => ({
+        data?.map(row => ({
           id: row.id,
           tenantId: row.tenant_id,
           kmsKeyId: row.kms_key_id,
@@ -454,7 +432,7 @@ export class KeyManager {
           rotatedAt: row.rotated_at ? new Date(row.rotated_at) : undefined,
           expiresAt: new Date(row.expires_at),
         })) || []
-      );
+      )
     } catch (error) {
       throw new KeyManagementError(
         `Failed to get key history for tenant ${tenantId}`,
@@ -463,7 +441,7 @@ export class KeyManager {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -474,28 +452,26 @@ export class KeyManager {
    */
   clearCache(tenantId?: string): void {
     if (tenantId) {
-      this.keyCache.delete(tenantId);
+      this.keyCache.delete(tenantId)
     } else {
-      this.keyCache.clear();
+      this.keyCache.clear()
     }
   }
 
   /**
    * Get active key version from database
    */
-  private async getActiveKeyVersion(
-    tenantId: string
-  ): Promise<KeyVersion | null> {
-    const supabase = await createClient();
+  private async getActiveKeyVersion(tenantId: string): Promise<KeyVersion | null> {
+    const supabase = await createClient()
     const { data, error } = await supabase
       .from('encryption_keys')
       .select('*')
       .eq('tenant_id', tenantId)
       .eq('is_active', true)
-      .single();
+      .single()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
     return {
@@ -508,67 +484,67 @@ export class KeyManager {
       createdAt: new Date(data.created_at),
       rotatedAt: data.rotated_at ? new Date(data.rotated_at) : undefined,
       expiresAt: new Date(data.expires_at),
-    };
+    }
   }
 
   /**
    * Get next version number for a tenant
    */
   private async getNextVersion(tenantId: string): Promise<number> {
-    const supabase = await createClient();
+    const supabase = await createClient()
     const { data, error } = await supabase
       .from('encryption_keys')
       .select('version')
       .eq('tenant_id', tenantId)
       .order('version', { ascending: false })
       .limit(1)
-      .single();
+      .single()
 
     if (error || !data) {
-      return 1;
+      return 1
     }
 
-    return data.version + 1;
+    return data.version + 1
   }
 
   /**
    * Get tenants that need key rotation
    */
   private async getTenantsNeedingRotation(): Promise<string[]> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get keys that are expired or expiring within warning period
-    const warningDate = new Date();
-    warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS);
+    const warningDate = new Date()
+    warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS)
 
     const { data, error } = await supabase
       .from('encryption_keys')
       .select('tenant_id')
       .eq('is_active', true)
-      .lte('expires_at', warningDate.toISOString());
+      .lte('expires_at', warningDate.toISOString())
 
     if (error || !data) {
-      return [];
+      return []
     }
 
     // Return unique tenant IDs
-    return [...new Set(data.map((row) => row.tenant_id))];
+    return [...new Set(data.map(row => row.tenant_id))]
   }
 
   /**
    * Check if key is expired
    */
   private isKeyExpired(expiresAt: Date): boolean {
-    return new Date() > new Date(expiresAt);
+    return new Date() > new Date(expiresAt)
   }
 
   /**
    * Check if key is near expiration
    */
   private isKeyNearExpiration(expiresAt: Date): boolean {
-    const warningDate = new Date();
-    warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS);
-    return new Date(expiresAt) <= warningDate;
+    const warningDate = new Date()
+    warningDate.setDate(warningDate.getDate() + this.KEY_ROTATION_WARNING_DAYS)
+    return new Date(expiresAt) <= warningDate
   }
 
   /**
@@ -579,26 +555,26 @@ export class KeyManager {
       key: Buffer.from(key),
       timestamp: Date.now(),
       version,
-    });
+    })
   }
 
   /**
    * Get cached key if valid
    */
   private getCachedKey(tenantId: string): Buffer | null {
-    const cached = this.keyCache.get(tenantId);
+    const cached = this.keyCache.get(tenantId)
 
     if (!cached) {
-      return null;
+      return null
     }
 
     // Check if cache entry is still valid
     if (Date.now() - cached.timestamp > this.CACHE_TTL) {
-      this.keyCache.delete(tenantId);
-      return null;
+      this.keyCache.delete(tenantId)
+      return null
     }
 
-    return Buffer.from(cached.key);
+    return Buffer.from(cached.key)
   }
 
   /**
@@ -612,7 +588,7 @@ export class KeyManager {
     error?: unknown
   ): Promise<void> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
       await supabase.from('key_rotation_log').insert({
         tenant_id: tenantId,
         operation,
@@ -621,9 +597,9 @@ export class KeyManager {
         success,
         error_message: error instanceof Error ? error.message : undefined,
         performed_at: new Date().toISOString(),
-      });
+      })
     } catch (logError) {
-      console.error('Failed to log key operation:', logError);
+      console.error('Failed to log key operation:', logError)
       // Don't throw - logging failure shouldn't stop the operation
     }
   }
@@ -637,7 +613,7 @@ export class KeyManager {
     toVersion: number
   ): Promise<void> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
       await supabase.from('key_rotation_log').insert({
         tenant_id: tenantId,
         operation: 'rotate',
@@ -645,9 +621,9 @@ export class KeyManager {
         to_version: toVersion,
         success: true,
         performed_at: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      console.error('Failed to log key rotation:', error);
+      console.error('Failed to log key rotation:', error)
     }
   }
 }
@@ -655,7 +631,7 @@ export class KeyManager {
 /**
  * Singleton key manager instance
  */
-let keyManagerInstance: KeyManager | null = null;
+let keyManagerInstance: KeyManager | null = null
 
 /**
  * Get or create key manager singleton
@@ -664,9 +640,9 @@ let keyManagerInstance: KeyManager | null = null;
  */
 export function getKeyManager(): KeyManager {
   if (!keyManagerInstance) {
-    keyManagerInstance = new KeyManager();
+    keyManagerInstance = new KeyManager()
   }
-  return keyManagerInstance;
+  return keyManagerInstance
 }
 
 /**
@@ -674,8 +650,8 @@ export function getKeyManager(): KeyManager {
  */
 export function resetKeyManager(): void {
   if (keyManagerInstance) {
-    keyManagerInstance.clearCache();
-    keyManagerInstance = null;
+    keyManagerInstance.clearCache()
+    keyManagerInstance = null
   }
 }
 
@@ -685,4 +661,4 @@ export function resetKeyManager(): void {
 export const __testing__ = {
   KeyManager,
   resetKeyManager,
-};
+}

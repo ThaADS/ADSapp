@@ -3,6 +3,7 @@
 ## Quick Apply (< 1 minute)
 
 1. **Open Supabase SQL Editor**
+
    ```
    https://supabase.com/dashboard/project/egaiyydjgeqlhthxmvbn/sql/new
    ```
@@ -23,26 +24,29 @@
 ## What This Migration Does
 
 ### Adds to Database
+
 - ✅ `business_hours` JSONB column to `organizations` table
 - ✅ Validation function to ensure proper format
 - ✅ Check constraint for data integrity
 
 ### Business Hours Format
+
 ```json
 {
-  "monday": {"enabled": true, "start": "09:00", "end": "17:00"},
-  "tuesday": {"enabled": true, "start": "09:00", "end": "17:00"},
-  "wednesday": {"enabled": true, "start": "09:00", "end": "17:00"},
-  "thursday": {"enabled": true, "start": "09:00", "end": "17:00"},
-  "friday": {"enabled": true, "start": "09:00", "end": "17:00"},
-  "saturday": {"enabled": false, "start": "09:00", "end": "17:00"},
-  "sunday": {"enabled": false, "start": "09:00", "end": "17:00"}
+  "monday": { "enabled": true, "start": "09:00", "end": "17:00" },
+  "tuesday": { "enabled": true, "start": "09:00", "end": "17:00" },
+  "wednesday": { "enabled": true, "start": "09:00", "end": "17:00" },
+  "thursday": { "enabled": true, "start": "09:00", "end": "17:00" },
+  "friday": { "enabled": true, "start": "09:00", "end": "17:00" },
+  "saturday": { "enabled": false, "start": "09:00", "end": "17:00" },
+  "sunday": { "enabled": false, "start": "09:00", "end": "17:00" }
 }
 ```
 
 ## After Migration
 
 ### Test the Feature
+
 1. Navigate to: `http://localhost:3000/dashboard/settings/organization`
 2. Scroll to "Business Hours" section
 3. Modify hours for any day
@@ -51,6 +55,7 @@
 6. Refresh page - hours should persist!
 
 ### Verify in Database
+
 ```sql
 -- Check if column was added
 SELECT column_name, data_type

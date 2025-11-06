@@ -16,7 +16,7 @@ export class WebSocketClient {
     try {
       // Use Supabase Realtime for WebSocket connections
       const supabase = createClient()
-      
+
       // Subscribe to real-time changes for messages
       const channel = supabase
         .channel(`organization:${this.organizationId}`)
@@ -26,9 +26,9 @@ export class WebSocketClient {
             event: 'INSERT',
             schema: 'public',
             table: 'messages',
-            filter: `organization_id=eq.${this.organizationId}`
+            filter: `organization_id=eq.${this.organizationId}`,
           },
-          (payload) => {
+          payload => {
             this.handleNewMessage(payload.new)
           }
         )
@@ -38,9 +38,9 @@ export class WebSocketClient {
             event: 'UPDATE',
             schema: 'public',
             table: 'conversations',
-            filter: `organization_id=eq.${this.organizationId}`
+            filter: `organization_id=eq.${this.organizationId}`,
           },
-          (payload) => {
+          payload => {
             this.handleConversationUpdate(payload.new)
           }
         )
@@ -55,16 +55,20 @@ export class WebSocketClient {
 
   private handleNewMessage(message: Record<string, unknown>) {
     // Dispatch custom event for new messages
-    window.dispatchEvent(new CustomEvent('newMessage', {
-      detail: message
-    }))
+    window.dispatchEvent(
+      new CustomEvent('newMessage', {
+        detail: message,
+      })
+    )
   }
 
   private handleConversationUpdate(conversation: Record<string, unknown>) {
     // Dispatch custom event for conversation updates
-    window.dispatchEvent(new CustomEvent('conversationUpdate', {
-      detail: conversation
-    }))
+    window.dispatchEvent(
+      new CustomEvent('conversationUpdate', {
+        detail: conversation,
+      })
+    )
   }
 
   private scheduleReconnect() {
@@ -87,9 +91,9 @@ export class WebSocketClient {
 // Hook for using WebSocket in React components
 export function useWebSocket(organizationId: string) {
   const client = new WebSocketClient(organizationId)
-  
+
   return {
     connect: () => client.connect(),
-    disconnect: () => client.disconnect()
+    disconnect: () => client.disconnect(),
   }
 }

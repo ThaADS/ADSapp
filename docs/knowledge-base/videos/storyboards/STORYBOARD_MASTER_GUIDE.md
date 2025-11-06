@@ -37,6 +37,7 @@ PRODUCTION NOTES:
 # Video 1: Welcome to ADSapp - Platform Overview
 
 ## Scene 1: Opening Hook (0:00-0:10)
+
 ```
 ┌─────────────────────────────────┐
 │ ADSapp logo animates in         │
@@ -61,6 +62,7 @@ PRODUCTION NOTES:
 ```
 
 ## Scene 2: Problem Statement (0:10-0:30)
+
 ```
 ┌─────────────────────────────────┐
 │ Split screen comparison         │
@@ -97,6 +99,7 @@ PRODUCTION NOTES:
 ```
 
 ## Scene 3: Five Core Capabilities (0:30-2:00)
+
 ```
 Scene 3A: Unified Inbox (0:30-0:50)
 ┌─────────────────────────────────┐
@@ -249,6 +252,7 @@ PRODUCTION NOTES:
 ```
 
 ## Scene 4: Industry Use Cases Montage (2:00-2:30)
+
 ```
 Quick cuts between 4 scenarios:
 
@@ -302,6 +306,7 @@ PRODUCTION NOTES:
 ```
 
 ## Scene 5: Getting Started CTA (2:30-3:00)
+
 ```
 ┌─────────────────────────────────┐
 │ Three-step visual journey       │
@@ -335,6 +340,7 @@ PRODUCTION NOTES:
 ```
 
 ## Scene 6: Closing and Next Video Preview (3:00-3:30)
+
 ```
 ┌─────────────────────────────────┐
 │ Montage of upcoming video       │
@@ -387,6 +393,7 @@ PRODUCTION NOTES:
 For efficiency, videos 3-20 follow these standardized storyboard templates:
 
 ## Standard Feature Tutorial Template
+
 1. Opening hook (0:00-0:30)
 2. Feature overview (0:30-1:30)
 3. Step-by-step demonstration (1:30-5:00)
@@ -395,6 +402,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 6. Recap and next video (7:00-7:30)
 
 ## Standard Use Case Template
+
 1. Industry introduction (0:00-0:30)
 2. Common challenges (0:30-2:00)
 3. ADSapp solution workflows (2:00-6:00)
@@ -407,24 +415,28 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 ## Universal Production Standards
 
 ### Camera/Screen Settings
+
 - **Resolution**: 1920x1080 (1080p)
 - **Frame Rate**: 60fps for smooth animations
 - **Bitrate**: 10-15 Mbps for quality
 - **Format**: MP4 (H.264 codec)
 
 ### Screen Recording Standards
+
 - **Mouse Cursor**: Smooth, purposeful movements
 - **Click Timing**: Hold clicks 0.5s for visibility
 - **Scrolling**: Slow, deliberate scrolling
 - **Highlighting**: Use colored overlays (50% opacity)
 
 ### Audio Standards
+
 - **Narration**: -3dB peak levels
 - **Background Music**: -18dB to -24dB
 - **Sound Effects**: -12dB to -15dB
 - **Format**: 48kHz, 16-bit WAV or 320kbps MP3
 
 ### Graphics Standards
+
 - **Font**: Inter or Roboto (sans-serif)
 - **Title Size**: 48-60pt
 - **Body Text**: 24-32pt
@@ -436,12 +448,14 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
   - Error: #FF3B30
 
 ### Transition Standards
+
 - **Between Scenes**: 0.3-0.5s fade or dissolve
 - **Callouts**: 0.2s fade in
 - **Animations**: Smooth easing (ease-in-out)
 - **Page Transitions**: 0.4s slide or fade
 
 ### Accessibility Standards
+
 - **Captions**: Full narration transcription
 - **Caption Timing**: Max 2 lines, 3 seconds visible
 - **Caption Font**: Clear sans-serif, 24-28pt
@@ -453,6 +467,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 ## Asset Requirements Checklist
 
 ### For Each Video:
+
 - [ ] Logo assets (4K PNG with transparency)
 - [ ] Icon set for features (SVG preferred)
 - [ ] Screenshot content (anonymized demo data)
@@ -465,6 +480,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 - [ ] End card template
 
 ### Demo Account Setup:
+
 - [ ] Clean ADSapp demo account
 - [ ] Sample conversations (10-15)
 - [ ] Sample contacts (20-30)
@@ -479,6 +495,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 ## Filming Day Preparation
 
 ### Pre-Production Checklist:
+
 - [ ] Scripts printed and reviewed
 - [ ] Storyboards accessible on second monitor
 - [ ] Demo accounts set up and tested
@@ -492,6 +509,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 - [ ] Test recording reviewed
 
 ### During Production:
+
 - [ ] Record each scene multiple times
 - [ ] Capture B-roll footage for editing flexibility
 - [ ] Monitor audio levels continuously
@@ -500,6 +518,7 @@ For efficiency, videos 3-20 follow these standardized storyboard templates:
 - [ ] Log any issues or retake notes
 
 ### Post-Production:
+
 - [ ] Sync audio and video
 - [ ] Color correction
 - [ ] Add graphics and callouts

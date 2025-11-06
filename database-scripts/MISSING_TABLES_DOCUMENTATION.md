@@ -20,26 +20,26 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `user_id` | UUID | FK to auth.users (nullable) |
-| `session_id` | TEXT | User session identifier |
-| `type` | TEXT | Metric type: CLS, FCP, FID, LCP, TTFB, api-call, custom-timing, error, user-interaction, navigation-timing |
-| `name` | TEXT | Metric name for custom types |
-| `value` | NUMERIC | Numeric metric value |
-| `duration` | NUMERIC | Duration in milliseconds |
-| `url` | TEXT | URL where metric was captured |
-| `route` | TEXT | Route/page identifier |
-| `metadata` | JSONB | Additional context data |
-| `ip_address` | INET | Client IP address |
-| `user_agent` | TEXT | Browser/client user agent |
-| `viewport_width` | INT | Browser viewport width |
-| `viewport_height` | INT | Browser viewport height |
-| `device_type` | TEXT | Device category |
-| `timestamp` | TIMESTAMPTZ | Metric capture timestamp |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
+| Column            | Type        | Description                                                                                                |
+| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| `id`              | UUID        | Primary key                                                                                                |
+| `organization_id` | UUID        | Multi-tenant FK to organizations                                                                           |
+| `user_id`         | UUID        | FK to auth.users (nullable)                                                                                |
+| `session_id`      | TEXT        | User session identifier                                                                                    |
+| `type`            | TEXT        | Metric type: CLS, FCP, FID, LCP, TTFB, api-call, custom-timing, error, user-interaction, navigation-timing |
+| `name`            | TEXT        | Metric name for custom types                                                                               |
+| `value`           | NUMERIC     | Numeric metric value                                                                                       |
+| `duration`        | NUMERIC     | Duration in milliseconds                                                                                   |
+| `url`             | TEXT        | URL where metric was captured                                                                              |
+| `route`           | TEXT        | Route/page identifier                                                                                      |
+| `metadata`        | JSONB       | Additional context data                                                                                    |
+| `ip_address`      | INET        | Client IP address                                                                                          |
+| `user_agent`      | TEXT        | Browser/client user agent                                                                                  |
+| `viewport_width`  | INT         | Browser viewport width                                                                                     |
+| `viewport_height` | INT         | Browser viewport height                                                                                    |
+| `device_type`     | TEXT        | Device category                                                                                            |
+| `timestamp`       | TIMESTAMPTZ | Metric capture timestamp                                                                                   |
+| `created_at`      | TIMESTAMPTZ | Record creation timestamp                                                                                  |
 
 ### Indexes
 
@@ -74,28 +74,28 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `created_by` | UUID | FK to profiles (report creator) |
-| `report_type` | TEXT | Type: conversations, messages, agents, contacts, performance |
-| `report_name` | TEXT | User-defined report name |
-| `start_date` | DATE | Report period start |
-| `end_date` | DATE | Report period end |
-| `filters` | JSONB | Custom filters for report |
-| `format` | TEXT | Output format: json, csv, pdf |
-| `scheduling` | JSONB | Schedule config: {"frequency": "once\|daily\|weekly\|monthly", "dayOfWeek": 1, "dayOfMonth": 15, "time": "09:00"} |
-| `next_run_at` | TIMESTAMPTZ | Next scheduled execution |
-| `last_run_at` | TIMESTAMPTZ | Last execution timestamp |
-| `status` | TEXT | Status: pending, processing, completed, failed, cancelled |
-| `error_message` | TEXT | Error details if failed |
-| `output_url` | TEXT | Generated report URL |
-| `delivery_emails` | TEXT[] | Email recipients for report delivery |
-| `metadata` | JSONB | Additional configuration |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger) |
-| `completed_at` | TIMESTAMPTZ | Completion timestamp |
+| Column            | Type        | Description                                                                                                       |
+| ----------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `id`              | UUID        | Primary key                                                                                                       |
+| `organization_id` | UUID        | Multi-tenant FK to organizations                                                                                  |
+| `created_by`      | UUID        | FK to profiles (report creator)                                                                                   |
+| `report_type`     | TEXT        | Type: conversations, messages, agents, contacts, performance                                                      |
+| `report_name`     | TEXT        | User-defined report name                                                                                          |
+| `start_date`      | DATE        | Report period start                                                                                               |
+| `end_date`        | DATE        | Report period end                                                                                                 |
+| `filters`         | JSONB       | Custom filters for report                                                                                         |
+| `format`          | TEXT        | Output format: json, csv, pdf                                                                                     |
+| `scheduling`      | JSONB       | Schedule config: {"frequency": "once\|daily\|weekly\|monthly", "dayOfWeek": 1, "dayOfMonth": 15, "time": "09:00"} |
+| `next_run_at`     | TIMESTAMPTZ | Next scheduled execution                                                                                          |
+| `last_run_at`     | TIMESTAMPTZ | Last execution timestamp                                                                                          |
+| `status`          | TEXT        | Status: pending, processing, completed, failed, cancelled                                                         |
+| `error_message`   | TEXT        | Error details if failed                                                                                           |
+| `output_url`      | TEXT        | Generated report URL                                                                                              |
+| `delivery_emails` | TEXT[]      | Email recipients for report delivery                                                                              |
+| `metadata`        | JSONB       | Additional configuration                                                                                          |
+| `created_at`      | TIMESTAMPTZ | Record creation timestamp                                                                                         |
+| `updated_at`      | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger)                                                                  |
+| `completed_at`    | TIMESTAMPTZ | Completion timestamp                                                                                              |
 
 ### Indexes
 
@@ -130,24 +130,24 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `actor_id` | UUID | FK to auth.users (who performed action) |
-| `actor_email` | TEXT | Actor's email for audit trail |
-| `actor_role` | TEXT | Actor's role at time of action |
-| `action` | TEXT | Action performed (e.g., "mfa_enrollment_initiated") |
-| `resource_type` | TEXT | Type of resource affected |
-| `resource_id` | UUID | ID of affected resource |
-| `old_values` | JSONB | State before change |
-| `new_values` | JSONB | State after change |
-| `risk_level` | TEXT | Risk: low, medium, high, critical |
-| `ip_address` | INET | Client IP address |
-| `user_agent` | TEXT | Client user agent |
-| `metadata` | JSONB | Additional context |
-| `session_id` | TEXT | Session identifier |
-| `created_at` | TIMESTAMPTZ | Event timestamp |
+| Column            | Type        | Description                                         |
+| ----------------- | ----------- | --------------------------------------------------- |
+| `id`              | UUID        | Primary key                                         |
+| `organization_id` | UUID        | Multi-tenant FK to organizations                    |
+| `actor_id`        | UUID        | FK to auth.users (who performed action)             |
+| `actor_email`     | TEXT        | Actor's email for audit trail                       |
+| `actor_role`      | TEXT        | Actor's role at time of action                      |
+| `action`          | TEXT        | Action performed (e.g., "mfa_enrollment_initiated") |
+| `resource_type`   | TEXT        | Type of resource affected                           |
+| `resource_id`     | UUID        | ID of affected resource                             |
+| `old_values`      | JSONB       | State before change                                 |
+| `new_values`      | JSONB       | State after change                                  |
+| `risk_level`      | TEXT        | Risk: low, medium, high, critical                   |
+| `ip_address`      | INET        | Client IP address                                   |
+| `user_agent`      | TEXT        | Client user agent                                   |
+| `metadata`        | JSONB       | Additional context                                  |
+| `session_id`      | TEXT        | Session identifier                                  |
+| `created_at`      | TIMESTAMPTZ | Event timestamp                                     |
 
 ### Indexes
 
@@ -184,35 +184,35 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `subscription_id` | UUID | FK to subscriptions |
-| `stripe_invoice_id` | TEXT | Stripe invoice ID (unique) |
-| `stripe_customer_id` | TEXT | Stripe customer ID |
-| `invoice_number` | TEXT | Sequential invoice number (unique) |
-| `amount_due` | INT | Total amount due (cents) |
-| `amount_paid` | INT | Amount paid (cents) |
-| `currency` | TEXT | Currency code (default: usd) |
-| `status` | TEXT | Status: draft, open, paid, void, uncollectible |
-| `billing_period_start` | DATE | Billing period start date |
-| `billing_period_end` | DATE | Billing period end date |
-| `due_date` | DATE | Payment due date |
-| `paid_at` | TIMESTAMPTZ | Payment timestamp |
-| `line_items` | JSONB | Invoice line items array |
-| `subtotal` | INT | Subtotal before tax/discount (cents) |
-| `tax_amount` | INT | Tax amount (cents) |
-| `discount_amount` | INT | Discount amount (cents) |
-| `total_amount` | INT | Final total amount (cents) |
-| `payment_method` | TEXT | Payment method used |
-| `payment_intent_id` | TEXT | Stripe payment intent ID |
-| `invoice_pdf_url` | TEXT | PDF invoice URL |
-| `hosted_invoice_url` | TEXT | Stripe hosted invoice URL |
-| `metadata` | JSONB | Additional invoice data |
-| `notes` | TEXT | Internal notes |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger) |
+| Column                 | Type        | Description                                      |
+| ---------------------- | ----------- | ------------------------------------------------ |
+| `id`                   | UUID        | Primary key                                      |
+| `organization_id`      | UUID        | Multi-tenant FK to organizations                 |
+| `subscription_id`      | UUID        | FK to subscriptions                              |
+| `stripe_invoice_id`    | TEXT        | Stripe invoice ID (unique)                       |
+| `stripe_customer_id`   | TEXT        | Stripe customer ID                               |
+| `invoice_number`       | TEXT        | Sequential invoice number (unique)               |
+| `amount_due`           | INT         | Total amount due (cents)                         |
+| `amount_paid`          | INT         | Amount paid (cents)                              |
+| `currency`             | TEXT        | Currency code (default: usd)                     |
+| `status`               | TEXT        | Status: draft, open, paid, void, uncollectible   |
+| `billing_period_start` | DATE        | Billing period start date                        |
+| `billing_period_end`   | DATE        | Billing period end date                          |
+| `due_date`             | DATE        | Payment due date                                 |
+| `paid_at`              | TIMESTAMPTZ | Payment timestamp                                |
+| `line_items`           | JSONB       | Invoice line items array                         |
+| `subtotal`             | INT         | Subtotal before tax/discount (cents)             |
+| `tax_amount`           | INT         | Tax amount (cents)                               |
+| `discount_amount`      | INT         | Discount amount (cents)                          |
+| `total_amount`         | INT         | Final total amount (cents)                       |
+| `payment_method`       | TEXT        | Payment method used                              |
+| `payment_intent_id`    | TEXT        | Stripe payment intent ID                         |
+| `invoice_pdf_url`      | TEXT        | PDF invoice URL                                  |
+| `hosted_invoice_url`   | TEXT        | Stripe hosted invoice URL                        |
+| `metadata`             | JSONB       | Additional invoice data                          |
+| `notes`                | TEXT        | Internal notes                                   |
+| `created_at`           | TIMESTAMPTZ | Record creation timestamp                        |
+| `updated_at`           | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger) |
 
 ### Indexes
 
@@ -248,27 +248,27 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `subscription_id` | UUID | FK to subscriptions |
-| `change_type` | TEXT | Type: created, upgraded, downgraded, cancelled, renewed, trial_started, trial_ended, reactivated |
-| `old_plan_id` | TEXT | Previous plan ID |
-| `new_plan_id` | TEXT | New plan ID |
-| `old_status` | TEXT | Previous subscription status |
-| `new_status` | TEXT | New subscription status |
-| `old_amount` | INT | Previous amount (cents) |
-| `new_amount` | INT | New amount (cents) |
-| `currency` | TEXT | Currency code (default: usd) |
-| `prorated_amount` | INT | Prorated amount (cents) |
-| `effective_date` | DATE | Change effective date |
-| `change_reason` | TEXT | Reason for change |
-| `initiated_by` | UUID | FK to profiles (who initiated) |
-| `stripe_subscription_id` | TEXT | Stripe subscription ID |
-| `stripe_event_id` | TEXT | Stripe event ID |
-| `metadata` | JSONB | Additional change data |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
+| Column                   | Type        | Description                                                                                      |
+| ------------------------ | ----------- | ------------------------------------------------------------------------------------------------ |
+| `id`                     | UUID        | Primary key                                                                                      |
+| `organization_id`        | UUID        | Multi-tenant FK to organizations                                                                 |
+| `subscription_id`        | UUID        | FK to subscriptions                                                                              |
+| `change_type`            | TEXT        | Type: created, upgraded, downgraded, cancelled, renewed, trial_started, trial_ended, reactivated |
+| `old_plan_id`            | TEXT        | Previous plan ID                                                                                 |
+| `new_plan_id`            | TEXT        | New plan ID                                                                                      |
+| `old_status`             | TEXT        | Previous subscription status                                                                     |
+| `new_status`             | TEXT        | New subscription status                                                                          |
+| `old_amount`             | INT         | Previous amount (cents)                                                                          |
+| `new_amount`             | INT         | New amount (cents)                                                                               |
+| `currency`               | TEXT        | Currency code (default: usd)                                                                     |
+| `prorated_amount`        | INT         | Prorated amount (cents)                                                                          |
+| `effective_date`         | DATE        | Change effective date                                                                            |
+| `change_reason`          | TEXT        | Reason for change                                                                                |
+| `initiated_by`           | UUID        | FK to profiles (who initiated)                                                                   |
+| `stripe_subscription_id` | TEXT        | Stripe subscription ID                                                                           |
+| `stripe_event_id`        | TEXT        | Stripe event ID                                                                                  |
+| `metadata`               | JSONB       | Additional change data                                                                           |
+| `created_at`             | TIMESTAMPTZ | Record creation timestamp                                                                        |
 
 ### Indexes
 
@@ -303,26 +303,26 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `usage_date` | DATE | Usage date |
-| `usage_hour` | INT | Hour of day (0-23) for granular tracking, NULL for daily |
-| `resource_type` | TEXT | Type: messages_sent, messages_received, storage_gb, api_calls, active_contacts, active_users, whatsapp_sessions, automation_executions |
-| `quantity` | NUMERIC | Usage quantity |
-| `unit` | TEXT | Unit of measurement |
-| `unit_price` | NUMERIC | Price per unit |
-| `total_cost` | NUMERIC | Total cost |
-| `currency` | TEXT | Currency code (default: usd) |
-| `subscription_id` | UUID | FK to subscriptions |
-| `invoice_id` | UUID | FK to invoices |
-| `is_billable` | BOOLEAN | Whether usage is billable |
-| `included_quantity` | NUMERIC | Included in plan quantity |
-| `overage_quantity` | NUMERIC | Quantity over plan limits |
-| `metadata` | JSONB | Additional usage data |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger) |
+| Column              | Type        | Description                                                                                                                            |
+| ------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | UUID        | Primary key                                                                                                                            |
+| `organization_id`   | UUID        | Multi-tenant FK to organizations                                                                                                       |
+| `usage_date`        | DATE        | Usage date                                                                                                                             |
+| `usage_hour`        | INT         | Hour of day (0-23) for granular tracking, NULL for daily                                                                               |
+| `resource_type`     | TEXT        | Type: messages_sent, messages_received, storage_gb, api_calls, active_contacts, active_users, whatsapp_sessions, automation_executions |
+| `quantity`          | NUMERIC     | Usage quantity                                                                                                                         |
+| `unit`              | TEXT        | Unit of measurement                                                                                                                    |
+| `unit_price`        | NUMERIC     | Price per unit                                                                                                                         |
+| `total_cost`        | NUMERIC     | Total cost                                                                                                                             |
+| `currency`          | TEXT        | Currency code (default: usd)                                                                                                           |
+| `subscription_id`   | UUID        | FK to subscriptions                                                                                                                    |
+| `invoice_id`        | UUID        | FK to invoices                                                                                                                         |
+| `is_billable`       | BOOLEAN     | Whether usage is billable                                                                                                              |
+| `included_quantity` | NUMERIC     | Included in plan quantity                                                                                                              |
+| `overage_quantity`  | NUMERIC     | Quantity over plan limits                                                                                                              |
+| `metadata`          | JSONB       | Additional usage data                                                                                                                  |
+| `created_at`        | TIMESTAMPTZ | Record creation timestamp                                                                                                              |
+| `updated_at`        | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger)                                                                                       |
 
 **Unique Constraint**: (organization_id, usage_date, usage_hour, resource_type)
 
@@ -360,25 +360,25 @@ This migration creates **7 missing database tables** identified during Week 3-4 
 
 ### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `organization_id` | UUID | Multi-tenant FK to organizations |
-| `created_by` | UUID | FK to profiles (template creator) |
-| `name` | TEXT | Template name |
-| `category` | TEXT | Category: greeting, away, closing, follow_up, support, sales, custom |
-| `content` | TEXT | Template content with variables |
-| `language` | TEXT | Language code (default: en) |
-| `variables` | JSONB | Array of variable names, e.g., ["customer_name", "order_id"] |
-| `whatsapp_template_id` | TEXT | WhatsApp Business template ID |
-| `whatsapp_status` | TEXT | Status: draft, pending, approved, rejected |
-| `usage_count` | INT | Number of times template used |
-| `last_used_at` | TIMESTAMPTZ | Last usage timestamp |
-| `is_active` | BOOLEAN | Whether template is active |
-| `metadata` | JSONB | Additional template data |
-| `tags` | TEXT[] | Template tags for organization |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger) |
+| Column                 | Type        | Description                                                          |
+| ---------------------- | ----------- | -------------------------------------------------------------------- |
+| `id`                   | UUID        | Primary key                                                          |
+| `organization_id`      | UUID        | Multi-tenant FK to organizations                                     |
+| `created_by`           | UUID        | FK to profiles (template creator)                                    |
+| `name`                 | TEXT        | Template name                                                        |
+| `category`             | TEXT        | Category: greeting, away, closing, follow_up, support, sales, custom |
+| `content`              | TEXT        | Template content with variables                                      |
+| `language`             | TEXT        | Language code (default: en)                                          |
+| `variables`            | JSONB       | Array of variable names, e.g., ["customer_name", "order_id"]         |
+| `whatsapp_template_id` | TEXT        | WhatsApp Business template ID                                        |
+| `whatsapp_status`      | TEXT        | Status: draft, pending, approved, rejected                           |
+| `usage_count`          | INT         | Number of times template used                                        |
+| `last_used_at`         | TIMESTAMPTZ | Last usage timestamp                                                 |
+| `is_active`            | BOOLEAN     | Whether template is active                                           |
+| `metadata`             | JSONB       | Additional template data                                             |
+| `tags`                 | TEXT[]      | Template tags for organization                                       |
+| `created_at`           | TIMESTAMPTZ | Record creation timestamp                                            |
+| `updated_at`           | TIMESTAMPTZ | Last update timestamp (auto-updated via trigger)                     |
 
 ### Indexes
 
@@ -472,45 +472,39 @@ Update the following files to remove TODO comments:
 
 ```typescript
 // Test performance analytics insertion
-const { data, error } = await supabase
-  .from('performance_analytics')
-  .insert({
-    organization_id: orgId,
-    user_id: userId,
-    type: 'LCP',
-    value: 2500,
-    timestamp: new Date().toISOString()
-  });
+const { data, error } = await supabase.from('performance_analytics').insert({
+  organization_id: orgId,
+  user_id: userId,
+  type: 'LCP',
+  value: 2500,
+  timestamp: new Date().toISOString(),
+})
 ```
 
 ### 3. Test Scheduled Reports
 
 ```typescript
 // Test scheduled report creation
-const { data, error } = await supabase
-  .from('scheduled_reports')
-  .insert({
-    organization_id: orgId,
-    created_by: userId,
-    report_type: 'conversations',
-    start_date: '2025-01-01',
-    end_date: '2025-01-31'
-  });
+const { data, error } = await supabase.from('scheduled_reports').insert({
+  organization_id: orgId,
+  created_by: userId,
+  report_type: 'conversations',
+  start_date: '2025-01-01',
+  end_date: '2025-01-31',
+})
 ```
 
 ### 4. Test Audit Logging
 
 ```typescript
 // Test audit log entry
-const { data, error } = await supabase
-  .from('audit_logs')
-  .insert({
-    organization_id: orgId,
-    actor_id: userId,
-    action: 'mfa_enrollment_initiated',
-    resource_type: 'profile',
-    risk_level: 'medium'
-  });
+const { data, error } = await supabase.from('audit_logs').insert({
+  organization_id: orgId,
+  actor_id: userId,
+  action: 'mfa_enrollment_initiated',
+  resource_type: 'profile',
+  risk_level: 'medium',
+})
 ```
 
 ---
@@ -551,31 +545,35 @@ All tables include composite indexes for common query patterns:
 Add the following type exports:
 
 ```typescript
-export type PerformanceAnalytics = Database['public']['Tables']['performance_analytics']['Row'];
-export type ScheduledReport = Database['public']['Tables']['scheduled_reports']['Row'];
-export type AuditLog = Database['public']['Tables']['audit_logs']['Row'];
-export type Invoice = Database['public']['Tables']['invoices']['Row'];
-export type SubscriptionChange = Database['public']['Tables']['subscription_changes']['Row'];
-export type UsageTracking = Database['public']['Tables']['usage_tracking']['Row'];
-export type MessageTemplate = Database['public']['Tables']['message_templates']['Row'];
+export type PerformanceAnalytics = Database['public']['Tables']['performance_analytics']['Row']
+export type ScheduledReport = Database['public']['Tables']['scheduled_reports']['Row']
+export type AuditLog = Database['public']['Tables']['audit_logs']['Row']
+export type Invoice = Database['public']['Tables']['invoices']['Row']
+export type SubscriptionChange = Database['public']['Tables']['subscription_changes']['Row']
+export type UsageTracking = Database['public']['Tables']['usage_tracking']['Row']
+export type MessageTemplate = Database['public']['Tables']['message_templates']['Row']
 
 // Insert types
-export type PerformanceAnalyticsInsert = Database['public']['Tables']['performance_analytics']['Insert'];
-export type ScheduledReportInsert = Database['public']['Tables']['scheduled_reports']['Insert'];
-export type AuditLogInsert = Database['public']['Tables']['audit_logs']['Insert'];
-export type InvoiceInsert = Database['public']['Tables']['invoices']['Insert'];
-export type SubscriptionChangeInsert = Database['public']['Tables']['subscription_changes']['Insert'];
-export type UsageTrackingInsert = Database['public']['Tables']['usage_tracking']['Insert'];
-export type MessageTemplateInsert = Database['public']['Tables']['message_templates']['Insert'];
+export type PerformanceAnalyticsInsert =
+  Database['public']['Tables']['performance_analytics']['Insert']
+export type ScheduledReportInsert = Database['public']['Tables']['scheduled_reports']['Insert']
+export type AuditLogInsert = Database['public']['Tables']['audit_logs']['Insert']
+export type InvoiceInsert = Database['public']['Tables']['invoices']['Insert']
+export type SubscriptionChangeInsert =
+  Database['public']['Tables']['subscription_changes']['Insert']
+export type UsageTrackingInsert = Database['public']['Tables']['usage_tracking']['Insert']
+export type MessageTemplateInsert = Database['public']['Tables']['message_templates']['Insert']
 
 // Update types
-export type PerformanceAnalyticsUpdate = Database['public']['Tables']['performance_analytics']['Update'];
-export type ScheduledReportUpdate = Database['public']['Tables']['scheduled_reports']['Update'];
-export type AuditLogUpdate = Database['public']['Tables']['audit_logs']['Update'];
-export type InvoiceUpdate = Database['public']['Tables']['invoices']['Update'];
-export type SubscriptionChangeUpdate = Database['public']['Tables']['subscription_changes']['Update'];
-export type UsageTrackingUpdate = Database['public']['Tables']['usage_tracking']['Update'];
-export type MessageTemplateUpdate = Database['public']['Tables']['message_templates']['Update'];
+export type PerformanceAnalyticsUpdate =
+  Database['public']['Tables']['performance_analytics']['Update']
+export type ScheduledReportUpdate = Database['public']['Tables']['scheduled_reports']['Update']
+export type AuditLogUpdate = Database['public']['Tables']['audit_logs']['Update']
+export type InvoiceUpdate = Database['public']['Tables']['invoices']['Update']
+export type SubscriptionChangeUpdate =
+  Database['public']['Tables']['subscription_changes']['Update']
+export type UsageTrackingUpdate = Database['public']['Tables']['usage_tracking']['Update']
+export type MessageTemplateUpdate = Database['public']['Tables']['message_templates']['Update']
 ```
 
 ---

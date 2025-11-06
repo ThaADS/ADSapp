@@ -52,10 +52,7 @@ export {
 } from './middleware'
 
 // Database tracing
-export {
-  createTracedSupabaseClient,
-  traceQuery,
-} from './database'
+export { createTracedSupabaseClient, traceQuery } from './database'
 
 // External API tracing
 export {

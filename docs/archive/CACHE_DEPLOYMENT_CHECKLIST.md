@@ -5,6 +5,7 @@
 ## Phase 1: Setup & Configuration (15 minutes)
 
 ### 1.1 Upstash Redis Setup
+
 - [ ] Create Upstash Redis account at [console.upstash.com/redis](https://console.upstash.com/redis)
 - [ ] Create new Redis database (select region closest to deployment)
 - [ ] Copy `UPSTASH_REDIS_REST_URL`
@@ -16,6 +17,7 @@
   ```
 
 ### 1.2 Environment Configuration
+
 - [ ] Add to `.env.production`:
   ```bash
   UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
@@ -28,6 +30,7 @@
 - [ ] Configure cache TTLs for production workload
 
 ### 1.3 Database Migration
+
 - [ ] Backup production database
 - [ ] Review migration SQL: `supabase/migrations/20251016_cache_infrastructure.sql`
 - [ ] Apply migration:
@@ -50,6 +53,7 @@
 ## Phase 2: Testing & Verification (30 minutes)
 
 ### 2.1 Local Testing
+
 - [ ] Run unit tests:
   ```bash
   npm run test:cache
@@ -57,7 +61,7 @@
 - [ ] Verify cache hit/miss logging in console
 - [ ] Test cache invalidation:
   ```typescript
-  await invalidateCache('test-tenant', 'conversations');
+  await invalidateCache('test-tenant', 'conversations')
   ```
 - [ ] Test rate limiting:
   ```bash
@@ -66,6 +70,7 @@
   ```
 
 ### 2.2 Staging Environment
+
 - [ ] Deploy to staging
 - [ ] Monitor cache hit rate (target: >70%)
 - [ ] Monitor API response times (target: <50ms P95)
@@ -79,6 +84,7 @@
 - [ ] Verify graceful degradation (disable Redis temporarily)
 
 ### 2.3 Performance Validation
+
 - [ ] Baseline metrics (cache disabled):
   ```bash
   CACHE_ENABLED=false npm run test:performance
@@ -97,6 +103,7 @@
 ## Phase 3: Production Deployment (45 minutes)
 
 ### 3.1 Pre-Deployment
+
 - [ ] Review deployment plan with team
 - [ ] Schedule deployment window (low traffic period)
 - [ ] Notify stakeholders
@@ -104,15 +111,17 @@
 - [ ] Set up monitoring alerts
 
 ### 3.2 Deployment Steps
+
 - [ ] Deploy code to production
 - [ ] Verify environment variables loaded
 - [ ] Apply database migration
 - [ ] Verify cache connection:
   ```typescript
-  const health = await checkCacheHealth();
-  console.log('Cache status:', health.status);
+  const health = await checkCacheHealth()
+  console.log('Cache status:', health.status)
   ```
 - [ ] Enable cache gradually:
+
   ```bash
   # Start with L1 only
   CACHE_L1_ENABLED=true
@@ -123,6 +132,7 @@
   ```
 
 ### 3.3 Post-Deployment Monitoring (First 2 Hours)
+
 - [ ] Monitor error rates (target: <0.1% increase)
 - [ ] Monitor response times (target: 80% improvement)
 - [ ] Monitor cache hit rate (target: >70%)
@@ -136,9 +146,11 @@
 ## Phase 4: Optimization (Week 1-2)
 
 ### 4.1 Cache Hit Rate Optimization
+
 - [ ] Monitor hit rates by endpoint
 - [ ] Identify low hit rate endpoints (<60%)
 - [ ] Adjust TTLs based on data volatility:
+
   ```bash
   # Static data
   CACHE_L2_TTL_SECONDS=3600  # 1 hour
@@ -146,10 +158,12 @@
   # Dynamic data
   CACHE_L2_TTL_SECONDS=300   # 5 minutes
   ```
+
 - [ ] Implement cache warming for hot data
 - [ ] Target: >85% overall hit rate
 
 ### 4.2 Cost Optimization
+
 - [ ] Monitor Upstash usage dashboard
 - [ ] Review Redis operations per endpoint
 - [ ] Optimize cache key sizes
@@ -157,6 +171,7 @@
 - [ ] Calculate cost savings vs baseline
 
 ### 4.3 Rate Limiting Tuning
+
 - [ ] Monitor rate limit hit rates
 - [ ] Adjust limits based on legitimate usage:
   ```bash
@@ -170,6 +185,7 @@
 ## Phase 5: Monitoring Setup (Ongoing)
 
 ### 5.1 Health Check Endpoint
+
 - [ ] Deploy health check endpoint:
   ```typescript
   // /api/admin/cache/health
@@ -181,6 +197,7 @@
   - 🚨 Critical: score < 60
 
 ### 5.2 Performance Metrics
+
 - [ ] Track in analytics:
   - Cache hit rate (daily)
   - Average latency (hourly)
@@ -193,6 +210,7 @@
   - Cost tracking
 
 ### 5.3 Database Analytics
+
 - [ ] Set up cron job for daily aggregation:
   ```sql
   -- Run daily at 00:00
@@ -211,6 +229,7 @@
 ## Phase 6: Team Training (1-2 hours)
 
 ### 6.1 Developer Training
+
 - [ ] Share documentation:
   - [ ] [Quick Start Guide](./CACHE_QUICK_START.md)
   - [ ] [Implementation Guide](./REDIS_CACHE_IMPLEMENTATION.md)
@@ -221,6 +240,7 @@
 - [ ] Q&A session
 
 ### 6.2 Best Practices Review
+
 - [ ] Always invalidate cache on mutations
 - [ ] Use tenant-aware cache keys
 - [ ] Monitor hit rates for new endpoints
@@ -234,6 +254,7 @@
 ### If Issues Occur
 
 **Step 1: Disable Cache**
+
 ```bash
 # Set environment variable
 CACHE_ENABLED=false
@@ -243,17 +264,20 @@ vercel --prod
 ```
 
 **Step 2: Investigate**
+
 - Check error logs
 - Review cache metrics
 - Test Redis connection
 - Verify database migration
 
 **Step 3: Fix & Redeploy**
+
 - Fix identified issues
 - Test in staging
 - Redeploy with `CACHE_ENABLED=true`
 
 **Step 4: Monitor**
+
 - Watch for recurring issues
 - Verify metrics return to normal
 
@@ -262,18 +286,21 @@ vercel --prod
 ## Success Criteria
 
 ### After 24 Hours
+
 - ✅ Cache hit rate: >75%
 - ✅ API response time: <50ms P95
 - ✅ Error rate: <0.1%
 - ✅ Zero production incidents
 
 ### After 1 Week
+
 - ✅ Cache hit rate: >80%
 - ✅ API response time: <30ms P95
 - ✅ Database query reduction: >75%
 - ✅ Cost savings visible
 
 ### After 1 Month
+
 - ✅ Cache hit rate: >85%
 - ✅ API response time: <20ms P95
 - ✅ Database query reduction: >80%
@@ -284,12 +311,14 @@ vercel --prod
 ## Support & Escalation
 
 ### Normal Issues
+
 - Check [Troubleshooting Guide](./REDIS_CACHE_IMPLEMENTATION.md#troubleshooting)
 - Review error logs
 - Test Redis connection
 - Verify environment variables
 
 ### Critical Issues
+
 1. Disable cache immediately
 2. Notify team lead
 3. Create incident ticket
@@ -297,6 +326,7 @@ vercel --prod
 5. Post-mortem after resolution
 
 ### Contact
+
 - 📖 Documentation: See REDIS_CACHE_IMPLEMENTATION.md
 - 💬 Slack: #engineering-cache
 - 🚨 On-call: escalate@adsapp.com
@@ -307,6 +337,7 @@ vercel --prod
 ## Final Checklist
 
 Before marking deployment complete:
+
 - [ ] All phases completed
 - [ ] Monitoring active
 - [ ] Team trained
@@ -318,9 +349,10 @@ Before marking deployment complete:
 ---
 
 **Deployment Status:** [ ] Complete
-**Deployed By:** _______________
-**Deployment Date:** _______________
+**Deployed By:** ******\_\_\_******
+**Deployment Date:** ******\_\_\_******
 **Post-Deployment Notes:**
+
 ```
 (Add any observations, issues encountered, or recommendations)
 ```

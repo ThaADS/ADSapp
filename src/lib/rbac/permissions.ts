@@ -31,7 +31,7 @@ export const RESOURCES = {
   AUDIT_LOGS: 'audit_logs',
 } as const
 
-export type Resource = typeof RESOURCES[keyof typeof RESOURCES]
+export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES]
 
 /**
  * Available actions
@@ -56,7 +56,7 @@ export const ACTIONS = {
   ALL: '*',
 } as const
 
-export type Action = typeof ACTIONS[keyof typeof ACTIONS]
+export type Action = (typeof ACTIONS)[keyof typeof ACTIONS]
 
 /**
  * Permission conditions
@@ -94,9 +94,7 @@ export const SYSTEM_ROLES = {
     name: 'super_admin',
     description: 'Platform super administrator with full access',
     priority: 1000,
-    permissions: [
-      { resource: '*', action: ACTIONS.ALL },
-    ] as Permission[],
+    permissions: [{ resource: '*', action: ACTIONS.ALL }] as Permission[],
   },
 
   ORGANIZATION_OWNER: {
@@ -104,10 +102,18 @@ export const SYSTEM_ROLES = {
     description: 'Organization owner with full organizational access',
     priority: 900,
     permissions: [
-      { resource: RESOURCES.ORGANIZATIONS, action: ACTIONS.ALL, conditions: { organization: true } },
+      {
+        resource: RESOURCES.ORGANIZATIONS,
+        action: ACTIONS.ALL,
+        conditions: { organization: true },
+      },
       { resource: RESOURCES.USERS, action: ACTIONS.ALL, conditions: { organization: true } },
       { resource: RESOURCES.ROLES, action: ACTIONS.ALL, conditions: { organization: true } },
-      { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.ALL, conditions: { organization: true } },
+      {
+        resource: RESOURCES.CONVERSATIONS,
+        action: ACTIONS.ALL,
+        conditions: { organization: true },
+      },
       { resource: RESOURCES.CONTACTS, action: ACTIONS.ALL, conditions: { organization: true } },
       { resource: RESOURCES.MESSAGES, action: ACTIONS.ALL, conditions: { organization: true } },
       { resource: RESOURCES.TEMPLATES, action: ACTIONS.ALL, conditions: { organization: true } },
@@ -131,7 +137,11 @@ export const SYSTEM_ROLES = {
       { resource: RESOURCES.USERS, action: ACTIONS.READ, conditions: { organization: true } },
       { resource: RESOURCES.USERS, action: ACTIONS.CREATE, conditions: { organization: true } },
       { resource: RESOURCES.USERS, action: ACTIONS.UPDATE, conditions: { organization: true } },
-      { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.ALL, conditions: { organization: true } },
+      {
+        resource: RESOURCES.CONVERSATIONS,
+        action: ACTIONS.ALL,
+        conditions: { organization: true },
+      },
       { resource: RESOURCES.CONTACTS, action: ACTIONS.ALL, conditions: { organization: true } },
       { resource: RESOURCES.MESSAGES, action: ACTIONS.ALL, conditions: { organization: true } },
       { resource: RESOURCES.TEMPLATES, action: ACTIONS.ALL, conditions: { organization: true } },
@@ -163,7 +173,11 @@ export const SYSTEM_ROLES = {
     description: 'Supervisor with monitoring and reporting access',
     priority: 650,
     permissions: [
-      { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.READ, conditions: { organization: true } },
+      {
+        resource: RESOURCES.CONVERSATIONS,
+        action: ACTIONS.READ,
+        conditions: { organization: true },
+      },
       { resource: RESOURCES.CONTACTS, action: ACTIONS.READ, conditions: { organization: true } },
       { resource: RESOURCES.MESSAGES, action: ACTIONS.READ, conditions: { organization: true } },
       { resource: RESOURCES.TEMPLATES, action: ACTIONS.READ, conditions: { organization: true } },
@@ -177,8 +191,16 @@ export const SYSTEM_ROLES = {
     description: 'Agent with conversation handling access',
     priority: 600,
     permissions: [
-      { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.READ, conditions: { organization: true } },
-      { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.CREATE, conditions: { organization: true } },
+      {
+        resource: RESOURCES.CONVERSATIONS,
+        action: ACTIONS.READ,
+        conditions: { organization: true },
+      },
+      {
+        resource: RESOURCES.CONVERSATIONS,
+        action: ACTIONS.CREATE,
+        conditions: { organization: true },
+      },
       { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.UPDATE, conditions: { own: true } },
       { resource: RESOURCES.CONVERSATIONS, action: ACTIONS.CLOSE, conditions: { own: true } },
       { resource: RESOURCES.CONTACTS, action: ACTIONS.READ, conditions: { organization: true } },

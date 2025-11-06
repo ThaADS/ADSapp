@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { withAuth } from '@/lib/api-middleware'
 import { createClient } from '@/lib/supabase/server'
@@ -22,10 +21,7 @@ async function handler(request: NextRequest, context: any) {
     const isSuperAdmin = profile.role === 'super_admin'
 
     if (!isSuperAdmin) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     // Get metrics from the last hour
@@ -81,10 +77,7 @@ async function handler(request: NextRequest, context: any) {
     })
   } catch (error) {
     console.error('Error fetching metrics:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch metrics' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch metrics' }, { status: 500 })
   }
 }
 

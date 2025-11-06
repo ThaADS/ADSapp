@@ -59,7 +59,9 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
         const contactName = conv.contact.name?.toLowerCase() || ''
         const contactPhone = conv.contact.phone_number.toLowerCase()
         const lastMessage = conv.last_message?.content.toLowerCase() || ''
-        return contactName.includes(query) || contactPhone.includes(query) || lastMessage.includes(query)
+        return (
+          contactName.includes(query) || contactPhone.includes(query) || lastMessage.includes(query)
+        )
       })
     }
 
@@ -137,38 +139,48 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
   const selectedConversation = filteredConversations.find(c => c.id === selectedConversationId)
 
   return (
-    <div className="flex h-full bg-white">
+    <div className='flex h-full bg-white'>
       {/* Conversation List - Left Sidebar */}
-      <div className="w-80 border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-gray-900">
+      <div className='flex w-80 flex-col border-r border-gray-200'>
+        <div className='border-b border-gray-200 p-4'>
+          <div className='flex items-center justify-between'>
+            <h1 className='text-lg font-semibold text-gray-900'>
               Inbox
               {activeFilterCount > 0 && (
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span className='ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
                   {activeFilterCount}
                 </span>
               )}
             </h1>
-            <div className="flex items-center space-x-2">
+            <div className='flex items-center space-x-2'>
               {/* Advanced filter button */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 ${showFilters ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
-                title="Advanced filters"
+                title='Advanced filters'
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'
+                  />
                 </svg>
               </button>
               {/* Search button */}
               <button
                 onClick={() => setShowSearch(!showSearch)}
                 className={`p-2 ${showSearch ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
-                title="Search conversations"
+                title='Search conversations'
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                  />
                 </svg>
               </button>
             </div>
@@ -176,30 +188,40 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
 
           {/* Search input */}
           {showSearch && (
-            <div className="mt-3">
-              <div className="relative">
+            <div className='mt-3'>
+              <div className='relative'>
                 <input
-                  type="text"
-                  placeholder="Search by name, phone, or message..."
+                  type='text'
+                  placeholder='Search by name, phone, or message...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='w-full rounded-lg border border-gray-300 py-2 pr-10 pl-10 text-sm focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none'
                 />
                 <svg
-                  className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  className='absolute top-2.5 left-3 h-4 w-4 text-gray-400'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                  />
                 </svg>
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    className='absolute top-2.5 right-3 text-gray-400 hover:text-gray-600'
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M6 18L18 6M6 6l12 12'
+                      />
                     </svg>
                   </button>
                 )}
@@ -223,12 +245,12 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
           )}
 
           {/* Status filter tabs */}
-          <div className="mt-4 flex space-x-1 bg-gray-100 rounded-lg p-1">
+          <div className='mt-4 flex space-x-1 rounded-lg bg-gray-100 p-1'>
             <button
               onClick={() => setStatusFilter('all')}
-              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+              className={`flex-1 rounded-md py-1 text-xs font-medium transition-colors ${
                 statusFilter === 'all'
-                  ? 'text-white bg-green-600'
+                  ? 'bg-green-600 text-white'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -236,9 +258,9 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
             </button>
             <button
               onClick={() => setStatusFilter('open')}
-              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+              className={`flex-1 rounded-md py-1 text-xs font-medium transition-colors ${
                 statusFilter === 'open'
-                  ? 'text-white bg-green-600'
+                  ? 'bg-green-600 text-white'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -246,9 +268,9 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
             </button>
             <button
               onClick={() => setStatusFilter('assigned')}
-              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+              className={`flex-1 rounded-md py-1 text-xs font-medium transition-colors ${
                 statusFilter === 'assigned'
-                  ? 'text-white bg-green-600'
+                  ? 'bg-green-600 text-white'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -256,9 +278,9 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
             </button>
             <button
               onClick={() => setStatusFilter('unread')}
-              className={`flex-1 text-xs font-medium rounded-md py-1 transition-colors ${
+              className={`flex-1 rounded-md py-1 text-xs font-medium transition-colors ${
                 statusFilter === 'unread'
-                  ? 'text-white bg-green-600'
+                  ? 'bg-green-600 text-white'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -268,13 +290,13 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
 
           {/* Active filters indicator */}
           {activeFilterCount > 0 && (
-            <div className="mt-3 flex items-center justify-between text-xs text-gray-600">
+            <div className='mt-3 flex items-center justify-between text-xs text-gray-600'>
               <span>
                 {filteredConversations.length} of {conversations.length} conversations
               </span>
               <button
                 onClick={clearAllFilters}
-                className="text-green-600 hover:text-green-700 font-medium"
+                className='font-medium text-green-600 hover:text-green-700'
               >
                 Clear all
               </button>
@@ -290,7 +312,7 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
       </div>
 
       {/* Chat Window - Center */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className='flex min-w-0 flex-1 flex-col'>
         {selectedConversation ? (
           <ChatWindow
             conversation={selectedConversation}
@@ -299,23 +321,23 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
             showDetails={showDetails}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
-            <div className="text-center">
+          <div className='flex flex-1 items-center justify-center bg-gray-50'>
+            <div className='text-center'>
               <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                className='mx-auto h-12 w-12 text-gray-400'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   strokeWidth={2}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No conversation selected</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className='mt-2 text-sm font-medium text-gray-900'>No conversation selected</h3>
+              <p className='mt-1 text-sm text-gray-500'>
                 Choose a conversation from the left to start messaging.
               </p>
             </div>
@@ -325,7 +347,7 @@ export function InboxLayout({ conversations, profile }: InboxLayoutProps) {
 
       {/* Conversation Details - Right Sidebar */}
       {selectedConversation && showDetails && (
-        <div className="w-80 border-l border-gray-200">
+        <div className='w-80 border-l border-gray-200'>
           <ConversationDetails
             conversation={selectedConversation}
             profile={profile}

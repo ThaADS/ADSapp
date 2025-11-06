@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { BulkOperationQueue, BulkContactImportConfig } from '@/lib/bulk-operations/queue'
 import { MediaStorageService } from '@/lib/media/storage'
 
@@ -10,14 +15,11 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const mapping = JSON.parse(formData.get('mapping') as string || '{}')
-    const options = JSON.parse(formData.get('options') as string || '{}')
+    const mapping = JSON.parse((formData.get('mapping') as string) || '{}')
+    const options = JSON.parse((formData.get('options') as string) || '{}')
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'File is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'File is required' }, { status: 400 })
     }
 
     // Validate file type
@@ -25,7 +27,7 @@ export async function POST(request: NextRequest) {
       'text/csv',
       'application/vnd.ms-excel',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/json'
+      'application/json',
     ]
 
     if (!allowedTypes.includes(file.type)) {
@@ -38,33 +40,22 @@ export async function POST(request: NextRequest) {
     // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024 // 10MB
     if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: 'File size exceeds 10MB limit' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'File size exceeds 10MB limit' }, { status: 400 })
     }
 
     // Validate mapping
     if (!mapping.phone_number) {
-      return NextResponse.json(
-        { error: 'Phone number field mapping is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Phone number field mapping is required' }, { status: 400 })
     }
 
     // Upload file to storage
     const mediaStorage = new MediaStorageService()
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    const uploadedFile = await mediaStorage.uploadFile(
-      buffer,
-      file.name,
-      file.type,
-      {
-        organizationId: profile.organization_id,
-        uploadedBy: user.id
-      }
-    )
+    const uploadedFile = await mediaStorage.uploadFile(buffer, file.name, file.type, {
+      organizationId: profile.organization_id,
+      uploadedBy: user.id,
+    })
 
     // Determine file format
     let format: 'csv' | 'json' | 'xlsx'
@@ -80,14 +71,14 @@ export async function POST(request: NextRequest) {
     const importConfig: BulkContactImportConfig = {
       file: {
         url: uploadedFile.url,
-        format
+        format,
       },
       mapping,
       options: {
         skipDuplicates: options.skipDuplicates !== false,
         updateExisting: options.updateExisting === true,
-        tagAll: options.tagAll || []
-      }
+        tagAll: options.tagAll || [],
+      },
     }
 
     // Estimate number of contacts
@@ -101,22 +92,24 @@ export async function POST(request: NextRequest) {
       type: 'bulk_contact_import',
       status: 'queued',
       totalItems: estimatedContacts,
-      configuration: importConfig
+      configuration: importConfig,
     })
 
-    return createSuccessResponse({
-      operation,
-      uploadedFile: {
-        id: uploadedFile.id,
-        name: uploadedFile.originalName,
-        size: uploadedFile.size,
-        url: uploadedFile.url
+    return createSuccessResponse(
+      {
+        operation,
+        uploadedFile: {
+          id: uploadedFile.id,
+          name: uploadedFile.originalName,
+          size: uploadedFile.size,
+          url: uploadedFile.url,
+        },
+        estimatedContacts,
+        mapping,
+        options: importConfig.options,
       },
-      estimatedContacts,
-      mapping,
-      options: importConfig.options
-    }, 201)
-
+      201
+    )
   } catch (error) {
     console.error('Contact import error:', error)
     return createErrorResponse(error)
@@ -136,7 +129,7 @@ export async function GET(request: NextRequest) {
     const result = await queue.listOperations(profile.organization_id, {
       type: 'bulk_contact_import',
       limit,
-      offset
+      offset,
     })
 
     return createSuccessResponse({
@@ -145,10 +138,9 @@ export async function GET(request: NextRequest) {
         limit,
         offset,
         total: result.total,
-        hasMore: offset + limit < result.total
-      }
+        hasMore: offset + limit < result.total,
+      },
     })
-
   } catch (error) {
     console.error('List contact imports error:', error)
     return createErrorResponse(error)

@@ -7,10 +7,7 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
     // Create Supabase client
@@ -19,36 +16,26 @@ export async function POST(request: NextRequest) {
     // Sign in the user
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     })
 
     if (authError) {
       console.error('Auth signin error:', authError)
-      return NextResponse.json(
-        { error: authError.message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
     if (!authData.user || !authData.session) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
     // Success
     return NextResponse.json({
       message: 'Signed in successfully',
       user: authData.user,
-      session: authData.session
+      session: authData.session,
     })
-
   } catch (error) {
     console.error('Signin API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

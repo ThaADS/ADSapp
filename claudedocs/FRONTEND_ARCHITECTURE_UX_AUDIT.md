@@ -1,5 +1,7 @@
 # FRONTEND ARCHITECTURE & UX AUDIT
+
 ## ADSapp Multi-Tenant WhatsApp Business Platform
+
 **Audit Date:** 2025-10-13
 **Auditor:** Claude Code (Frontend Architect)
 **Scope:** Comprehensive UX/UI, Accessibility, Architecture, Knowledge Base
@@ -11,6 +13,7 @@
 ### Overall Quality Score: **72/100** (Good, with improvement opportunities)
 
 **Key Findings:**
+
 - Strong foundation with Next.js 15, TypeScript, accessibility provider
 - Basic onboarding implemented (60% complete vs industry standard)
 - Limited knowledge base infrastructure (20% implemented)
@@ -20,6 +23,7 @@
 - Missing systematic user guidance and help system
 
 **Critical Priorities:**
+
 1. Complete onboarding experience (40% gap)
 2. Implement knowledge base system (80% gap)
 3. Enhance accessibility to full WCAG AA compliance
@@ -127,17 +131,17 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 
 **Industry Best Practice Comparison:**
 
-| Feature | ADSapp | Intercom | Zendesk | Slack | Industry Avg |
-|---------|--------|----------|---------|-------|--------------|
-| Welcome screen | ❌ | ✅ | ✅ | ✅ | 90% |
-| Progress saving | ❌ | ✅ | ✅ | ✅ | 85% |
-| Interactive tour | ❌ | ✅ | ✅ | ✅ | 95% |
-| Sample data | ❌ | ✅ | ✅ | ✅ | 80% |
-| Team invites | ❌ | ✅ | ✅ | ✅ | 75% |
-| Setup checklist | ❌ | ✅ | ✅ | ✅ | 90% |
-| Contextual help | ❌ | ✅ | ✅ | ✅ | 85% |
-| Success celebration | ❌ | ✅ | ✅ | ✅ | 70% |
-| **Total Score** | **60%** | **95%** | **92%** | **98%** | **84%** |
+| Feature             | ADSapp  | Intercom | Zendesk | Slack   | Industry Avg |
+| ------------------- | ------- | -------- | ------- | ------- | ------------ |
+| Welcome screen      | ❌      | ✅       | ✅      | ✅      | 90%          |
+| Progress saving     | ❌      | ✅       | ✅      | ✅      | 85%          |
+| Interactive tour    | ❌      | ✅       | ✅      | ✅      | 95%          |
+| Sample data         | ❌      | ✅       | ✅      | ✅      | 80%          |
+| Team invites        | ❌      | ✅       | ✅      | ✅      | 75%          |
+| Setup checklist     | ❌      | ✅       | ✅      | ✅      | 90%          |
+| Contextual help     | ❌      | ✅       | ✅      | ✅      | 85%          |
+| Success celebration | ❌      | ✅       | ✅      | ✅      | 70%          |
+| **Total Score**     | **60%** | **95%**  | **92%** | **98%** | **84%**      |
 
 #### 1.3 Dashboard Usability
 
@@ -204,6 +208,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ❌ No sample data or demo mode options
 
 **Recommendation:** Implement comprehensive empty state system with:
+
 - Illustrations (friendly, on-brand)
 - Clear explanations of what belongs here
 - Primary CTA to add first item
@@ -237,12 +242,15 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ## 2. ONBOARDING COMPLETENESS DEEP DIVE
 
 ### Current Completion: **60%**
+
 ### Industry Standard: **85-95%**
+
 ### Gap: **40% (Critical)**
 
 ### 2.1 Existing Implementation
 
 **Step 1: Organization (Complete - 90%)**
+
 ```typescript
 ✅ Organization name input
 ✅ Auto-generated subdomain
@@ -253,6 +261,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 2: WhatsApp Setup (Incomplete - 50%)**
+
 ```typescript
 ✅ Phone number input
 ✅ Business Account ID input
@@ -266,6 +275,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 3: Profile (Complete - 80%)**
+
 ```typescript
 ✅ Full name input
 ✅ Role selection (owner/admin/agent)
@@ -279,6 +289,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ### 2.2 Missing Onboarding Steps (Industry Standard)
 
 **Pre-Step: Welcome & Expectations (Missing - 0%)**
+
 ```typescript
 ❌ Welcome message
 ❌ Platform value proposition
@@ -288,6 +299,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 2.5: WhatsApp Advanced Configuration (Missing - 0%)**
+
 ```typescript
 ❌ Webhook verification
 ❌ Template message approval status
@@ -298,6 +310,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 4: Team Setup (Missing - 0%)**
+
 ```typescript
 ❌ Invite team members
 ❌ Set up team structure
@@ -307,6 +320,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 5: Initial Configuration (Missing - 0%)**
+
 ```typescript
 ❌ Create first message template
 ❌ Set up auto-responder for after-hours
@@ -316,6 +330,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Step 6: Feature Introduction (Missing - 0%)**
+
 ```typescript
 ❌ Interactive product tour
 ❌ Key features walkthrough
@@ -325,6 +340,7 @@ File: `src/app/onboarding/page.tsx` + `src/components/onboarding/OnboardingForm.
 ```
 
 **Post-Onboarding: Success & Next Steps (Missing - 0%)**
+
 ```typescript
 ❌ Completion celebration
 ❌ Setup quality score (e.g., "75% complete")
@@ -411,6 +427,7 @@ Completion Target: 85%+ for production readiness
 **Complete Flow (Power Users):** Steps 1-7
 
 **Branching Logic:**
+
 ```typescript
 if (solo_user) {
   skip_step_4_team_setup()
@@ -434,12 +451,15 @@ if (returning_from_saved_progress) {
 ## 3. KNOWLEDGE BASE REQUIREMENTS
 
 ### Current State: **20%** (Minimal)
+
 ### Required State: **100%** (Comprehensive)
+
 ### Gap: **80%** (Critical Priority)
 
 ### 3.1 Current Implementation
 
 **Files Found:**
+
 - `src/components/shared/faq-item.tsx` (Basic FAQ accordion component)
 - `src/components/shared/faq-search.tsx` (Search component for FAQs)
 - `src/app/page.tsx` (Landing page with 6 static FAQs)
@@ -728,6 +748,7 @@ interface HelpLink {
 **In-App Help Features:**
 
 1. **Contextual Tooltips:**
+
    ```
    Location: Inline with UI elements
    Trigger: Hover or click "?" icon
@@ -741,6 +762,7 @@ interface HelpLink {
    ```
 
 2. **Help Center Modal (Cmd/Ctrl + ?):**
+
    ```
    Quick Access Panel:
    ├─ Search help articles
@@ -753,6 +775,7 @@ interface HelpLink {
    ```
 
 3. **Feature Discovery Tours:**
+
    ```
    Interactive Walkthroughs:
    ├─ Dashboard tour (first visit)
@@ -765,6 +788,7 @@ interface HelpLink {
    ```
 
 4. **Smart Help Suggestions:**
+
    ```
    Machine Learning Triggers:
    - User stuck on page > 60 seconds: "Need help?"
@@ -774,6 +798,7 @@ interface HelpLink {
    ```
 
 5. **In-App Documentation Sidebar:**
+
    ```
    Collapsible panel on right side:
    ├─ Page-specific help articles
@@ -786,6 +811,7 @@ interface HelpLink {
    ```
 
 6. **Onboarding Checklist (Persistent):**
+
    ```
    Progress Widget (Dashboard):
    ├─ Setup completion (%)
@@ -891,6 +917,7 @@ SETTINGS
 ### 3.5 Implementation Roadmap
 
 **Phase 1: Foundation (2-3 weeks)**
+
 - [ ] Design information architecture
 - [ ] Create database schema for articles
 - [ ] Build article CMS admin interface
@@ -899,6 +926,7 @@ SETTINGS
 - [ ] Add search functionality (Algolia or ElasticSearch)
 
 **Phase 2: Public Knowledge Base (2 weeks)**
+
 - [ ] Build main help center page (/help)
 - [ ] Implement category navigation
 - [ ] Create article detail page
@@ -907,6 +935,7 @@ SETTINGS
 - [ ] Add feedback collection (rating, helpful/not helpful)
 
 **Phase 3: In-App Help (2 weeks)**
+
 - [ ] Build contextual tooltip system
 - [ ] Create help modal (Cmd+?)
 - [ ] Implement feature tours (Shepherd.js)
@@ -915,6 +944,7 @@ SETTINGS
 - [ ] Add smart help suggestions
 
 **Phase 4: Content & Optimization (Ongoing)**
+
 - [ ] Write core 50 articles
 - [ ] Create video tutorials (10 videos)
 - [ ] Optimize for SEO
@@ -964,16 +994,19 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 #### Perceivable (Level A & AA)
 
 **1.1 Text Alternatives**
+
 - [ ] All images have alt text (⚠️ **Partial** - needs audit)
 - [ ] Decorative images have empty alt="" (⚠️ **Unknown**)
 - [ ] Form inputs have associated labels (✅ **Good** - seen in forms)
 - [ ] Icons have aria-label or sr-only text (⚠️ **Partial**)
 
 **1.2 Time-based Media**
+
 - [ ] Video content has captions (❌ **Not Applicable** - no video yet)
 - [ ] Audio descriptions provided (❌ **Not Applicable**)
 
 **1.3 Adaptable**
+
 - [ ] Content structure uses semantic HTML (⚠️ **Partial**)
   - ✅ nav, header elements present
   - ⚠️ main, aside, section usage inconsistent
@@ -983,9 +1016,11 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Sensory characteristics not sole instruction method (✅ **Good**)
 
 **1.4 Distinguishable**
+
 - [ ] Color not used as only visual means (⚠️ **Needs Testing**)
 - [ ] Audio control available (❌ **Not Applicable**)
 - [ ] Contrast ratio 4.5:1 for normal text (⚠️ **Needs Testing**)
+
   ```
   Current Colors:
   - Primary: green-600 (#16a34a) on white
@@ -998,6 +1033,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
   - Focus indicators
   - Error states
   ```
+
 - [ ] Text can be resized 200% without loss of content (✅ **Good** - font size controls)
 - [ ] Images of text avoided except logos (✅ **Good**)
 - [ ] Contrast ratio 3:1 for graphics (⚠️ **Needs Testing**)
@@ -1007,6 +1043,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 #### Operable (Level A & AA)
 
 **2.1 Keyboard Accessible**
+
 - [ ] All functionality via keyboard (⚠️ **Needs Testing**)
   - ✅ Navigation works with Tab
   - ✅ Skip links implemented
@@ -1017,15 +1054,18 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Keyboard shortcuts documented (❌ **Missing** - no visible documentation)
 
 **2.2 Enough Time**
+
 - [ ] Time limits adjustable (⚠️ **Session timeout not reviewed**)
 - [ ] Pause, stop, hide for moving content (✅ **No auto-play content**)
 - [ ] No timing on essential activities (✅ **Good**)
 
 **2.3 Seizures**
+
 - [ ] No content flashes > 3 times per second (✅ **Good** - no flashing)
 - [ ] Animation can be disabled (✅ **Good** - reduced motion support)
 
 **2.4 Navigable**
+
 - [ ] Bypass blocks (skip links) (✅ **Good** - skip links present)
 - [ ] Page titles descriptive (✅ **Good** - Metadata present)
 - [ ] Focus order logical (✅ **Good**)
@@ -1045,6 +1085,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Current location indicated (✅ **Good** - active nav states)
 
 **2.5 Input Modalities**
+
 - [ ] Pointer gestures have keyboard alternative (✅ **Good**)
 - [ ] Pointer cancellation possible (✅ **Good** - standard buttons)
 - [ ] Label in name matches visible text (⚠️ **Needs Audit**)
@@ -1054,6 +1095,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 #### Understandable (Level A & AA)
 
 **3.1 Readable**
+
 - [ ] Language of page identified (❌ **Missing** `<html lang="en">`)
 - [ ] Language of parts identified (❌ **Missing** - no multilingual)
 - [ ] Unusual words defined (✅ **Good** - standard business terms)
@@ -1061,6 +1103,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Reading level appropriate (✅ **Good**)
 
 **3.2 Predictable**
+
 - [ ] Focus doesn't trigger unexpected change (✅ **Good**)
 - [ ] Input doesn't trigger unexpected change (✅ **Good**)
 - [ ] Navigation consistent across pages (✅ **Good**)
@@ -1068,12 +1111,13 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Change on request only (✅ **Good**)
 
 **3.3 Input Assistance**
+
 - [ ] Error identification (✅ **Good** - form validation)
 - [ ] Labels or instructions provided (✅ **Good**)
 - [ ] Error suggestions (⚠️ **Partial** - generic errors)
   ```typescript
-  Current: "An unexpected error occurred"
-  Better: "Connection failed. Please check your internet and try again."
+  Current: 'An unexpected error occurred'
+  Better: 'Connection failed. Please check your internet and try again.'
   ```
 - [ ] Error prevention for legal/financial (❌ **Not Applicable**)
 - [ ] Help available (❌ **Missing** - no contextual help yet)
@@ -1082,6 +1126,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 #### Robust (Level A & AA)
 
 **4.1 Compatible**
+
 - [ ] Parsing: No duplicate IDs (⚠️ **Needs Testing**)
 - [ ] Name, Role, Value programmatically determined (⚠️ **Partial**)
   ```
@@ -1099,6 +1144,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 **Navigation Components:**
 
 1. **DashboardNav (`src/components/dashboard/nav.tsx`)**
+
    ```typescript
    Issues:
    ⚠️ Logo link missing aria-label
@@ -1113,6 +1159,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
    ```
 
 2. **MobileNav (`src/components/mobile/mobile-nav.tsx`)**
+
    ```typescript
    Issues:
    ✅ sr-only label on button (good)
@@ -1128,6 +1175,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 **Form Components:**
 
 3. **OnboardingForm**
+
    ```typescript
    Issues:
    ✅ Labels associated with inputs (good)
@@ -1144,6 +1192,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
    ```
 
 4. **SignInForm**
+
    ```typescript
    Issues:
    ✅ sr-only labels present (good)
@@ -1159,6 +1208,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 **Interactive Components:**
 
 5. **FAQ Components**
+
    ```typescript
    Issues:
    ✅ Button with aria-expanded (good)
@@ -1178,6 +1228,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 ### 4.4 Testing Strategy
 
 **Automated Testing (30% Coverage):**
+
 - [ ] Install @axe-core/react
 - [ ] Run axe-core on all pages
 - [ ] Integrate into CI/CD pipeline
@@ -1185,6 +1236,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Fix all serious issues (Level AA)
 
 **Manual Testing (70% Coverage):**
+
 - [ ] Keyboard navigation audit (all pages)
 - [ ] Screen reader testing (NVDA, JAWS, VoiceOver)
 - [ ] Color contrast testing (all components)
@@ -1194,6 +1246,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 - [ ] Modal keyboard trap testing
 
 **User Testing:**
+
 - [ ] Recruit users with disabilities
 - [ ] Screen reader users (3-5 participants)
 - [ ] Keyboard-only users (3-5 participants)
@@ -1204,6 +1257,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 ### 4.5 Accessibility Remediation Plan (Prioritized)
 
 **P0: Critical (1-2 weeks)**
+
 1. Add `<html lang="en">` to root layout
 2. Fix color contrast issues (test all combinations)
 3. Add missing aria-labels to icon buttons
@@ -1211,28 +1265,11 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 5. Add role="alert" to error messages
 6. Announce loading states to screen readers
 
-**P1: High (2-3 weeks)**
-7. Complete semantic HTML audit (main, aside, article tags)
-8. Add aria-current to active navigation items
-9. Implement keyboard shortcuts documentation
-10. Add contextual help for complex interactions
-11. Fix link purpose (make context clear)
-12. Add confirmation dialogs for destructive actions
+**P1: High (2-3 weeks)** 7. Complete semantic HTML audit (main, aside, article tags) 8. Add aria-current to active navigation items 9. Implement keyboard shortcuts documentation 10. Add contextual help for complex interactions 11. Fix link purpose (make context clear) 12. Add confirmation dialogs for destructive actions
 
-**P2: Medium (3-4 weeks)**
-13. Improve error messages (specific, actionable)
-14. Add aria-labelledby to related content
-15. Implement skip navigation within pages
-16. Add keyboard navigation for custom components
-17. Create accessibility statement page
-18. Add high contrast mode CSS
+**P2: Medium (3-4 weeks)** 13. Improve error messages (specific, actionable) 14. Add aria-labelledby to related content 15. Implement skip navigation within pages 16. Add keyboard navigation for custom components 17. Create accessibility statement page 18. Add high contrast mode CSS
 
-**P3: Low (Ongoing)**
-19. Add video captions (when videos added)
-20. Implement sitemap for alternative navigation
-21. Add global search functionality
-22. Create accessibility testing checklist for new features
-23. Regular accessibility audits (quarterly)
+**P3: Low (Ongoing)** 19. Add video captions (when videos added) 20. Implement sitemap for alternative navigation 21. Add global search functionality 22. Create accessibility testing checklist for new features 23. Regular accessibility audits (quarterly)
 
 ---
 
@@ -1247,6 +1284,7 @@ File: `src/components/accessibility/accessibility-provider.tsx`
 **Reusability Score:** 60% (moderate duplication)
 
 **Directory Structure:**
+
 ```
 src/components/
 ├─ accessibility/          # ✅ Well-isolated
@@ -1276,6 +1314,7 @@ src/components/
 **Icon Duplication (CRITICAL):**
 
 Found in `src/components/dashboard/nav.tsx`:
+
 ```typescript
 // 8 inline SVG icon components defined
 const DashboardIcon = () => (<svg>...</svg>)
@@ -1293,6 +1332,7 @@ const SettingsIcon = () => (<svg>...</svg>)
 **Installed:** `@heroicons/react@2.2.0` (already in package.json!)
 
 **Fix:** Use @heroicons/react instead of custom SVG components:
+
 ```typescript
 import {
   HomeIcon,
@@ -1302,13 +1342,14 @@ import {
   DocumentTextIcon,
   BoltIcon,
   PhoneIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
 ```
 
 **Form Pattern Duplication:**
 
 Common patterns repeated across:
+
 - `src/components/auth/signin-form.tsx`
 - `src/components/auth/signup-form.tsx`
 - `src/components/auth/forgot-password-form.tsx`
@@ -1316,12 +1357,14 @@ Common patterns repeated across:
 - `src/components/onboarding/OnboardingForm.tsx`
 
 Repeated code:
+
 - Input styling (border, focus states, error states)
 - Error message rendering
 - Loading state handling
 - Submit button patterns
 
 **Should Extract:**
+
 ```typescript
 // src/components/ui/form/input.tsx
 export function Input({ error, ...props }) {
@@ -1346,6 +1389,7 @@ export function SubmitButton({ isLoading, children }) {
 **Layout Duplication:**
 
 Dashboard layout pattern repeated:
+
 - Admin dashboard
 - User dashboard
 - Demo dashboard
@@ -1355,6 +1399,7 @@ Should extract: `<DashboardLayout>` component with slots
 ### 5.3 Component API Design Issues
 
 **Inconsistent Props Naming:**
+
 ```typescript
 // Inconsistent:
 <OnboardingForm userEmail={email} />          // camelCase
@@ -1368,6 +1413,7 @@ Should extract: `<DashboardLayout>` component with slots
 ```
 
 **Missing TypeScript Types:**
+
 ```typescript
 // Found:
 interface DashboardNavProps {
@@ -1384,6 +1430,7 @@ interface DashboardNavProps {
 **Large Component Files:**
 
 Files > 500 lines should be split:
+
 - `src/components/onboarding/OnboardingForm.tsx` (496 lines - borderline)
 - `src/components/accessibility/accessibility-provider.tsx` (539 lines - should split)
 - Need to audit other files
@@ -1537,62 +1584,49 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary: '#16a34a',      // green-600
+          primary: '#16a34a', // green-600
           'primary-hover': '#15803d', // green-700
-          secondary: '#f3f4f6',    // gray-100
-          accent: '#3b82f6'        // blue-500
+          secondary: '#f3f4f6', // gray-100
+          accent: '#3b82f6', // blue-500
         },
         semantic: {
           success: '#16a34a',
           error: '#dc2626',
           warning: '#f59e0b',
-          info: '#3b82f6'
-        }
+          info: '#3b82f6',
+        },
       },
       spacing: {
-        'dashboard-nav': '16rem',  // 256px
-        'mobile-nav': '20rem'      // 320px
+        'dashboard-nav': '16rem', // 256px
+        'mobile-nav': '20rem', // 320px
       },
       fontSize: {
         'heading-1': ['2.25rem', { lineHeight: '2.5rem' }],
         'heading-2': ['1.875rem', { lineHeight: '2.25rem' }],
         'heading-3': ['1.5rem', { lineHeight: '2rem' }],
-        'body': ['1rem', { lineHeight: '1.5rem' }],
-        'body-sm': ['0.875rem', { lineHeight: '1.25rem' }]
-      }
-    }
-  }
+        body: ['1rem', { lineHeight: '1.5rem' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.25rem' }],
+      },
+    },
+  },
 }
 ```
 
 ### 5.6 Component Refactoring Priority
 
 **Phase 1: Foundation (2 weeks)**
+
 1. Create `src/components/ui/` directory
 2. Build base components (Button, Input, Modal, Toast)
 3. Extract inline SVG icons → use @heroicons/react
 4. Create layout components (DashboardLayout, AuthLayout)
 5. Implement CVA for button variants
 
-**Phase 2: Forms (1 week)**
-6. Create form components (Form, FormField, FormError)
-7. Refactor auth forms to use new components
-8. Refactor onboarding form to use new components
-9. Extract validation logic to shared hooks
+**Phase 2: Forms (1 week)** 6. Create form components (Form, FormField, FormError) 7. Refactor auth forms to use new components 8. Refactor onboarding form to use new components 9. Extract validation logic to shared hooks
 
-**Phase 3: Patterns (2 weeks)**
-10. Create empty state component
-11. Create skeleton loading components
-12. Extract common patterns (UserMenu, NotificationBell)
-13. Build toast notification system
-14. Create reusable modal patterns
+**Phase 3: Patterns (2 weeks)** 10. Create empty state component 11. Create skeleton loading components 12. Extract common patterns (UserMenu, NotificationBell) 13. Build toast notification system 14. Create reusable modal patterns
 
-**Phase 4: Documentation (Ongoing)**
-15. Document all UI components (Storybook or similar)
-16. Create usage examples
-17. Document props API
-18. Add accessibility notes per component
-19. Create component testing guidelines
+**Phase 4: Documentation (Ongoing)** 15. Document all UI components (Storybook or similar) 16. Create usage examples 17. Document props API 18. Add accessibility notes per component 19. Create component testing guidelines
 
 ---
 
@@ -1603,6 +1637,7 @@ export default {
 ### 6.1 Design System Maturity
 
 **Typography System:** 65/100
+
 - ✅ Consistent font family (default system fonts)
 - ⚠️ Inconsistent font sizes (text-sm, text-base, text-lg mixed)
 - ⚠️ No defined typography scale
@@ -1610,6 +1645,7 @@ export default {
 - ❌ No headings hierarchy system
 
 **Color System:** 70/100
+
 - ✅ Primary color (green-600) consistently used
 - ⚠️ Shades not systematically applied (500, 600, 700 mixed)
 - ⚠️ Secondary colors undefined
@@ -1617,17 +1653,20 @@ export default {
 - ❌ No dark mode color tokens defined
 
 **Spacing System:** 80/100
+
 - ✅ Tailwind default spacing scale used
 - ✅ Consistent padding in cards (p-6, p-8)
 - ✅ Consistent gaps (gap-4, gap-6)
 - ⚠️ Occasional custom spacing (mb-3 vs mb-4)
 
 **Border Radius:** 85/100
+
 - ✅ Consistent rounded corners (rounded-lg, rounded-md)
 - ✅ No mixed border radius styles
 - ✅ Rounded-full for avatars
 
 **Shadow System:** 75/100
+
 - ✅ Consistent shadow usage (shadow-sm, shadow-lg)
 - ⚠️ Occasional missing shadows on cards
 - ⚠️ No hover elevation changes documented
@@ -1635,17 +1674,20 @@ export default {
 ### 6.2 Visual Hierarchy
 
 **Information Density:** 70/100
+
 - ✅ Good whitespace usage
 - ✅ Clear content grouping
 - ⚠️ Dashboard feels empty initially (empty states issue)
 - ⚠️ Dense forms could use more breathing room
 
 **Visual Weight:** 75/100
+
 - ✅ Clear primary actions (green-600 buttons)
 - ✅ Secondary actions muted appropriately
 - ⚠️ Tertiary actions sometimes too prominent
 
 **Contrast:** 80/100
+
 - ✅ Good text contrast (gray-900 on white)
 - ✅ Clear hover states
 - ⚠️ Some buttons lack sufficient contrast in hover state
@@ -1653,6 +1695,7 @@ export default {
 ### 6.3 Animation & Transitions
 
 **Current Implementation:**
+
 - ✅ Button hover transitions (`transition-colors`)
 - ✅ Loading spinner animation
 - ✅ Modal/overlay fade-in
@@ -1662,11 +1705,13 @@ export default {
 - ❌ No micro-interactions (success checkmarks, etc.)
 
 **Reduced Motion Support:**
+
 - ✅ Accessibility provider respects prefers-reduced-motion
 - ✅ Root CSS class for reduced motion
 - ⚠️ Not all animations check reduced motion preference
 
 **Recommendations:**
+
 ```css
 /* Add to global CSS */
 .reduced-motion * {
@@ -1681,6 +1726,7 @@ export default {
 ### 6.4 Micro-interactions
 
 **Missing Opportunities:**
+
 - ❌ Success checkmark animation on form submission
 - ❌ Confetti or celebration on onboarding completion
 - ❌ Ripple effect on button clicks
@@ -1693,12 +1739,14 @@ export default {
 ### 6.5 Responsive Design Quality
 
 **Breakpoints Used:**
+
 - `sm:` 640px
 - `md:` 768px
 - `lg:` 1024px
 - `xl:` 1280px
 
 **Mobile (320px - 640px):** 75/100
+
 - ✅ Mobile navigation functional
 - ✅ Forms stack properly
 - ✅ Touch targets adequately sized
@@ -1706,11 +1754,13 @@ export default {
 - ⚠️ Tables need horizontal scroll
 
 **Tablet (640px - 1024px):** 80/100
+
 - ✅ Layout adapts well
 - ✅ Navigation transitions smoothly
 - ✅ Two-column grids work well
 
 **Desktop (1024px+):** 85/100
+
 - ✅ Fixed sidebar navigation
 - ✅ Multi-column layouts
 - ✅ Optimal content width
@@ -1742,6 +1792,7 @@ export default {
 ### 7.2 Error Message Quality
 
 **Current Messages:**
+
 ```typescript
 // Generic:
 "Organization name is required" ✅
@@ -1753,6 +1804,7 @@ export default {
 ```
 
 **Recommendations:**
+
 - Be specific about what went wrong
 - Provide actionable next steps
 - Include error codes for support reference
@@ -1762,6 +1814,7 @@ export default {
 ### 7.3 Input Field Enhancements
 
 **Missing Features:**
+
 - ❌ Input masks (phone numbers, credit cards)
 - ❌ Character counters for limited inputs
 - ❌ Password strength indicators
@@ -1772,6 +1825,7 @@ export default {
 - ❌ Placeholder examples
 
 **Example Enhancements:**
+
 ```typescript
 // Phone number input with mask and validation
 <PhoneInput
@@ -1800,6 +1854,7 @@ export default {
 **Current State:** ❌ No autosave implemented
 
 **Recommendation:**
+
 ```typescript
 // Implement for long forms (onboarding, settings)
 useAutosave({
@@ -1855,6 +1910,7 @@ useAutosave({
 **Current State:** ⚠️ Unknown (needs verification)
 
 **Checklist:**
+
 - [ ] Manifest.json present and configured
 - [ ] Service worker registered
 - [ ] Offline fallback page
@@ -1913,6 +1969,7 @@ useAutosave({
 ❌ Prefetching for navigation
 
 **Example Skeleton Implementation:**
+
 ```typescript
 // src/components/ui/skeleton/skeleton.tsx
 export function Skeleton({ className }) {
@@ -1935,7 +1992,9 @@ export function Skeleton({ className }) {
 ### 9.2 Perceived Performance
 
 **Techniques to Implement:**
+
 1. **Optimistic UI Updates**
+
    ```typescript
    // Update UI immediately, rollback if fails
    const handleLike = async () => {
@@ -1950,12 +2009,14 @@ export function Skeleton({ className }) {
    ```
 
 2. **Prefetching**
+
    ```typescript
    // Prefetch likely next pages
    <Link href="/inbox" onMouseEnter={() => router.prefetch('/inbox')}>
    ```
 
 3. **Lazy Loading**
+
    ```typescript
    const Analytics = lazy(() => import('@/components/analytics/dashboard'))
 
@@ -1975,6 +2036,7 @@ export function Skeleton({ className }) {
 ### 10.1 Critical Priorities (Next 30 Days)
 
 **1. Complete Onboarding Experience (Week 1-2)**
+
 - [ ] Add welcome step with value proposition
 - [ ] Enhance WhatsApp setup with visual guides
 - [ ] Add team invitation step
@@ -1983,6 +2045,7 @@ export function Skeleton({ className }) {
 - [ ] Add contextual help throughout
 
 **2. Implement Knowledge Base Foundation (Week 2-3)**
+
 - [ ] Build public knowledge base page (/help)
 - [ ] Create article CMS for admins
 - [ ] Write core 20 articles
@@ -1990,6 +2053,7 @@ export function Skeleton({ className }) {
 - [ ] Add contextual help modal (Cmd+?)
 
 **3. Accessibility Remediation (Week 3-4)**
+
 - [ ] Add `<html lang="en">` attribute
 - [ ] Fix color contrast issues
 - [ ] Add missing ARIA labels
@@ -1998,6 +2062,7 @@ export function Skeleton({ className }) {
 - [ ] Fix keyboard navigation gaps
 
 **4. Component Architecture Refactoring (Week 4)**
+
 - [ ] Create `src/components/ui/` directory
 - [ ] Extract base components (Button, Input, Modal)
 - [ ] Replace inline SVG with @heroicons/react
@@ -2007,6 +2072,7 @@ export function Skeleton({ className }) {
 ### 10.2 High Priority (Next 60 Days)
 
 **5. Design System Standardization**
+
 - [ ] Define design tokens (colors, spacing, typography)
 - [ ] Create component documentation (Storybook)
 - [ ] Standardize all form components
@@ -2014,6 +2080,7 @@ export function Skeleton({ className }) {
 - [ ] Add skeleton loading screens
 
 **6. UX Enhancements**
+
 - [ ] Add persistent onboarding checklist
 - [ ] Implement smart help suggestions
 - [ ] Create comprehensive empty states
@@ -2021,6 +2088,7 @@ export function Skeleton({ className }) {
 - [ ] Improve error messages (specific, actionable)
 
 **7. Mobile Optimizations**
+
 - [ ] Implement PWA fully (manifest, service worker)
 - [ ] Add bottom navigation bar for mobile
 - [ ] Implement swipe gestures (inbox)
@@ -2030,6 +2098,7 @@ export function Skeleton({ className }) {
 ### 10.3 Medium Priority (Next 90 Days)
 
 **8. Advanced Features**
+
 - [ ] Keyboard shortcuts system (documented)
 - [ ] Global search (Cmd+K)
 - [ ] Dark mode (full implementation)
@@ -2037,6 +2106,7 @@ export function Skeleton({ className }) {
 - [ ] Customizable dashboard widgets
 
 **9. Performance Optimizations**
+
 - [ ] Implement code splitting consistently
 - [ ] Add optimistic UI updates
 - [ ] Prefetch navigation routes
@@ -2044,6 +2114,7 @@ export function Skeleton({ className }) {
 - [ ] Image optimization (next/image)
 
 **10. Content & Documentation**
+
 - [ ] Write 50+ knowledge base articles
 - [ ] Create 10 video tutorials
 - [ ] Document keyboard shortcuts
@@ -2057,24 +2128,28 @@ export function Skeleton({ className }) {
 ### 11.1 Key Performance Indicators (KPIs)
 
 **Onboarding Metrics:**
+
 - Onboarding completion rate: Target 85% (current ~60%)
 - Time to first message: Target < 5 minutes
 - Setup quality score: Target > 80%
 - Drop-off rate by step: Target < 10% per step
 
 **UX Metrics:**
+
 - Task success rate: Target > 90%
 - Time on task: Baseline → 20% reduction
 - Error rate: Target < 5%
 - User satisfaction (CSAT): Target > 4.5/5
 
 **Accessibility Metrics:**
+
 - WCAG 2.1 AA compliance: Target 100%
 - Keyboard navigation completeness: Target 100%
 - Screen reader compatibility: Target 100%
 - Color contrast pass rate: Target 100%
 
 **Engagement Metrics:**
+
 - Help center usage: Track views, searches
 - Feature adoption rate: Target > 70% in 30 days
 - Support ticket reduction: Target 30% decrease
@@ -2083,12 +2158,14 @@ export function Skeleton({ className }) {
 ### 11.2 Testing Strategy
 
 **User Testing:**
+
 - [ ] Recruit 15 users (5 new, 5 existing, 5 churned)
 - [ ] Conduct usability tests (moderated)
 - [ ] A/B test onboarding variations
 - [ ] Measure completion rates and feedback
 
 **Accessibility Testing:**
+
 - [ ] Automated testing (axe-core, Lighthouse)
 - [ ] Manual keyboard navigation audit
 - [ ] Screen reader testing (NVDA, JAWS, VoiceOver)
@@ -2096,12 +2173,14 @@ export function Skeleton({ className }) {
 - [ ] Recruit users with disabilities for testing
 
 **Performance Testing:**
+
 - [ ] Lighthouse performance audit (target > 90)
 - [ ] Core Web Vitals measurement
 - [ ] Mobile performance testing (3G/4G)
 - [ ] Bundle size analysis and optimization
 
 **Component Testing:**
+
 - [ ] Unit tests for all UI components (Jest)
 - [ ] Integration tests for complex flows (Playwright)
 - [ ] Visual regression testing (Percy or similar)
@@ -2114,21 +2193,25 @@ export function Skeleton({ className }) {
 ### Phase 1: Foundation (Weeks 1-4)
 
 **Week 1: Onboarding Enhancement**
+
 - Day 1-2: Design enhanced onboarding flow
 - Day 3-4: Implement welcome + enhanced setup steps
 - Day 5: Add team invitation step
 
 **Week 2: Onboarding Completion**
+
 - Day 1-2: Implement feature tour (Shepherd.js)
 - Day 3-4: Add success celebration + checklist
 - Day 5: Testing and refinement
 
 **Week 3: Knowledge Base Foundation**
+
 - Day 1-2: Design information architecture
 - Day 3-4: Build article CMS (admin)
 - Day 5: Create public KB page (/help)
 
 **Week 4: Accessibility Fixes**
+
 - Day 1-2: Fix critical WCAG violations
 - Day 3-4: Add missing ARIA labels
 - Day 5: Screen reader testing
@@ -2136,21 +2219,25 @@ export function Skeleton({ className }) {
 ### Phase 2: Enhancement (Weeks 5-8)
 
 **Week 5: Component Library**
+
 - Create base UI components
 - Implement CVA variants
 - Replace custom icons with Heroicons
 
 **Week 6: In-App Help**
+
 - Build contextual help system
 - Implement help modal (Cmd+?)
 - Add smart help suggestions
 
 **Week 7: Design System**
+
 - Define design tokens
 - Standardize components
 - Create Storybook documentation
 
 **Week 8: Mobile Optimization**
+
 - PWA implementation
 - Mobile-specific features
 - Touch gesture support
@@ -2158,21 +2245,25 @@ export function Skeleton({ className }) {
 ### Phase 3: Polish (Weeks 9-12)
 
 **Week 9: UX Refinement**
+
 - Empty states
 - Toast notifications
 - Error handling improvements
 
 **Week 10: Performance**
+
 - Code splitting optimization
 - Skeleton screens
 - Optimistic UI updates
 
 **Week 11: Content Creation**
+
 - Write KB articles
 - Create video tutorials
 - Document features
 
 **Week 12: Testing & Launch**
+
 - User acceptance testing
 - Accessibility validation
 - Performance benchmarking
@@ -2185,6 +2276,7 @@ export function Skeleton({ className }) {
 ### UI Component Libraries (Recommended)
 
 **Option 1: Radix UI (Recommended)**
+
 - Unstyled, accessible components
 - Works perfectly with Tailwind CSS
 - Already following similar patterns
@@ -2195,6 +2287,7 @@ npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react
 ```
 
 **Option 2: shadcn/ui (Highly Recommended)**
+
 - Built on Radix UI + Tailwind CSS
 - Copy-paste components (not installed as dependency)
 - Customizable and composable
@@ -2206,6 +2299,7 @@ npx shadcn-ui@latest add button input modal toast
 ```
 
 **Option 3: Headless UI (Already Installed!)**
+
 - Package: `@headlessui/react@2.2.9` already in dependencies
 - Built by Tailwind team
 - Fully accessible
@@ -2216,18 +2310,22 @@ npx shadcn-ui@latest add button input modal toast
 ### Animation Libraries
 
 **Framer Motion**
+
 ```bash
 npm install framer-motion
 ```
+
 - Perfect for React
 - Excellent for micro-interactions
 - Gesture support (swipes, drags)
 - Reduced motion support built-in
 
 **React Spring**
+
 ```bash
 npm install @react-spring/web
 ```
+
 - Physics-based animations
 - Great for complex animations
 - Performance-focused
@@ -2235,18 +2333,22 @@ npm install @react-spring/web
 ### Tour/Walkthrough Libraries
 
 **Shepherd.js**
+
 ```bash
 npm install shepherd.js react-shepherd
 ```
+
 - Customizable product tours
 - Excellent accessibility
 - Mobile-friendly
 - Supports callbacks and events
 
 **Intro.js**
+
 ```bash
 npm install intro.js
 ```
+
 - Simple step-by-step walkthroughs
 - Highlight elements
 - Progress tracking
@@ -2254,9 +2356,11 @@ npm install intro.js
 ### Form Libraries
 
 **React Hook Form (Highly Recommended)**
+
 ```bash
 npm install react-hook-form @hookform/resolvers zod
 ```
+
 - Already using patterns similar to this
 - Excellent performance (uncontrolled)
 - Built-in validation with Zod
@@ -2265,18 +2369,22 @@ npm install react-hook-form @hookform/resolvers zod
 ### Toast/Notification Systems
 
 **Sonner (Recommended)**
+
 ```bash
 npm install sonner
 ```
+
 - Beautiful default styling
 - Accessibility built-in
 - Promise-based notifications
 - Stacking and positioning options
 
 **React Hot Toast**
+
 ```bash
 npm install react-hot-toast
 ```
+
 - Lightweight alternative
 - Simple API
 - Customizable
@@ -2284,6 +2392,7 @@ npm install react-hot-toast
 ### Icon System (Already Available!)
 
 **Heroicons (Already Installed!)**
+
 - Package: `@heroicons/react@2.2.0`
 - Perfect for Tailwind projects
 - Outline and solid variants
@@ -2291,28 +2400,28 @@ npm install react-hot-toast
 
 ```typescript
 // Start using immediately:
-import {
-  HomeIcon,
-  InboxIcon,
-  UserIcon
-} from '@heroicons/react/24/outline'
+import { HomeIcon, InboxIcon, UserIcon } from '@heroicons/react/24/outline'
 ```
 
 ### Search & Command Palette
 
 **Kbar (Cmd+K Interface)**
+
 ```bash
 npm install kbar
 ```
+
 - Command palette UI
 - Keyboard-first
 - Nested actions
 - Excellent UX pattern
 
 **Algolia InstantSearch (For KB)**
+
 ```bash
 npm install react-instantsearch-dom algoliasearch
 ```
+
 - Powerful search
 - Typo tolerance
 - Faceted search
@@ -2568,27 +2677,27 @@ interface ToastStore {
   removeToast: (id: string) => void
 }
 
-export const useToastStore = create<ToastStore>((set) => ({
+export const useToastStore = create<ToastStore>(set => ({
   toasts: [],
-  addToast: (toast) => {
+  addToast: toast => {
     const id = Math.random().toString(36).substr(2, 9)
-    set((state) => ({
-      toasts: [...state.toasts, { ...toast, id }]
+    set(state => ({
+      toasts: [...state.toasts, { ...toast, id }],
     }))
 
     // Auto-remove after duration
     const duration = toast.duration || 5000
     setTimeout(() => {
-      set((state) => ({
-        toasts: state.toasts.filter((t) => t.id !== id)
+      set(state => ({
+        toasts: state.toasts.filter(t => t.id !== id),
       }))
     }, duration)
   },
-  removeToast: (id) => {
-    set((state) => ({
-      toasts: state.toasts.filter((t) => t.id !== id)
+  removeToast: id => {
+    set(state => ({
+      toasts: state.toasts.filter(t => t.id !== id),
     }))
-  }
+  },
 }))
 
 export function useToast() {
@@ -2597,12 +2706,10 @@ export function useToast() {
   return {
     success: (title: string, description?: string) =>
       addToast({ type: 'success', title, description }),
-    error: (title: string, description?: string) =>
-      addToast({ type: 'error', title, description }),
+    error: (title: string, description?: string) => addToast({ type: 'error', title, description }),
     warning: (title: string, description?: string) =>
       addToast({ type: 'warning', title, description }),
-    info: (title: string, description?: string) =>
-      addToast({ type: 'info', title, description })
+    info: (title: string, description?: string) => addToast({ type: 'info', title, description }),
   }
 }
 ```
@@ -2614,12 +2721,14 @@ export function useToast() {
 The ADSapp platform has a **solid foundation** with good architecture, modern tech stack, and strong security practices. However, there are **critical gaps** in onboarding completeness (60% vs industry 85%), knowledge base infrastructure (20% vs required 100%), and accessibility compliance (70% WCAG AA).
 
 **Immediate Action Required:**
+
 1. **Complete onboarding experience** (40% gap) - 2 weeks
 2. **Build knowledge base system** (80% gap) - 3-4 weeks
 3. **Fix accessibility issues** (30% gap) - 2 weeks
 4. **Refactor component architecture** (35% improvement needed) - 3 weeks
 
 **Expected Outcomes:**
+
 - Onboarding completion rate: 60% → 85%
 - WCAG 2.1 AA compliance: 70% → 100%
 - Component reusability: 60% → 85%
@@ -2634,6 +2743,6 @@ This audit provides a comprehensive roadmap for elevating ADSapp from "good" to 
 ---
 
 **End of Report**
-*Generated: 2025-10-13*
-*By: Claude Code (Frontend Architect)*
-*Next Review: 2025-11-13 (30 days)*
+_Generated: 2025-10-13_
+_By: Claude Code (Frontend Architect)_
+_Next Review: 2025-11-13 (30 days)_

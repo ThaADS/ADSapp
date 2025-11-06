@@ -1,6 +1,11 @@
 // @ts-nocheck - Type definitions need review
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
@@ -19,7 +24,12 @@ export async function GET(request: NextRequest) {
       calculateSegment(supabase, profile.organization_id, 'vip', 'VIP Contacts'),
       calculateSegment(supabase, profile.organization_id, 'blocked', 'Blocked Contacts'),
       calculateSegment(supabase, profile.organization_id, 'no_conversations', 'No Conversations'),
-      calculateSegment(supabase, profile.organization_id, 'high_volume', 'High Volume (10+ messages)')
+      calculateSegment(
+        supabase,
+        profile.organization_id,
+        'high_volume',
+        'High Volume (10+ messages)'
+      ),
     ])
 
     // Get tag-based segments
@@ -34,15 +44,19 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     const customSegmentStats = await Promise.all(
-      (customSegments || []).map(async (segment) => {
-        const count = await calculateCustomSegmentCount(supabase, profile.organization_id, segment.criteria)
+      (customSegments || []).map(async segment => {
+        const count = await calculateCustomSegmentCount(
+          supabase,
+          profile.organization_id,
+          segment.criteria
+        )
         return {
           id: segment.id,
           name: segment.name,
           description: segment.description,
           count,
           criteria: segment.criteria,
-          lastUpdated: segment.updated_at
+          lastUpdated: segment.updated_at,
         }
       })
     )
@@ -55,10 +69,9 @@ export async function GET(request: NextRequest) {
         totalContacts: segments.find(s => s.key === 'all')?.count || 0,
         activeContacts: segments.find(s => s.key === 'active')?.count || 0,
         newContacts: segments.find(s => s.key === 'new')?.count || 0,
-        blockedContacts: segments.find(s => s.key === 'blocked')?.count || 0
-      }
+        blockedContacts: segments.find(s => s.key === 'blocked')?.count || 0,
+      },
     })
-
   } catch (error) {
     console.error('Error fetching contact segments:', error)
     return createErrorResponse(error)
@@ -74,18 +87,12 @@ export async function POST(request: NextRequest) {
     const { name, description, criteria } = body
 
     if (!name || !criteria) {
-      return NextResponse.json(
-        { error: 'Name and criteria are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Name and criteria are required' }, { status: 400 })
     }
 
     // Validate criteria structure
     if (!validateSegmentCriteria(criteria)) {
-      return NextResponse.json(
-        { error: 'Invalid criteria structure' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid criteria structure' }, { status: 400 })
     }
 
     const supabase = await createClient()
@@ -99,10 +106,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (existingSegment) {
-      return NextResponse.json(
-        { error: 'Segment with this name already exists' },
-        { status: 409 }
-      )
+      return NextResponse.json({ error: 'Segment with this name already exists' }, { status: 409 })
     }
 
     // Test the criteria to ensure it works
@@ -118,7 +122,7 @@ export async function POST(request: NextRequest) {
         description,
         criteria,
         contact_count: testCount,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single()
@@ -127,11 +131,13 @@ export async function POST(request: NextRequest) {
       throw error
     }
 
-    return createSuccessResponse({
-      ...segment,
-      count: testCount
-    }, 201)
-
+    return createSuccessResponse(
+      {
+        ...segment,
+        count: testCount,
+      },
+      201
+    )
   } catch (error) {
     console.error('Error creating contact segment:', error)
     return createErrorResponse(error)
@@ -178,11 +184,15 @@ async function calculateSegment(supabase: any, organizationId: string, key: stri
         .from('contacts')
         .select('id', { count: 'exact' })
         .eq('organization_id', organizationId)
-        .not('id', 'in', `(
+        .not(
+          'id',
+          'in',
+          `(
           SELECT DISTINCT contact_id
           FROM conversations
           WHERE organization_id = '${organizationId}'
-        )`)
+        )`
+        )
       break
 
     case 'high_volume':
@@ -191,14 +201,17 @@ async function calculateSegment(supabase: any, organizationId: string, key: stri
         .from('contacts')
         .select('id', { count: 'exact' })
         .eq('organization_id', organizationId)
-        .in('id', `(
+        .in(
+          'id',
+          `(
           SELECT c.contact_id
           FROM conversations c
           JOIN messages m ON c.id = m.conversation_id
           WHERE c.organization_id = '${organizationId}'
           GROUP BY c.contact_id
           HAVING COUNT(m.id) >= 10
-        )`)
+        )`
+        )
       break
 
     default:
@@ -211,7 +224,7 @@ async function calculateSegment(supabase: any, organizationId: string, key: stri
     key,
     name,
     count: count || 0,
-    description: getSegmentDescription(key)
+    description: getSegmentDescription(key),
   }
 }
 
@@ -238,12 +251,16 @@ async function calculateTagSegments(supabase: any, organizationId: string) {
       name: `Tagged: ${tag}`,
       count,
       tag,
-      description: `Contacts tagged with "${tag}"`
+      description: `Contacts tagged with "${tag}"`,
     }))
     .sort((a, b) => b.count - a.count)
 }
 
-async function calculateCustomSegmentCount(supabase: any, organizationId: string, criteria: any): Promise<number> {
+async function calculateCustomSegmentCount(
+  supabase: any,
+  organizationId: string,
+  criteria: any
+): Promise<number> {
   try {
     let query = supabase
       .from('contacts')
@@ -329,11 +346,34 @@ function validateSegmentCriteria(criteria: any): boolean {
     return false
   }
 
-  const validFields = ['name', 'phone_number', 'email', 'tags', 'notes', 'is_blocked', 'created_at', 'updated_at', 'last_message_at']
+  const validFields = [
+    'name',
+    'phone_number',
+    'email',
+    'tags',
+    'notes',
+    'is_blocked',
+    'created_at',
+    'updated_at',
+    'last_message_at',
+  ]
   const validOperators = [
-    'equals', 'not_equals', 'contains', 'not_contains', 'starts_with', 'ends_with',
-    'is_null', 'is_not_null', 'greater_than', 'less_than', 'greater_than_or_equal',
-    'less_than_or_equal', 'in', 'not_in', 'has_tag', 'not_has_tag'
+    'equals',
+    'not_equals',
+    'contains',
+    'not_contains',
+    'starts_with',
+    'ends_with',
+    'is_null',
+    'is_not_null',
+    'greater_than',
+    'less_than',
+    'greater_than_or_equal',
+    'less_than_or_equal',
+    'in',
+    'not_in',
+    'has_tag',
+    'not_has_tag',
   ]
 
   for (const condition of criteria.conditions) {
@@ -368,7 +408,7 @@ function getSegmentDescription(key: string): string {
     vip: 'Contacts tagged as VIP',
     blocked: 'Contacts that have been blocked',
     no_conversations: 'Contacts who have never had a conversation',
-    high_volume: 'Contacts with 10 or more messages'
+    high_volume: 'Contacts with 10 or more messages',
   }
 
   return descriptions[key] || ''

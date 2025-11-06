@@ -66,14 +66,16 @@ export function createServiceRoleClient() {
     url,
     keyPrefix: serviceKey.substring(0, 25) + '...',
     keyLength: serviceKey.length,
-    isServiceRole: serviceKey.includes('service_role') || serviceKey.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+    isServiceRole:
+      serviceKey.includes('service_role') ||
+      serviceKey.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'),
   })
 
   return createSupabaseClient<Database>(url, serviceKey, {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
+      persistSession: false,
+    },
   })
 }
 
@@ -117,7 +119,7 @@ export async function callSecureRpc<T = any>(
   params: Record<string, any> = {},
   options?: SecureRpcOptions
 ): Promise<SecureRpcResult<T>> {
-  return secureRpc<T>(supabase, functionName, params, options);
+  return secureRpc<T>(supabase, functionName, params, options)
 }
 
 /**
@@ -152,11 +154,11 @@ export function validateQueryFilters(
   params: Record<string, any>,
   validators: Record<string, (value: any) => ValidationResult>
 ): {
-  isValid: boolean;
-  sanitizedParams: Record<string, any>;
-  errors: Record<string, string>;
+  isValid: boolean
+  sanitizedParams: Record<string, any>
+  errors: Record<string, string>
 } {
-  return InputValidator.validateParameters(params, validators);
+  return InputValidator.validateParameters(params, validators)
 }
 
 /**
@@ -172,7 +174,7 @@ export function validateQueryFilters(
  * ```
  */
 export function validateSearchQuery(query: string, maxLength?: number): string {
-  return InputValidator.sanitizeSearchQuery(query, maxLength);
+  return InputValidator.sanitizeSearchQuery(query, maxLength)
 }
 
 /**
@@ -187,7 +189,7 @@ export function validateSearchQuery(query: string, maxLength?: number): string {
  * ```
  */
 export function detectSQLInjection(value: string): boolean {
-  return InputValidator.containsSQLInjection(value);
+  return InputValidator.containsSQLInjection(value)
 }
 
 /**
@@ -201,7 +203,7 @@ export function detectSQLInjection(value: string): boolean {
  * ```
  */
 export function detectXSS(value: string): boolean {
-  return InputValidator.containsXSS(value);
+  return InputValidator.containsXSS(value)
 }
 
 // ============================================================================
@@ -255,20 +257,20 @@ export const QueryValidators = {
         isValid: false,
         error: 'Boolean value cannot be null',
         errorCode: 'NULL_NOT_ALLOWED',
-      };
+      }
     }
 
     if (typeof value === 'boolean') {
-      return { isValid: true, sanitizedValue: value };
+      return { isValid: true, sanitizedValue: value }
     }
 
     if (typeof value === 'string') {
-      const lower = value.toLowerCase();
+      const lower = value.toLowerCase()
       if (lower === 'true' || lower === '1') {
-        return { isValid: true, sanitizedValue: true };
+        return { isValid: true, sanitizedValue: true }
       }
       if (lower === 'false' || lower === '0') {
-        return { isValid: true, sanitizedValue: false };
+        return { isValid: true, sanitizedValue: false }
       }
     }
 
@@ -276,6 +278,6 @@ export const QueryValidators = {
       isValid: false,
       error: 'Invalid boolean value',
       errorCode: 'INVALID_TYPE',
-    };
+    }
   },
-};
+}

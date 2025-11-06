@@ -48,7 +48,10 @@ export function createMockRequest(
   })
 }
 
-export function createPaginatedUrl(baseUrl: string, params: { page?: number; limit?: number; sort?: string; order?: string }) {
+export function createPaginatedUrl(
+  baseUrl: string,
+  params: { page?: number; limit?: number; sort?: string; order?: string }
+) {
   const url = new URL(baseUrl, 'http://localhost:3000')
   if (params.page) url.searchParams.set('page', params.page.toString())
   if (params.limit) url.searchParams.set('limit', params.limit.toString())

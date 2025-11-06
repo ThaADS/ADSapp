@@ -156,6 +156,7 @@ This file contains abbreviated scripts for core features videos 7-13. Each follo
 **Graphics**: Feature highlights, process diagrams, result metrics
 
 **Key Visuals for All**:
+
 - Clean demonstration environment
 - Real-world examples that resonate
 - Before/after comparisons where applicable

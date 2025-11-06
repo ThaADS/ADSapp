@@ -1,23 +1,25 @@
 // @ts-nocheck - Type definitions need review
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export const dynamic = 'force-dynamic'
 
 // GET /api/tags/[id] - Get tag details with contacts using this tag
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { id } = await params
     const supabase = await createClient()
@@ -25,24 +27,23 @@ export async function GET(
     // Get tag details using new schema
     const { data: tag, error } = await supabase
       .from('tags')
-      .select(`
+      .select(
+        `
         *,
         category:tag_categories(
           id,
           name,
           description
         )
-      `)
+      `
+      )
       .eq('id', id)
       .eq('organization_id', organizationId)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Tag not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
       }
       throw error
     }
@@ -50,7 +51,8 @@ export async function GET(
     // Get contacts with this tag via junction table
     const { data: contactsData, error: contactsError } = await supabase
       .from('contact_tags')
-      .select(`
+      .select(
+        `
         contact:contacts(
           id,
           name,
@@ -65,7 +67,8 @@ export async function GET(
           full_name,
           avatar_url
         )
-      `)
+      `
+      )
       .eq('tag_id', id)
       .limit(100)
 
@@ -74,20 +77,20 @@ export async function GET(
     }
 
     // Transform contacts data
-    const contacts = contactsData?.map(ct => ({
-      ...ct.contact,
-      tag_assigned_at: ct.assigned_at,
-      tag_assigned_by: ct.assigned_by
-    })) || []
+    const contacts =
+      contactsData?.map(ct => ({
+        ...ct.contact,
+        tag_assigned_at: ct.assigned_at,
+        tag_assigned_by: ct.assigned_by,
+      })) || []
 
     return createSuccessResponse({
       tag: {
         ...tag,
-        usage_count: contacts.length
+        usage_count: contacts.length,
       },
-      contacts
+      contacts,
     })
-
   } catch (error) {
     console.error('Error fetching tag:', error)
     return createErrorResponse(error)
@@ -95,17 +98,14 @@ export async function GET(
 }
 
 // PUT /api/tags/[id] - Update tag
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
+    const { organizationId, userId } = getTenantContext(request)
 
     const { id } = await params
     const supabase = await createClient()
@@ -134,33 +134,19 @@ export async function PUT(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Tag not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
       }
       throw fetchError
     }
 
-    const body = await request.json();
-    const {
-      name,
-      description,
-      color_hex,
-      color_class,
-      icon,
-      category_id,
-      sort_order,
-      is_active
-    } = body
+    const body = await request.json()
+    const { name, description, color_hex, color_class, icon, category_id, sort_order, is_active } =
+      body
 
     // Validate new name if provided
     if (name !== undefined) {
       if (!name || typeof name !== 'string' || name.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Tag name must be a non-empty string' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Tag name must be a non-empty string' }, { status: 400 })
       }
 
       // Check if new name conflicts with another tag
@@ -219,7 +205,7 @@ export async function PUT(
     if (Object.keys(updateData).length === 0) {
       return createSuccessResponse({
         ...existingTag,
-        usage_count: existingTag.usage_count || 0
+        usage_count: existingTag.usage_count || 0,
       })
     }
 
@@ -229,14 +215,16 @@ export async function PUT(
       .update(updateData)
       .eq('id', id)
       .eq('organization_id', organizationId)
-      .select(`
+      .select(
+        `
         *,
         category:tag_categories(
           id,
           name,
           description
         )
-      `)
+      `
+      )
       .single()
 
     if (updateError) {
@@ -244,9 +232,8 @@ export async function PUT(
     }
 
     return createSuccessResponse({
-      ...updatedTag
+      ...updatedTag,
     })
-
   } catch (error) {
     console.error('Error updating tag:', error)
     return createErrorResponse(error)
@@ -259,12 +246,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
+    const { organizationId, userId } = getTenantContext(request)
 
     const { id } = await params
     const supabase = await createClient()
@@ -293,10 +280,7 @@ export async function DELETE(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Tag not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
       }
       throw fetchError
     }
@@ -320,7 +304,7 @@ export async function DELETE(
 
       return createSuccessResponse({
         message: 'Tag permanently deleted',
-        removed_from_contacts: tag.usage_count || 0
+        removed_from_contacts: tag.usage_count || 0,
       })
     } else {
       // Soft delete: Just mark as inactive
@@ -336,10 +320,9 @@ export async function DELETE(
 
       return createSuccessResponse({
         message: 'Tag deactivated successfully',
-        note: 'Tag is hidden but contact associations are preserved. Use force=true to permanently delete.'
+        note: 'Tag is hidden but contact associations are preserved. Use force=true to permanently delete.',
       })
     }
-
   } catch (error) {
     console.error('Error deleting tag:', error)
     return createErrorResponse(error)

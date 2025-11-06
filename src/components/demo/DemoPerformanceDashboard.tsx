@@ -7,25 +7,16 @@ import {
   UserJourney,
   FeatureEngagement,
   RealTimeMetrics,
-  OptimizationInsight
+  OptimizationInsight,
 } from '@/lib/demo-analytics-advanced'
-import {
-  ABTestingFramework,
-  ABTest,
-  ABTestResults,
-  ABTestingUtils
-} from '@/lib/ab-testing'
+import { ABTestingFramework, ABTest, ABTestResults, ABTestingUtils } from '@/lib/ab-testing'
 import {
   ConversionOptimizationEngine,
   ConversionFunnel,
   OptimizationOpportunity,
-  ConversionOptimizationUtils
+  ConversionOptimizationUtils,
 } from '@/lib/conversion-optimization'
-import {
-  LeadHandoffSystem,
-  Lead,
-  LeadHandoffUtils
-} from '@/lib/lead-handoff'
+import { LeadHandoffSystem, Lead, LeadHandoffUtils } from '@/lib/lead-handoff'
 import { BusinessScenario } from '@/types/demo'
 import { createClient } from '@supabase/supabase-js'
 
@@ -52,7 +43,7 @@ const timeRangeOptions: TimeRangeOption[] = [
   { label: 'Last 24 Hours', value: '24h', days: 1 },
   { label: 'Last 7 Days', value: '7d', days: 7 },
   { label: 'Last 30 Days', value: '30d', days: 30 },
-  { label: 'Last 90 Days', value: '90d', days: 90 }
+  { label: 'Last 90 Days', value: '90d', days: 90 },
 ]
 
 const supabase = createClient(
@@ -61,7 +52,7 @@ const supabase = createClient(
 )
 
 export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> = ({
-  className = ''
+  className = '',
 }) => {
   // Services
   const [analytics] = useState(() => new AdvancedDemoAnalytics(supabase))
@@ -72,7 +63,9 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
   // State
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRangeOption>(timeRangeOptions[1])
   const [selectedScenario, setSelectedScenario] = useState<BusinessScenario | 'all'>('all')
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'tests' | 'optimization' | 'leads'>('overview')
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'analytics' | 'tests' | 'optimization' | 'leads'
+  >('overview')
   const [isLoading, setIsLoading] = useState(true)
 
   // Data state
@@ -82,14 +75,16 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
     averageEngagement: 0,
     activeTests: 0,
     qualifiedLeads: 0,
-    revenueImpact: 0
+    revenueImpact: 0,
   })
   const [realTimeMetrics, setRealTimeMetrics] = useState<RealTimeMetrics | null>(null)
   const [conversionFunnels, setConversionFunnels] = useState<ConversionFunnel[]>([])
   const [featureEngagement, setFeatureEngagement] = useState<FeatureEngagement[]>([])
   const [activeTests, setActiveTests] = useState<ABTest[]>([])
   const [testResults, setTestResults] = useState<ABTestResults[]>([])
-  const [optimizationOpportunities, setOptimizationOpportunities] = useState<OptimizationOpportunity[]>([])
+  const [optimizationOpportunities, setOptimizationOpportunities] = useState<
+    OptimizationOpportunity[]
+  >([])
   const [leads, setLeads] = useState<Lead[]>([])
   const [optimizationInsights, setOptimizationInsights] = useState<OptimizationInsight[]>([])
 
@@ -100,7 +95,7 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
     start.setDate(start.getDate() - selectedTimeRange.days)
     return {
       start: start.toISOString(),
-      end: end.toISOString()
+      end: end.toISOString(),
     }
   }, [selectedTimeRange])
 
@@ -111,7 +106,7 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
 
   // Start real-time monitoring
   useEffect(() => {
-    const monitoringId = analytics.startRealTimeMonitoring((metrics) => {
+    const monitoringId = analytics.startRealTimeMonitoring(metrics => {
       setRealTimeMetrics(metrics)
     })
 
@@ -128,7 +123,7 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
         loadAnalyticsData(),
         loadTestingData(),
         loadOptimizationData(),
-        loadLeadsData()
+        loadLeadsData(),
       ])
     } catch (error) {
       console.error('Error loading dashboard data:', error)
@@ -146,7 +141,7 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
         averageEngagement: 67,
         activeTests: 3,
         qualifiedLeads: 45,
-        revenueImpact: 125000
+        revenueImpact: 125000,
       }
       setDashboardMetrics(metrics)
     } catch (error) {
@@ -171,7 +166,6 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
       // Load optimization insights
       const insights = await conversionEngine.generateOptimizationInsights(scenario, timeRange)
       setOptimizationInsights(insights)
-
     } catch (error) {
       console.error('Error loading analytics data:', error)
     }
@@ -203,7 +197,7 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
       const leadsData = await leadSystem.getLeads({
         business_scenario: selectedScenario === 'all' ? undefined : selectedScenario,
         created_after: timeRange.start,
-        created_before: timeRange.end
+        created_before: timeRange.end,
       })
       setLeads(leadsData)
     } catch (error) {
@@ -212,112 +206,130 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
   }
 
   const renderOverviewTab = () => (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
         <MetricCard
-          title="Total Sessions"
+          title='Total Sessions'
           value={dashboardMetrics.totalSessions.toLocaleString()}
-          change="+12.5%"
-          trend="up"
-          icon="👥"
+          change='+12.5%'
+          trend='up'
+          icon='👥'
         />
         <MetricCard
-          title="Conversion Rate"
+          title='Conversion Rate'
           value={`${dashboardMetrics.conversionRate}%`}
-          change="+2.3%"
-          trend="up"
-          icon="📈"
+          change='+2.3%'
+          trend='up'
+          icon='📈'
         />
         <MetricCard
-          title="Avg Engagement"
+          title='Avg Engagement'
           value={`${dashboardMetrics.averageEngagement}/100`}
-          change="+5.7%"
-          trend="up"
-          icon="⚡"
+          change='+5.7%'
+          trend='up'
+          icon='⚡'
         />
         <MetricCard
-          title="Active Tests"
+          title='Active Tests'
           value={dashboardMetrics.activeTests.toString()}
-          change="2 completed"
-          trend="neutral"
-          icon="🧪"
+          change='2 completed'
+          trend='neutral'
+          icon='🧪'
         />
         <MetricCard
-          title="Qualified Leads"
+          title='Qualified Leads'
           value={dashboardMetrics.qualifiedLeads.toString()}
-          change="+18.9%"
-          trend="up"
-          icon="🎯"
+          change='+18.9%'
+          trend='up'
+          icon='🎯'
         />
         <MetricCard
-          title="Revenue Impact"
+          title='Revenue Impact'
           value={`$${(dashboardMetrics.revenueImpact / 1000).toFixed(0)}K`}
-          change="+25.3%"
-          trend="up"
-          icon="💰"
+          change='+25.3%'
+          trend='up'
+          icon='💰'
         />
       </div>
 
       {/* Real-time Activity */}
       {realTimeMetrics && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Real-time Activity</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{realTimeMetrics.active_sessions}</div>
-              <div className="text-sm text-gray-500">Active Sessions</div>
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Real-time Activity</h3>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-green-600'>
+                {realTimeMetrics.active_sessions}
+              </div>
+              <div className='text-sm text-gray-500'>Active Sessions</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{realTimeMetrics.current_conversions}</div>
-              <div className="text-sm text-gray-500">Today's Conversions</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-blue-600'>
+                {realTimeMetrics.current_conversions}
+              </div>
+              <div className='text-sm text-gray-500'>Today's Conversions</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{realTimeMetrics.trending_features.length}</div>
-              <div className="text-sm text-gray-500">Trending Features</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-purple-600'>
+                {realTimeMetrics.trending_features.length}
+              </div>
+              <div className='text-sm text-gray-500'>Trending Features</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{realTimeMetrics.alert_conditions.filter(a => a.triggered).length}</div>
-              <div className="text-sm text-gray-500">Active Alerts</div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-orange-600'>
+                {realTimeMetrics.alert_conditions.filter(a => a.triggered).length}
+              </div>
+              <div className='text-sm text-gray-500'>Active Alerts</div>
             </div>
           </div>
         </div>
       )}
 
       {/* Quick Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Optimization Opportunities</h3>
-          <div className="space-y-3">
+      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+            Top Optimization Opportunities
+          </h3>
+          <div className='space-y-3'>
             {optimizationOpportunities.slice(0, 3).map((opportunity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className='flex items-center justify-between rounded-lg bg-gray-50 p-3'
+              >
                 <div>
-                  <div className="font-medium text-gray-900">{opportunity.title}</div>
-                  <div className="text-sm text-gray-500">{opportunity.description}</div>
+                  <div className='font-medium text-gray-900'>{opportunity.title}</div>
+                  <div className='text-sm text-gray-500'>{opportunity.description}</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-green-600">
+                <div className='text-right'>
+                  <div className='text-sm font-medium text-green-600'>
                     +{opportunity.ab_test_suggestions[0]?.expected_improvement || 0}%
                   </div>
-                  <div className="text-xs text-gray-400">Expected Impact</div>
+                  <div className='text-xs text-gray-400'>Expected Impact</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Insights</h3>
-          <div className="space-y-3">
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Recent Insights</h3>
+          <div className='space-y-3'>
             {optimizationInsights.slice(0, 3).map((insight, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                <div className={`w-2 h-2 rounded-full mt-2 ${
-                  insight.severity === 'critical' ? 'bg-red-500' :
-                  insight.severity === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-                }`} />
+              <div key={index} className='flex items-start space-x-3 rounded-lg bg-gray-50 p-3'>
+                <div
+                  className={`mt-2 h-2 w-2 rounded-full ${
+                    insight.severity === 'critical'
+                      ? 'bg-red-500'
+                      : insight.severity === 'warning'
+                        ? 'bg-yellow-500'
+                        : 'bg-blue-500'
+                  }`}
+                />
                 <div>
-                  <div className="font-medium text-gray-900">{insight.title}</div>
-                  <div className="text-sm text-gray-500">{insight.description}</div>
+                  <div className='font-medium text-gray-900'>{insight.title}</div>
+                  <div className='text-sm text-gray-500'>{insight.description}</div>
                 </div>
               </div>
             ))}
@@ -328,25 +340,25 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
   )
 
   const renderAnalyticsTab = () => (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Conversion Funnel */}
       {conversionFunnels.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversion Funnel</h3>
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Conversion Funnel</h3>
           <ConversionFunnelChart funnel={conversionFunnels[0]} />
         </div>
       )}
 
       {/* Feature Engagement */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Feature Engagement</h3>
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>Feature Engagement</h3>
         <FeatureEngagementChart features={featureEngagement} />
       </div>
 
       {/* User Journey Heatmap */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">User Journey Patterns</h3>
-        <div className="text-gray-500 text-center py-8">
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>User Journey Patterns</h3>
+        <div className='py-8 text-center text-gray-500'>
           User journey heatmap visualization would go here
         </div>
       </div>
@@ -354,19 +366,19 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
   )
 
   const renderTestsTab = () => (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Active Tests */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Active A/B Tests</h3>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <div className='mb-4 flex items-center justify-between'>
+          <h3 className='text-lg font-semibold text-gray-900'>Active A/B Tests</h3>
+          <button className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'>
             Create New Test
           </button>
         </div>
         {activeTests.length > 0 ? (
           <ABTestList tests={activeTests} />
         ) : (
-          <div className="text-center py-8 text-gray-500">
+          <div className='py-8 text-center text-gray-500'>
             No active tests. Create your first A/B test to optimize conversion rates.
           </div>
         )}
@@ -374,8 +386,8 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
 
       {/* Test Results */}
       {testResults.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Test Results</h3>
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Recent Test Results</h3>
           <TestResultsList results={testResults} />
         </div>
       )}
@@ -383,10 +395,10 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
   )
 
   const renderOptimizationTab = () => (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Optimization Score */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Optimization Score</h3>
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>Optimization Score</h3>
         <OptimizationScoreCard
           score={72}
           opportunities={optimizationOpportunities}
@@ -395,37 +407,39 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
       </div>
 
       {/* Opportunities List */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Optimization Opportunities</h3>
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>Optimization Opportunities</h3>
         <OptimizationOpportunitiesList opportunities={optimizationOpportunities} />
       </div>
 
       {/* Performance Trends */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>Performance Trends</h3>
         <PerformanceTrendsChart />
       </div>
     </div>
   )
 
   const renderLeadsTab = () => (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Lead Pipeline */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Lead Pipeline</h3>
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <h3 className='mb-4 text-lg font-semibold text-gray-900'>Lead Pipeline</h3>
         <LeadPipelineChart leads={leads} />
       </div>
 
       {/* Lead Quality Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Lead Quality Distribution</h3>
+      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Lead Quality Distribution</h3>
           <LeadQualityChart leads={leads} />
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent High-Quality Leads</h3>
-          <HighQualityLeadsList leads={leads.filter(l => l.lead_score.sales_readiness === 'qualified').slice(0, 5)} />
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Recent High-Quality Leads</h3>
+          <HighQualityLeadsList
+            leads={leads.filter(l => l.lead_score.sales_readiness === 'qualified').slice(0, 5)}
+          />
         </div>
       </div>
     </div>
@@ -433,40 +447,40 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
 
   if (isLoading) {
     return (
-      <div className={`${className} flex items-center justify-center h-96`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className={`${className} flex h-96 items-center justify-center`}>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
       </div>
     )
   }
 
   return (
-    <div className={`${className} max-w-7xl mx-auto`}>
+    <div className={`${className} mx-auto max-w-7xl`}>
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-gray-900">Demo Performance Dashboard</h1>
-          <div className="flex items-center space-x-4">
+      <div className='mb-8'>
+        <div className='mb-4 flex items-center justify-between'>
+          <h1 className='text-3xl font-bold text-gray-900'>Demo Performance Dashboard</h1>
+          <div className='flex items-center space-x-4'>
             <select
               value={selectedScenario}
-              onChange={(e) => setSelectedScenario(e.target.value as BusinessScenario | 'all')}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              onChange={e => setSelectedScenario(e.target.value as BusinessScenario | 'all')}
+              className='rounded-lg border border-gray-300 px-3 py-2 text-sm'
             >
-              <option value="all">All Scenarios</option>
-              <option value="retail">Retail</option>
-              <option value="restaurant">Restaurant</option>
-              <option value="ecommerce">E-commerce</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="education">Education</option>
+              <option value='all'>All Scenarios</option>
+              <option value='retail'>Retail</option>
+              <option value='restaurant'>Restaurant</option>
+              <option value='ecommerce'>E-commerce</option>
+              <option value='healthcare'>Healthcare</option>
+              <option value='education'>Education</option>
             </select>
             <select
               value={selectedTimeRange.value}
-              onChange={(e) => {
+              onChange={e => {
                 const range = timeRangeOptions.find(r => r.value === e.target.value)
                 if (range) setSelectedTimeRange(range)
               }}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className='rounded-lg border border-gray-300 px-3 py-2 text-sm'
             >
-              {timeRangeOptions.map((option) => (
+              {timeRangeOptions.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -476,22 +490,22 @@ export const DemoPerformanceDashboard: React.FC<DemoPerformanceDashboardProps> =
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8">
+        <div className='border-b border-gray-200'>
+          <nav className='flex space-x-8'>
             {[
               { id: 'overview', label: 'Overview' },
               { id: 'analytics', label: 'Analytics' },
               { id: 'tests', label: 'A/B Tests' },
               { id: 'optimization', label: 'Optimization' },
-              { id: 'leads', label: 'Leads' }
-            ].map((tab) => (
+              { id: 'leads', label: 'Leads' },
+            ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`border-b-2 px-1 py-2 text-sm font-medium ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 }`}
               >
                 {tab.label}
@@ -524,19 +538,23 @@ interface MetricCardProps {
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({ title, value, change, trend, icon }) => (
-  <div className="bg-white rounded-lg border border-gray-200 p-4">
-    <div className="flex items-center justify-between mb-2">
-      <div className="text-2xl">{icon}</div>
-      <div className={`text-xs font-medium px-2 py-1 rounded-full ${
-        trend === 'up' ? 'bg-green-100 text-green-600' :
-        trend === 'down' ? 'bg-red-100 text-red-600' :
-        'bg-gray-100 text-gray-600'
-      }`}>
+  <div className='rounded-lg border border-gray-200 bg-white p-4'>
+    <div className='mb-2 flex items-center justify-between'>
+      <div className='text-2xl'>{icon}</div>
+      <div
+        className={`rounded-full px-2 py-1 text-xs font-medium ${
+          trend === 'up'
+            ? 'bg-green-100 text-green-600'
+            : trend === 'down'
+              ? 'bg-red-100 text-red-600'
+              : 'bg-gray-100 text-gray-600'
+        }`}
+      >
         {change}
       </div>
     </div>
-    <div className="text-2xl font-bold text-gray-900">{value}</div>
-    <div className="text-sm text-gray-500">{title}</div>
+    <div className='text-2xl font-bold text-gray-900'>{value}</div>
+    <div className='text-sm text-gray-500'>{title}</div>
   </div>
 )
 
@@ -545,23 +563,23 @@ interface ConversionFunnelChartProps {
 }
 
 const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ funnel }) => (
-  <div className="space-y-4">
+  <div className='space-y-4'>
     {funnel.steps.map((step, index) => (
-      <div key={step.id} className="flex items-center space-x-4">
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-medium text-gray-900">{step.name}</span>
-            <span className="text-sm text-gray-500">
+      <div key={step.id} className='flex items-center space-x-4'>
+        <div className='flex-1'>
+          <div className='mb-2 flex items-center justify-between'>
+            <span className='font-medium text-gray-900'>{step.name}</span>
+            <span className='text-sm text-gray-500'>
               {step.conversion_rate.toFixed(1)}% conversion
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className='h-2 w-full rounded-full bg-gray-200'>
             <div
-              className="bg-blue-600 h-2 rounded-full"
+              className='h-2 rounded-full bg-blue-600'
               style={{ width: `${step.conversion_rate}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className='mt-1 flex justify-between text-xs text-gray-400'>
             <span>{step.entry_count} entered</span>
             <span>{step.completion_count} completed</span>
           </div>
@@ -576,22 +594,22 @@ interface FeatureEngagementChartProps {
 }
 
 const FeatureEngagementChart: React.FC<FeatureEngagementChartProps> = ({ features }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
     {features.map((feature, index) => (
-      <div key={index} className="p-4 border border-gray-200 rounded-lg">
-        <div className="font-medium text-gray-900 mb-2">{feature.feature_name}</div>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Engagement Score</span>
-            <span className="font-medium">{feature.engagement_score}/100</span>
+      <div key={index} className='rounded-lg border border-gray-200 p-4'>
+        <div className='mb-2 font-medium text-gray-900'>{feature.feature_name}</div>
+        <div className='space-y-2'>
+          <div className='flex justify-between text-sm'>
+            <span className='text-gray-500'>Engagement Score</span>
+            <span className='font-medium'>{feature.engagement_score}/100</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Users</span>
-            <span className="font-medium">{feature.unique_users}</span>
+          <div className='flex justify-between text-sm'>
+            <span className='text-gray-500'>Users</span>
+            <span className='font-medium'>{feature.unique_users}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Completion Rate</span>
-            <span className="font-medium">{feature.completion_rate.toFixed(1)}%</span>
+          <div className='flex justify-between text-sm'>
+            <span className='text-gray-500'>Completion Rate</span>
+            <span className='font-medium'>{feature.completion_rate.toFixed(1)}%</span>
           </div>
         </div>
       </div>
@@ -604,25 +622,29 @@ interface ABTestListProps {
 }
 
 const ABTestList: React.FC<ABTestListProps> = ({ tests }) => (
-  <div className="space-y-4">
-    {tests.map((test) => (
-      <div key={test.id} className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="font-medium text-gray-900">{test.name}</h4>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-            test.status === 'running' ? 'bg-green-100 text-green-600' :
-            test.status === 'completed' ? 'bg-blue-100 text-blue-600' :
-            'bg-gray-100 text-gray-600'
-          }`}>
+  <div className='space-y-4'>
+    {tests.map(test => (
+      <div key={test.id} className='rounded-lg border border-gray-200 p-4'>
+        <div className='mb-2 flex items-center justify-between'>
+          <h4 className='font-medium text-gray-900'>{test.name}</h4>
+          <span
+            className={`rounded-full px-2 py-1 text-xs font-medium ${
+              test.status === 'running'
+                ? 'bg-green-100 text-green-600'
+                : test.status === 'completed'
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'bg-gray-100 text-gray-600'
+            }`}
+          >
             {test.status}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mb-3">{test.description}</p>
-        <div className="grid grid-cols-2 gap-4">
-          {test.variants.map((variant) => (
-            <div key={variant.id} className="text-center p-3 bg-gray-50 rounded">
-              <div className="font-medium text-gray-900">{variant.name}</div>
-              <div className="text-sm text-gray-500">
+        <p className='mb-3 text-sm text-gray-500'>{test.description}</p>
+        <div className='grid grid-cols-2 gap-4'>
+          {test.variants.map(variant => (
+            <div key={variant.id} className='rounded bg-gray-50 p-3 text-center'>
+              <div className='font-medium text-gray-900'>{variant.name}</div>
+              <div className='text-sm text-gray-500'>
                 {variant.conversion_rate.toFixed(1)}% conversion
               </div>
             </div>
@@ -638,34 +660,43 @@ interface TestResultsListProps {
 }
 
 const TestResultsList: React.FC<TestResultsListProps> = ({ results }) => (
-  <div className="space-y-4">
-    {results.map((result) => (
-      <div key={result.test_id} className="border border-gray-200 rounded-lg p-4">
-        <div className="mb-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">Test Results</h4>
-            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-              result.statistical_significance.is_significant
-                ? 'bg-green-100 text-green-600'
-                : 'bg-yellow-100 text-yellow-600'
-            }`}>
+  <div className='space-y-4'>
+    {results.map(result => (
+      <div key={result.test_id} className='rounded-lg border border-gray-200 p-4'>
+        <div className='mb-4'>
+          <div className='flex items-center justify-between'>
+            <h4 className='font-medium text-gray-900'>Test Results</h4>
+            <div
+              className={`rounded-full px-2 py-1 text-xs font-medium ${
+                result.statistical_significance.is_significant
+                  ? 'bg-green-100 text-green-600'
+                  : 'bg-yellow-100 text-yellow-600'
+              }`}
+            >
               {result.statistical_significance.is_significant ? 'Significant' : 'Not Significant'}
             </div>
           </div>
-          <div className="text-sm text-gray-500">
-            {result.total_sessions} sessions • {result.overall_conversion_rate.toFixed(1)}% overall conversion
+          <div className='text-sm text-gray-500'>
+            {result.total_sessions} sessions • {result.overall_conversion_rate.toFixed(1)}% overall
+            conversion
           </div>
         </div>
-        <div className="space-y-2">
-          {result.variant_results.map((variant) => (
-            <div key={variant.variant_id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-              <span className="font-medium">{variant.variant_name}</span>
-              <div className="text-right">
-                <div className="text-sm font-medium">{variant.conversion_rate.toFixed(1)}%</div>
-                <div className={`text-xs ${
-                  variant.improvement_over_control > 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {variant.improvement_over_control > 0 ? '+' : ''}{variant.improvement_over_control.toFixed(1)}%
+        <div className='space-y-2'>
+          {result.variant_results.map(variant => (
+            <div
+              key={variant.variant_id}
+              className='flex items-center justify-between rounded bg-gray-50 p-2'
+            >
+              <span className='font-medium'>{variant.variant_name}</span>
+              <div className='text-right'>
+                <div className='text-sm font-medium'>{variant.conversion_rate.toFixed(1)}%</div>
+                <div
+                  className={`text-xs ${
+                    variant.improvement_over_control > 0 ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {variant.improvement_over_control > 0 ? '+' : ''}
+                  {variant.improvement_over_control.toFixed(1)}%
                 </div>
               </div>
             </div>
@@ -682,7 +713,11 @@ interface OptimizationScoreCardProps {
   funnels: ConversionFunnel[]
 }
 
-const OptimizationScoreCard: React.FC<OptimizationScoreCardProps> = ({ score, opportunities, funnels }) => {
+const OptimizationScoreCard: React.FC<OptimizationScoreCardProps> = ({
+  score,
+  opportunities,
+  funnels,
+}) => {
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600'
     if (score >= 60) return 'text-yellow-600'
@@ -696,28 +731,34 @@ const OptimizationScoreCard: React.FC<OptimizationScoreCardProps> = ({ score, op
   }
 
   return (
-    <div className="text-center">
-      <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${getScoreBackground(score)} mb-4`}>
+    <div className='text-center'>
+      <div
+        className={`inline-flex h-24 w-24 items-center justify-center rounded-full ${getScoreBackground(score)} mb-4`}
+      >
         <span className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
       </div>
-      <div className="text-lg font-medium text-gray-900 mb-2">Optimization Score</div>
-      <div className="text-sm text-gray-500 mb-4">
+      <div className='mb-2 text-lg font-medium text-gray-900'>Optimization Score</div>
+      <div className='mb-4 text-sm text-gray-500'>
         {opportunities.length} opportunities identified
       </div>
-      <div className="grid grid-cols-3 gap-4 text-center">
+      <div className='grid grid-cols-3 gap-4 text-center'>
         <div>
-          <div className="text-lg font-bold text-gray-900">{opportunities.filter(o => o.impact_level === 'high').length}</div>
-          <div className="text-xs text-gray-500">High Impact</div>
+          <div className='text-lg font-bold text-gray-900'>
+            {opportunities.filter(o => o.impact_level === 'high').length}
+          </div>
+          <div className='text-xs text-gray-500'>High Impact</div>
         </div>
         <div>
-          <div className="text-lg font-bold text-gray-900">{opportunities.filter(o => o.effort_level === 'low').length}</div>
-          <div className="text-xs text-gray-500">Low Effort</div>
+          <div className='text-lg font-bold text-gray-900'>
+            {opportunities.filter(o => o.effort_level === 'low').length}
+          </div>
+          <div className='text-xs text-gray-500'>Low Effort</div>
         </div>
         <div>
-          <div className="text-lg font-bold text-gray-900">
+          <div className='text-lg font-bold text-gray-900'>
             {funnels.length > 0 ? funnels[0].bottlenecks.length : 0}
           </div>
-          <div className="text-xs text-gray-500">Bottlenecks</div>
+          <div className='text-xs text-gray-500'>Bottlenecks</div>
         </div>
       </div>
     </div>
@@ -728,38 +769,48 @@ interface OptimizationOpportunitiesListProps {
   opportunities: OptimizationOpportunity[]
 }
 
-const OptimizationOpportunitiesList: React.FC<OptimizationOpportunitiesListProps> = ({ opportunities }) => {
+const OptimizationOpportunitiesList: React.FC<OptimizationOpportunitiesListProps> = ({
+  opportunities,
+}) => {
   const prioritized = ConversionOptimizationUtils.prioritizeOpportunities(opportunities)
 
   return (
-    <div className="space-y-4">
-      {prioritized.slice(0, 5).map((opportunity) => (
-        <div key={opportunity.id} className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-medium text-gray-900">{opportunity.title}</h4>
-            <div className="flex items-center space-x-2">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                opportunity.impact_level === 'high' ? 'bg-red-100 text-red-600' :
-                opportunity.impact_level === 'medium' ? 'bg-yellow-100 text-yellow-600' :
-                'bg-green-100 text-green-600'
-              }`}>
+    <div className='space-y-4'>
+      {prioritized.slice(0, 5).map(opportunity => (
+        <div key={opportunity.id} className='rounded-lg border border-gray-200 p-4'>
+          <div className='mb-2 flex items-center justify-between'>
+            <h4 className='font-medium text-gray-900'>{opportunity.title}</h4>
+            <div className='flex items-center space-x-2'>
+              <span
+                className={`rounded-full px-2 py-1 text-xs font-medium ${
+                  opportunity.impact_level === 'high'
+                    ? 'bg-red-100 text-red-600'
+                    : opportunity.impact_level === 'medium'
+                      ? 'bg-yellow-100 text-yellow-600'
+                      : 'bg-green-100 text-green-600'
+                }`}
+              >
                 {opportunity.impact_level} impact
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                opportunity.effort_level === 'low' ? 'bg-green-100 text-green-600' :
-                opportunity.effort_level === 'medium' ? 'bg-yellow-100 text-yellow-600' :
-                'bg-red-100 text-red-600'
-              }`}>
+              <span
+                className={`rounded-full px-2 py-1 text-xs font-medium ${
+                  opportunity.effort_level === 'low'
+                    ? 'bg-green-100 text-green-600'
+                    : opportunity.effort_level === 'medium'
+                      ? 'bg-yellow-100 text-yellow-600'
+                      : 'bg-red-100 text-red-600'
+                }`}
+              >
                 {opportunity.effort_level} effort
               </span>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mb-3">{opportunity.description}</p>
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              ROI Score: <span className="font-medium">{opportunity.roi_score}</span>
+          <p className='mb-3 text-sm text-gray-500'>{opportunity.description}</p>
+          <div className='flex items-center justify-between'>
+            <div className='text-sm text-gray-600'>
+              ROI Score: <span className='font-medium'>{opportunity.roi_score}</span>
             </div>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <button className='text-sm font-medium text-blue-600 hover:text-blue-700'>
               Create A/B Test
             </button>
           </div>
@@ -770,9 +821,7 @@ const OptimizationOpportunitiesList: React.FC<OptimizationOpportunitiesListProps
 }
 
 const PerformanceTrendsChart: React.FC = () => (
-  <div className="text-center py-8 text-gray-500">
-    Performance trends chart would go here
-  </div>
+  <div className='py-8 text-center text-gray-500'>Performance trends chart would go here</div>
 )
 
 interface LeadPipelineChartProps {
@@ -787,29 +836,34 @@ const LeadPipelineChart: React.FC<LeadPipelineChartProps> = ({ leads }) => {
     qualified: 'Qualified',
     demo_scheduled: 'Demo Scheduled',
     proposal_sent: 'Proposal Sent',
-    closed_won: 'Closed Won'
+    closed_won: 'Closed Won',
   }
 
-  const stageCounts = stages.reduce((acc, stage) => {
-    acc[stage] = leads.filter(lead => lead.status === stage).length
-    return acc
-  }, {} as Record<string, number>)
+  const stageCounts = stages.reduce(
+    (acc, stage) => {
+      acc[stage] = leads.filter(lead => lead.status === stage).length
+      return acc
+    },
+    {} as Record<string, number>
+  )
 
   return (
-    <div className="space-y-4">
-      {stages.map((stage) => (
-        <div key={stage} className="flex items-center space-x-4">
-          <div className="w-32 text-sm font-medium text-gray-700">
+    <div className='space-y-4'>
+      {stages.map(stage => (
+        <div key={stage} className='flex items-center space-x-4'>
+          <div className='w-32 text-sm font-medium text-gray-700'>
             {stageLabels[stage as keyof typeof stageLabels]}
           </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-gray-500">{stageCounts[stage]} leads</span>
+          <div className='flex-1'>
+            <div className='mb-1 flex items-center justify-between'>
+              <span className='text-sm text-gray-500'>{stageCounts[stage]} leads</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className='h-2 w-full rounded-full bg-gray-200'>
               <div
-                className="bg-blue-600 h-2 rounded-full"
-                style={{ width: `${leads.length > 0 ? (stageCounts[stage] / leads.length) * 100 : 0}%` }}
+                className='h-2 rounded-full bg-blue-600'
+                style={{
+                  width: `${leads.length > 0 ? (stageCounts[stage] / leads.length) * 100 : 0}%`,
+                }}
               />
             </div>
           </div>
@@ -824,24 +878,31 @@ interface LeadQualityChartProps {
 }
 
 const LeadQualityChart: React.FC<LeadQualityChartProps> = ({ leads }) => {
-  const qualityDistribution = leads.reduce((acc, lead) => {
-    acc[lead.lead_score.sales_readiness] = (acc[lead.lead_score.sales_readiness] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
+  const qualityDistribution = leads.reduce(
+    (acc, lead) => {
+      acc[lead.lead_score.sales_readiness] = (acc[lead.lead_score.sales_readiness] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {Object.entries(qualityDistribution).map(([quality, count]) => (
-        <div key={quality} className="flex items-center justify-between">
-          <span className="font-medium text-gray-700 capitalize">{quality.replace('_', ' ')}</span>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">{count}</span>
-            <div className="w-20 bg-gray-200 rounded-full h-2">
+        <div key={quality} className='flex items-center justify-between'>
+          <span className='font-medium text-gray-700 capitalize'>{quality.replace('_', ' ')}</span>
+          <div className='flex items-center space-x-2'>
+            <span className='text-sm text-gray-500'>{count}</span>
+            <div className='h-2 w-20 rounded-full bg-gray-200'>
               <div
                 className={`h-2 rounded-full ${
-                  quality === 'qualified' ? 'bg-green-500' :
-                  quality === 'hot' ? 'bg-orange-500' :
-                  quality === 'warm' ? 'bg-yellow-500' : 'bg-gray-400'
+                  quality === 'qualified'
+                    ? 'bg-green-500'
+                    : quality === 'hot'
+                      ? 'bg-orange-500'
+                      : quality === 'warm'
+                        ? 'bg-yellow-500'
+                        : 'bg-gray-400'
                 }`}
                 style={{ width: `${leads.length > 0 ? (count / leads.length) * 100 : 0}%` }}
               />
@@ -858,20 +919,20 @@ interface HighQualityLeadsListProps {
 }
 
 const HighQualityLeadsList: React.FC<HighQualityLeadsListProps> = ({ leads }) => (
-  <div className="space-y-3">
-    {leads.map((lead) => {
+  <div className='space-y-3'>
+    {leads.map(lead => {
       const { scoreColor, statusBadge } = LeadHandoffUtils.formatLeadDisplay(lead)
       return (
-        <div key={lead.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div key={lead.id} className='flex items-center justify-between rounded-lg bg-gray-50 p-3'>
           <div>
-            <div className="font-medium text-gray-900">{lead.name || lead.email}</div>
-            <div className="text-sm text-gray-500">{lead.company || lead.business_scenario}</div>
+            <div className='font-medium text-gray-900'>{lead.name || lead.email}</div>
+            <div className='text-sm text-gray-500'>{lead.company || lead.business_scenario}</div>
           </div>
-          <div className="text-right">
+          <div className='text-right'>
             <div className={`text-sm font-medium text-${scoreColor}-600`}>
               {lead.lead_score.total_score}/100
             </div>
-            <div className="text-xs text-gray-400">{statusBadge}</div>
+            <div className='text-xs text-gray-400'>{statusBadge}</div>
           </div>
         </div>
       )

@@ -3,6 +3,7 @@
 ## Direct Link (Open in Browser)
 
 ### 1. Open SQL Editor
+
 👉 **[KLIK HIER](https://supabase.com/dashboard/project/egaiyydjgeqlhthxmvbn/sql/new)**
 
 ### 2. Copy Deze SQL (Ctrl+A, Ctrl+C)
@@ -39,6 +40,7 @@ Open bestand: `supabase/migrations/037_team_invitations_FIXED.sql`
 ## After Success:
 
 Test de functionaliteit:
+
 - **Team Invitations**: http://localhost:3000/dashboard/settings/team
 - **API Keys**: http://localhost:3000/dashboard/settings/integrations
 

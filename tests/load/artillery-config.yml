@@ -2,33 +2,33 @@
 # WebSocket and complex scenario testing
 
 config:
-  target: "ws://localhost:3000"
+  target: 'ws://localhost:3000'
   phases:
     # Baseline
     - duration: 600
       arrivalRate: 10
-      name: "Baseline - 100 users"
+      name: 'Baseline - 100 users'
 
     # Ramp up
     - duration: 900
       arrivalRate: 50
       rampTo: 80
-      name: "Ramp up - 500 users"
+      name: 'Ramp up - 500 users'
 
     # Sustained load
     - duration: 1800
       arrivalRate: 80
-      name: "Sustained - 500 users"
+      name: 'Sustained - 500 users'
 
     # Spike test
     - duration: 300
       arrivalRate: 200
-      name: "Spike - 1500 users"
+      name: 'Spike - 1500 users'
 
     # Peak load
     - duration: 1200
       arrivalRate: 300
-      name: "Peak - 2000 users"
+      name: 'Peak - 2000 users'
 
   # Performance thresholds
   ensure:
@@ -49,37 +49,37 @@ config:
     metrics-by-endpoint: {}
 
   # Custom metrics
-  processor: "./artillery-processor.js"
+  processor: './artillery-processor.js'
 
   # Test data
   payload:
-    path: "./data/test-users.json"
+    path: './data/test-users.json'
     fields:
-      - "email"
-      - "password"
-      - "organizationId"
+      - 'email'
+      - 'password'
+      - 'organizationId'
 
 # Test Scenarios
 scenarios:
   # WebSocket real-time updates scenario
-  - name: "Real-time Message Updates"
-    engine: "ws"
+  - name: 'Real-time Message Updates'
+    engine: 'ws'
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
-            - json: "$.user.id"
-              as: "userId"
+            - json: '$.token'
+              as: 'authToken'
+            - json: '$.user.id'
+              as: 'userId'
 
       # Connect WebSocket
       - ws:
-          url: "/api/realtime?token={{ authToken }}"
+          url: '/api/realtime?token={{ authToken }}'
           actions:
             # Subscribe to conversations channel
             - send:
@@ -124,27 +124,27 @@ scenarios:
                 payload: '{"type": "unsubscribe", "channel": "messages"}'
 
   # Conversation list updates
-  - name: "Conversation List Polling"
+  - name: 'Conversation List Polling'
     weight: 30
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # Poll conversation list
       - loop:
           count: 10
           flow:
             - get:
-                url: "http://localhost:3000/api/conversations?status=open"
+                url: 'http://localhost:3000/api/conversations?status=open'
                 headers:
-                  Authorization: "Bearer {{ authToken }}"
+                  Authorization: 'Bearer {{ authToken }}'
                 expect:
                   - statusCode: 200
                   - contentType: json
@@ -154,39 +154,39 @@ scenarios:
                 seconds: 6 # 10 requests per minute
 
   # Message sending scenario
-  - name: "Send Messages"
+  - name: 'Send Messages'
     weight: 20
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # Get conversations
       - get:
-          url: "http://localhost:3000/api/conversations?status=open&limit=5"
+          url: 'http://localhost:3000/api/conversations?status=open&limit=5'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           capture:
-            - json: "$.data[0].id"
-              as: "conversationId"
+            - json: '$.data[0].id'
+              as: 'conversationId'
 
       # Send messages
       - loop:
           count: 5
           flow:
             - post:
-                url: "http://localhost:3000/api/conversations/{{ conversationId }}/messages"
+                url: 'http://localhost:3000/api/conversations/{{ conversationId }}/messages'
                 headers:
-                  Authorization: "Bearer {{ authToken }}"
+                  Authorization: 'Bearer {{ authToken }}'
                 json:
-                  content: "Load test message at {{ $timestamp }}"
-                  type: "text"
+                  content: 'Load test message at {{ $timestamp }}'
+                  type: 'text'
                 expect:
                   - statusCode: [200, 201]
 
@@ -194,24 +194,24 @@ scenarios:
                 seconds: 30
 
   # Search and filter scenario
-  - name: "Search Operations"
+  - name: 'Search Operations'
     weight: 15
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # Search conversations
       - get:
-          url: "http://localhost:3000/api/conversations?search=test"
+          url: 'http://localhost:3000/api/conversations?search=test'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
@@ -220,9 +220,9 @@ scenarios:
 
       # Search contacts
       - get:
-          url: "http://localhost:3000/api/contacts?search=john"
+          url: 'http://localhost:3000/api/contacts?search=john'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
@@ -231,31 +231,31 @@ scenarios:
 
       # Filter by tags
       - get:
-          url: "http://localhost:3000/api/contacts?tags=vip,customer"
+          url: 'http://localhost:3000/api/contacts?tags=vip,customer'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
   # Analytics dashboard scenario
-  - name: "Analytics Dashboard"
+  - name: 'Analytics Dashboard'
     weight: 10
     flow:
       # Authenticate as admin
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # Load dashboard metrics
       - get:
-          url: "http://localhost:3000/api/analytics/dashboard"
+          url: 'http://localhost:3000/api/analytics/dashboard'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
             - hasProperty: metrics
@@ -265,9 +265,9 @@ scenarios:
 
       # Load performance metrics
       - get:
-          url: "http://localhost:3000/api/analytics/performance"
+          url: 'http://localhost:3000/api/analytics/performance'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
@@ -276,38 +276,38 @@ scenarios:
 
       # Real-time metrics
       - get:
-          url: "http://localhost:3000/api/analytics/realtime"
+          url: 'http://localhost:3000/api/analytics/realtime'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
   # Bulk operations scenario
-  - name: "Bulk Operations"
+  - name: 'Bulk Operations'
     weight: 5
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # Create bulk message job
       - post:
-          url: "http://localhost:3000/api/bulk/messages"
+          url: 'http://localhost:3000/api/bulk/messages'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           json:
-            contactIds: ["{{ $randomString() }}", "{{ $randomString() }}"]
-            message: "Bulk test message"
+            contactIds: ['{{ $randomString() }}', '{{ $randomString() }}']
+            message: 'Bulk test message'
             scheduleAt: null
           capture:
-            - json: "$.jobId"
-              as: "jobId"
+            - json: '$.jobId'
+              as: 'jobId'
           expect:
             - statusCode: [200, 201]
 
@@ -319,9 +319,9 @@ scenarios:
           count: 5
           flow:
             - get:
-                url: "http://localhost:3000/api/jobs/{{ jobId }}"
+                url: 'http://localhost:3000/api/jobs/{{ jobId }}'
                 headers:
-                  Authorization: "Bearer {{ authToken }}"
+                  Authorization: 'Bearer {{ authToken }}'
                 expect:
                   - statusCode: 200
 
@@ -329,24 +329,24 @@ scenarios:
                 seconds: 10
 
   # Contact management scenario
-  - name: "Contact Management"
+  - name: 'Contact Management'
     weight: 10
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # List contacts
       - get:
-          url: "http://localhost:3000/api/contacts?limit=20"
+          url: 'http://localhost:3000/api/contacts?limit=20'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
@@ -355,16 +355,16 @@ scenarios:
 
       # Create new contact
       - post:
-          url: "http://localhost:3000/api/contacts"
+          url: 'http://localhost:3000/api/contacts'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           json:
-            name: "Load Test Contact {{ $randomString() }}"
-            phoneNumber: "+1{{ $randomNumber(2000000000, 9999999999) }}"
-            email: "loadtest{{ $randomString() }}@test.com"
+            name: 'Load Test Contact {{ $randomString() }}'
+            phoneNumber: '+1{{ $randomNumber(2000000000, 9999999999) }}'
+            email: 'loadtest{{ $randomString() }}@test.com'
           capture:
-            - json: "$.id"
-              as: "contactId"
+            - json: '$.id'
+              as: 'contactId'
           expect:
             - statusCode: [200, 201]
 
@@ -373,11 +373,11 @@ scenarios:
 
       # Update contact
       - put:
-          url: "http://localhost:3000/api/contacts/{{ contactId }}"
+          url: 'http://localhost:3000/api/contacts/{{ contactId }}'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           json:
-            tags: ["test", "load-test"]
+            tags: ['test', 'load-test']
           expect:
             - statusCode: 200
 
@@ -386,31 +386,31 @@ scenarios:
 
       # Get contact details
       - get:
-          url: "http://localhost:3000/api/contacts/{{ contactId }}"
+          url: 'http://localhost:3000/api/contacts/{{ contactId }}'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
   # Template management scenario
-  - name: "Template Operations"
+  - name: 'Template Operations'
     weight: 5
     flow:
       # Authenticate
       - post:
-          url: "http://localhost:3000/api/auth/signin"
+          url: 'http://localhost:3000/api/auth/signin'
           json:
-            email: "{{ email }}"
-            password: "{{ password }}"
+            email: '{{ email }}'
+            password: '{{ password }}'
           capture:
-            - json: "$.token"
-              as: "authToken"
+            - json: '$.token'
+              as: 'authToken'
 
       # List templates
       - get:
-          url: "http://localhost:3000/api/templates"
+          url: 'http://localhost:3000/api/templates'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           expect:
             - statusCode: 200
 
@@ -419,11 +419,11 @@ scenarios:
 
       # Use template in message
       - get:
-          url: "http://localhost:3000/api/templates?category=greeting"
+          url: 'http://localhost:3000/api/templates?category=greeting'
           headers:
-            Authorization: "Bearer {{ authToken }}"
+            Authorization: 'Bearer {{ authToken }}'
           capture:
-            - json: "$.data[0].id"
-              as: "templateId"
+            - json: '$.data[0].id'
+              as: 'templateId'
           expect:
             - statusCode: 200

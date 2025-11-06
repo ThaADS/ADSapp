@@ -1,15 +1,9 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { v4 as uuidv4 } from 'uuid';
-import { createClient } from '@/lib/supabase/server';
-import {
-  RedisSessionStore,
-  createRedisSessionStore,
-  RedisSession,
-  DeviceInfo
-} from './redis-store';
+import { v4 as uuidv4 } from 'uuid'
+import { createClient } from '@/lib/supabase/server'
+import { RedisSessionStore, createRedisSessionStore, RedisSession, DeviceInfo } from './redis-store'
 
 /**
  * Session Manager for Enterprise Session Management
@@ -35,39 +29,39 @@ import {
  * Session creation parameters
  */
 export interface CreateSessionParams {
-  userId: string;
-  organizationId: string;
-  userRole: string;
-  deviceInfo: DeviceInfo;
+  userId: string
+  organizationId: string
+  userRole: string
+  deviceInfo: DeviceInfo
 }
 
 /**
  * Session validation result
  */
 export interface SessionValidationResult {
-  valid: boolean;
-  session?: RedisSession;
-  reason?: string;
+  valid: boolean
+  session?: RedisSession
+  reason?: string
 }
 
 /**
  * Session refresh result
  */
 export interface SessionRefreshResult {
-  success: boolean;
-  session?: RedisSession;
-  newToken?: string;
-  error?: string;
+  success: boolean
+  session?: RedisSession
+  newToken?: string
+  error?: string
 }
 
 /**
  * Privilege change detection result
  */
 export interface PrivilegeChangeResult {
-  changed: boolean;
-  oldRole?: string;
-  newRole?: string;
-  requiresRegeneration: boolean;
+  changed: boolean
+  oldRole?: string
+  newRole?: string
+  requiresRegeneration: boolean
 }
 
 /**
@@ -82,20 +76,20 @@ export enum SessionEventType {
   PRIVILEGE_CHANGED = 'privilege_changed',
   CONCURRENT_LIMIT = 'concurrent_limit_reached',
   INVALID_TOKEN = 'invalid_token',
-  SECURITY_EVENT = 'security_event'
+  SECURITY_EVENT = 'security_event',
 }
 
 /**
  * Session audit event
  */
 export interface SessionAuditEvent {
-  eventType: SessionEventType;
-  userId: string;
-  organizationId: string;
-  sessionToken?: string;
-  deviceInfo?: DeviceInfo;
-  metadata?: Record<string, unknown>;
-  timestamp: string;
+  eventType: SessionEventType
+  userId: string
+  organizationId: string
+  sessionToken?: string
+  deviceInfo?: DeviceInfo
+  metadata?: Record<string, unknown>
+  timestamp: string
 }
 
 /**
@@ -124,8 +118,8 @@ export interface SessionAuditEvent {
  * ```
  */
 export class SessionManager {
-  private store: RedisSessionStore | null;
-  private storeInitialized: boolean = false;
+  private store: RedisSessionStore | null
+  private storeInitialized: boolean = false
 
   /**
    * Initialize Session Manager
@@ -134,12 +128,12 @@ export class SessionManager {
    */
   constructor(store?: RedisSessionStore | null) {
     if (store !== undefined) {
-      this.store = store;
-      this.storeInitialized = true;
+      this.store = store
+      this.storeInitialized = true
     } else {
       // Delay initialization to avoid circular dependency during module load
-      this.store = null;
-      this.storeInitialized = false;
+      this.store = null
+      this.storeInitialized = false
     }
   }
 
@@ -149,12 +143,12 @@ export class SessionManager {
   private initializeStoreIfNeeded(): void {
     if (!this.storeInitialized) {
       try {
-        this.store = createRedisSessionStore();
+        this.store = createRedisSessionStore()
       } catch (error) {
-        console.warn('[SessionManager] Failed to initialize Redis:', error);
-        this.store = null;
+        console.warn('[SessionManager] Failed to initialize Redis:', error)
+        this.store = null
       }
-      this.storeInitialized = true;
+      this.storeInitialized = true
     }
   }
 
@@ -164,8 +158,8 @@ export class SessionManager {
    * @returns True if Redis is configured and available
    */
   private hasStore(): boolean {
-    this.initializeStoreIfNeeded();
-    return this.store !== null;
+    this.initializeStoreIfNeeded()
+    return this.store !== null
   }
 
   /**
@@ -197,20 +191,20 @@ export class SessionManager {
    * ```
    */
   async createSession(params: CreateSessionParams): Promise<{
-    session: RedisSession;
-    token: string;
+    session: RedisSession
+    token: string
   }> {
-    const { userId, organizationId, userRole, deviceInfo } = params;
+    const { userId, organizationId, userRole, deviceInfo } = params
 
     // Generate secure session token
-    const sessionToken = this.generateSessionToken();
+    const sessionToken = this.generateSessionToken()
 
     // Check if Redis is available
     if (!this.hasStore()) {
-      console.warn('[SessionManager] Redis not available - using database-only sessions');
+      console.warn('[SessionManager] Redis not available - using database-only sessions')
       // Create minimal session for database-only mode
-      const now = new Date().toISOString();
-      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      const now = new Date().toISOString()
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
       const session: RedisSession = {
         userId,
@@ -220,16 +214,16 @@ export class SessionManager {
         createdAt: now,
         lastActivity: now,
         expiresAt,
-        isRevoked: false
-      };
+        isRevoked: false,
+      }
 
       // Log session to database only
-      await this.logSessionToDatabase(session, userRole);
+      await this.logSessionToDatabase(session, userRole)
 
       return {
         session,
-        token: sessionToken
-      };
+        token: sessionToken,
+      }
     }
 
     // Create session in Redis (handles concurrent limits automatically)
@@ -237,11 +231,11 @@ export class SessionManager {
       userId,
       organizationId,
       sessionToken,
-      deviceInfo
-    });
+      deviceInfo,
+    })
 
     // Log session to database
-    await this.logSessionToDatabase(session, userRole);
+    await this.logSessionToDatabase(session, userRole)
 
     // Log audit event
     await this.logAuditEvent({
@@ -251,13 +245,13 @@ export class SessionManager {
       sessionToken,
       deviceInfo,
       metadata: { userRole },
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+    })
 
     return {
       session,
-      token: sessionToken
-    };
+      token: sessionToken,
+    }
   }
 
   /**
@@ -284,18 +278,15 @@ export class SessionManager {
    * }
    * ```
    */
-  async validateSession(
-    userId: string,
-    sessionToken: string
-  ): Promise<SessionValidationResult> {
+  async validateSession(userId: string, sessionToken: string): Promise<SessionValidationResult> {
     // Get session from Redis or database
-    let session: RedisSession | null = null;
+    let session: RedisSession | null = null
 
     if (this.hasStore()) {
-      session = await this.store!.getSession(userId, sessionToken);
+      session = await this.store!.getSession(userId, sessionToken)
     } else {
       // Fallback to database-only mode
-      session = await this.getSessionFromDatabase(userId, sessionToken);
+      session = await this.getSessionFromDatabase(userId, sessionToken)
     }
 
     if (!session) {
@@ -304,21 +295,21 @@ export class SessionManager {
         userId,
         organizationId: '',
         sessionToken,
-        timestamp: new Date().toISOString()
-      });
+        timestamp: new Date().toISOString(),
+      })
 
       return {
         valid: false,
-        reason: 'Session not found or expired'
-      };
+        reason: 'Session not found or expired',
+      }
     }
 
     // Check if session is revoked
     if (session.isRevoked) {
       return {
         valid: false,
-        reason: 'Session has been revoked'
-      };
+        reason: 'Session has been revoked',
+      }
     }
 
     // Check if session is expired
@@ -328,39 +319,37 @@ export class SessionManager {
         userId,
         organizationId: session.organizationId,
         sessionToken,
-        timestamp: new Date().toISOString()
-      });
+        timestamp: new Date().toISOString(),
+      })
 
       return {
         valid: false,
-        reason: 'Session has expired'
-      };
+        reason: 'Session has expired',
+      }
     }
 
     // Validate user still exists
-    const userExists = await this.validateUserExists(userId);
+    const userExists = await this.validateUserExists(userId)
     if (!userExists) {
       if (this.hasStore()) {
-        await this.store!.revokeSession(userId, sessionToken);
+        await this.store!.revokeSession(userId, sessionToken)
       }
       return {
         valid: false,
-        reason: 'User no longer exists'
-      };
+        reason: 'User no longer exists',
+      }
     }
 
     // Validate organization still active
-    const orgActive = await this.validateOrganizationActive(
-      session.organizationId
-    );
+    const orgActive = await this.validateOrganizationActive(session.organizationId)
     if (!orgActive) {
       if (this.hasStore()) {
-        await this.store!.revokeSession(userId, sessionToken);
+        await this.store!.revokeSession(userId, sessionToken)
       }
       return {
         valid: false,
-        reason: 'Organization is not active'
-      };
+        reason: 'Organization is not active',
+      }
     }
 
     // Log validation event
@@ -369,13 +358,13 @@ export class SessionManager {
       userId,
       organizationId: session.organizationId,
       sessionToken,
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+    })
 
     return {
       valid: true,
-      session
-    };
+      session,
+    }
   }
 
   /**
@@ -394,52 +383,46 @@ export class SessionManager {
    * const session = await manager.refreshSession('user123', 'token789');
    * ```
    */
-  async refreshSession(
-    userId: string,
-    sessionToken: string
-  ): Promise<SessionRefreshResult> {
+  async refreshSession(userId: string, sessionToken: string): Promise<SessionRefreshResult> {
     // Validate session first
-    const validation = await this.validateSession(userId, sessionToken);
+    const validation = await this.validateSession(userId, sessionToken)
 
     if (!validation.valid) {
       return {
         success: false,
-        error: validation.reason
-      };
+        error: validation.reason,
+      }
     }
 
     // Update activity in Redis or database
-    let updatedSession: RedisSession | null = null;
+    let updatedSession: RedisSession | null = null
 
     if (this.hasStore()) {
-      updatedSession = await this.store!.updateSessionActivity(
-        userId,
-        sessionToken
-      );
+      updatedSession = await this.store!.updateSessionActivity(userId, sessionToken)
     } else {
       // Database-only mode: update database directly
-      const now = new Date().toISOString();
-      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      const now = new Date().toISOString()
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
       updatedSession = {
         ...validation.session!,
         lastActivity: now,
-        expiresAt
-      };
+        expiresAt,
+      }
 
-      await this.updateSessionInDatabase(updatedSession);
+      await this.updateSessionInDatabase(updatedSession)
     }
 
     if (!updatedSession) {
       return {
         success: false,
-        error: 'Failed to update session activity'
-      };
+        error: 'Failed to update session activity',
+      }
     }
 
     // Update database record (if Redis was used)
     if (this.hasStore()) {
-      await this.updateSessionInDatabase(updatedSession);
+      await this.updateSessionInDatabase(updatedSession)
     }
 
     // Log refresh event
@@ -448,13 +431,13 @@ export class SessionManager {
       userId,
       organizationId: updatedSession.organizationId,
       sessionToken,
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+    })
 
     return {
       success: true,
-      session: updatedSession
-    };
+      session: updatedSession,
+    }
   }
 
   /**
@@ -476,33 +459,33 @@ export class SessionManager {
    * ```
    */
   async revokeSession(userId: string, sessionToken: string): Promise<boolean> {
-    let session: RedisSession | null = null;
+    let session: RedisSession | null = null
 
     if (this.hasStore()) {
-      session = await this.store!.getSession(userId, sessionToken);
+      session = await this.store!.getSession(userId, sessionToken)
     } else {
-      session = await this.getSessionFromDatabase(userId, sessionToken);
+      session = await this.getSessionFromDatabase(userId, sessionToken)
     }
 
     if (!session) {
-      return false;
+      return false
     }
 
     // Revoke in Redis or database
-    let revoked = false;
+    let revoked = false
 
     if (this.hasStore()) {
-      revoked = await this.store!.revokeSession(userId, sessionToken);
+      revoked = await this.store!.revokeSession(userId, sessionToken)
     } else {
       // Database-only mode: mark as revoked directly
-      await this.markSessionRevokedInDatabase(sessionToken);
-      revoked = true;
+      await this.markSessionRevokedInDatabase(sessionToken)
+      revoked = true
     }
 
     if (revoked) {
       // Update database (if Redis was used)
       if (this.hasStore()) {
-        await this.markSessionRevokedInDatabase(sessionToken);
+        await this.markSessionRevokedInDatabase(sessionToken)
       }
 
       // Log audit event
@@ -511,11 +494,11 @@ export class SessionManager {
         userId,
         organizationId: session.organizationId,
         sessionToken,
-        timestamp: new Date().toISOString()
-      });
+        timestamp: new Date().toISOString(),
+      })
     }
 
-    return revoked;
+    return revoked
   }
 
   /**
@@ -540,38 +523,35 @@ export class SessionManager {
    * );
    * ```
    */
-  async revokeAllUserSessions(
-    userId: string,
-    reason: string
-  ): Promise<number> {
+  async revokeAllUserSessions(userId: string, reason: string): Promise<number> {
     // Get user's organization
-    const supabase = await createClient();
+    const supabase = await createClient()
     const { data: profile } = await supabase
       .from('profiles')
       .select('organization_id')
       .eq('id', userId)
-      .single();
+      .single()
 
-    const organizationId = profile?.organization_id || '';
+    const organizationId = profile?.organization_id || ''
 
     // Revoke all sessions in Redis or database
-    let count = 0;
+    let count = 0
 
     if (this.hasStore()) {
-      count = await this.store!.revokeAllUserSessions(userId);
+      count = await this.store!.revokeAllUserSessions(userId)
     } else {
       // Database-only mode: revoke all sessions in database
       const { data: sessions } = await supabase
         .from('sessions')
         .select('session_token')
         .eq('user_id', userId)
-        .eq('revoked', false);
+        .eq('revoked', false)
 
       if (sessions) {
         for (const session of sessions) {
-          await this.markSessionRevokedInDatabase(session.session_token);
+          await this.markSessionRevokedInDatabase(session.session_token)
         }
-        count = sessions.length;
+        count = sessions.length
       }
     }
 
@@ -582,12 +562,12 @@ export class SessionManager {
       organizationId,
       metadata: {
         reason,
-        sessionsRevoked: count
+        sessionsRevoked: count,
       },
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+    })
 
-    return count;
+    return count
   }
 
   /**
@@ -604,21 +584,21 @@ export class SessionManager {
    */
   async getUserSessions(userId: string): Promise<RedisSession[]> {
     if (this.hasStore()) {
-      return this.store!.getUserSessions(userId);
+      return this.store!.getUserSessions(userId)
     } else {
       // Database-only mode: get sessions from database
       try {
-        const supabase = await createClient();
+        const supabase = await createClient()
 
         const { data, error } = await supabase
           .from('sessions')
           .select('*')
           .eq('user_id', userId)
           .eq('revoked', false)
-          .gte('expires_at', new Date().toISOString());
+          .gte('expires_at', new Date().toISOString())
 
         if (error || !data) {
-          return [];
+          return []
         }
 
         // Convert to RedisSession format
@@ -630,11 +610,11 @@ export class SessionManager {
           createdAt: session.created_at,
           lastActivity: session.last_activity,
           expiresAt: session.expires_at,
-          isRevoked: session.revoked
-        }));
+          isRevoked: session.revoked,
+        }))
       } catch (error) {
-        console.error('[SessionManager] Failed to get user sessions:', error);
-        return [];
+        console.error('[SessionManager] Failed to get user sessions:', error)
+        return []
       }
     }
   }
@@ -657,45 +637,42 @@ export class SessionManager {
    * }
    * ```
    */
-  async checkPrivilegeChange(
-    userId: string,
-    sessionToken: string
-  ): Promise<PrivilegeChangeResult> {
+  async checkPrivilegeChange(userId: string, sessionToken: string): Promise<PrivilegeChangeResult> {
     // Get current session
-    let session: RedisSession | null = null;
+    let session: RedisSession | null = null
 
     if (this.hasStore()) {
-      session = await this.store!.getSession(userId, sessionToken);
+      session = await this.store!.getSession(userId, sessionToken)
     } else {
-      session = await this.getSessionFromDatabase(userId, sessionToken);
+      session = await this.getSessionFromDatabase(userId, sessionToken)
     }
 
     if (!session) {
       return {
         changed: false,
-        requiresRegeneration: false
-      };
+        requiresRegeneration: false,
+      }
     }
 
     // Get current user role from database
-    const currentRole = await this.getUserRoleFromDatabase(userId);
+    const currentRole = await this.getUserRoleFromDatabase(userId)
 
     if (!currentRole) {
       return {
         changed: false,
-        requiresRegeneration: false
-      };
+        requiresRegeneration: false,
+      }
     }
 
     // Get session role from database
-    const supabase = await createClient();
+    const supabase = await createClient()
     const { data: sessionRecord } = await supabase
       .from('sessions')
       .select('user_role')
       .eq('session_token', sessionToken)
-      .single();
+      .single()
 
-    const sessionRole = sessionRecord?.user_role;
+    const sessionRole = sessionRecord?.user_role
 
     if (sessionRole && sessionRole !== currentRole) {
       // Privilege changed
@@ -706,23 +683,23 @@ export class SessionManager {
         sessionToken,
         metadata: {
           oldRole: sessionRole,
-          newRole: currentRole
+          newRole: currentRole,
         },
-        timestamp: new Date().toISOString()
-      });
+        timestamp: new Date().toISOString(),
+      })
 
       return {
         changed: true,
         oldRole: sessionRole,
         newRole: currentRole,
-        requiresRegeneration: true
-      };
+        requiresRegeneration: true,
+      }
     }
 
     return {
       changed: false,
-      requiresRegeneration: false
-    };
+      requiresRegeneration: false,
+    }
   }
 
   /**
@@ -748,40 +725,40 @@ export class SessionManager {
     oldSessionToken: string
   ): Promise<{ session: RedisSession; token: string }> {
     // Get old session
-    let oldSession: RedisSession | null = null;
+    let oldSession: RedisSession | null = null
 
     if (this.hasStore()) {
-      oldSession = await this.store!.getSession(userId, oldSessionToken);
+      oldSession = await this.store!.getSession(userId, oldSessionToken)
     } else {
-      oldSession = await this.getSessionFromDatabase(userId, oldSessionToken);
+      oldSession = await this.getSessionFromDatabase(userId, oldSessionToken)
     }
 
     if (!oldSession) {
-      throw new Error('Session not found');
+      throw new Error('Session not found')
     }
 
     // Get current user info
-    const supabase = await createClient();
+    const supabase = await createClient()
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', userId)
-      .single();
+      .single()
 
-    const currentRole = profile?.role || 'agent';
+    const currentRole = profile?.role || 'agent'
 
     // Revoke old session
-    await this.revokeSession(userId, oldSessionToken);
+    await this.revokeSession(userId, oldSessionToken)
 
     // Create new session
     const result = await this.createSession({
       userId,
       organizationId: oldSession.organizationId,
       userRole: currentRole,
-      deviceInfo: oldSession.deviceInfo
-    });
+      deviceInfo: oldSession.deviceInfo,
+    })
 
-    return result;
+    return result
   }
 
   /**
@@ -792,7 +769,7 @@ export class SessionManager {
    * @returns Session token
    */
   private generateSessionToken(): string {
-    return `${uuidv4()}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    return `${uuidv4()}_${Date.now()}_${Math.random().toString(36).substring(2)}`
   }
 
   /**
@@ -803,12 +780,9 @@ export class SessionManager {
    * @param session - Redis session
    * @param userRole - User role
    */
-  private async logSessionToDatabase(
-    session: RedisSession,
-    userRole: string
-  ): Promise<void> {
+  private async logSessionToDatabase(session: RedisSession, userRole: string): Promise<void> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       await supabase.from('sessions').insert({
         user_id: session.userId,
@@ -819,10 +793,10 @@ export class SessionManager {
         created_at: session.createdAt,
         last_activity: session.lastActivity,
         expires_at: session.expiresAt,
-        revoked: false
-      });
+        revoked: false,
+      })
     } catch (error) {
-      console.error('[SessionManager] Failed to log session to database:', error);
+      console.error('[SessionManager] Failed to log session to database:', error)
       // Don't throw - Redis is source of truth
     }
   }
@@ -834,17 +808,17 @@ export class SessionManager {
    */
   private async updateSessionInDatabase(session: RedisSession): Promise<void> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       await supabase
         .from('sessions')
         .update({
           last_activity: session.lastActivity,
-          expires_at: session.expiresAt
+          expires_at: session.expiresAt,
         })
-        .eq('session_token', session.sessionToken);
+        .eq('session_token', session.sessionToken)
     } catch (error) {
-      console.error('[SessionManager] Failed to update session in database:', error);
+      console.error('[SessionManager] Failed to update session in database:', error)
     }
   }
 
@@ -853,20 +827,18 @@ export class SessionManager {
    *
    * @param sessionToken - Session token
    */
-  private async markSessionRevokedInDatabase(
-    sessionToken: string
-  ): Promise<void> {
+  private async markSessionRevokedInDatabase(sessionToken: string): Promise<void> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       await supabase
         .from('sessions')
         .update({
-          revoked: true
+          revoked: true,
         })
-        .eq('session_token', sessionToken);
+        .eq('session_token', sessionToken)
     } catch (error) {
-      console.error('[SessionManager] Failed to mark session revoked:', error);
+      console.error('[SessionManager] Failed to mark session revoked:', error)
     }
   }
 
@@ -878,18 +850,14 @@ export class SessionManager {
    */
   private async validateUserExists(userId: string): Promise<boolean> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', userId)
-        .single();
+      const { data, error } = await supabase.from('profiles').select('id').eq('id', userId).single()
 
-      return !error && !!data;
+      return !error && !!data
     } catch (error) {
-      console.error('[SessionManager] Failed to validate user:', error);
-      return false;
+      console.error('[SessionManager] Failed to validate user:', error)
+      return false
     }
   }
 
@@ -899,25 +867,22 @@ export class SessionManager {
    * @param organizationId - Organization ID
    * @returns True if organization active
    */
-  private async validateOrganizationActive(
-    organizationId: string
-  ): Promise<boolean> {
+  private async validateOrganizationActive(organizationId: string): Promise<boolean> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       const { data, error } = await supabase
         .from('organizations')
         .select('subscription_status')
         .eq('id', organizationId)
-        .single();
+        .single()
 
-      if (error || !data) return false;
+      if (error || !data) return false
 
-      return data.subscription_status === 'active' ||
-             data.subscription_status === 'trial';
+      return data.subscription_status === 'active' || data.subscription_status === 'trial'
     } catch (error) {
-      console.error('[SessionManager] Failed to validate organization:', error);
-      return false;
+      console.error('[SessionManager] Failed to validate organization:', error)
+      return false
     }
   }
 
@@ -927,22 +892,20 @@ export class SessionManager {
    * @param userId - User ID
    * @returns User role or null
    */
-  private async getUserRoleFromDatabase(
-    userId: string
-  ): Promise<string | null> {
+  private async getUserRoleFromDatabase(userId: string): Promise<string | null> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', userId)
-        .single();
+        .single()
 
-      return error || !data ? null : data.role;
+      return error || !data ? null : data.role
     } catch (error) {
-      console.error('[SessionManager] Failed to get user role:', error);
-      return null;
+      console.error('[SessionManager] Failed to get user role:', error)
+      return null
     }
   }
 
@@ -957,23 +920,23 @@ export class SessionManager {
     try {
       // Log to console in development
       if (process.env.NODE_ENV === 'development') {
-        console.log('[SessionManager] Audit Event:', event);
+        console.log('[SessionManager] Audit Event:', event)
       }
 
       // In production, send to monitoring service (Sentry, custom analytics, etc.)
       if (process.env.NODE_ENV === 'production') {
         try {
-          const Sentry = await import('@sentry/nextjs');
+          const Sentry = await import('@sentry/nextjs')
           Sentry.captureMessage('Session Audit Event', {
             level: 'info',
-            extra: event as Record<string, unknown>
-          });
+            extra: event as Record<string, unknown>,
+          })
         } catch (error) {
-          console.error('[SessionManager] Failed to log to Sentry:', error);
+          console.error('[SessionManager] Failed to log to Sentry:', error)
         }
       }
     } catch (error) {
-      console.error('[SessionManager] Failed to log audit event:', error);
+      console.error('[SessionManager] Failed to log audit event:', error)
     }
   }
 
@@ -989,7 +952,7 @@ export class SessionManager {
     sessionToken: string
   ): Promise<RedisSession | null> {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       const { data, error } = await supabase
         .from('sessions')
@@ -997,15 +960,15 @@ export class SessionManager {
         .eq('user_id', userId)
         .eq('session_token', sessionToken)
         .eq('revoked', false)
-        .single();
+        .single()
 
       if (error || !data) {
-        return null;
+        return null
       }
 
       // Check if expired
       if (new Date(data.expires_at) < new Date()) {
-        return null;
+        return null
       }
 
       // Convert database format to RedisSession format
@@ -1017,11 +980,11 @@ export class SessionManager {
         createdAt: data.created_at,
         lastActivity: data.last_activity,
         expiresAt: data.expires_at,
-        isRevoked: data.revoked
-      };
+        isRevoked: data.revoked,
+      }
     } catch (error) {
-      console.error('[SessionManager] Failed to get session from database:', error);
-      return null;
+      console.error('[SessionManager] Failed to get session from database:', error)
+      return null
     }
   }
 
@@ -1031,7 +994,7 @@ export class SessionManager {
    * @returns Redis session store or null
    */
   getStore(): RedisSessionStore | null {
-    return this.store;
+    return this.store
   }
 }
 
@@ -1049,14 +1012,14 @@ export class SessionManager {
 export function getSessionManager(): SessionManager {
   // Use a module-scoped variable that's only initialized when this function is first called
   if (typeof (globalThis as any).__adsapp_session_manager === 'undefined') {
-    (globalThis as any).__adsapp_session_manager = new SessionManager();
+    ;(globalThis as any).__adsapp_session_manager = new SessionManager()
   }
-  return (globalThis as any).__adsapp_session_manager;
+  return (globalThis as any).__adsapp_session_manager
 }
 
 /**
  * Reset session manager instance (for testing)
  */
 export function resetSessionManager(): void {
-  delete (globalThis as any).__adsapp_session_manager;
+  delete (globalThis as any).__adsapp_session_manager
 }

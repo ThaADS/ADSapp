@@ -21,6 +21,7 @@
 ## Pre-Deployment Phase (30-60 minutes)
 
 ### Step 1: Account Verification
+
 **Deadline**: 48 hours before deployment
 
 - [ ] **Vercel Account**
@@ -65,6 +66,7 @@
   - [ ] Team members invited
 
 ### Step 2: Code Preparation
+
 **Deadline**: 24 hours before deployment
 
 - [ ] **Code Quality**
@@ -92,6 +94,7 @@
   - [ ] Verified no secrets in Git history
 
 ### Step 3: Environment Variables Preparation
+
 **Deadline**: 12 hours before deployment
 
 - [ ] **Application Variables**
@@ -142,6 +145,7 @@
   - [ ] `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics
 
 ### Step 4: Database Backup
+
 **Deadline**: 6 hours before deployment
 
 - [ ] **Backup Creation**
@@ -163,6 +167,7 @@
   ```
 
 ### Step 5: Migration Files Verification
+
 **Deadline**: 6 hours before deployment
 
 - [ ] **Migration Count**
@@ -184,6 +189,7 @@
   - [ ] No circular dependencies
 
 ### Step 6: Team Notification
+
 **Deadline**: 4 hours before deployment
 
 - [ ] **Team Communication**
@@ -194,11 +200,11 @@
   - [ ] Emergency contacts list distributed
 
 - [ ] **Roles Assigned**
-  - [ ] Deployment lead: ____________________
-  - [ ] Database admin: ____________________
-  - [ ] DevOps engineer: ____________________
-  - [ ] QA tester: ____________________
-  - [ ] Customer support lead: ____________________
+  - [ ] Deployment lead: ********\_\_\_\_********
+  - [ ] Database admin: ********\_\_\_\_********
+  - [ ] DevOps engineer: ********\_\_\_\_********
+  - [ ] QA tester: ********\_\_\_\_********
+  - [ ] Customer support lead: ********\_\_\_\_********
 
 - [ ] **Communication Channels**
   - [ ] Slack/Teams channel for deployment updates
@@ -211,6 +217,7 @@
 ## Deployment Phase (60-90 minutes)
 
 ### Step 7: Vercel Project Setup
+
 **Estimated Time**: 15 minutes
 
 - [ ] **Project Import**
@@ -234,6 +241,7 @@
   - [ ] Team selected (if applicable)
 
 ### Step 8: Environment Variables Configuration
+
 **Estimated Time**: 20 minutes
 
 - [ ] **Variable Entry Method**
@@ -263,6 +271,7 @@
   - [ ] No exposed secrets in logs
 
 ### Step 9: Domain Configuration
+
 **Estimated Time**: 10 minutes (+ DNS propagation time)
 
 - [ ] **Add Domain**
@@ -288,6 +297,7 @@
   - [ ] SSL certificate provisioned automatically
 
 ### Step 10: Database Migration
+
 **Estimated Time**: 30 minutes
 
 - [ ] **Pre-Migration Checks**
@@ -344,6 +354,7 @@
   - [ ] Indexes created: `SELECT COUNT(*) FROM pg_indexes WHERE schemaname = 'public';`
 
 ### Step 11: Initial Deployment
+
 **Estimated Time**: 5-10 minutes
 
 - [ ] **Deployment Trigger**
@@ -356,13 +367,13 @@
   - [ ] Deployment status: Building
   - [ ] No build errors
   - [ ] Build logs reviewed
-  - [ ] Build time documented: __________
+  - [ ] Build time documented: ****\_\_****
 
 - [ ] **Deployment Completion**
   - [ ] Status changed to: Ready
   - [ ] Deployment URL displayed
   - [ ] Production URL active
-  - [ ] Deployment time documented: __________
+  - [ ] Deployment time documented: ****\_\_****
 
 - [ ] **Deployment Information**
   ```
@@ -378,6 +389,7 @@
 ## Post-Deployment Verification Phase (30-60 minutes)
 
 ### Step 12: Health Check Verification
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Overall Health**
@@ -411,6 +423,7 @@
   ```
 
 ### Step 13: SSL Certificate Verification
+
 **Estimated Time**: 2 minutes
 
 - [ ] **Certificate Check**
@@ -439,6 +452,7 @@
   ```
 
 ### Step 14: Authentication Flow Testing
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Sign Up Flow**
@@ -480,6 +494,7 @@
   ```
 
 ### Step 15: Database Connectivity Testing
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Connection Test**
@@ -501,6 +516,7 @@
   - [ ] Test user 2 cannot see user 1's data
 
 - [ ] **Database Query Test**
+
   ```sql
   -- Run as authenticated user
   SELECT COUNT(*) FROM organizations;
@@ -509,6 +525,7 @@
   SELECT COUNT(*) FROM profiles;
   -- Should return: >= 1 (user's profile)
   ```
+
   ```
   Query Results Valid: Yes / No
   RLS Working Correctly: Yes / No
@@ -516,6 +533,7 @@
   ```
 
 ### Step 16: Payment Integration Testing
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Stripe Webhook Verification**
@@ -547,6 +565,7 @@
   ```
 
 ### Step 17: WhatsApp Integration Testing
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Webhook Verification**
@@ -557,9 +576,11 @@
   - [ ] Webhook status: Connected
 
 - [ ] **Manual Webhook Test**
+
   ```bash
   curl -X GET "https://app.yourdomain.com/api/webhooks/whatsapp?hub.mode=subscribe&hub.challenge=test123&hub.verify_token=YOUR_TOKEN"
   ```
+
   - [ ] Returns: `test123`
   - [ ] Status code: 200
 
@@ -590,6 +611,7 @@
   ```
 
 ### Step 18: Email Delivery Testing
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Domain Verification**
@@ -623,6 +645,7 @@
   ```
 
 ### Step 19: Performance Verification
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Page Load Testing**
@@ -633,28 +656,30 @@
   - [ ] Images load correctly
 
 - [ ] **API Response Testing**
+
   ```bash
   # Test critical endpoints
   time curl https://app.yourdomain.com/api/health
   time curl -H "Authorization: Bearer TOKEN" https://app.yourdomain.com/api/conversations
   time curl -H "Authorization: Bearer TOKEN" https://app.yourdomain.com/api/contacts
   ```
+
   - [ ] `/api/health` < 500ms
   - [ ] `/api/conversations` < 1000ms
   - [ ] `/api/contacts` < 1000ms
 
 - [ ] **Google PageSpeed Insights**
   - [ ] Test URL: `https://pagespeed.web.dev/`
-  - [ ] Performance score: ______ (target: > 90)
-  - [ ] Accessibility score: ______ (target: > 95)
-  - [ ] Best Practices score: ______ (target: > 95)
-  - [ ] SEO score: ______ (target: > 90)
+  - [ ] Performance score: **\_\_** (target: > 90)
+  - [ ] Accessibility score: **\_\_** (target: > 95)
+  - [ ] Best Practices score: **\_\_** (target: > 95)
+  - [ ] SEO score: **\_\_** (target: > 90)
 
 - [ ] **Core Web Vitals**
-  - [ ] First Contentful Paint (FCP): ______ (target: < 1.8s)
-  - [ ] Largest Contentful Paint (LCP): ______ (target: < 2.5s)
-  - [ ] Total Blocking Time (TBT): ______ (target: < 300ms)
-  - [ ] Cumulative Layout Shift (CLS): ______ (target: < 0.1)
+  - [ ] First Contentful Paint (FCP): **\_\_** (target: < 1.8s)
+  - [ ] Largest Contentful Paint (LCP): **\_\_** (target: < 2.5s)
+  - [ ] Total Blocking Time (TBT): **\_\_** (target: < 300ms)
+  - [ ] Cumulative Layout Shift (CLS): **\_\_** (target: < 0.1)
 
 - [ ] **Performance Test Results**
   ```
@@ -666,12 +691,15 @@
   ```
 
 ### Step 20: Security Verification
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Security Headers Check**
+
   ```bash
   curl -I https://app.yourdomain.com
   ```
+
   - [ ] `Strict-Transport-Security` present
   - [ ] `X-Content-Type-Options: nosniff` present
   - [ ] `X-Frame-Options: DENY` present
@@ -684,9 +712,11 @@
   - [ ] Certificate valid and trusted
 
 - [ ] **Security Audit**
+
   ```bash
   npm audit --production
   ```
+
   - [ ] 0 critical vulnerabilities
   - [ ] 0 high vulnerabilities
   - [ ] < 5 moderate vulnerabilities
@@ -712,6 +742,7 @@
 ## Post-Deployment Configuration (30 minutes)
 
 ### Step 21: Monitoring Setup
+
 **Estimated Time**: 15 minutes
 
 - [ ] **Vercel Analytics**
@@ -736,6 +767,7 @@
   - [ ] Backup schedule verified
 
 ### Step 22: Team Access Configuration
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Vercel Team Access**
@@ -755,6 +787,7 @@
   - [ ] Escalation path defined
 
 ### Step 23: Documentation Update
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Deployment Documentation**
@@ -774,6 +807,7 @@
 ## Final Verification (15 minutes)
 
 ### Step 24: End-to-End User Journey Test
+
 **Estimated Time**: 10 minutes
 
 - [ ] **Complete User Flow**
@@ -800,6 +834,7 @@
   - [ ] All features working
 
 ### Step 25: Stakeholder Sign-Off
+
 **Estimated Time**: 5 minutes
 
 - [ ] **Deployment Review**
@@ -810,6 +845,7 @@
   - [ ] Team notified
 
 - [ ] **Sign-Off**
+
   ```
   Deployment Completed By: ____________________
   Date: ____________________
@@ -884,6 +920,7 @@
 ### Rollback Criteria
 
 Initiate rollback if:
+
 - [ ] Critical functionality broken
 - [ ] Error rate > 5%
 - [ ] Database corruption detected
@@ -922,33 +959,34 @@ Initiate rollback if:
 
 **Deployment Status**: ☐ Successful ☐ Completed with Issues ☐ Rolled Back
 
-**Deployment Completed By**: ____________________
+**Deployment Completed By**: ********\_\_\_\_********
 
-**Date**: ____________________
+**Date**: ********\_\_\_\_********
 
-**Time**: ____________________
+**Time**: ********\_\_\_\_********
 
-**Total Duration**: ____________________
+**Total Duration**: ********\_\_\_\_********
 
-**Critical Issues Found**: ____________________
+**Critical Issues Found**: ********\_\_\_\_********
 
-**Resolution Status**: ____________________
+**Resolution Status**: ********\_\_\_\_********
 
 **Next Steps**:
-1. ____________________
-2. ____________________
-3. ____________________
+
+1. ***
+2. ***
+3. ***
 
 **Approved for Production**: ☐ Yes ☐ No
 
-**Approver Name**: ____________________
+**Approver Name**: ********\_\_\_\_********
 
-**Approver Signature**: ____________________
+**Approver Signature**: ********\_\_\_\_********
 
-**Date**: ____________________
+**Date**: ********\_\_\_\_********
 
 ---
 
 **Version**: 1.0.0
 **Last Updated**: October 2025
-**Next Review Date**: ____________________
+**Next Review Date**: ********\_\_\_\_********

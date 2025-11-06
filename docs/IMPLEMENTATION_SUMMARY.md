@@ -35,6 +35,7 @@ psql -c "SELECT append_event(
 ### 3. Using API V2 Endpoints
 
 #### List Conversations
+
 ```bash
 curl -X GET "https://yourapp.com/api/v2/conversations?page=1&limit=20&status=open" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -42,6 +43,7 @@ curl -X GET "https://yourapp.com/api/v2/conversations?page=1&limit=20&status=ope
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -84,6 +86,7 @@ curl -X GET "https://yourapp.com/api/v2/conversations?page=1&limit=20&status=ope
 ```
 
 #### Create Conversation
+
 ```bash
 curl -X POST "https://yourapp.com/api/v2/conversations" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -98,6 +101,7 @@ curl -X POST "https://yourapp.com/api/v2/conversations" \
 ```
 
 **Response (201 Created)**:
+
 ```json
 {
   "success": true,
@@ -130,6 +134,7 @@ curl -X POST "https://yourapp.com/api/v2/conversations" \
 ### 4. Using Event Sourcing
 
 #### Publish Domain Event
+
 ```typescript
 import { EventBus } from '@/lib/events/event-bus'
 
@@ -141,34 +146,36 @@ await EventBus.publish({
   eventData: {
     contactId: 'uuid',
     status: 'open',
-    priority: 'medium'
+    priority: 'medium',
   },
   organizationId: 'uuid',
   createdBy: userId,
   metadata: {
     source: 'api_v2',
-    userAgent: 'Mozilla/5.0...'
-  }
+    userAgent: 'Mozilla/5.0...',
+  },
 })
 ```
 
 #### Subscribe to Events
+
 ```typescript
 import { EventBus } from '@/lib/events/event-bus'
 
 // Subscribe to conversation events
-EventBus.subscribe('ConversationCreated', async (event) => {
+EventBus.subscribe('ConversationCreated', async event => {
   console.log('New conversation:', event)
   // Update analytics, send notifications, etc.
 })
 
 // Subscribe to all events
-EventBus.subscribe('*', async (event) => {
+EventBus.subscribe('*', async event => {
   console.log('Event occurred:', event.eventType)
 })
 ```
 
 #### Query Event Store
+
 ```typescript
 import { EventStore } from '@/lib/events/event-store'
 
@@ -188,6 +195,7 @@ const stats = await EventStore.getEventStats(organizationId)
 ## Files Created (8 core files)
 
 ### Database Layer
+
 1. **`supabase/migrations/20251014_api_versioning_event_sourcing.sql`**
    - 15 tables created
    - 10 database functions
@@ -195,6 +203,7 @@ const stats = await EventStore.getEventStats(organizationId)
    - Performance indexes
 
 ### API Versioning
+
 2. **`src/lib/api/versioning.ts`**
    - Version negotiation (URL, header, query)
    - Deprecation management
@@ -211,6 +220,7 @@ const stats = await EventStore.getEventStats(organizationId)
    - Sorting and filtering utilities
 
 ### Event Sourcing
+
 5. **`src/lib/events/types.ts`**
    - Domain event definitions
    - TypeScript interfaces
@@ -228,6 +238,7 @@ const stats = await EventStore.getEventStats(organizationId)
    - Handler execution
 
 ### API Endpoints
+
 8. **`src/app/api/v2/conversations/route.ts`**
    - GET /api/v2/conversations (list with filtering)
    - POST /api/v2/conversations (create)
@@ -235,6 +246,7 @@ const stats = await EventStore.getEventStats(organizationId)
    - Full HATEOAS support
 
 ### Documentation
+
 9. **`docs/API_VERSIONING_EVENT_SOURCING_REPORT.md`**
    - Comprehensive implementation report
    - Performance benchmarks
@@ -249,6 +261,7 @@ const stats = await EventStore.getEventStats(organizationId)
 ## API V2 Features
 
 ### 1. Standardized Response Format
+
 ```typescript
 interface APIResponse<T> {
   success: boolean
@@ -260,35 +273,44 @@ interface APIResponse<T> {
 ```
 
 ### 2. HATEOAS Links
+
 Every resource includes:
+
 - `self`: Link to current resource
 - `related`: Links to related resources
 - `next/prev`: Pagination links
 - `first/last`: First and last pages
 
 ### 3. Advanced Pagination
+
 **Offset-based**:
+
 ```
 GET /api/v2/conversations?page=2&limit=20
 ```
 
 **Cursor-based** (efficient for large datasets):
+
 ```
 GET /api/v2/conversations?cursor=eyJpZCI6InV1aWQifQ&limit=20
 ```
 
 ### 4. Flexible Filtering
+
 ```
 GET /api/v2/conversations?status=open&priority=high&assigned_to=uuid
 ```
 
 ### 5. Sorting
+
 ```
 GET /api/v2/conversations?sort_by=created_at&sort_order=desc
 ```
 
 ### 6. Version Negotiation
+
 Multiple ways to specify version:
+
 1. URL: `/api/v2/conversations`
 2. Header: `Accept: application/vnd.adsapp.v2+json`
 3. Header: `X-API-Version: v2`
@@ -297,7 +319,9 @@ Multiple ways to specify version:
 ## Event Sourcing Benefits
 
 ### 1. Complete Audit Trail
+
 Every change captured as immutable event:
+
 ```sql
 SELECT * FROM event_store
 WHERE aggregate_id = 'conversation-uuid'
@@ -305,16 +329,20 @@ ORDER BY version;
 ```
 
 ### 2. Time Travel Debugging
+
 Replay events to any point in time:
+
 ```typescript
 // See conversation state at version 5
 const state = await EventStore.replayEvents(conversationId, 5)
 ```
 
 ### 3. Event-Driven Architecture
+
 React to domain events:
+
 ```typescript
-EventBus.subscribe('MessageSent', async (event) => {
+EventBus.subscribe('MessageSent', async event => {
   await updateAnalytics(event)
   await sendNotification(event)
   await updateSearchIndex(event)
@@ -322,7 +350,9 @@ EventBus.subscribe('MessageSent', async (event) => {
 ```
 
 ### 4. Performance Optimization
+
 Snapshots reduce replay time by 90%+:
+
 ```sql
 -- Automatic snapshot every 100 events
 -- Manual snapshot creation
@@ -332,17 +362,20 @@ SELECT create_snapshot('uuid'::uuid, 'conversation', 'org-uuid'::uuid);
 ## Performance Characteristics
 
 ### Event Store
+
 - **Write Throughput**: 1,000+ events/sec
 - **Read Latency**: <10ms (with snapshot)
 - **Replay Time**: 100 events in <50ms
 - **Storage**: ~1KB per event (compressed)
 
 ### API V2
+
 - **Response Time**: <100ms (simple queries)
 - **Pagination**: Cursor-based 3x faster than offset for large datasets
 - **HATEOAS**: <5ms overhead per response
 
 ### Database
+
 - **10 Strategic Indexes**: Optimized query performance
 - **RLS Overhead**: <2ms per query
 - **Connection Pooling**: Supabase managed
@@ -350,6 +383,7 @@ SELECT create_snapshot('uuid'::uuid, 'conversation', 'org-uuid'::uuid);
 ## Best Practices
 
 ### 1. Event Naming
+
 ```typescript
 // Good: Past tense, specific
 'ConversationCreated'
@@ -363,6 +397,7 @@ SELECT create_snapshot('uuid'::uuid, 'conversation', 'org-uuid'::uuid);
 ```
 
 ### 2. Event Data
+
 ```typescript
 // Good: Complete, immutable
 {
@@ -382,6 +417,7 @@ SELECT create_snapshot('uuid'::uuid, 'conversation', 'org-uuid'::uuid);
 ```
 
 ### 3. API Response Building
+
 ```typescript
 // Good: Use response builders
 return createV2SuccessResponse(data, { requestId, startTime })
@@ -391,6 +427,7 @@ return NextResponse.json({ success: true, data })
 ```
 
 ### 4. Error Handling
+
 ```typescript
 // Good: Use predefined errors
 return V2Errors.notFound('Conversation', { requestId })
@@ -402,6 +439,7 @@ return NextResponse.json({ error: 'Not found' }, { status: 404 })
 ## Next Steps
 
 ### Immediate (Complete remaining core features)
+
 1. ✅ Database migration
 2. ✅ API versioning infrastructure
 3. ✅ Event sourcing core
@@ -411,18 +449,21 @@ return NextResponse.json({ error: 'Not found' }, { status: 404 })
 7. ⏳ CQRS command/query handlers
 
 ### Testing (Ensure quality)
+
 1. Unit tests for event store (>90% coverage)
 2. Integration tests for V2 endpoints
 3. Performance tests (1000+ events/sec)
 4. Load testing for pagination
 
 ### Documentation (Enable adoption)
+
 1. Complete API V2 reference guide
 2. Event sourcing architecture guide
 3. Migration guide (V1 → V2)
 4. Code examples and tutorials
 
 ### Deployment (Go live)
+
 1. Staging environment testing
 2. Production database migration
 3. Gradual V2 rollout
@@ -431,6 +472,7 @@ return NextResponse.json({ error: 'Not found' }, { status: 404 })
 ## Monitoring Dashboard Queries
 
 ### Event Store Health
+
 ```sql
 -- Events per second
 SELECT
@@ -451,6 +493,7 @@ GROUP BY aggregate_type;
 ```
 
 ### API V2 Usage
+
 ```sql
 -- Requests by version
 SELECT
@@ -477,6 +520,7 @@ ORDER BY error_rate DESC;
 ```
 
 ### Webhook Delivery
+
 ```sql
 -- Delivery success rate
 SELECT
@@ -495,6 +539,7 @@ GROUP BY subscription_id;
 ### Event Store Issues
 
 **Problem**: Slow event replay
+
 ```sql
 -- Check if snapshot exists
 SELECT * FROM event_snapshots WHERE aggregate_id = 'uuid';
@@ -504,6 +549,7 @@ SELECT create_snapshot('uuid'::uuid, 'conversation', 'org-uuid'::uuid);
 ```
 
 **Problem**: Version conflicts
+
 ```sql
 -- Check event versions
 SELECT aggregate_id, version, event_type, created_at
@@ -517,6 +563,7 @@ ORDER BY version;
 ### API V2 Issues
 
 **Problem**: Incorrect version detected
+
 ```typescript
 // Debug version detection
 const version = getApiVersion(request)
@@ -527,6 +574,7 @@ const response = createV2SuccessResponse(data, { version: 'v2' })
 ```
 
 **Problem**: Missing HATEOAS links
+
 ```typescript
 // Ensure baseUrl is set
 process.env.NEXT_PUBLIC_APP_URL = 'https://yourapp.com'

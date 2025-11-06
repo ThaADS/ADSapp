@@ -16,7 +16,7 @@ export default function WhiteLabelBranding({
   organizationId,
   currentLogoUrl,
   primaryColor = '#10b981',
-  secondaryColor = '#3b82f6'
+  secondaryColor = '#3b82f6',
 }: WhiteLabelBrandingProps) {
   const [logoPreview, setLogoPreview] = useState<string | null>(currentLogoUrl || null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -26,7 +26,7 @@ export default function WhiteLabelBranding({
 
   const [brandColors, setBrandColors] = useState({
     primary: primaryColor,
-    secondary: secondaryColor
+    secondary: secondaryColor,
   })
 
   const [isSavingColors, setIsSavingColors] = useState(false)
@@ -56,7 +56,7 @@ export default function WhiteLabelBranding({
 
     // Create preview
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = e => {
       setLogoPreview(e.target?.result as string)
     }
     reader.readAsDataURL(file)
@@ -75,7 +75,7 @@ export default function WhiteLabelBranding({
 
       const response = await fetch(`/api/organizations/${organizationId}/branding`, {
         method: 'POST',
-        body: formData
+        body: formData,
       })
 
       const data = await response.json()
@@ -115,8 +115,8 @@ export default function WhiteLabelBranding({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           primaryColor: brandColors.primary,
-          secondaryColor: brandColors.secondary
-        })
+          secondaryColor: brandColors.secondary,
+        }),
       })
 
       const data = await response.json()
@@ -136,76 +136,63 @@ export default function WhiteLabelBranding({
   }
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       {/* Logo Upload Section */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <PhotoIcon className="w-5 h-5 text-emerald-600" />
+      <div className='overflow-hidden rounded-lg bg-white shadow'>
+        <div className='border-b border-gray-200 px-6 py-4'>
+          <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>
+            <PhotoIcon className='h-5 w-5 text-emerald-600' />
             Organization Logo
           </h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className='mt-1 text-sm text-gray-600'>
             Upload your organization's logo. Recommended size: 512x512px (PNG, JPG, or SVG)
           </p>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
+        <div className='space-y-6 px-6 py-6'>
           {/* Logo Preview */}
           {logoPreview && (
-            <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg border-2 border-gray-200 relative">
+            <div className='relative flex items-center justify-center rounded-lg border-2 border-gray-200 bg-gray-50 p-8'>
               <button
                 onClick={handleRemoveLogo}
-                className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-                title="Remove logo"
+                className='absolute top-2 right-2 rounded-full bg-white p-1 shadow-lg transition-colors hover:bg-gray-100'
+                title='Remove logo'
               >
-                <XMarkIcon className="w-5 h-5 text-gray-600" />
+                <XMarkIcon className='h-5 w-5 text-gray-600' />
               </button>
-              <div className="relative w-32 h-32">
-                <Image
-                  src={logoPreview}
-                  alt="Logo preview"
-                  fill
-                  className="object-contain"
-                />
+              <div className='relative h-32 w-32'>
+                <Image src={logoPreview} alt='Logo preview' fill className='object-contain' />
               </div>
             </div>
           )}
 
           {/* Upload Input */}
           <div>
-            <label className="block">
-              <span className="sr-only">Choose logo file</span>
+            <label className='block'>
+              <span className='sr-only'>Choose logo file</span>
               <input
                 ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                type='file'
+                accept='image/png,image/jpeg,image/jpg,image/svg+xml'
                 onChange={handleFileSelect}
-                className="block w-full text-sm text-gray-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-lg file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-emerald-50 file:text-emerald-700
-                  hover:file:bg-emerald-100
-                  cursor-pointer"
+                className='block w-full cursor-pointer text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100'
               />
             </label>
-            <p className="mt-2 text-xs text-gray-500">
-              PNG, JPG or SVG. Max size 2MB.
-            </p>
+            <p className='mt-2 text-xs text-gray-500'>PNG, JPG or SVG. Max size 2MB.</p>
           </div>
 
           {/* Upload Error */}
           {uploadError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-800">{uploadError}</p>
+            <div className='rounded-lg border border-red-200 bg-red-50 p-3'>
+              <p className='text-sm text-red-800'>{uploadError}</p>
             </div>
           )}
 
           {/* Upload Success */}
           {uploadSuccess && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-              <CheckIcon className="w-5 h-5 text-green-600" />
-              <p className="text-sm text-green-800">Logo uploaded successfully!</p>
+            <div className='flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3'>
+              <CheckIcon className='h-5 w-5 text-green-600' />
+              <p className='text-sm text-green-800'>Logo uploaded successfully!</p>
             </div>
           )}
 
@@ -214,16 +201,16 @@ export default function WhiteLabelBranding({
             <button
               onClick={handleUploadLogo}
               disabled={isUploading}
-              className="w-full px-4 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className='flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300'
             >
               {isUploading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                   <span>Uploading...</span>
                 </>
               ) : (
                 <>
-                  <PhotoIcon className="w-5 h-5" />
+                  <PhotoIcon className='h-5 w-5' />
                   <span>Upload Logo</span>
                 </>
               )}
@@ -233,36 +220,34 @@ export default function WhiteLabelBranding({
       </div>
 
       {/* Brand Colors Section */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Brand Colors</h3>
-          <p className="text-sm text-gray-600 mt-1">
+      <div className='overflow-hidden rounded-lg bg-white shadow'>
+        <div className='border-b border-gray-200 px-6 py-4'>
+          <h3 className='text-lg font-semibold text-gray-900'>Brand Colors</h3>
+          <p className='mt-1 text-sm text-gray-600'>
             Customize the primary and secondary colors for your organization's interface
           </p>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
+        <div className='space-y-6 px-6 py-6'>
           {/* Primary Color */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Primary Color
-            </label>
-            <div className="flex items-center gap-4">
+            <label className='mb-2 block text-sm font-medium text-gray-700'>Primary Color</label>
+            <div className='flex items-center gap-4'>
               <input
-                type="color"
+                type='color'
                 value={brandColors.primary}
-                onChange={(e) => setBrandColors({ ...brandColors, primary: e.target.value })}
-                className="h-12 w-20 rounded-lg border-2 border-gray-300 cursor-pointer"
+                onChange={e => setBrandColors({ ...brandColors, primary: e.target.value })}
+                className='h-12 w-20 cursor-pointer rounded-lg border-2 border-gray-300'
               />
               <input
-                type="text"
+                type='text'
                 value={brandColors.primary}
-                onChange={(e) => setBrandColors({ ...brandColors, primary: e.target.value })}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="#10b981"
+                onChange={e => setBrandColors({ ...brandColors, primary: e.target.value })}
+                className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
+                placeholder='#10b981'
               />
               <div
-                className="w-12 h-12 rounded-lg border-2 border-gray-300"
+                className='h-12 w-12 rounded-lg border-2 border-gray-300'
                 style={{ backgroundColor: brandColors.primary }}
               />
             </div>
@@ -270,25 +255,23 @@ export default function WhiteLabelBranding({
 
           {/* Secondary Color */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Secondary Color
-            </label>
-            <div className="flex items-center gap-4">
+            <label className='mb-2 block text-sm font-medium text-gray-700'>Secondary Color</label>
+            <div className='flex items-center gap-4'>
               <input
-                type="color"
+                type='color'
                 value={brandColors.secondary}
-                onChange={(e) => setBrandColors({ ...brandColors, secondary: e.target.value })}
-                className="h-12 w-20 rounded-lg border-2 border-gray-300 cursor-pointer"
+                onChange={e => setBrandColors({ ...brandColors, secondary: e.target.value })}
+                className='h-12 w-20 cursor-pointer rounded-lg border-2 border-gray-300'
               />
               <input
-                type="text"
+                type='text'
                 value={brandColors.secondary}
-                onChange={(e) => setBrandColors({ ...brandColors, secondary: e.target.value })}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="#3b82f6"
+                onChange={e => setBrandColors({ ...brandColors, secondary: e.target.value })}
+                className='flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
+                placeholder='#3b82f6'
               />
               <div
-                className="w-12 h-12 rounded-lg border-2 border-gray-300"
+                className='h-12 w-12 rounded-lg border-2 border-gray-300'
                 style={{ backgroundColor: brandColors.secondary }}
               />
             </div>
@@ -296,9 +279,9 @@ export default function WhiteLabelBranding({
 
           {/* Color Success */}
           {colorsSaved && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-              <CheckIcon className="w-5 h-5 text-green-600" />
-              <p className="text-sm text-green-800">Brand colors saved successfully!</p>
+            <div className='flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3'>
+              <CheckIcon className='h-5 w-5 text-green-600' />
+              <p className='text-sm text-green-800'>Brand colors saved successfully!</p>
             </div>
           )}
 
@@ -306,7 +289,7 @@ export default function WhiteLabelBranding({
           <button
             onClick={handleSaveColors}
             disabled={isSavingColors}
-            className="w-full px-4 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className='w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300'
           >
             {isSavingColors ? 'Saving...' : 'Save Brand Colors'}
           </button>

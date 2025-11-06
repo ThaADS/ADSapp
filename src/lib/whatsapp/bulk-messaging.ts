@@ -55,11 +55,26 @@ export interface BulkCampaign {
 }
 
 export type CampaignType = 'promotional' | 'transactional' | 'notification' | 'survey'
-export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled'
+export type CampaignStatus =
+  | 'draft'
+  | 'scheduled'
+  | 'running'
+  | 'paused'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
 
 export interface AudienceFilter {
   field: 'last_message_at' | 'created_at' | 'tags' | 'name' | 'phone_number'
-  operator: 'equals' | 'contains' | 'starts_with' | 'ends_with' | 'before' | 'after' | 'in' | 'not_in'
+  operator:
+    | 'equals'
+    | 'contains'
+    | 'starts_with'
+    | 'ends_with'
+    | 'before'
+    | 'after'
+    | 'in'
+    | 'not_in'
   value: string | string[] | Date
 }
 
@@ -152,11 +167,11 @@ export class BulkMessagingEngine {
           deliveryRate: 0,
           readRate: 0,
           replyRate: 0,
-          failureRate: 0
+          failureRate: 0,
         } as CampaignStatistics,
         created_by: campaign.createdBy,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       }
 
       const { data, error } = await this.supabase
@@ -171,7 +186,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to create campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to create campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -201,7 +218,7 @@ export class BulkMessagingEngine {
         .update({
           status: 'running',
           started_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
         .select()
@@ -216,7 +233,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to start campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to start campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -229,7 +248,7 @@ export class BulkMessagingEngine {
         .from('bulk_campaigns')
         .update({
           status: 'paused',
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
         .select()
@@ -241,7 +260,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to pause campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to pause campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -254,7 +275,7 @@ export class BulkMessagingEngine {
         .from('bulk_campaigns')
         .update({
           status: 'running',
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
         .select()
@@ -269,7 +290,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to resume campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to resume campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -290,7 +313,7 @@ export class BulkMessagingEngine {
         .update({
           status: 'cancelled',
           completed_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
         .select()
@@ -302,7 +325,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to cancel campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to cancel campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -323,7 +348,9 @@ export class BulkMessagingEngine {
 
       return this.mapToCampaign(data)
     } catch (error) {
-      throw new Error(`Failed to get campaign: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get campaign: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -373,17 +400,22 @@ export class BulkMessagingEngine {
       return {
         campaigns,
         total: count || 0,
-        hasMore: (offset + limit) < (count || 0)
+        hasMore: offset + limit < (count || 0),
       }
     } catch (error) {
-      throw new Error(`Failed to get campaigns: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get campaigns: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
   /**
    * Calculate audience size based on targeting criteria
    */
-  async calculateAudienceSize(organizationId: string, targetAudience: BulkCampaign['targetAudience']): Promise<number> {
+  async calculateAudienceSize(
+    organizationId: string,
+    targetAudience: BulkCampaign['targetAudience']
+  ): Promise<number> {
     try {
       let query = this.supabase
         .from('contacts')
@@ -424,7 +456,9 @@ export class BulkMessagingEngine {
 
       return count || 0
     } catch (error) {
-      throw new Error(`Failed to calculate audience size: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to calculate audience size: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -469,7 +503,10 @@ export class BulkMessagingEngine {
   async generateMessageJobs(campaign: BulkCampaign): Promise<BulkMessageJob[]> {
     try {
       // Get target contacts
-      const contacts = await this.getTargetContacts(campaign.organizationId, campaign.targetAudience)
+      const contacts = await this.getTargetContacts(
+        campaign.organizationId,
+        campaign.targetAudience
+      )
 
       const jobs: Omit<BulkMessageJob, 'id'>[] = []
       const now = new Date()
@@ -486,7 +523,7 @@ export class BulkMessagingEngine {
         // Apply campaign scheduling
         if (campaign.scheduling.type === 'scheduled' && campaign.scheduling.scheduledAt) {
           const baseScheduledTime = campaign.scheduling.scheduledAt
-          scheduledAt = new Date(baseScheduledTime.getTime() + (index * 1000)) // 1 second intervals
+          scheduledAt = new Date(baseScheduledTime.getTime() + index * 1000) // 1 second intervals
         }
 
         jobs.push({
@@ -496,7 +533,7 @@ export class BulkMessagingEngine {
           status: 'pending',
           scheduledAt,
           retryCount: 0,
-          maxRetries: 3
+          maxRetries: 3,
         })
       })
 
@@ -509,7 +546,7 @@ export class BulkMessagingEngine {
         status: job.status,
         scheduled_at: job.scheduledAt,
         retry_count: job.retryCount,
-        max_retries: job.maxRetries
+        max_retries: job.maxRetries,
       }))
 
       const { data, error } = await this.supabase
@@ -523,14 +560,19 @@ export class BulkMessagingEngine {
 
       return data.map(item => this.mapToMessageJob(item))
     } catch (error) {
-      throw new Error(`Failed to generate message jobs: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to generate message jobs: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
   /**
    * Get target contacts for campaign
    */
-  private async getTargetContacts(organizationId: string, targetAudience: BulkCampaign['targetAudience']): Promise<ContactData[]> {
+  private async getTargetContacts(
+    organizationId: string,
+    targetAudience: BulkCampaign['targetAudience']
+  ): Promise<ContactData[]> {
     let query = this.supabase
       .from('contacts')
       .select('id, whatsapp_id, name, tags')
@@ -619,7 +661,7 @@ export class BulkMessagingEngine {
             .update({
               status: 'failed',
               error: error instanceof Error ? error.message : 'Unknown error',
-              updated_at: new Date()
+              updated_at: new Date(),
             })
             .eq('id', jobData.id)
         }
@@ -661,7 +703,10 @@ export class BulkMessagingEngine {
         // Send regular message
         switch (campaign.message.type) {
           case 'text':
-            messageResponse = await whatsappClient.sendTextMessage(job.whatsappId, campaign.message.content)
+            messageResponse = await whatsappClient.sendTextMessage(
+              job.whatsappId,
+              campaign.message.content
+            )
             break
           case 'media':
             if (campaign.message.mediaUrl) {
@@ -682,10 +727,9 @@ export class BulkMessagingEngine {
           status: 'sent',
           message_id: messageResponse?.messages?.[0]?.id,
           sent_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', job.id)
-
     } catch (error) {
       // Handle retry logic
       if (job.retryCount < job.maxRetries) {
@@ -694,7 +738,7 @@ export class BulkMessagingEngine {
           .update({
             retry_count: job.retryCount + 1,
             scheduled_at: new Date(Date.now() + Math.pow(2, job.retryCount) * 60000), // Exponential backoff
-            updated_at: new Date()
+            updated_at: new Date(),
           })
           .eq('id', job.id)
       } else {
@@ -703,7 +747,7 @@ export class BulkMessagingEngine {
           .update({
             status: 'failed',
             error: error instanceof Error ? error.message : 'Unknown error',
-            updated_at: new Date()
+            updated_at: new Date(),
           })
           .eq('id', job.id)
       }
@@ -728,8 +772,10 @@ export class BulkMessagingEngine {
       }
 
       const totalTargets = stats?.length || 0
-      const messagesSent = stats?.filter(s => ['sent', 'delivered', 'read'].includes(s.status)).length || 0
-      const messagesDelivered = stats?.filter(s => ['delivered', 'read'].includes(s.status)).length || 0
+      const messagesSent =
+        stats?.filter(s => ['sent', 'delivered', 'read'].includes(s.status)).length || 0
+      const messagesDelivered =
+        stats?.filter(s => ['delivered', 'read'].includes(s.status)).length || 0
       const messagesRead = stats?.filter(s => s.status === 'read').length || 0
       const messagesFailed = stats?.filter(s => s.status === 'failed').length || 0
 
@@ -744,17 +790,16 @@ export class BulkMessagingEngine {
         deliveryRate: messagesSent > 0 ? (messagesDelivered / messagesSent) * 100 : 0,
         readRate: messagesSent > 0 ? (messagesRead / messagesSent) * 100 : 0,
         replyRate: 0, // Would calculate based on replies
-        failureRate: totalTargets > 0 ? (messagesFailed / totalTargets) * 100 : 0
+        failureRate: totalTargets > 0 ? (messagesFailed / totalTargets) * 100 : 0,
       }
 
       await this.supabase
         .from('bulk_campaigns')
         .update({
           statistics,
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .eq('id', campaignId)
-
     } catch (error) {
       console.error('Failed to update campaign statistics:', error)
     }
@@ -784,7 +829,7 @@ export class BulkMessagingEngine {
           .update({
             status: 'completed',
             completed_at: new Date(),
-            updated_at: new Date()
+            updated_at: new Date(),
           })
           .eq('id', campaignId)
       }
@@ -796,7 +841,9 @@ export class BulkMessagingEngine {
   /**
    * Get WhatsApp configuration for organization
    */
-  private async getWhatsAppConfig(organizationId: string): Promise<{ phoneNumberId: string; accessToken: string }> {
+  private async getWhatsAppConfig(
+    organizationId: string
+  ): Promise<{ phoneNumberId: string; accessToken: string }> {
     const { data: organization } = await this.supabase
       .from('organizations')
       .select('whatsapp_phone_number_id, whatsapp_business_account_id')
@@ -810,14 +857,16 @@ export class BulkMessagingEngine {
     return {
       accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
       phoneNumberId: organization.whatsapp_phone_number_id,
-      businessAccountId: organization.whatsapp_business_account_id
+      businessAccountId: organization.whatsapp_business_account_id,
     }
   }
 
   /**
    * Validate campaign before starting
    */
-  private async validateCampaign(campaign: BulkCampaign): Promise<{ valid: boolean; errors: string[] }> {
+  private async validateCampaign(
+    campaign: BulkCampaign
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = []
 
     // Check message content
@@ -849,7 +898,7 @@ export class BulkMessagingEngine {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -874,7 +923,7 @@ export class BulkMessagingEngine {
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
       startedAt: data.started_at ? new Date(data.started_at) : undefined,
-      completedAt: data.completed_at ? new Date(data.completed_at) : undefined
+      completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
     }
   }
 
@@ -895,7 +944,7 @@ export class BulkMessagingEngine {
       readAt: data.read_at ? new Date(data.read_at) : undefined,
       error: data.error,
       retryCount: data.retry_count,
-      maxRetries: data.max_retries
+      maxRetries: data.max_retries,
     }
   }
 }
@@ -926,7 +975,7 @@ export class ContactListManager {
         filters: list.filters,
         created_by: list.createdBy,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       }
 
       const { data, error } = await this.supabase
@@ -941,14 +990,19 @@ export class ContactListManager {
 
       return this.mapToContactList(data)
     } catch (error) {
-      throw new Error(`Failed to create contact list: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to create contact list: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
   /**
    * Calculate list size based on filters
    */
-  private async calculateListSize(organizationId: string, filters: AudienceFilter[]): Promise<number> {
+  private async calculateListSize(
+    organizationId: string,
+    filters: AudienceFilter[]
+  ): Promise<number> {
     let query = this.supabase
       .from('contacts')
       .select('id', { count: 'exact', head: true })
@@ -991,7 +1045,7 @@ export class ContactListManager {
       filters: data.filters || [],
       createdBy: data.created_by,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     }
   }
 }

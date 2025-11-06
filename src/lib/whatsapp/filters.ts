@@ -64,7 +64,7 @@ export class ConversationFilterManager {
         icon: 'message-circle',
         criteria: { hasUnreadMessages: true },
         sortBy: { field: 'last_message_at', direction: 'desc' },
-        isSystem: true
+        isSystem: true,
       },
       {
         id: 'open',
@@ -73,7 +73,7 @@ export class ConversationFilterManager {
         icon: 'message-square',
         criteria: { status: ['open'] },
         sortBy: { field: 'last_message_at', direction: 'desc' },
-        isSystem: true
+        isSystem: true,
       },
       {
         id: 'pending',
@@ -82,7 +82,7 @@ export class ConversationFilterManager {
         icon: 'clock',
         criteria: { status: ['pending'] },
         sortBy: { field: 'last_message_at', direction: 'desc' },
-        isSystem: true
+        isSystem: true,
       },
       {
         id: 'high-priority',
@@ -91,7 +91,7 @@ export class ConversationFilterManager {
         icon: 'alert-circle',
         criteria: { priority: ['high', 'urgent'] },
         sortBy: { field: 'priority', direction: 'desc' },
-        isSystem: true
+        isSystem: true,
       },
       {
         id: 'assigned-to-me',
@@ -100,8 +100,8 @@ export class ConversationFilterManager {
         icon: 'user',
         criteria: {},
         sortBy: { field: 'last_message_at', direction: 'desc' },
-        isSystem: true
-      }
+        isSystem: true,
+      },
     ]
   }
 
@@ -117,7 +117,7 @@ export class ConversationFilterManager {
     const newFilter: QuickFilter = {
       ...filter,
       id: `custom-${Date.now()}`,
-      isSystem: false
+      isSystem: false,
     }
     this.quickFilters.push(newFilter)
     return newFilter
@@ -152,7 +152,7 @@ export class ConversationFilterManager {
         limit: (options.limit || 50).toString(),
         offset: (options.offset || 0).toString(),
         sort_field: sortBy.field,
-        sort_direction: sortBy.direction
+        sort_direction: sortBy.direction,
       })
 
       // Add filter criteria to params
@@ -205,15 +205,15 @@ export class ConversationFilterManager {
       }
 
       const data = await response.json()
-      
+
       return {
         conversations: data.conversations || [],
         totalCount: data.totalCount || 0,
-        aggregations: data.aggregations
+        aggregations: data.aggregations,
       }
     } catch (error) {
       console.error('Error filtering conversations:', error)
-      
+
       // Return mock data for development
       return this.getMockFilterResult(criteria, options)
     }
@@ -228,7 +228,7 @@ export class ConversationFilterManager {
           id: 'contact-1',
           name: 'John Doe',
           phone_number: '+1234567890',
-          profile_picture_url: null
+          profile_picture_url: null,
         },
         status: 'open',
         priority: 'medium',
@@ -236,7 +236,7 @@ export class ConversationFilterManager {
         assigned_agent: {
           id: options.currentUserId || 'agent-1',
           full_name: 'Current User',
-          avatar_url: null
+          avatar_url: null,
         },
         subject: 'Product inquiry',
         tags: ['sales', 'product'],
@@ -245,9 +245,9 @@ export class ConversationFilterManager {
         last_message: {
           content: 'Hi, I have a question about your product',
           message_type: 'text',
-          sender_type: 'contact' as const
+          sender_type: 'contact' as const,
         },
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       },
       {
         id: '2',
@@ -255,7 +255,7 @@ export class ConversationFilterManager {
           id: 'contact-2',
           name: 'Jane Smith',
           phone_number: '+0987654321',
-          profile_picture_url: null
+          profile_picture_url: null,
         },
         status: 'pending',
         priority: 'high',
@@ -268,23 +268,23 @@ export class ConversationFilterManager {
         last_message: {
           content: 'Thank you for your help!',
           message_type: 'text',
-          sender_type: 'contact' as const
+          sender_type: 'contact' as const,
         },
-        created_at: new Date(Date.now() - 86400000).toISOString()
-      }
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+      },
     ]
 
     // Apply basic filtering to mock data
     let filteredConversations = mockConversations
 
     if (criteria.status?.length) {
-      filteredConversations = filteredConversations.filter(c => 
+      filteredConversations = filteredConversations.filter(c =>
         criteria.status!.includes(c.status as any)
       )
     }
 
     if (criteria.priority?.length) {
-      filteredConversations = filteredConversations.filter(c => 
+      filteredConversations = filteredConversations.filter(c =>
         criteria.priority!.includes(c.priority as any)
       )
     }
@@ -299,8 +299,8 @@ export class ConversationFilterManager {
       aggregations: {
         statusCounts: { open: 1, pending: 1, resolved: 0, closed: 0 },
         priorityCounts: { low: 0, medium: 1, high: 1, urgent: 0 },
-        tagCounts: { sales: 1, product: 1, support: 1 }
-      }
+        tagCounts: { sales: 1, product: 1, support: 1 },
+      },
     }
   }
 
@@ -325,7 +325,9 @@ export class ConversationFilterManager {
 
     if (criteria.dateRange) {
       if (criteria.dateRange.start) {
-        conditions.push(`${criteria.dateRange.field} >= '${criteria.dateRange.start.toISOString()}'`)
+        conditions.push(
+          `${criteria.dateRange.field} >= '${criteria.dateRange.start.toISOString()}'`
+        )
       }
       if (criteria.dateRange.end) {
         conditions.push(`${criteria.dateRange.field} <= '${criteria.dateRange.end.toISOString()}'`)
@@ -356,7 +358,7 @@ export class ConversationFilterManager {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 }

@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react'
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
@@ -28,66 +28,66 @@ import {
   EyeIcon,
   ShareIcon,
   Bars3Icon,
-  TableCellsIcon
-} from '@heroicons/react/24/outline';
-import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
-import ContactForm from './contact-form';
-import { useToast } from '@/components/ui/toast';
+  TableCellsIcon,
+} from '@heroicons/react/24/outline'
+import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
+import ContactForm from './contact-form'
+import { useToast } from '@/components/ui/toast'
 
 // Contact interface
 interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email?: string;
-  avatar?: string;
-  company?: string;
-  position?: string;
-  location?: string;
-  website?: string;
-  metadata?: Record<string, unknown>;
-  tags: string[];
-  status: 'active' | 'inactive' | 'blocked';
-  isStarred: boolean;
-  lastContact: string;
-  addedDate: string;
-  totalMessages: number;
-  customFields: Record<string, unknown>;
-  notes: string;
-  source: 'manual' | 'import' | 'whatsapp' | 'api';
-  assignedTo?: string;
+  id: string
+  firstName: string
+  lastName: string
+  phone: string
+  email?: string
+  avatar?: string
+  company?: string
+  position?: string
+  location?: string
+  website?: string
+  metadata?: Record<string, unknown>
+  tags: string[]
+  status: 'active' | 'inactive' | 'blocked'
+  isStarred: boolean
+  lastContact: string
+  addedDate: string
+  totalMessages: number
+  customFields: Record<string, unknown>
+  notes: string
+  source: 'manual' | 'import' | 'whatsapp' | 'api'
+  assignedTo?: string
 }
 
 // Filter options
 interface FilterOptions {
-  search: string;
-  status: string;
-  tags: string[];
-  dateRange: string;
-  source: string;
-  assignedTo: string;
-  isStarred: boolean | null;
+  search: string
+  status: string
+  tags: string[]
+  dateRange: string
+  source: string
+  assignedTo: string
+  isStarred: boolean | null
 }
 
 // No more mock data - all loaded from API
 
 interface ContactManagerProps {
-  organizationId: string;
+  organizationId: string
 }
 
 export default function ContactManager({ organizationId }: ContactManagerProps) {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [tags, setTags] = useState<Array<{ id: string; label: string; color: string }>>([]);
-  const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string }>>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
-  const [showFilters, setShowFilters] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [editingContact, setEditingContact] = useState<Contact | null>(null);
-  const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [tags, setTags] = useState<Array<{ id: string; label: string; color: string }>>([])
+  const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string }>>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([])
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
+  const [showFilters, setShowFilters] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [editingContact, setEditingContact] = useState<Contact | null>(null)
+  const [isLoadingForm, setIsLoadingForm] = useState(false)
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
     status: 'all',
@@ -95,23 +95,22 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
     dateRange: 'all',
     source: 'all',
     assignedTo: 'all',
-    isStarred: null
-  });
+    isStarred: null,
+  })
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { addToast } = useToast()
 
   // Load data on mount
   React.useEffect(() => {
-    Promise.all([loadContacts(), loadTags(), loadTeamMembers()])
-      .finally(() => setIsLoading(false));
-  }, [organizationId]);
+    Promise.all([loadContacts(), loadTags(), loadTeamMembers()]).finally(() => setIsLoading(false))
+  }, [organizationId])
 
   // Load contacts from API
   const loadContacts = async () => {
     try {
-      const res = await fetch(`/api/contacts?organization_id=${organizationId}`);
-      const data = await res.json();
+      const res = await fetch(`/api/contacts?organization_id=${organizationId}`)
+      const data = await res.json()
 
       if (data.contacts) {
         const formattedContacts = data.contacts.map((c: any) => ({
@@ -133,442 +132,463 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
           position: c.metadata?.position,
           location: c.metadata?.location,
           website: c.metadata?.website,
-          assignedTo: c.assigned_to
-        }));
-        setContacts(formattedContacts);
+          assignedTo: c.assigned_to,
+        }))
+        setContacts(formattedContacts)
       }
     } catch (error) {
-      console.error('Error loading contacts:', error);
+      console.error('Error loading contacts:', error)
       addToast({
         type: 'error',
         title: 'Error loading contacts',
-        message: 'Failed to load contacts from server'
-      });
+        message: 'Failed to load contacts from server',
+      })
     }
-  };
+  }
 
   // Load tags from API
   const loadTags = async () => {
     try {
-      const res = await fetch(`/api/tags?organization_id=${organizationId}`);
-      const data = await res.json();
+      const res = await fetch(`/api/tags?organization_id=${organizationId}`)
+      const data = await res.json()
 
       if (data.tags) {
         const formattedTags = data.tags.map((t: any) => ({
           id: t.name.toLowerCase().replace(/\s+/g, '-'),
           label: t.name,
-          color: t.color_class || 'bg-gray-100 text-gray-800'
-        }));
-        setTags(formattedTags);
+          color: t.color_class || 'bg-gray-100 text-gray-800',
+        }))
+        setTags(formattedTags)
       }
     } catch (error) {
-      console.error('Error loading tags:', error);
+      console.error('Error loading tags:', error)
     }
-  };
+  }
 
   // Load team members from API
   const loadTeamMembers = async () => {
     try {
-      const res = await fetch(`/api/admin/users?organization_id=${organizationId}`);
-      const data = await res.json();
+      const res = await fetch(`/api/admin/users?organization_id=${organizationId}`)
+      const data = await res.json()
 
       if (data.users) {
         const formattedMembers = data.users.map((u: any) => ({
           id: u.id,
-          name: u.full_name
-        }));
-        setTeamMembers(formattedMembers);
+          name: u.full_name,
+        }))
+        setTeamMembers(formattedMembers)
       }
     } catch (error) {
-      console.error('Error loading team members:', error);
+      console.error('Error loading team members:', error)
     }
-  };
+  }
 
   // Filter contacts based on current filters
   const filteredContacts = useMemo(() => {
     return contacts.filter(contact => {
       // Search filter
-      const searchTerm = filters.search.toLowerCase();
-      const matchesSearch = !searchTerm ||
+      const searchTerm = filters.search.toLowerCase()
+      const matchesSearch =
+        !searchTerm ||
         contact.firstName.toLowerCase().includes(searchTerm) ||
         contact.lastName.toLowerCase().includes(searchTerm) ||
         contact.email?.toLowerCase().includes(searchTerm) ||
         contact.phone.includes(searchTerm) ||
-        contact.company?.toLowerCase().includes(searchTerm);
+        contact.company?.toLowerCase().includes(searchTerm)
 
       // Status filter
-      const matchesStatus = filters.status === 'all' || contact.status === filters.status;
+      const matchesStatus = filters.status === 'all' || contact.status === filters.status
 
       // Tags filter
-      const matchesTags = filters.tags.length === 0 ||
-        filters.tags.some(tag => contact.tags.includes(tag));
+      const matchesTags =
+        filters.tags.length === 0 || filters.tags.some(tag => contact.tags.includes(tag))
 
       // Starred filter
-      const matchesStarred = filters.isStarred === null || contact.isStarred === filters.isStarred;
+      const matchesStarred = filters.isStarred === null || contact.isStarred === filters.isStarred
 
       // Source filter
-      const matchesSource = filters.source === 'all' || contact.source === filters.source;
+      const matchesSource = filters.source === 'all' || contact.source === filters.source
 
       // Assigned to filter
-      const matchesAssignment = filters.assignedTo === 'all' || contact.assignedTo === filters.assignedTo;
+      const matchesAssignment =
+        filters.assignedTo === 'all' || contact.assignedTo === filters.assignedTo
 
       // Date range filter (simplified)
-      const matchesDateRange = filters.dateRange === 'all'; // Implement date logic as needed
+      const matchesDateRange = filters.dateRange === 'all' // Implement date logic as needed
 
-      return matchesSearch && matchesStatus && matchesTags && matchesStarred &&
-             matchesSource && matchesAssignment && matchesDateRange;
-    });
-  }, [contacts, filters]);
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesTags &&
+        matchesStarred &&
+        matchesSource &&
+        matchesAssignment &&
+        matchesDateRange
+      )
+    })
+  }, [contacts, filters])
 
   // Handle contact selection
   const toggleContactSelection = useCallback((contactId: string) => {
     setSelectedContacts(prev =>
-      prev.includes(contactId)
-        ? prev.filter(id => id !== contactId)
-        : [...prev, contactId]
-    );
-  }, []);
+      prev.includes(contactId) ? prev.filter(id => id !== contactId) : [...prev, contactId]
+    )
+  }, [])
 
   // Select all contacts
   const toggleSelectAll = useCallback(() => {
     setSelectedContacts(prev =>
-      prev.length === filteredContacts.length
-        ? []
-        : filteredContacts.map(c => c.id)
-    );
-  }, [filteredContacts]);
+      prev.length === filteredContacts.length ? [] : filteredContacts.map(c => c.id)
+    )
+  }, [filteredContacts])
 
   // Star/Unstar contact
   const toggleStar = useCallback((contactId: string) => {
-    setContacts(prev => prev.map(contact =>
-      contact.id === contactId
-        ? { ...contact, isStarred: !contact.isStarred }
-        : contact
-    ));
-  }, []);
+    setContacts(prev =>
+      prev.map(contact =>
+        contact.id === contactId ? { ...contact, isStarred: !contact.isStarred } : contact
+      )
+    )
+  }, [])
 
   // Delete contacts
   const deleteContacts = useCallback((contactIds: string[]) => {
     if (confirm(`Are you sure you want to delete ${contactIds.length} contact(s)?`)) {
-      setContacts(prev => prev.filter(contact => !contactIds.includes(contact.id)));
-      setSelectedContacts([]);
+      setContacts(prev => prev.filter(contact => !contactIds.includes(contact.id)))
+      setSelectedContacts([])
     }
-  }, []);
+  }, [])
 
   // Export contacts
-  const exportContacts = useCallback((format: 'csv' | 'excel') => {
-    // Simulate export functionality
-    const contactsToExport = selectedContacts.length > 0
-      ? contacts.filter(c => selectedContacts.includes(c.id))
-      : filteredContacts;
+  const exportContacts = useCallback(
+    (format: 'csv' | 'excel') => {
+      // Simulate export functionality
+      const contactsToExport =
+        selectedContacts.length > 0
+          ? contacts.filter(c => selectedContacts.includes(c.id))
+          : filteredContacts
 
-    
-    // In real implementation, generate and download file
-    alert(`Exported ${contactsToExport.length} contacts as ${format.toUpperCase()}`);
-  }, [contacts, selectedContacts, filteredContacts]);
+      // In real implementation, generate and download file
+      alert(`Exported ${contactsToExport.length} contacts as ${format.toUpperCase()}`)
+    },
+    [contacts, selectedContacts, filteredContacts]
+  )
 
   // Import contacts
   const handleImport = useCallback((file: File) => {
     // Simulate import functionality
 
     // In real implementation, parse file and add contacts
-    setShowImportModal(false);
-    alert('Contacts imported successfully!');
-  }, []);
+    setShowImportModal(false)
+    alert('Contacts imported successfully!')
+  }, [])
 
   // Handle contact form submission
-  const handleContactSubmit = useCallback(async (formData: {
-    name: string;
-    phone_number: string;
-    email: string;
-    tags: string[];
-    notes: string;
-    metadata: Record<string, string>;
-  }, contactId?: string) => {
-    setIsLoadingForm(true);
+  const handleContactSubmit = useCallback(
+    async (
+      formData: {
+        name: string
+        phone_number: string
+        email: string
+        tags: string[]
+        notes: string
+        metadata: Record<string, string>
+      },
+      contactId?: string
+    ) => {
+      setIsLoadingForm(true)
 
-    try {
-      const url = contactId ? `/api/contacts/${contactId}` : '/api/contacts';
-      const method = contactId ? 'PUT' : 'POST';
+      try {
+        const url = contactId ? `/api/contacts/${contactId}` : '/api/contacts'
+        const method = contactId ? 'PUT' : 'POST'
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
 
-      const data = await response.json();
+        const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to save contact');
-      }
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save contact')
+        }
 
-      // Update contacts list
-      if (contactId) {
-        // Update existing contact in the list
-        setContacts(prev => prev.map(c => {
-          if (c.id === contactId) {
-            return {
-              ...c,
-              firstName: formData.name.split(' ')[0] || '',
-              lastName: formData.name.split(' ').slice(1).join(' ') || '',
-              email: formData.email || undefined,
-              tags: formData.tags,
-              notes: formData.notes,
-              customFields: formData.metadata,
-            };
+        // Update contacts list
+        if (contactId) {
+          // Update existing contact in the list
+          setContacts(prev =>
+            prev.map(c => {
+              if (c.id === contactId) {
+                return {
+                  ...c,
+                  firstName: formData.name.split(' ')[0] || '',
+                  lastName: formData.name.split(' ').slice(1).join(' ') || '',
+                  email: formData.email || undefined,
+                  tags: formData.tags,
+                  notes: formData.notes,
+                  customFields: formData.metadata,
+                }
+              }
+              return c
+            })
+          )
+
+          addToast({
+            type: 'success',
+            title: 'Contact updated',
+            message: 'Contact has been updated successfully',
+          })
+        } else {
+          // Add new contact to the list
+          const newContact: Contact = {
+            id: data.id || Date.now().toString(),
+            firstName: formData.name.split(' ')[0] || '',
+            lastName: formData.name.split(' ').slice(1).join(' ') || '',
+            phone: formData.phone_number,
+            email: formData.email || undefined,
+            tags: formData.tags,
+            notes: formData.notes,
+            customFields: formData.metadata,
+            status: 'active',
+            isStarred: false,
+            lastContact: new Date().toISOString().split('T')[0],
+            addedDate: new Date().toISOString().split('T')[0],
+            totalMessages: 0,
+            source: 'manual',
           }
-          return c;
-        }));
 
+          setContacts(prev => [newContact, ...prev])
+
+          addToast({
+            type: 'success',
+            title: 'Contact created',
+            message: 'New contact has been added successfully',
+          })
+        }
+
+        // Close modal
+        setShowContactModal(false)
+        setEditingContact(null)
+      } catch (error) {
+        console.error('Error saving contact:', error)
         addToast({
-          type: 'success',
-          title: 'Contact updated',
-          message: 'Contact has been updated successfully',
-        });
-      } else {
-        // Add new contact to the list
-        const newContact: Contact = {
-          id: data.id || Date.now().toString(),
-          firstName: formData.name.split(' ')[0] || '',
-          lastName: formData.name.split(' ').slice(1).join(' ') || '',
-          phone: formData.phone_number,
-          email: formData.email || undefined,
-          tags: formData.tags,
-          notes: formData.notes,
-          customFields: formData.metadata,
-          status: 'active',
-          isStarred: false,
-          lastContact: new Date().toISOString().split('T')[0],
-          addedDate: new Date().toISOString().split('T')[0],
-          totalMessages: 0,
-          source: 'manual',
-        };
-
-        setContacts(prev => [newContact, ...prev]);
-
-        addToast({
-          type: 'success',
-          title: 'Contact created',
-          message: 'New contact has been added successfully',
-        });
+          type: 'error',
+          title: 'Error',
+          message: error instanceof Error ? error.message : 'Failed to save contact',
+        })
+      } finally {
+        setIsLoadingForm(false)
       }
-
-      // Close modal
-      setShowContactModal(false);
-      setEditingContact(null);
-    } catch (error) {
-      console.error('Error saving contact:', error);
-      addToast({
-        type: 'error',
-        title: 'Error',
-        message: error instanceof Error ? error.message : 'Failed to save contact',
-      });
-    } finally {
-      setIsLoadingForm(false);
-    }
-  }, [addToast]);
+    },
+    [addToast]
+  )
 
   // Contact card component for grid view
   const ContactCard: React.FC<{ contact: Contact }> = ({ contact }) => (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-3">
+    <div className='rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md'>
+      <div className='mb-3 flex items-start justify-between'>
+        <div className='flex items-center space-x-3'>
           <input
-            type="checkbox"
+            type='checkbox'
             title={`Select contact ${contact.firstName} ${contact.lastName}`}
             checked={selectedContacts.includes(contact.id)}
             onChange={() => toggleContactSelection(contact.id)}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
           />
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300'>
             {contact.avatar ? (
-              <img src={contact.avatar} alt="" className="w-10 h-10 rounded-full" />
+              <img src={contact.avatar} alt='' className='h-10 w-10 rounded-full' />
             ) : (
-              <span className="text-sm font-medium text-gray-600">
-                {contact.firstName[0]}{contact.lastName[0]}
+              <span className='text-sm font-medium text-gray-600'>
+                {contact.firstName[0]}
+                {contact.lastName[0]}
               </span>
             )}
           </div>
         </div>
-        <div className="flex items-center space-x-1">
+        <div className='flex items-center space-x-1'>
           <button
-            type="button"
+            type='button'
             onClick={() => toggleStar(contact.id)}
-            className="text-gray-400 hover:text-yellow-500"
-            aria-label="Star contact"
+            className='text-gray-400 hover:text-yellow-500'
+            aria-label='Star contact'
           >
             {contact.isStarred ? (
-              <StarIconSolid className="w-4 h-4 text-yellow-500" />
+              <StarIconSolid className='h-4 w-4 text-yellow-500' />
             ) : (
-              <StarIcon className="w-4 h-4" />
+              <StarIcon className='h-4 w-4' />
             )}
           </button>
-          <button type="button" className="text-gray-400 hover:text-gray-600" aria-label="More options">
-            <EllipsisVerticalIcon className="w-4 h-4" />
+          <button
+            type='button'
+            className='text-gray-400 hover:text-gray-600'
+            aria-label='More options'
+          >
+            <EllipsisVerticalIcon className='h-4 w-4' />
           </button>
         </div>
       </div>
 
-      <div className="mb-3">
-        <h3 className="font-medium text-gray-900">
+      <div className='mb-3'>
+        <h3 className='font-medium text-gray-900'>
           {contact.firstName} {contact.lastName}
         </h3>
         {contact.position && contact.company && (
-          <p className="text-sm text-gray-600">
+          <p className='text-sm text-gray-600'>
             {contact.position} at {contact.company}
           </p>
         )}
       </div>
 
-      <div className="space-y-2 text-sm text-gray-600 mb-3">
+      <div className='mb-3 space-y-2 text-sm text-gray-600'>
         {contact.phone && (
-          <div className="flex items-center">
-            <PhoneIcon className="w-4 h-4 mr-2" />
+          <div className='flex items-center'>
+            <PhoneIcon className='mr-2 h-4 w-4' />
             {contact.phone}
           </div>
         )}
         {contact.email && (
-          <div className="flex items-center">
-            <EnvelopeIcon className="w-4 h-4 mr-2" />
+          <div className='flex items-center'>
+            <EnvelopeIcon className='mr-2 h-4 w-4' />
             {contact.email}
           </div>
         )}
         {contact.location && (
-          <div className="flex items-center">
-            <MapPinIcon className="w-4 h-4 mr-2" />
+          <div className='flex items-center'>
+            <MapPinIcon className='mr-2 h-4 w-4' />
             {contact.location}
           </div>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-1 mb-3">
+      <div className='mb-3 flex flex-wrap gap-1'>
         {contact.tags.slice(0, 3).map(tagId => {
-          const tag = tags.find(t => t.id === tagId);
+          const tag = tags.find(t => t.id === tagId)
           return tag ? (
-            <span key={tagId} className={`px-2 py-1 text-xs rounded-full ${tag.color}`}>
+            <span key={tagId} className={`rounded-full px-2 py-1 text-xs ${tag.color}`}>
               {tag.label}
             </span>
-          ) : null;
+          ) : null
         })}
         {contact.tags.length > 3 && (
-          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
+          <span className='rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600'>
             +{contact.tags.length - 3}
           </span>
         )}
       </div>
 
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className='flex items-center justify-between text-xs text-gray-500'>
         <span>{contact.totalMessages} messages</span>
         <span>Last: {contact.lastContact}</span>
       </div>
     </div>
-  );
+  )
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className='flex h-screen flex-col bg-gray-50'>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Contacts</h1>
-              <span className="text-sm text-gray-500">
+      <div className='border-b border-gray-200 bg-white'>
+        <div className='px-6 py-4'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center space-x-4'>
+              <h1 className='text-2xl font-bold text-gray-900'>Contacts</h1>
+              <span className='text-sm text-gray-500'>
                 {filteredContacts.length} of {contacts.length} contacts
               </span>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className='flex items-center space-x-3'>
               {/* View Toggle */}
-              <div className="flex border border-gray-300 rounded-lg">
+              <div className='flex rounded-lg border border-gray-300'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setViewMode('table')}
                   className={`p-2 ${viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
-                  aria-label="Table view"
+                  aria-label='Table view'
                 >
-                  <TableCellsIcon className="w-4 h-4" />
+                  <TableCellsIcon className='h-4 w-4' />
                 </button>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setViewMode('grid')}
                   className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
-                  aria-label="Grid view"
+                  aria-label='Grid view'
                 >
-                  <Bars3Icon className="w-4 h-4" />
+                  <Bars3Icon className='h-4 w-4' />
                 </button>
               </div>
 
               <button
-                type="button"
+                type='button'
                 onClick={() => setShowImportModal(true)}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className='flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
               >
-                <DocumentArrowUpIcon className="w-4 h-4 mr-2" />
+                <DocumentArrowUpIcon className='mr-2 h-4 w-4' />
                 Import
               </button>
 
               <button
-                type="button"
+                type='button'
                 onClick={() => exportContacts('csv')}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className='flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
               >
-                <DocumentArrowDownIcon className="w-4 h-4 mr-2" />
+                <DocumentArrowDownIcon className='mr-2 h-4 w-4' />
                 Export
               </button>
 
               <button
-                type="button"
+                type='button'
                 onClick={() => {
-                  setEditingContact(null);
-                  setShowContactModal(true);
+                  setEditingContact(null)
+                  setShowContactModal(true)
                 }}
-                className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                className='flex items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700'
               >
-                <UserPlusIcon className="w-4 h-4 mr-2" />
+                <UserPlusIcon className='mr-2 h-4 w-4' />
                 Add Contact
               </button>
             </div>
           </div>
 
           {/* Search and Filters */}
-          <div className="mt-4 flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className='mt-4 flex items-center space-x-4'>
+            <div className='relative flex-1'>
+              <MagnifyingGlassIcon className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
               <input
-                type="text"
-                placeholder="Search contacts..."
+                type='text'
+                placeholder='Search contacts...'
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                className='w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none'
               />
             </div>
 
             <button
-              type="button"
+              type='button'
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
-                showFilters ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium ${
+                showFilters
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <FunnelIcon className="w-4 h-4 mr-2" />
+              <FunnelIcon className='mr-2 h-4 w-4' />
               Filters
             </button>
 
             {selectedContacts.length > 0 && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
-                  {selectedContacts.length} selected
-                </span>
+              <div className='flex items-center space-x-2'>
+                <span className='text-sm text-gray-600'>{selectedContacts.length} selected</span>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => deleteContacts(selectedContacts)}
-                  className="text-red-600 hover:text-red-700"
-                  aria-label="Delete selected contacts"
+                  className='text-red-600 hover:text-red-700'
+                  aria-label='Delete selected contacts'
                 >
-                  <TrashIcon className="w-4 h-4" />
+                  <TrashIcon className='h-4 w-4' />
                 </button>
               </div>
             )}
@@ -576,70 +596,74 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className='mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4'>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>Status</label>
                   <select
-                    title="Filter by contact status"
+                    title='Filter by contact status'
                     value={filters.status}
-                    onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value="all">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="blocked">Blocked</option>
+                    <option value='all'>All Statuses</option>
+                    <option value='active'>Active</option>
+                    <option value='inactive'>Inactive</option>
+                    <option value='blocked'>Blocked</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>Source</label>
                   <select
-                    title="Filter by contact source"
+                    title='Filter by contact source'
                     value={filters.source}
-                    onChange={(e) => setFilters(prev => ({ ...prev, source: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    onChange={e => setFilters(prev => ({ ...prev, source: e.target.value }))}
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value="all">All Sources</option>
-                    <option value="whatsapp">WhatsApp</option>
-                    <option value="manual">Manual</option>
-                    <option value="import">Import</option>
-                    <option value="api">API</option>
+                    <option value='all'>All Sources</option>
+                    <option value='whatsapp'>WhatsApp</option>
+                    <option value='manual'>Manual</option>
+                    <option value='import'>Import</option>
+                    <option value='api'>API</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>
+                    Assigned To
+                  </label>
                   <select
-                    title="Filter by assigned team member"
+                    title='Filter by assigned team member'
                     value={filters.assignedTo}
-                    onChange={(e) => setFilters(prev => ({ ...prev, assignedTo: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    onChange={e => setFilters(prev => ({ ...prev, assignedTo: e.target.value }))}
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value="all">All Team Members</option>
+                    <option value='all'>All Team Members</option>
                     {teamMembers.map(member => (
-                      <option key={member.id} value={member.name}>{member.name}</option>
+                      <option key={member.id} value={member.name}>
+                        {member.name}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-                  <div className="flex flex-wrap gap-2">
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>Tags</label>
+                  <div className='flex flex-wrap gap-2'>
                     {tags.slice(0, 4).map(tag => (
                       <button
-                        type="button"
+                        type='button'
                         key={tag.id}
                         onClick={() => {
                           setFilters(prev => ({
                             ...prev,
                             tags: prev.tags.includes(tag.id)
                               ? prev.tags.filter(t => t !== tag.id)
-                              : [...prev.tags, tag.id]
-                          }));
+                              : [...prev.tags, tag.id],
+                          }))
                         }}
-                        className={`px-2 py-1 text-xs rounded-full transition-colors ${
+                        className={`rounded-full px-2 py-1 text-xs transition-colors ${
                           filters.tags.includes(tag.id)
                             ? tag.color
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -652,34 +676,38 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <label className="flex items-center">
+              <div className='mt-4 flex items-center justify-between'>
+                <div className='flex items-center space-x-4'>
+                  <label className='flex items-center'>
                     <input
-                      type="checkbox"
+                      type='checkbox'
                       checked={filters.isStarred === true}
-                      onChange={(e) => setFilters(prev => ({
-                        ...prev,
-                        isStarred: e.target.checked ? true : null
-                      }))}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      onChange={e =>
+                        setFilters(prev => ({
+                          ...prev,
+                          isStarred: e.target.checked ? true : null,
+                        }))
+                      }
+                      className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                     />
-                    <span className="ml-2 text-sm text-gray-700">Starred only</span>
+                    <span className='ml-2 text-sm text-gray-700'>Starred only</span>
                   </label>
                 </div>
 
                 <button
-                  type="button"
-                  onClick={() => setFilters({
-                    search: '',
-                    status: 'all',
-                    tags: [],
-                    dateRange: 'all',
-                    source: 'all',
-                    assignedTo: 'all',
-                    isStarred: null
-                  })}
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  type='button'
+                  onClick={() =>
+                    setFilters({
+                      search: '',
+                      status: 'all',
+                      tags: [],
+                      dateRange: 'all',
+                      source: 'all',
+                      assignedTo: 'all',
+                      isStarred: null,
+                    })
+                  }
+                  className='text-sm text-blue-600 hover:text-blue-700'
                 >
                   Clear Filters
                 </button>
@@ -690,153 +718,160 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className='flex-1 overflow-hidden'>
         {viewMode === 'table' ? (
           /* Table View */
-          <div className="h-full overflow-y-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 sticky top-0">
+          <div className='h-full overflow-y-auto'>
+            <table className='w-full'>
+              <thead className='sticky top-0 bg-gray-50'>
                 <tr>
-                  <th className="w-12 px-6 py-3">
+                  <th className='w-12 px-6 py-3'>
                     <input
-                      type="checkbox"
-                      title="Select all contacts"
-                      checked={selectedContacts.length === filteredContacts.length && filteredContacts.length > 0}
+                      type='checkbox'
+                      title='Select all contacts'
+                      checked={
+                        selectedContacts.length === filteredContacts.length &&
+                        filteredContacts.length > 0
+                      }
                       onChange={toggleSelectAll}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                     />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Company
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Contact Info
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Tags
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Last Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className='divide-y divide-gray-200 bg-white'>
                 {filteredContacts.map(contact => (
-                  <tr key={contact.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
+                  <tr key={contact.id} className='hover:bg-gray-50'>
+                    <td className='px-6 py-4'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         title={`Select ${contact.firstName} ${contact.lastName}`}
                         checked={selectedContacts.includes(contact.id)}
                         onChange={() => toggleContactSelection(contact.id)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                       />
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center'>
+                        <div className='mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-300'>
                           {contact.avatar ? (
-                            <img src={contact.avatar} alt="" className="w-8 h-8 rounded-full" />
+                            <img src={contact.avatar} alt='' className='h-8 w-8 rounded-full' />
                           ) : (
-                            <span className="text-xs font-medium text-gray-600">
-                              {contact.firstName[0]}{contact.lastName[0]}
+                            <span className='text-xs font-medium text-gray-600'>
+                              {contact.firstName[0]}
+                              {contact.lastName[0]}
                             </span>
                           )}
                         </div>
                         <div>
-                          <div className="flex items-center">
-                            <span className="text-sm font-medium text-gray-900">
+                          <div className='flex items-center'>
+                            <span className='text-sm font-medium text-gray-900'>
                               {contact.firstName} {contact.lastName}
                             </span>
                             {contact.isStarred && (
-                              <StarIconSolid className="w-4 h-4 text-yellow-500 ml-1" />
+                              <StarIconSolid className='ml-1 h-4 w-4 text-yellow-500' />
                             )}
                           </div>
                           {contact.position && (
-                            <div className="text-sm text-gray-500">{contact.position}</div>
+                            <div className='text-sm text-gray-500'>{contact.position}</div>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {contact.company || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{contact.phone}</div>
+                    <td className='px-6 py-4 text-sm text-gray-900'>{contact.company || '-'}</td>
+                    <td className='px-6 py-4'>
+                      <div className='text-sm text-gray-900'>{contact.phone}</div>
                       {contact.email && (
-                        <div className="text-sm text-gray-500">{contact.email}</div>
+                        <div className='text-sm text-gray-500'>{contact.email}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
+                    <td className='px-6 py-4'>
+                      <div className='flex flex-wrap gap-1'>
                         {contact.tags.slice(0, 2).map(tagId => {
-                          const tag = tags.find(t => t.id === tagId);
+                          const tag = tags.find(t => t.id === tagId)
                           return tag ? (
-                            <span key={tagId} className={`px-2 py-1 text-xs rounded-full ${tag.color}`}>
+                            <span
+                              key={tagId}
+                              className={`rounded-full px-2 py-1 text-xs ${tag.color}`}
+                            >
                               {tag.label}
                             </span>
-                          ) : null;
+                          ) : null
                         })}
                         {contact.tags.length > 2 && (
-                          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
+                          <span className='rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600'>
                             +{contact.tags.length - 2}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        contact.status === 'active' ? 'bg-green-100 text-green-800' :
-                        contact.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
+                    <td className='px-6 py-4'>
+                      <span
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                          contact.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : contact.status === 'inactive'
+                              ? 'bg-gray-100 text-gray-800'
+                              : 'bg-red-100 text-red-800'
+                        }`}
+                      >
                         {contact.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {contact.lastContact}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
+                    <td className='px-6 py-4 text-sm text-gray-500'>{contact.lastContact}</td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center space-x-2'>
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => toggleStar(contact.id)}
-                          className="text-gray-400 hover:text-yellow-500"
-                          aria-label="Star contact"
+                          className='text-gray-400 hover:text-yellow-500'
+                          aria-label='Star contact'
                         >
                           {contact.isStarred ? (
-                            <StarIconSolid className="w-4 h-4 text-yellow-500" />
+                            <StarIconSolid className='h-4 w-4 text-yellow-500' />
                           ) : (
-                            <StarIcon className="w-4 h-4" />
+                            <StarIcon className='h-4 w-4' />
                           )}
                         </button>
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => {
-                            setEditingContact(contact);
-                            setShowContactModal(true);
+                            setEditingContact(contact)
+                            setShowContactModal(true)
                           }}
-                          className="text-gray-400 hover:text-blue-600"
-                          aria-label="Edit contact"
+                          className='text-gray-400 hover:text-blue-600'
+                          aria-label='Edit contact'
                         >
-                          <PencilIcon className="w-4 h-4" />
+                          <PencilIcon className='h-4 w-4' />
                         </button>
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => deleteContacts([contact.id])}
-                          className="text-gray-400 hover:text-red-600"
-                          aria-label="Delete contact"
+                          className='text-gray-400 hover:text-red-600'
+                          aria-label='Delete contact'
                         >
-                          <TrashIcon className="w-4 h-4" />
+                          <TrashIcon className='h-4 w-4' />
                         </button>
                       </div>
                     </td>
@@ -846,22 +881,21 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
             </table>
 
             {filteredContacts.length === 0 && (
-              <div className="text-center py-12">
-                <UserGroupIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
-                <p className="text-gray-500 mb-4">
+              <div className='py-12 text-center'>
+                <UserGroupIcon className='mx-auto mb-4 h-12 w-12 text-gray-400' />
+                <h3 className='mb-2 text-lg font-medium text-gray-900'>No contacts found</h3>
+                <p className='mb-4 text-gray-500'>
                   {filters.search || filters.status !== 'all' || filters.tags.length > 0
                     ? 'Try adjusting your filters'
-                    : 'Get started by adding your first contact'
-                  }
+                    : 'Get started by adding your first contact'}
                 </p>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => {
-                    setEditingContact(null);
-                    setShowContactModal(true);
+                    setEditingContact(null)
+                    setShowContactModal(true)
                   }}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'
                 >
                   Add Contact
                 </button>
@@ -870,30 +904,29 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
           </div>
         ) : (
           /* Grid View */
-          <div className="p-6 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className='overflow-y-auto p-6'>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {filteredContacts.map(contact => (
                 <ContactCard key={contact.id} contact={contact} />
               ))}
             </div>
 
             {filteredContacts.length === 0 && (
-              <div className="text-center py-12">
-                <UserGroupIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
-                <p className="text-gray-500 mb-4">
+              <div className='py-12 text-center'>
+                <UserGroupIcon className='mx-auto mb-4 h-12 w-12 text-gray-400' />
+                <h3 className='mb-2 text-lg font-medium text-gray-900'>No contacts found</h3>
+                <p className='mb-4 text-gray-500'>
                   {filters.search || filters.status !== 'all' || filters.tags.length > 0
                     ? 'Try adjusting your filters'
-                    : 'Get started by adding your first contact'
-                  }
+                    : 'Get started by adding your first contact'}
                 </p>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => {
-                    setEditingContact(null);
-                    setShowContactModal(true);
+                    setEditingContact(null)
+                    setShowContactModal(true)
                   }}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'
                 >
                   Add Contact
                 </button>
@@ -905,47 +938,47 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
       {/* Import Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">Import Contacts</h2>
+        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
+          <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
+            <div className='flex items-center justify-between border-b border-gray-200 p-6'>
+              <h2 className='text-lg font-medium text-gray-900'>Import Contacts</h2>
               <button
-                type="button"
+                type='button'
                 onClick={() => setShowImportModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-                aria-label="Close import modal"
+                className='text-gray-400 hover:text-gray-600'
+                aria-label='Close import modal'
               >
-                <XMarkIcon className="w-5 h-5" />
+                <XMarkIcon className='h-5 w-5' />
               </button>
             </div>
 
-            <div className="p-6">
-              <div className="space-y-4">
+            <div className='p-6'>
+              <div className='space-y-4'>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className='mb-2 block text-sm font-medium text-gray-700'>
                     Select File
                   </label>
                   <input
                     ref={fileInputRef}
-                    type="file"
-                    title="Select CSV or Excel file to import contacts"
-                    accept=".csv,.xlsx,.xls"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
+                    type='file'
+                    title='Select CSV or Excel file to import contacts'
+                    accept='.csv,.xlsx,.xls'
+                    onChange={e => {
+                      const file = e.target.files?.[0]
                       if (file) {
-                        handleImport(file);
+                        handleImport(file)
                       }
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className='w-full rounded-md border border-gray-300 px-3 py-2'
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className='mt-1 text-xs text-gray-500'>
                     Supported formats: CSV, Excel (.xlsx, .xls)
                   </p>
                 </div>
 
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Required Columns</h4>
-                  <ul className="text-xs text-gray-600 space-y-1">
+                <div className='border-t border-gray-200 pt-4'>
+                  <h4 className='mb-2 text-sm font-medium text-gray-900'>Required Columns</h4>
+                  <ul className='space-y-1 text-xs text-gray-600'>
                     <li>• first_name (required)</li>
                     <li>• last_name (required)</li>
                     <li>• phone (required)</li>
@@ -957,11 +990,11 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
+            <div className='flex justify-end space-x-3 border-t border-gray-200 p-6'>
               <button
-                type="button"
+                type='button'
                 onClick={() => setShowImportModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className='rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
               >
                 Cancel
               </button>
@@ -972,41 +1005,45 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
       {/* Contact Modal (Add/Edit) */}
       {showContactModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
-              <h2 className="text-lg font-medium text-gray-900">
+        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4'>
+          <div className='flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white shadow-xl'>
+            <div className='flex flex-shrink-0 items-center justify-between border-b border-gray-200 p-6'>
+              <h2 className='text-lg font-medium text-gray-900'>
                 {editingContact ? 'Edit Contact' : 'Add New Contact'}
               </h2>
               <button
-                type="button"
+                type='button'
                 onClick={() => {
-                  setShowContactModal(false);
-                  setEditingContact(null);
+                  setShowContactModal(false)
+                  setEditingContact(null)
                 }}
                 disabled={isLoadingForm}
-                className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
-                aria-label="Close contact modal"
+                className='text-gray-400 hover:text-gray-600 disabled:opacity-50'
+                aria-label='Close contact modal'
               >
-                <XMarkIcon className="w-5 h-5" />
+                <XMarkIcon className='h-5 w-5' />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className='flex-1 overflow-y-auto p-6'>
               <ContactForm
-                contact={editingContact ? {
-                  id: editingContact.id,
-                  name: `${editingContact.firstName} ${editingContact.lastName}`,
-                  phone_number: editingContact.phone,
-                  email: editingContact.email,
-                  tags: editingContact.tags,
-                  notes: editingContact.notes,
-                  metadata: editingContact.customFields,
-                } : null}
+                contact={
+                  editingContact
+                    ? {
+                        id: editingContact.id,
+                        name: `${editingContact.firstName} ${editingContact.lastName}`,
+                        phone_number: editingContact.phone,
+                        email: editingContact.email,
+                        tags: editingContact.tags,
+                        notes: editingContact.notes,
+                        metadata: editingContact.customFields,
+                      }
+                    : null
+                }
                 onSubmit={handleContactSubmit}
                 onCancel={() => {
-                  setShowContactModal(false);
-                  setEditingContact(null);
+                  setShowContactModal(false)
+                  setEditingContact(null)
                 }}
                 isLoading={isLoadingForm}
               />
@@ -1015,5 +1052,5 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
         </div>
       )}
     </div>
-  );
+  )
 }

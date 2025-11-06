@@ -12,11 +12,11 @@
  */
 export interface EncryptedField {
   /** Base64 encoded: IV + ciphertext + authTag */
-  encrypted: string;
+  encrypted: string
   /** Version identifier for key rotation (v1, v2, etc.) */
-  version: string;
+  version: string
   /** Optional algorithm identifier for future flexibility */
-  algorithm?: string;
+  algorithm?: string
 }
 
 /**
@@ -24,15 +24,15 @@ export interface EncryptedField {
  */
 export interface EncryptionConfig {
   /** Master encryption key (32 bytes for AES-256) */
-  key: Buffer;
+  key: Buffer
   /** Current key version */
-  version: string;
+  version: string
   /** Algorithm to use (default: aes-256-gcm) */
-  algorithm?: string;
+  algorithm?: string
   /** IV length in bytes (default: 12 for GCM) */
-  ivLength?: number;
+  ivLength?: number
   /** Auth tag length in bytes (default: 16 for GCM) */
-  authTagLength?: number;
+  authTagLength?: number
 }
 
 /**
@@ -40,15 +40,15 @@ export interface EncryptionConfig {
  */
 export interface EncryptionResult {
   /** Encrypted data as base64 string */
-  encrypted: string;
+  encrypted: string
   /** Key version used */
-  version: string;
+  version: string
   /** Algorithm used */
-  algorithm: string;
+  algorithm: string
   /** Initialization vector (base64) */
-  iv: string;
+  iv: string
   /** Authentication tag (base64) */
-  authTag: string;
+  authTag: string
 }
 
 /**
@@ -56,11 +56,11 @@ export interface EncryptionResult {
  */
 export interface DecryptionResult {
   /** Decrypted plaintext */
-  plaintext: string;
+  plaintext: string
   /** Key version that was used */
-  version: string;
+  version: string
   /** Algorithm that was used */
-  algorithm: string;
+  algorithm: string
 }
 
 /**
@@ -68,11 +68,11 @@ export interface DecryptionResult {
  */
 export interface BatchEncryptRequest {
   /** Field name */
-  field: string;
+  field: string
   /** Value to encrypt */
-  value: string | null;
+  value: string | null
   /** Record ID for tracking */
-  id: string;
+  id: string
 }
 
 /**
@@ -80,15 +80,15 @@ export interface BatchEncryptRequest {
  */
 export interface BatchEncryptResult {
   /** Record ID */
-  id: string;
+  id: string
   /** Field name */
-  field: string;
+  field: string
   /** Encrypted value */
-  encrypted: string | null;
+  encrypted: string | null
   /** Whether encryption succeeded */
-  success: boolean;
+  success: boolean
   /** Error message if failed */
-  error?: string;
+  error?: string
 }
 
 /**
@@ -96,11 +96,11 @@ export interface BatchEncryptResult {
  */
 export interface BatchDecryptRequest {
   /** Field name */
-  field: string;
+  field: string
   /** Encrypted value */
-  encrypted: string | null;
+  encrypted: string | null
   /** Record ID for tracking */
-  id: string;
+  id: string
 }
 
 /**
@@ -108,15 +108,15 @@ export interface BatchDecryptRequest {
  */
 export interface BatchDecryptResult {
   /** Record ID */
-  id: string;
+  id: string
   /** Field name */
-  field: string;
+  field: string
   /** Decrypted value */
-  decrypted: string | null;
+  decrypted: string | null
   /** Whether decryption succeeded */
-  success: boolean;
+  success: boolean
   /** Error message if failed */
-  error?: string;
+  error?: string
 }
 
 /**
@@ -124,25 +124,25 @@ export interface BatchDecryptResult {
  */
 export interface EncryptionAuditLog {
   /** Timestamp of operation */
-  timestamp: Date;
+  timestamp: Date
   /** Operation type */
-  operation: 'encrypt' | 'decrypt' | 'batch_encrypt' | 'batch_decrypt';
+  operation: 'encrypt' | 'decrypt' | 'batch_encrypt' | 'batch_decrypt'
   /** Table name */
-  table?: string;
+  table?: string
   /** Field name */
-  field?: string;
+  field?: string
   /** Record ID */
-  recordId?: string;
+  recordId?: string
   /** Number of records processed (for batch) */
-  recordCount?: number;
+  recordCount?: number
   /** Whether operation succeeded */
-  success: boolean;
+  success: boolean
   /** Error message if failed */
-  error?: string;
+  error?: string
   /** User ID who performed operation */
-  userId?: string;
+  userId?: string
   /** Organization ID */
-  organizationId?: string;
+  organizationId?: string
 }
 
 /**
@@ -150,33 +150,33 @@ export interface EncryptionAuditLog {
  */
 export interface MigrationProgress {
   /** Table being migrated */
-  table: string;
+  table: string
   /** Total records to migrate */
-  total: number;
+  total: number
   /** Records processed so far */
-  processed: number;
+  processed: number
   /** Records successfully encrypted */
-  successful: number;
+  successful: number
   /** Records that failed */
-  failed: number;
+  failed: number
   /** Start time */
-  startedAt: Date;
+  startedAt: Date
   /** End time (if completed) */
-  completedAt?: Date;
+  completedAt?: Date
   /** Current status */
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status: 'pending' | 'in_progress' | 'completed' | 'failed'
   /** Error message if failed */
-  error?: string;
+  error?: string
 }
 
 /**
  * Fields that require encryption by table
  */
 export interface EncryptedFieldsMap {
-  contacts: string[];
-  profiles: string[];
-  api_keys?: string[];
-  whatsapp_credentials?: string[];
+  contacts: string[]
+  profiles: string[]
+  api_keys?: string[]
+  whatsapp_credentials?: string[]
 }
 
 /**
@@ -187,7 +187,7 @@ export const ENCRYPTED_FIELDS: EncryptedFieldsMap = {
   profiles: ['email'],
   api_keys: ['key_value', 'secret'],
   whatsapp_credentials: ['access_token', 'phone_number_id', 'business_account_id'],
-};
+}
 
 /**
  * Encryption constants
@@ -207,29 +207,41 @@ export const ENCRYPTION_CONSTANTS = {
   ENCODING: 'base64' as const,
   /** UTF-8 encoding for strings */
   STRING_ENCODING: 'utf8' as const,
-} as const;
+} as const
 
 /**
  * Error types for encryption operations
  */
 export class EncryptionError extends Error {
-  constructor(message: string, public code: string, public details?: unknown) {
-    super(message);
-    this.name = 'EncryptionError';
+  constructor(
+    message: string,
+    public code: string,
+    public details?: unknown
+  ) {
+    super(message)
+    this.name = 'EncryptionError'
   }
 }
 
 export class DecryptionError extends Error {
-  constructor(message: string, public code: string, public details?: unknown) {
-    super(message);
-    this.name = 'DecryptionError';
+  constructor(
+    message: string,
+    public code: string,
+    public details?: unknown
+  ) {
+    super(message)
+    this.name = 'DecryptionError'
   }
 }
 
 export class KeyManagementError extends Error {
-  constructor(message: string, public code: string, public details?: unknown) {
-    super(message);
-    this.name = 'KeyManagementError';
+  constructor(
+    message: string,
+    public code: string,
+    public details?: unknown
+  ) {
+    super(message)
+    this.name = 'KeyManagementError'
   }
 }
 
@@ -238,16 +250,16 @@ export class KeyManagementError extends Error {
  */
 export interface ValidationResult {
   /** Whether validation passed */
-  valid: boolean;
+  valid: boolean
   /** Error message if invalid */
-  error?: string;
+  error?: string
   /** Details about the validation */
   details?: {
-    hasVersion?: boolean;
-    hasEncrypted?: boolean;
-    isBase64?: boolean;
-    hasValidStructure?: boolean;
-  };
+    hasVersion?: boolean
+    hasEncrypted?: boolean
+    isBase64?: boolean
+    hasValidStructure?: boolean
+  }
 }
 
 /**
@@ -261,12 +273,12 @@ export function isEncryptedField(value: unknown): value is EncryptedField {
     'version' in value &&
     typeof (value as EncryptedField).encrypted === 'string' &&
     typeof (value as EncryptedField).version === 'string'
-  );
+  )
 }
 
 /**
  * Type guard to check if value needs encryption
  */
 export function needsEncryption(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0;
+  return typeof value === 'string' && value.length > 0
 }

@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 
 export interface BulkOperation {
@@ -59,7 +58,9 @@ export class BulkOperationQueue {
     this.supabase = createClient()
   }
 
-  async createOperation(operation: Omit<BulkOperation, 'id' | 'createdAt' | 'processedItems' | 'failedItems'>): Promise<BulkOperation> {
+  async createOperation(
+    operation: Omit<BulkOperation, 'id' | 'createdAt' | 'processedItems' | 'failedItems'>
+  ): Promise<BulkOperation> {
     const supabase = await this.supabase
 
     const { data, error } = await supabase
@@ -73,7 +74,7 @@ export class BulkOperationQueue {
         processed_items: 0,
         failed_items: 0,
         configuration: operation.configuration,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single()
@@ -102,12 +103,15 @@ export class BulkOperationQueue {
     return this.mapDatabaseToOperation(data)
   }
 
-  async updateProgress(id: string, progress: { processedItems: number; failedItems?: number; results?: any }): Promise<void> {
+  async updateProgress(
+    id: string,
+    progress: { processedItems: number; failedItems?: number; results?: any }
+  ): Promise<void> {
     const supabase = await this.supabase
 
     const updateData: any = {
       processed_items: progress.processedItems,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     if (progress.failedItems !== undefined) {
@@ -118,10 +122,7 @@ export class BulkOperationQueue {
       updateData.results = progress.results
     }
 
-    const { error } = await supabase
-      .from('bulk_operations')
-      .update(updateData)
-      .eq('id', id)
+    const { error } = await supabase.from('bulk_operations').update(updateData).eq('id', id)
 
     if (error) {
       throw new Error(`Failed to update operation progress: ${error.message}`)
@@ -133,7 +134,7 @@ export class BulkOperationQueue {
 
     const updateData: any = {
       status,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     if (status === 'processing') {
@@ -156,12 +157,15 @@ export class BulkOperationQueue {
     }
   }
 
-  async listOperations(organizationId: string, options?: {
-    status?: BulkOperation['status']
-    type?: BulkOperation['type']
-    limit?: number
-    offset?: number
-  }): Promise<{ operations: BulkOperation[]; total: number }> {
+  async listOperations(
+    organizationId: string,
+    options?: {
+      status?: BulkOperation['status']
+      type?: BulkOperation['type']
+      limit?: number
+      offset?: number
+    }
+  ): Promise<{ operations: BulkOperation[]; total: number }> {
     const supabase = await this.supabase
 
     let query = supabase
@@ -182,7 +186,7 @@ export class BulkOperationQueue {
     }
 
     if (options?.offset) {
-      query = query.range(options.offset, (options.offset + (options.limit || 20)) - 1)
+      query = query.range(options.offset, options.offset + (options.limit || 20) - 1)
     }
 
     const { data, error, count } = await query.order('created_at', { ascending: false })
@@ -193,7 +197,7 @@ export class BulkOperationQueue {
 
     return {
       operations: (data || []).map(item => this.mapDatabaseToOperation(item)),
-      total: count || 0
+      total: count || 0,
     }
   }
 
@@ -204,7 +208,7 @@ export class BulkOperationQueue {
       .from('bulk_operations')
       .update({
         status: 'cancelled',
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('organization_id', organizationId)
@@ -247,7 +251,7 @@ export class BulkOperationQueue {
       error: data.error,
       createdAt: data.created_at,
       startedAt: data.started_at,
-      completedAt: data.completed_at
+      completedAt: data.completed_at,
     }
   }
 

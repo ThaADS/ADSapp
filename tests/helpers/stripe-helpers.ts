@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import Stripe from 'stripe'
 
 // =============================================================================
@@ -206,15 +205,24 @@ export function createCustomerDeletedEvent(customer?: Partial<Stripe.Customer>) 
 }
 
 export function createSubscriptionCreatedEvent(subscription?: Partial<Stripe.Subscription>) {
-  return createMockWebhookEvent('customer.subscription.created', createMockSubscription(subscription))
+  return createMockWebhookEvent(
+    'customer.subscription.created',
+    createMockSubscription(subscription)
+  )
 }
 
 export function createSubscriptionUpdatedEvent(subscription?: Partial<Stripe.Subscription>) {
-  return createMockWebhookEvent('customer.subscription.updated', createMockSubscription(subscription))
+  return createMockWebhookEvent(
+    'customer.subscription.updated',
+    createMockSubscription(subscription)
+  )
 }
 
 export function createSubscriptionDeletedEvent(subscription?: Partial<Stripe.Subscription>) {
-  return createMockWebhookEvent('customer.subscription.deleted', createMockSubscription(subscription))
+  return createMockWebhookEvent(
+    'customer.subscription.deleted',
+    createMockSubscription(subscription)
+  )
 }
 
 export function createPaymentIntentSucceededEvent(paymentIntent?: Partial<Stripe.PaymentIntent>) {

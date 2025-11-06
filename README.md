@@ -34,6 +34,7 @@ ADSapp is a modern, scalable WhatsApp Business Inbox SaaS application built with
 ## 🏗️ Technical Architecture
 
 ### Frontend Stack
+
 - **Next.js 15** - React framework with App Router and Turbopack
 - **TypeScript 5** - Type-safe development with strict mode
 - **Tailwind CSS 4** - Utility-first CSS framework with modern features
@@ -41,13 +42,16 @@ ADSapp is a modern, scalable WhatsApp Business Inbox SaaS application built with
 - **Heroicons** - Professional icon library
 
 ### Backend Infrastructure
+
 - **Next.js API Routes** - Serverless backend functions
 - **Supabase** - PostgreSQL database with real-time capabilities
 - **Row Level Security** - Database-level multi-tenancy and security
 - **Edge Functions** - Global serverless compute
 
 ### Integrations & Services
+
 - **WhatsApp Business Cloud API** - Message sending, receiving, and media handling
+
 ---
 
 ## 🎉 Production Ready - Complete Enterprise Platform
@@ -68,6 +72,7 @@ Password: ADSapp2024!SuperSecure#Admin
 ```
 
 **🛠️ Admin Features:**
+
 - **🏢 Organization Management** - Full multi-tenant administration
 - **👥 User Management** - Cross-tenant user oversight and support
 - **💳 Billing Administration** - Stripe integration with subscription control
@@ -80,6 +85,7 @@ Password: ADSapp2024!SuperSecure#Admin
 ### 🌟 Complete Feature Set (Production Ready)
 
 #### 💬 WhatsApp Business Integration
+
 - **✅ Cloud API Integration** - Full WhatsApp Business Cloud API
 - **✅ Enhanced Onboarding** - 3-step wizard with live credential validation
 - **✅ Visual Setup Guide** - Annotated screenshots and tutorial video
@@ -89,6 +95,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ Contact Synchronization** - Automated contact management
 
 #### 📥 Enterprise Inbox System
+
 - **✅ Real-Time Messaging** - Live conversation updates
 - **✅ Team Collaboration** - Multi-agent support with assignments
 - **✅ Message Threading** - Organized conversation flows
@@ -96,6 +103,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ File Management** - Secure media storage and sharing
 
 #### 🤖 Advanced Automation
+
 - **✅ Workflow Builder** - Visual automation designer
 - **✅ Rule-Based Routing** - Intelligent message distribution
 - **✅ Auto-Responses** - 24/7 automated customer service
@@ -103,6 +111,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ Performance Tracking** - Automation effectiveness metrics
 
 #### 📊 Comprehensive Analytics
+
 - **✅ Real-Time Dashboard** - Live performance metrics
 - **✅ Conversation Analytics** - Response times, resolution rates
 - **✅ Team Performance** - Agent productivity tracking
@@ -110,6 +119,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ Custom Reports** - Exportable business intelligence
 
 #### 💳 Enterprise Billing System
+
 - **✅ Stripe Integration** - Secure payment processing
 - **✅ Multiple Plans** - Flexible subscription tiers
 - **✅ Usage Tracking** - Accurate billing based on usage
@@ -117,6 +127,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ Payment Analytics** - Revenue tracking and forecasting
 
 #### 👥 Team Management & License System
+
 - **✅ Team Invitations** - Email-based team member invitations with expiration
 - **✅ License Management** - Automatic seat counting and limit enforcement
 - **✅ Role-Based Invites** - Admin and member role assignment
@@ -125,6 +136,7 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ License Tracking** - Real-time available/used seat monitoring
 
 #### 🔒 Enterprise Security & Compliance
+
 - **✅ Multi-Tenant Architecture** - Complete tenant isolation
 - **✅ Role-Based Access Control** - Granular permission system
 - **✅ Data Encryption** - End-to-end data protection
@@ -133,9 +145,11 @@ Password: ADSapp2024!SuperSecure#Admin
 - **✅ SOC 2 Ready** - Enterprise security standards
 
 ---- **Resend** - Transactional email delivery
+
 - **Webhook Processing** - Real-time data synchronization
 
 ### Development & Deployment
+
 - **Vercel** - Hosting platform with global CDN
 - **GitHub Actions** - CI/CD pipeline automation
 - **Jest & Playwright** - Comprehensive testing suite
@@ -400,75 +414,75 @@ erDiagram
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `POST` | `/api/auth/signin` | User authentication | ❌ |
-| `POST` | `/api/auth/signup` | User registration | ❌ |
-| `POST` | `/api/auth/forgot-password` | Password reset | ❌ |
-| `POST` | `/api/auth/reset-password` | Password reset confirmation | ❌ |
+| Method | Endpoint                    | Description                 | Auth Required |
+| ------ | --------------------------- | --------------------------- | ------------- |
+| `POST` | `/api/auth/signin`          | User authentication         | ❌            |
+| `POST` | `/api/auth/signup`          | User registration           | ❌            |
+| `POST` | `/api/auth/forgot-password` | Password reset              | ❌            |
+| `POST` | `/api/auth/reset-password`  | Password reset confirmation | ❌            |
 
 ### Core Business Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/conversations` | List conversations | ✅ |
-| `GET` | `/api/conversations/[id]/messages` | Get conversation messages | ✅ |
-| `POST` | `/api/conversations/[id]/messages` | Send message | ✅ |
-| `GET` | `/api/contacts` | List contacts | ✅ |
-| `POST` | `/api/contacts` | Create contact | ✅ |
-| `GET` | `/api/templates` | List message templates | ✅ |
-| `POST` | `/api/templates` | Create template | ✅ |
+| Method | Endpoint                           | Description               | Auth Required |
+| ------ | ---------------------------------- | ------------------------- | ------------- |
+| `GET`  | `/api/conversations`               | List conversations        | ✅            |
+| `GET`  | `/api/conversations/[id]/messages` | Get conversation messages | ✅            |
+| `POST` | `/api/conversations/[id]/messages` | Send message              | ✅            |
+| `GET`  | `/api/contacts`                    | List contacts             | ✅            |
+| `POST` | `/api/contacts`                    | Create contact            | ✅            |
+| `GET`  | `/api/templates`                   | List message templates    | ✅            |
+| `POST` | `/api/templates`                   | Create template           | ✅            |
 
 ### Team Management Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `POST` | `/api/team/invitations` | Create team invitation | ✅ (Admin) |
-| `GET` | `/api/team/invitations` | List team invitations | ✅ |
-| `DELETE` | `/api/team/invitations/[id]` | Revoke invitation | ✅ (Admin) |
-| `POST` | `/api/team/invitations/[token]/accept` | Accept invitation | ✅ |
-| `GET` | `/api/team/licenses` | Check available licenses | ✅ |
+| Method   | Endpoint                               | Description              | Auth Required |
+| -------- | -------------------------------------- | ------------------------ | ------------- |
+| `POST`   | `/api/team/invitations`                | Create team invitation   | ✅ (Admin)    |
+| `GET`    | `/api/team/invitations`                | List team invitations    | ✅            |
+| `DELETE` | `/api/team/invitations/[id]`           | Revoke invitation        | ✅ (Admin)    |
+| `POST`   | `/api/team/invitations/[token]/accept` | Accept invitation        | ✅            |
+| `GET`    | `/api/team/licenses`                   | Check available licenses | ✅            |
 
 ### Onboarding Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `POST` | `/api/onboarding/validate-whatsapp` | Validate WhatsApp credentials | ✅ |
-| `POST` | `/api/onboarding` | Complete onboarding process | ✅ |
+| Method | Endpoint                            | Description                   | Auth Required |
+| ------ | ----------------------------------- | ----------------------------- | ------------- |
+| `POST` | `/api/onboarding/validate-whatsapp` | Validate WhatsApp credentials | ✅            |
+| `POST` | `/api/onboarding`                   | Complete onboarding process   | ✅            |
 
 ### Analytics & Reporting
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/analytics/dashboard` | Dashboard metrics | ✅ |
-| `GET` | `/api/analytics/reports` | Generate reports | ✅ |
-| `GET` | `/api/analytics/performance` | Performance metrics | ✅ |
-| `GET` | `/api/analytics/export` | Export data | ✅ |
+| Method | Endpoint                     | Description         | Auth Required |
+| ------ | ---------------------------- | ------------------- | ------------- |
+| `GET`  | `/api/analytics/dashboard`   | Dashboard metrics   | ✅            |
+| `GET`  | `/api/analytics/reports`     | Generate reports    | ✅            |
+| `GET`  | `/api/analytics/performance` | Performance metrics | ✅            |
+| `GET`  | `/api/analytics/export`      | Export data         | ✅            |
 
 ### Admin Management
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/admin/dashboard` | Admin dashboard | ✅ (Admin) |
-| `GET` | `/api/admin/organizations` | List organizations | ✅ (Admin) |
-| `POST` | `/api/admin/organizations` | Create organization | ✅ (Admin) |
-| `GET` | `/api/admin/users` | List users | ✅ (Admin) |
-| `GET` | `/api/admin/audit-logs` | View audit logs | ✅ (Admin) |
+| Method | Endpoint                   | Description         | Auth Required |
+| ------ | -------------------------- | ------------------- | ------------- |
+| `GET`  | `/api/admin/dashboard`     | Admin dashboard     | ✅ (Admin)    |
+| `GET`  | `/api/admin/organizations` | List organizations  | ✅ (Admin)    |
+| `POST` | `/api/admin/organizations` | Create organization | ✅ (Admin)    |
+| `GET`  | `/api/admin/users`         | List users          | ✅ (Admin)    |
+| `GET`  | `/api/admin/audit-logs`    | View audit logs     | ✅ (Admin)    |
 
 ### Webhook Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
+| Method | Endpoint                 | Description               | Auth Required  |
+| ------ | ------------------------ | ------------------------- | -------------- |
 | `POST` | `/api/webhooks/whatsapp` | WhatsApp message webhooks | 🔐 (Signature) |
-| `POST` | `/api/webhooks/stripe` | Stripe payment webhooks | 🔐 (Signature) |
+| `POST` | `/api/webhooks/stripe`   | Stripe payment webhooks   | 🔐 (Signature) |
 
 ### Health & Monitoring
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/health` | Application health | ❌ |
-| `GET` | `/api/health/db` | Database connectivity | ❌ |
-| `GET` | `/api/health/stripe` | Stripe service status | ❌ |
+| Method | Endpoint             | Description           | Auth Required |
+| ------ | -------------------- | --------------------- | ------------- |
+| `GET`  | `/api/health`        | Application health    | ❌            |
+| `GET`  | `/api/health/db`     | Database connectivity | ❌            |
+| `GET`  | `/api/health/stripe` | Stripe service status | ❌            |
 
 ---
 
@@ -555,6 +569,7 @@ NEXTAUTH_SECRET=your-production-secret-256-bit
 ### Vercel Deployment (Recommended)
 
 1. **Connect Repository**
+
    ```bash
    # Connect to Vercel
    npx vercel --prod
@@ -722,4 +737,4 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Built with ❤️ using Next.js 15, TypeScript, Supabase, and Stripe**
 
-*Enterprise-grade WhatsApp Business communication platform for the modern business.*
+_Enterprise-grade WhatsApp Business communication platform for the modern business._

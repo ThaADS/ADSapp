@@ -1,14 +1,16 @@
 // @ts-nocheck - Database types need regeneration
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const user = await requireAuthenticatedUser()
@@ -33,17 +35,13 @@ export async function GET(
     const notes = conversation.notes || []
 
     return createSuccessResponse({ notes })
-
   } catch (error) {
     console.error('Error fetching conversation notes:', error)
     return createErrorResponse(error)
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const user = await requireAuthenticatedUser()
@@ -78,7 +76,7 @@ export async function POST(
       created_by: user.id,
       created_by_name: userOrg.full_name || user.email,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     // Append to existing notes
@@ -95,7 +93,6 @@ export async function POST(
     }
 
     return createSuccessResponse({ note: newNote }, 201)
-
   } catch (error) {
     console.error('Error creating note:', error)
     return createErrorResponse(error)

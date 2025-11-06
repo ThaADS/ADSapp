@@ -1,16 +1,11 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import { DemoSessionManager } from '@/lib/demo'
-import {
-  CreateDemoSessionRequest,
-  CreateDemoSessionResponse,
-  BusinessScenario
-} from '@/types/demo'
+import { CreateDemoSessionRequest, CreateDemoSessionResponse, BusinessScenario } from '@/types/demo'
 
 // Rate limiting store (in production, use Redis)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -36,7 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Business scenario is required'
+          error: 'Business scenario is required',
         } as CreateDemoSessionResponse,
         { status: 400 }
       )
@@ -44,15 +39,23 @@ export async function POST(request: NextRequest) {
 
     // Validate business scenario
     const validScenarios: BusinessScenario[] = [
-      'retail', 'restaurant', 'real_estate', 'healthcare', 'education',
-      'ecommerce', 'automotive', 'travel', 'fitness', 'generic'
+      'retail',
+      'restaurant',
+      'real_estate',
+      'healthcare',
+      'education',
+      'ecommerce',
+      'automotive',
+      'travel',
+      'fitness',
+      'generic',
     ]
 
     if (!validScenarios.includes(body.business_scenario)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid business scenario'
+          error: 'Invalid business scenario',
         } as CreateDemoSessionResponse,
         { status: 400 }
       )
@@ -70,8 +73,8 @@ export async function POST(request: NextRequest) {
             current_sessions: rateLimitResult.currentCount,
             sessions_in_window: rateLimitResult.currentCount,
             is_blocked: true,
-            reset_time: new Date(rateLimitResult.resetTime).toISOString()
-          }
+            reset_time: new Date(rateLimitResult.resetTime).toISOString(),
+          },
         } as CreateDemoSessionResponse,
         { status: 429 }
       )
@@ -86,7 +89,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         } as CreateDemoSessionResponse,
         { status: 500 }
       )
@@ -103,7 +106,7 @@ export async function POST(request: NextRequest) {
       {
         referrer: body.referrer,
         utm_params: body.utm_params,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     )
 
@@ -111,7 +114,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: result.error
+          error: result.error,
         } as CreateDemoSessionResponse,
         { status: 400 }
       )
@@ -136,8 +139,8 @@ export async function POST(request: NextRequest) {
         ip_address: ipAddress,
         user_agent: userAgent,
         referrer: body.referrer,
-        utm_params: body.utm_params
-      }
+        utm_params: body.utm_params,
+      },
     })
 
     const response: CreateDemoSessionResponse = {
@@ -147,22 +150,21 @@ export async function POST(request: NextRequest) {
         organization: {
           id: result.organization.id,
           name: result.organization.name,
-          slug: result.organization.slug
+          slug: result.organization.slug,
         },
         access_token: accessToken,
-        dashboard_url: dashboardUrl
-      }
+        dashboard_url: dashboardUrl,
+      },
     }
 
     return NextResponse.json(response, { status: 201 })
-
   } catch (error) {
     console.error('Error creating demo session:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to create demo session. Please try again.'
+        error: 'Failed to create demo session. Please try again.',
       } as CreateDemoSessionResponse,
       { status: 500 }
     )
@@ -192,7 +194,7 @@ export async function GET(request: NextRequest) {
           sessions_in_window: rateLimitResult.currentCount,
           max_sessions_per_hour: 10,
           is_blocked: !rateLimitResult.allowed,
-          reset_time: new Date(rateLimitResult.resetTime).toISOString()
+          reset_time: new Date(rateLimitResult.resetTime).toISOString(),
         },
         available_scenarios: [
           'retail',
@@ -204,19 +206,18 @@ export async function GET(request: NextRequest) {
           'automotive',
           'travel',
           'fitness',
-          'generic'
+          'generic',
         ],
-        session_duration_minutes: 30
-      }
+        session_duration_minutes: 30,
+      },
     })
-
   } catch (error) {
     console.error('Error getting demo info:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to get demo information'
+        error: 'Failed to get demo information',
       },
       { status: 500 }
     )
@@ -249,14 +250,14 @@ function checkRateLimit(ipAddress: string): {
     return {
       allowed: true,
       currentCount: 0,
-      resetTime: now + windowMs
+      resetTime: now + windowMs,
     }
   }
 
   return {
     allowed: existing.count < maxRequests,
     currentCount: existing.count,
-    resetTime: existing.resetTime
+    resetTime: existing.resetTime,
   }
 }
 
@@ -269,12 +270,12 @@ function updateRateLimit(ipAddress: string): void {
   if (!existing || now > existing.resetTime) {
     rateLimitStore.set(ipAddress, {
       count: 1,
-      resetTime: now + windowMs
+      resetTime: now + windowMs,
     })
   } else {
     rateLimitStore.set(ipAddress, {
       count: existing.count + 1,
-      resetTime: existing.resetTime
+      resetTime: existing.resetTime,
     })
   }
 }

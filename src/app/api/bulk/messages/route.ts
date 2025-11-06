@@ -1,9 +1,13 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { BulkOperationQueue, BulkMessageConfig } from '@/lib/bulk-operations/queue'
 import { createClient } from '@/lib/supabase/server'
 
@@ -14,12 +18,7 @@ export async function POST(request: NextRequest) {
     const profile = await getUserOrganization(user.id)
 
     const body = await request.json()
-    const {
-      message,
-      recipients,
-      templateId,
-      scheduling
-    } = body
+    const { message, recipients, templateId, scheduling } = body
 
     if (!message || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
       return NextResponse.json(
@@ -79,7 +78,7 @@ export async function POST(request: NextRequest) {
               organization_id: profile.organization_id,
               phone_number: recipient.phoneNumber,
               name: recipient.name || null,
-              metadata: { created_for_bulk_message: true }
+              metadata: { created_for_bulk_message: true },
             })
             .select()
             .single()
@@ -106,7 +105,7 @@ export async function POST(request: NextRequest) {
       processedRecipients.push({
         contactId,
         phoneNumber,
-        variables: recipient.variables || {}
+        variables: recipient.variables || {},
       })
     }
 
@@ -128,10 +127,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (!template) {
-        return NextResponse.json(
-          { error: 'Template not found or inactive' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Template not found or inactive' }, { status: 400 })
       }
 
       // Update message with template name
@@ -143,7 +139,7 @@ export async function POST(request: NextRequest) {
       templateId,
       message,
       recipients: processedRecipients,
-      scheduling
+      scheduling,
     }
 
     // Create bulk operation
@@ -154,15 +150,20 @@ export async function POST(request: NextRequest) {
       type: 'bulk_message',
       status: 'queued',
       totalItems: processedRecipients.length,
-      configuration: config
+      configuration: config,
     })
 
-    return createSuccessResponse({
-      operation,
-      estimatedCompletion: calculateEstimatedCompletion(processedRecipients.length, scheduling?.delay),
-      message: 'Bulk message operation created and queued for processing'
-    }, 201)
-
+    return createSuccessResponse(
+      {
+        operation,
+        estimatedCompletion: calculateEstimatedCompletion(
+          processedRecipients.length,
+          scheduling?.delay
+        ),
+        message: 'Bulk message operation created and queued for processing',
+      },
+      201
+    )
   } catch (error) {
     console.error('Bulk message error:', error)
     return createErrorResponse(error)
@@ -185,7 +186,7 @@ export async function GET(request: NextRequest) {
       type: 'bulk_message',
       status: status as any,
       limit,
-      offset
+      offset,
     })
 
     return createSuccessResponse({
@@ -194,10 +195,9 @@ export async function GET(request: NextRequest) {
         limit,
         offset,
         total: result.total,
-        hasMore: offset + limit < result.total
-      }
+        hasMore: offset + limit < result.total,
+      },
     })
-
   } catch (error) {
     console.error('List bulk messages error:', error)
     return createErrorResponse(error)

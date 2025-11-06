@@ -1,10 +1,19 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination } from '@/lib/api-utils'
-import { BulkOperationQueue, BulkMessageConfig, BulkContactImportConfig } from '@/lib/bulk-operations/queue'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+  validatePagination,
+} from '@/lib/api-utils'
+import {
+  BulkOperationQueue,
+  BulkMessageConfig,
+  BulkContactImportConfig,
+} from '@/lib/bulk-operations/queue'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
@@ -23,7 +32,7 @@ export async function GET(request: NextRequest) {
       status,
       type,
       limit,
-      offset
+      offset,
     })
 
     return createSuccessResponse({
@@ -32,10 +41,9 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: result.total,
-        hasMore: offset + limit < result.total
-      }
+        hasMore: offset + limit < result.total,
+      },
     })
-
   } catch (error) {
     console.error('List bulk operations error:', error)
     return createErrorResponse(error)
@@ -52,10 +60,7 @@ export async function POST(request: NextRequest) {
     const { type, configuration } = body
 
     if (!type || !configuration) {
-      return NextResponse.json(
-        { error: 'Type and configuration are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Type and configuration are required' }, { status: 400 })
     }
 
     // Validate configuration based on type
@@ -73,7 +78,9 @@ export async function POST(request: NextRequest) {
         totalItems = messageConfig.recipients.length
 
         // Validate recipients
-        const invalidRecipients = messageConfig.recipients.filter(r => !r.phoneNumber || !r.contactId)
+        const invalidRecipients = messageConfig.recipients.filter(
+          r => !r.phoneNumber || !r.contactId
+        )
         if (invalidRecipients.length > 0) {
           return NextResponse.json(
             { error: 'All recipients must have phoneNumber and contactId' },
@@ -84,10 +91,7 @@ export async function POST(request: NextRequest) {
         // Check organization limits
         const messageLimit = await checkMessageLimit(profile.organization_id, totalItems)
         if (!messageLimit.allowed) {
-          return NextResponse.json(
-            { error: messageLimit.reason },
-            { status: 429 }
-          )
+          return NextResponse.json({ error: messageLimit.reason }, { status: 429 })
         }
         break
 
@@ -122,10 +126,7 @@ export async function POST(request: NextRequest) {
         break
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid operation type' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid operation type' }, { status: 400 })
     }
 
     // Create the bulk operation
@@ -136,21 +137,23 @@ export async function POST(request: NextRequest) {
       type,
       status: 'queued',
       totalItems,
-      configuration
+      configuration,
     })
 
     // Queue the operation for processing
     await queueOperationForProcessing(operation.id)
 
     return createSuccessResponse(operation, 201)
-
   } catch (error) {
     console.error('Create bulk operation error:', error)
     return createErrorResponse(error)
   }
 }
 
-async function checkMessageLimit(organizationId: string, messageCount: number): Promise<{ allowed: boolean; reason?: string }> {
+async function checkMessageLimit(
+  organizationId: string,
+  messageCount: number
+): Promise<{ allowed: boolean; reason?: string }> {
   const supabase = await createClient()
 
   // Get organization subscription details
@@ -173,7 +176,7 @@ async function checkMessageLimit(organizationId: string, messageCount: number): 
   const limits = {
     starter: 100,
     professional: 1000,
-    enterprise: 10000
+    enterprise: 10000,
   }
 
   const limit = limits[org.subscription_tier] || 0
@@ -181,7 +184,7 @@ async function checkMessageLimit(organizationId: string, messageCount: number): 
   if (messageCount > limit) {
     return {
       allowed: false,
-      reason: `Bulk message limit exceeded. Your ${org.subscription_tier} plan allows up to ${limit} messages per operation.`
+      reason: `Bulk message limit exceeded. Your ${org.subscription_tier} plan allows up to ${limit} messages per operation.`,
     }
   }
 
@@ -200,7 +203,7 @@ async function checkMessageLimit(organizationId: string, messageCount: number): 
   if (messagesUsedToday + messageCount > dailyLimit) {
     return {
       allowed: false,
-      reason: `Daily message limit would be exceeded. Used: ${messagesUsedToday}, Attempting: ${messageCount}, Daily limit: ${dailyLimit}`
+      reason: `Daily message limit would be exceeded. Used: ${messagesUsedToday}, Attempting: ${messageCount}, Daily limit: ${dailyLimit}`,
     }
   }
 
@@ -255,7 +258,9 @@ async function estimateConversationsToClose(organizationId: string, config: any)
   }
 
   if (config.olderThanDays) {
-    const cutoffDate = new Date(Date.now() - config.olderThanDays * 24 * 60 * 60 * 1000).toISOString()
+    const cutoffDate = new Date(
+      Date.now() - config.olderThanDays * 24 * 60 * 60 * 1000
+    ).toISOString()
     query = query.lt('last_message_at', cutoffDate)
   }
 

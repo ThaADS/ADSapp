@@ -11,6 +11,7 @@ This implementation provides the **foundational infrastructure** for completing 
 ### ✅ Production-Ready Components (40% Complete)
 
 #### 1. Complete Database Schema (100%)
+
 Three comprehensive database migrations providing the foundation for all Stripe operations:
 
 - **`20251015_webhook_events.sql`** (200 lines)
@@ -34,6 +35,7 @@ Three comprehensive database migrations providing the foundation for all Stripe 
 **Total: 950 lines of production-ready SQL**
 
 #### 2. Security Middleware (100%)
+
 Industrial-strength webhook validation and security:
 
 - **`src/lib/middleware/webhook-validator.ts`** (500 lines)
@@ -46,6 +48,7 @@ Industrial-strength webhook validation and security:
   - Complete TypeScript types and documentation
 
 #### 3. Refund Business Logic (100%)
+
 Complete refund processing system:
 
 - **`src/lib/billing/refunds.ts`** (700 lines)
@@ -112,6 +115,7 @@ Complete refund processing system:
 ## 🎯 What You Can Do Now
 
 ### 1. Deploy Database Migrations
+
 ```bash
 # Apply migrations to your Supabase instance
 npx supabase db reset --linked
@@ -123,21 +127,27 @@ psql -h your-supabase-host -d postgres -f supabase/migrations/20251015_payment_i
 ```
 
 ### 2. Review Database Schema
+
 Examine the comprehensive database foundation:
+
 - Idempotency infrastructure
 - Refund workflows
 - 3DS authentication tracking
 - Compliance logging
 
 ### 3. Understand Security Middleware
+
 Review `WebhookValidator` class for:
+
 - Signature verification patterns
 - Idempotency checking
 - Rate limiting implementation
 - Security monitoring
 
 ### 4. Study Refund Implementation
+
 The `RefundManager` class provides a complete reference for:
+
 - Authorization workflows
 - Stripe API integration
 - Error handling patterns
@@ -150,6 +160,7 @@ The `RefundManager` class provides a complete reference for:
 ### Immediate Next Steps (Week 1)
 
 #### 1. Payment Intent Manager
+
 **File**: `src/lib/billing/payment-intent.ts`
 **Lines**: ~700
 **Priority**: HIGH (Required for S-002)
@@ -171,6 +182,7 @@ class PaymentIntentManager {
 ```
 
 **Key Features**:
+
 - Payment Intent creation with `automatic_payment_methods`
 - 3DS2 authentication (frictionless + challenge)
 - SCA exemption logic
@@ -178,17 +190,20 @@ class PaymentIntentManager {
 - Compliance logging (PSD2, SCA, PCI DSS)
 
 **Reference**: Use `RefundManager` as template for:
+
 - Error handling patterns
 - Supabase integration
 - Authorization checks
 - Notification flow
 
 #### 2. Enhanced Webhook Processor
+
 **File**: `src/lib/billing/webhook-processor-enhanced.ts`
 **Lines**: ~400
 **Priority**: HIGH (Required for S-003)
 
 **Extend** existing `StripeWebhookProcessor` with:
+
 1. Idempotency checking before processing
 2. Atomic event status transitions
 3. New event handlers:
@@ -199,6 +214,7 @@ class PaymentIntentManager {
 4. Retry logic with exponential backoff
 
 **Reference**: Copy existing webhook processor and add:
+
 ```typescript
 async processEvent(event: Stripe.Event): Promise<void> {
   // 1. Check if already processed
@@ -222,37 +238,40 @@ async processEvent(event: Stripe.Event): Promise<void> {
 ### Short-term (Week 2)
 
 #### 3. Update Webhook Endpoint
+
 **File**: `src/app/api/webhooks/stripe/route.ts`
 **Lines**: ~50 (update)
 **Priority**: HIGH
 
 Add idempotency integration:
+
 ```typescript
-import { validateStripeWebhook } from '@/lib/middleware/webhook-validator';
-import { EnhancedWebhookProcessor } from '@/lib/billing/webhook-processor-enhanced';
+import { validateStripeWebhook } from '@/lib/middleware/webhook-validator'
+import { EnhancedWebhookProcessor } from '@/lib/billing/webhook-processor-enhanced'
 
 export async function POST(request: NextRequest) {
   // 1. Validate with middleware
-  const validation = await validateStripeWebhook(request);
+  const validation = await validateStripeWebhook(request)
   if (!validation.valid) {
-    return NextResponse.json({ error: validation.error }, { status: 400 });
+    return NextResponse.json({ error: validation.error }, { status: 400 })
   }
 
   // 2. Process with enhanced processor
-  const processor = new EnhancedWebhookProcessor();
-  await processor.processEvent(validation.event!);
+  const processor = new EnhancedWebhookProcessor()
+  await processor.processEvent(validation.event!)
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ received: true })
 }
 ```
 
 #### 4. Admin Refunds API
+
 **File**: `src/app/api/admin/billing/refunds/route.ts`
 **Lines**: ~200
 **Priority**: MEDIUM
 
 ```typescript
-import { RefundManager } from '@/lib/billing/refunds';
+import { RefundManager } from '@/lib/billing/refunds'
 
 export async function POST(request: NextRequest) {
   // 1. Validate super admin (use existing middleware)
@@ -270,48 +289,52 @@ export async function GET(request: NextRequest) {
 ```
 
 #### 5. Payment Intent API
+
 **Files**:
+
 - `src/app/api/billing/payment-intent/route.ts`
 - `src/app/api/billing/confirm-payment/route.ts`
-**Lines**: ~300
-**Priority**: HIGH
+  **Lines**: ~300
+  **Priority**: HIGH
 
 ```typescript
 // Create payment intent
 export async function POST(request: NextRequest) {
-  const manager = new PaymentIntentManager();
+  const manager = new PaymentIntentManager()
   const result = await manager.createPaymentIntent({
     organizationId,
     amount,
     currency,
     purpose,
     customerId,
-    returnUrl: `${APP_URL}/dashboard/billing/confirm`
-  });
+    returnUrl: `${APP_URL}/dashboard/billing/confirm`,
+  })
 
   return NextResponse.json({
     clientSecret: result.clientSecret,
-    requiresAction: result.requiresAction
-  });
+    requiresAction: result.requiresAction,
+  })
 }
 
 // Confirm payment
 export async function POST(request: NextRequest) {
-  const manager = new PaymentIntentManager();
-  await manager.confirmPayment(paymentIntentId);
+  const manager = new PaymentIntentManager()
+  await manager.confirmPayment(paymentIntentId)
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true })
 }
 ```
 
 ### Medium-term (Week 3)
 
 #### 6. Refund Manager UI
+
 **File**: `src/components/admin/refund-manager.tsx`
 **Lines**: ~400
 **Priority**: MEDIUM
 
 **Features**:
+
 - Refund request form
 - Refund list with filtering
 - Approval workflow UI
@@ -319,6 +342,7 @@ export async function POST(request: NextRequest) {
 - Statistics dashboard
 
 **Tech Stack**:
+
 - React with TypeScript
 - Tailwind CSS (existing in project)
 - Supabase Realtime for updates
@@ -327,11 +351,13 @@ export async function POST(request: NextRequest) {
 **Reference**: Look at existing admin components in `src/components/admin/`
 
 #### 7. Payment Form with 3DS
+
 **File**: `src/components/billing/payment-form.tsx`
 **Lines**: ~400
 **Priority**: HIGH
 
 **Features**:
+
 - Stripe Elements integration
 - CardElement with validation
 - 3DS modal/redirect handling
@@ -339,11 +365,13 @@ export async function POST(request: NextRequest) {
 - Mobile-responsive
 
 **Required**:
+
 ```bash
 npm install @stripe/stripe-js @stripe/react-stripe-js
 ```
 
 **Example Structure**:
+
 ```typescript
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -381,13 +409,16 @@ function CheckoutForm() {
 ### Long-term (Week 4)
 
 #### 8. Comprehensive Testing
+
 **Files**:
+
 - `tests/unit/refunds.test.ts`
 - `tests/unit/payment-intent.test.ts`
 - `tests/unit/webhook-idempotency.test.ts`
 - `tests/integration/billing-flow.test.ts`
 
 **Test Coverage**:
+
 - Refund calculations
 - Authorization checks
 - 3DS flows
@@ -395,12 +426,15 @@ function CheckoutForm() {
 - End-to-end workflows
 
 **Tools**:
+
 - Jest (existing)
 - Supertest for API testing
 - Stripe test mode
 
 #### 9. Production Deployment
+
 **Checklist**:
+
 - [ ] Deploy database migrations
 - [ ] Configure Stripe webhook endpoint
 - [ ] Set environment variables
@@ -416,6 +450,7 @@ function CheckoutForm() {
 ## 📚 Key Files Reference
 
 ### Implemented
+
 ```
 supabase/migrations/
   └─ 20251015_webhook_events.sql      (200 lines) ✅
@@ -430,6 +465,7 @@ src/lib/billing/
 ```
 
 ### To Create
+
 ```
 src/lib/billing/
   └─ payment-intent.ts                 (700 lines) 📋
@@ -466,6 +502,7 @@ tests/
 ## 🔒 Security Checklist
 
 ### ✅ Implemented
+
 - [x] Webhook signature verification
 - [x] Timestamp validation (replay attack prevention)
 - [x] Row Level Security (RLS) policies
@@ -477,6 +514,7 @@ tests/
 - [x] Rate limiting logic
 
 ### 📋 Pending Implementation
+
 - [ ] API rate limiting enforcement
 - [ ] IP whitelist for admin endpoints
 - [ ] Refund amount validation enforcement
@@ -490,25 +528,25 @@ tests/
 
 ## 📊 Effort Estimation
 
-| Task | Complexity | Est. Time | Priority |
-|------|-----------|-----------|----------|
-| **Completed** | | | |
-| Database migrations | High | 4h | ✅ Done |
-| Webhook validator | High | 2h | ✅ Done |
-| Refunds library | High | 4h | ✅ Done |
-| **Remaining** | | | |
-| Payment intent library | Very High | 6h | 🔴 HIGH |
-| Enhanced webhook processor | Medium | 3h | 🔴 HIGH |
-| Webhook API update | Low | 1h | 🔴 HIGH |
-| Admin refunds API | Medium | 3h | 🟡 MEDIUM |
-| Payment intent API | Medium | 3h | 🔴 HIGH |
-| Refund manager UI | Medium | 5h | 🟡 MEDIUM |
-| Payment form UI | High | 5h | 🔴 HIGH |
-| Unit tests | Medium | 4h | 🟡 MEDIUM |
-| Integration tests | Medium | 3h | 🟡 MEDIUM |
-| Documentation | Low | 2h | 🟢 LOW |
-| Deployment & testing | High | 4h | 🔴 HIGH |
-| **TOTAL REMAINING** | | **39h** | |
+| Task                       | Complexity | Est. Time | Priority  |
+| -------------------------- | ---------- | --------- | --------- |
+| **Completed**              |            |           |           |
+| Database migrations        | High       | 4h        | ✅ Done   |
+| Webhook validator          | High       | 2h        | ✅ Done   |
+| Refunds library            | High       | 4h        | ✅ Done   |
+| **Remaining**              |            |           |           |
+| Payment intent library     | Very High  | 6h        | 🔴 HIGH   |
+| Enhanced webhook processor | Medium     | 3h        | 🔴 HIGH   |
+| Webhook API update         | Low        | 1h        | 🔴 HIGH   |
+| Admin refunds API          | Medium     | 3h        | 🟡 MEDIUM |
+| Payment intent API         | Medium     | 3h        | 🔴 HIGH   |
+| Refund manager UI          | Medium     | 5h        | 🟡 MEDIUM |
+| Payment form UI            | High       | 5h        | 🔴 HIGH   |
+| Unit tests                 | Medium     | 4h        | 🟡 MEDIUM |
+| Integration tests          | Medium     | 3h        | 🟡 MEDIUM |
+| Documentation              | Low        | 2h        | 🟢 LOW    |
+| Deployment & testing       | High       | 4h        | 🔴 HIGH   |
+| **TOTAL REMAINING**        |            | **39h**   |           |
 
 **Total Project**: 10 hours completed + 39 hours remaining = **49 hours**
 
@@ -517,21 +555,27 @@ tests/
 ## 💡 Development Tips
 
 ### 1. Use Existing Patterns
+
 The `RefundManager` class is a complete reference implementation. Copy its patterns for:
+
 - Error handling
 - Supabase integration
 - Authorization checks
 - Notification flow
 
 ### 2. Leverage TypeScript
+
 All interfaces and types are defined. Use them for type safety:
+
 ```typescript
-import { RefundRequest, RefundResult } from '@/lib/billing/refunds';
-import { PaymentIntentOptions, PaymentIntentResult } from '@/lib/billing/payment-intent';
+import { RefundRequest, RefundResult } from '@/lib/billing/refunds'
+import { PaymentIntentOptions, PaymentIntentResult } from '@/lib/billing/payment-intent'
 ```
 
 ### 3. Test with Stripe Test Mode
+
 Use Stripe's test mode for development:
+
 ```bash
 # Test card numbers
 4242 4242 4242 4242  # Success
@@ -540,7 +584,9 @@ Use Stripe's test mode for development:
 ```
 
 ### 4. Database Function Testing
+
 Test database functions directly in Supabase:
+
 ```sql
 SELECT create_refund_request(
   'org-id',
@@ -556,7 +602,9 @@ SELECT create_refund_request(
 ```
 
 ### 5. Monitor in Production
+
 Key metrics to track:
+
 - Webhook processing success rate (target: >99%)
 - Refund request volume
 - 3DS authentication success rate (target: >85%)
@@ -567,6 +615,7 @@ Key metrics to track:
 ## 🆘 Support and Resources
 
 ### Documentation
+
 - **Stripe API Docs**: https://stripe.com/docs/api
 - **Stripe 3DS Guide**: https://stripe.com/docs/payments/3d-secure
 - **Stripe Refunds**: https://stripe.com/docs/refunds
@@ -574,11 +623,13 @@ Key metrics to track:
 - **Supabase Docs**: https://supabase.com/docs
 
 ### Testing Resources
+
 - **Stripe Test Cards**: https://stripe.com/docs/testing
 - **Webhook Testing**: https://stripe.com/docs/webhooks/test
 - **3DS Test Flows**: https://stripe.com/docs/testing#regulatory-cards
 
 ### Code References
+
 - Existing Stripe integration: `src/lib/stripe/server.ts`
 - Existing webhook processor: `src/lib/billing/webhook-processor.ts`
 - Admin billing API: `src/app/api/admin/billing/route.ts`
@@ -588,6 +639,7 @@ Key metrics to track:
 ## ✅ Definition of Done
 
 A feature is complete when:
+
 1. ✅ Code implemented with TypeScript strict mode
 2. ✅ Unit tests passing with >80% coverage
 3. ✅ Integration tests passing

@@ -5,12 +5,14 @@
 The authentication error "Neither apiKey nor config.authenticator provided" has been **completely resolved** with the following fixes:
 
 ### 1. Build-Safe Stripe Configuration
+
 - ✅ Fixed `SUBSCRIPTION_PLANS` getter functions that were causing build-time errors
 - ✅ Implemented build-time detection and safe service initialization
 - ✅ Updated `SubscriptionLifecycleManager` to use lazy loading for dependencies
 - ✅ Added proper build-time safety checks to all billing API routes
 
 ### 2. Environment Variable Handling
+
 - ✅ Enhanced `isBuildTime()` detection for Vercel builds
 - ✅ Improved `requireEnvVar()` function with build-time placeholders
 - ✅ Created `createBuildSafeService()` utility for safe service initialization
@@ -61,12 +63,14 @@ SENTRY_DSN=https://your_sentry_dsn
 ### Set Environment Variables in Vercel
 
 **Method 1: Vercel Dashboard**
+
 1. Go to https://vercel.com/dashboard
 2. Select your project
 3. Go to Settings → Environment Variables
 4. Add each variable above
 
 **Method 2: Vercel CLI**
+
 ```bash
 vercel env add NEXT_PUBLIC_APP_NAME production
 vercel env add STRIPE_SECRET_KEY production
@@ -78,6 +82,7 @@ vercel env add STRIPE_SECRET_KEY production
 ## 🔐 Super Admin Credentials & Access
 
 ### Production Super Admin Login
+
 ```
 Email:    superadmin@adsapp.com
 Password: ADSapp2024!SuperSecure#Admin
@@ -85,6 +90,7 @@ Name:     ADSapp Super Administrator
 ```
 
 ### Access URLs
+
 ```
 Main App:         https://adsapp.nl
 Login:           https://adsapp.nl/auth/signin
@@ -95,6 +101,7 @@ System Settings: https://adsapp.nl/admin/settings
 ```
 
 ### First Login Steps
+
 1. Navigate to https://adsapp.nl/auth/signin
 2. Enter super admin credentials above
 3. **IMMEDIATELY change the password** after first login
@@ -125,6 +132,7 @@ Add all environment variables listed above to your Vercel project settings.
 ### 3. Create Super Admin Account
 
 **Method 1: Using Supabase Dashboard**
+
 1. Go to https://supabase.com/dashboard
 2. Select your project → SQL Editor
 3. Run this SQL:
@@ -213,6 +221,7 @@ npm run start
 ```
 
 ### Verify Build Success
+
 - ✅ No TypeScript errors
 - ✅ No build-time authentication errors
 - ✅ All API routes compile successfully
@@ -237,6 +246,7 @@ npm run start
 ### Runtime Issues
 
 **Cannot access admin dashboard**
+
 ```sql
 -- Verify super admin status
 SELECT email, is_super_admin FROM profiles WHERE email = 'superadmin@adsapp.com';
@@ -246,6 +256,7 @@ UPDATE profiles SET is_super_admin = true WHERE email = 'superadmin@adsapp.com';
 ```
 
 **Authentication issues**
+
 ```sql
 -- Confirm email verification
 UPDATE auth.users SET email_confirmed_at = NOW() WHERE email = 'superadmin@adsapp.com';
@@ -256,6 +267,7 @@ UPDATE auth.users SET email_confirmed_at = NOW() WHERE email = 'superadmin@adsap
 ## 📋 Production Checklist
 
 ### Pre-Deployment ✅
+
 - [x] Build errors fixed
 - [x] Environment variables documented
 - [x] Super admin credentials provided
@@ -263,6 +275,7 @@ UPDATE auth.users SET email_confirmed_at = NOW() WHERE email = 'superadmin@adsap
 - [x] API routes properly configured
 
 ### Post-Deployment
+
 - [ ] Set all environment variables in Vercel
 - [ ] Deploy application to production
 - [ ] Create super admin account in database
@@ -304,6 +317,7 @@ vercel env add SUPABASE_SERVICE_ROLE_KEY production
 The application is now **production-ready** with all build issues resolved and complete deployment instructions provided.
 
 **Next Steps**:
+
 1. Set environment variables in Vercel
 2. Deploy the application
 3. Create super admin account

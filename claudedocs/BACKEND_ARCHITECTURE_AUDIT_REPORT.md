@@ -1,4 +1,5 @@
 # BACKEND ARCHITECTURE AUDIT REPORT
+
 **ADSapp Multi-Tenant WhatsApp Business Inbox SaaS Platform**
 **Audit Date:** 2025-10-13
 **Auditor:** Backend Architect AI Agent
@@ -11,11 +12,13 @@
 **Overall Backend Score**: **76/100** ⚠️ Good foundation with critical gaps
 
 ### Key Findings
+
 - ✅ **Strengths**: Solid Stripe integration (85%), comprehensive monitoring, good database schema
 - ⚠️ **Critical Gaps**: Missing idempotency, no job queue system, incomplete fault tolerance
 - 🔴 **High Risk**: Transaction handling, webhook processing, background jobs
 
 ### Priority Action Items
+
 1. **IMMEDIATE** (Week 1): Implement webhook idempotency + transaction management
 2. **CRITICAL** (Month 1): Deploy job queue system (BullMQ/Inngest) for background processing
 3. **IMPORTANT** (Month 2): Complete fault tolerance patterns + circuit breakers
@@ -28,7 +31,9 @@
 ### Overall Stripe Score: **85/100** ✅ Very Good Coverage
 
 #### Payment Processing: **90/100** ✅
+
 **Implemented**:
+
 - ✅ Checkout flow (`/api/billing/checkout`) - Complete
 - ✅ Payment method handling (SetupIntent, attachment, detachment)
 - ✅ Payment method validation (expiry checks, method validation)
@@ -36,6 +41,7 @@
 - ✅ Payment method management (default, multiple methods)
 
 **Gaps**:
+
 - ❌ **3D Secure (SCA) explicit handling** - Missing dedicated SCA flow documentation
 - ⚠️ **Payment disputes/chargebacks** - Basic structure, needs dispute webhook handling
 - ⚠️ **Refund API implementation** - Structure exists, incomplete API routes
@@ -43,6 +49,7 @@
 **Risk Assessment**: **MEDIUM** - Core flows work, edge cases incomplete
 
 **Recommendations**:
+
 ```typescript
 // Missing: Refund API endpoint
 POST /api/billing/refunds
@@ -69,6 +76,7 @@ POST /api/billing/disputes/:id/respond
 #### Subscription Management: **95/100** ✅ Excellent
 
 **Implemented**:
+
 - ✅ Subscription creation/updates (comprehensive)
 - ✅ Plan changes with proration (`upgrade`, `downgrade` routes)
 - ✅ Trial period handling (trial_will_end webhook)
@@ -79,12 +87,14 @@ POST /api/billing/disputes/:id/respond
 - ✅ Subscription metrics and analytics
 
 **Gaps**:
+
 - ⚠️ **Dunning management** - Basic retry logic exists, needs sophisticated dunning campaigns
 - ⚠️ **Prorated refunds for downgrades** - Calculation exists, refund application needs verification
 
 **Risk Assessment**: **LOW** - Excellent coverage
 
 **Code Quality Sample** (subscription-lifecycle.ts):
+
 ```typescript
 // EXCELLENT: Comprehensive upgrade with proration
 async upgradeSubscription(
@@ -95,16 +105,17 @@ async upgradeSubscription(
 ```
 
 **Missing Enhancement**:
+
 ```typescript
 // Recommended: Advanced dunning configuration
 interface DunningConfig {
-  maxRetryAttempts: number;
-  retryIntervals: number[]; // [1h, 24h, 72h, 168h]
+  maxRetryAttempts: number
+  retryIntervals: number[] // [1h, 24h, 72h, 168h]
   escalationActions: Array<{
-    attemptNumber: number;
-    action: 'email' | 'suspend' | 'downgrade' | 'cancel';
-    delayHours: number;
-  }>;
+    attemptNumber: number
+    action: 'email' | 'suspend' | 'downgrade' | 'cancel'
+    delayHours: number
+  }>
 }
 ```
 
@@ -113,12 +124,14 @@ interface DunningConfig {
 #### Webhook Handling: **80/100** ✅ Good
 
 **Implemented**:
+
 - ✅ Webhook signature verification (`stripe-signature` header validation)
 - ✅ Comprehensive event coverage (25+ event types)
 - ✅ Webhook logging (`webhook_events` table)
 - ✅ Error handling with status tracking
 
 **Critical Gaps**:
+
 - 🔴 **NO IDEMPOTENCY** - Multiple webhook deliveries will duplicate operations
 - 🔴 **NO TRANSACTION WRAPPING** - Database updates can partially fail
 - ⚠️ **Missing event replay mechanism** - No way to replay failed webhooks
@@ -127,6 +140,7 @@ interface DunningConfig {
 **Risk Assessment**: **HIGH** - Missing idempotency is critical production issue
 
 **Current Implementation** (`webhook-processor.ts`):
+
 ```typescript
 // PROBLEM: No idempotency check
 async processEvent(event: Stripe.Event): Promise<void> {
@@ -149,6 +163,7 @@ async processEvent(event: Stripe.Event): Promise<void> {
 ```
 
 **Required Fix**:
+
 ```typescript
 // SOLUTION: Idempotency with transaction safety
 async processEvent(event: Stripe.Event): Promise<void> {
@@ -219,6 +234,7 @@ async processEvent(event: Stripe.Event): Promise<void> {
 ```
 
 **Webhook Event Coverage**:
+
 ```yaml
 Subscription Events: ✅ Complete
   - customer.subscription.created
@@ -261,6 +277,7 @@ Missing Critical Events: ❌
 #### Billing Features: **75/100** ⚠️ Good Core, Missing Advanced
 
 **Implemented**:
+
 - ✅ Usage-based billing (overage tracking, metered billing)
 - ✅ Invoice generation (custom + subscription invoices)
 - ✅ Invoice management (finalize, void, payment retry)
@@ -268,6 +285,7 @@ Missing Critical Events: ❌
 - ✅ Invoice analytics (revenue, payment success rates)
 
 **Gaps**:
+
 - ❌ **Stripe Tax integration** - No automatic tax calculation
 - ❌ **Invoice customization** - Basic fields only, no custom line items API
 - ⚠️ **Billing portal** - Route exists (`/api/billing/portal`) but needs verification
@@ -276,6 +294,7 @@ Missing Critical Events: ❌
 **Risk Assessment**: **MEDIUM** - Core works, tax compliance risk
 
 **Usage Tracking Implementation** (usage-tracking.ts):
+
 ```typescript
 // EXCELLENT: Comprehensive overage calculation
 async calculateOverageCharges(organizationId: string): Promise<number> {
@@ -296,6 +315,7 @@ async calculateOverageCharges(organizationId: string): Promise<number> {
 ```
 
 **Missing Tax Implementation**:
+
 ```typescript
 // RECOMMENDED: Stripe Tax integration
 import { stripe } from '@/lib/stripe/server'
@@ -334,6 +354,7 @@ async function calculateTaxForInvoice(
 #### Customer Management: **85/100** ✅ Good
 
 **Implemented**:
+
 - ✅ Customer creation (automatic on organization creation)
 - ✅ Customer updates (sync with Stripe)
 - ✅ Payment method management (comprehensive)
@@ -341,6 +362,7 @@ async function calculateTaxForInvoice(
 - ✅ Customer metadata sync
 
 **Gaps**:
+
 - ⚠️ **Tax ID validation** - Field exists, no validation flow
 - ❌ **Account balance tracking** - No Stripe balance sync
 - ⚠️ **Customer portal customization** - Basic portal, needs theming
@@ -352,12 +374,14 @@ async function calculateTaxForInvoice(
 #### Analytics & Reporting: **80/100** ✅ Good
 
 **Implemented**:
+
 - ✅ Revenue tracking (MRR/ARR calculations in `subscription-lifecycle.ts`)
 - ✅ Payment success/failure rates (invoice analytics)
 - ✅ Usage analytics (comprehensive overage tracking)
 - ✅ Subscription metrics (status, churn data)
 
 **Gaps**:
+
 - ❌ **Churn analytics** - No dedicated churn calculation logic
 - ❌ **Revenue forecasting** - No predictive models
 - ⚠️ **Cohort analysis** - Basic analytics, no cohort tracking
@@ -365,6 +389,7 @@ async function calculateTaxForInvoice(
 **Risk Assessment**: **MEDIUM** - Operational metrics good, strategic analytics missing
 
 **Current Implementation**:
+
 ```typescript
 // GOOD: Basic subscription metrics
 async getSubscriptionMetrics(organizationId: string): Promise<SubscriptionMetrics> {
@@ -393,6 +418,7 @@ async getSubscriptionMetrics(organizationId: string): Promise<SubscriptionMetric
 ```
 
 **Missing Advanced Analytics**:
+
 ```typescript
 // RECOMMENDED: Churn prediction
 async calculateChurnRisk(organizationId: string): Promise<{
@@ -438,14 +464,14 @@ async calculateChurnRisk(organizationId: string): Promise<{
 
 ### Stripe Integration Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Payment Processing | 90/100 | ✅ Very Good | P2 - Add refunds |
-| Subscription Management | 95/100 | ✅ Excellent | P3 - Enhance dunning |
-| Webhook Handling | 80/100 | ⚠️ Good | P0 - Add idempotency |
-| Billing Features | 75/100 | ⚠️ Good | P1 - Add Stripe Tax |
-| Customer Management | 85/100 | ✅ Good | P3 - Tax ID validation |
-| Analytics & Reporting | 80/100 | ✅ Good | P2 - Churn analytics |
+| Category                | Score  | Status       | Priority               |
+| ----------------------- | ------ | ------------ | ---------------------- |
+| Payment Processing      | 90/100 | ✅ Very Good | P2 - Add refunds       |
+| Subscription Management | 95/100 | ✅ Excellent | P3 - Enhance dunning   |
+| Webhook Handling        | 80/100 | ⚠️ Good      | P0 - Add idempotency   |
+| Billing Features        | 75/100 | ⚠️ Good      | P1 - Add Stripe Tax    |
+| Customer Management     | 85/100 | ✅ Good      | P3 - Tax ID validation |
+| Analytics & Reporting   | 80/100 | ✅ Good      | P2 - Churn analytics   |
 
 **Overall**: **85/100** - Strong foundation, critical idempotency gap
 
@@ -458,6 +484,7 @@ async calculateChurnRisk(organizationId: string): Promise<{
 #### Transaction Management: **60/100** ⚠️ Critical Gap
 
 **Current State**:
+
 - ❌ **NO TRANSACTION WRAPPERS** in API routes
 - ❌ **NO ACID guarantees** for multi-table operations
 - ⚠️ **Partial updates possible** in webhook handlers
@@ -465,6 +492,7 @@ async calculateChurnRisk(organizationId: string): Promise<{
 **Critical Issues Found**:
 
 **Issue 1**: Webhook Processing Without Transactions
+
 ```typescript
 // PROBLEM: subscription-lifecycle.ts:148 - Downgrade can fail mid-operation
 async downgradeSubscription(
@@ -491,6 +519,7 @@ async downgradeSubscription(
 ```
 
 **Solution**:
+
 ```typescript
 // FIXED: Transaction-safe downgrade
 async downgradeSubscription(
@@ -550,6 +579,7 @@ async downgradeSubscription(
 ```
 
 **Issue 2**: Invoice Management Without Atomicity
+
 ```typescript
 // PROBLEM: invoice-management.ts:65 - Partial invoice creation possible
 async createInvoiceRecord(stripeInvoice: Stripe.Invoice): Promise<void> {
@@ -566,6 +596,7 @@ async createInvoiceRecord(stripeInvoice: Stripe.Invoice): Promise<void> {
 ```
 
 **Database-Level Transaction Support**:
+
 ```sql
 -- Missing: Transaction helper functions in migrations
 CREATE OR REPLACE FUNCTION begin_transaction()
@@ -595,6 +626,7 @@ $$ LANGUAGE plpgsql;
 **Risk Assessment**: **CRITICAL** - Data inconsistency in production is highly likely
 
 **Recommendations**:
+
 1. **Immediate** (Week 1):
    - Wrap all multi-table operations in Supabase transactions
    - Add transaction logging for audit trail
@@ -610,11 +642,13 @@ $$ LANGUAGE plpgsql;
 #### Data Validation Layers: **75/100** ✅ Good
 
 **Implemented**:
+
 - ✅ Database-level constraints (foreign keys, check constraints)
 - ✅ TypeScript type validation (comprehensive types in `database.ts`)
 - ✅ Input validation in API routes (basic parameter checks)
 
 **Examples of Good Validation**:
+
 ```sql
 -- database schema line 20-21
 CHECK (file_type IN ('image', 'document', 'audio', 'video', 'sticker'))
@@ -627,11 +661,13 @@ CHECK (template_type IN ('marketing', 'utility', 'authentication'))
 ```
 
 **Gaps**:
+
 - ⚠️ **No centralized validation library** (e.g., Zod, Joi)
 - ⚠️ **Business logic validation missing** in some routes
 - ⚠️ **Rate limiting validation** not comprehensive
 
 **Recommendation**:
+
 ```typescript
 // RECOMMENDED: Centralized validation with Zod
 import { z } from 'zod'
@@ -640,12 +676,14 @@ import { z } from 'zod'
 export const SubscriptionUpgradeSchema = z.object({
   organizationId: z.string().uuid(),
   newPlanId: z.enum(['starter', 'professional', 'enterprise']),
-  options: z.object({
-    prorate: z.boolean().default(true),
-    billingCycleAnchor: z.enum(['now', 'unchanged']).optional(),
-    trialEnd: z.date().optional(),
-    metadata: z.record(z.string()).optional(),
-  }).optional(),
+  options: z
+    .object({
+      prorate: z.boolean().default(true),
+      billingCycleAnchor: z.enum(['now', 'unchanged']).optional(),
+      trialEnd: z.date().optional(),
+      metadata: z.record(z.string()).optional(),
+    })
+    .optional(),
 })
 
 // API route validation
@@ -679,12 +717,14 @@ export async function POST(request: NextRequest) {
 #### Constraint Enforcement: **85/100** ✅ Very Good
 
 **Implemented**:
+
 - ✅ Foreign key integrity (comprehensive relationships)
 - ✅ Unique constraints (proper unique indexes)
 - ✅ Check constraints (enum validation, range validation)
 - ✅ Not null constraints (required fields enforced)
 
 **Database Constraints Analysis** (from migration 004):
+
 ```sql
 -- Excellent: Comprehensive referential integrity
 CREATE TABLE media_files (
@@ -706,10 +746,12 @@ CHECK (month >= 1 AND month <= 12) -- ✅
 ```
 
 **Minor Gaps**:
+
 - ⚠️ **No database-level triggers for audit** (e.g., delete_at timestamp)
 - ⚠️ **Missing soft delete constraints** (some tables have is_active, others don't)
 
 **Recommendation**: Add soft delete standardization
+
 ```sql
 -- Add to all tables that need soft delete
 ALTER TABLE contacts ADD COLUMN deleted_at TIMESTAMPTZ;
@@ -728,11 +770,13 @@ CREATE INDEX idx_contacts_active ON contacts(id) WHERE deleted_at IS NULL;
 #### Cascade Deletes Safety: **80/100** ✅ Good
 
 **Analysis**:
+
 - ✅ **ON DELETE CASCADE** used appropriately for child records
 - ✅ **ON DELETE SET NULL** used for optional references (preserves data)
 - ⚠️ **No DELETE triggers for soft delete enforcement**
 
 **Examples**:
+
 ```sql
 -- GOOD: Cascade delete for truly dependent data
 message_id UUID REFERENCES messages(id) ON DELETE CASCADE
@@ -747,6 +791,7 @@ organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
 **Risk Assessment**: **LOW** - Well-designed cascade behavior
 
 **Recommendation**: Add soft delete protection
+
 ```sql
 -- Prevent hard delete if soft delete preferred
 CREATE OR REPLACE FUNCTION prevent_hard_delete_if_soft_delete_available()
@@ -769,6 +814,7 @@ CREATE TRIGGER enforce_soft_delete_contacts
 #### Data Migration Safety: **65/100** ⚠️ Needs Improvement
 
 **Current State**:
+
 - ✅ **Migrations organized** (`supabase/migrations/` with numbered files)
 - ✅ **Up migrations exist** (schema creation, data seeding)
 - ❌ **NO DOWN MIGRATIONS** (no rollback capability)
@@ -778,6 +824,7 @@ CREATE TRIGGER enforce_soft_delete_contacts
 **Risk Assessment**: **MEDIUM-HIGH** - Production migration failures could cause downtime
 
 **Recommendations**:
+
 ```bash
 # RECOMMENDED: Migration workflow
 1. Create migration with up + down:
@@ -804,6 +851,7 @@ CREATE TRIGGER enforce_soft_delete_contacts
 ```
 
 **Missing Migration Validation Script**:
+
 ```typescript
 // scripts/validate-migration.ts
 import { createClient } from '@supabase/supabase-js'
@@ -855,13 +903,13 @@ async function validateMigration(migrationFile: string) {
 
 ### Data Integrity Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Transaction Management | 60/100 | ⚠️ Critical | P0 - Immediate |
-| Data Validation | 75/100 | ✅ Good | P2 - Enhance |
-| Constraint Enforcement | 85/100 | ✅ Very Good | P3 - Minor improvements |
-| Cascade Deletes | 80/100 | ✅ Good | P3 - Add soft delete |
-| Migration Safety | 65/100 | ⚠️ Needs Work | P1 - Add rollback |
+| Category               | Score  | Status        | Priority                |
+| ---------------------- | ------ | ------------- | ----------------------- |
+| Transaction Management | 60/100 | ⚠️ Critical   | P0 - Immediate          |
+| Data Validation        | 75/100 | ✅ Good       | P2 - Enhance            |
+| Constraint Enforcement | 85/100 | ✅ Very Good  | P3 - Minor improvements |
+| Cascade Deletes        | 80/100 | ✅ Good       | P3 - Add soft delete    |
+| Migration Safety       | 65/100 | ⚠️ Needs Work | P1 - Add rollback       |
 
 **Overall**: **70/100** - Solid foundation, critical transaction gap
 
@@ -874,6 +922,7 @@ async function validateMigration(migrationFile: string) {
 #### Error Handling Patterns: **65/100** ⚠️ Inconsistent
 
 **Current State**:
+
 - ✅ **Try-catch blocks** present in most methods
 - ⚠️ **Inconsistent error propagation** (some swallow errors, others throw)
 - ❌ **No structured error types** (generic Error objects)
@@ -882,6 +931,7 @@ async function validateMigration(migrationFile: string) {
 **Examples**:
 
 **Good Error Handling** (monitoring.ts:44):
+
 ```typescript
 async logError(error: ErrorEvent): Promise<void> {
   try {
@@ -897,6 +947,7 @@ async logError(error: ErrorEvent): Promise<void> {
 ```
 
 **Poor Error Handling** (webhook-processor.ts:96):
+
 ```typescript
 } catch (error) {
   console.error(`[Webhook] Error processing ${event.type}:`, error)
@@ -906,6 +957,7 @@ async logError(error: ErrorEvent): Promise<void> {
 ```
 
 **Missing Structured Errors**:
+
 ```typescript
 // RECOMMENDED: Structured error classes
 class StripeWebhookError extends Error {
@@ -967,12 +1019,14 @@ try {
 #### Graceful Degradation: **45/100** 🔴 Poor
 
 **Current State**:
+
 - ❌ **No circuit breakers** for external services (Stripe, WhatsApp API)
 - ❌ **No fallback mechanisms** when dependencies fail
 - ❌ **Hard failures** - if Stripe fails, entire operation fails
 - ⚠️ **Some monitoring** for slow responses (5s threshold)
 
 **Critical Gap Example**:
+
 ```typescript
 // PROBLEM: usage-tracking.ts:314 - Hard dependency on Stripe
 async addUsageBasedCharges(subscriptionId: string, amount: number): Promise<void> {
@@ -991,6 +1045,7 @@ async addUsageBasedCharges(subscriptionId: string, amount: number): Promise<void
 ```
 
 **Required Solution**:
+
 ```typescript
 // SOLUTION: Graceful degradation with queue fallback
 async addUsageBasedCharges(subscriptionId: string, amount: number): Promise<void> {
@@ -1053,6 +1108,7 @@ private async isStripeServiceDegraded(): Promise<boolean> {
 ```
 
 **Missing Circuit Breaker**:
+
 ```typescript
 // RECOMMENDED: Circuit breaker for Stripe API
 class CircuitBreaker {
@@ -1136,12 +1192,14 @@ async function createStripeInvoice(data: InvoiceData): Promise<string> {
 #### Retry Mechanisms: **50/100** 🔴 Inadequate
 
 **Current State**:
+
 - ⚠️ **Basic retry logic** in invoice payment (hardcoded intervals)
 - ❌ **No exponential backoff** for API retries
 - ❌ **No retry budget** (unlimited retries possible)
 - ❌ **No dead letter queue** for permanently failed operations
 
 **Current Implementation** (invoice-management.ts:417):
+
 ```typescript
 // PROBLEM: Fixed retry intervals, no exponential backoff
 private readonly defaultRetryConfig: PaymentRetryConfig = {
@@ -1157,6 +1215,7 @@ private readonly defaultRetryConfig: PaymentRetryConfig = {
 ```
 
 **Required Enhancement**:
+
 ```typescript
 // SOLUTION: Exponential backoff with jitter
 interface RetryConfig {
@@ -1170,10 +1229,7 @@ interface RetryConfig {
 class RetryWithBackoff {
   constructor(private config: RetryConfig) {}
 
-  async execute<T>(
-    operation: () => Promise<T>,
-    attemptNumber: number = 1
-  ): Promise<T> {
+  async execute<T>(operation: () => Promise<T>, attemptNumber: number = 1): Promise<T> {
     try {
       return await operation()
     } catch (error) {
@@ -1204,16 +1260,14 @@ class RetryWithBackoff {
   }
 
   private async sendToDeadLetterQueue(operation: any, error: any): Promise<void> {
-    await supabase
-      .from('dead_letter_queue')
-      .insert({
-        operation_name: operation.name,
-        operation_data: JSON.stringify(operation),
-        error_message: error.message,
-        error_stack: error.stack,
-        failed_at: new Date().toISOString(),
-        retry_attempts: this.config.maxAttempts,
-      })
+    await supabase.from('dead_letter_queue').insert({
+      operation_name: operation.name,
+      operation_data: JSON.stringify(operation),
+      error_message: error.message,
+      error_stack: error.stack,
+      failed_at: new Date().toISOString(),
+      retry_attempts: this.config.maxAttempts,
+    })
   }
 
   private sleep(ms: number): Promise<void> {
@@ -1243,6 +1297,7 @@ async function processPayment(invoiceId: string): Promise<void> {
 #### Timeout Handling: **40/100** 🔴 Poor
 
 **Current State**:
+
 - ❌ **No explicit timeouts** on external API calls
 - ❌ **No request timeout middleware**
 - ❌ **Slow queries undetected** (no query timeout enforcement)
@@ -1251,6 +1306,7 @@ async function processPayment(invoiceId: string): Promise<void> {
 **Risk**: Operations can hang indefinitely
 
 **Solution**:
+
 ```typescript
 // RECOMMENDED: Timeout wrapper for all external calls
 async function withTimeout<T>(
@@ -1300,6 +1356,7 @@ await supabase.rpc('set_statement_timeout', { timeout_ms: 5000 })
 ```
 
 **PostgreSQL Statement Timeout**:
+
 ```sql
 -- Add to migration
 CREATE OR REPLACE FUNCTION set_statement_timeout(timeout_ms INTEGER)
@@ -1322,12 +1379,14 @@ SELECT * FROM conversations WHERE organization_id = 'xxx';
 #### Health Checks: **70/100** ✅ Good
 
 **Current State**:
+
 - ✅ **Application health endpoint** (`/api/health`)
 - ✅ **Database connectivity check** (`/api/health/db`)
 - ✅ **Stripe service status** (`/api/health/stripe`)
 - ✅ **WhatsApp API connectivity** (`/api/health/whatsapp`)
 
 **Good Implementation** (monitoring.ts:179):
+
 ```typescript
 async getHealthMetrics(organizationId?: string): Promise<{
   errorRate: number
@@ -1367,6 +1426,7 @@ async getHealthMetrics(organizationId?: string): Promise<{
 ```
 
 **Enhancements Needed**:
+
 ```typescript
 // RECOMMENDED: Comprehensive health check
 interface HealthCheckResult {
@@ -1398,9 +1458,7 @@ export async function GET(request: NextRequest) {
   const degradedCount = Object.values(checks).filter(c => c.status === 'degraded').length
 
   const overallStatus =
-    unhealthyCount > 0 ? 'unhealthy' :
-    degradedCount > 0 ? 'degraded' :
-    'healthy'
+    unhealthyCount > 0 ? 'unhealthy' : degradedCount > 0 ? 'degraded' : 'healthy'
 
   const result: HealthCheckResult = {
     status: overallStatus,
@@ -1409,7 +1467,7 @@ export async function GET(request: NextRequest) {
       version: process.env.APP_VERSION || 'unknown',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
-    }
+    },
   }
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503
@@ -1424,7 +1482,7 @@ async function checkDatabase(): Promise<{ status: string; latency: number }> {
 
     return {
       status: latency < 100 ? 'healthy' : 'degraded',
-      latency
+      latency,
     }
   } catch (error) {
     return { status: 'unhealthy', latency: Date.now() - start }
@@ -1436,13 +1494,13 @@ async function checkDatabase(): Promise<{ status: string; latency: number }> {
 
 ### Fault Tolerance Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Error Handling | 65/100 | ⚠️ Inconsistent | P1 - Standardize |
-| Graceful Degradation | 45/100 | 🔴 Poor | P0 - Add circuit breakers |
-| Retry Mechanisms | 50/100 | 🔴 Inadequate | P1 - Exponential backoff |
-| Timeout Handling | 40/100 | 🔴 Poor | P1 - Add timeouts |
-| Health Checks | 70/100 | ✅ Good | P2 - Enhance |
+| Category             | Score  | Status          | Priority                  |
+| -------------------- | ------ | --------------- | ------------------------- |
+| Error Handling       | 65/100 | ⚠️ Inconsistent | P1 - Standardize          |
+| Graceful Degradation | 45/100 | 🔴 Poor         | P0 - Add circuit breakers |
+| Retry Mechanisms     | 50/100 | 🔴 Inadequate   | P1 - Exponential backoff  |
+| Timeout Handling     | 40/100 | 🔴 Poor         | P1 - Add timeouts         |
+| Health Checks        | 70/100 | ✅ Good         | P2 - Enhance              |
 
 **Overall**: **55/100** - Critical gaps in resilience
 
@@ -1455,6 +1513,7 @@ async function checkDatabase(): Promise<{ status: string; latency: number }> {
 #### Current State: **NO JOB QUEUE SYSTEM**
 
 **Analysis**:
+
 - ❌ **No job queue** (BullMQ, Inngest, or equivalent)
 - ❌ **No async task processing** beyond API requests
 - ❌ **Synchronous operations** that should be background jobs
@@ -1463,6 +1522,7 @@ async function checkDatabase(): Promise<{ status: string; latency: number }> {
 **Critical Issues**:
 
 **Issue 1**: Webhook Processing is Synchronous
+
 ```typescript
 // PROBLEM: Webhook blocks until complete
 export async function POST(request: NextRequest) {
@@ -1477,6 +1537,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **Issue 2**: Analytics Aggregation Runs Inline
+
 ```typescript
 // PROBLEM: Daily aggregation should be background job
 async function aggregate_daily_analytics(target_date DATE): Promise<INTEGER> {
@@ -1489,6 +1550,7 @@ async function aggregate_daily_analytics(target_date DATE): Promise<INTEGER> {
 ```
 
 **Issue 3**: Email Sending is Synchronous
+
 ```typescript
 // PROBLEM: No email queue
 await this.notificationService.sendSubscriptionWelcome(organizationId, planId)
@@ -1496,6 +1558,7 @@ await this.notificationService.sendSubscriptionWelcome(organizationId, planId)
 ```
 
 **Issue 4**: Usage Charge Retry Has No Scheduler
+
 ```typescript
 // PROBLEM: Retry logic exists but no scheduler
 private async schedulePaymentRetry(organizationId: string, invoiceId: string): Promise<void> {
@@ -1510,11 +1573,13 @@ private async schedulePaymentRetry(organizationId: string, invoiceId: string): P
 **Recommendation: BullMQ** (Redis-based, production-ready)
 
 **Installation**:
+
 ```bash
 npm install bullmq ioredis
 ```
 
 **Implementation**:
+
 ```typescript
 // lib/jobs/queue.ts
 import { Queue, Worker, Job } from 'bullmq'
@@ -1620,6 +1685,7 @@ paymentQueue.add(
 ```
 
 **Updated Webhook Handler**:
+
 ```typescript
 // app/api/webhooks/stripe/route.ts
 import { webhookQueue } from '@/lib/jobs/queue'
@@ -1660,15 +1726,13 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Stripe webhook error:', error)
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
   }
 }
 ```
 
 **Job Monitoring Dashboard**:
+
 ```typescript
 // app/api/admin/jobs/route.ts
 import { webhookQueue, emailQueue, analyticsQueue } from '@/lib/jobs/queue'
@@ -1711,6 +1775,7 @@ export async function GET(request: NextRequest) {
 #### Alternative: Inngest (Serverless-friendly)
 
 **If Vercel deployment without Redis**:
+
 ```typescript
 // lib/jobs/inngest.ts
 import { Inngest } from 'inngest'
@@ -1741,7 +1806,7 @@ export const aggregateAnalytics = inngest.createFunction(
 
     await step.run('aggregate', async () => {
       await supabase.rpc('aggregate_daily_analytics', {
-        target_date: yesterday.toISOString().split('T')[0]
+        target_date: yesterday.toISOString().split('T')[0],
       })
     })
 
@@ -1768,6 +1833,7 @@ export async function POST(request: NextRequest) {
 #### Background Job Requirements
 
 **Identified Background Operations**:
+
 1. **Webhook Processing** - Stripe events (30+ event types)
 2. **Email Sending** - Notifications, receipts, alerts
 3. **Analytics Aggregation** - Daily, monthly summaries
@@ -1780,6 +1846,7 @@ export async function POST(request: NextRequest) {
 10. **Automation Workflows** - Triggered actions
 
 **Priority Matrix**:
+
 ```yaml
 P0_IMMEDIATE:
   - Webhook processing (async)
@@ -1804,13 +1871,13 @@ P3_NICE_TO_HAVE:
 
 ### Background Jobs Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Job Queue System | 0/100 | 🔴 Missing | P0 - Critical |
-| Async Processing | 30/100 | 🔴 Poor | P0 - Critical |
-| Job Monitoring | 0/100 | 🔴 Missing | P1 - High |
-| Scheduled Tasks | 40/100 | 🔴 Poor | P1 - High |
-| Dead Letter Queue | 0/100 | 🔴 Missing | P1 - High |
+| Category          | Score  | Status     | Priority      |
+| ----------------- | ------ | ---------- | ------------- |
+| Job Queue System  | 0/100  | 🔴 Missing | P0 - Critical |
+| Async Processing  | 30/100 | 🔴 Poor    | P0 - Critical |
+| Job Monitoring    | 0/100  | 🔴 Missing | P1 - High     |
+| Scheduled Tasks   | 40/100 | 🔴 Poor    | P1 - High     |
+| Dead Letter Queue | 0/100  | 🔴 Missing | P1 - High     |
 
 **Overall**: **30/100** - Critical infrastructure gap
 
@@ -1825,12 +1892,14 @@ P3_NICE_TO_HAVE:
 #### Query Performance: **80/100** ✅ Good
 
 **Implemented**:
+
 - ✅ **Comprehensive indexes** (50+ indexes in migration 004)
 - ✅ **Foreign key indexes** (all FK relationships indexed)
 - ✅ **Composite indexes** for common query patterns
 - ✅ **Partial indexes** for filtered queries
 
 **Good Index Examples** (migration 004):
+
 ```sql
 -- Excellent: Compound index for common dashboard query
 CREATE INDEX idx_daily_analytics_org_date
@@ -1851,6 +1920,7 @@ CREATE INDEX idx_realtime_cache_org_key
 ```
 
 **Potential Optimizations**:
+
 ```sql
 -- RECOMMENDED: Add covering index for message fetching
 CREATE INDEX idx_messages_conversation_created
@@ -1879,6 +1949,7 @@ CREATE INDEX idx_media_files_metadata_file_type
 **Potential N+1 Problems**:
 
 **Issue 1**: Conversation List with Contact Info
+
 ```typescript
 // PROBLEM: Fetches conversations, then fetches contact for each
 const { data: conversations } = await supabase
@@ -1900,11 +1971,13 @@ for (const conv of conversations) {
 ```
 
 **Solution**:
+
 ```typescript
 // FIXED: Single query with join
 const { data: conversations } = await supabase
   .from('conversations')
-  .select(`
+  .select(
+    `
     *,
     contact:contacts(
       id,
@@ -1917,13 +1990,15 @@ const { data: conversations } = await supabase
       full_name,
       avatar_url
     )
-  `)
+  `
+  )
   .eq('organization_id', orgId)
   .order('last_message_at', { ascending: false })
   .limit(50)
 ```
 
 **Issue 2**: Message List with Sender Info
+
 ```typescript
 // PROBLEM: Fetches messages, then sender for each
 const { data: messages } = await supabase
@@ -1948,18 +2023,21 @@ for (const msg of messages) {
 ```
 
 **Solution**:
+
 ```typescript
 // FIXED: Single query with conditional join
 const { data: messages } = await supabase
   .from('messages')
-  .select(`
+  .select(
+    `
     *,
     sender:profiles!messages_sender_id_fkey(
       id,
       full_name,
       avatar_url
     )
-  `)
+  `
+  )
   .eq('conversation_id', conversationId)
   .order('created_at', { ascending: true })
   .limit(100)
@@ -1972,6 +2050,7 @@ const { data: messages } = await supabase
 **Analysis**: Comprehensive index coverage
 
 **Additional Indexes Recommended**:
+
 ```sql
 -- For frequently filtered columns
 CREATE INDEX idx_organizations_subscription_status
@@ -1998,11 +2077,13 @@ CREATE INDEX idx_webhook_events_event_id_created
 #### Query Timeout Handling: **60/100** ⚠️ Needs Work
 
 **Current State**:
+
 - ⚠️ **No statement timeout** configured
 - ❌ **No query monitoring** for slow queries
 - ⚠️ **Monitoring logs slow responses** (>5s) but doesn't prevent them
 
 **Recommendations**:
+
 ```sql
 -- Set default statement timeout
 ALTER DATABASE adsapp SET statement_timeout = '30s';
@@ -2044,11 +2125,13 @@ $$ LANGUAGE plpgsql;
 #### Connection Pooling: **70/100** ✅ Good
 
 **Current State**:
+
 - ✅ **Supabase handles pooling** automatically
 - ⚠️ **No explicit pool configuration** visible
 - ⚠️ **Connection limits not documented**
 
 **Recommendations**:
+
 ```typescript
 // RECOMMENDED: Configure Supabase client with explicit pooling
 import { createClient } from '@supabase/supabase-js'
@@ -2117,13 +2200,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ### Database Optimization Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Query Performance | 80/100 | ✅ Good | P2 - Optimize |
-| N+1 Queries | 70/100 | ⚠️ Some Issues | P2 - Review |
-| Missing Indexes | 85/100 | ✅ Very Good | P3 - Minor |
-| Query Timeout | 60/100 | ⚠️ Needs Work | P1 - Configure |
-| Connection Pooling | 70/100 | ✅ Good | P3 - Monitor |
+| Category           | Score  | Status         | Priority       |
+| ------------------ | ------ | -------------- | -------------- |
+| Query Performance  | 80/100 | ✅ Good        | P2 - Optimize  |
+| N+1 Queries        | 70/100 | ⚠️ Some Issues | P2 - Review    |
+| Missing Indexes    | 85/100 | ✅ Very Good   | P3 - Minor     |
+| Query Timeout      | 60/100 | ⚠️ Needs Work  | P1 - Configure |
+| Connection Pooling | 70/100 | ✅ Good        | P3 - Monitor   |
 
 **Overall**: **75/100** - Good foundation, minor optimizations needed
 
@@ -2136,6 +2219,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 #### Backup Strategy: **70/100** ✅ Good Design
 
 **Implemented**:
+
 - ✅ **Backup configuration table** (backup_configurations)
 - ✅ **Backup execution logs** (backup_logs)
 - ✅ **Automated scheduling** (next_backup_at field)
@@ -2143,6 +2227,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 - ✅ **Encryption support** (encryption_enabled flag)
 
 **Database Schema** (migration 004, lines 301-319):
+
 ```sql
 CREATE TABLE backup_configurations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -2166,6 +2251,7 @@ CREATE TABLE backup_configurations (
 ```
 
 **Backup Function** (migration 004, lines 891-941):
+
 ```sql
 CREATE OR REPLACE FUNCTION execute_backup(config_id UUID)
 RETURNS UUID AS $$
@@ -2201,6 +2287,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 **Critical Gaps**:
+
 - 🔴 **NO ACTUAL BACKUP EXECUTION** - Function only logs, doesn't backup
 - 🔴 **NO BACKUP TESTING** - No validation that backups work
 - ❌ **NO AUTOMATIC BACKUP TRIGGER** - No cron job or scheduler
@@ -2212,6 +2299,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 #### Backup Execution: **40/100** 🔴 Critical Gap
 
 **Required Implementation**:
+
 ```typescript
 // lib/backup/backup-service.ts
 import { exec } from 'child_process'
@@ -2279,7 +2367,6 @@ export class BackupService {
 
       console.log(`Backup completed: ${storageUrl}`)
       return storageUrl
-
     } catch (error) {
       console.error('Backup failed:', error)
 
@@ -2373,6 +2460,7 @@ export class BackupService {
 ```
 
 **Scheduled Backup Job** (with BullMQ):
+
 ```typescript
 // lib/jobs/backup-worker.ts
 import { Worker } from 'bullmq'
@@ -2380,7 +2468,7 @@ import { BackupService } from '../backup/backup-service'
 
 const backupWorker = new Worker(
   'scheduled-backups',
-  async (job) => {
+  async job => {
     const { configId } = job.data
     const backupService = new BackupService()
 
@@ -2427,11 +2515,13 @@ export async function scheduleBackups() {
 #### Point-in-Time Recovery: **50/100** ⚠️ Limited
 
 **Current State**:
+
 - ⚠️ **Supabase supports PITR** (point-in-time recovery) but not configured
 - ❌ **No documented recovery procedures**
 - ❌ **No recovery testing**
 
 **Recommendations**:
+
 ```typescript
 // lib/backup/restore-service.ts
 export class RestoreService {
@@ -2487,19 +2577,16 @@ export class RestoreService {
       const restoredRows = await this.executeRestore(backupFile, targetOrganizationId, options)
 
       // 7. Log restore operation
-      await supabase
-        .from('restore_logs')
-        .insert({
-          backup_id: backupId,
-          target_organization_id: targetOrganizationId,
-          restored_rows: restoredRows,
-          restore_options: options,
-          restored_at: new Date().toISOString(),
-        })
+      await supabase.from('restore_logs').insert({
+        backup_id: backupId,
+        target_organization_id: targetOrganizationId,
+        restored_rows: restoredRows,
+        restore_options: options,
+        restored_at: new Date().toISOString(),
+      })
 
       console.log(`Restore completed: ${restoredRows} rows restored`)
       return { success: true, restoredRows }
-
     } catch (error) {
       console.error('Restore failed:', error)
       throw error
@@ -2550,18 +2637,18 @@ export class RestoreService {
 #### Disaster Recovery Testing: **30/100** 🔴 Critical Gap
 
 **Current State**:
+
 - ✅ **DR configuration table** exists (disaster_recovery_configs)
 - ✅ **DR test logging** exists (disaster_recovery_tests)
 - ❌ **NO ACTUAL DR TESTING** has been performed
 - ❌ **NO AUTOMATED DR TESTS**
 
 **Required DR Testing Framework**:
+
 ```typescript
 // lib/backup/dr-test-service.ts
 export class DRTestService {
-  async runDisasterRecoveryTest(
-    drConfigId: string
-  ): Promise<{
+  async runDisasterRecoveryTest(drConfigId: string): Promise<{
     success: boolean
     rtoAchieved: number // hours
     rpoAchieved: number // hours
@@ -2652,26 +2739,24 @@ export class DRTestService {
       await this.cleanupTestDatabase(testDb)
 
       // 7. Log test results
-      await supabase
-        .from('disaster_recovery_tests')
-        .insert({
-          organization_id: config.organization_id,
-          dr_config_id: drConfigId,
-          test_type: 'automated',
-          test_scenario: 'complete_database_failure',
-          status: issues.length === 0 ? 'passed' : 'failed',
-          rto_achieved_hours: Math.round(rtoAchieved * 10) / 10,
-          rpo_achieved_hours: Math.round(rpoAchieved * 10) / 10,
-          data_integrity_verified: integrityCheck.valid,
-          issues_found: issues,
-          recommendations: recommendations,
-          test_results: {
-            restoreTime: rtoAchieved,
-            dataLoss: rpoAchieved,
-            rowsRestored: restoreResult.restoredRows,
-          },
-          completed_at: new Date().toISOString(),
-        })
+      await supabase.from('disaster_recovery_tests').insert({
+        organization_id: config.organization_id,
+        dr_config_id: drConfigId,
+        test_type: 'automated',
+        test_scenario: 'complete_database_failure',
+        status: issues.length === 0 ? 'passed' : 'failed',
+        rto_achieved_hours: Math.round(rtoAchieved * 10) / 10,
+        rpo_achieved_hours: Math.round(rpoAchieved * 10) / 10,
+        data_integrity_verified: integrityCheck.valid,
+        issues_found: issues,
+        recommendations: recommendations,
+        test_results: {
+          restoreTime: rtoAchieved,
+          dataLoss: rpoAchieved,
+          rowsRestored: restoreResult.restoredRows,
+        },
+        completed_at: new Date().toISOString(),
+      })
 
       return {
         success: issues.length === 0,
@@ -2680,21 +2765,18 @@ export class DRTestService {
         issues,
         recommendations,
       }
-
     } catch (error) {
       console.error('DR test failed:', error)
 
-      await supabase
-        .from('disaster_recovery_tests')
-        .insert({
-          organization_id: config.organization_id,
-          dr_config_id: drConfigId,
-          test_type: 'automated',
-          test_scenario: 'complete_database_failure',
-          status: 'failed',
-          issues_found: [`Test execution failed: ${error.message}`],
-          completed_at: new Date().toISOString(),
-        })
+      await supabase.from('disaster_recovery_tests').insert({
+        organization_id: config.organization_id,
+        dr_config_id: drConfigId,
+        test_type: 'automated',
+        test_scenario: 'complete_database_failure',
+        status: 'failed',
+        issues_found: [`Test execution failed: ${error.message}`],
+        completed_at: new Date().toISOString(),
+      })
 
       throw error
     }
@@ -2707,7 +2789,9 @@ export class DRTestService {
     const errors: string[] = []
 
     // Check foreign key constraints
-    const fkCheck = await execAsync(`psql -d ${testDb} -c "SELECT COUNT(*) FROM check_fk_constraints()"`)
+    const fkCheck = await execAsync(
+      `psql -d ${testDb} -c "SELECT COUNT(*) FROM check_fk_constraints()"`
+    )
 
     // Check data completeness
     const conversationCount = await this.getTableCount(testDb, 'conversations', organizationId)
@@ -2762,13 +2846,13 @@ export async function scheduleDRTests() {
 
 ### Backup & Recovery Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Backup Strategy | 70/100 | ✅ Good | P2 - Enhance |
-| Backup Execution | 40/100 | 🔴 Critical | P0 - Implement |
-| PITR Support | 50/100 | ⚠️ Limited | P1 - Configure |
-| DR Testing | 30/100 | 🔴 Critical | P0 - Immediate |
-| Restore Procedures | 50/100 | ⚠️ Limited | P1 - Document |
+| Category           | Score  | Status      | Priority       |
+| ------------------ | ------ | ----------- | -------------- |
+| Backup Strategy    | 70/100 | ✅ Good     | P2 - Enhance   |
+| Backup Execution   | 40/100 | 🔴 Critical | P0 - Implement |
+| PITR Support       | 50/100 | ⚠️ Limited  | P1 - Configure |
+| DR Testing         | 30/100 | 🔴 Critical | P0 - Immediate |
+| Restore Procedures | 50/100 | ⚠️ Limited  | P1 - Document  |
 
 **Overall**: **60/100** - Infrastructure exists, execution missing
 
@@ -2783,6 +2867,7 @@ export async function scheduleDRTests() {
 #### Application Logging: **75/100** ✅ Good
 
 **Implemented**:
+
 - ✅ **Centralized error logging** (`error_logs` table)
 - ✅ **Webhook logging** (`webhook_events` table)
 - ✅ **Performance metrics** (`performance_metrics` table)
@@ -2790,6 +2875,7 @@ export async function scheduleDRTests() {
 - ✅ **Monitoring service** (`monitoring.ts`)
 
 **Good Implementation** (monitoring.ts):
+
 ```typescript
 async logError(error: ErrorEvent): Promise<void> {
   try {
@@ -2817,12 +2903,14 @@ async logError(error: ErrorEvent): Promise<void> {
 ```
 
 **Gaps**:
+
 - ⚠️ **No structured logging library** (Winston, Pino)
 - ⚠️ **Console.log still used** in many places
 - ❌ **No log aggregation** (Datadog, Logtail)
 - ⚠️ **Log retention not enforced**
 
 **Recommendations**:
+
 ```typescript
 // RECOMMENDED: Structured logging with Pino
 import pino from 'pino'
@@ -2830,7 +2918,7 @@ import pino from 'pino'
 export const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
   formatters: {
-    level: (label) => {
+    level: label => {
       return { level: label }
     },
   },
@@ -2841,12 +2929,15 @@ export const logger = pino({
   },
   timestamp: pino.stdTimeFunctions.isoTime,
   // Send to external logging service
-  transport: process.env.NODE_ENV === 'production' ? {
-    target: 'pino-logtail',
-    options: {
-      sourceToken: process.env.LOGTAIL_TOKEN,
-    },
-  } : undefined,
+  transport:
+    process.env.NODE_ENV === 'production'
+      ? {
+          target: 'pino-logtail',
+          options: {
+            sourceToken: process.env.LOGTAIL_TOKEN,
+          },
+        }
+      : undefined,
 })
 
 // Usage
@@ -2860,6 +2951,7 @@ logger.warn({ metric: 'response_time', value: 5000 }, 'Slow API response')
 #### Error Tracking: **80/100** ✅ Very Good
 
 **Implemented**:
+
 - ✅ **Error logging to database**
 - ✅ **Error severity classification**
 - ✅ **Error metadata capture**
@@ -2867,6 +2959,7 @@ logger.warn({ metric: 'response_time', value: 5000 }, 'Slow API response')
 - ⚠️ **Sentry mentioned** but integration incomplete
 
 **Sentry Integration** (monitoring.ts:332):
+
 ```typescript
 if (process.env.SENTRY_DSN) {
   console.error('CRITICAL ALERT:', alert) // ❌ Just logs, doesn't send to Sentry
@@ -2874,6 +2967,7 @@ if (process.env.SENTRY_DSN) {
 ```
 
 **Complete Sentry Integration**:
+
 ```typescript
 // lib/monitoring/sentry.ts
 import * as Sentry from '@sentry/nextjs'
@@ -2882,10 +2976,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.VERCEL_ENV || 'development',
   tracesSampleRate: 1.0,
-  integrations: [
-    new Sentry.BrowserTracing(),
-    new Sentry.Integrations.Http({ tracing: true }),
-  ],
+  integrations: [new Sentry.BrowserTracing(), new Sentry.Integrations.Http({ tracing: true })],
   beforeSend(event, hint) {
     // Filter out noisy errors
     if (event.exception?.values?.some(v => v.type === 'NetworkError')) {
@@ -2918,12 +3009,14 @@ export async function logError(error: ErrorEvent): Promise<void> {
 #### Performance Monitoring: **65/100** ⚠️ Basic
 
 **Implemented**:
+
 - ✅ **Performance metrics logging** (`performance_metrics` table)
 - ✅ **Response time tracking**
 - ✅ **Slow response alerts** (>5s threshold)
 - ⚠️ **Basic metrics only** (no distributed tracing)
 
 **Current Implementation** (monitoring.ts:84):
+
 ```typescript
 async logPerformance(metric: PerformanceMetric): Promise<void> {
   await supabase.from('performance_metrics').insert({
@@ -2947,6 +3040,7 @@ async logPerformance(metric: PerformanceMetric): Promise<void> {
 ```
 
 **Missing Advanced Monitoring**:
+
 ```typescript
 // RECOMMENDED: APM with OpenTelemetry
 import { trace } from '@opentelemetry/api'
@@ -2995,12 +3089,14 @@ export async function POST(request: NextRequest) {
 #### Business Metrics: **75/100** ✅ Good
 
 **Implemented**:
+
 - ✅ **Subscription metrics** (MRR, ARR tracking)
 - ✅ **Usage analytics** (overage tracking)
 - ✅ **Invoice analytics** (payment success rates)
 - ✅ **Daily/monthly aggregations** (comprehensive schema)
 
 **Good Analytics Schema** (migration 004):
+
 ```sql
 CREATE TABLE daily_analytics_summary (
   organization_id UUID NOT NULL,
@@ -3029,49 +3125,45 @@ CREATE TABLE monthly_analytics_summary (
 ```
 
 **Missing Real-time Dashboards**:
+
 ```typescript
 // RECOMMENDED: Real-time metrics API
 export async function GET(request: NextRequest) {
   const orgId = request.nextUrl.searchParams.get('organizationId')
 
-  const [
-    activeConversations,
-    todayMessages,
-    avgResponseTime,
-    currentOnlineAgents,
-    todayRevenue,
-  ] = await Promise.all([
-    // Active conversations right now
-    supabase
-      .from('conversations')
-      .select('id', { count: 'exact', head: true })
-      .eq('organization_id', orgId)
-      .eq('status', 'open'),
+  const [activeConversations, todayMessages, avgResponseTime, currentOnlineAgents, todayRevenue] =
+    await Promise.all([
+      // Active conversations right now
+      supabase
+        .from('conversations')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', orgId)
+        .eq('status', 'open'),
 
-    // Messages sent today
-    supabase
-      .from('messages')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', new Date().toISOString().split('T')[0]),
+      // Messages sent today
+      supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', new Date().toISOString().split('T')[0]),
 
-    // Average response time (last hour)
-    supabase.rpc('calculate_avg_response_time', { org_id: orgId, hours: 1 }),
+      // Average response time (last hour)
+      supabase.rpc('calculate_avg_response_time', { org_id: orgId, hours: 1 }),
 
-    // Online agents
-    supabase
-      .from('profiles')
-      .select('id', { count: 'exact', head: true })
-      .eq('organization_id', orgId)
-      .gte('last_seen_at', new Date(Date.now() - 5 * 60 * 1000).toISOString()),
+      // Online agents
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', orgId)
+        .gte('last_seen_at', new Date(Date.now() - 5 * 60 * 1000).toISOString()),
 
-    // Today's revenue
-    supabase
-      .from('billing_events')
-      .select('amount_cents')
-      .eq('organization_id', orgId)
-      .eq('event_type', 'payment_succeeded')
-      .gte('created_at', new Date().toISOString().split('T')[0]),
-  ])
+      // Today's revenue
+      supabase
+        .from('billing_events')
+        .select('amount_cents')
+        .eq('organization_id', orgId)
+        .eq('event_type', 'payment_succeeded')
+        .gte('created_at', new Date().toISOString().split('T')[0]),
+    ])
 
   return NextResponse.json({
     activeConversations: activeConversations.count || 0,
@@ -3089,12 +3181,14 @@ export async function GET(request: NextRequest) {
 #### Alert Configuration: **70/100** ✅ Good
 
 **Implemented**:
+
 - ✅ **System alerts table** (`system_alerts`)
 - ✅ **Alert deduplication** (prevents spam)
 - ✅ **Alert severity levels**
 - ✅ **External notification support** (Slack webhook)
 
 **Good Implementation** (monitoring.ts:124):
+
 ```typescript
 async createAlert(alert: SystemAlert): Promise<void> {
   // Check if similar alert was created recently (avoid spam)
@@ -3132,6 +3226,7 @@ async createAlert(alert: SystemAlert): Promise<void> {
 ```
 
 **Missing Alert Routing**:
+
 ```typescript
 // RECOMMENDED: Alert routing configuration
 interface AlertRoute {
@@ -3157,9 +3252,7 @@ const alertRoutes: AlertRoute[] = [
   {
     alertType: 'slow_response',
     severity: 'warning',
-    channels: [
-      { type: 'slack', destination: '#alerts-performance' },
-    ],
+    channels: [{ type: 'slack', destination: '#alerts-performance' }],
   },
   {
     alertType: 'payment_failed',
@@ -3188,13 +3281,13 @@ async function routeAlert(alert: SystemAlert): Promise<void> {
 
 ### Monitoring & Observability Summary
 
-| Category | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Application Logging | 75/100 | ✅ Good | P2 - Enhance |
-| Error Tracking | 80/100 | ✅ Very Good | P2 - Complete Sentry |
-| Performance Monitoring | 65/100 | ⚠️ Basic | P1 - Add APM |
-| Business Metrics | 75/100 | ✅ Good | P2 - Real-time dashboard |
-| Alert Configuration | 70/100 | ✅ Good | P2 - Alert routing |
+| Category               | Score  | Status       | Priority                 |
+| ---------------------- | ------ | ------------ | ------------------------ |
+| Application Logging    | 75/100 | ✅ Good      | P2 - Enhance             |
+| Error Tracking         | 80/100 | ✅ Very Good | P2 - Complete Sentry     |
+| Performance Monitoring | 65/100 | ⚠️ Basic     | P1 - Add APM             |
+| Business Metrics       | 75/100 | ✅ Good      | P2 - Real-time dashboard |
+| Alert Configuration    | 70/100 | ✅ Good      | P2 - Alert routing       |
 
 **Overall**: **70/100** - Good foundation, enhance observability
 
@@ -3205,25 +3298,30 @@ async function routeAlert(alert: SystemAlert): Promise<void> {
 ### Critical Priority (P0) - Week 1
 
 **1. Webhook Idempotency Implementation**
+
 ```typescript
 // Required changes to webhook-processor.ts
 - Add event_id uniqueness check before processing
 - Wrap all webhook operations in database transactions
 - Implement rollback on failure
 ```
+
 **Estimated Effort**: 2-3 days
 **Risk if not done**: Duplicate billing operations, data corruption
 
 **2. Job Queue System Deployment**
+
 ```bash
 # Deploy BullMQ with Redis or Inngest
 npm install bullmq ioredis
 # Create worker processes for webhook, email, analytics
 ```
+
 **Estimated Effort**: 3-4 days
 **Risk if not done**: Webhook timeouts, poor scalability
 
 **3. Backup Execution Implementation**
+
 ```typescript
 // Implement actual backup execution in BackupService
 - pg_dump integration
@@ -3231,6 +3329,7 @@ npm install bullmq ioredis
 - Upload to storage
 - Schedule automated backups
 ```
+
 **Estimated Effort**: 4-5 days
 **Risk if not done**: No disaster recovery capability
 
@@ -3239,21 +3338,25 @@ npm install bullmq ioredis
 ### High Priority (P1) - Month 1
 
 **4. Transaction Safety Everywhere**
+
 - Wrap multi-table operations in transactions
 - Add compensation logic for Stripe failures
 - Implement retry with exponential backoff
 
 **5. Circuit Breakers for External Services**
+
 - Stripe API circuit breaker
 - WhatsApp API circuit breaker
 - Graceful degradation fallbacks
 
 **6. Database Optimization**
+
 - Add missing indexes
 - Configure statement timeouts
 - Implement slow query logging
 
 **7. DR Testing Framework**
+
 - Automated DR test execution
 - Monthly DR test schedule
 - Restore procedure documentation
@@ -3263,16 +3366,19 @@ npm install bullmq ioredis
 ### Important Priority (P2) - Month 2
 
 **8. Stripe Tax Integration**
+
 - Implement Stripe Tax calculation
 - Tax ID validation
 - Multi-region tax compliance
 
 **9. Advanced Observability**
+
 - OpenTelemetry integration
 - Distributed tracing
 - APM dashboard
 
 **10. Churn Analytics**
+
 - Churn prediction model
 - Retention metrics
 - Customer health scoring
@@ -3282,16 +3388,19 @@ npm install bullmq ioredis
 ### Nice-to-Have (P3) - Month 3
 
 **11. Query Optimization**
+
 - N+1 query fixes
 - Covering indexes
 - Query plan analysis
 
 **12. Alert Routing**
+
 - PagerDuty integration
 - Alert routing rules
 - Escalation policies
 
 **13. Performance Testing**
+
 - Load testing with k6
 - Stress testing
 - Capacity planning
@@ -3303,12 +3412,14 @@ npm install bullmq ioredis
 **Grade**: **B** - Good foundation with critical gaps
 
 ### Strengths
+
 - ✅ Comprehensive Stripe integration (85%)
 - ✅ Strong database schema with RLS
 - ✅ Good monitoring infrastructure
 - ✅ Well-designed backup system (design only)
 
 ### Critical Weaknesses
+
 - 🔴 No webhook idempotency (data corruption risk)
 - 🔴 No job queue system (scalability blocker)
 - 🔴 Missing transaction management (data integrity risk)
@@ -3316,6 +3427,7 @@ npm install bullmq ioredis
 - 🔴 Poor fault tolerance (no circuit breakers, limited retries)
 
 ### Strategic Gaps
+
 - ⚠️ No Stripe Tax (tax compliance risk)
 - ⚠️ Limited observability (no distributed tracing)
 - ⚠️ Basic analytics (no churn prediction)
@@ -3335,6 +3447,7 @@ ADSapp has a **solid backend foundation** with comprehensive Stripe integration 
 **Recommendation**: Focus on P0 items (idempotency, job queue, backup execution) before production launch. The platform has 76/100 backend maturity, which is good but not production-ready for enterprise customers without addressing critical gaps.
 
 **Timeline to Production-Ready**:
+
 - **Week 1**: P0 fixes (idempotency + job queue + backup) = **80/100**
 - **Month 1**: P1 improvements (transactions + circuit breakers + DR) = **85/100**
 - **Month 2**: P2 enhancements (observability + analytics) = **90/100**

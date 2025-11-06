@@ -6,10 +6,10 @@
  * Implements OAuth 2.0 with PKCE and OpenID Connect support
  */
 
-import { createClient } from '@/lib/supabase/server';
-import { Issuer, generators, TokenSet, Client } from 'openid-client';
-import * as jose from 'jose';
-import * as crypto from 'crypto';
+import { createClient } from '@/lib/supabase/server'
+import { Issuer, generators, TokenSet, Client } from 'openid-client'
+import * as jose from 'jose'
+import * as crypto from 'crypto'
 import {
   OAuthConfig,
   OAuthTokenResponse,
@@ -17,15 +17,15 @@ import {
   SSOConfiguration,
   SSOError,
   PKCEConfig,
-} from './types';
+} from './types'
 
 export class OAuthHandler {
-  private config: SSOConfiguration;
-  private oauthConfig: OAuthConfig;
-  private client?: Client;
+  private config: SSOConfiguration
+  private oauthConfig: OAuthConfig
+  private client?: Client
 
   constructor(config: SSOConfiguration) {
-    this.config = config;
+    this.config = config
     this.oauthConfig = {
       clientId: config.oauth_client_id!,
       clientSecret: config.oauth_client_secret!,
@@ -35,7 +35,7 @@ export class OAuthHandler {
       jwksUrl: config.oauth_jwks_url,
       scopes: config.oauth_scopes || ['openid', 'email', 'profile'],
       pkceEnabled: config.oauth_pkce_enabled ?? true,
-    };
+    }
   }
 
   /**
@@ -43,20 +43,20 @@ export class OAuthHandler {
    */
   private async initializeClient(): Promise<void> {
     if (this.client || !this.oauthConfig.jwksUrl) {
-      return;
+      return
     }
 
     try {
-      const issuer = await Issuer.discover(this.oauthConfig.authorizationUrl);
+      const issuer = await Issuer.discover(this.oauthConfig.authorizationUrl)
       this.client = new issuer.Client({
         client_id: this.oauthConfig.clientId,
         client_secret: this.oauthConfig.clientSecret,
         redirect_uris: [this.getRedirectUri()],
         response_types: ['code'],
-      });
+      })
     } catch (error) {
       // Fall back to manual OAuth flow
-      console.warn('OIDC discovery failed, using manual OAuth flow');
+      console.warn('OIDC discovery failed, using manual OAuth flow')
     }
   }
 
@@ -66,21 +66,21 @@ export class OAuthHandler {
   async generateAuthorizationUrl(
     state?: string
   ): Promise<{ url: string; state: string; codeVerifier?: string }> {
-    await this.initializeClient();
+    await this.initializeClient()
 
-    const stateParam = state || this.generateState();
-    let codeVerifier: string | undefined;
-    let codeChallenge: string | undefined;
+    const stateParam = state || this.generateState()
+    let codeVerifier: string | undefined
+    let codeChallenge: string | undefined
 
     // Generate PKCE parameters if enabled
     if (this.oauthConfig.pkceEnabled) {
-      const pkce = this.generatePKCE();
-      codeVerifier = pkce.codeVerifier;
-      codeChallenge = pkce.codeChallenge;
+      const pkce = this.generatePKCE()
+      codeVerifier = pkce.codeVerifier
+      codeChallenge = pkce.codeChallenge
     }
 
     // Store state and PKCE parameters
-    await this.storeOAuthState(stateParam, codeVerifier, codeChallenge);
+    await this.storeOAuthState(stateParam, codeVerifier, codeChallenge)
 
     // Build authorization URL
     const params = new URLSearchParams({
@@ -89,16 +89,16 @@ export class OAuthHandler {
       response_type: 'code',
       scope: this.oauthConfig.scopes.join(' '),
       state: stateParam,
-    });
+    })
 
     if (codeChallenge) {
-      params.append('code_challenge', codeChallenge);
-      params.append('code_challenge_method', 'S256');
+      params.append('code_challenge', codeChallenge)
+      params.append('code_challenge_method', 'S256')
     }
 
-    const url = `${this.oauthConfig.authorizationUrl}?${params.toString()}`;
+    const url = `${this.oauthConfig.authorizationUrl}?${params.toString()}`
 
-    return { url, state: stateParam, codeVerifier };
+    return { url, state: stateParam, codeVerifier }
   }
 
   /**
@@ -109,37 +109,31 @@ export class OAuthHandler {
     state: string
   ): Promise<{ tokens: OAuthTokenResponse; userInfo: OIDCUserInfo }> {
     // Verify state parameter
-    const storedState = await this.verifyAndConsumeState(state);
+    const storedState = await this.verifyAndConsumeState(state)
 
     if (!storedState) {
-      throw this.createSSOError(
-        'INVALID_OAUTH_STATE',
-        'Invalid or expired state parameter'
-      );
+      throw this.createSSOError('INVALID_OAUTH_STATE', 'Invalid or expired state parameter')
     }
 
     try {
       // Exchange code for tokens
-      const tokens = await this.exchangeCodeForTokens(
-        code,
-        storedState.codeVerifier
-      );
+      const tokens = await this.exchangeCodeForTokens(code, storedState.codeVerifier)
 
       // Validate ID token if present (OIDC)
       if (tokens.id_token) {
-        await this.validateIdToken(tokens.id_token);
+        await this.validateIdToken(tokens.id_token)
       }
 
       // Fetch user info
-      const userInfo = await this.fetchUserInfo(tokens.access_token);
+      const userInfo = await this.fetchUserInfo(tokens.access_token)
 
-      return { tokens, userInfo };
+      return { tokens, userInfo }
     } catch (error) {
       throw this.createSSOError(
         'TOKEN_EXCHANGE_FAILED',
         'Failed to exchange authorization code for tokens',
         { error: error instanceof Error ? error.message : String(error) }
-      );
+      )
     }
   }
 
@@ -153,7 +147,7 @@ export class OAuthHandler {
         refresh_token: refreshToken,
         client_id: this.oauthConfig.clientId,
         client_secret: this.oauthConfig.clientSecret,
-      });
+      })
 
       const response = await fetch(this.oauthConfig.tokenUrl, {
         method: 'POST',
@@ -161,20 +155,18 @@ export class OAuthHandler {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: params.toString(),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`Token refresh failed: ${response.statusText}`);
+        throw new Error(`Token refresh failed: ${response.statusText}`)
       }
 
-      const tokens = (await response.json()) as OAuthTokenResponse;
-      return tokens;
+      const tokens = (await response.json()) as OAuthTokenResponse
+      return tokens
     } catch (error) {
-      throw this.createSSOError(
-        'TOKEN_EXCHANGE_FAILED',
-        'Failed to refresh access token',
-        { error: error instanceof Error ? error.message : String(error) }
-      );
+      throw this.createSSOError('TOKEN_EXCHANGE_FAILED', 'Failed to refresh access token', {
+        error: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -189,13 +181,10 @@ export class OAuthHandler {
         token,
         client_id: this.oauthConfig.clientId,
         client_secret: this.oauthConfig.clientSecret,
-      });
+      })
 
       // Example revocation endpoint (provider-specific)
-      const revocationUrl = this.oauthConfig.tokenUrl.replace(
-        '/token',
-        '/revoke'
-      );
+      const revocationUrl = this.oauthConfig.tokenUrl.replace('/token', '/revoke')
 
       await fetch(revocationUrl, {
         method: 'POST',
@@ -203,33 +192,33 @@ export class OAuthHandler {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: params.toString(),
-      });
+      })
     } catch (error) {
       // Token revocation is best-effort
-      console.error('Token revocation failed:', error);
+      console.error('Token revocation failed:', error)
     }
   }
 
   // Private helper methods
 
   private generateState(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString('hex')
   }
 
   private generatePKCE(): PKCEConfig {
-    const codeVerifier = generators.codeVerifier();
-    const codeChallenge = generators.codeChallenge(codeVerifier);
+    const codeVerifier = generators.codeVerifier()
+    const codeChallenge = generators.codeChallenge(codeVerifier)
 
     return {
       codeVerifier,
       codeChallenge,
       codeChallengeMethod: 'S256',
-    };
+    }
   }
 
   private getRedirectUri(): string {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    return `${baseUrl}/api/auth/sso/oauth/callback`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    return `${baseUrl}/api/auth/sso/oauth/callback`
   }
 
   private async storeOAuthState(
@@ -237,8 +226,8 @@ export class OAuthHandler {
     codeVerifier?: string,
     codeChallenge?: string
   ): Promise<void> {
-    const supabase = await createClient();
-    const nonce = crypto.randomBytes(32).toString('hex');
+    const supabase = await createClient()
+    const nonce = crypto.randomBytes(32).toString('hex')
 
     await supabase.from('sso_oauth_states').insert({
       state,
@@ -249,13 +238,11 @@ export class OAuthHandler {
       redirect_uri: this.getRedirectUri(),
       nonce,
       expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-    });
+    })
   }
 
-  private async verifyAndConsumeState(
-    state: string
-  ): Promise<{ codeVerifier?: string } | null> {
-    const supabase = await createClient();
+  private async verifyAndConsumeState(state: string): Promise<{ codeVerifier?: string } | null> {
+    const supabase = await createClient()
 
     // Fetch and mark as consumed in one transaction
     const { data, error } = await supabase
@@ -263,26 +250,26 @@ export class OAuthHandler {
       .select('*')
       .eq('state', state)
       .eq('consumed', false)
-      .single();
+      .single()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
     // Check expiration
     if (new Date(data.expires_at) < new Date()) {
-      return null;
+      return null
     }
 
     // Mark as consumed
     await supabase
       .from('sso_oauth_states')
       .update({ consumed: true, consumed_at: new Date().toISOString() })
-      .eq('id', data.id);
+      .eq('id', data.id)
 
     return {
       codeVerifier: data.code_verifier || undefined,
-    };
+    }
   }
 
   private async exchangeCodeForTokens(
@@ -295,10 +282,10 @@ export class OAuthHandler {
       redirect_uri: this.getRedirectUri(),
       client_id: this.oauthConfig.clientId,
       client_secret: this.oauthConfig.clientSecret,
-    });
+    })
 
     if (codeVerifier) {
-      params.append('code_verifier', codeVerifier);
+      params.append('code_verifier', codeVerifier)
     }
 
     const response = await fetch(this.oauthConfig.tokenUrl, {
@@ -308,23 +295,20 @@ export class OAuthHandler {
         Accept: 'application/json',
       },
       body: params.toString(),
-    });
+    })
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Token exchange failed: ${response.status} ${errorText}`);
+      const errorText = await response.text()
+      throw new Error(`Token exchange failed: ${response.status} ${errorText}`)
     }
 
-    const tokens = (await response.json()) as OAuthTokenResponse;
-    return tokens;
+    const tokens = (await response.json()) as OAuthTokenResponse
+    return tokens
   }
 
   private async fetchUserInfo(accessToken: string): Promise<OIDCUserInfo> {
     if (!this.oauthConfig.userInfoUrl) {
-      throw this.createSSOError(
-        'USER_INFO_FETCH_FAILED',
-        'UserInfo URL not configured'
-      );
+      throw this.createSSOError('USER_INFO_FETCH_FAILED', 'UserInfo URL not configured')
     }
 
     const response = await fetch(this.oauthConfig.userInfoUrl, {
@@ -333,57 +317,55 @@ export class OAuthHandler {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`UserInfo fetch failed: ${response.statusText}`);
+      throw new Error(`UserInfo fetch failed: ${response.statusText}`)
     }
 
-    const userInfo = (await response.json()) as OIDCUserInfo;
-    return userInfo;
+    const userInfo = (await response.json()) as OIDCUserInfo
+    return userInfo
   }
 
   private async validateIdToken(idToken: string): Promise<void> {
     try {
       if (!this.oauthConfig.jwksUrl) {
         // Skip validation if JWKS URL not available
-        return;
+        return
       }
 
       // Fetch JWKS
-      const JWKS = jose.createRemoteJWKSet(new URL(this.oauthConfig.jwksUrl));
+      const JWKS = jose.createRemoteJWKSet(new URL(this.oauthConfig.jwksUrl))
 
       // Verify JWT signature
       const { payload } = await jose.jwtVerify(idToken, JWKS, {
         issuer: this.extractIssuerFromAuthUrl(),
         audience: this.oauthConfig.clientId,
-      });
+      })
 
       // Additional validation
-      const now = Math.floor(Date.now() / 1000);
+      const now = Math.floor(Date.now() / 1000)
 
       if (payload.exp && payload.exp < now) {
-        throw new Error('ID token has expired');
+        throw new Error('ID token has expired')
       }
 
       if (payload.nbf && payload.nbf > now) {
-        throw new Error('ID token not yet valid');
+        throw new Error('ID token not yet valid')
       }
     } catch (error) {
-      throw this.createSSOError(
-        'INVALID_CREDENTIALS',
-        'ID token validation failed',
-        { error: error instanceof Error ? error.message : String(error) }
-      );
+      throw this.createSSOError('INVALID_CREDENTIALS', 'ID token validation failed', {
+        error: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
   private extractIssuerFromAuthUrl(): string {
     try {
-      const url = new URL(this.oauthConfig.authorizationUrl);
-      return url.origin;
+      const url = new URL(this.oauthConfig.authorizationUrl)
+      return url.origin
     } catch {
-      return this.oauthConfig.authorizationUrl;
+      return this.oauthConfig.authorizationUrl
     }
   }
 
@@ -396,32 +378,30 @@ export class OAuthHandler {
       code: code as any,
       message,
       details,
-    };
+    }
   }
 }
 
 /**
  * Initialize OAuth handler from configuration
  */
-export async function createOAuthHandler(
-  configId: string
-): Promise<OAuthHandler> {
-  const supabase = await createClient();
+export async function createOAuthHandler(configId: string): Promise<OAuthHandler> {
+  const supabase = await createClient()
 
   const { data: config, error } = await supabase
     .from('sso_configurations')
     .select('*')
     .eq('id', configId)
     .in('provider_type', ['oauth', 'oidc'])
-    .single();
+    .single()
 
   if (error || !config) {
-    throw new Error('OAuth configuration not found');
+    throw new Error('OAuth configuration not found')
   }
 
   if (!config.enabled) {
-    throw new Error('OAuth configuration is disabled');
+    throw new Error('OAuth configuration is disabled')
   }
 
-  return new OAuthHandler(config);
+  return new OAuthHandler(config)
 }

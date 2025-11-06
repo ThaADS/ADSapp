@@ -2,13 +2,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -262,13 +256,25 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
   const getCardBrandIcon = (brand?: string) => {
     switch (brand?.toLowerCase()) {
       case 'visa':
-        return <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">VISA</div>
+        return (
+          <div className='flex h-5 w-8 items-center justify-center rounded bg-blue-600 text-xs font-bold text-white'>
+            VISA
+          </div>
+        )
       case 'mastercard':
-        return <div className="w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">MC</div>
+        return (
+          <div className='flex h-5 w-8 items-center justify-center rounded bg-red-600 text-xs font-bold text-white'>
+            MC
+          </div>
+        )
       case 'amex':
-        return <div className="w-8 h-5 bg-green-600 rounded text-white text-xs flex items-center justify-center font-bold">AMEX</div>
+        return (
+          <div className='flex h-5 w-8 items-center justify-center rounded bg-green-600 text-xs font-bold text-white'>
+            AMEX
+          </div>
+        )
       default:
-        return <CreditCard className="h-5 w-5 text-gray-500" />
+        return <CreditCard className='h-5 w-5 text-gray-500' />
     }
   }
 
@@ -304,21 +310,21 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <CreditCard className='h-5 w-5' />
             Payment Methods
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="animate-pulse space-y-4">
+          <div className='animate-pulse space-y-4'>
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
-                <div className="w-8 h-5 bg-gray-200 rounded"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+              <div key={i} className='flex items-center gap-4 rounded-lg border p-4'>
+                <div className='h-5 w-8 rounded bg-gray-200'></div>
+                <div className='flex-1'>
+                  <div className='mb-2 h-4 w-32 rounded bg-gray-200'></div>
+                  <div className='h-3 w-20 rounded bg-gray-200'></div>
                 </div>
-                <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                <div className='h-8 w-16 rounded bg-gray-200'></div>
               </div>
             ))}
           </div>
@@ -330,21 +336,19 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className='flex items-center justify-between'>
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
+            <CardTitle className='flex items-center gap-2'>
+              <CreditCard className='h-5 w-5' />
               Payment Methods
             </CardTitle>
-            <CardDescription>
-              Manage your payment methods and billing preferences
-            </CardDescription>
+            <CardDescription>Manage your payment methods and billing preferences</CardDescription>
           </div>
           <Button onClick={createSetupIntent} disabled={actionLoading}>
             {actionLoading ? (
-              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
             ) : (
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className='mr-2 h-4 w-4' />
             )}
             Add Payment Method
           </Button>
@@ -352,74 +356,70 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       </CardHeader>
       <CardContent>
         {paymentMethods.length === 0 ? (
-          <div className="text-center py-8">
-            <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No payment methods</h3>
-            <p className="text-muted-foreground mb-4">
+          <div className='py-8 text-center'>
+            <CreditCard className='mx-auto mb-4 h-12 w-12 text-gray-400' />
+            <h3 className='mb-2 text-lg font-semibold'>No payment methods</h3>
+            <p className='text-muted-foreground mb-4'>
               Add a payment method to manage your subscription
             </p>
             <Button onClick={createSetupIntent} disabled={actionLoading}>
               {actionLoading ? (
-                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
               ) : (
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className='mr-2 h-4 w-4' />
               )}
               Add Payment Method
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
-            {paymentMethods.map((method) => (
+          <div className='space-y-4'>
+            {paymentMethods.map(method => (
               <div
                 key={method.id}
-                className={`flex items-center gap-4 p-4 border rounded-lg ${
-                  method.isDefault ? 'ring-2 ring-blue-600 bg-blue-50' : ''
+                className={`flex items-center gap-4 rounded-lg border p-4 ${
+                  method.isDefault ? 'bg-blue-50 ring-2 ring-blue-600' : ''
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className='flex items-center gap-3'>
                   {getCardBrandIcon(method.brand)}
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        •••• •••• •••• {method.last4}
-                      </span>
+                    <div className='flex items-center gap-2'>
+                      <span className='font-medium'>•••• •••• •••• {method.last4}</span>
                       {method.isDefault && (
-                        <Badge variant="default" className="text-xs">
-                          <Star className="h-3 w-3 mr-1" />
+                        <Badge variant='default' className='text-xs'>
+                          <Star className='mr-1 h-3 w-3' />
                           Default
                         </Badge>
                       )}
                       {isExpiringSoon(method.expiryMonth, method.expiryYear) && (
-                        <Badge variant="destructive" className="text-xs">
-                          <AlertTriangle className="h-3 w-3 mr-1" />
+                        <Badge variant='destructive' className='text-xs'>
+                          <AlertTriangle className='mr-1 h-3 w-3' />
                           Expires Soon
                         </Badge>
                       )}
                       {method.failureCount > 0 && (
-                        <Badge variant="destructive" className="text-xs">
+                        <Badge variant='destructive' className='text-xs'>
                           {method.failureCount} failures
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className='text-muted-foreground flex items-center gap-4 text-sm'>
                       {method.expiryMonth && method.expiryYear && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                        <span className='flex items-center gap-1'>
+                          <Calendar className='h-3 w-3' />
                           Expires {formatExpiryDate(method.expiryMonth, method.expiryYear)}
                         </span>
                       )}
-                      {method.country && (
-                        <span className="uppercase">{method.country}</span>
-                      )}
+                      {method.country && <span className='uppercase'>{method.country}</span>}
                     </div>
                   </div>
                 </div>
 
-                <div className="ml-auto flex items-center gap-2">
+                <div className='ml-auto flex items-center gap-2'>
                   {!method.isDefault && method.isActive && (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant='outline'
+                      size='sm'
                       onClick={() => setDefaultPaymentMethod(method.id)}
                       disabled={actionLoading}
                     >
@@ -428,33 +428,27 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                   )}
 
                   {method.type === 'card' && method.expiryMonth && method.expiryYear && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(method)}
-                    >
-                      <Edit className="h-4 w-4" />
+                    <Button variant='outline' size='sm' onClick={() => openEditDialog(method)}>
+                      <Edit className='h-4 w-4' />
                     </Button>
                   )}
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={method.isDefault}
-                      >
-                        <Trash2 className="h-4 w-4" />
+                      <Button variant='outline' size='sm' disabled={method.isDefault}>
+                        <Trash2 className='h-4 w-4' />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Remove Payment Method</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to remove this payment method? This action cannot be undone.
+                          Are you sure you want to remove this payment method? This action cannot be
+                          undone.
                           {method.isDefault && (
-                            <span className="block mt-2 text-yellow-600">
-                              You cannot remove your default payment method. Set another method as default first.
+                            <span className='mt-2 block text-yellow-600'>
+                              You cannot remove your default payment method. Set another method as
+                              default first.
                             </span>
                           )}
                         </AlertDialogDescription>
@@ -464,7 +458,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                         <AlertDialogAction
                           onClick={() => deletePaymentMethod(method.id)}
                           disabled={method.isDefault || actionLoading}
-                          className="bg-red-600 hover:bg-red-700"
+                          className='bg-red-600 hover:bg-red-700'
                         >
                           Remove
                         </AlertDialogAction>
@@ -483,37 +477,34 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Payment Method</DialogTitle>
-            <DialogDescription>
-              Add a new payment method for your subscription
-            </DialogDescription>
+            <DialogDescription>Add a new payment method for your subscription</DialogDescription>
           </DialogHeader>
-          <div className="py-4">
+          <div className='py-4'>
             {setupIntent ? (
-              <div className="text-center">
-                <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <p className="text-sm text-muted-foreground">
-                  Integration with Stripe Elements would go here to collect payment method details securely.
+              <div className='text-center'>
+                <Shield className='mx-auto mb-4 h-12 w-12 text-blue-600' />
+                <p className='text-muted-foreground text-sm'>
+                  Integration with Stripe Elements would go here to collect payment method details
+                  securely.
                 </p>
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600">
+                <div className='mt-4 rounded-lg bg-gray-50 p-4'>
+                  <p className='text-xs text-gray-600'>
                     Setup Intent ID: {setupIntent.setupIntentId}
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8">
-                <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+              <div className='py-8 text-center'>
+                <RefreshCw className='mx-auto mb-4 h-8 w-8 animate-spin' />
                 <p>Setting up payment method...</p>
               </div>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+            <Button variant='outline' onClick={() => setShowAddDialog(false)}>
               Cancel
             </Button>
-            <Button disabled={!setupIntent}>
-              Add Payment Method
-            </Button>
+            <Button disabled={!setupIntent}>Add Payment Method</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -523,23 +514,21 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Payment Method</DialogTitle>
-            <DialogDescription>
-              Update the expiry date for your card
-            </DialogDescription>
+            <DialogDescription>Update the expiry date for your card</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className='space-y-4'>
+            <div className='grid grid-cols-2 gap-4'>
               <div>
-                <Label htmlFor="expiryMonth">Expiry Month</Label>
+                <Label htmlFor='expiryMonth'>Expiry Month</Label>
                 <Select
                   value={editForm.expiryMonth}
-                  onValueChange={(value) => setEditForm({ ...editForm, expiryMonth: value })}
+                  onValueChange={value => setEditForm({ ...editForm, expiryMonth: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Month" />
+                    <SelectValue placeholder='Month' />
                   </SelectTrigger>
                   <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
                       <SelectItem key={month} value={month.toString()}>
                         {month.toString().padStart(2, '0')}
                       </SelectItem>
@@ -548,36 +537,36 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="expiryYear">Expiry Year</Label>
+                <Label htmlFor='expiryYear'>Expiry Year</Label>
                 <Select
                   value={editForm.expiryYear}
-                  onValueChange={(value) => setEditForm({ ...editForm, expiryYear: value })}
+                  onValueChange={value => setEditForm({ ...editForm, expiryYear: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Year" />
+                    <SelectValue placeholder='Year' />
                   </SelectTrigger>
                   <SelectContent>
-                    {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map((year) => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}
-                      </SelectItem>
-                    ))}
+                    {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(
+                      year => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+            <Button variant='outline' onClick={() => setShowEditDialog(false)}>
               Cancel
             </Button>
             <Button
               onClick={updatePaymentMethod}
               disabled={!editForm.expiryMonth || !editForm.expiryYear || actionLoading}
             >
-              {actionLoading ? (
-                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-              ) : null}
+              {actionLoading ? <RefreshCw className='mr-2 h-4 w-4 animate-spin' /> : null}
               Update
             </Button>
           </DialogFooter>

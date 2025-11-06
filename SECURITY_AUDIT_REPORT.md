@@ -10,6 +10,7 @@
 ## Executive Summary
 
 Comprehensive security audit of three new features:
+
 1. Business Hours Storage (Migration 038)
 2. Logo Upload (Migration 039)
 3. Integration Status Endpoints
@@ -31,18 +32,21 @@ Comprehensive security audit of three new features:
 #### ✅ Strengths
 
 **Authentication & Authorization:**
+
 - ✅ Requires user authentication via Supabase
 - ✅ Role-based access control (owner/admin only for PUT)
 - ✅ Organization context validated
 - ✅ Profile lookup prevents unauthorized access
 
 **Input Validation:**
+
 - ✅ Zod schema validation for business hours structure
 - ✅ Type checking for day names and time formats
 - ✅ JSONB validation at database level
 - ✅ Server-side validation before database write
 
 **Data Protection:**
+
 - ✅ Row Level Security (RLS) on organizations table
 - ✅ Tenant isolation enforced
 - ✅ Audit logging for all changes
@@ -51,22 +55,23 @@ Comprehensive security audit of three new features:
 #### ⚠️ Recommendations
 
 **Medium Priority:**
+
 1. **Rate Limiting** - Add rate limiting to prevent abuse
    ```typescript
    // Recommendation: Add rate limiter middleware
-   import rateLimit from 'express-rate-limit';
+   import rateLimit from 'express-rate-limit'
    const limiter = rateLimit({
      windowMs: 15 * 60 * 1000, // 15 minutes
-     max: 100 // limit each IP to 100 requests per windowMs
-   });
+     max: 100, // limit each IP to 100 requests per windowMs
+   })
    ```
 
-**Low Priority:**
-2. **Input Sanitization** - Add HTML/XSS sanitization for string fields
-   ```typescript
-   import DOMPurify from 'isomorphic-dompurify';
-   // Sanitize any text inputs before storage
-   ```
+**Low Priority:** 2. **Input Sanitization** - Add HTML/XSS sanitization for string fields
+
+```typescript
+import DOMPurify from 'isomorphic-dompurify'
+// Sanitize any text inputs before storage
+```
 
 3. **CORS Headers** - Explicitly set CORS headers
    ```typescript
@@ -100,6 +105,7 @@ Comprehensive security audit of three new features:
 #### ✅ Strengths
 
 **File Upload Security:**
+
 - ✅ File type validation (JPEG, PNG, WebP, SVG only)
 - ✅ File size limit enforced (5MB max)
 - ✅ Server-side validation (not just client-side)
@@ -108,12 +114,14 @@ Comprehensive security audit of three new features:
 - ✅ Upsert prevents file accumulation
 
 **Authentication & Authorization:**
+
 - ✅ Authentication required
 - ✅ Owner/admin only (403 for other roles)
 - ✅ Organization context validated
 - ✅ No cross-tenant access possible
 
 **Storage Security:**
+
 - ✅ Public bucket for CDN access (appropriate for logos)
 - ✅ RLS policies on storage.objects table
 - ✅ Organization ID in file path
@@ -122,16 +130,18 @@ Comprehensive security audit of three new features:
 #### ⚠️ Critical Recommendations
 
 **Medium Priority:**
+
 1. **SVG Sanitization** - SVGs can contain XSS vectors
+
    ```typescript
-   import { sanitize } from '@braintree/sanitize-url';
-   import DOMPurify from 'isomorphic-dompurify';
+   import { sanitize } from '@braintree/sanitize-url'
+   import DOMPurify from 'isomorphic-dompurify'
 
    if (file.type === 'image/svg+xml') {
-     const svgContent = await file.text();
+     const svgContent = await file.text()
      const sanitized = DOMPurify.sanitize(svgContent, {
-       USE_PROFILES: { svg: true, svgFilters: true }
-     });
+       USE_PROFILES: { svg: true, svgFilters: true },
+     })
      // Upload sanitized version
    }
    ```
@@ -143,23 +153,23 @@ Comprehensive security audit of three new features:
    }
    ```
 
-**Low Priority:**
-3. **File Signature Validation** - Verify actual file type (magic numbers)
-   ```typescript
-   import fileType from 'file-type';
+**Low Priority:** 3. **File Signature Validation** - Verify actual file type (magic numbers)
 
-   const buffer = Buffer.from(await file.arrayBuffer());
-   const type = await fileType.fromBuffer(buffer);
+```typescript
+import fileType from 'file-type'
 
-   if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
-     throw new Error('Invalid file signature');
-   }
-   ```
+const buffer = Buffer.from(await file.arrayBuffer())
+const type = await fileType.fromBuffer(buffer)
+
+if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
+  throw new Error('Invalid file signature')
+}
+```
 
 4. **Virus Scanning** - Integrate antivirus for uploaded files
    ```typescript
    // Consider ClamAV or cloud-based solution
-   import ClamScan from 'clamscan';
+   import ClamScan from 'clamscan'
    ```
 
 #### Security Checklist
@@ -187,24 +197,28 @@ Comprehensive security audit of three new features:
 #### ✅ Strengths
 
 **Information Disclosure Protection:**
+
 - ✅ No API keys or secrets exposed in responses
 - ✅ Only status information returned
 - ✅ Tenant-scoped checks only
 - ✅ Error messages don't leak sensitive data
 
 **Authentication & Authorization:**
+
 - ✅ Authentication required
 - ✅ Organization context enforced
 - ✅ User must belong to organization
 - ✅ No cross-tenant data access
 
 **External API Security:**
+
 - ✅ Environment variables for credentials
 - ✅ No hardcoded secrets
 - ✅ API keys not logged
 - ✅ Proper error handling for failed checks
 
 **Rate Limiting Built-in:**
+
 - ✅ External API calls are already rate-limited by providers
 - ✅ Parallel execution prevents sequential bottlenecks
 - ✅ Timeout handling prevents hanging
@@ -212,27 +226,26 @@ Comprehensive security audit of three new features:
 #### ⚠️ Recommendations
 
 **Informational:**
+
 1. **Caching** - Cache status results to reduce API calls
+
    ```typescript
    // Redis or in-memory cache
-   const cacheKey = `integration-status:${orgId}`;
-   const cached = await redis.get(cacheKey);
-   if (cached) return JSON.parse(cached);
+   const cacheKey = `integration-status:${orgId}`
+   const cached = await redis.get(cacheKey)
+   if (cached) return JSON.parse(cached)
 
    // ... perform checks ...
 
-   await redis.setex(cacheKey, 60, JSON.stringify(result)); // 60s TTL
+   await redis.setex(cacheKey, 60, JSON.stringify(result)) // 60s TTL
    ```
 
 2. **Webhook Verification** - Verify webhook signatures
+
    ```typescript
    // For Stripe webhooks
-   const signature = headers['stripe-signature'];
-   const event = stripe.webhooks.constructEvent(
-     body,
-     signature,
-     process.env.STRIPE_WEBHOOK_SECRET
-   );
+   const signature = headers['stripe-signature']
+   const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
    ```
 
 3. **Secrets Rotation** - Implement secret rotation policy
@@ -273,6 +286,7 @@ FOR ALL USING (id IN (
 ```
 
 **Audit Result:** ✅ SECURE
+
 - Business hours are part of organizations table
 - Existing RLS policies apply automatically
 - No new security holes introduced
@@ -310,6 +324,7 @@ USING ( /* same as upload */ );
 ```
 
 **Audit Result:** ✅ SECURE
+
 - All CRUD operations covered
 - Tenant isolation enforced at storage level
 - No cross-tenant access possible
@@ -319,6 +334,7 @@ USING ( /* same as upload */ );
 
 **Low Priority:**
 Add bucket-level configuration validation:
+
 ```sql
 -- Ensure bucket settings are correct
 SELECT
@@ -406,15 +422,18 @@ WHERE id = 'organization-logos';
 ### Automated Security Scans
 
 **Tool:** npm audit
+
 ```bash
 npm audit
 
 # Results:
 found 0 vulnerabilities
 ```
+
 ✅ PASS
 
 **Tool:** Snyk (recommended)
+
 ```bash
 snyk test
 
@@ -427,26 +446,31 @@ snyk test
 ### Manual Penetration Testing
 
 **SQL Injection Testing:** ✅ PASS
+
 - Tested with malicious inputs
 - Parameterized queries prevent injection
 - Zod validation blocks malformed data
 
 **XSS Testing:** ⚠️ NEEDS SVG SANITIZATION
+
 - JSON responses safe from XSS
 - **SVG uploads need sanitization**
 - React auto-escapes output
 
 **CSRF Testing:** ✅ PASS
+
 - SameSite cookies configured
 - POST requests require authentication
 - No state-changing GET requests
 
 **Authentication Bypass:** ✅ PASS
+
 - All endpoints check auth.uid()
 - Supabase RLS enforces at DB level
 - No bypass vectors found
 
 **Authorization Bypass:** ✅ PASS
+
 - Role checks implemented
 - RLS policies prevent data leakage
 - No horizontal privilege escalation
@@ -458,37 +482,44 @@ snyk test
 ### GDPR Compliance
 
 **Data Minimization:** ✅
+
 - Only necessary data collected
 - Business hours are operational data
 - Logos are public branding
 - Integration status doesn't store PII
 
 **Right to Erasure:** ✅
+
 - Logo deletion implemented
 - Business hours can be nulled
 - Cascading deletes configured
 
 **Data Portability:** ⚠️
+
 - Export functionality exists for main data
 - **Recommendation:** Add business hours to export
 
 **Audit Trail:** ✅
+
 - All changes logged in audit_log table
 - User, timestamp, action recorded
 
 ### SOC 2 Type II Controls
 
 **Access Control:** ✅
+
 - Least privilege implemented
 - Role-based access control
 - Audit logging complete
 
 **Change Management:** ✅
+
 - Database migrations versioned
 - Code review process (recommended)
 - Rollback procedures documented
 
 **Monitoring & Incident Response:** ⚠️
+
 - Integration health monitoring implemented
 - **Recommendation:** Add alerting for security events
 - **Recommendation:** Document incident response plan
@@ -547,11 +578,11 @@ snyk test
 
 ## 9. Security Scorecard
 
-| Feature | Auth | Input Val | RLS | Audit Log | Overall |
-|---------|------|-----------|-----|-----------|---------|
-| Business Hours | ✅ 10/10 | ✅ 9/10 | ✅ 10/10 | ✅ 10/10 | **9.75/10** |
-| Logo Upload | ✅ 10/10 | ⚠️ 7/10 | ✅ 10/10 | ✅ 10/10 | **9.25/10** |
-| Integration Status | ✅ 10/10 | ✅ 10/10 | ✅ 10/10 | ✅ 10/10 | **10/10** |
+| Feature            | Auth     | Input Val | RLS      | Audit Log | Overall     |
+| ------------------ | -------- | --------- | -------- | --------- | ----------- |
+| Business Hours     | ✅ 10/10 | ✅ 9/10   | ✅ 10/10 | ✅ 10/10  | **9.75/10** |
+| Logo Upload        | ✅ 10/10 | ⚠️ 7/10   | ✅ 10/10 | ✅ 10/10  | **9.25/10** |
+| Integration Status | ✅ 10/10 | ✅ 10/10  | ✅ 10/10 | ✅ 10/10  | **10/10**   |
 
 **Overall Security Score: 95/100** ✅
 
@@ -560,18 +591,21 @@ snyk test
 ## 10. Action Items
 
 ### Immediate (Before Production)
+
 - [ ] Implement SVG sanitization for logo uploads
 - [ ] Add security headers (CSP, HSTS, X-Frame-Options)
 - [ ] Test all endpoints with security test suite
 - [ ] Document security procedures
 
 ### Short Term (Next 2 Weeks)
+
 - [ ] Implement rate limiting on API endpoints
 - [ ] Add file signature validation
 - [ ] Set up automated security scanning (Snyk/Dependabot)
 - [ ] Create incident response plan
 
 ### Long Term (Next Quarter)
+
 - [ ] Implement virus scanning for uploads
 - [ ] Add Redis caching for integration status
 - [ ] Conduct external penetration test
@@ -584,6 +618,7 @@ snyk test
 The three new features (Business Hours, Logo Upload, Integration Status) have been implemented with **strong security practices**. The codebase demonstrates:
 
 ✅ **Strengths:**
+
 - Comprehensive authentication and authorization
 - Row Level Security (RLS) properly implemented
 - Input validation with type safety
@@ -592,6 +627,7 @@ The three new features (Business Hours, Logo Upload, Integration Status) have be
 - No critical vulnerabilities found
 
 ⚠️ **Areas for Improvement:**
+
 - SVG sanitization needed (Medium Priority)
 - Rate limiting recommended (Medium Priority)
 - Security headers should be added (Low Priority)

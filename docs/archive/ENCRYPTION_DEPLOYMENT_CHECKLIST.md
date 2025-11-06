@@ -67,6 +67,7 @@ npm run generate-encryption-key
 ```
 
 **Output:**
+
 ```
 ENCRYPTION_KEY=base64EncodedKeyHere...
 ```
@@ -91,6 +92,7 @@ npm run test:encryption
 ```
 
 **Expected Results:**
+
 - ✅ All tests pass (65 tests)
 - ✅ No TypeScript errors
 - ✅ Encryption verification passes
@@ -180,6 +182,7 @@ npm run generate-encryption-key
 ```
 
 ⚠️ **CRITICAL**:
+
 - Use a completely different key than dev/staging
 - Back up this key in multiple secure locations
 - Never commit this key to version control
@@ -188,6 +191,7 @@ npm run generate-encryption-key
 ### Step 2: Add to Production Environment
 
 **Vercel:**
+
 ```bash
 vercel env add ENCRYPTION_KEY production
 
@@ -195,6 +199,7 @@ vercel env add ENCRYPTION_KEY production
 ```
 
 **Alternative (Environment Variable Management):**
+
 - AWS Systems Manager Parameter Store
 - HashiCorp Vault
 - Vercel dashboard manual entry
@@ -224,6 +229,7 @@ curl https://your-production-app.com/api/health
 ⚠️ **MANDATORY**: Create backup before migration!
 
 **Supabase:**
+
 1. Go to Supabase Dashboard
 2. Navigate to Database → Backups
 3. Click "Create Backup"
@@ -231,6 +237,7 @@ curl https://your-production-app.com/api/health
 5. Verify backup exists
 
 **Alternative:**
+
 ```bash
 # PostgreSQL dump
 pg_dump -h your-supabase-host \
@@ -255,6 +262,7 @@ npm run migrate-encryption -- \
 ```
 
 **Expected Output:**
+
 ```
 ========== Migration Summary ==========
 
@@ -308,6 +316,7 @@ npm run migrate-encryption -- \
 #### Database Verification
 
 1. **Check Encrypted Data:**
+
    ```sql
    -- In Supabase SQL Editor
    SELECT phone_number, whatsapp_id
@@ -318,6 +327,7 @@ npm run migrate-encryption -- \
    ```
 
 2. **Count Records:**
+
    ```sql
    SELECT COUNT(*) FROM contacts;
    SELECT COUNT(*) FROM profiles;
@@ -356,6 +366,7 @@ curl https://your-production-app.com/api/contacts?organization_id=org-123
 - [ ] Verify database query performance
 
 **Metrics to Monitor:**
+
 - API response time (should be < 200ms increase)
 - Error rate (should be < 0.1%)
 - Database CPU usage
@@ -579,12 +590,12 @@ Thanks,
 
 ## Contacts
 
-| Role | Name | Contact |
-|------|------|---------|
-| Lead Developer | [NAME] | [EMAIL] |
-| DevOps Engineer | [NAME] | [EMAIL] |
+| Role             | Name   | Contact |
+| ---------------- | ------ | ------- |
+| Lead Developer   | [NAME] | [EMAIL] |
+| DevOps Engineer  | [NAME] | [EMAIL] |
 | Security Officer | [NAME] | [EMAIL] |
-| Database Admin | [NAME] | [EMAIL] |
+| Database Admin   | [NAME] | [EMAIL] |
 
 ---
 

@@ -23,7 +23,7 @@ import {
   decryptBatch as decryptBatchCore,
   validateEncryptedData,
   getEncryptionStatus,
-} from './encryption';
+} from './encryption'
 import {
   EncryptionError,
   DecryptionError,
@@ -36,17 +36,17 @@ import {
   ENCRYPTED_FIELDS,
   EncryptedFieldsMap,
   needsEncryption,
-} from './types';
+} from './types'
 
 /**
  * Field encryptor class for managing encrypted fields
  */
 export class FieldEncryptor {
-  private auditLogs: EncryptionAuditLog[] = [];
-  private enableAuditLogging: boolean;
+  private auditLogs: EncryptionAuditLog[] = []
+  private enableAuditLogging: boolean
 
   constructor(options?: { enableAuditLogging?: boolean }) {
-    this.enableAuditLogging = options?.enableAuditLogging ?? true;
+    this.enableAuditLogging = options?.enableAuditLogging ?? true
   }
 
   /**
@@ -67,13 +67,13 @@ export class FieldEncryptor {
     value: string | null | undefined,
     fieldName?: string,
     metadata?: {
-      table?: string;
-      recordId?: string;
-      userId?: string;
-      organizationId?: string;
+      table?: string
+      recordId?: string
+      userId?: string
+      organizationId?: string
     }
   ): string | null {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Handle null/undefined/empty values
@@ -84,12 +84,12 @@ export class FieldEncryptor {
           success: true,
           timestamp: new Date(),
           ...metadata,
-        });
-        return null;
+        })
+        return null
       }
 
       // Perform encryption
-      const result = encryptCore(value);
+      const result = encryptCore(value)
 
       // Log successful encryption
       this.logAudit({
@@ -98,12 +98,11 @@ export class FieldEncryptor {
         success: true,
         timestamp: new Date(),
         ...metadata,
-      });
+      })
 
-      return result.encrypted;
+      return result.encrypted
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error)
 
       // Log failed encryption
       this.logAudit({
@@ -113,7 +112,7 @@ export class FieldEncryptor {
         error: errorMessage,
         timestamp: new Date(),
         ...metadata,
-      });
+      })
 
       // Re-throw with context
       throw new EncryptionError(
@@ -125,7 +124,7 @@ export class FieldEncryptor {
           duration: Date.now() - startTime,
           ...metadata,
         }
-      );
+      )
     }
   }
 
@@ -147,13 +146,13 @@ export class FieldEncryptor {
     encryptedValue: string | null | undefined,
     fieldName?: string,
     metadata?: {
-      table?: string;
-      recordId?: string;
-      userId?: string;
-      organizationId?: string;
+      table?: string
+      recordId?: string
+      userId?: string
+      organizationId?: string
     }
   ): string | null {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     try {
       // Handle null/undefined/empty values
@@ -164,29 +163,23 @@ export class FieldEncryptor {
           success: true,
           timestamp: new Date(),
           ...metadata,
-        });
-        return null;
+        })
+        return null
       }
 
       // Validate encrypted data format
-      const validation = validateEncryptedData(
-        encryptedValue,
-        ENCRYPTION_CONSTANTS.CURRENT_VERSION
-      );
+      const validation = validateEncryptedData(encryptedValue, ENCRYPTION_CONSTANTS.CURRENT_VERSION)
 
       if (!validation.valid) {
         throw new DecryptionError(
           `Invalid encrypted data format: ${validation.error}`,
           'INVALID_ENCRYPTED_FORMAT',
           validation.details
-        );
+        )
       }
 
       // Perform decryption
-      const result = decryptCore(
-        encryptedValue,
-        ENCRYPTION_CONSTANTS.CURRENT_VERSION
-      );
+      const result = decryptCore(encryptedValue, ENCRYPTION_CONSTANTS.CURRENT_VERSION)
 
       // Log successful decryption
       this.logAudit({
@@ -195,12 +188,11 @@ export class FieldEncryptor {
         success: true,
         timestamp: new Date(),
         ...metadata,
-      });
+      })
 
-      return result.plaintext;
+      return result.plaintext
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error)
 
       // Log failed decryption
       this.logAudit({
@@ -210,7 +202,7 @@ export class FieldEncryptor {
         error: errorMessage,
         timestamp: new Date(),
         ...metadata,
-      });
+      })
 
       // Re-throw with context
       throw new DecryptionError(
@@ -222,7 +214,7 @@ export class FieldEncryptor {
           duration: Date.now() - startTime,
           ...metadata,
         }
-      );
+      )
     }
   }
 
@@ -247,26 +239,26 @@ export class FieldEncryptor {
     record: T,
     fields: (keyof T)[],
     metadata?: {
-      table?: string;
-      recordId?: string;
-      userId?: string;
-      organizationId?: string;
+      table?: string
+      recordId?: string
+      userId?: string
+      organizationId?: string
     }
   ): T {
-    const encryptedRecord = { ...record };
+    const encryptedRecord = { ...record }
 
     for (const field of fields) {
-      const value = record[field];
+      const value = record[field]
 
       if (typeof value === 'string') {
         encryptedRecord[field] = this.encryptField(value, String(field), {
           ...metadata,
           recordId: metadata?.recordId || (record.id as string),
-        }) as T[keyof T];
+        }) as T[keyof T]
       }
     }
 
-    return encryptedRecord;
+    return encryptedRecord
   }
 
   /**
@@ -290,26 +282,26 @@ export class FieldEncryptor {
     record: T,
     fields: (keyof T)[],
     metadata?: {
-      table?: string;
-      recordId?: string;
-      userId?: string;
-      organizationId?: string;
+      table?: string
+      recordId?: string
+      userId?: string
+      organizationId?: string
     }
   ): T {
-    const decryptedRecord = { ...record };
+    const decryptedRecord = { ...record }
 
     for (const field of fields) {
-      const value = record[field];
+      const value = record[field]
 
       if (typeof value === 'string') {
         decryptedRecord[field] = this.decryptField(value, String(field), {
           ...metadata,
           recordId: metadata?.recordId || (record.id as string),
-        }) as T[keyof T];
+        }) as T[keyof T]
       }
     }
 
-    return decryptedRecord;
+    return decryptedRecord
   }
 
   /**
@@ -328,24 +320,23 @@ export class FieldEncryptor {
    * ```
    */
   batchEncrypt(requests: BatchEncryptRequest[]): BatchEncryptResult[] {
-    const startTime = Date.now();
-    const results: BatchEncryptResult[] = [];
+    const startTime = Date.now()
+    const results: BatchEncryptResult[] = []
 
     for (const request of requests) {
       try {
         const encrypted = this.encryptField(request.value, request.field, {
           recordId: request.id,
-        });
+        })
 
         results.push({
           id: request.id,
           field: request.field,
           encrypted,
           success: true,
-        });
+        })
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error)
 
         results.push({
           id: request.id,
@@ -353,13 +344,13 @@ export class FieldEncryptor {
           encrypted: null,
           success: false,
           error: errorMessage,
-        });
+        })
       }
     }
 
     // Log batch operation
-    const successCount = results.filter((r) => r.success).length;
-    const failureCount = results.length - successCount;
+    const successCount = results.filter(r => r.success).length
+    const failureCount = results.length - successCount
 
     this.logAudit({
       operation: 'batch_encrypt',
@@ -367,9 +358,9 @@ export class FieldEncryptor {
       success: failureCount === 0,
       error: failureCount > 0 ? `${failureCount} records failed` : undefined,
       timestamp: new Date(),
-    });
+    })
 
-    return results;
+    return results
   }
 
   /**
@@ -388,24 +379,23 @@ export class FieldEncryptor {
    * ```
    */
   batchDecrypt(requests: BatchDecryptRequest[]): BatchDecryptResult[] {
-    const startTime = Date.now();
-    const results: BatchDecryptResult[] = [];
+    const startTime = Date.now()
+    const results: BatchDecryptResult[] = []
 
     for (const request of requests) {
       try {
         const decrypted = this.decryptField(request.encrypted, request.field, {
           recordId: request.id,
-        });
+        })
 
         results.push({
           id: request.id,
           field: request.field,
           decrypted,
           success: true,
-        });
+        })
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error)
 
         results.push({
           id: request.id,
@@ -413,13 +403,13 @@ export class FieldEncryptor {
           decrypted: null,
           success: false,
           error: errorMessage,
-        });
+        })
       }
     }
 
     // Log batch operation
-    const successCount = results.filter((r) => r.success).length;
-    const failureCount = results.length - successCount;
+    const successCount = results.filter(r => r.success).length
+    const failureCount = results.length - successCount
 
     this.logAudit({
       operation: 'batch_decrypt',
@@ -427,9 +417,9 @@ export class FieldEncryptor {
       success: failureCount === 0,
       error: failureCount > 0 ? `${failureCount} records failed` : undefined,
       timestamp: new Date(),
-    });
+    })
 
-    return results;
+    return results
   }
 
   /**
@@ -439,7 +429,7 @@ export class FieldEncryptor {
    * @returns Array of field names to encrypt
    */
   getEncryptedFieldsForTable(tableName: keyof EncryptedFieldsMap): string[] {
-    return ENCRYPTED_FIELDS[tableName] || [];
+    return ENCRYPTED_FIELDS[tableName] || []
   }
 
   /**
@@ -449,12 +439,9 @@ export class FieldEncryptor {
    * @param fieldName - Name of the field
    * @returns True if field should be encrypted
    */
-  shouldEncryptField(
-    tableName: keyof EncryptedFieldsMap,
-    fieldName: string
-  ): boolean {
-    const fields = this.getEncryptedFieldsForTable(tableName);
-    return fields.includes(fieldName);
+  shouldEncryptField(tableName: keyof EncryptedFieldsMap, fieldName: string): boolean {
+    const fields = this.getEncryptedFieldsForTable(tableName)
+    return fields.includes(fieldName)
   }
 
   /**
@@ -471,7 +458,7 @@ export class FieldEncryptor {
       table: 'contacts',
       recordId: (contact as { id?: string }).id,
       ...metadata,
-    });
+    })
   }
 
   /**
@@ -488,7 +475,7 @@ export class FieldEncryptor {
       table: 'contacts',
       recordId: (contact as { id?: string }).id,
       ...metadata,
-    });
+    })
   }
 
   /**
@@ -505,7 +492,7 @@ export class FieldEncryptor {
       table: 'profiles',
       recordId: (profile as { id?: string }).id,
       ...metadata,
-    });
+    })
   }
 
   /**
@@ -522,7 +509,7 @@ export class FieldEncryptor {
       table: 'profiles',
       recordId: (profile as { id?: string }).id,
       ...metadata,
-    });
+    })
   }
 
   /**
@@ -531,14 +518,14 @@ export class FieldEncryptor {
    * @returns Array of audit log entries
    */
   getAuditLogs(): EncryptionAuditLog[] {
-    return [...this.auditLogs];
+    return [...this.auditLogs]
   }
 
   /**
    * Clear audit logs
    */
   clearAuditLogs(): void {
-    this.auditLogs = [];
+    this.auditLogs = []
   }
 
   /**
@@ -548,26 +535,22 @@ export class FieldEncryptor {
    * @returns Filtered audit log entries
    */
   getFilteredAuditLogs(filter: {
-    operation?: EncryptionAuditLog['operation'];
-    table?: string;
-    field?: string;
-    success?: boolean;
-    startDate?: Date;
-    endDate?: Date;
+    operation?: EncryptionAuditLog['operation']
+    table?: string
+    field?: string
+    success?: boolean
+    startDate?: Date
+    endDate?: Date
   }): EncryptionAuditLog[] {
-    return this.auditLogs.filter((log) => {
-      if (filter.operation && log.operation !== filter.operation) return false;
-      if (filter.table && log.table !== filter.table) return false;
-      if (filter.field && log.field !== filter.field) return false;
-      if (
-        filter.success !== undefined &&
-        log.success !== filter.success
-      )
-        return false;
-      if (filter.startDate && log.timestamp < filter.startDate) return false;
-      if (filter.endDate && log.timestamp > filter.endDate) return false;
-      return true;
-    });
+    return this.auditLogs.filter(log => {
+      if (filter.operation && log.operation !== filter.operation) return false
+      if (filter.table && log.table !== filter.table) return false
+      if (filter.field && log.field !== filter.field) return false
+      if (filter.success !== undefined && log.success !== filter.success) return false
+      if (filter.startDate && log.timestamp < filter.startDate) return false
+      if (filter.endDate && log.timestamp > filter.endDate) return false
+      return true
+    })
   }
 
   /**
@@ -577,8 +560,8 @@ export class FieldEncryptor {
    * @returns JSON string of audit logs
    */
   exportAuditLogs(filter?: Parameters<typeof this.getFilteredAuditLogs>[0]): string {
-    const logs = filter ? this.getFilteredAuditLogs(filter) : this.auditLogs;
-    return JSON.stringify(logs, null, 2);
+    const logs = filter ? this.getFilteredAuditLogs(filter) : this.auditLogs
+    return JSON.stringify(logs, null, 2)
   }
 
   /**
@@ -587,39 +570,35 @@ export class FieldEncryptor {
    * @returns Statistics about encryption operations
    */
   getStatistics(): {
-    totalOperations: number;
-    successfulOperations: number;
-    failedOperations: number;
-    successRate: number;
-    operationsByType: Record<string, number>;
-    operationsByTable: Record<string, number>;
+    totalOperations: number
+    successfulOperations: number
+    failedOperations: number
+    successRate: number
+    operationsByType: Record<string, number>
+    operationsByTable: Record<string, number>
   } {
     const stats = {
       totalOperations: this.auditLogs.length,
-      successfulOperations: this.auditLogs.filter((log) => log.success).length,
-      failedOperations: this.auditLogs.filter((log) => !log.success).length,
+      successfulOperations: this.auditLogs.filter(log => log.success).length,
+      failedOperations: this.auditLogs.filter(log => !log.success).length,
       successRate: 0,
       operationsByType: {} as Record<string, number>,
       operationsByTable: {} as Record<string, number>,
-    };
+    }
 
     stats.successRate =
-      stats.totalOperations > 0
-        ? (stats.successfulOperations / stats.totalOperations) * 100
-        : 0;
+      stats.totalOperations > 0 ? (stats.successfulOperations / stats.totalOperations) * 100 : 0
 
     // Count by operation type
     for (const log of this.auditLogs) {
-      stats.operationsByType[log.operation] =
-        (stats.operationsByType[log.operation] || 0) + 1;
+      stats.operationsByType[log.operation] = (stats.operationsByType[log.operation] || 0) + 1
 
       if (log.table) {
-        stats.operationsByTable[log.table] =
-          (stats.operationsByTable[log.table] || 0) + 1;
+        stats.operationsByTable[log.table] = (stats.operationsByTable[log.table] || 0) + 1
       }
     }
 
-    return stats;
+    return stats
   }
 
   /**
@@ -629,7 +608,7 @@ export class FieldEncryptor {
    */
   private logAudit(log: EncryptionAuditLog): void {
     if (this.enableAuditLogging) {
-      this.auditLogs.push(log);
+      this.auditLogs.push(log)
     }
   }
 
@@ -639,19 +618,19 @@ export class FieldEncryptor {
    * @returns Status object with encryption health information
    */
   static verifyEncryption(): {
-    healthy: boolean;
-    status: ReturnType<typeof getEncryptionStatus>;
-    message: string;
+    healthy: boolean
+    status: ReturnType<typeof getEncryptionStatus>
+    message: string
   } {
     try {
-      const status = getEncryptionStatus();
+      const status = getEncryptionStatus()
 
       if (!status.keyLoaded) {
         return {
           healthy: false,
           status,
           message: 'Encryption key not loaded',
-        };
+        }
       }
 
       if (!status.testPassed) {
@@ -659,14 +638,14 @@ export class FieldEncryptor {
           healthy: false,
           status,
           message: 'Encryption test failed',
-        };
+        }
       }
 
       return {
         healthy: true,
         status,
         message: 'Encryption system operational',
-      };
+      }
     } catch (error) {
       return {
         healthy: false,
@@ -677,7 +656,7 @@ export class FieldEncryptor {
           testPassed: false,
         },
         message: error instanceof Error ? error.message : String(error),
-      };
+      }
     }
   }
 }
@@ -685,7 +664,7 @@ export class FieldEncryptor {
 /**
  * Singleton instance of FieldEncryptor for convenience
  */
-export const fieldEncryptor = new FieldEncryptor({ enableAuditLogging: true });
+export const fieldEncryptor = new FieldEncryptor({ enableAuditLogging: true })
 
 /**
  * Convenience functions using singleton instance
@@ -694,30 +673,34 @@ export const encryptField = (
   value: string | null | undefined,
   fieldName?: string,
   metadata?: Parameters<typeof fieldEncryptor.encryptField>[2]
-): string | null => fieldEncryptor.encryptField(value, fieldName, metadata);
+): string | null => fieldEncryptor.encryptField(value, fieldName, metadata)
 
 export const decryptField = (
   value: string | null | undefined,
   fieldName?: string,
   metadata?: Parameters<typeof fieldEncryptor.decryptField>[2]
-): string | null => fieldEncryptor.decryptField(value, fieldName, metadata);
+): string | null => fieldEncryptor.decryptField(value, fieldName, metadata)
 
-export const encryptContact = <T extends { phone_number?: string | null; whatsapp_id?: string | null }>(
+export const encryptContact = <
+  T extends { phone_number?: string | null; whatsapp_id?: string | null },
+>(
   contact: T,
   metadata?: { organizationId?: string; userId?: string }
-): T => fieldEncryptor.encryptContact(contact, metadata);
+): T => fieldEncryptor.encryptContact(contact, metadata)
 
-export const decryptContact = <T extends { phone_number?: string | null; whatsapp_id?: string | null }>(
+export const decryptContact = <
+  T extends { phone_number?: string | null; whatsapp_id?: string | null },
+>(
   contact: T,
   metadata?: { organizationId?: string; userId?: string }
-): T => fieldEncryptor.decryptContact(contact, metadata);
+): T => fieldEncryptor.decryptContact(contact, metadata)
 
 export const encryptProfile = <T extends { email?: string | null }>(
   profile: T,
   metadata?: { organizationId?: string; userId?: string }
-): T => fieldEncryptor.encryptProfile(profile, metadata);
+): T => fieldEncryptor.encryptProfile(profile, metadata)
 
 export const decryptProfile = <T extends { email?: string | null }>(
   profile: T,
   metadata?: { organizationId?: string; userId?: string }
-): T => fieldEncryptor.decryptProfile(profile, metadata);
+): T => fieldEncryptor.decryptProfile(profile, metadata)

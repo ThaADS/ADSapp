@@ -17,21 +17,25 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 #### 1. Perceivable
 
 **✅ Text Alternatives (1.1)**
+
 - All images have descriptive alt text
 - Decorative images use empty alt="" or role="presentation"
 - Icon buttons have aria-labels
 
 **✅ Time-based Media (1.2)**
+
 - Captions available for video content
 - Audio descriptions for multimedia
 
 **✅ Adaptable (1.3)**
+
 - Proper semantic HTML structure
 - Heading hierarchy (h1 → h2 → h3)
 - Landmark regions (header, nav, main, footer)
 - Form labels properly associated
 
 **✅ Distinguishable (1.4)**
+
 - Color contrast ratio 4.5:1 minimum (AA standard)
 - Text resizable up to 200%
 - No information conveyed by color alone
@@ -40,26 +44,31 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 #### 2. Operable
 
 **✅ Keyboard Accessible (2.1)**
+
 - All functionality available via keyboard
 - No keyboard traps
 - Logical tab order
 - Skip links for navigation
 
 **✅ Enough Time (2.2)**
+
 - No time limits on interactions
 - Session timeout warnings with extension option
 
 **✅ Seizures and Physical Reactions (2.3)**
+
 - No flashing content >3 times per second
 - Reduced motion support
 
 **✅ Navigable (2.4)**
+
 - Multiple navigation methods
 - Clear page titles
 - Consistent navigation
 - Link purpose clear from context
 
 **✅ Input Modalities (2.5)**
+
 - Pointer gestures have keyboard alternatives
 - Click targets at least 44x44px
 - Touch targets well-spaced
@@ -67,16 +76,19 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 #### 3. Understandable
 
 **✅ Readable (3.1)**
+
 - Language of page declared (lang="en")
 - Clear, simple language
 - Technical terms explained
 
 **✅ Predictable (3.2)**
+
 - Consistent navigation
 - Consistent identification
 - No automatic context changes
 
 **✅ Input Assistance (3.3)**
+
 - Error identification and description
 - Form labels and instructions
 - Error suggestions provided
@@ -85,6 +97,7 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 #### 4. Robust
 
 **✅ Compatible (4.1)**
+
 - Valid HTML
 - Proper ARIA usage
 - Status messages announced
@@ -95,6 +108,7 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 ### 1. Keyboard Navigation
 
 #### Shortcuts
+
 - `Tab` / `Shift+Tab` - Navigate between interactive elements
 - `Enter` / `Space` - Activate buttons and links
 - `Escape` - Close modals and dropdowns
@@ -102,6 +116,7 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 - `Home` / `End` - Jump to first/last item in lists
 
 #### Focus Management
+
 - Visible focus indicators on all interactive elements
 - Focus trapped within modal dialogs
 - Focus returns to trigger element after modal closes
@@ -110,6 +125,7 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 ### 2. Screen Reader Support
 
 #### ARIA Landmarks
+
 ```html
 <header role="banner">
   <!-- Site header -->
@@ -133,11 +149,13 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 ```
 
 #### Live Regions
+
 - Toast notifications use `aria-live="polite"`
 - Error messages use `aria-live="assertive"`
 - Loading states announced with `aria-busy="true"`
 
 #### Form Labels
+
 ```tsx
 <label htmlFor="email">
   Email Address
@@ -160,20 +178,21 @@ ADSapp is committed to providing an inclusive, accessible experience for all use
 
 All text meets WCAG AA contrast requirements:
 
-| Element | Color | Contrast Ratio |
-|---------|-------|----------------|
-| Body text | #111827 on #ffffff | 16.0:1 |
-| Secondary text | #6b7280 on #ffffff | 4.54:1 |
-| Links | #1d4ed8 on #ffffff | 4.98:1 |
-| Error messages | #dc2626 on #ffffff | 5.53:1 |
-| Success messages | #15803d on #ffffff | 4.67:1 |
+| Element          | Color              | Contrast Ratio |
+| ---------------- | ------------------ | -------------- |
+| Body text        | #111827 on #ffffff | 16.0:1         |
+| Secondary text   | #6b7280 on #ffffff | 4.54:1         |
+| Links            | #1d4ed8 on #ffffff | 4.98:1         |
+| Error messages   | #dc2626 on #ffffff | 5.53:1         |
+| Success messages | #15803d on #ffffff | 4.67:1         |
 
 #### Dark Mode Contrast
-| Element | Color | Contrast Ratio |
-|---------|-------|----------------|
-| Body text | #f9fafb on #1f2937 | 15.8:1 |
-| Secondary text | #9ca3af on #1f2937 | 4.61:1 |
-| Links | #60a5fa on #1f2937 | 4.66:1 |
+
+| Element        | Color              | Contrast Ratio |
+| -------------- | ------------------ | -------------- |
+| Body text      | #f9fafb on #1f2937 | 15.8:1         |
+| Secondary text | #9ca3af on #1f2937 | 4.61:1         |
+| Links          | #60a5fa on #1f2937 | 4.66:1         |
 
 ### 4. User Preferences
 
@@ -192,20 +211,24 @@ import { AccessibilityPreferences } from '@/components/accessibility/accessibili
 #### Available Preferences
 
 **Visual**
+
 - High contrast mode
 - Large text mode
 - Font size (small, medium, large, extra large)
 - Theme (auto, light, dark)
 
 **Motion**
+
 - Reduce motion (disables animations)
 
 **Keyboard**
+
 - Enhanced keyboard navigation
 - Auto-focus on modal open
 - Skip links enabled/disabled
 
 **Screen Reader**
+
 - Verbose descriptions
 - Notification announcements
 
@@ -214,14 +237,15 @@ import { AccessibilityPreferences } from '@/components/accessibility/accessibili
 ### Accessible Components
 
 #### Modal Dialog
-```tsx
-import { AccessibleModal } from '@/components/accessibility/accessible-modal';
 
-<AccessibleModal
+```tsx
+import { AccessibleModal } from '@/components/accessibility/accessible-modal'
+
+;<AccessibleModal
   isOpen={isOpen}
   onClose={handleClose}
-  title="Delete Account"
-  description="This action cannot be undone"
+  title='Delete Account'
+  description='This action cannot be undone'
   closeOnEscape={true}
 >
   <p>Are you sure you want to delete your account?</p>
@@ -229,11 +253,12 @@ import { AccessibleModal } from '@/components/accessibility/accessible-modal';
 ```
 
 #### Dropdown/Select
-```tsx
-import { AccessibleDropdown } from '@/components/accessibility/accessible-dropdown';
 
-<AccessibleDropdown
-  label="Country"
+```tsx
+import { AccessibleDropdown } from '@/components/accessibility/accessible-dropdown'
+
+;<AccessibleDropdown
+  label='Country'
   options={countries}
   value={selectedCountry}
   onChange={setSelectedCountry}
@@ -242,13 +267,14 @@ import { AccessibleDropdown } from '@/components/accessibility/accessible-dropdo
 ```
 
 #### Form Input
-```tsx
-import { AccessibleInput } from '@/components/accessibility/accessible-form';
 
-<AccessibleInput
-  label="Email Address"
-  type="email"
-  name="email"
+```tsx
+import { AccessibleInput } from '@/components/accessibility/accessible-form'
+
+;<AccessibleInput
+  label='Email Address'
+  type='email'
+  name='email'
   required
   hint="We'll never share your email"
   error={errors.email}
@@ -256,40 +282,38 @@ import { AccessibleInput } from '@/components/accessibility/accessible-form';
 ```
 
 #### Checkbox
-```tsx
-import { AccessibleCheckbox } from '@/components/accessibility/accessible-form';
 
-<AccessibleCheckbox
-  label="Accept Terms and Conditions"
-  name="terms"
+```tsx
+import { AccessibleCheckbox } from '@/components/accessibility/accessible-form'
+
+;<AccessibleCheckbox
+  label='Accept Terms and Conditions'
+  name='terms'
   required
   error={errors.terms}
 />
 ```
 
 #### Complete Form
+
 ```tsx
 import {
   AccessibleForm,
   AccessibleInput,
-  useAccessibleForm
-} from '@/components/accessibility/accessible-form';
+  useAccessibleForm,
+} from '@/components/accessibility/accessible-form'
 
 function SignUpForm() {
   const { values, errors, handleChange, handleBlur } = useAccessibleForm({
     email: '',
-    password: ''
-  });
+    password: '',
+  })
 
   return (
-    <AccessibleForm
-      errors={Object.values(errors)}
-      ariaLabel="Sign Up Form"
-      onSubmit={handleSubmit}
-    >
+    <AccessibleForm errors={Object.values(errors)} ariaLabel='Sign Up Form' onSubmit={handleSubmit}>
       <AccessibleInput
-        label="Email"
-        name="email"
+        label='Email'
+        name='email'
         value={values.email}
         onChange={handleChange('email')}
         onBlur={handleBlur('email')}
@@ -297,17 +321,17 @@ function SignUpForm() {
         required
       />
       <AccessibleInput
-        label="Password"
-        type="password"
-        name="password"
+        label='Password'
+        type='password'
+        name='password'
         value={values.password}
         onChange={handleChange('password')}
         error={errors.password}
         required
       />
-      <button type="submit">Sign Up</button>
+      <button type='submit'>Sign Up</button>
     </AccessibleForm>
-  );
+  )
 }
 ```
 
@@ -316,6 +340,7 @@ function SignUpForm() {
 ### Automated Testing
 
 #### Run Accessibility Tests
+
 ```bash
 # Run Jest accessibility tests
 npm run test:accessibility
@@ -328,6 +353,7 @@ npm run test:coverage
 ```
 
 #### Lighthouse Audit
+
 ```bash
 # Run Lighthouse accessibility audit
 npm run lighthouse
@@ -336,6 +362,7 @@ npm run lighthouse
 ```
 
 #### axe DevTools
+
 1. Install axe DevTools browser extension
 2. Open browser DevTools
 3. Navigate to axe tab
@@ -345,6 +372,7 @@ npm run lighthouse
 ### Manual Testing
 
 #### Keyboard Navigation Test
+
 1. Disconnect mouse/touchpad
 2. Navigate entire application using only keyboard
 3. Verify all interactive elements are reachable
@@ -354,6 +382,7 @@ npm run lighthouse
 #### Screen Reader Test
 
 **NVDA (Windows)**
+
 ```bash
 # Start NVDA
 Ctrl + Alt + N
@@ -369,6 +398,7 @@ Insert + Up Arrow
 ```
 
 **VoiceOver (Mac)**
+
 ```bash
 # Start VoiceOver
 Cmd + F5
@@ -386,6 +416,7 @@ VO + A
 #### Browser Testing
 
 Test in multiple browsers with screen readers:
+
 - Chrome + NVDA (Windows)
 - Firefox + NVDA (Windows)
 - Safari + VoiceOver (Mac)
@@ -413,6 +444,7 @@ Test in multiple browsers with screen readers:
 ### Do's ✅
 
 1. **Use Semantic HTML**
+
    ```tsx
    // Good
    <button onClick={handleClick}>Submit</button>
@@ -422,6 +454,7 @@ Test in multiple browsers with screen readers:
    ```
 
 2. **Provide Text Alternatives**
+
    ```tsx
    // Good
    <img src="profile.jpg" alt="John Doe profile picture" />
@@ -431,6 +464,7 @@ Test in multiple browsers with screen readers:
    ```
 
 3. **Associate Labels with Inputs**
+
    ```tsx
    // Good
    <label htmlFor="email">Email</label>
@@ -442,6 +476,7 @@ Test in multiple browsers with screen readers:
    ```
 
 4. **Use ARIA When Necessary**
+
    ```tsx
    // Good
    <button aria-label="Close dialog">×</button>
@@ -453,6 +488,7 @@ Test in multiple browsers with screen readers:
 ### Don'ts ❌
 
 1. **Don't Remove Focus Outlines**
+
    ```css
    /* Bad */
    button:focus {
@@ -467,6 +503,7 @@ Test in multiple browsers with screen readers:
    ```
 
 2. **Don't Use Color Alone**
+
    ```tsx
    // Bad
    <span style={{ color: 'red' }}>Error</span>
@@ -478,6 +515,7 @@ Test in multiple browsers with screen readers:
    ```
 
 3. **Don't Create Keyboard Traps**
+
    ```tsx
    // Bad
    <div onKeyDown={(e) => e.preventDefault()}>
@@ -489,17 +527,20 @@ Test in multiple browsers with screen readers:
 ## Resources
 
 ### Tools
+
 - [axe DevTools](https://www.deque.com/axe/devtools/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WAVE Browser Extension](https://wave.webaim.org/extension/)
 - [Color Contrast Analyzer](https://www.tpgi.com/color-contrast-checker/)
 
 ### Guidelines
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
 - [WebAIM Resources](https://webaim.org/resources/)
 
 ### Screen Readers
+
 - [NVDA (Free, Windows)](https://www.nvaccess.org/)
 - [VoiceOver (Built-in, Mac)](https://www.apple.com/accessibility/voiceover/)
 - [JAWS (Commercial, Windows)](https://www.freedomscientific.com/products/software/jaws/)
@@ -507,6 +548,7 @@ Test in multiple browsers with screen readers:
 ## Support
 
 For accessibility issues or questions:
+
 - Email: accessibility@adsapp.com
 - Create an issue in the repository
 - Contact the development team
@@ -514,6 +556,7 @@ For accessibility issues or questions:
 ## Continuous Improvement
 
 We continuously monitor and improve accessibility:
+
 - Monthly accessibility audits
 - User feedback incorporation
 - Regular testing with assistive technologies

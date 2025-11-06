@@ -9,22 +9,22 @@ Practical code examples for implementing the testing roadmap from the Quality En
 ### File: `src/app/api/auth/signin/__tests__/route.test.ts`
 
 ```typescript
-import { POST } from '@/app/api/auth/signin/route';
-import { createClient } from '@/lib/supabase/server';
-import { NextRequest } from 'next/server';
+import { POST } from '@/app/api/auth/signin/route'
+import { createClient } from '@/lib/supabase/server'
+import { NextRequest } from 'next/server'
 
 // Mock Supabase
-jest.mock('@/lib/supabase/server');
+jest.mock('@/lib/supabase/server')
 
 describe('POST /api/auth/signin', () => {
   const mockRequest = (body: unknown) =>
     ({
       json: async () => body,
-    } as NextRequest);
+    }) as NextRequest
 
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   describe('Successful Authentication', () => {
     it('should sign in user with valid credentials', async () => {
@@ -39,8 +39,8 @@ describe('POST /api/auth/signin', () => {
             error: null,
           }),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -48,92 +48,82 @@ describe('POST /api/auth/signin', () => {
           email: 'test@example.com',
           password: 'ValidPassword123!',
         })
-      );
-      const data = await response.json();
+      )
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(200);
-      expect(data.user).toBeDefined();
-      expect(data.user.email).toBe('test@example.com');
-      expect(data.session).toBeDefined();
+      expect(response.status).toBe(200)
+      expect(data.user).toBeDefined()
+      expect(data.user.email).toBe('test@example.com')
+      expect(data.session).toBeDefined()
       expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'ValidPassword123!',
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('Input Validation - Edge Cases', () => {
     it('AUTH-001: should return 400 when email is missing', async () => {
       // Act
-      const response = await POST(
-        mockRequest({ password: 'password123' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ password: 'password123' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
 
     it('AUTH-002: should return 400 when password is missing', async () => {
       // Act
-      const response = await POST(
-        mockRequest({ email: 'test@example.com' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ email: 'test@example.com' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
 
     it('AUTH-003: should return 400 when both fields are missing', async () => {
       // Act
-      const response = await POST(mockRequest({}));
-      const data = await response.json();
+      const response = await POST(mockRequest({}))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
 
     it('AUTH-004: should handle null email gracefully', async () => {
       // Act
-      const response = await POST(
-        mockRequest({ email: null, password: 'password123' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ email: null, password: 'password123' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
 
     it('AUTH-005: should handle empty string email', async () => {
       // Act
-      const response = await POST(
-        mockRequest({ email: '', password: 'password123' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ email: '', password: 'password123' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
 
     it('AUTH-006: should handle whitespace-only email', async () => {
       // Act
-      const response = await POST(
-        mockRequest({ email: '   ', password: 'password123' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ email: '   ', password: 'password123' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Email and password are required');
-    });
-  });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Email and password are required')
+    })
+  })
 
   describe('Security - SQL Injection Prevention', () => {
     it('AUTH-007: should reject SQL injection in email', async () => {
@@ -145,8 +135,8 @@ describe('POST /api/auth/signin', () => {
             error: { message: 'Invalid credentials' },
           }),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -154,12 +144,12 @@ describe('POST /api/auth/signin', () => {
           email: "admin'--",
           password: 'password',
         })
-      );
+      )
 
       // Assert
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400)
       // Should NOT execute SQL, should be treated as invalid credential
-    });
+    })
 
     it('AUTH-008: should reject SQL injection in password', async () => {
       // Arrange
@@ -170,8 +160,8 @@ describe('POST /api/auth/signin', () => {
             error: { message: 'Invalid credentials' },
           }),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -179,13 +169,13 @@ describe('POST /api/auth/signin', () => {
           email: 'test@example.com',
           password: "' OR '1'='1",
         })
-      );
+      )
 
       // Assert
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400)
       // Should NOT bypass authentication
-    });
-  });
+    })
+  })
 
   describe('Authentication Failures', () => {
     it('AUTH-009: should return 400 for invalid credentials', async () => {
@@ -197,8 +187,8 @@ describe('POST /api/auth/signin', () => {
             error: { message: 'Invalid credentials' },
           }),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -206,13 +196,13 @@ describe('POST /api/auth/signin', () => {
           email: 'test@example.com',
           password: 'wrongpassword',
         })
-      );
-      const data = await response.json();
+      )
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Invalid credentials');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Invalid credentials')
+    })
 
     it('AUTH-010: should return 401 when user not found', async () => {
       // Arrange
@@ -223,8 +213,8 @@ describe('POST /api/auth/signin', () => {
             error: null,
           }),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -232,21 +222,19 @@ describe('POST /api/auth/signin', () => {
           email: 'nonexistent@example.com',
           password: 'password123',
         })
-      );
-      const data = await response.json();
+      )
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(401);
-      expect(data.error).toBe('Invalid credentials');
-    });
-  });
+      expect(response.status).toBe(401)
+      expect(data.error).toBe('Invalid credentials')
+    })
+  })
 
   describe('Error Handling', () => {
     it('AUTH-011: should handle database connection errors', async () => {
       // Arrange
-      (createClient as jest.Mock).mockRejectedValue(
-        new Error('Database connection failed')
-      );
+      ;(createClient as jest.Mock).mockRejectedValue(new Error('Database connection failed'))
 
       // Act
       const response = await POST(
@@ -254,24 +242,22 @@ describe('POST /api/auth/signin', () => {
           email: 'test@example.com',
           password: 'password123',
         })
-      );
-      const data = await response.json();
+      )
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Internal server error');
-    });
+      expect(response.status).toBe(500)
+      expect(data.error).toBe('Internal server error')
+    })
 
     it('AUTH-012: should handle unexpected errors gracefully', async () => {
       // Arrange
       const mockSupabase = {
         auth: {
-          signInWithPassword: jest.fn().mockRejectedValue(
-            new Error('Unexpected error')
-          ),
+          signInWithPassword: jest.fn().mockRejectedValue(new Error('Unexpected error')),
         },
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
       const response = await POST(
@@ -279,15 +265,15 @@ describe('POST /api/auth/signin', () => {
           email: 'test@example.com',
           password: 'password123',
         })
-      );
-      const data = await response.json();
+      )
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Internal server error');
-    });
-  });
-});
+      expect(response.status).toBe(500)
+      expect(data.error).toBe('Internal server error')
+    })
+  })
+})
 ```
 
 ---
@@ -297,24 +283,24 @@ describe('POST /api/auth/signin', () => {
 ### File: `tests/integration/multi-tenant-isolation.test.ts`
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
 describe('Multi-Tenant Isolation', () => {
-  let supabaseAdmin: ReturnType<typeof createClient>;
-  let userAClient: ReturnType<typeof createClient>;
-  let userBClient: ReturnType<typeof createClient>;
+  let supabaseAdmin: ReturnType<typeof createClient>
+  let userAClient: ReturnType<typeof createClient>
+  let userBClient: ReturnType<typeof createClient>
 
-  let orgA: { id: string };
-  let orgB: { id: string };
-  let userA: { id: string; access_token: string };
-  let userB: { id: string; access_token: string };
+  let orgA: { id: string }
+  let orgB: { id: string }
+  let userA: { id: string; access_token: string }
+  let userB: { id: string; access_token: string }
 
   beforeAll(async () => {
     // Setup: Create admin client
     supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    )
 
     // Create Organization A
     const { data: orgAData } = await supabaseAdmin
@@ -324,8 +310,8 @@ describe('Multi-Tenant Isolation', () => {
         subdomain: 'org-a-test',
       })
       .select()
-      .single();
-    orgA = orgAData;
+      .single()
+    orgA = orgAData
 
     // Create Organization B
     const { data: orgBData } = await supabaseAdmin
@@ -335,45 +321,45 @@ describe('Multi-Tenant Isolation', () => {
         subdomain: 'org-b-test',
       })
       .select()
-      .single();
-    orgB = orgBData;
+      .single()
+    orgB = orgBData
 
     // Create User A in Org A
     const { data: authUserA } = await supabaseAdmin.auth.admin.createUser({
       email: 'usera@test.com',
       password: 'TestPassword123!',
       email_confirm: true,
-    });
-    userA = { id: authUserA.user!.id, access_token: '' };
+    })
+    userA = { id: authUserA.user!.id, access_token: '' }
 
     await supabaseAdmin.from('profiles').insert({
       id: userA.id,
       organization_id: orgA.id,
       email: 'usera@test.com',
       role: 'owner',
-    });
+    })
 
     // Create User B in Org B
     const { data: authUserB } = await supabaseAdmin.auth.admin.createUser({
       email: 'userb@test.com',
       password: 'TestPassword123!',
       email_confirm: true,
-    });
-    userB = { id: authUserB.user!.id, access_token: '' };
+    })
+    userB = { id: authUserB.user!.id, access_token: '' }
 
     await supabaseAdmin.from('profiles').insert({
       id: userB.id,
       organization_id: orgB.id,
       email: 'userb@test.com',
       role: 'owner',
-    });
+    })
 
     // Create authenticated clients
     const { data: sessionA } = await supabaseAdmin.auth.signInWithPassword({
       email: 'usera@test.com',
       password: 'TestPassword123!',
-    });
-    userA.access_token = sessionA.session!.access_token;
+    })
+    userA.access_token = sessionA.session!.access_token
     userAClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -382,13 +368,13 @@ describe('Multi-Tenant Isolation', () => {
           headers: { Authorization: `Bearer ${userA.access_token}` },
         },
       }
-    );
+    )
 
     const { data: sessionB } = await supabaseAdmin.auth.signInWithPassword({
       email: 'userb@test.com',
       password: 'TestPassword123!',
-    });
-    userB.access_token = sessionB.session!.access_token;
+    })
+    userB.access_token = sessionB.session!.access_token
     userBClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -397,84 +383,73 @@ describe('Multi-Tenant Isolation', () => {
           headers: { Authorization: `Bearer ${userB.access_token}` },
         },
       }
-    );
-  });
+    )
+  })
 
   afterAll(async () => {
     // Cleanup
-    await supabaseAdmin.from('profiles').delete().eq('id', userA.id);
-    await supabaseAdmin.from('profiles').delete().eq('id', userB.id);
-    await supabaseAdmin.auth.admin.deleteUser(userA.id);
-    await supabaseAdmin.auth.admin.deleteUser(userB.id);
-    await supabaseAdmin.from('organizations').delete().eq('id', orgA.id);
-    await supabaseAdmin.from('organizations').delete().eq('id', orgB.id);
-  });
+    await supabaseAdmin.from('profiles').delete().eq('id', userA.id)
+    await supabaseAdmin.from('profiles').delete().eq('id', userB.id)
+    await supabaseAdmin.auth.admin.deleteUser(userA.id)
+    await supabaseAdmin.auth.admin.deleteUser(userB.id)
+    await supabaseAdmin.from('organizations').delete().eq('id', orgA.id)
+    await supabaseAdmin.from('organizations').delete().eq('id', orgB.id)
+  })
 
   describe('Organizations Table Isolation', () => {
     it('TENANT-001: User A can only see their own organization', async () => {
       // Act
-      const { data, error } = await userAClient
-        .from('organizations')
-        .select('*');
+      const { data, error } = await userAClient.from('organizations').select('*')
 
       // Assert
-      expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      expect(data[0].id).toBe(orgA.id);
-    });
+      expect(error).toBeNull()
+      expect(data).toHaveLength(1)
+      expect(data[0].id).toBe(orgA.id)
+    })
 
     it('TENANT-002: User A cannot access Organization B data', async () => {
       // Act
-      const { data, error } = await userAClient
-        .from('organizations')
-        .select('*')
-        .eq('id', orgB.id);
+      const { data, error } = await userAClient.from('organizations').select('*').eq('id', orgB.id)
 
       // Assert
-      expect(data).toHaveLength(0); // RLS should prevent access
-    });
+      expect(data).toHaveLength(0) // RLS should prevent access
+    })
 
     it('TENANT-003: User A cannot update Organization B', async () => {
       // Act
       const { error } = await userAClient
         .from('organizations')
         .update({ name: 'Hacked Org B' })
-        .eq('id', orgB.id);
+        .eq('id', orgB.id)
 
       // Assert
-      expect(error).toBeDefined(); // Should fail due to RLS
+      expect(error).toBeDefined() // Should fail due to RLS
 
       // Verify Organization B was not modified
       const { data } = await supabaseAdmin
         .from('organizations')
         .select('name')
         .eq('id', orgB.id)
-        .single();
-      expect(data.name).toBe('Organization B');
-    });
+        .single()
+      expect(data.name).toBe('Organization B')
+    })
 
     it('TENANT-004: User A cannot delete Organization B', async () => {
       // Act
-      const { error } = await userAClient
-        .from('organizations')
-        .delete()
-        .eq('id', orgB.id);
+      const { error } = await userAClient.from('organizations').delete().eq('id', orgB.id)
 
       // Assert
-      expect(error).toBeDefined();
+      expect(error).toBeDefined()
 
       // Verify Organization B still exists
-      const { data } = await supabaseAdmin
-        .from('organizations')
-        .select('*')
-        .eq('id', orgB.id);
-      expect(data).toHaveLength(1);
-    });
-  });
+      const { data } = await supabaseAdmin.from('organizations').select('*').eq('id', orgB.id)
+      expect(data).toHaveLength(1)
+    })
+  })
 
   describe('Contacts Table Isolation', () => {
-    let contactA: { id: string };
-    let contactB: { id: string };
+    let contactA: { id: string }
+    let contactB: { id: string }
 
     beforeAll(async () => {
       // Create contact for Org A
@@ -487,8 +462,8 @@ describe('Multi-Tenant Isolation', () => {
           name: 'Contact A',
         })
         .select()
-        .single();
-      contactA = contactAData;
+        .single()
+      contactA = contactAData
 
       // Create contact for Org B
       const { data: contactBData } = await supabaseAdmin
@@ -500,61 +475,58 @@ describe('Multi-Tenant Isolation', () => {
           name: 'Contact B',
         })
         .select()
-        .single();
-      contactB = contactBData;
-    });
+        .single()
+      contactB = contactBData
+    })
 
     afterAll(async () => {
-      await supabaseAdmin.from('contacts').delete().eq('id', contactA.id);
-      await supabaseAdmin.from('contacts').delete().eq('id', contactB.id);
-    });
+      await supabaseAdmin.from('contacts').delete().eq('id', contactA.id)
+      await supabaseAdmin.from('contacts').delete().eq('id', contactB.id)
+    })
 
     it('TENANT-005: User A can only see their org contacts', async () => {
       // Act
-      const { data, error } = await userAClient.from('contacts').select('*');
+      const { data, error } = await userAClient.from('contacts').select('*')
 
       // Assert
-      expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      expect(data[0].id).toBe(contactA.id);
-    });
+      expect(error).toBeNull()
+      expect(data).toHaveLength(1)
+      expect(data[0].id).toBe(contactA.id)
+    })
 
     it('TENANT-006: User A cannot access Org B contacts', async () => {
       // Act
-      const { data, error } = await userAClient
-        .from('contacts')
-        .select('*')
-        .eq('id', contactB.id);
+      const { data, error } = await userAClient.from('contacts').select('*').eq('id', contactB.id)
 
       // Assert
-      expect(data).toHaveLength(0);
-    });
+      expect(data).toHaveLength(0)
+    })
 
     it('TENANT-007: User A cannot update Org B contacts', async () => {
       // Act
       const { error } = await userAClient
         .from('contacts')
         .update({ name: 'Hacked Contact' })
-        .eq('id', contactB.id);
+        .eq('id', contactB.id)
 
       // Assert
-      expect(error).toBeDefined();
+      expect(error).toBeDefined()
 
       // Verify contact was not modified
       const { data } = await supabaseAdmin
         .from('contacts')
         .select('name')
         .eq('id', contactB.id)
-        .single();
-      expect(data.name).toBe('Contact B');
-    });
-  });
+        .single()
+      expect(data.name).toBe('Contact B')
+    })
+  })
 
   describe('Conversations Table Isolation', () => {
-    let conversationA: { id: string };
-    let conversationB: { id: string };
-    let contactA: { id: string };
-    let contactB: { id: string };
+    let conversationA: { id: string }
+    let conversationB: { id: string }
+    let contactA: { id: string }
+    let contactB: { id: string }
 
     beforeAll(async () => {
       // Create contacts first
@@ -566,8 +538,8 @@ describe('Multi-Tenant Isolation', () => {
           phone_number: '+1111111111',
         })
         .select()
-        .single();
-      contactA = contactAData;
+        .single()
+      contactA = contactAData
 
       const { data: contactBData } = await supabaseAdmin
         .from('contacts')
@@ -577,8 +549,8 @@ describe('Multi-Tenant Isolation', () => {
           phone_number: '+2222222222',
         })
         .select()
-        .single();
-      contactB = contactBData;
+        .single()
+      contactB = contactBData
 
       // Create conversations
       const { data: conversationAData } = await supabaseAdmin
@@ -589,8 +561,8 @@ describe('Multi-Tenant Isolation', () => {
           status: 'open',
         })
         .select()
-        .single();
-      conversationA = conversationAData;
+        .single()
+      conversationA = conversationAData
 
       const { data: conversationBData } = await supabaseAdmin
         .from('conversations')
@@ -600,33 +572,27 @@ describe('Multi-Tenant Isolation', () => {
           status: 'open',
         })
         .select()
-        .single();
-      conversationB = conversationBData;
-    });
+        .single()
+      conversationB = conversationBData
+    })
 
     afterAll(async () => {
-      await supabaseAdmin
-        .from('conversations')
-        .delete()
-        .eq('id', conversationA.id);
-      await supabaseAdmin
-        .from('conversations')
-        .delete()
-        .eq('id', conversationB.id);
-      await supabaseAdmin.from('contacts').delete().eq('id', contactA.id);
-      await supabaseAdmin.from('contacts').delete().eq('id', contactB.id);
-    });
+      await supabaseAdmin.from('conversations').delete().eq('id', conversationA.id)
+      await supabaseAdmin.from('conversations').delete().eq('id', conversationB.id)
+      await supabaseAdmin.from('contacts').delete().eq('id', contactA.id)
+      await supabaseAdmin.from('contacts').delete().eq('id', contactB.id)
+    })
 
     it('TENANT-008: User A cannot access Org B conversations', async () => {
       // Act
       const { data, error } = await userAClient
         .from('conversations')
         .select('*')
-        .eq('id', conversationB.id);
+        .eq('id', conversationB.id)
 
       // Assert
-      expect(data).toHaveLength(0);
-    });
+      expect(data).toHaveLength(0)
+    })
 
     it('TENANT-009: User A cannot send messages in Org B conversations', async () => {
       // Act
@@ -635,13 +601,13 @@ describe('Multi-Tenant Isolation', () => {
         sender_id: userA.id,
         content: 'Unauthorized message',
         message_type: 'text',
-      });
+      })
 
       // Assert
-      expect(error).toBeDefined();
-    });
-  });
-});
+      expect(error).toBeDefined()
+    })
+  })
+})
 ```
 
 ---
@@ -651,41 +617,38 @@ describe('Multi-Tenant Isolation', () => {
 ### File: `src/lib/whatsapp/__tests__/client.test.ts`
 
 ```typescript
-import { WhatsAppClient } from '../client';
+import { WhatsAppClient } from '../client'
 
 describe('WhatsAppClient', () => {
-  let client: WhatsAppClient;
-  const mockAccessToken = 'test_token_123';
-  const mockPhoneNumberId = 'phone_123';
+  let client: WhatsAppClient
+  const mockAccessToken = 'test_token_123'
+  const mockPhoneNumberId = 'phone_123'
 
   beforeEach(() => {
-    client = new WhatsAppClient(mockAccessToken, mockPhoneNumberId);
-    global.fetch = jest.fn();
-  });
+    client = new WhatsAppClient(mockAccessToken, mockPhoneNumberId)
+    global.fetch = jest.fn()
+  })
 
   afterEach(() => {
-    jest.restoreAllMocks();
-  });
+    jest.restoreAllMocks()
+  })
 
   describe('sendTextMessage', () => {
     it('WHATSAPP-001: should send text message successfully', async () => {
       // Arrange
       const mockResponse = {
         messages: [{ id: 'wamid.123' }],
-      };
-      (global.fetch as jest.Mock).mockResolvedValue({
+      }
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      });
+      })
 
       // Act
-      const result = await client.sendTextMessage(
-        '+1234567890',
-        'Hello World'
-      );
+      const result = await client.sendTextMessage('+1234567890', 'Hello World')
 
       // Assert
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual(mockResponse)
       expect(fetch).toHaveBeenCalledWith(
         `https://graph.facebook.com/v18.0/${mockPhoneNumberId}/messages`,
         expect.objectContaining({
@@ -696,34 +659,32 @@ describe('WhatsAppClient', () => {
           },
           body: expect.stringContaining('"messaging_product":"whatsapp"'),
         })
-      );
-    });
+      )
+    })
 
     it('WHATSAPP-002: should reject empty message body', async () => {
       // Act & Assert
-      await expect(
-        client.sendTextMessage('+1234567890', '')
-      ).rejects.toThrow();
-    });
+      await expect(client.sendTextMessage('+1234567890', '')).rejects.toThrow()
+    })
 
     it('WHATSAPP-003: should reject invalid phone number', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValue({
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         json: async () => ({
           error: { message: 'Invalid phone number' },
         }),
-      });
+      })
 
       // Act & Assert
-      await expect(
-        client.sendTextMessage('invalid_number', 'Hello')
-      ).rejects.toThrow('WhatsApp API Error: Invalid phone number');
-    });
+      await expect(client.sendTextMessage('invalid_number', 'Hello')).rejects.toThrow(
+        'WhatsApp API Error: Invalid phone number'
+      )
+    })
 
     it('WHATSAPP-004: should handle API rate limiting', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValue({
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         json: async () => ({
           error: {
@@ -731,130 +692,121 @@ describe('WhatsAppClient', () => {
             code: 4,
           },
         }),
-      });
+      })
 
       // Act & Assert
-      await expect(
-        client.sendTextMessage('+1234567890', 'Hello')
-      ).rejects.toThrow('Rate limit exceeded');
-    });
+      await expect(client.sendTextMessage('+1234567890', 'Hello')).rejects.toThrow(
+        'Rate limit exceeded'
+      )
+    })
 
     it('WHATSAPP-005: should handle network timeout', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockRejectedValue(
-        new Error('Network timeout')
-      );
+      ;(global.fetch as jest.Mock).mockRejectedValue(new Error('Network timeout'))
 
       // Act & Assert
-      await expect(
-        client.sendTextMessage('+1234567890', 'Hello')
-      ).rejects.toThrow('Network timeout');
-    });
-  });
+      await expect(client.sendTextMessage('+1234567890', 'Hello')).rejects.toThrow(
+        'Network timeout'
+      )
+    })
+  })
 
   describe('sendTemplateMessage', () => {
     it('WHATSAPP-006: should send template message successfully', async () => {
       // Arrange
       const mockResponse = {
         messages: [{ id: 'wamid.124' }],
-      };
-      (global.fetch as jest.Mock).mockResolvedValue({
+      }
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      });
+      })
 
       // Act
-      const result = await client.sendTemplateMessage(
-        '+1234567890',
-        'welcome_template',
-        'en'
-      );
+      const result = await client.sendTemplateMessage('+1234567890', 'welcome_template', 'en')
 
       // Assert
-      expect(result).toEqual(mockResponse);
-      expect(fetch).toHaveBeenCalled();
-    });
+      expect(result).toEqual(mockResponse)
+      expect(fetch).toHaveBeenCalled()
+    })
 
     it('WHATSAPP-007: should reject unapproved template', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValue({
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         json: async () => ({
           error: { message: 'Template not approved' },
         }),
-      });
+      })
 
       // Act & Assert
       await expect(
         client.sendTemplateMessage('+1234567890', 'unapproved_template')
-      ).rejects.toThrow('Template not approved');
-    });
-  });
+      ).rejects.toThrow('Template not approved')
+    })
+  })
 
   describe('sendImageMessage', () => {
     it('WHATSAPP-008: should send image message successfully', async () => {
       // Arrange
       const mockResponse = {
         messages: [{ id: 'wamid.125' }],
-      };
-      (global.fetch as jest.Mock).mockResolvedValue({
+      }
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      });
+      })
 
       // Act
       const result = await client.sendImageMessage(
         '+1234567890',
         'https://example.com/image.jpg',
         'Test caption'
-      );
+      )
 
       // Assert
-      expect(result).toEqual(mockResponse);
-    });
+      expect(result).toEqual(mockResponse)
+    })
 
     it('WHATSAPP-009: should handle media upload failure', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValue({
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         json: async () => ({
           error: { message: 'Media upload failed' },
         }),
-      });
+      })
 
       // Act & Assert
       await expect(
-        client.sendImageMessage(
-          '+1234567890',
-          'https://invalid-url.com/image.jpg'
-        )
-      ).rejects.toThrow('Media upload failed');
-    });
-  });
+        client.sendImageMessage('+1234567890', 'https://invalid-url.com/image.jpg')
+      ).rejects.toThrow('Media upload failed')
+    })
+  })
 
   describe('markAsRead', () => {
     it('WHATSAPP-010: should mark message as read', async () => {
       // Arrange
-      const mockResponse = { success: true };
-      (global.fetch as jest.Mock).mockResolvedValue({
+      const mockResponse = { success: true }
+      ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      });
+      })
 
       // Act
-      const result = await client.markAsRead('wamid.123');
+      const result = await client.markAsRead('wamid.123')
 
       // Assert
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual(mockResponse)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/messages'),
         expect.objectContaining({
           body: expect.stringContaining('"status":"read"'),
         })
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})
 ```
 
 ---
@@ -864,37 +816,37 @@ describe('WhatsAppClient', () => {
 ### File: `tests/integration/billing-checkout.test.ts`
 
 ```typescript
-import { POST } from '@/app/api/billing/checkout/route';
-import { createClient } from '@/lib/supabase/server';
-import { StripeService } from '@/lib/stripe/server';
+import { POST } from '@/app/api/billing/checkout/route'
+import { createClient } from '@/lib/supabase/server'
+import { StripeService } from '@/lib/stripe/server'
 
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/stripe/server');
-jest.mock('@/lib/auth');
+jest.mock('@/lib/supabase/server')
+jest.mock('@/lib/stripe/server')
+jest.mock('@/lib/auth')
 
 describe('POST /api/billing/checkout', () => {
   const mockRequest = (body: unknown) =>
     ({
       json: async () => body,
-    } as any);
+    }) as any
 
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   describe('Successful Checkout', () => {
     it('BILLING-001: should create checkout session for valid plan', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
-      const mockOrg = { id: 'org-123', name: 'Test Org' };
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
+      const mockOrg = { id: 'org-123', name: 'Test Org' }
       const mockProfile = {
         id: 'user-123',
         organization_id: 'org-123',
         role: 'owner',
         organization: mockOrg,
-      };
+      }
 
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       const mockSupabase = {
         from: jest.fn(() => ({
@@ -902,76 +854,72 @@ describe('POST /api/billing/checkout', () => {
           eq: jest.fn().mockReturnThis(),
           single: jest.fn().mockResolvedValue({ data: mockProfile }),
         })),
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
-      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123');
+      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123')
       jest.mocked(StripeService.createCheckoutSession).mockResolvedValue({
         id: 'cs_123',
         url: 'https://checkout.stripe.com/123',
-      } as any);
+      } as any)
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ planId: 'professional' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(200);
-      expect(data.url).toBe('https://checkout.stripe.com/123');
+      expect(response.status).toBe(200)
+      expect(data.url).toBe('https://checkout.stripe.com/123')
       expect(StripeService.createCustomer).toHaveBeenCalledWith(
         'org-123',
         'owner@test.com',
         'Test Org'
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('Input Validation', () => {
     it('BILLING-002: should reject invalid plan ID', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'invalid_plan' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ planId: 'invalid_plan' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Invalid plan');
-    });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Invalid plan')
+    })
 
     it('BILLING-003: should reject missing plan ID', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       // Act
-      const response = await POST(mockRequest({}));
-      const data = await response.json();
+      const response = await POST(mockRequest({}))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Invalid plan');
-    });
-  });
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Invalid plan')
+    })
+  })
 
   describe('Authorization', () => {
     it('BILLING-004: should reject non-owner/admin users', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'agent@test.com' };
+      const mockUser = { id: 'user-123', email: 'agent@test.com' }
       const mockProfile = {
         id: 'user-123',
         organization_id: 'org-123',
         role: 'agent', // Not owner or admin
         organization: { id: 'org-123', name: 'Test Org' },
-      };
+      }
 
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       const mockSupabase = {
         from: jest.fn(() => ({
@@ -979,31 +927,29 @@ describe('POST /api/billing/checkout', () => {
           eq: jest.fn().mockReturnThis(),
           single: jest.fn().mockResolvedValue({ data: mockProfile }),
         })),
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ planId: 'professional' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(403);
-      expect(data.error).toBe('Unauthorized');
-    });
+      expect(response.status).toBe(403)
+      expect(data.error).toBe('Unauthorized')
+    })
 
     it('BILLING-005: should allow owner to create checkout', async () => {
       // Test owner role
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
       const mockProfile = {
         id: 'user-123',
         organization_id: 'org-123',
         role: 'owner',
         organization: { id: 'org-123', name: 'Test Org' },
-      };
+      }
 
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       const mockSupabase = {
         from: jest.fn(() => ({
@@ -1011,35 +957,33 @@ describe('POST /api/billing/checkout', () => {
           eq: jest.fn().mockReturnThis(),
           single: jest.fn().mockResolvedValue({ data: mockProfile }),
         })),
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
-      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123');
+      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123')
       jest.mocked(StripeService.createCheckoutSession).mockResolvedValue({
         id: 'cs_123',
         url: 'https://checkout.stripe.com/123',
-      } as any);
+      } as any)
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
+      const response = await POST(mockRequest({ planId: 'professional' }))
 
       // Assert
-      expect(response.status).toBe(200);
-    });
+      expect(response.status).toBe(200)
+    })
 
     it('BILLING-006: should allow admin to create checkout', async () => {
       // Test admin role
-      const mockUser = { id: 'user-123', email: 'admin@test.com' };
+      const mockUser = { id: 'user-123', email: 'admin@test.com' }
       const mockProfile = {
         id: 'user-123',
         organization_id: 'org-123',
         role: 'admin',
         organization: { id: 'org-123', name: 'Test Org' },
-      };
+      }
 
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       const mockSupabase = {
         from: jest.fn(() => ({
@@ -1047,37 +991,35 @@ describe('POST /api/billing/checkout', () => {
           eq: jest.fn().mockReturnThis(),
           single: jest.fn().mockResolvedValue({ data: mockProfile }),
         })),
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
-      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123');
+      jest.mocked(StripeService.createCustomer).mockResolvedValue('cus_123')
       jest.mocked(StripeService.createCheckoutSession).mockResolvedValue({
         id: 'cs_123',
         url: 'https://checkout.stripe.com/123',
-      } as any);
+      } as any)
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
+      const response = await POST(mockRequest({ planId: 'professional' }))
 
       // Assert
-      expect(response.status).toBe(200);
-    });
-  });
+      expect(response.status).toBe(200)
+    })
+  })
 
   describe('Error Handling', () => {
     it('BILLING-007: should handle Stripe API errors', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
       const mockProfile = {
         id: 'user-123',
         organization_id: 'org-123',
         role: 'owner',
         organization: { id: 'org-123', name: 'Test Org' },
-      };
+      }
 
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
       const mockSupabase = {
         from: jest.fn(() => ({
@@ -1085,45 +1027,37 @@ describe('POST /api/billing/checkout', () => {
           eq: jest.fn().mockReturnThis(),
           single: jest.fn().mockResolvedValue({ data: mockProfile }),
         })),
-      };
-      (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+      }
+      ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
-      jest.mocked(StripeService.createCustomer).mockRejectedValue(
-        new Error('Stripe API error')
-      );
+      jest.mocked(StripeService.createCustomer).mockRejectedValue(new Error('Stripe API error'))
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ planId: 'professional' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Failed to create checkout session');
-    });
+      expect(response.status).toBe(500)
+      expect(data.error).toBe('Failed to create checkout session')
+    })
 
     it('BILLING-008: should handle database errors', async () => {
       // Arrange
-      const mockUser = { id: 'user-123', email: 'owner@test.com' };
-      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser);
+      const mockUser = { id: 'user-123', email: 'owner@test.com' }
+      jest.mocked(require('@/lib/auth').requireAuth).mockResolvedValue(mockUser)
 
-      (createClient as jest.Mock).mockRejectedValue(
-        new Error('Database connection failed')
-      );
+      ;(createClient as jest.Mock).mockRejectedValue(new Error('Database connection failed'))
 
       // Act
-      const response = await POST(
-        mockRequest({ planId: 'professional' })
-      );
-      const data = await response.json();
+      const response = await POST(mockRequest({ planId: 'professional' }))
+      const data = await response.json()
 
       // Assert
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Failed to create checkout session');
-    });
-  });
-});
+      expect(response.status).toBe(500)
+      expect(data.error).toBe('Failed to create checkout session')
+    })
+  })
+})
 ```
 
 ---
@@ -1295,98 +1229,94 @@ describe('SignupForm', () => {
 ### File: `tests/e2e/complete-messaging-flow.spec.ts`
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Complete WhatsApp Messaging Flow', () => {
   test('user can complete full messaging journey', async ({ page }) => {
     // Step 1: Sign up
-    await page.goto('http://localhost:3000/auth/signup');
-    await page.fill('input[name="email"]', 'newuser@test.com');
-    await page.fill('input[name="password"]', 'StrongPass123!');
-    await page.fill('input[name="organizationName"]', 'Test Company');
-    await page.click('button[type="submit"]');
+    await page.goto('http://localhost:3000/auth/signup')
+    await page.fill('input[name="email"]', 'newuser@test.com')
+    await page.fill('input[name="password"]', 'StrongPass123!')
+    await page.fill('input[name="organizationName"]', 'Test Company')
+    await page.click('button[type="submit"]')
 
     // Step 2: Complete onboarding
-    await expect(page).toHaveURL(/\/onboarding/);
-    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL(/\/onboarding/)
+    await page.waitForTimeout(1000)
 
     // Step 3: Navigate to inbox
-    await page.goto('http://localhost:3000/dashboard/inbox');
-    await expect(page).toHaveURL(/\/dashboard\/inbox/);
+    await page.goto('http://localhost:3000/dashboard/inbox')
+    await expect(page).toHaveURL(/\/dashboard\/inbox/)
 
     // Step 4: Select or create conversation
-    const conversationList = page.locator('[data-testid="conversation-list"]');
-    if (await conversationList.locator('[data-testid="conversation-item"]').count() > 0) {
+    const conversationList = page.locator('[data-testid="conversation-list"]')
+    if ((await conversationList.locator('[data-testid="conversation-item"]').count()) > 0) {
       // Select existing conversation
-      await conversationList.locator('[data-testid="conversation-item"]').first().click();
+      await conversationList.locator('[data-testid="conversation-item"]').first().click()
     } else {
       // Create new conversation
-      await page.click('[data-testid="new-conversation-button"]');
-      await page.fill('[data-testid="phone-number-input"]', '+1234567890');
-      await page.click('[data-testid="start-conversation-button"]');
+      await page.click('[data-testid="new-conversation-button"]')
+      await page.fill('[data-testid="phone-number-input"]', '+1234567890')
+      await page.click('[data-testid="start-conversation-button"]')
     }
 
     // Step 5: Send text message
-    const messageInput = page.locator('[data-testid="message-input"]');
-    await messageInput.fill('Hello! This is a test message.');
-    await page.click('[data-testid="send-button"]');
+    const messageInput = page.locator('[data-testid="message-input"]')
+    await messageInput.fill('Hello! This is a test message.')
+    await page.click('[data-testid="send-button"]')
 
     // Step 6: Verify message sent
-    await expect(
-      page.locator('text=Hello! This is a test message.').last()
-    ).toBeVisible();
+    await expect(page.locator('text=Hello! This is a test message.').last()).toBeVisible()
 
-    await expect(
-      page.locator('[data-testid="message-status"]').last()
-    ).toContainText(/sent|delivered/i);
+    await expect(page.locator('[data-testid="message-status"]').last()).toContainText(
+      /sent|delivered/i
+    )
 
     // Step 7: Send template message
-    await page.click('[data-testid="template-button"]');
-    await page.click('[data-testid="template-item"]').first();
-    await page.click('[data-testid="send-template-button"]');
+    await page.click('[data-testid="template-button"]')
+    await page.click('[data-testid="template-item"]').first()
+    await page.click('[data-testid="send-template-button"]')
 
     // Step 8: Verify template sent
-    await expect(
-      page.locator('[data-testid="message-template-indicator"]').last()
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="message-template-indicator"]').last()).toBeVisible()
 
     // Step 9: Check analytics
-    await page.goto('http://localhost:3000/dashboard/analytics');
-    await expect(page).toHaveURL(/\/dashboard\/analytics/);
+    await page.goto('http://localhost:3000/dashboard/analytics')
+    await expect(page).toHaveURL(/\/dashboard\/analytics/)
 
     // Verify message count increased
-    const messageCount = page.locator('[data-testid="messages-sent-count"]');
-    await expect(messageCount).toBeVisible();
+    const messageCount = page.locator('[data-testid="messages-sent-count"]')
+    await expect(messageCount).toBeVisible()
 
     // Take final screenshot
     await page.screenshot({
       path: 'test-results/complete-messaging-flow.png',
       fullPage: true,
-    });
-  });
+    })
+  })
 
   test('user can complete payment flow', async ({ page }) => {
     // Step 1: Login
-    await page.goto('http://localhost:3000/auth/signin');
-    await page.fill('input[type="email"]', 'owner@demo-company.com');
-    await page.fill('input[type="password"]', 'Demo2024!Owner');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/dashboard');
+    await page.goto('http://localhost:3000/auth/signin')
+    await page.fill('input[type="email"]', 'owner@demo-company.com')
+    await page.fill('input[type="password"]', 'Demo2024!Owner')
+    await page.click('button[type="submit"]')
+    await page.waitForURL('**/dashboard')
 
     // Step 2: Navigate to billing
-    await page.goto('http://localhost:3000/dashboard/settings/billing');
+    await page.goto('http://localhost:3000/dashboard/settings/billing')
 
     // Step 3: Select plan
-    await page.click('[data-testid="professional-plan-button"]');
+    await page.click('[data-testid="professional-plan-button"]')
 
     // Step 4: Verify redirect to Stripe
-    await page.waitForURL(/checkout\.stripe\.com/, { timeout: 10000 });
-    expect(page.url()).toContain('checkout.stripe.com');
+    await page.waitForURL(/checkout\.stripe\.com/, { timeout: 10000 })
+    expect(page.url()).toContain('checkout.stripe.com')
 
     // Note: Do not complete Stripe checkout in E2E tests
     // Use Stripe test mode webhooks for testing payment completion
-  });
-});
+  })
+})
 ```
 
 ---
@@ -1402,6 +1332,7 @@ These test examples demonstrate:
 5. **E2E Tests** - Complete user journeys
 
 **Next Steps:**
+
 1. Copy these examples to your project
 2. Adapt to your specific implementation
 3. Run tests: `npm run test` and `npm run test:e2e`
@@ -1409,6 +1340,7 @@ These test examples demonstrate:
 5. Aim for 80% code coverage
 
 **Test Execution:**
+
 ```bash
 # Unit and integration tests
 npm run test

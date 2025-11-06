@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionManager } from '@/lib/session/manager';
-import { clearSessionCookie } from '@/lib/middleware/session';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { getSessionManager } from '@/lib/session/manager'
+import { clearSessionCookie } from '@/lib/middleware/session'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Session Revocation API Route
@@ -31,91 +31,90 @@ import { createClient } from '@/lib/supabase/server';
 export async function DELETE(request: NextRequest) {
   try {
     // Get user ID from Supabase auth
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return NextResponse.json(
         {
           error: 'User not authenticated',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         },
         { status: 401 }
-      );
+      )
     }
 
     // Parse request body
-    const body = await request.json().catch(() => ({}));
-    const sessionTokenToRevoke = body.sessionToken ||
-                                 request.cookies.get('adsapp_session')?.value;
+    const body = await request.json().catch(() => ({}))
+    const sessionTokenToRevoke = body.sessionToken || request.cookies.get('adsapp_session')?.value
 
     if (!sessionTokenToRevoke) {
       return NextResponse.json(
         {
           error: 'No session token provided',
-          code: 'NO_SESSION_TOKEN'
+          code: 'NO_SESSION_TOKEN',
         },
         { status: 400 }
-      );
+      )
     }
 
     // Revoke session
-    const sessionManager = getSessionManager();
-    const revoked = await sessionManager.revokeSession(
-      user.id,
-      sessionTokenToRevoke
-    );
+    const sessionManager = getSessionManager()
+    const revoked = await sessionManager.revokeSession(user.id, sessionTokenToRevoke)
 
     if (!revoked) {
       return NextResponse.json(
         {
           error: 'Session not found or already revoked',
-          code: 'SESSION_NOT_FOUND'
+          code: 'SESSION_NOT_FOUND',
         },
         { status: 404 }
-      );
+      )
     }
 
     // Create response
     const response = NextResponse.json(
       {
         success: true,
-        message: 'Session revoked successfully'
+        message: 'Session revoked successfully',
       },
       { status: 200 }
-    );
+    )
 
     // Clear session cookie if revoking current session
-    const currentSessionToken = request.cookies.get('adsapp_session')?.value;
+    const currentSessionToken = request.cookies.get('adsapp_session')?.value
     if (sessionTokenToRevoke === currentSessionToken) {
-      clearSessionCookie(response);
+      clearSessionCookie(response)
     }
 
-    return response;
+    return response
   } catch (error) {
-    console.error('[SessionRevoke] Error:', error);
+    console.error('[SessionRevoke] Error:', error)
 
     // Log error to monitoring
     if (process.env.NODE_ENV === 'production') {
       try {
-        const Sentry = await import('@sentry/nextjs');
+        const Sentry = await import('@sentry/nextjs')
         Sentry.captureException(error, {
           tags: {
-            endpoint: 'session-revoke'
-          }
-        });
+            endpoint: 'session-revoke',
+          },
+        })
       } catch (sentryError) {
-        console.error('[SessionRevoke] Failed to log error:', sentryError);
+        console.error('[SessionRevoke] Failed to log error:', sentryError)
       }
     }
 
     return NextResponse.json(
       {
         error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -123,7 +122,7 @@ export async function DELETE(request: NextRequest) {
  * POST method (alternative to DELETE for client compatibility)
  */
 export async function POST(request: NextRequest) {
-  return DELETE(request);
+  return DELETE(request)
 }
 
 /**
@@ -133,8 +132,8 @@ export async function GET() {
   return NextResponse.json(
     {
       error: 'Method not allowed',
-      code: 'METHOD_NOT_ALLOWED'
+      code: 'METHOD_NOT_ALLOWED',
     },
     { status: 405 }
-  );
+  )
 }

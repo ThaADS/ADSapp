@@ -19,7 +19,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         } as ResetDemoDataResponse,
         { status: 400 }
       )
@@ -33,7 +33,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Confirmation required. Set confirm: true to proceed with reset.'
+          error: 'Confirmation required. Set confirm: true to proceed with reset.',
         } as ResetDemoDataResponse,
         { status: 400 }
       )
@@ -48,7 +48,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         } as ResetDemoDataResponse,
         { status: 500 }
       )
@@ -64,7 +64,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: result.error || 'Failed to reset demo data'
+          error: result.error || 'Failed to reset demo data',
         } as ResetDemoDataResponse,
         { status: 400 }
       )
@@ -77,20 +77,19 @@ export async function POST(
         items_reset: result.itemsReset || {
           contacts: 0,
           conversations: 0,
-          messages: 0
-        }
-      }
+          messages: 0,
+        },
+      },
     }
 
     return NextResponse.json(response)
-
   } catch (error) {
     console.error('Error resetting demo data:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to reset demo data. Please try again.'
+        error: 'Failed to reset demo data. Please try again.',
       } as ResetDemoDataResponse,
       { status: 500 }
     )
@@ -113,7 +112,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         },
         { status: 400 }
       )
@@ -127,7 +126,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -143,7 +142,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Session not found or invalid'
+          error: 'Session not found or invalid',
         },
         { status: 404 }
       )
@@ -193,30 +192,28 @@ export async function GET(
           scenario: sessionResult.session.business_scenario,
           organization_id: organizationId,
           created_at: sessionResult.session.created_at,
-          progress: sessionResult.session.progress
+          progress: sessionResult.session.progress,
         },
         current_data: {
           contacts: contactsCount || 0,
           conversations: conversationsCount || 0,
-          messages: messagesCount
+          messages: messagesCount,
         },
         reset_history: {
           times_reset: resetEvents.length,
-          last_reset: resetEvents.length > 0
-            ? resetEvents[resetEvents.length - 1].timestamp
-            : null
+          last_reset: resetEvents.length > 0 ? resetEvents[resetEvents.length - 1].timestamp : null,
         },
-        warning: 'Resetting will permanently delete all demo data and restore original sample data for this scenario.'
-      }
+        warning:
+          'Resetting will permanently delete all demo data and restore original sample data for this scenario.',
+      },
     })
-
   } catch (error) {
     console.error('Error getting reset information:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to get reset information'
+        error: 'Failed to get reset information',
       },
       { status: 500 }
     )
@@ -241,7 +238,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Unauthorized - Admin access required'
+          error: 'Unauthorized - Admin access required',
         },
         { status: 401 }
       )
@@ -259,7 +256,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         },
         { status: 400 }
       )
@@ -273,7 +270,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -289,7 +286,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: 'Session not found'
+          error: 'Session not found',
         },
         { status: 404 }
       )
@@ -307,52 +304,36 @@ export async function DELETE(
 
     if (conversations && conversations.length > 0) {
       const conversationIds = conversations.map(c => c.id)
-      await supabase
-        .from('messages')
-        .delete()
-        .in('conversation_id', conversationIds)
+      await supabase.from('messages').delete().in('conversation_id', conversationIds)
     }
 
     // 2. Conversations
-    await supabase
-      .from('conversations')
-      .delete()
-      .eq('organization_id', organizationId)
+    await supabase.from('conversations').delete().eq('organization_id', organizationId)
 
     // 3. Contacts
-    await supabase
-      .from('contacts')
-      .delete()
-      .eq('organization_id', organizationId)
+    await supabase.from('contacts').delete().eq('organization_id', organizationId)
 
     // 4. Profiles (if any demo users were created)
-    await supabase
-      .from('profiles')
-      .delete()
-      .eq('organization_id', organizationId)
+    await supabase.from('profiles').delete().eq('organization_id', organizationId)
 
     // 5. Organization
-    await supabase
-      .from('organizations')
-      .delete()
-      .eq('id', organizationId)
+    await supabase.from('organizations').delete().eq('id', organizationId)
 
     return NextResponse.json({
       success: true,
       data: {
         deleted_at: new Date().toISOString(),
         organization_id: organizationId,
-        session_token: token
-      }
+        session_token: token,
+      },
     })
-
   } catch (error) {
     console.error('Error force deleting demo session:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete demo session'
+        error: 'Failed to delete demo session',
       },
       { status: 500 }
     )
@@ -372,7 +353,7 @@ async function handleBulkExpiredReset(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -391,15 +372,15 @@ async function handleBulkExpiredReset(request: NextRequest) {
         success: true,
         data: {
           deleted_sessions: 0,
-          message: 'No demo sessions found'
-        }
+          message: 'No demo sessions found',
+        },
       })
     }
 
     // Filter expired sessions (older than 2 hours)
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000)
-    const expiredOrganizations = demoOrganizations.filter(org =>
-      new Date(org.created_at) < twoHoursAgo
+    const expiredOrganizations = demoOrganizations.filter(
+      org => new Date(org.created_at) < twoHoursAgo
     )
 
     let deletedCount = 0
@@ -415,10 +396,7 @@ async function handleBulkExpiredReset(request: NextRequest) {
 
         if (conversations && conversations.length > 0) {
           const conversationIds = conversations.map(c => c.id)
-          await supabase
-            .from('messages')
-            .delete()
-            .in('conversation_id', conversationIds)
+          await supabase.from('messages').delete().in('conversation_id', conversationIds)
         }
 
         await supabase.from('conversations').delete().eq('organization_id', org.id)
@@ -438,16 +416,15 @@ async function handleBulkExpiredReset(request: NextRequest) {
         deleted_sessions: deletedCount,
         total_found: demoOrganizations.length,
         expired_found: expiredOrganizations.length,
-        cleaned_at: new Date().toISOString()
-      }
+        cleaned_at: new Date().toISOString(),
+      },
     })
-
   } catch (error) {
     console.error('Error in bulk cleanup:', error)
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to perform bulk cleanup'
+        error: 'Failed to perform bulk cleanup',
       },
       { status: 500 }
     )

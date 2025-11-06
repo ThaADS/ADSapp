@@ -1,15 +1,10 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { DemoSessionManager, DemoUtils } from '@/lib/demo'
-import {
-  TrackAnalyticsRequest,
-  TrackAnalyticsResponse,
-  DemoEventType
-} from '@/types/demo'
+import { TrackAnalyticsRequest, TrackAnalyticsResponse, DemoEventType } from '@/types/demo'
 
 /**
  * Track analytics events for demo sessions
@@ -25,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         } as TrackAnalyticsResponse,
         { status: 401 }
       )
@@ -39,7 +34,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'event_type, action, and category are required'
+          error: 'event_type, action, and category are required',
         } as TrackAnalyticsResponse,
         { status: 400 }
       )
@@ -53,14 +48,14 @@ export async function POST(request: NextRequest) {
       'api_call',
       'feature_interaction',
       'error',
-      'conversion'
+      'conversion',
     ]
 
     if (!validEventTypes.includes(body.event_type)) {
       return NextResponse.json(
         {
           success: false,
-          error: `Invalid event_type. Must be one of: ${validEventTypes.join(', ')}`
+          error: `Invalid event_type. Must be one of: ${validEventTypes.join(', ')}`,
         } as TrackAnalyticsResponse,
         { status: 400 }
       )
@@ -75,7 +70,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         } as TrackAnalyticsResponse,
         { status: 500 }
       )
@@ -91,7 +86,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         } as TrackAnalyticsResponse,
         { status: 401 }
       )
@@ -107,7 +102,7 @@ export async function POST(request: NextRequest) {
         (new Date().getTime() - new Date(sessionResult.session.created_at).getTime()) / (1000 * 60)
       ),
       user_agent: sessionResult.session.user_agent,
-      ip_address: sessionResult.session.ip_address
+      ip_address: sessionResult.session.ip_address,
     }
 
     // Add page information if it's a page view
@@ -124,14 +119,14 @@ export async function POST(request: NextRequest) {
       label: body.label,
       value: body.value,
       metadata: enrichedMetadata,
-      page: body.page
+      page: body.page,
     })
 
     if (!eventId) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to track event'
+          error: 'Failed to track event',
         } as TrackAnalyticsResponse,
         { status: 500 }
       )
@@ -147,19 +142,18 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         event_id: eventId,
-        tracked_at: new Date().toISOString()
-      }
+        tracked_at: new Date().toISOString(),
+      },
     }
 
     return NextResponse.json(response, { status: 201 })
-
   } catch (error) {
     console.error('Error tracking analytics event:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to track analytics event. Please try again.'
+        error: 'Failed to track analytics event. Please try again.',
       } as TrackAnalyticsResponse,
       { status: 500 }
     )
@@ -180,7 +174,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         },
         { status: 401 }
       )
@@ -194,7 +188,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -210,7 +204,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         },
         { status: 401 }
       )
@@ -230,10 +224,14 @@ export async function GET(request: NextRequest) {
     const pageViewStats = generatePageViewStats(sessionResult.session.analytics.page_views)
 
     // Get feature usage statistics
-    const featureUsageStats = generateFeatureUsageStats(sessionResult.session.analytics.feature_usage)
+    const featureUsageStats = generateFeatureUsageStats(
+      sessionResult.session.analytics.feature_usage
+    )
 
     // Get conversion funnel statistics
-    const conversionStats = generateConversionStats(sessionResult.session.analytics.conversion_funnel)
+    const conversionStats = generateConversionStats(
+      sessionResult.session.analytics.conversion_funnel
+    )
 
     return NextResponse.json({
       success: true,
@@ -244,27 +242,26 @@ export async function GET(request: NextRequest) {
           status: sessionResult.session.status,
           created_at: sessionResult.session.created_at,
           duration: sessionDuration,
-          completion_rate: completionRate
+          completion_rate: completionRate,
         },
         analytics_summary: analyticsSummary,
         detailed_metrics: {
           page_views: pageViewStats,
           feature_usage: featureUsageStats,
           conversion_funnel: conversionStats,
-          performance: sessionResult.session.analytics.performance_metrics
+          performance: sessionResult.session.analytics.performance_metrics,
         },
         progress: sessionResult.session.progress,
-        recommendations: generatePersonalizedRecommendations(sessionResult.session)
-      }
+        recommendations: generatePersonalizedRecommendations(sessionResult.session),
+      },
     })
-
   } catch (error) {
     console.error('Error getting analytics summary:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to get analytics summary'
+        error: 'Failed to get analytics summary',
       },
       { status: 500 }
     )
@@ -285,7 +282,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         },
         { status: 401 }
       )
@@ -299,7 +296,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'events array is required and must not be empty'
+          error: 'events array is required and must not be empty',
         },
         { status: 400 }
       )
@@ -309,7 +306,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Maximum 50 events allowed per batch'
+          error: 'Maximum 50 events allowed per batch',
         },
         { status: 400 }
       )
@@ -323,7 +320,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -339,7 +336,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         },
         { status: 401 }
       )
@@ -357,7 +354,7 @@ export async function PUT(request: NextRequest) {
         if (!eventData.event_type || !eventData.action || !eventData.category) {
           errors.push({
             index: i,
-            error: 'Missing required fields: event_type, action, category'
+            error: 'Missing required fields: event_type, action, category',
           })
           continue
         }
@@ -372,29 +369,28 @@ export async function PUT(request: NextRequest) {
           metadata: {
             ...eventData.metadata,
             batch_index: i,
-            batch_id: `batch_${Date.now()}`
+            batch_id: `batch_${Date.now()}`,
           },
-          page: eventData.page
+          page: eventData.page,
         })
 
         if (eventId) {
           results.push({
             index: i,
             event_id: eventId,
-            tracked_at: new Date().toISOString()
+            tracked_at: new Date().toISOString(),
           })
         } else {
           errors.push({
             index: i,
-            error: 'Failed to track event'
+            error: 'Failed to track event',
           })
         }
-
       } catch (error) {
         console.error(`Error processing event ${i}:`, error)
         errors.push({
           index: i,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
     }
@@ -409,8 +405,8 @@ export async function PUT(request: NextRequest) {
       metadata: {
         total_events: events.length,
         successful: results.length,
-        failed: errors.length
-      }
+        failed: errors.length,
+      },
     })
 
     return NextResponse.json({
@@ -421,17 +417,16 @@ export async function PUT(request: NextRequest) {
         successful: results.length,
         failed: errors.length,
         results: results,
-        errors: errors.length > 0 ? errors : undefined
-      }
+        errors: errors.length > 0 ? errors : undefined,
+      },
     })
-
   } catch (error) {
     console.error('Error in bulk analytics tracking:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to process bulk analytics events'
+        error: 'Failed to process bulk analytics events',
       },
       { status: 500 }
     )
@@ -446,11 +441,11 @@ async function updateSessionProgressFromEvent(
   eventData: TrackAnalyticsRequest
 ) {
   const progressSteps = {
-    'page_view': 'navigation',
-    'feature_interaction': 'feature_usage',
-    'form_submission': 'form_completion',
-    'api_call': 'api_interaction',
-    'conversion': 'goal_completion'
+    page_view: 'navigation',
+    feature_interaction: 'feature_usage',
+    form_submission: 'form_completion',
+    api_call: 'api_interaction',
+    conversion: 'goal_completion',
   }
 
   const step = progressSteps[eventData.event_type] || 'general_activity'
@@ -458,7 +453,7 @@ async function updateSessionProgressFromEvent(
 
   await sessionManager.updateProgress(sessionToken, step, feature, {
     event_category: eventData.category,
-    event_label: eventData.label
+    event_label: eventData.label,
   })
 }
 
@@ -474,7 +469,7 @@ async function checkAndTrackConversions(
     'demo_complete',
     'feature_explored',
     'trial_requested',
-    'pricing_viewed'
+    'pricing_viewed',
   ]
 
   if (conversionActions.includes(eventData.action)) {
@@ -486,24 +481,24 @@ async function checkAndTrackConversions(
       value: 1,
       metadata: {
         original_event: eventData,
-        conversion_type: eventData.action
-      }
+        conversion_type: eventData.action,
+      },
     })
   }
 }
 
 function getPageTitle(page: string): string {
   const pageTitles: Record<string, string> = {
-    'dashboard': 'Dashboard Overview',
-    'inbox': 'WhatsApp Inbox',
-    'contacts': 'Contact Management',
-    'conversations': 'Conversations',
-    'analytics': 'Analytics & Reports',
-    'settings': 'Settings',
-    'billing': 'Billing & Subscriptions',
-    'team': 'Team Management',
-    'automations': 'Automation Rules',
-    'templates': 'Message Templates'
+    dashboard: 'Dashboard Overview',
+    inbox: 'WhatsApp Inbox',
+    contacts: 'Contact Management',
+    conversations: 'Conversations',
+    analytics: 'Analytics & Reports',
+    settings: 'Settings',
+    billing: 'Billing & Subscriptions',
+    team: 'Team Management',
+    automations: 'Automation Rules',
+    templates: 'Message Templates',
   }
 
   return pageTitles[page] || 'Unknown Page'
@@ -511,16 +506,16 @@ function getPageTitle(page: string): string {
 
 function getPageCategory(page: string): string {
   const pageCategories: Record<string, string> = {
-    'dashboard': 'overview',
-    'inbox': 'communication',
-    'contacts': 'management',
-    'conversations': 'communication',
-    'analytics': 'insights',
-    'settings': 'configuration',
-    'billing': 'monetization',
-    'team': 'management',
-    'automations': 'automation',
-    'templates': 'communication'
+    dashboard: 'overview',
+    inbox: 'communication',
+    contacts: 'management',
+    conversations: 'communication',
+    analytics: 'insights',
+    settings: 'configuration',
+    billing: 'monetization',
+    team: 'management',
+    automations: 'automation',
+    templates: 'communication',
   }
 
   return pageCategories[page] || 'general'
@@ -532,7 +527,7 @@ function generatePageViewStats(pageViews: any[]) {
     unique_pages: new Set(pageViews.map(pv => pv.page)).size,
     average_duration: 0,
     most_viewed_page: '',
-    page_breakdown: {} as Record<string, number>
+    page_breakdown: {} as Record<string, number>,
   }
 
   if (pageViews.length > 0) {
@@ -558,18 +553,22 @@ function generatePageViewStats(pageViews: any[]) {
 function generateFeatureUsageStats(featureUsage: any[]) {
   return {
     total_features_used: featureUsage.length,
-    most_used_feature: featureUsage.length > 0
-      ? featureUsage.reduce((a, b) => a.usage_count > b.usage_count ? a : b).feature
-      : null,
-    feature_breakdown: featureUsage.reduce((acc, feature) => {
-      acc[feature.feature] = {
-        usage_count: feature.usage_count,
-        time_spent: feature.time_spent_seconds,
-        first_used: feature.first_used_at,
-        last_used: feature.last_used_at
-      }
-      return acc
-    }, {} as Record<string, any>)
+    most_used_feature:
+      featureUsage.length > 0
+        ? featureUsage.reduce((a, b) => (a.usage_count > b.usage_count ? a : b)).feature
+        : null,
+    feature_breakdown: featureUsage.reduce(
+      (acc, feature) => {
+        acc[feature.feature] = {
+          usage_count: feature.usage_count,
+          time_spent: feature.time_spent_seconds,
+          first_used: feature.first_used_at,
+          last_used: feature.last_used_at,
+        }
+        return acc
+      },
+      {} as Record<string, any>
+    ),
   }
 }
 
@@ -582,14 +581,17 @@ function generateConversionStats(conversionFunnel: any[]) {
     completed_steps: completedSteps,
     completion_rate: totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0,
     current_step: conversionFunnel.find(step => !step.completed)?.step || 'completed',
-    step_breakdown: conversionFunnel.reduce((acc, step) => {
-      acc[step.step] = {
-        completed: step.completed,
-        completed_at: step.completed_at,
-        time_to_complete: step.time_to_complete_seconds
-      }
-      return acc
-    }, {} as Record<string, any>)
+    step_breakdown: conversionFunnel.reduce(
+      (acc, step) => {
+        acc[step.step] = {
+          completed: step.completed,
+          completed_at: step.completed_at,
+          time_to_complete: step.time_to_complete_seconds,
+        }
+        return acc
+      },
+      {} as Record<string, any>
+    ),
   }
 }
 
@@ -604,14 +606,14 @@ function generatePersonalizedRecommendations(session: any) {
       type: 'onboarding',
       title: 'Continue exploring the basics',
       description: 'Try viewing the inbox and sending a test message',
-      action: 'explore_inbox'
+      action: 'explore_inbox',
     })
   } else if (progress.completion_percentage < 70) {
     recommendations.push({
       type: 'feature_discovery',
       title: 'Discover advanced features',
       description: 'Check out automation rules and analytics',
-      action: 'explore_automation'
+      action: 'explore_automation',
     })
   }
 
@@ -621,7 +623,7 @@ function generatePersonalizedRecommendations(session: any) {
       type: 'analytics',
       title: 'View your analytics',
       description: 'See how analytics can help your business',
-      action: 'view_analytics'
+      action: 'view_analytics',
     })
   }
 
@@ -631,7 +633,7 @@ function generatePersonalizedRecommendations(session: any) {
       type: 'templates',
       title: 'Try message templates',
       description: 'Speed up customer service with pre-made templates',
-      action: 'create_template'
+      action: 'create_template',
     })
   }
 

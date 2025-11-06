@@ -62,7 +62,7 @@ export class MediaStorageService {
         .from(this.bucketName)
         .upload(fileName, file, {
           contentType: mimeType,
-          cacheControl: '3600'
+          cacheControl: '3600',
         })
 
       if (uploadError) {
@@ -93,23 +93,21 @@ export class MediaStorageService {
         thumbnailUrl,
         organizationId: options.organizationId,
         uploadedBy: options.uploadedBy,
-        metadata
+        metadata,
       }
 
-      const { error: dbError } = await (await this.supabase)
-        .from('media_files')
-        .insert({
-          id: fileId,
-          original_name: originalName,
-          mime_type: mimeType,
-          file_size: file.length,
-          storage_path: fileName,
-          url: urlData.publicUrl,
-          thumbnail_url: thumbnailUrl,
-          organization_id: options.organizationId,
-          uploaded_by: options.uploadedBy,
-          metadata
-        })
+      const { error: dbError } = await (await this.supabase).from('media_files').insert({
+        id: fileId,
+        original_name: originalName,
+        mime_type: mimeType,
+        file_size: file.length,
+        storage_path: fileName,
+        url: urlData.publicUrl,
+        thumbnail_url: thumbnailUrl,
+        organization_id: options.organizationId,
+        uploaded_by: options.uploadedBy,
+        metadata,
+      })
 
       if (dbError) {
         // Clean up uploaded file if database insert fails
@@ -145,7 +143,7 @@ export class MediaStorageService {
       thumbnailUrl: data.thumbnail_url,
       organizationId: data.organization_id,
       uploadedBy: data.uploaded_by,
-      metadata: data.metadata
+      metadata: data.metadata,
     }
   }
 
@@ -171,9 +169,7 @@ export class MediaStorageService {
       // Delete thumbnail if exists
       if (file.thumbnailUrl) {
         const thumbnailPath = `${organizationId}/thumbnails/${fileId}.jpg`
-        await (await this.supabase).storage
-          .from(this.bucketName)
-          .remove([thumbnailPath])
+        await (await this.supabase).storage.from(this.bucketName).remove([thumbnailPath])
       }
 
       // Delete from database
@@ -219,7 +215,7 @@ export class MediaStorageService {
     }
 
     if (options?.offset) {
-      query = query.range(options.offset, (options.offset + (options.limit || 20)) - 1)
+      query = query.range(options.offset, options.offset + (options.limit || 20) - 1)
     }
 
     const { data, error, count } = await query.order('created_at', { ascending: false })
@@ -237,12 +233,12 @@ export class MediaStorageService {
       thumbnailUrl: item.thumbnail_url,
       organizationId: item.organization_id,
       uploadedBy: item.uploaded_by,
-      metadata: item.metadata
+      metadata: item.metadata,
     }))
 
     return {
       files,
-      total: count || 0
+      total: count || 0,
     }
   }
 
@@ -255,7 +251,7 @@ export class MediaStorageService {
       const thumbnailBuffer = await sharp(imageBuffer)
         .resize(300, 300, {
           fit: 'inside',
-          withoutEnlargement: true
+          withoutEnlargement: true,
         })
         .jpeg({ quality: 80 })
         .toBuffer()
@@ -267,7 +263,7 @@ export class MediaStorageService {
         .from(this.bucketName)
         .upload(thumbnailPath, thumbnailBuffer, {
           contentType: 'image/jpeg',
-          cacheControl: '3600'
+          cacheControl: '3600',
         })
 
       if (error) {
@@ -294,7 +290,7 @@ export class MediaStorageService {
         height: metadata.height,
         format: metadata.format,
         hasAlpha: metadata.hasAlpha,
-        channels: metadata.channels
+        channels: metadata.channels,
       }
     } catch (error) {
       console.error('Error getting image metadata:', error)
@@ -326,7 +322,7 @@ export class MediaStorageService {
       'audio/wav': '.wav',
       'application/pdf': '.pdf',
       'text/plain': '.txt',
-      'application/json': '.json'
+      'application/json': '.json',
     }
 
     return mimeTypeExtensions[mimeType] || ''
@@ -343,7 +339,11 @@ export class MediaStorageService {
         .select('id')
         .eq('organization_id', organizationId)
         .lt('created_at', thirtyDaysAgo)
-        .not('id', 'in', `(SELECT DISTINCT media_file_id FROM messages WHERE media_file_id IS NOT NULL)`)
+        .not(
+          'id',
+          'in',
+          `(SELECT DISTINCT media_file_id FROM messages WHERE media_file_id IS NOT NULL)`
+        )
 
       if (orphanedFiles) {
         for (const file of orphanedFiles) {

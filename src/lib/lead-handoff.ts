@@ -58,7 +58,14 @@ export interface ConversionEvent {
 
 export interface EngagementEvent {
   id: string
-  event_type: 'demo_start' | 'feature_use' | 'signup_click' | 'form_fill' | 'email_open' | 'link_click' | 'meeting_booked'
+  event_type:
+    | 'demo_start'
+    | 'feature_use'
+    | 'signup_click'
+    | 'form_fill'
+    | 'email_open'
+    | 'link_click'
+    | 'meeting_booked'
   timestamp: string
   description: string
   metadata?: Record<string, any>
@@ -156,14 +163,24 @@ export interface LeadHandoffRule {
 }
 
 export interface HandoffCondition {
-  field: 'lead_score' | 'engagement_score' | 'conversion_probability' | 'demo_completion' | 'feature_usage'
+  field:
+    | 'lead_score'
+    | 'engagement_score'
+    | 'conversion_probability'
+    | 'demo_completion'
+    | 'feature_usage'
   operator: 'greater_than' | 'less_than' | 'equals' | 'in_range'
   value: any
   weight: number
 }
 
 export interface HandoffAction {
-  action_type: 'assign_sales_rep' | 'send_email' | 'create_task' | 'schedule_demo' | 'add_to_sequence'
+  action_type:
+    | 'assign_sales_rep'
+    | 'send_email'
+    | 'create_task'
+    | 'schedule_demo'
+    | 'add_to_sequence'
   parameters: Record<string, any>
   delay_minutes?: number
 }
@@ -203,9 +220,31 @@ export interface StepConfiguration {
   webhook_url?: string
 }
 
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'demo_scheduled' | 'proposal_sent' | 'negotiation' | 'closed_won' | 'closed_lost' | 'nurturing'
-export type LeadSource = 'website_demo' | 'landing_page' | 'referral' | 'advertising' | 'social_media' | 'content' | 'direct'
-export type LifecycleStage = 'visitor' | 'lead' | 'marketing_qualified_lead' | 'sales_qualified_lead' | 'opportunity' | 'customer'
+export type LeadStatus =
+  | 'new'
+  | 'contacted'
+  | 'qualified'
+  | 'demo_scheduled'
+  | 'proposal_sent'
+  | 'negotiation'
+  | 'closed_won'
+  | 'closed_lost'
+  | 'nurturing'
+export type LeadSource =
+  | 'website_demo'
+  | 'landing_page'
+  | 'referral'
+  | 'advertising'
+  | 'social_media'
+  | 'content'
+  | 'direct'
+export type LifecycleStage =
+  | 'visitor'
+  | 'lead'
+  | 'marketing_qualified_lead'
+  | 'sales_qualified_lead'
+  | 'opportunity'
+  | 'customer'
 
 /**
  * Lead Scoring and Handoff System
@@ -280,7 +319,7 @@ export class LeadHandoffSystem {
         last_activity_at: now,
         conversion_probability: leadScore.conversion_probability,
         estimated_value: estimatedValue,
-        lifecycle_stage: lifecycleStage
+        lifecycle_stage: lifecycleStage,
       }
 
       // Store lead in database
@@ -300,7 +339,7 @@ export class LeadHandoffSystem {
       console.error('Error creating lead:', error)
       return {
         lead: null as any,
-        error: error instanceof Error ? error.message : 'Failed to create lead'
+        error: error instanceof Error ? error.message : 'Failed to create lead',
       }
     }
   }
@@ -336,9 +375,9 @@ export class LeadHandoffSystem {
           metadata: {
             previous_score: previousScore,
             new_score: newScore.total_score,
-            activity_data: activityData
+            activity_data: activityData,
           },
-          engagement_score_impact: scoreChange
+          engagement_score_impact: scoreChange,
         }
         lead.engagement_timeline.push(engagementEvent)
       }
@@ -384,7 +423,7 @@ export class LeadHandoffSystem {
         created_at: new Date().toISOString(),
         note_type: 'general',
         sentiment: 'neutral',
-        next_action: 'Initial contact within 24 hours'
+        next_action: 'Initial contact within 24 hours',
       }
       lead.sales_notes.push(assignmentNote)
 
@@ -422,7 +461,7 @@ export class LeadHandoffSystem {
         ...action,
         id: uuidv4(),
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
 
       lead.follow_up_actions.push(followUpAction)
@@ -445,10 +484,7 @@ export class LeadHandoffSystem {
   /**
    * Add sales note to lead
    */
-  async addSalesNote(
-    leadId: string,
-    note: Omit<SalesNote, 'id' | 'created_at'>
-  ): Promise<boolean> {
+  async addSalesNote(leadId: string, note: Omit<SalesNote, 'id' | 'created_at'>): Promise<boolean> {
     try {
       const lead = await this.getLead(leadId)
       if (!lead) return false
@@ -456,7 +492,7 @@ export class LeadHandoffSystem {
       const salesNote: SalesNote = {
         ...note,
         id: uuidv4(),
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }
 
       lead.sales_notes.push(salesNote)
@@ -539,9 +575,7 @@ export class LeadHandoffSystem {
   /**
    * Get lead analytics and insights
    */
-  async getLeadAnalytics(
-    timeRange?: { start: string; end: string }
-  ): Promise<{
+  async getLeadAnalytics(timeRange?: { start: string; end: string }): Promise<{
     total_leads: number
     conversion_rate: number
     average_score: number
@@ -554,9 +588,7 @@ export class LeadHandoffSystem {
       let query = this.supabase.from('leads').select('*')
 
       if (timeRange) {
-        query = query
-          .gte('created_at', timeRange.start)
-          .lte('created_at', timeRange.end)
+        query = query.gte('created_at', timeRange.start).lte('created_at', timeRange.end)
       }
 
       const { data: leads, error } = await query
@@ -569,29 +601,34 @@ export class LeadHandoffSystem {
           lead_by_source: {},
           lead_by_stage: {},
           score_distribution: [],
-          top_performing_scenarios: []
+          top_performing_scenarios: [],
         }
       }
 
       // Calculate metrics
       const totalLeads = leads.length
-      const convertedLeads = leads.filter(lead =>
-        lead.status === 'closed_won'
-      ).length
+      const convertedLeads = leads.filter(lead => lead.status === 'closed_won').length
       const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0
-      const averageScore = leads.reduce((sum, lead) => sum + (lead.lead_score?.total_score || 0), 0) / totalLeads
+      const averageScore =
+        leads.reduce((sum, lead) => sum + (lead.lead_score?.total_score || 0), 0) / totalLeads
 
       // Group by source
-      const leadBySource = leads.reduce((acc, lead) => {
-        acc[lead.source] = (acc[lead.source] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
+      const leadBySource = leads.reduce(
+        (acc, lead) => {
+          acc[lead.source] = (acc[lead.source] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>
+      )
 
       // Group by lifecycle stage
-      const leadByStage = leads.reduce((acc, lead) => {
-        acc[lead.lifecycle_stage] = (acc[lead.lifecycle_stage] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
+      const leadByStage = leads.reduce(
+        (acc, lead) => {
+          acc[lead.lifecycle_stage] = (acc[lead.lifecycle_stage] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>
+      )
 
       // Score distribution
       const scoreRanges = ['0-20', '21-40', '41-60', '61-80', '81-100']
@@ -605,22 +642,25 @@ export class LeadHandoffSystem {
       })
 
       // Top performing scenarios
-      const scenarioStats = leads.reduce((acc, lead) => {
-        const scenario = lead.business_scenario
-        if (!acc[scenario]) {
-          acc[scenario] = { total: 0, converted: 0 }
-        }
-        acc[scenario].total++
-        if (lead.status === 'closed_won') {
-          acc[scenario].converted++
-        }
-        return acc
-      }, {} as Record<string, { total: number; converted: number }>)
+      const scenarioStats = leads.reduce(
+        (acc, lead) => {
+          const scenario = lead.business_scenario
+          if (!acc[scenario]) {
+            acc[scenario] = { total: 0, converted: 0 }
+          }
+          acc[scenario].total++
+          if (lead.status === 'closed_won') {
+            acc[scenario].converted++
+          }
+          return acc
+        },
+        {} as Record<string, { total: number; converted: number }>
+      )
 
       const topPerformingScenarios = Object.entries(scenarioStats)
         .map(([scenario, stats]) => ({
           scenario,
-          conversion_rate: stats.total > 0 ? (stats.converted / stats.total) * 100 : 0
+          conversion_rate: stats.total > 0 ? (stats.converted / stats.total) * 100 : 0,
         }))
         .sort((a, b) => b.conversion_rate - a.conversion_rate)
 
@@ -631,7 +671,7 @@ export class LeadHandoffSystem {
         lead_by_source: leadBySource,
         lead_by_stage: leadByStage,
         score_distribution: scoreDistribution,
-        top_performing_scenarios: topPerformingScenarios
+        top_performing_scenarios: topPerformingScenarios,
       }
     } catch (error) {
       console.error('Error getting lead analytics:', error)
@@ -642,7 +682,7 @@ export class LeadHandoffSystem {
         lead_by_source: {},
         lead_by_stage: {},
         score_distribution: [],
-        top_performing_scenarios: []
+        top_performing_scenarios: [],
       }
     }
   }
@@ -677,7 +717,6 @@ export class LeadHandoffSystem {
         .eq('is_active', true)
 
       this.automationWorkflows = automationData || []
-
     } catch (error) {
       console.error('Error loading configurations:', error)
     }
@@ -699,7 +738,7 @@ export class LeadHandoffSystem {
         timestamp: activity.created_at,
         description: this.generateEventDescription(activity),
         metadata: activity.activity_data,
-        engagement_score_impact: this.calculateEngagementImpact(activity.activity_type)
+        engagement_score_impact: this.calculateEngagementImpact(activity.activity_type),
       }
       timeline.push(event)
     })
@@ -709,10 +748,10 @@ export class LeadHandoffSystem {
 
   private mapActivityToEngagementType(activityType: string): EngagementEvent['event_type'] {
     const mapping: Record<string, EngagementEvent['event_type']> = {
-      'demo_session_created': 'demo_start',
-      'feature_interaction': 'feature_use',
-      'signup_clicked': 'signup_click',
-      'form_submission': 'form_fill'
+      demo_session_created: 'demo_start',
+      feature_interaction: 'feature_use',
+      signup_clicked: 'signup_click',
+      form_submission: 'form_fill',
     }
     return mapping[activityType] || 'feature_use'
   }
@@ -734,11 +773,11 @@ export class LeadHandoffSystem {
 
   private calculateEngagementImpact(activityType: string): number {
     const impacts: Record<string, number> = {
-      'demo_session_created': 10,
-      'feature_interaction': 5,
-      'signup_clicked': 15,
-      'form_submission': 20,
-      'page_view': 2
+      demo_session_created: 10,
+      feature_interaction: 5,
+      signup_clicked: 15,
+      form_submission: 20,
+      page_view: 2,
     }
     return impacts[activityType] || 1
   }
@@ -768,7 +807,7 @@ export class LeadHandoffSystem {
       automotive: 3000,
       travel: 600,
       fitness: 400,
-      generic: 750
+      generic: 750,
     }
 
     const baseValue = baseValues[businessScenario] || 750
@@ -810,7 +849,7 @@ export class LeadHandoffSystem {
       last_activity_at: lead.last_activity_at,
       conversion_probability: lead.conversion_probability,
       estimated_value: lead.estimated_value,
-      lifecycle_stage: lead.lifecycle_stage
+      lifecycle_stage: lead.lifecycle_stage,
     })
   }
 
@@ -827,17 +866,13 @@ export class LeadHandoffSystem {
         updated_at: lead.updated_at,
         last_activity_at: lead.last_activity_at,
         conversion_probability: lead.conversion_probability,
-        lifecycle_stage: lead.lifecycle_stage
+        lifecycle_stage: lead.lifecycle_stage,
       })
       .eq('id', lead.id)
   }
 
   private async getLead(leadId: string): Promise<Lead | null> {
-    const { data, error } = await this.supabase
-      .from('leads')
-      .select('*')
-      .eq('id', leadId)
-      .single()
+    const { data, error } = await this.supabase.from('leads').select('*').eq('id', leadId).single()
 
     return error ? null : data
   }
@@ -917,7 +952,7 @@ export class LeadHandoffSystem {
             due_date: new Date(Date.now() + (action.delay_minutes || 0) * 60000).toISOString(),
             assigned_to: action.parameters.assigned_to,
             status: 'pending',
-            priority: action.parameters.priority || 'medium'
+            priority: action.parameters.priority || 'medium',
           })
           break
       }
@@ -939,7 +974,7 @@ export class LeadHandoffSystem {
       status: 'pending',
       priority: lead.lead_score.sales_readiness === 'qualified' ? 'high' : 'medium',
       created_at: now.toISOString(),
-      updated_at: now.toISOString()
+      updated_at: now.toISOString(),
     })
 
     // Follow-up email task
@@ -953,11 +988,14 @@ export class LeadHandoffSystem {
       status: 'pending',
       priority: 'medium',
       created_at: now.toISOString(),
-      updated_at: now.toISOString()
+      updated_at: now.toISOString(),
     })
 
     // Demo task if high-intent lead
-    if (lead.lead_score.sales_readiness === 'qualified' || lead.lead_score.sales_readiness === 'hot') {
+    if (
+      lead.lead_score.sales_readiness === 'qualified' ||
+      lead.lead_score.sales_readiness === 'hot'
+    ) {
       tasks.push({
         id: uuidv4(),
         action_type: 'demo',
@@ -968,7 +1006,7 @@ export class LeadHandoffSystem {
         status: 'pending',
         priority: 'high',
         created_at: now.toISOString(),
-        updated_at: now.toISOString()
+        updated_at: now.toISOString(),
       })
     }
 
@@ -1079,7 +1117,10 @@ export class LeadHandoffSystem {
     })
   }
 
-  private async executeAutomationWorkflow(lead: Lead, workflow: MarketingAutomation): Promise<void> {
+  private async executeAutomationWorkflow(
+    lead: Lead,
+    workflow: MarketingAutomation
+  ): Promise<void> {
     // Execute workflow steps in sequence
     for (const step of workflow.workflow_steps.sort((a, b) => a.step_order - b.step_order)) {
       await this.executeWorkflowStep(lead, step)
@@ -1116,7 +1157,7 @@ export class LeadHandoffSystem {
         await fetch(config.webhook_url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(lead)
+          body: JSON.stringify(lead),
         })
       } catch (error) {
         console.error('Error calling webhook:', error)
@@ -1150,7 +1191,7 @@ export const LeadHandoffUtils = {
       qualified: 'green',
       hot: 'orange',
       warm: 'yellow',
-      cold: 'gray'
+      cold: 'gray',
     }
 
     const statusBadges = {
@@ -1159,16 +1200,18 @@ export const LeadHandoffUtils = {
       qualified: 'Qualified',
       demo_scheduled: 'Demo Scheduled',
       closed_won: 'Customer',
-      closed_lost: 'Lost'
+      closed_lost: 'Lost',
     }
 
     const scoreColor = scoreColors[lead.lead_score.sales_readiness]
     const statusBadge = statusBadges[lead.status]
     const priorityLevel = lead.lead_score.total_score
 
-    const nextAction = lead.follow_up_actions
-      .filter(action => action.status === 'pending')
-      .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())[0]?.title || 'No actions scheduled'
+    const nextAction =
+      lead.follow_up_actions
+        .filter(action => action.status === 'pending')
+        .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())[0]
+        ?.title || 'No actions scheduled'
 
     return { scoreColor, statusBadge, priorityLevel, nextAction }
   },
@@ -1183,40 +1226,48 @@ export const LeadHandoffUtils = {
   } {
     const contactedLeads = leads.filter(lead => lead.status !== 'new')
     const qualifiedLeads = leads.filter(lead =>
-      ['qualified', 'demo_scheduled', 'proposal_sent', 'negotiation', 'closed_won', 'closed_lost'].includes(lead.status)
+      [
+        'qualified',
+        'demo_scheduled',
+        'proposal_sent',
+        'negotiation',
+        'closed_won',
+        'closed_lost',
+      ].includes(lead.status)
     )
-    const closedLeads = leads.filter(lead =>
-      ['closed_won', 'closed_lost'].includes(lead.status)
-    )
+    const closedLeads = leads.filter(lead => ['closed_won', 'closed_lost'].includes(lead.status))
 
-    const averageDaysToContact = contactedLeads.length > 0
-      ? contactedLeads.reduce((sum, lead) => {
-          const createdDate = new Date(lead.created_at)
-          const contactedDate = new Date(lead.updated_at) // Simplified
-          return sum + (contactedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
-        }, 0) / contactedLeads.length
-      : 0
+    const averageDaysToContact =
+      contactedLeads.length > 0
+        ? contactedLeads.reduce((sum, lead) => {
+            const createdDate = new Date(lead.created_at)
+            const contactedDate = new Date(lead.updated_at) // Simplified
+            return sum + (contactedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+          }, 0) / contactedLeads.length
+        : 0
 
-    const averageDaysToQualify = qualifiedLeads.length > 0
-      ? qualifiedLeads.reduce((sum, lead) => {
-          const createdDate = new Date(lead.created_at)
-          const qualifiedDate = new Date(lead.updated_at) // Simplified
-          return sum + (qualifiedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
-        }, 0) / qualifiedLeads.length
-      : 0
+    const averageDaysToQualify =
+      qualifiedLeads.length > 0
+        ? qualifiedLeads.reduce((sum, lead) => {
+            const createdDate = new Date(lead.created_at)
+            const qualifiedDate = new Date(lead.updated_at) // Simplified
+            return sum + (qualifiedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+          }, 0) / qualifiedLeads.length
+        : 0
 
-    const averageDaysToClose = closedLeads.length > 0
-      ? closedLeads.reduce((sum, lead) => {
-          const createdDate = new Date(lead.created_at)
-          const closedDate = new Date(lead.updated_at) // Simplified
-          return sum + (closedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
-        }, 0) / closedLeads.length
-      : 0
+    const averageDaysToClose =
+      closedLeads.length > 0
+        ? closedLeads.reduce((sum, lead) => {
+            const createdDate = new Date(lead.created_at)
+            const closedDate = new Date(lead.updated_at) // Simplified
+            return sum + (closedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+          }, 0) / closedLeads.length
+        : 0
 
     return {
       averageDaysToContact: Math.round(averageDaysToContact * 10) / 10,
       averageDaysToQualify: Math.round(averageDaysToQualify * 10) / 10,
-      averageDaysToClose: Math.round(averageDaysToClose * 10) / 10
+      averageDaysToClose: Math.round(averageDaysToClose * 10) / 10,
     }
-  }
+  },
 }

@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 import { WhatsAppClient } from './client'
 import crypto from 'crypto'
@@ -191,11 +190,11 @@ export class WhatsAppTemplates {
           parameters: [
             {
               type: 'text',
-              text: customerName || 'Customer'
-            }
-          ]
-        }
-      ]
+              text: customerName || 'Customer',
+            },
+          ],
+        },
+      ],
     }
   }
 
@@ -203,7 +202,7 @@ export class WhatsAppTemplates {
     return {
       name: 'business_hours',
       language: 'en',
-      components: []
+      components: [],
     }
   }
 
@@ -217,11 +216,11 @@ export class WhatsAppTemplates {
           parameters: [
             {
               type: 'text',
-              text: agentName || 'Support Team'
-            }
-          ]
-        }
-      ]
+              text: agentName || 'Support Team',
+            },
+          ],
+        },
+      ],
     }
   }
 }
@@ -236,13 +235,7 @@ export function validateWebhookSignature(payload: string, signature: string): bo
     return true // Skip validation in development
   }
 
-  const expectedSignature = crypto
-    .createHmac('sha256', appSecret)
-    .update(payload)
-    .digest('hex')
+  const expectedSignature = crypto.createHmac('sha256', appSecret).update(payload).digest('hex')
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(`sha256=${expectedSignature}`)
-  )
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(`sha256=${expectedSignature}`))
 }

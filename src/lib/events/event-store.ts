@@ -22,7 +22,7 @@ export class EventStore {
       p_event_data: event.eventData,
       p_organization_id: event.organizationId,
       p_created_by: event.createdBy || null,
-      p_metadata: event.metadata || {}
+      p_metadata: event.metadata || {},
     })
 
     if (error) {
@@ -35,10 +35,7 @@ export class EventStore {
   /**
    * Get all events for an aggregate
    */
-  static async getEvents(
-    aggregateId: string,
-    fromVersion?: number
-  ): Promise<EventStoreRecord[]> {
+  static async getEvents(aggregateId: string, fromVersion?: number): Promise<EventStoreRecord[]> {
     const supabase = await createClient()
 
     let query = supabase
@@ -126,7 +123,7 @@ export class EventStore {
     const supabase = await createClient()
 
     const { data, error } = await supabase.rpc('get_aggregate_state', {
-      p_aggregate_id: aggregateId
+      p_aggregate_id: aggregateId,
     })
 
     if (error) {
@@ -149,7 +146,7 @@ export class EventStore {
     const { error } = await supabase.rpc('create_snapshot', {
       p_aggregate_id: aggregateId,
       p_aggregate_type: aggregateType,
-      p_organization_id: organizationId
+      p_organization_id: organizationId,
     })
 
     if (error) {
@@ -169,7 +166,8 @@ export class EventStore {
       .eq('aggregate_id', aggregateId)
       .single()
 
-    if (error && error.code !== 'PGRST116') { // Not found is ok
+    if (error && error.code !== 'PGRST116') {
+      // Not found is ok
       throw new Error(`Failed to retrieve snapshot: ${error.message}`)
     }
 
@@ -179,10 +177,7 @@ export class EventStore {
   /**
    * Replay events to rebuild state
    */
-  static async replayEvents(
-    aggregateId: string,
-    toVersion?: number
-  ): Promise<Record<string, any>> {
+  static async replayEvents(aggregateId: string, toVersion?: number): Promise<Record<string, any>> {
     const events = await this.getEvents(aggregateId, undefined)
 
     let state: Record<string, any> = {}
@@ -213,19 +208,19 @@ export class EventStore {
         return {
           ...event.eventData,
           id: event.aggregateId,
-          createdAt: event.createdAt
+          createdAt: event.createdAt,
         }
 
       case 'ConversationStatusChanged':
         return {
           ...newState,
-          status: event.eventData.newStatus
+          status: event.eventData.newStatus,
         }
 
       case 'ConversationAssigned':
         return {
           ...newState,
-          assignedTo: event.eventData.assignedTo
+          assignedTo: event.eventData.assignedTo,
         }
 
       case 'MessageSent':
@@ -233,20 +228,20 @@ export class EventStore {
         return {
           ...event.eventData,
           id: event.aggregateId,
-          createdAt: event.createdAt
+          createdAt: event.createdAt,
         }
 
       case 'ContactCreated':
         return {
           ...event.eventData,
           id: event.aggregateId,
-          createdAt: event.createdAt
+          createdAt: event.createdAt,
         }
 
       case 'ContactUpdated':
         return {
           ...newState,
-          ...event.eventData.updatedFields
+          ...event.eventData.updatedFields,
         }
 
       default:
@@ -261,7 +256,7 @@ export class EventStore {
     const supabase = await createClient()
 
     const { data, error } = await supabase.rpc('get_event_store_stats', {
-      p_organization_id: organizationId || null
+      p_organization_id: organizationId || null,
     })
 
     if (error) {

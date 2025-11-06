@@ -11,20 +11,24 @@ The migration for team invitations and API keys is complete and ready for manual
 ## Problem Resolution
 
 ### Original Issue
+
 ```
 ERROR: 42804: foreign key constraint "team_invitations_organization_id_fkey" cannot be implemented
 DETAIL: Key columns "organization_id" and "id" are of incompatible types: uuid and text.
 ```
 
 ### Root Cause Analysis
+
 - Original migration assumed schema matched migration files exactly
 - Database connection via pooler has limitations for DDL operations
 - Type mismatch error suggested potential schema drift
 
 ### Solution Implemented
+
 Created **037_team_invitations_FIXED.sql** with:
 
 1. **Diagnostic Type Checking**
+
    ```sql
    DO $
    DECLARE org_id_type TEXT;
@@ -48,9 +52,11 @@ Created **037_team_invitations_FIXED.sql** with:
 ## Files Created
 
 ### 1. `supabase/migrations/037_team_invitations_FIXED.sql` (10.72 KB)
+
 **Purpose**: Creates team_invitations and api_keys tables with proper RLS and audit logging
 
 **Contents**:
+
 - Schema type diagnostics
 - team_invitations table (11 columns)
 - api_keys table (9 columns)
@@ -62,9 +68,11 @@ Created **037_team_invitations_FIXED.sql** with:
 **Safe to Retry**: Yes (includes DROP IF EXISTS)
 
 ### 2. `MIGRATION_INSTRUCTIONS.md` (4.2 KB)
+
 **Purpose**: Step-by-step manual application guide
 
 **Contents**:
+
 - Detailed application steps with screenshots guidance
 - Verification queries
 - Troubleshooting section
@@ -72,19 +80,20 @@ Created **037_team_invitations_FIXED.sql** with:
 - Next steps after success
 
 ### 3. `MIGRATION_037_STATUS.md` (This file)
+
 **Purpose**: Comprehensive status report and context
 
 ## Why Manual Application Required
 
 Supabase has several connection methods, each with different capabilities:
 
-| Connection Method | DDL Support | Use Case |
-|-------------------|-------------|----------|
-| JS Client (Anon Key) | ❌ No | Frontend queries |
-| JS Client (Service Role) | ❌ No | Backend CRUD operations |
-| Connection Pooler | ❌ No | Application connections |
-| Direct Database | ✅ Yes | Migrations, DDL |
-| **SQL Editor (Dashboard)** | ✅ Yes | **← Use this** |
+| Connection Method          | DDL Support | Use Case                |
+| -------------------------- | ----------- | ----------------------- |
+| JS Client (Anon Key)       | ❌ No       | Frontend queries        |
+| JS Client (Service Role)   | ❌ No       | Backend CRUD operations |
+| Connection Pooler          | ❌ No       | Application connections |
+| Direct Database            | ✅ Yes      | Migrations, DDL         |
+| **SQL Editor (Dashboard)** | ✅ Yes      | **← Use this**          |
 
 The SQL Editor in Supabase Dashboard provides direct database access and is the recommended method for applying migrations.
 
@@ -101,6 +110,7 @@ The SQL Editor in Supabase Dashboard provides direct database access and is the 
 ## What This Enables
 
 ### Team Management Features ✅
+
 Once migration is applied:
 
 - ✅ **Invite Team Members**
@@ -121,6 +131,7 @@ Once migration is applied:
   - Full history maintained
 
 ### API Keys Features ✅
+
 Once migration is applied:
 
 - ✅ **Generate API Keys**
@@ -143,6 +154,7 @@ Once migration is applied:
 ## Testing Plan (Post-Migration)
 
 ### Phase 1: Verification (2 minutes)
+
 ```sql
 -- 1. Check tables exist
 SELECT table_name FROM information_schema.tables
@@ -190,6 +202,7 @@ GROUP BY tablename;
    ORDER BY created_at DESC
    LIMIT 5;
    ```
+
    - Verify: Invitation creation logged
    - Verify: API key creation logged
 
@@ -213,6 +226,7 @@ GROUP BY tablename;
 ## Current Implementation Status
 
 ### ✅ Complete (100%)
+
 - Migration SQL file with diagnostics
 - Error handling and retry support
 - RLS policies for multi-tenant security
@@ -223,12 +237,14 @@ GROUP BY tablename;
 - Email integration (Resend configured)
 
 ### ⏳ Pending User Action (1 step)
+
 - **Manual migration application** via Supabase Dashboard
   - Time required: < 2 minutes
   - Instructions: See MIGRATION_INSTRUCTIONS.md
   - No risk: Migration is idempotent and safe to retry
 
 ### 🎯 Enabled After Migration
+
 - Team invitation functionality (fully implemented)
 - API key management (fully implemented)
 - Email notifications (Resend API key configured)
@@ -240,6 +256,7 @@ GROUP BY tablename;
 ### Database Schema Created
 
 **team_invitations** table:
+
 ```sql
 id                uuid          PRIMARY KEY
 organization_id   uuid          REFERENCES organizations(id)
@@ -255,6 +272,7 @@ updated_at       timestamptz   Last update timestamp
 ```
 
 **api_keys** table:
+
 ```sql
 id               uuid          PRIMARY KEY
 organization_id  uuid          REFERENCES organizations(id)
@@ -271,12 +289,14 @@ updated_at      timestamptz   Last update timestamp
 ### RLS Policies (8 total)
 
 **team_invitations**:
+
 1. SELECT: Users can view invitations for their organization
 2. INSERT: Owner/admin can create invitations
 3. UPDATE: Owner/admin can update invitations
 4. DELETE: Owner/admin can delete invitations
 
 **api_keys**:
+
 1. SELECT: Users can view keys for their organization
 2. INSERT: Owner/admin can create keys
 3. UPDATE: Owner/admin can update keys
@@ -306,6 +326,7 @@ updated_at      timestamptz   Last update timestamp
 ### Migration Application: 🟢 LOW RISK
 
 **Why Low Risk**:
+
 - ✅ Migration is idempotent (safe to re-run)
 - ✅ Uses `DROP TABLE IF EXISTS`
 - ✅ No existing data to migrate
@@ -316,6 +337,7 @@ updated_at      timestamptz   Last update timestamp
 
 **Rollback Plan**:
 If needed, simply run:
+
 ```sql
 DROP TABLE IF EXISTS team_invitations CASCADE;
 DROP TABLE IF EXISTS api_keys CASCADE;
@@ -328,6 +350,7 @@ DROP FUNCTION IF EXISTS log_api_key_event() CASCADE;
 ### Production Impact: 🟢 ZERO
 
 **Why Zero Impact**:
+
 - New tables only (no changes to existing tables)
 - No downtime required
 - Application continues working without migration
@@ -351,6 +374,7 @@ Migration is successful when:
 ## Next Steps
 
 ### Immediate (You)
+
 1. Open Supabase Dashboard SQL Editor
 2. Copy/paste migration SQL
 3. Execute migration
@@ -358,6 +382,7 @@ Migration is successful when:
 5. Report any errors (if any)
 
 ### After Migration Success (Me)
+
 1. Update status documents
 2. Run functional tests
 3. Verify audit logging
@@ -368,6 +393,7 @@ Migration is successful when:
 ## Questions or Issues?
 
 If you encounter:
+
 - ❌ **Type mismatch error**: Check diagnostic output (organizations.id type)
 - ❌ **Syntax error**: Copy entire file including comments
 - ❌ **Permission error**: Ensure you're using SQL Editor (not REST API)

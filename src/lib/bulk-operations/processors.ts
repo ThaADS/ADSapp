@@ -1,5 +1,10 @@
 // @ts-nocheck - Type definitions need review
-import { BulkOperation, BulkOperationQueue, BulkMessageConfig, BulkContactImportConfig } from './queue'
+import {
+  BulkOperation,
+  BulkOperationQueue,
+  BulkMessageConfig,
+  BulkContactImportConfig,
+} from './queue'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { MediaStorageService } from '@/lib/media/storage'
 import { createClient } from '@/lib/supabase/server'
@@ -65,8 +70,8 @@ export class BulkOperationProcessor {
       summary: {
         totalSent: 0,
         totalFailed: 0,
-        errors: {}
-      }
+        errors: {},
+      },
     }
 
     let processedCount = 0
@@ -85,7 +90,7 @@ export class BulkOperationProcessor {
         if (config.message.type === 'text') {
           messageData = {
             type: 'text',
-            text: { body: config.message.content }
+            text: { body: config.message.content },
           }
         } else if (config.message.type === 'template') {
           messageData = {
@@ -93,14 +98,18 @@ export class BulkOperationProcessor {
             template: {
               name: config.message.content, // template name
               language: { code: 'en' },
-              components: recipient.variables ? [{
-                type: 'body',
-                parameters: Object.values(recipient.variables).map(value => ({
-                  type: 'text',
-                  text: value
-                }))
-              }] : undefined
-            }
+              components: recipient.variables
+                ? [
+                    {
+                      type: 'body',
+                      parameters: Object.values(recipient.variables).map(value => ({
+                        type: 'text',
+                        text: value,
+                      })),
+                    },
+                  ]
+                : undefined,
+            },
           }
         }
 
@@ -126,7 +135,7 @@ export class BulkOperationProcessor {
           contactId: recipient.contactId,
           phoneNumber: recipient.phoneNumber,
           messageId,
-          sentAt: new Date().toISOString()
+          sentAt: new Date().toISOString(),
         })
 
         results.summary.totalSent++
@@ -136,7 +145,6 @@ export class BulkOperationProcessor {
         if (config.scheduling?.delay && processedCount < config.recipients.length) {
           await new Promise(resolve => setTimeout(resolve, config.scheduling.delay * 1000))
         }
-
       } catch (error) {
         console.error(`Failed to send message to ${recipient.phoneNumber}:`, error)
 
@@ -144,7 +152,7 @@ export class BulkOperationProcessor {
           contactId: recipient.contactId,
           phoneNumber: recipient.phoneNumber,
           error: error.message,
-          failedAt: new Date().toISOString()
+          failedAt: new Date().toISOString(),
         })
 
         const errorKey = error.message.substring(0, 100)
@@ -158,7 +166,7 @@ export class BulkOperationProcessor {
         await this.queue.updateProgress(operation.id, {
           processedItems: processedCount,
           failedItems: failedCount,
-          results
+          results,
         })
       }
     }
@@ -167,7 +175,7 @@ export class BulkOperationProcessor {
     await this.queue.updateProgress(operation.id, {
       processedItems: processedCount,
       failedItems: failedCount,
-      results
+      results,
     })
   }
 
@@ -212,8 +220,8 @@ export class BulkOperationProcessor {
       summary: {
         totalImported: 0,
         totalSkipped: 0,
-        totalFailed: 0
-      }
+        totalFailed: 0,
+      },
     }
 
     let processedCount = 0
@@ -233,7 +241,7 @@ export class BulkOperationProcessor {
           results.failed.push({
             data: rawContact,
             error: 'Missing phone number',
-            row: processedCount + 1
+            row: processedCount + 1,
           })
           results.summary.totalFailed++
           processedCount++
@@ -256,8 +264,10 @@ export class BulkOperationProcessor {
                 .from('contacts')
                 .update({
                   ...mappedContact,
-                  tags: config.options.tagAll ? [...(mappedContact.tags || []), ...config.options.tagAll] : mappedContact.tags,
-                  updated_at: new Date().toISOString()
+                  tags: config.options.tagAll
+                    ? [...(mappedContact.tags || []), ...config.options.tagAll]
+                    : mappedContact.tags,
+                  updated_at: new Date().toISOString(),
                 })
                 .eq('id', existing.id)
 
@@ -268,13 +278,13 @@ export class BulkOperationProcessor {
               results.imported.push({
                 contactId: existing.id,
                 phoneNumber: mappedContact.phone_number,
-                action: 'updated'
+                action: 'updated',
               })
               results.summary.totalImported++
             } else {
               results.skipped.push({
                 phoneNumber: mappedContact.phone_number,
-                reason: 'Duplicate phone number'
+                reason: 'Duplicate phone number',
               })
               results.summary.totalSkipped++
             }
@@ -289,8 +299,10 @@ export class BulkOperationProcessor {
           .insert({
             organization_id: operation.organizationId,
             ...mappedContact,
-            tags: config.options.tagAll ? [...(mappedContact.tags || []), ...config.options.tagAll] : mappedContact.tags,
-            metadata: { imported: true, import_source: config.file.format }
+            tags: config.options.tagAll
+              ? [...(mappedContact.tags || []), ...config.options.tagAll]
+              : mappedContact.tags,
+            metadata: { imported: true, import_source: config.file.format },
           })
           .select()
           .single()
@@ -302,16 +314,15 @@ export class BulkOperationProcessor {
         results.imported.push({
           contactId: newContact.id,
           phoneNumber: mappedContact.phone_number,
-          action: 'created'
+          action: 'created',
         })
         results.summary.totalImported++
-
       } catch (error) {
         console.error(`Failed to import contact at row ${processedCount + 1}:`, error)
         results.failed.push({
           data: rawContact,
           error: error.message,
-          row: processedCount + 1
+          row: processedCount + 1,
         })
         results.summary.totalFailed++
       }
@@ -322,7 +333,7 @@ export class BulkOperationProcessor {
       if (processedCount % 50 === 0) {
         await this.queue.updateProgress(operation.id, {
           processedItems: processedCount,
-          results
+          results,
         })
       }
     }
@@ -330,7 +341,7 @@ export class BulkOperationProcessor {
     // Final progress update
     await this.queue.updateProgress(operation.id, {
       processedItems: processedCount,
-      results
+      results,
     })
   }
 
@@ -358,7 +369,7 @@ export class BulkOperationProcessor {
       tags: contact.tags?.join(', ') || '',
       notes: contact.notes,
       created_at: contact.created_at,
-      last_message_at: contact.last_message_at
+      last_message_at: contact.last_message_at,
     }))
 
     // Generate file based on format
@@ -395,26 +406,21 @@ export class BulkOperationProcessor {
     }
 
     // Upload file to storage
-    const mediaFile = await this.mediaStorage.uploadFile(
-      fileContent,
-      filename,
-      mimeType,
-      {
-        organizationId: operation.organizationId,
-        uploadedBy: operation.userId
-      }
-    )
+    const mediaFile = await this.mediaStorage.uploadFile(fileContent, filename, mimeType, {
+      organizationId: operation.organizationId,
+      uploadedBy: operation.userId,
+    })
 
     const results = {
       exportedCount: contacts.length,
       fileUrl: mediaFile.url,
       filename: mediaFile.originalName,
-      fileSize: mediaFile.size
+      fileSize: mediaFile.size,
     }
 
     await this.queue.updateProgress(operation.id, {
       processedItems: contacts.length,
-      results
+      results,
     })
   }
 
@@ -433,7 +439,9 @@ export class BulkOperationProcessor {
     }
 
     if (config.olderThanDays) {
-      const cutoffDate = new Date(Date.now() - config.olderThanDays * 24 * 60 * 60 * 1000).toISOString()
+      const cutoffDate = new Date(
+        Date.now() - config.olderThanDays * 24 * 60 * 60 * 1000
+      ).toISOString()
       query = query.lt('last_message_at', cutoffDate)
     }
 
@@ -448,8 +456,8 @@ export class BulkOperationProcessor {
       failed: [],
       summary: {
         totalClosed: 0,
-        totalFailed: 0
-      }
+        totalFailed: 0,
+      },
     }
 
     let processedCount = 0
@@ -460,7 +468,7 @@ export class BulkOperationProcessor {
           .from('conversations')
           .update({
             status: 'closed',
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', conversation.id)
 
@@ -470,12 +478,11 @@ export class BulkOperationProcessor {
 
         results.closed.push(conversation.id)
         results.summary.totalClosed++
-
       } catch (error) {
         console.error(`Failed to close conversation ${conversation.id}:`, error)
         results.failed.push({
           conversationId: conversation.id,
-          error: error.message
+          error: error.message,
         })
         results.summary.totalFailed++
       }
@@ -486,7 +493,7 @@ export class BulkOperationProcessor {
       if (processedCount % 100 === 0) {
         await this.queue.updateProgress(operation.id, {
           processedItems: processedCount,
-          results
+          results,
         })
       }
     }
@@ -494,7 +501,7 @@ export class BulkOperationProcessor {
     // Final progress update
     await this.queue.updateProgress(operation.id, {
       processedItems: processedCount,
-      results
+      results,
     })
   }
 
@@ -523,7 +530,7 @@ export class BulkOperationProcessor {
           organization_id: organizationId,
           contact_id: contactId,
           status: 'open',
-          last_message_at: new Date().toISOString()
+          last_message_at: new Date().toISOString(),
         })
         .select()
         .single()
@@ -532,23 +539,21 @@ export class BulkOperationProcessor {
     }
 
     // Insert message
-    await supabase
-      .from('messages')
-      .insert({
-        conversation_id: conversation.id,
-        whatsapp_message_id: whatsappMessageId,
-        sender_type: 'agent',
-        sender_id: senderId,
-        content,
-        message_type: messageType,
-        created_at: new Date().toISOString()
-      })
+    await supabase.from('messages').insert({
+      conversation_id: conversation.id,
+      whatsapp_message_id: whatsappMessageId,
+      sender_type: 'agent',
+      sender_id: senderId,
+      content,
+      message_type: messageType,
+      created_at: new Date().toISOString(),
+    })
 
     // Update conversation timestamp
     await supabase
       .from('conversations')
       .update({
-        last_message_at: new Date().toISOString()
+        last_message_at: new Date().toISOString(),
       })
       .eq('id', conversation.id)
   }

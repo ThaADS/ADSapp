@@ -1,8 +1,7 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { Queue, Worker, QueueEvents, Job } from 'bullmq';
+import { Queue, Worker, QueueEvents, Job } from 'bullmq'
 import {
   createQueue,
   createWorker,
@@ -10,12 +9,12 @@ import {
   QueueName,
   JobPriority,
   getQueueStats,
-  gracefulShutdown
-} from './bull-config';
-import { processBulkMessage } from './processors/bulk-message-processor';
-import { processContactImport } from './processors/contact-import-processor';
-import { processTemplate } from './processors/template-processor';
-import { processEmailNotification } from './processors/email-notification-processor';
+  gracefulShutdown,
+} from './bull-config'
+import { processBulkMessage } from './processors/bulk-message-processor'
+import { processContactImport } from './processors/contact-import-processor'
+import { processTemplate } from './processors/template-processor'
+import { processEmailNotification } from './processors/email-notification-processor'
 
 /**
  * Queue Manager
@@ -38,85 +37,76 @@ import { processEmailNotification } from './processors/email-notification-proces
  * Job creation options
  */
 export interface CreateJobOptions {
-  priority?: JobPriority;
-  delay?: number; // Delay in milliseconds
-  attempts?: number;
+  priority?: JobPriority
+  delay?: number // Delay in milliseconds
+  attempts?: number
   backoff?: {
-    type: 'exponential' | 'fixed';
-    delay: number;
-  };
-  removeOnComplete?: boolean | number;
-  removeOnFail?: boolean | number;
+    type: 'exponential' | 'fixed'
+    delay: number
+  }
+  removeOnComplete?: boolean | number
+  removeOnFail?: boolean | number
 }
 
 /**
  * Job information
  */
 export interface JobInfo {
-  id: string;
-  name: string;
-  queueName: string;
-  data: any;
-  progress: number | object;
-  attemptsMade: number;
-  attemptsTotal: number;
-  delay: number;
-  timestamp: number;
-  processedOn?: number;
-  finishedOn?: number;
-  failedReason?: string;
-  stacktrace?: string[];
-  returnValue?: any;
-  state: 'waiting' | 'active' | 'completed' | 'failed' | 'delayed' | 'paused';
+  id: string
+  name: string
+  queueName: string
+  data: any
+  progress: number | object
+  attemptsMade: number
+  attemptsTotal: number
+  delay: number
+  timestamp: number
+  processedOn?: number
+  finishedOn?: number
+  failedReason?: string
+  stacktrace?: string[]
+  returnValue?: any
+  state: 'waiting' | 'active' | 'completed' | 'failed' | 'delayed' | 'paused'
 }
 
 /**
  * Queue Manager Class
  */
 export class QueueManager {
-  private queues: Map<QueueName, Queue>;
-  private workers: Map<QueueName, Worker>;
-  private queueEvents: Map<QueueName, QueueEvents>;
-  private isShuttingDown: boolean = false;
+  private queues: Map<QueueName, Queue>
+  private workers: Map<QueueName, Worker>
+  private queueEvents: Map<QueueName, QueueEvents>
+  private isShuttingDown: boolean = false
 
   constructor() {
-    this.queues = new Map();
-    this.workers = new Map();
-    this.queueEvents = new Map();
+    this.queues = new Map()
+    this.workers = new Map()
+    this.queueEvents = new Map()
   }
 
   /**
    * Initialize all queues and workers
    */
   async initialize(): Promise<void> {
-    console.log('[QueueManager] Initializing queues and workers...');
+    console.log('[QueueManager] Initializing queues and workers...')
 
     try {
       // Initialize bulk message queue
-      await this.initializeQueue(QueueName.BULK_MESSAGE, processBulkMessage);
+      await this.initializeQueue(QueueName.BULK_MESSAGE, processBulkMessage)
 
       // Initialize contact import queue
-      await this.initializeQueue(
-        QueueName.CONTACT_IMPORT,
-        processContactImport
-      );
+      await this.initializeQueue(QueueName.CONTACT_IMPORT, processContactImport)
 
       // Initialize template processing queue
-      await this.initializeQueue(
-        QueueName.TEMPLATE_PROCESSING,
-        processTemplate
-      );
+      await this.initializeQueue(QueueName.TEMPLATE_PROCESSING, processTemplate)
 
       // Initialize email notification queue
-      await this.initializeQueue(
-        QueueName.EMAIL_NOTIFICATION,
-        processEmailNotification
-      );
+      await this.initializeQueue(QueueName.EMAIL_NOTIFICATION, processEmailNotification)
 
-      console.log('[QueueManager] All queues and workers initialized');
+      console.log('[QueueManager] All queues and workers initialized')
     } catch (error) {
-      console.error('[QueueManager] Initialization error:', error);
-      throw error;
+      console.error('[QueueManager] Initialization error:', error)
+      throw error
     }
   }
 
@@ -129,21 +119,21 @@ export class QueueManager {
   ): Promise<void> {
     try {
       // Create queue
-      const queue = createQueue(queueName);
-      this.queues.set(queueName, queue);
+      const queue = createQueue(queueName)
+      this.queues.set(queueName, queue)
 
       // Create worker
-      const worker = createWorker(queueName, processor);
-      this.workers.set(queueName, worker);
+      const worker = createWorker(queueName, processor)
+      this.workers.set(queueName, worker)
 
       // Create queue events
-      const queueEvents = createQueueEvents(queueName);
-      this.queueEvents.set(queueName, queueEvents);
+      const queueEvents = createQueueEvents(queueName)
+      this.queueEvents.set(queueName, queueEvents)
 
-      console.log(`[QueueManager] Initialized ${queueName}`);
+      console.log(`[QueueManager] Initialized ${queueName}`)
     } catch (error) {
-      console.error(`[QueueManager] Error initializing ${queueName}:`, error);
-      throw error;
+      console.error(`[QueueManager] Error initializing ${queueName}:`, error)
+      throw error
     }
   }
 
@@ -151,7 +141,7 @@ export class QueueManager {
    * Get queue by name
    */
   getQueue(queueName: QueueName): Queue | undefined {
-    return this.queues.get(queueName);
+    return this.queues.get(queueName)
   }
 
   /**
@@ -163,10 +153,10 @@ export class QueueManager {
     data: any,
     options?: CreateJobOptions
   ): Promise<string> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
     const job = await queue.add(jobName, data, {
@@ -175,31 +165,31 @@ export class QueueManager {
       attempts: options?.attempts,
       backoff: options?.backoff,
       removeOnComplete: options?.removeOnComplete,
-      removeOnFail: options?.removeOnFail
-    });
+      removeOnFail: options?.removeOnFail,
+    })
 
-    console.log(`[QueueManager] Job ${job.id} added to ${queueName}`);
+    console.log(`[QueueManager] Job ${job.id} added to ${queueName}`)
 
-    return job.id?.toString() || '';
+    return job.id?.toString() || ''
   }
 
   /**
    * Get job by ID
    */
   async getJob(queueName: QueueName, jobId: string): Promise<JobInfo | null> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const job = await queue.getJob(jobId);
+    const job = await queue.getJob(jobId)
 
     if (!job) {
-      return null;
+      return null
     }
 
-    const state = await job.getState();
+    const state = await job.getState()
 
     return {
       id: job.id?.toString() || '',
@@ -216,110 +206,110 @@ export class QueueManager {
       failedReason: job.failedReason,
       stacktrace: job.stacktrace,
       returnValue: job.returnvalue,
-      state: state as any
-    };
+      state: state as any,
+    }
   }
 
   /**
    * Cancel a job
    */
   async cancelJob(queueName: QueueName, jobId: string): Promise<boolean> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const job = await queue.getJob(jobId);
+    const job = await queue.getJob(jobId)
 
     if (!job) {
-      return false;
+      return false
     }
 
-    await job.remove();
+    await job.remove()
 
-    console.log(`[QueueManager] Job ${jobId} cancelled from ${queueName}`);
+    console.log(`[QueueManager] Job ${jobId} cancelled from ${queueName}`)
 
-    return true;
+    return true
   }
 
   /**
    * Retry a failed job
    */
   async retryJob(queueName: QueueName, jobId: string): Promise<boolean> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const job = await queue.getJob(jobId);
+    const job = await queue.getJob(jobId)
 
     if (!job) {
-      return false;
+      return false
     }
 
-    await job.retry();
+    await job.retry()
 
-    console.log(`[QueueManager] Job ${jobId} retried in ${queueName}`);
+    console.log(`[QueueManager] Job ${jobId} retried in ${queueName}`)
 
-    return true;
+    return true
   }
 
   /**
    * Get queue statistics
    */
   async getQueueStatistics(queueName: QueueName) {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    return await getQueueStats(queue);
+    return await getQueueStats(queue)
   }
 
   /**
    * Get all queue statistics
    */
   async getAllQueueStatistics() {
-    const stats: Record<string, any> = {};
+    const stats: Record<string, any> = {}
 
     for (const [queueName, queue] of this.queues) {
-      stats[queueName] = await getQueueStats(queue);
+      stats[queueName] = await getQueueStats(queue)
     }
 
-    return stats;
+    return stats
   }
 
   /**
    * Pause a queue
    */
   async pauseQueue(queueName: QueueName): Promise<void> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    await queue.pause();
+    await queue.pause()
 
-    console.log(`[QueueManager] Queue ${queueName} paused`);
+    console.log(`[QueueManager] Queue ${queueName} paused`)
   }
 
   /**
    * Resume a queue
    */
   async resumeQueue(queueName: QueueName): Promise<void> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    await queue.resume();
+    await queue.resume()
 
-    console.log(`[QueueManager] Queue ${queueName} resumed`);
+    console.log(`[QueueManager] Queue ${queueName} resumed`)
   }
 
   /**
@@ -330,17 +320,17 @@ export class QueueManager {
     start: number = 0,
     end: number = 10
   ): Promise<JobInfo[]> {
-    const queue = this.queues.get(queueName);
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const failedJobs = await queue.getFailed(start, end);
+    const failedJobs = await queue.getFailed(start, end)
 
     return Promise.all(
-      failedJobs.map(async (job) => {
-        const state = await job.getState();
+      failedJobs.map(async job => {
+        const state = await job.getState()
 
         return {
           id: job.id?.toString() || '',
@@ -357,54 +347,44 @@ export class QueueManager {
           failedReason: job.failedReason,
           stacktrace: job.stacktrace,
           returnValue: job.returnvalue,
-          state: state as any
-        };
+          state: state as any,
+        }
       })
-    );
+    )
   }
 
   /**
    * Clean completed jobs
    */
-  async cleanCompletedJobs(
-    queueName: QueueName,
-    grace: number = 3600000
-  ): Promise<string[]> {
-    const queue = this.queues.get(queueName);
+  async cleanCompletedJobs(queueName: QueueName, grace: number = 3600000): Promise<string[]> {
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const cleaned = await queue.clean(grace, 1000, 'completed');
+    const cleaned = await queue.clean(grace, 1000, 'completed')
 
-    console.log(
-      `[QueueManager] Cleaned ${cleaned.length} completed jobs from ${queueName}`
-    );
+    console.log(`[QueueManager] Cleaned ${cleaned.length} completed jobs from ${queueName}`)
 
-    return cleaned;
+    return cleaned
   }
 
   /**
    * Clean failed jobs
    */
-  async cleanFailedJobs(
-    queueName: QueueName,
-    grace: number = 86400000
-  ): Promise<string[]> {
-    const queue = this.queues.get(queueName);
+  async cleanFailedJobs(queueName: QueueName, grace: number = 86400000): Promise<string[]> {
+    const queue = this.queues.get(queueName)
 
     if (!queue) {
-      throw new Error(`Queue ${queueName} not initialized`);
+      throw new Error(`Queue ${queueName} not initialized`)
     }
 
-    const cleaned = await queue.clean(grace, 1000, 'failed');
+    const cleaned = await queue.clean(grace, 1000, 'failed')
 
-    console.log(
-      `[QueueManager] Cleaned ${cleaned.length} failed jobs from ${queueName}`
-    );
+    console.log(`[QueueManager] Cleaned ${cleaned.length} failed jobs from ${queueName}`)
 
-    return cleaned;
+    return cleaned
   }
 
   /**
@@ -412,88 +392,88 @@ export class QueueManager {
    */
   async shutdown(): Promise<void> {
     if (this.isShuttingDown) {
-      console.log('[QueueManager] Shutdown already in progress');
-      return;
+      console.log('[QueueManager] Shutdown already in progress')
+      return
     }
 
-    this.isShuttingDown = true;
+    this.isShuttingDown = true
 
-    console.log('[QueueManager] Starting graceful shutdown...');
+    console.log('[QueueManager] Starting graceful shutdown...')
 
-    const shutdownPromises: Promise<void>[] = [];
+    const shutdownPromises: Promise<void>[] = []
 
     for (const [queueName, queue] of this.queues) {
-      const worker = this.workers.get(queueName);
-      const queueEvents = this.queueEvents.get(queueName);
+      const worker = this.workers.get(queueName)
+      const queueEvents = this.queueEvents.get(queueName)
 
       if (worker && queueEvents) {
-        shutdownPromises.push(gracefulShutdown(queue, worker, queueEvents));
+        shutdownPromises.push(gracefulShutdown(queue, worker, queueEvents))
       }
     }
 
-    await Promise.all(shutdownPromises);
+    await Promise.all(shutdownPromises)
 
-    this.queues.clear();
-    this.workers.clear();
-    this.queueEvents.clear();
+    this.queues.clear()
+    this.workers.clear()
+    this.queueEvents.clear()
 
-    console.log('[QueueManager] Graceful shutdown complete');
+    console.log('[QueueManager] Graceful shutdown complete')
   }
 
   /**
    * Health check for all queues
    */
   async healthCheck(): Promise<{
-    healthy: boolean;
-    queues: Record<string, any>;
+    healthy: boolean
+    queues: Record<string, any>
   }> {
-    const queueHealth: Record<string, any> = {};
-    let allHealthy = true;
+    const queueHealth: Record<string, any> = {}
+    let allHealthy = true
 
     for (const [queueName, queue] of this.queues) {
       try {
-        const stats = await getQueueStats(queue);
+        const stats = await getQueueStats(queue)
         queueHealth[queueName] = {
           healthy: true,
-          stats
-        };
+          stats,
+        }
       } catch (error) {
-        allHealthy = false;
+        allHealthy = false
         queueHealth[queueName] = {
           healthy: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        };
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
       }
     }
 
     return {
       healthy: allHealthy,
-      queues: queueHealth
-    };
+      queues: queueHealth,
+    }
   }
 }
 
 /**
  * Singleton instance
  */
-let queueManagerInstance: QueueManager | null = null;
+let queueManagerInstance: QueueManager | null = null
 
 /**
  * Get queue manager instance
  */
 export function getQueueManager(): QueueManager {
   if (!queueManagerInstance) {
-    queueManagerInstance = new QueueManager();
+    queueManagerInstance = new QueueManager()
   }
 
-  return queueManagerInstance;
+  return queueManagerInstance
 }
 
 /**
  * Initialize queue manager (call once at application startup)
  */
 export async function initializeQueueManager(): Promise<QueueManager> {
-  const manager = getQueueManager();
-  await manager.initialize();
-  return manager;
+  const manager = getQueueManager()
+  await manager.initialize()
+  return manager
 }

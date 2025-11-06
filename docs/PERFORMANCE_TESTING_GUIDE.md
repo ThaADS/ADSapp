@@ -19,6 +19,7 @@ npm run test:performance
 ### Manual Lighthouse Testing
 
 #### Chrome DevTools Method
+
 1. Open Chrome browser
 2. Navigate to page to test
 3. Open DevTools (F12)
@@ -32,6 +33,7 @@ npm run test:performance
 7. Click "Generate report"
 
 #### Pages to Test
+
 - Homepage: `http://localhost:3000`
 - Sign In: `http://localhost:3000/auth/signin`
 - Dashboard: `http://localhost:3000/dashboard`
@@ -43,6 +45,7 @@ npm run test:performance
 #### Local Testing
 
 **1. Development Console**
+
 ```bash
 npm run dev
 # Open http://localhost:3000
@@ -53,6 +56,7 @@ npm run dev
 ```
 
 **2. Chrome DevTools Performance Tab**
+
 1. Open DevTools > Performance
 2. Click Record button
 3. Load page and interact
@@ -63,6 +67,7 @@ npm run dev
    - LCP marker
 
 **3. Chrome DevTools Coverage Tab**
+
 1. Open DevTools > Coverage
 2. Click Record
 3. Load page
@@ -72,22 +77,26 @@ npm run dev
 ### Network Throttling Tests
 
 #### Slow 3G Simulation
+
 1. Open DevTools > Network tab
 2. Select "Slow 3G" from throttling dropdown
 3. Reload page
 4. Verify acceptable performance
 
 **Expected Results:**
+
 - LCP < 4 seconds on Slow 3G
 - Page functional within 5 seconds
 - Progressive enhancement working
 
 #### Fast 3G Simulation
+
 1. Select "Fast 3G"
 2. Reload page
 3. Verify near-native performance
 
 **Expected Results:**
+
 - LCP < 3 seconds
 - Smooth interactions
 - No blocking resources
@@ -95,6 +104,7 @@ npm run dev
 ### CPU Throttling Tests
 
 #### 4x Slowdown
+
 1. Open DevTools > Performance tab
 2. Click gear icon ⚙️
 3. Set CPU throttling to "4x slowdown"
@@ -102,6 +112,7 @@ npm run dev
 5. Check FID/INP metrics
 
 **Expected Results:**
+
 - FID < 200ms on 4x throttle
 - No frozen UI
 - Responsive inputs
@@ -109,6 +120,7 @@ npm run dev
 ### Bundle Size Analysis
 
 #### Analyze Bundle
+
 ```bash
 npm run analyze
 # Opens bundle analyzer reports:
@@ -117,12 +129,14 @@ npm run analyze
 ```
 
 **What to Check:**
+
 - Largest modules (should be <100KB)
 - Duplicate dependencies
 - Unexpected large packages
 - Tree-shaking effectiveness
 
 **Performance Budgets:**
+
 - Main bundle: <200KB
 - Dashboard chunk: <150KB
 - Total JS: <500KB
@@ -131,6 +145,7 @@ npm run analyze
 ### Automated Testing Workflows
 
 #### Pre-Commit Testing
+
 ```bash
 # Fast checks before commit
 npm run type-check
@@ -139,6 +154,7 @@ npm run format:check
 ```
 
 #### Pre-Push Testing
+
 ```bash
 # Comprehensive checks before push
 npm run build
@@ -146,6 +162,7 @@ npm run test:ci
 ```
 
 #### CI/CD Pipeline Testing
+
 ```bash
 # Full test suite in CI
 npm run build
@@ -172,17 +189,20 @@ npm run test:e2e
 ### Performance Metrics to Monitor
 
 #### Critical Metrics
+
 - **LCP**: <2.5s (must pass)
 - **FID**: <100ms (must pass)
 - **CLS**: <0.1 (must pass)
 
 #### Secondary Metrics
+
 - **FCP**: <1.8s (target)
 - **TTFB**: <800ms (target)
 - **INP**: <200ms (target)
 - **Speed Index**: <3.4s (target)
 
 #### Bundle Metrics
+
 - **Main Bundle**: <200KB (budget)
 - **Page Chunks**: <150KB (budget)
 - **Total JS**: <500KB (budget)
@@ -192,12 +212,14 @@ npm run test:e2e
 ### Production Monitoring
 
 **1. Vercel Analytics**
+
 - Real-time Web Vitals from actual users
 - Geographical performance breakdown
 - Device-specific metrics
 - Historical trend analysis
 
 **2. Supabase Web Vitals Table**
+
 ```sql
 -- Query recent Web Vitals
 SELECT
@@ -212,6 +234,7 @@ GROUP BY metric_name;
 ```
 
 **3. Custom Dashboards**
+
 - Access: `/api/analytics/web-vitals/dashboard`
 - Metrics by page, device, geography
 - Performance trends over time
@@ -220,6 +243,7 @@ GROUP BY metric_name;
 ### Setting Up Alerts
 
 **Performance Regression Alert:**
+
 ```javascript
 // Example alert logic
 if (p75_LCP > 2500) {
@@ -238,11 +262,13 @@ if (p75_CLS > 0.1) {
 ### LCP Issues
 
 **Symptoms:**
+
 - Large Contentful Paint >2.5s
 - Slow image loading
 - Blocking resources
 
 **Debug Steps:**
+
 1. Check Network tab for slow resources
 2. Verify image optimization (WebP/AVIF)
 3. Check for render-blocking CSS/JS
@@ -250,6 +276,7 @@ if (p75_CLS > 0.1) {
 5. Check server response times
 
 **Common Fixes:**
+
 - Add priority to above-the-fold images
 - Implement code splitting
 - Use Next.js Image component
@@ -259,11 +286,13 @@ if (p75_CLS > 0.1) {
 ### FID Issues
 
 **Symptoms:**
+
 - First Input Delay >100ms
 - Unresponsive buttons
 - Delayed interactions
 
 **Debug Steps:**
+
 1. Check Coverage tab for unused code
 2. Analyze long tasks in Performance tab
 3. Check for expensive React renders
@@ -271,6 +300,7 @@ if (p75_CLS > 0.1) {
 5. Check for blocking scripts
 
 **Common Fixes:**
+
 - Code splitting
 - Memoization (React.memo, useMemo)
 - Defer non-critical scripts
@@ -280,11 +310,13 @@ if (p75_CLS > 0.1) {
 ### CLS Issues
 
 **Symptoms:**
+
 - Content jumping/shifting
 - Layout instability
 - Cumulative Layout Shift >0.1
 
 **Debug Steps:**
+
 1. Record page load in Performance tab
 2. Check Layout Shift events
 3. Find elements without dimensions
@@ -292,6 +324,7 @@ if (p75_CLS > 0.1) {
 5. Verify font loading strategy
 
 **Common Fixes:**
+
 - Add explicit dimensions to images
 - Reserve space with skeleton loaders
 - Use font-display: swap
@@ -301,21 +334,25 @@ if (p75_CLS > 0.1) {
 ## Performance Testing Tools
 
 ### Browser Tools
+
 - Chrome DevTools (Performance, Network, Lighthouse)
 - Firefox DevTools
 - Edge DevTools
 
 ### CLI Tools
+
 - `lighthouse` - Official CLI
 - `@lhci/cli` - Lighthouse CI
 - `webpack-bundle-analyzer` - Bundle analysis
 
 ### Online Tools
+
 - WebPageTest.org - Real device testing
 - PageSpeed Insights - Google's tool
 - GTmetrix - Comprehensive analysis
 
 ### Monitoring Services
+
 - Vercel Analytics
 - Sentry Performance Monitoring
 - Google Analytics (Web Vitals)
@@ -324,6 +361,7 @@ if (p75_CLS > 0.1) {
 ## Troubleshooting Common Issues
 
 ### Build Failures
+
 ```bash
 # Clear cache and rebuild
 rm -rf .next node_modules
@@ -332,6 +370,7 @@ npm run build
 ```
 
 ### Lighthouse Errors
+
 ```bash
 # Ensure server is running
 npm run build
@@ -342,6 +381,7 @@ npm run test:performance
 ```
 
 ### Bundle Analyzer Not Opening
+
 ```bash
 # Set ANALYZE env var
 ANALYZE=true npm run build
@@ -354,6 +394,7 @@ open .next/analyze/server.html
 ## Performance Best Practices
 
 ### Images
+
 - Always use Next.js Image component
 - Specify width and height
 - Use priority for above-the-fold
@@ -361,6 +402,7 @@ open .next/analyze/server.html
 - Optimize image formats (WebP/AVIF)
 
 ### JavaScript
+
 - Code split heavy components
 - Lazy load modals and dialogs
 - Use dynamic imports
@@ -368,6 +410,7 @@ open .next/analyze/server.html
 - Defer non-critical scripts
 
 ### CSS
+
 - Remove unused styles
 - Use CSS-in-JS efficiently
 - Avoid inline styles where possible
@@ -375,6 +418,7 @@ open .next/analyze/server.html
 - Enable CSS minification
 
 ### Fonts
+
 - Use font-display: swap
 - Preload critical fonts
 - Subset fonts when possible
@@ -384,16 +428,19 @@ open .next/analyze/server.html
 ## Resources
 
 ### Documentation
+
 - [Web Vitals](https://web.dev/vitals/)
 - [Next.js Performance](https://nextjs.org/docs/app/building-your-application/optimizing)
 - [Chrome DevTools Performance](https://developer.chrome.com/docs/devtools/performance/)
 
 ### Tools
+
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WebPageTest](https://www.webpagetest.org/)
 - [Bundle Phobia](https://bundlephobia.com/)
 
 ### Communities
+
 - [Web Performance Slack](https://webperformance.slack.com/)
 - [Next.js Discussions](https://github.com/vercel/next.js/discussions)
 - [r/webdev](https://reddit.com/r/webdev)

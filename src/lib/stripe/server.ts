@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { requireEnvVar, createBuildSafeService } from '@/lib/build-safe-init'
@@ -34,7 +33,7 @@ export const SUBSCRIPTION_PLANS = {
       maxContacts: 1000,
       maxMessages: 1000,
       automationRules: 5,
-    }
+    },
   },
   professional: {
     id: 'professional',
@@ -57,7 +56,7 @@ export const SUBSCRIPTION_PLANS = {
       maxContacts: 10000,
       maxMessages: 10000,
       automationRules: 20,
-    }
+    },
   },
   enterprise: {
     id: 'enterprise',
@@ -81,8 +80,8 @@ export const SUBSCRIPTION_PLANS = {
       maxContacts: -1,
       maxMessages: -1,
       automationRules: -1,
-    }
-  }
+    },
+  },
 }
 
 export class StripeService {
@@ -172,10 +171,7 @@ export class StripeService {
     return await stripe.subscriptions.cancel(subscriptionId)
   }
 
-  static async updateSubscription(
-    subscriptionId: string,
-    planId: keyof typeof SUBSCRIPTION_PLANS
-  ) {
+  static async updateSubscription(subscriptionId: string, planId: keyof typeof SUBSCRIPTION_PLANS) {
     const plan = SUBSCRIPTION_PLANS[planId]
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
@@ -190,18 +186,11 @@ export class StripeService {
     })
   }
 
-  static async handleWebhook(
-    rawBody: string,
-    signature: string
-  ): Promise<Stripe.Event> {
+  static async handleWebhook(rawBody: string, signature: string): Promise<Stripe.Event> {
     const endpointSecret = requireEnvVar('STRIPE_WEBHOOK_SECRET')
 
     try {
-      const event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature,
-        endpointSecret
-      )
+      const event = stripe.webhooks.constructEvent(rawBody, signature, endpointSecret)
 
       return event
     } catch (error) {
@@ -271,9 +260,14 @@ export class StripeService {
     await supabase
       .from('organizations')
       .update({
-        subscription_status: subscription.status === 'active' ? 'active' :
-                           subscription.status === 'past_due' ? 'past_due' :
-                           subscription.status === 'canceled' ? 'cancelled' : 'active',
+        subscription_status:
+          subscription.status === 'active'
+            ? 'active'
+            : subscription.status === 'past_due'
+              ? 'past_due'
+              : subscription.status === 'canceled'
+                ? 'cancelled'
+                : 'active',
         subscription_tier: planId,
       })
       .eq('id', organizationId)
@@ -333,10 +327,7 @@ export class StripeService {
     const limits = this.getPlanLimits(organization.subscription_tier)
 
     // Get current usage
-    const [
-      { count: userCount },
-      { count: contactCount },
-    ] = await Promise.all([
+    const [{ count: userCount }, { count: contactCount }] = await Promise.all([
       supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })

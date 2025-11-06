@@ -8,7 +8,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { TextEncoder, TextDecoder } from 'util'
 import '@testing-library/jest-dom'
 
@@ -23,7 +22,7 @@ global.TextDecoder = TextDecoder as typeof global.TextDecoder
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: jest.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -333,16 +332,13 @@ global.fetch = jest.fn((url: string | URL | Request, options?: RequestInit) => {
 // =============================================================================
 
 // Wait for async updates
-export const waitForAsync = () =>
-  new Promise((resolve) => setTimeout(resolve, 0))
+export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0))
 
 // Wait for specific time
-export const wait = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 // Flush promises
-export const flushPromises = () =>
-  new Promise((resolve) => setImmediate(resolve))
+export const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 
 // Mock successful API response
 export const mockSuccessResponse = (data: any) => ({

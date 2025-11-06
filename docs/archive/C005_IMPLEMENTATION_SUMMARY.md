@@ -127,11 +127,11 @@ Version: v1 (supports key rotation)
 
 ### Encrypted Fields
 
-| Table | Field | Type | Status |
-|-------|-------|------|--------|
+| Table    | Field        | Type   | Status       |
+| -------- | ------------ | ------ | ------------ |
 | contacts | phone_number | string | ✅ Encrypted |
-| contacts | whatsapp_id | string | ✅ Encrypted |
-| profiles | email | string | ✅ Encrypted |
+| contacts | whatsapp_id  | string | ✅ Encrypted |
+| profiles | email        | string | ✅ Encrypted |
 
 ### Performance Benchmarks
 
@@ -149,24 +149,28 @@ Version: v1 (supports key rotation)
 ### Security Features
 
 ✅ **Cryptography**
+
 - AES-256-GCM authenticated encryption
 - Unique IV for each encryption
 - Authentication tag verification
 - Cryptographically secure random generation
 
 ✅ **Key Management**
+
 - Environment-based key storage
 - Key versioning for rotation
 - Secure key derivation
 - Key validation on load
 
 ✅ **Data Protection**
+
 - Encryption at rest
 - Transparent encryption/decryption
 - Null/empty value handling
 - Input validation
 
 ✅ **Audit & Compliance**
+
 - Operation audit logging
 - Statistics tracking
 - Compliance documentation
@@ -175,24 +179,28 @@ Version: v1 (supports key rotation)
 ### Developer Experience
 
 ✅ **Easy Integration**
+
 - High-level API
 - Type-safe operations
 - Convenience functions
 - Middleware support
 
 ✅ **Database Integration**
+
 - Encrypted Supabase client
 - Transparent operations
 - Helper functions
 - Query transformation
 
 ✅ **Migration Tools**
+
 - Zero-downtime migration
 - Progress tracking
 - Dry-run mode
 - Rollback support
 
 ✅ **Testing**
+
 - 65 comprehensive tests
 - Unit + integration coverage
 - Performance benchmarks
@@ -205,57 +213,57 @@ Version: v1 (supports key rotation)
 ### Basic Encryption
 
 ```typescript
-import { encrypt, decrypt } from '@/lib/crypto/encryption';
+import { encrypt, decrypt } from '@/lib/crypto/encryption'
 
-const result = encrypt('+1234567890');
-const decrypted = decrypt(result.encrypted, result.version);
+const result = encrypt('+1234567890')
+const decrypted = decrypt(result.encrypted, result.version)
 ```
 
 ### Field Encryption
 
 ```typescript
-import { FieldEncryptor } from '@/lib/crypto/field-encryptor';
+import { FieldEncryptor } from '@/lib/crypto/field-encryptor'
 
-const encryptor = new FieldEncryptor();
-const encrypted = encryptor.encryptField('+1234567890', 'phone_number');
-const decrypted = encryptor.decryptField(encrypted, 'phone_number');
+const encryptor = new FieldEncryptor()
+const encrypted = encryptor.encryptField('+1234567890', 'phone_number')
+const decrypted = encryptor.decryptField(encrypted, 'phone_number')
 ```
 
 ### Database Integration
 
 ```typescript
-import { createClient } from '@/lib/supabase/server';
-import { createEncryptedClient } from '@/lib/crypto/db-helpers';
+import { createClient } from '@/lib/supabase/server'
+import { createEncryptedClient } from '@/lib/crypto/db-helpers'
 
-const supabase = createClient();
-const encryptedClient = createEncryptedClient(supabase);
+const supabase = createClient()
+const encryptedClient = createEncryptedClient(supabase)
 
 // Automatic encryption on insert
 const { data } = await encryptedClient.insertContact({
-  phone_number: '+1234567890',  // Encrypted automatically
-  whatsapp_id: 'wa:123',        // Encrypted automatically
-  name: 'John Doe'              // Not encrypted
-});
+  phone_number: '+1234567890', // Encrypted automatically
+  whatsapp_id: 'wa:123', // Encrypted automatically
+  name: 'John Doe', // Not encrypted
+})
 
 // Automatic decryption on select
-const { data: contacts } = await encryptedClient.selectContacts('org-id');
+const { data: contacts } = await encryptedClient.selectContacts('org-id')
 ```
 
 ### API Route Integration
 
 ```typescript
-import { encryptBeforeWrite, decryptAfterRead } from '@/lib/crypto/db-helpers';
+import { encryptBeforeWrite, decryptAfterRead } from '@/lib/crypto/db-helpers'
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  const body = await req.json()
 
   // Encrypt before database insert
-  const encrypted = encryptBeforeWrite('contacts', body);
-  const { data } = await supabase.from('contacts').insert(encrypted).select();
+  const encrypted = encryptBeforeWrite('contacts', body)
+  const { data } = await supabase.from('contacts').insert(encrypted).select()
 
   // Decrypt before responding
-  const decrypted = decryptAfterRead('contacts', data);
-  return Response.json({ data: decrypted });
+  const decrypted = decryptAfterRead('contacts', data)
+  return Response.json({ data: decrypted })
 }
 ```
 
@@ -311,6 +319,7 @@ npm run test:encryption
 ### GDPR Compliance
 
 ✅ **Article 32: Security of Processing**
+
 - Appropriate technical measures
 - Pseudonymisation and encryption of personal data
 - Ongoing confidentiality, integrity, availability
@@ -318,6 +327,7 @@ npm run test:encryption
 ### CCPA Compliance
 
 ✅ **§1798.150: Data Security**
+
 - Reasonable security procedures
 - Appropriate technical measures
 - Protection against unauthorized access
@@ -325,6 +335,7 @@ npm run test:encryption
 ### SOC 2 Type II
 
 ✅ **Security Controls**
+
 - CC6.1: Encryption of sensitive data
 - CC6.6: Logical access controls
 - CC7.2: System monitoring
@@ -404,21 +415,21 @@ npm test tests/integration/encryption-flow.test.ts
 
 ### Before Implementation
 
-| Risk | Mitigation | Status |
-|------|-----------|--------|
+| Risk                     | Mitigation             | Status      |
+| ------------------------ | ---------------------- | ----------- |
 | Unencrypted PII exposure | AES-256-GCM encryption | ✅ Complete |
-| Key compromise | Key rotation support | ✅ Complete |
-| Data integrity | Authentication tags | ✅ Complete |
-| Migration failure | Dry-run + rollback | ✅ Complete |
+| Key compromise           | Key rotation support   | ✅ Complete |
+| Data integrity           | Authentication tags    | ✅ Complete |
+| Migration failure        | Dry-run + rollback     | ✅ Complete |
 
 ### After Implementation
 
-| Risk | Mitigation | Action |
-|------|-----------|--------|
-| Key loss | Secure key backup | Document location |
-| Performance impact | Benchmark + optimize | Monitor metrics |
-| Migration errors | Comprehensive testing | Review logs |
-| Key rotation | Versioning support | Schedule rotation |
+| Risk               | Mitigation            | Action            |
+| ------------------ | --------------------- | ----------------- |
+| Key loss           | Secure key backup     | Document location |
+| Performance impact | Benchmark + optimize  | Monitor metrics   |
+| Migration errors   | Comprehensive testing | Review logs       |
+| Key rotation       | Versioning support    | Schedule rotation |
 
 ---
 
@@ -475,24 +486,29 @@ npm test tests/integration/encryption-flow.test.ts
 ## Files Created
 
 ### Core Library (4 files)
+
 - ✅ `src/lib/crypto/types.ts`
 - ✅ `src/lib/crypto/encryption.ts`
 - ✅ `src/lib/crypto/field-encryptor.ts`
 - ✅ `src/lib/crypto/db-helpers.ts`
 
 ### Migration Scripts (2 files)
+
 - ✅ `scripts/generate-encryption-key.ts`
 - ✅ `scripts/migrate-encryption.ts`
 
 ### Test Suites (2 files)
+
 - ✅ `tests/unit/encryption.test.ts`
 - ✅ `tests/integration/encryption-flow.test.ts`
 
 ### Configuration (2 files)
+
 - ✅ `.env.example` (updated)
 - ✅ `package.json` (updated)
 
 ### Documentation (2 files)
+
 - ✅ `ENCRYPTION_GUIDE.md`
 - ✅ `C005_IMPLEMENTATION_SUMMARY.md`
 
@@ -530,25 +546,29 @@ The field-level encryption implementation is **production-ready** and addresses 
 ## Quick Reference
 
 ### Generate Key
+
 ```bash
 npm run generate-encryption-key
 ```
 
 ### Run Tests
+
 ```bash
 npm run test:encryption
 ```
 
 ### Migrate Data
+
 ```bash
 npm run migrate-encryption -- --table=all --dry-run
 npm run migrate-encryption -- --table=all
 ```
 
 ### Verify System
+
 ```typescript
-import { FieldEncryptor } from '@/lib/crypto/field-encryptor';
-FieldEncryptor.verifyEncryption();
+import { FieldEncryptor } from '@/lib/crypto/field-encryptor'
+FieldEncryptor.verifyEncryption()
 ```
 
 ---

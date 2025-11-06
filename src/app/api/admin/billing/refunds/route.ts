@@ -9,21 +9,21 @@
  * Compliance: PCI DSS, Financial audit requirements
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { RefundManager } from '@/lib/billing/refunds';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { RefundManager } from '@/lib/billing/refunds'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // 1. Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // 2. Verify super admin role
@@ -31,17 +31,14 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || profile?.role !== 'super_admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Super admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 })
     }
 
     // 3. Parse and validate request body
-    const body = await request.json();
+    const body = await request.json()
 
     const {
       organizationId,
@@ -53,37 +50,25 @@ export async function POST(request: NextRequest) {
       reason,
       reasonDetails,
       cancelSubscription = false,
-    } = body;
+    } = body
 
     // Validate required fields
     if (!organizationId) {
-      return NextResponse.json(
-        { error: 'organizationId is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'organizationId is required' }, { status: 400 })
     }
 
     if (!amount || amount <= 0) {
-      return NextResponse.json(
-        { error: 'Valid amount is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Valid amount is required' }, { status: 400 })
     }
 
     if (!reason) {
-      return NextResponse.json(
-        { error: 'Reason is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Reason is required' }, { status: 400 })
     }
 
     // Validate refund type
-    const validRefundTypes = ['full', 'partial', 'prorated'];
+    const validRefundTypes = ['full', 'partial', 'prorated']
     if (!validRefundTypes.includes(refundType)) {
-      return NextResponse.json(
-        { error: 'Invalid refund type' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid refund type' }, { status: 400 })
     }
 
     // Validate reason
@@ -95,16 +80,13 @@ export async function POST(request: NextRequest) {
       'technical_issue',
       'billing_error',
       'other',
-    ];
+    ]
     if (!validReasons.includes(reason)) {
-      return NextResponse.json(
-        { error: 'Invalid reason' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid reason' }, { status: 400 })
     }
 
     // 4. Process refund
-    const refundManager = new RefundManager();
+    const refundManager = new RefundManager()
 
     const result = await refundManager.processRefund({
       organizationId,
@@ -117,31 +99,37 @@ export async function POST(request: NextRequest) {
       reasonDetails,
       cancelSubscription,
       requestedBy: user.id,
-    });
+    })
 
     // 5. Return result
     if (result.status === 'completed') {
-      return NextResponse.json({
-        success: true,
-        refund: {
-          id: result.refundId,
-          stripeRefundId: result.stripeRefundId,
-          amount: result.amount,
-          currency: result.currency,
-          status: result.status,
-          subscriptionCancelled: result.subscriptionCancelled,
+      return NextResponse.json(
+        {
+          success: true,
+          refund: {
+            id: result.refundId,
+            stripeRefundId: result.stripeRefundId,
+            amount: result.amount,
+            currency: result.currency,
+            status: result.status,
+            subscriptionCancelled: result.subscriptionCancelled,
+          },
         },
-      }, { status: 201 });
+        { status: 201 }
+      )
     } else {
-      return NextResponse.json({
-        success: false,
-        error: result.error,
-        errorCode: result.errorCode,
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error,
+          errorCode: result.errorCode,
+        },
+        { status: 400 }
+      )
     }
   } catch (error) {
-    const err = error as Error;
-    console.error('Refund API error:', err);
+    const err = error as Error
+    console.error('Refund API error:', err)
 
     return NextResponse.json(
       {
@@ -149,21 +137,21 @@ export async function POST(request: NextRequest) {
         message: err.message,
       },
       { status: 500 }
-    );
+    )
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // 1. Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // 2. Verify super admin role
@@ -171,17 +159,14 @@ export async function GET(request: NextRequest) {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || profile?.role !== 'super_admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Super admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 })
     }
 
     // 3. Parse query parameters
-    const searchParams = request.nextUrl.searchParams;
+    const searchParams = request.nextUrl.searchParams
     const filters = {
       organizationId: searchParams.get('organizationId') || undefined,
       status: searchParams.get('status') || undefined,
@@ -189,11 +174,11 @@ export async function GET(request: NextRequest) {
       endDate: searchParams.get('endDate') || undefined,
       limit: parseInt(searchParams.get('limit') || '50'),
       offset: parseInt(searchParams.get('offset') || '0'),
-    };
+    }
 
     // 4. Get refunds
-    const refundManager = new RefundManager();
-    const { refunds, totalCount } = await refundManager.listRefunds(filters);
+    const refundManager = new RefundManager()
+    const { refunds, totalCount } = await refundManager.listRefunds(filters)
 
     return NextResponse.json({
       success: true,
@@ -204,10 +189,10 @@ export async function GET(request: NextRequest) {
         offset: filters.offset,
         hasMore: filters.offset + filters.limit < totalCount,
       },
-    });
+    })
   } catch (error) {
-    const err = error as Error;
-    console.error('List refunds API error:', err);
+    const err = error as Error
+    console.error('List refunds API error:', err)
 
     return NextResponse.json(
       {
@@ -215,6 +200,6 @@ export async function GET(request: NextRequest) {
         message: err.message,
       },
       { status: 500 }
-    );
+    )
   }
 }

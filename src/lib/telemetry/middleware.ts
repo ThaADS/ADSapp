@@ -52,7 +52,7 @@ export function withTelemetry(
           ...options.attributes,
         },
       },
-      async (span) => {
+      async span => {
         try {
           // Add request context to span
           if (ctx?.user) {
@@ -129,7 +129,7 @@ export async function withSpan<T>(
 ): Promise<T> {
   const tracer = getTracer()
 
-  return tracer.startActiveSpan(name, { attributes }, async (span) => {
+  return tracer.startActiveSpan(name, { attributes }, async span => {
     try {
       const result = await fn()
       span.setStatus({ code: SpanStatusCode.OK })
@@ -217,17 +217,13 @@ export async function traceDbQuery<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `db.query.${operation}`,
-    fn,
-    {
-      'db.system': 'postgresql',
-      'db.name': 'supabase',
-      'db.operation': operation,
-      'db.table': tableName,
-      ...attributes,
-    }
-  )
+  return withSpan(`db.query.${operation}`, fn, {
+    'db.system': 'postgresql',
+    'db.name': 'supabase',
+    'db.operation': operation,
+    'db.table': tableName,
+    ...attributes,
+  })
 }
 
 /**
@@ -239,15 +235,11 @@ export async function traceExternalCall<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `external.${service}.${operation}`,
-    fn,
-    {
-      'external.service': service,
-      'external.operation': operation,
-      ...attributes,
-    }
-  )
+  return withSpan(`external.${service}.${operation}`, fn, {
+    'external.service': service,
+    'external.operation': operation,
+    ...attributes,
+  })
 }
 
 /**
@@ -280,14 +272,10 @@ export async function traceQueueJob<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `queue.job.${jobName}`,
-    fn,
-    {
-      'queue.job_name': jobName,
-      ...attributes,
-    }
-  )
+  return withSpan(`queue.job.${jobName}`, fn, {
+    'queue.job_name': jobName,
+    ...attributes,
+  })
 }
 
 /**
@@ -298,12 +286,8 @@ export async function traceAutomation<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `automation.workflow.${workflowName}`,
-    fn,
-    {
-      'automation.workflow': workflowName,
-      ...attributes,
-    }
-  )
+  return withSpan(`automation.workflow.${workflowName}`, fn, {
+    'automation.workflow': workflowName,
+    ...attributes,
+  })
 }

@@ -9,6 +9,7 @@ De Supabase JavaScript client kan geen DDL statements (CREATE TABLE, etc.) uitvo
 ### Method 1: Supabase Dashboard SQL Editor (RECOMMENDED)
 
 1. **Open Supabase Dashboard:**
+
    ```
    https://supabase.com/dashboard/project/egaiyydjgeqlhthxmvbn
    ```
@@ -27,6 +28,7 @@ De Supabase JavaScript client kan geen DDL statements (CREATE TABLE, etc.) uitvo
    - Wait for completion (~5-10 seconds)
 
 5. **Verify Tables Created:**
+
    ```sql
    -- Run this to verify:
    SELECT table_name
@@ -36,6 +38,7 @@ De Supabase JavaScript client kan geen DDL statements (CREATE TABLE, etc.) uitvo
    ```
 
    Expected output:
+
    ```
    team_invitations
    api_keys
@@ -51,12 +54,14 @@ psql "postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-eu-central-1.pooler.s
 ```
 
 Replace:
+
 - `[PROJECT-REF]`: Your project reference
 - `[PASSWORD]`: Your database password
 
 ### What This Migration Creates
 
 **Tables:**
+
 1. `team_invitations` - Stores pending team member invitations
    - Tracks email, role, token, expiry
    - Audit trail for accepted/cancelled invitations
@@ -67,11 +72,13 @@ Replace:
    - Soft delete (revoked_at)
 
 **Security:**
+
 - Row Level Security (RLS) enabled on both tables
 - Organization-level isolation (users only see their org data)
 - Role-based access (owner/admin can invite/manage)
 
 **Helpers:**
+
 - `generate_invitation_token()` - Creates unique invitation tokens
 - `cleanup_expired_invitations()` - Removes expired invitations
 - Audit logging triggers for all events
@@ -99,15 +106,18 @@ Replace:
 ## Troubleshooting
 
 ### "permission denied for table"
+
 - RLS policies not applied correctly
 - Re-run migration or check Supabase logs
 
 ### "relation does not exist"
+
 - Tables not created
 - Check migration execution logs
 - Verify you're running on correct database
 
 ### "function does not exist"
+
 - Helper functions not created
 - Verify update_updated_at_column() exists (from previous migrations)
 

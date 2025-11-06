@@ -1,25 +1,26 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { createClient } from '@/lib/supabase/server'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId } = getTenantContext(request)
+    const { id } = await params
 
     const supabase = await createClient()
 
@@ -31,10 +32,7 @@ export async function GET(
       .single()
 
     if (error || !template) {
-      return NextResponse.json(
-        { error: 'Template not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
     // Get usage statistics
@@ -54,30 +52,26 @@ export async function GET(
       usageStats: {
         totalUsage: usage?.length || 0,
         recentUsage: recentUsage.length,
-        lastUsed: usage?.[0]?.created_at || null
-      }
+        lastUsed: usage?.[0]?.created_at || null,
+      },
     }
 
     return createSuccessResponse(templateWithStats)
-
   } catch (error) {
     console.error('Error fetching template:', error)
     return createErrorResponse(error)
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId } = getTenantContext(request)
+    const { id } = await params
 
     const body = await request.json()
     const {
@@ -87,7 +81,7 @@ export async function PUT(
       variables,
       whatsappTemplate,
       submitToWhatsApp = false,
-      is_active
+      is_active,
     } = body
 
     const supabase = await createClient()
@@ -101,14 +95,11 @@ export async function PUT(
       .single()
 
     if (!existingTemplate) {
-      return NextResponse.json(
-        { error: 'Template not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
     const updateData: any = {
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     if (name !== undefined) updateData.name = name
@@ -157,7 +148,6 @@ export async function PUT(
         updateData.whatsapp_template_name = whatsappTemplate.name
         updateData.whatsapp_status = 'pending'
         updateData.whatsapp_template_data = whatsappTemplate
-
       } catch (error) {
         console.error('Error updating WhatsApp template:', error)
         return NextResponse.json(
@@ -181,7 +171,6 @@ export async function PUT(
     }
 
     return createSuccessResponse(updatedTemplate)
-
   } catch (error) {
     console.error('Error updating template:', error)
     return createErrorResponse(error)
@@ -193,13 +182,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId } = getTenantContext(request)
+    const { id } = await params
 
     const supabase = await createClient()
 
@@ -212,10 +201,7 @@ export async function DELETE(
       .single()
 
     if (!template) {
-      return NextResponse.json(
-        { error: 'Template not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
     // Check if template is being used in any bulk operations
@@ -270,9 +256,8 @@ export async function DELETE(
 
     return createSuccessResponse({
       id: id,
-      message: 'Template deleted successfully'
+      message: 'Template deleted successfully',
     })
-
   } catch (error) {
     console.error('Error deleting template:', error)
     return createErrorResponse(error)

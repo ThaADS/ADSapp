@@ -1,24 +1,24 @@
-import { OrganizationsManager } from '@/components/admin/organizations-manager';
-import { requireAuth, getUserProfile } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { OrganizationsManager } from '@/components/admin/organizations-manager'
+import { requireAuth, getUserProfile } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 export default async function AdminOrganizationsPage() {
   // Ensure user is authenticated
-  await requireAuth();
+  await requireAuth()
 
   // Get user profile to check super admin status
-  const profile = await getUserProfile();
+  const profile = await getUserProfile()
 
   // If not super admin, redirect to appropriate page
   if (!profile?.is_super_admin) {
     if (profile?.organization_id) {
-      redirect('/dashboard');
+      redirect('/dashboard')
     } else {
-      redirect('/onboarding');
+      redirect('/onboarding')
     }
   }
 
-  return <OrganizationsManager />;
+  return <OrganizationsManager />
 }

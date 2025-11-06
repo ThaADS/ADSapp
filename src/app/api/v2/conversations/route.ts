@@ -11,14 +11,14 @@ import {
   createV2ListResponse,
   createV2CreatedResponse,
   V2Errors,
-  buildResourceLinks
+  buildResourceLinks,
 } from '@/lib/api/v2/response'
 import {
   extractPaginationParams,
   buildPaginationMeta,
   extractSortParams,
   extractFilters,
-  applyFilters
+  applyFilters,
 } from '@/lib/api/v2/pagination'
 import { getApiVersion, validateApiVersion } from '@/lib/api/versioning'
 import { EventBus } from '@/lib/events/event-bus'
@@ -39,7 +39,10 @@ export async function GET(request: NextRequest) {
 
     // Get authenticated user
     const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return V2Errors.unauthorized('Authentication required', { requestId, startTime })
@@ -69,11 +72,14 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('conversations')
-      .select(`
+      .select(
+        `
         *,
         contact:contacts(id, name, phone_number, whatsapp_id),
         assigned_agent:profiles!conversations_assigned_to_fkey(id, full_name, email)
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('organization_id', profile.organization_id)
 
     // Apply filters
@@ -81,7 +87,7 @@ export async function GET(request: NextRequest) {
       status: { operator: 'eq' as const },
       priority: { operator: 'eq' as const },
       assigned_to: { operator: 'eq' as const },
-      contact_id: { operator: 'eq' as const }
+      contact_id: { operator: 'eq' as const },
     }
     query = applyFilters(query, filters, filterConfig)
 
@@ -103,30 +109,26 @@ export async function GET(request: NextRequest) {
     const pagination = buildPaginationMeta(page, limit, count || 0)
 
     // Add HATEOAS links to each conversation
-    const conversationsWithLinks = conversations?.map(conv => ({
-      ...conv,
-      _links: buildResourceLinks('conversations', conv.id, process.env.NEXT_PUBLIC_APP_URL)
-    })) || []
+    const conversationsWithLinks =
+      conversations?.map(conv => ({
+        ...conv,
+        _links: buildResourceLinks('conversations', conv.id, process.env.NEXT_PUBLIC_APP_URL),
+      })) || []
 
     // Return paginated response
-    return createV2ListResponse(
-      conversationsWithLinks,
-      pagination,
-      {
-        requestId,
-        startTime,
-        version: apiVersion,
-        baseUrl: process.env.NEXT_PUBLIC_APP_URL,
-        endpoint: '/api/v2/conversations'
-      }
-    )
-
+    return createV2ListResponse(conversationsWithLinks, pagination, {
+      requestId,
+      startTime,
+      version: apiVersion,
+      baseUrl: process.env.NEXT_PUBLIC_APP_URL,
+      endpoint: '/api/v2/conversations',
+    })
   } catch (error) {
     console.error('API Error:', error)
-    return V2Errors.internalError(
-      error instanceof Error ? error.message : 'Unknown error',
-      { requestId, startTime }
-    )
+    return V2Errors.internalError(error instanceof Error ? error.message : 'Unknown error', {
+      requestId,
+      startTime,
+    })
   }
 }
 
@@ -145,7 +147,10 @@ export async function POST(request: NextRequest) {
 
     // Get authenticated user
     const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return V2Errors.unauthorized('Authentication required', { requestId, startTime })
@@ -167,12 +172,18 @@ export async function POST(request: NextRequest) {
     try {
       body = await request.json()
     } catch (e) {
-      return V2Errors.badRequest('Invalid JSON in request body', undefined, { requestId, startTime })
+      return V2Errors.badRequest('Invalid JSON in request body', undefined, {
+        requestId,
+        startTime,
+      })
     }
 
     // Validate required fields
     if (!body.contact_id) {
-      return V2Errors.validationError('contact_id', 'Contact ID is required', { requestId, startTime })
+      return V2Errors.validationError('contact_id', 'Contact ID is required', {
+        requestId,
+        startTime,
+      })
     }
 
     // Verify contact belongs to organization
@@ -198,17 +209,19 @@ export async function POST(request: NextRequest) {
       subject: body.subject || null,
       assigned_to: body.assigned_to || null,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     const { data: conversation, error: createError } = await supabase
       .from('conversations')
       .insert(conversationData)
-      .select(`
+      .select(
+        `
         *,
         contact:contacts(id, name, phone_number, whatsapp_id),
         assigned_agent:profiles!conversations_assigned_to_fkey(id, full_name, email)
-      `)
+      `
+      )
       .single()
 
     if (createError) {
@@ -225,35 +238,34 @@ export async function POST(request: NextRequest) {
         contactId: body.contact_id,
         status: conversationData.status,
         priority: conversationData.priority,
-        subject: conversationData.subject
+        subject: conversationData.subject,
       },
       organizationId: profile.organization_id,
       createdBy: user.id,
       metadata: {
         source: 'api_v2',
-        userAgent: request.headers.get('user-agent')
-      }
+        userAgent: request.headers.get('user-agent'),
+      },
     })
 
     // Add HATEOAS links
     const conversationWithLinks = {
       ...conversation,
-      _links: buildResourceLinks('conversations', conversationId, process.env.NEXT_PUBLIC_APP_URL)
+      _links: buildResourceLinks('conversations', conversationId, process.env.NEXT_PUBLIC_APP_URL),
     }
 
     // Return created response
     const resourceUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/v2/conversations/${conversationId}`
-    return createV2CreatedResponse(
-      conversationWithLinks,
-      resourceUrl,
-      { requestId, startTime, version: apiVersion }
-    )
-
+    return createV2CreatedResponse(conversationWithLinks, resourceUrl, {
+      requestId,
+      startTime,
+      version: apiVersion,
+    })
   } catch (error) {
     console.error('API Error:', error)
-    return V2Errors.internalError(
-      error instanceof Error ? error.message : 'Unknown error',
-      { requestId, startTime }
-    )
+    return V2Errors.internalError(error instanceof Error ? error.message : 'Unknown error', {
+      requestId,
+      startTime,
+    })
   }
 }

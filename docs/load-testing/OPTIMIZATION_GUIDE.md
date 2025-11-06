@@ -37,6 +37,7 @@ ON messages(organization_id, created_at DESC);
 ```
 
 **Validation**:
+
 ```sql
 -- Check index usage
 SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
@@ -55,12 +56,12 @@ ORDER BY idx_scan DESC;
 
 ```typescript
 // src/lib/cache/response-cache.ts
-import { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis'
 
 const redis = new Redis({
   url: process.env.REDIS_URL!,
   token: process.env.REDIS_TOKEN!,
-});
+})
 
 export async function cacheResponse<T>(
   key: string,
@@ -68,35 +69,36 @@ export async function cacheResponse<T>(
   ttl: number = 300 // 5 minutes default
 ): Promise<T> {
   // Try cache first
-  const cached = await redis.get<T>(key);
+  const cached = await redis.get<T>(key)
   if (cached !== null) {
-    return cached;
+    return cached
   }
 
   // Fetch fresh data
-  const data = await fetcher();
+  const data = await fetcher()
 
   // Store in cache (fire and forget)
-  redis.setex(key, ttl, data).catch(console.error);
+  redis.setex(key, ttl, data).catch(console.error)
 
-  return data;
+  return data
 }
 
 // Usage in API route
 export async function GET(request: Request) {
-  const { organizationId } = await getAuth(request);
+  const { organizationId } = await getAuth(request)
 
   const conversations = await cacheResponse(
     `conversations:${organizationId}:open`,
     () => fetchConversations(organizationId, 'open'),
     300 // 5 minutes
-  );
+  )
 
-  return Response.json({ data: conversations });
+  return Response.json({ data: conversations })
 }
 ```
 
 **Recommended TTL by Endpoint**:
+
 - Health check: 30 seconds
 - Conversations list: 5 minutes
 - Contact list: 10 minutes
@@ -208,13 +210,14 @@ export const createClient = async () => {
         },
       },
     }
-  );
+  )
 
-  return supabase;
-};
+  return supabase
+}
 ```
 
 **Database Configuration**:
+
 ```sql
 -- Increase connection limits (requires admin access)
 ALTER SYSTEM SET max_connections = 200;
@@ -254,7 +257,7 @@ const nextConfig = {
   // Optimize production builds
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
-};
+}
 ```
 
 ## Medium Impact Optimizations
@@ -267,33 +270,29 @@ const nextConfig = {
 
 ```typescript
 // src/lib/database/client.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
 // Primary database (write operations)
 export const primaryDb = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+)
 
 // Read replica (read-only operations)
 export const replicaDb = createClient(
   process.env.SUPABASE_REPLICA_URL!,
   process.env.SUPABASE_REPLICA_KEY!
-);
+)
 
 // Smart routing
 export function getDbClient(operation: 'read' | 'write') {
-  return operation === 'read' ? replicaDb : primaryDb;
+  return operation === 'read' ? replicaDb : primaryDb
 }
 
 // Usage
-const conversations = await getDbClient('read')
-  .from('conversations')
-  .select('*');
+const conversations = await getDbClient('read').from('conversations').select('*')
 
-await getDbClient('write')
-  .from('messages')
-  .insert({ content: 'Hello' });
+await getDbClient('write').from('messages').insert({ content: 'Hello' })
 ```
 
 ---
@@ -307,17 +306,17 @@ await getDbClient('write')
 ```typescript
 // src/lib/pagination/cursor-pagination.ts
 export interface PaginationParams {
-  limit?: number;
-  cursor?: string;
+  limit?: number
+  cursor?: string
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  data: T[]
   pagination: {
-    nextCursor: string | null;
-    hasMore: boolean;
-    total?: number;
-  };
+    nextCursor: string | null
+    hasMore: boolean
+    total?: number
+  }
 }
 
 export async function paginateQuery<T>(
@@ -325,34 +324,32 @@ export async function paginateQuery<T>(
   params: PaginationParams,
   cursorField: string = 'created_at'
 ): Promise<PaginatedResponse<T>> {
-  const limit = Math.min(params.limit || 50, 100); // Max 100 per page
+  const limit = Math.min(params.limit || 50, 100) // Max 100 per page
 
-  let paginatedQuery = query.limit(limit + 1);
+  let paginatedQuery = query.limit(limit + 1)
 
   // Apply cursor if provided
   if (params.cursor) {
-    const decoded = Buffer.from(params.cursor, 'base64').toString();
-    const [timestamp, id] = decoded.split(':');
+    const decoded = Buffer.from(params.cursor, 'base64').toString()
+    const [timestamp, id] = decoded.split(':')
 
-    paginatedQuery = paginatedQuery
-      .lt(cursorField, timestamp)
-      .neq('id', id);
+    paginatedQuery = paginatedQuery.lt(cursorField, timestamp).neq('id', id)
   }
 
-  paginatedQuery = paginatedQuery.order(cursorField, { ascending: false });
+  paginatedQuery = paginatedQuery.order(cursorField, { ascending: false })
 
-  const { data, error } = await paginatedQuery;
+  const { data, error } = await paginatedQuery
 
-  if (error) throw error;
+  if (error) throw error
 
-  const hasMore = data.length > limit;
-  const items = hasMore ? data.slice(0, limit) : data;
+  const hasMore = data.length > limit
+  const items = hasMore ? data.slice(0, limit) : data
 
-  let nextCursor: string | null = null;
+  let nextCursor: string | null = null
   if (hasMore && items.length > 0) {
-    const lastItem = items[items.length - 1];
-    const cursorValue = `${lastItem[cursorField]}:${lastItem.id}`;
-    nextCursor = Buffer.from(cursorValue).toString('base64');
+    const lastItem = items[items.length - 1]
+    const cursorValue = `${lastItem[cursorField]}:${lastItem.id}`
+    nextCursor = Buffer.from(cursorValue).toString('base64')
   }
 
   return {
@@ -361,23 +358,20 @@ export async function paginateQuery<T>(
       nextCursor,
       hasMore,
     },
-  };
+  }
 }
 
 // Usage
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const cursor = searchParams.get('cursor') || undefined;
-  const limit = parseInt(searchParams.get('limit') || '50');
+  const { searchParams } = new URL(request.url)
+  const cursor = searchParams.get('cursor') || undefined
+  const limit = parseInt(searchParams.get('limit') || '50')
 
-  const query = db
-    .from('conversations')
-    .select('*')
-    .eq('organization_id', orgId);
+  const query = db.from('conversations').select('*').eq('organization_id', orgId)
 
-  const result = await paginateQuery(query, { cursor, limit });
+  const result = await paginateQuery(query, { cursor, limit })
 
-  return Response.json(result);
+  return Response.json(result)
 }
 ```
 
@@ -392,53 +386,53 @@ export async function GET(request: Request) {
 ```typescript
 // src/lib/websocket/connection-manager.ts
 class ConnectionManager {
-  private connections = new Map<string, WebSocket>();
-  private heartbeatInterval = 30000; // 30 seconds
-  private reconnectDelay = 1000;
-  private maxReconnectAttempts = 5;
+  private connections = new Map<string, WebSocket>()
+  private heartbeatInterval = 30000 // 30 seconds
+  private reconnectDelay = 1000
+  private maxReconnectAttempts = 5
 
   async connect(userId: string, organizationId: string): Promise<WebSocket> {
-    const connectionKey = `${userId}:${organizationId}`;
+    const connectionKey = `${userId}:${organizationId}`
 
     // Reuse existing connection
     if (this.connections.has(connectionKey)) {
-      const existing = this.connections.get(connectionKey)!;
+      const existing = this.connections.get(connectionKey)!
       if (existing.readyState === WebSocket.OPEN) {
-        return existing;
+        return existing
       }
       // Clean up dead connection
-      this.connections.delete(connectionKey);
+      this.connections.delete(connectionKey)
     }
 
-    const ws = new WebSocket(process.env.WS_URL!);
+    const ws = new WebSocket(process.env.WS_URL!)
 
     // Connection management
     ws.on('open', () => {
-      this.connections.set(connectionKey, ws);
-      this.startHeartbeat(ws);
-    });
+      this.connections.set(connectionKey, ws)
+      this.startHeartbeat(ws)
+    })
 
     ws.on('close', () => {
-      this.connections.delete(connectionKey);
-      this.stopHeartbeat(ws);
-    });
+      this.connections.delete(connectionKey)
+      this.stopHeartbeat(ws)
+    })
 
-    ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
-      this.handleReconnect(connectionKey, userId, organizationId);
-    });
+    ws.on('error', error => {
+      console.error('WebSocket error:', error)
+      this.handleReconnect(connectionKey, userId, organizationId)
+    })
 
-    return ws;
+    return ws
   }
 
   private startHeartbeat(ws: WebSocket) {
     const timer = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.ping();
+        ws.ping()
       }
-    }, this.heartbeatInterval);
+    }, this.heartbeatInterval)
 
-    ws.on('close', () => clearInterval(timer));
+    ws.on('close', () => clearInterval(timer))
   }
 
   private stopHeartbeat(ws: WebSocket) {
@@ -452,37 +446,37 @@ class ConnectionManager {
     attempt: number = 1
   ) {
     if (attempt > this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
-      return;
+      console.error('Max reconnection attempts reached')
+      return
     }
 
-    const delay = this.reconnectDelay * Math.pow(2, attempt - 1);
+    const delay = this.reconnectDelay * Math.pow(2, attempt - 1)
 
     setTimeout(async () => {
       try {
-        await this.connect(userId, organizationId);
+        await this.connect(userId, organizationId)
       } catch (error) {
-        this.handleReconnect(key, userId, organizationId, attempt + 1);
+        this.handleReconnect(key, userId, organizationId, attempt + 1)
       }
-    }, delay);
+    }, delay)
   }
 
   disconnect(userId: string, organizationId: string) {
-    const key = `${userId}:${organizationId}`;
-    const ws = this.connections.get(key);
+    const key = `${userId}:${organizationId}`
+    const ws = this.connections.get(key)
 
     if (ws) {
-      ws.close();
-      this.connections.delete(key);
+      ws.close()
+      this.connections.delete(key)
     }
   }
 
   getConnectionCount(): number {
-    return this.connections.size;
+    return this.connections.size
   }
 }
 
-export const connectionManager = new ConnectionManager();
+export const connectionManager = new ConnectionManager()
 ```
 
 ---
@@ -496,51 +490,51 @@ export const connectionManager = new ConnectionManager();
 ```typescript
 // src/lib/batch/batch-processor.ts
 class BatchProcessor<T, R> {
-  private queue: T[] = [];
-  private batchSize: number;
-  private flushInterval: number;
-  private timer: NodeJS.Timeout | null = null;
+  private queue: T[] = []
+  private batchSize: number
+  private flushInterval: number
+  private timer: NodeJS.Timeout | null = null
 
   constructor(
     private processor: (batch: T[]) => Promise<R[]>,
     options: { batchSize?: number; flushInterval?: number } = {}
   ) {
-    this.batchSize = options.batchSize || 100;
-    this.flushInterval = options.flushInterval || 1000; // 1 second
+    this.batchSize = options.batchSize || 100
+    this.flushInterval = options.flushInterval || 1000 // 1 second
   }
 
   async add(item: T): Promise<R> {
     return new Promise((resolve, reject) => {
-      this.queue.push(item);
+      this.queue.push(item)
 
       // Start flush timer if not already running
       if (!this.timer) {
-        this.timer = setTimeout(() => this.flush(), this.flushInterval);
+        this.timer = setTimeout(() => this.flush(), this.flushInterval)
       }
 
       // Flush immediately if batch size reached
       if (this.queue.length >= this.batchSize) {
-        this.flush();
+        this.flush()
       }
-    });
+    })
   }
 
   private async flush() {
     if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
+      clearTimeout(this.timer)
+      this.timer = null
     }
 
-    if (this.queue.length === 0) return;
+    if (this.queue.length === 0) return
 
-    const batch = this.queue.splice(0, this.batchSize);
+    const batch = this.queue.splice(0, this.batchSize)
 
     try {
-      const results = await this.processor(batch);
-      return results;
+      const results = await this.processor(batch)
+      return results
     } catch (error) {
-      console.error('Batch processing error:', error);
-      throw error;
+      console.error('Batch processing error:', error)
+      throw error
     }
   }
 }
@@ -548,17 +542,17 @@ class BatchProcessor<T, R> {
 // Usage for message sending
 const messageBatcher = new BatchProcessor(
   async (messages: Message[]) => {
-    return await db.from('messages').insert(messages).select();
+    return await db.from('messages').insert(messages).select()
   },
   { batchSize: 50, flushInterval: 1000 }
-);
+)
 
 // Instead of individual inserts
 await messageBatcher.add({
   conversation_id: conversationId,
   content: 'Hello',
   sender_id: senderId,
-});
+})
 ```
 
 ## Advanced Optimizations
@@ -660,17 +654,17 @@ export async function POST(request: Request) {
 
 ```typescript
 // src/lib/monitoring/performance-monitor.ts
-import { monitoring } from '@/lib/monitoring';
+import { monitoring } from '@/lib/monitoring'
 
 export function monitorPerformance() {
   // Track API endpoint performance
   return async (request: Request, handler: Function) => {
-    const start = Date.now();
-    const endpoint = new URL(request.url).pathname;
+    const start = Date.now()
+    const endpoint = new URL(request.url).pathname
 
     try {
-      const response = await handler(request);
-      const duration = Date.now() - start;
+      const response = await handler(request)
+      const duration = Date.now() - start
 
       await monitoring.logPerformance({
         endpoint,
@@ -678,11 +672,11 @@ export function monitorPerformance() {
         duration,
         statusCode: response.status,
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      return response;
+      return response
     } catch (error) {
-      const duration = Date.now() - start;
+      const duration = Date.now() - start
 
       await monitoring.logError({
         type: 'api_error',
@@ -690,19 +684,19 @@ export function monitorPerformance() {
         endpoint,
         severity: 'high',
         timestamp: new Date().toISOString(),
-      });
+      })
 
-      throw error;
+      throw error
     }
-  };
+  }
 }
 
 // Usage in API routes
 export const GET = monitorPerformance()(async (request: Request) => {
   // Your handler code
-  const data = await fetchData();
-  return Response.json(data);
-});
+  const data = await fetchData()
+  return Response.json(data)
+})
 ```
 
 ## Performance Testing Checklist

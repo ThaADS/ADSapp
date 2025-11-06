@@ -3,6 +3,7 @@
 **Duration**: 8-10 minutes
 **Target Audience**: New users during initial setup phase
 **Learning Objectives**:
+
 - Successfully connect WhatsApp Business API
 - Understand Meta Business verification process
 - Configure phone number and business profile
@@ -26,6 +27,7 @@
 **SCREEN ACTION**: Checklist animation appearing
 
 **CALLOUT**: Requirements Checklist:
+
 - ☐ Meta Business Account
 - ☐ Dedicated phone number (not on WhatsApp)
 - ☐ Business verification documents
@@ -36,6 +38,7 @@
 **SCREEN ACTION**: Show phone number examples with green checkmarks and red X marks
 
 **CALLOUT**:
+
 - ✓ New business number
 - ✓ Landline with call forwarding
 - ✗ Personal WhatsApp number
@@ -54,6 +57,7 @@
 **NARRATION CONTINUES**: "Enter your business name exactly as it appears on official documents. Choose your business details carefully - these will be reviewed by Meta during verification."
 
 **SCREEN ACTION**: Fill out business information form:
+
 - Business name: "ADSapp Demo Store"
 - Your name: "John Smith"
 - Business email: "john@adsappstore.com"
@@ -85,6 +89,7 @@
 **SCREEN ACTION**: Enter account name, show phone number selection
 
 **CALLOUT**: "Phone Number Requirements:
+
 - Not currently on WhatsApp
 - Able to receive SMS or voice call
 - Belongs to your business"
@@ -108,11 +113,13 @@
 **CALLOUT**: "Your Profile: First Impression Matters"
 
 ### Business Display Name
+
 **NARRATION**: "First, enter your business display name. This is what customers see in their WhatsApp. Keep it clear and recognizable."
 
 **SCREEN ACTION**: Enter "ADSapp Demo Store" in display name field
 
 ### Profile Picture
+
 **NARRATION**: "Upload a profile picture - ideally your logo on a clean background. The recommended size is 640x640 pixels."
 
 **SCREEN ACTION**: Upload logo image, preview shows in profile
@@ -120,6 +127,7 @@
 **CALLOUT**: "Best Practice: 640x640px PNG with transparent background"
 
 ### Business Description
+
 **NARRATION**: "Write a brief description of your business. Tell customers what you do and how you can help them. You have 512 characters."
 
 **SCREEN ACTION**: Type description:
@@ -128,11 +136,13 @@
 **CALLOUT**: Character count: "89 / 512"
 
 ### Business Category and Address
+
 **NARRATION**: "Select your business category from the dropdown - this helps WhatsApp categorize your account. Add your business address if you have a physical location."
 
 **SCREEN ACTION**: Select category "E-commerce", enter address
 
 ### Business Hours
+
 **NARRATION**: "Set your business hours so customers know when to expect responses. You can customize different hours for each day of the week."
 
 **SCREEN ACTION**: Configure business hours: Monday-Friday 9AM-6PM
@@ -158,6 +168,7 @@
 **SCREEN ACTION**: Show permissions list, select all, click Allow
 
 **CALLOUT**: Required permissions:
+
 - ✓ Manage WhatsApp Business Account
 - ✓ Send and receive messages
 - ✓ Read business information
@@ -165,6 +176,7 @@
 **NARRATION CONTINUES**: "Select your WhatsApp Business Account from the dropdown, then your phone number. If you have multiple accounts or numbers, choose the one you want to use with ADSapp."
 
 **SCREEN ACTION**: Select from dropdowns:
+
 - WhatsApp Business Account: "ADSapp Demo Store"
 - Phone Number: "+1 555-0123"
 
@@ -187,6 +199,7 @@
 **NARRATION CONTINUES**: "You'll also see your phone number, business name, and connection date. To test it out, try sending a message to your WhatsApp number from another phone."
 
 **SCREEN ACTION**: Split screen showing:
+
 - Left: Personal phone sending test message
 - Right: ADSapp inbox receiving the message in real-time
 
@@ -203,16 +216,19 @@
 **SCREEN ACTION**: Navigate to WhatsApp Settings in ADSapp
 
 ### Webhook Configuration
+
 **NARRATION**: "Webhooks are already configured automatically, but you can verify them here. This is how ADSapp receives messages from WhatsApp in real-time."
 
 **SCREEN ACTION**: Show webhook status: Active ✓
 
 ### Message Templates
+
 **NARRATION**: "To start conversations with customers who haven't messaged you first, you'll need approved message templates. We'll cover this in detail in the Templates video."
 
 **SCREEN ACTION**: Preview templates section
 
 ### API Rate Limits
+
 **NARRATION**: "WhatsApp has rate limits based on your phone number's quality rating. Start slow and build your reputation by sending relevant messages and maintaining high customer satisfaction."
 
 **SCREEN ACTION**: Show rate limit information
@@ -220,6 +236,7 @@
 **CALLOUT**: "Current Tier: 1,000 messages / 24 hours"
 
 ### Business Verification
+
 **NARRATION**: "Consider completing Meta Business Verification to unlock higher message limits and the green checkmark badge. This process can take a few days to a few weeks."
 
 **SCREEN ACTION**: Show verification prompt
@@ -237,17 +254,21 @@
 **CALLOUT**: Common Issues:
 
 ### Issue 1: Phone Number Already in Use
+
 **NARRATION**: "If you get an error that your number is already in use, it's registered on personal WhatsApp or WhatsApp Business App. You'll need a different number."
 
 ### Issue 2: Authentication Failed
+
 **NARRATION**: "Authentication errors usually mean permission issues. Make sure you're using the correct Facebook account and granted all permissions."
 
 ### Issue 3: Messages Not Appearing
+
 **NARRATION**: "If messages aren't syncing, check your webhook configuration and ensure your internet connection is stable. Try disconnecting and reconnecting."
 
 **SCREEN ACTION**: Show reconnect button
 
 ### Issue 4: Business Verification Rejected
+
 **NARRATION**: "If Meta rejects your verification, review their feedback carefully and resubmit with corrected information or additional documentation."
 
 ---
@@ -263,6 +284,7 @@
 **NARRATION CONTINUES**: "In the next video, we'll show you how to invite team members and set up permissions. See you there!"
 
 **CTA TEXT ON SCREEN**:
+
 - "Next: Inviting Team Members and Permissions"
 - "Help: Visit docs.adsapp.com/setup/whatsapp"
 - "Support: We're here if you need assistance"
@@ -278,6 +300,7 @@
 **Graphics**: Clear step numbers, progress indicators
 
 **Key Visuals Needed**:
+
 - Split screen Meta Business Manager and ADSapp
 - Phone number verification screens
 - Authentication flow screens
@@ -286,12 +309,14 @@
 - Troubleshooting visual aids
 
 **Accessibility**:
+
 - Describe all forms and fields verbally
 - Read all error messages shown
 - Explain all permission requests clearly
 - Provide alternative navigation paths
 
 **Recording Requirements**:
+
 - Test Meta Business account for demonstration
 - Secondary phone for verification demonstration
 - Clean business profile images and information

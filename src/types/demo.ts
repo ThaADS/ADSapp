@@ -295,18 +295,29 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
   retail: {
     scenario: 'retail',
     name: 'Fashion Retail Store',
-    description: 'Manage customer inquiries, order status, and support for a fashion retail business',
+    description:
+      'Manage customer inquiries, order status, and support for a fashion retail business',
     industry: 'Retail & Fashion',
     sample_data: {
       contacts: [],
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
-    key_features: ['Order Management', 'Customer Support', 'Product Recommendations', 'Inventory Updates'],
-    use_cases: ['Order Status Inquiries', 'Size & Fit Questions', 'Return Requests', 'New Arrivals Notifications']
+    key_features: [
+      'Order Management',
+      'Customer Support',
+      'Product Recommendations',
+      'Inventory Updates',
+    ],
+    use_cases: [
+      'Order Status Inquiries',
+      'Size & Fit Questions',
+      'Return Requests',
+      'New Arrivals Notifications',
+    ],
   },
   restaurant: {
     scenario: 'restaurant',
@@ -318,11 +329,16 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
-    key_features: ['Reservation Management', 'Menu Sharing', 'Order Taking', 'Delivery Coordination'],
-    use_cases: ['Table Reservations', 'Takeout Orders', 'Menu Inquiries', 'Special Events']
+    key_features: [
+      'Reservation Management',
+      'Menu Sharing',
+      'Order Taking',
+      'Delivery Coordination',
+    ],
+    use_cases: ['Table Reservations', 'Takeout Orders', 'Menu Inquiries', 'Special Events'],
   },
   real_estate: {
     scenario: 'real_estate',
@@ -334,11 +350,21 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
-    key_features: ['Lead Management', 'Property Showcasing', 'Viewing Scheduling', 'Market Updates'],
-    use_cases: ['Property Inquiries', 'Viewing Requests', 'Market Analysis', 'Investment Opportunities']
+    key_features: [
+      'Lead Management',
+      'Property Showcasing',
+      'Viewing Scheduling',
+      'Market Updates',
+    ],
+    use_cases: [
+      'Property Inquiries',
+      'Viewing Requests',
+      'Market Analysis',
+      'Investment Opportunities',
+    ],
   },
   healthcare: {
     scenario: 'healthcare',
@@ -350,11 +376,16 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
-    key_features: ['Appointment Scheduling', 'Health Consultations', 'Prescription Management', 'Health Reminders'],
-    use_cases: ['Appointment Booking', 'Health Questions', 'Prescription Refills', 'Test Results']
+    key_features: [
+      'Appointment Scheduling',
+      'Health Consultations',
+      'Prescription Management',
+      'Health Reminders',
+    ],
+    use_cases: ['Appointment Booking', 'Health Questions', 'Prescription Refills', 'Test Results'],
   },
   education: {
     scenario: 'education',
@@ -366,27 +397,33 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
     key_features: ['Student Support', 'Course Management', 'Assignment Help', 'Progress Tracking'],
-    use_cases: ['Course Enrollment', 'Assignment Submission', 'Academic Support', 'Progress Updates']
+    use_cases: [
+      'Course Enrollment',
+      'Assignment Submission',
+      'Academic Support',
+      'Progress Updates',
+    ],
   },
   ecommerce: {
     scenario: 'ecommerce',
     name: 'Electronics E-commerce',
-    description: 'Handle online orders, product support, and customer service for an electronics store',
+    description:
+      'Handle online orders, product support, and customer service for an electronics store',
     industry: 'E-commerce',
     sample_data: {
       contacts: [],
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
     key_features: ['Order Processing', 'Product Support', 'Warranty Management', 'Tech Support'],
-    use_cases: ['Product Inquiries', 'Order Tracking', 'Technical Support', 'Warranty Claims']
+    use_cases: ['Product Inquiries', 'Order Tracking', 'Technical Support', 'Warranty Claims'],
   },
   automotive: {
     scenario: 'automotive',
@@ -398,11 +435,21 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
-    key_features: ['Vehicle Showcase', 'Test Drive Booking', 'Service Scheduling', 'Finance Options'],
-    use_cases: ['Vehicle Inquiries', 'Test Drive Requests', 'Service Appointments', 'Finance Applications']
+    key_features: [
+      'Vehicle Showcase',
+      'Test Drive Booking',
+      'Service Scheduling',
+      'Finance Options',
+    ],
+    use_cases: [
+      'Vehicle Inquiries',
+      'Test Drive Requests',
+      'Service Appointments',
+      'Finance Applications',
+    ],
   },
   travel: {
     scenario: 'travel',
@@ -414,11 +461,11 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
     key_features: ['Trip Planning', 'Booking Management', 'Travel Support', 'Destination Info'],
-    use_cases: ['Trip Inquiries', 'Booking Assistance', 'Travel Updates', 'Emergency Support']
+    use_cases: ['Trip Inquiries', 'Booking Assistance', 'Travel Updates', 'Emergency Support'],
   },
   fitness: {
     scenario: 'fitness',
@@ -430,11 +477,16 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
     key_features: ['Class Booking', 'Fitness Tracking', 'Nutrition Advice', 'Personal Training'],
-    use_cases: ['Class Reservations', 'Fitness Consultations', 'Membership Inquiries', 'Progress Tracking']
+    use_cases: [
+      'Class Reservations',
+      'Fitness Consultations',
+      'Membership Inquiries',
+      'Progress Tracking',
+    ],
   },
   generic: {
     scenario: 'generic',
@@ -446,12 +498,12 @@ export const DEMO_SCENARIOS: Record<BusinessScenario, BusinessScenarioConfig> = 
       conversations: [],
       messages: [],
       templates: [],
-      automation_rules: []
+      automation_rules: [],
     },
     guided_tour: [],
     key_features: ['Customer Support', 'Team Collaboration', 'Message Management', 'Analytics'],
-    use_cases: ['Customer Inquiries', 'Support Tickets', 'Team Communication', 'Business Updates']
-  }
+    use_cases: ['Customer Inquiries', 'Support Tickets', 'Team Communication', 'Business Updates'],
+  },
 }
 
 export const DEFAULT_DEMO_SECURITY_POLICY: DemoSecurityPolicy = {
@@ -460,7 +512,7 @@ export const DEFAULT_DEMO_SECURITY_POLICY: DemoSecurityPolicy = {
   session_duration_minutes: 30,
   cleanup_interval_minutes: 60,
   blocked_ips: [],
-  rate_limit_window_minutes: 60
+  rate_limit_window_minutes: 60,
 }
 
 export const DEMO_TOUR_PAGES = [
@@ -469,7 +521,7 @@ export const DEMO_TOUR_PAGES = [
   'contacts',
   'analytics',
   'settings',
-  'billing'
+  'billing',
 ] as const
 
-export type DemoTourPage = typeof DEMO_TOUR_PAGES[number]
+export type DemoTourPage = (typeof DEMO_TOUR_PAGES)[number]

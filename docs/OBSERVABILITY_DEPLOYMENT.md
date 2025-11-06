@@ -56,6 +56,7 @@ npm list @casl/ability
 #### 1. Deploy Infrastructure
 
 **Jaeger (Development)**
+
 ```bash
 docker run -d --name jaeger \
   -p 16686:16686 \
@@ -64,6 +65,7 @@ docker run -d --name jaeger \
 ```
 
 **OTLP Collector (Production)**
+
 ```bash
 # Deploy OpenTelemetry Collector
 kubectl apply -f k8s/otel-collector.yaml
@@ -156,6 +158,7 @@ ON CONFLICT DO NOTHING;
 #### Telemetry Verification
 
 **1. HTTP Tracing**
+
 ```bash
 # Make API request
 curl -X GET http://localhost:3000/api/conversations \
@@ -166,6 +169,7 @@ curl -X GET http://localhost:3000/api/conversations \
 ```
 
 **2. Database Tracing**
+
 ```bash
 # Trigger database operation
 curl -X POST http://localhost:3000/api/contacts \
@@ -178,6 +182,7 @@ curl -X POST http://localhost:3000/api/contacts \
 ```
 
 **3. External API Tracing**
+
 ```bash
 # Send WhatsApp message (triggers external API)
 curl -X POST http://localhost:3000/api/conversations/123/messages \
@@ -190,6 +195,7 @@ curl -X POST http://localhost:3000/api/conversations/123/messages \
 ```
 
 **4. Metrics Endpoint**
+
 ```bash
 # Check metrics (requires super admin)
 curl -X GET http://localhost:3000/api/metrics \
@@ -201,6 +207,7 @@ curl -X GET http://localhost:3000/api/metrics \
 #### RBAC Verification
 
 **1. Permission Check**
+
 ```bash
 # Test as agent (should succeed)
 curl -X GET http://localhost:3000/api/conversations \
@@ -214,6 +221,7 @@ curl -X DELETE http://localhost:3000/api/users/123 \
 ```
 
 **2. Role Hierarchy**
+
 ```bash
 # Verify role priorities work
 psql -c "SELECT u.email, r.name, r.priority
@@ -225,6 +233,7 @@ ORDER BY r.priority DESC;"
 ```
 
 **3. Audit Trail**
+
 ```bash
 # Check audit logs are being created
 psql -c "SELECT event_type, COUNT(*)
@@ -272,6 +281,7 @@ npm run test:performance
 #### Alerts
 
 **Critical Alerts** (Page on-call)
+
 ```yaml
 - High error rate (>5%)
 - P99 latency >1000ms
@@ -280,6 +290,7 @@ npm run test:performance
 ```
 
 **Warning Alerts** (Team notification)
+
 ```yaml
 - Error rate >2%
 - P95 latency >500ms
@@ -290,6 +301,7 @@ npm run test:performance
 #### Dashboards
 
 **Telemetry Dashboard**
+
 - Request throughput
 - Latency percentiles (P50, P95, P99)
 - Error rates by endpoint
@@ -298,6 +310,7 @@ npm run test:performance
 - Queue processing times
 
 **RBAC Dashboard**
+
 - Permission checks/sec
 - Permission denials
 - Role assignments
@@ -369,6 +382,7 @@ ALTER TABLE permission_overrides ENABLE ROW LEVEL SECURITY;
 ### Success Criteria
 
 **Telemetry**
+
 - ✅ All API requests traced
 - ✅ Database queries instrumented
 - ✅ External API calls tracked
@@ -379,6 +393,7 @@ ALTER TABLE permission_overrides ENABLE ROW LEVEL SECURITY;
 - ✅ No trace data loss
 
 **RBAC**
+
 - ✅ 50+ granular permissions defined
 - ✅ 7 system roles operational
 - ✅ Permission checks <10ms
@@ -391,11 +406,13 @@ ALTER TABLE permission_overrides ENABLE ROW LEVEL SECURITY;
 ### Support Contacts
 
 **Telemetry Issues**
+
 - DevOps Team: devops@company.com
 - On-call: +1-555-ONCALL
 - Slack: #observability
 
 **RBAC Issues**
+
 - Security Team: security@company.com
 - On-call: +1-555-SECURITY
 - Slack: #security
@@ -410,18 +427,21 @@ ALTER TABLE permission_overrides ENABLE ROW LEVEL SECURITY;
 ### Maintenance
 
 **Weekly**
+
 - Review trace sampling rates
 - Check permission denial patterns
 - Monitor audit log growth
 - Review alert thresholds
 
 **Monthly**
+
 - Analyze performance trends
 - Review role assignments
 - Update documentation
 - Team training refresher
 
 **Quarterly**
+
 - Permission audit
 - Role hierarchy review
 - Telemetry cost optimization

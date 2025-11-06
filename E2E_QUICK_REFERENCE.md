@@ -15,28 +15,29 @@ run-e2e-tests.bat ui
 
 ## 📋 Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `run-e2e-tests.bat` | Run all tests in production mode |
-| `run-e2e-tests.bat dev` | Run tests in development mode |
-| `run-e2e-tests.bat chromium` | Run tests only on Chromium |
-| `run-e2e-tests.bat headed` | Run with browser visible |
-| `run-e2e-tests.bat ui` | Run with Playwright UI |
-| `npm run test:e2e` | Run tests (manual) |
-| `npx playwright show-report` | View test report |
+| Command                      | Description                      |
+| ---------------------------- | -------------------------------- |
+| `run-e2e-tests.bat`          | Run all tests in production mode |
+| `run-e2e-tests.bat dev`      | Run tests in development mode    |
+| `run-e2e-tests.bat chromium` | Run tests only on Chromium       |
+| `run-e2e-tests.bat headed`   | Run with browser visible         |
+| `run-e2e-tests.bat ui`       | Run with Playwright UI           |
+| `npm run test:e2e`           | Run tests (manual)               |
+| `npx playwright show-report` | View test report                 |
 
 ## 🔐 Test Users
 
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | super@admin.com | Admin2024!Super |
-| Owner | owner@demo-company.com | Demo2024!Owner |
-| Admin | admin@demo-company.com | Demo2024!Admin |
-| Agent | agent@demo-company.com | Demo2024!Agent |
+| Role        | Email                  | Password        |
+| ----------- | ---------------------- | --------------- |
+| Super Admin | super@admin.com        | Admin2024!Super |
+| Owner       | owner@demo-company.com | Demo2024!Owner  |
+| Admin       | admin@demo-company.com | Demo2024!Admin  |
+| Agent       | agent@demo-company.com | Demo2024!Agent  |
 
 ## 🛠️ Troubleshooting
 
 ### Authentication Errors
+
 ```bash
 # Clear auth cache
 rmdir /s /q .auth
@@ -44,6 +45,7 @@ run-e2e-tests.bat
 ```
 
 ### Server Issues
+
 ```bash
 # Kill node processes
 taskkill /F /IM node.exe
@@ -51,6 +53,7 @@ run-e2e-tests.bat
 ```
 
 ### Build Issues
+
 ```bash
 # Clean and rebuild
 rmdir /s /q .next
@@ -68,21 +71,21 @@ run-e2e-tests.bat
 ## 🧪 Writing Tests
 
 ```typescript
-import { test, expect } from './auth-fixtures';
+import { test, expect } from './auth-fixtures'
 
 // Use authenticated fixture
 test('owner test', async ({ ownerPage }) => {
-  await ownerPage.goto('/dashboard');
-  await expect(ownerPage.locator('h1')).toBeVisible();
-});
+  await ownerPage.goto('/dashboard')
+  await expect(ownerPage.locator('h1')).toBeVisible()
+})
 
 // Manual authentication
 test('custom test', async ({ page }) => {
-  await page.goto('/auth/signin');
-  await page.fill('input[type="email"]', 'test@example.com');
-  await page.fill('input[type="password"]', 'password');
-  await page.click('button[type="submit"]');
-});
+  await page.goto('/auth/signin')
+  await page.fill('input[type="email"]', 'test@example.com')
+  await page.fill('input[type="password"]', 'password')
+  await page.click('button[type="submit"]')
+})
 ```
 
 ## 📁 Key Files
@@ -129,5 +132,6 @@ npx playwright test tests/e2e/16-business-hours-feature.spec.ts --debug
 ## 📖 Full Documentation
 
 For complete details, see:
+
 - `tests/e2e/README.md` - Comprehensive testing guide
 - `E2E_TEST_CONFIGURATION_COMPLETE.md` - Implementation details

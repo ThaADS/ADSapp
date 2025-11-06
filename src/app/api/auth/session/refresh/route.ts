@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionManager } from '@/lib/session/manager';
-import { setSessionCookie } from '@/lib/middleware/session';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { getSessionManager } from '@/lib/session/manager'
+import { setSessionCookie } from '@/lib/middleware/session'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Session Refresh API Route
@@ -22,47 +22,50 @@ import { createClient } from '@/lib/supabase/server';
 export async function POST(request: NextRequest) {
   try {
     // Get session token from cookie or request body
-    const sessionToken = request.cookies.get('adsapp_session')?.value;
+    const sessionToken = request.cookies.get('adsapp_session')?.value
 
     if (!sessionToken) {
       return NextResponse.json(
         {
           error: 'No session token provided',
-          code: 'NO_SESSION_TOKEN'
+          code: 'NO_SESSION_TOKEN',
         },
         { status: 401 }
-      );
+      )
     }
 
     // Get user ID from Supabase auth
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return NextResponse.json(
         {
           error: 'User not authenticated',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         },
         { status: 401 }
-      );
+      )
     }
 
     // Refresh session
-    const sessionManager = getSessionManager();
-    const result = await sessionManager.refreshSession(user.id, sessionToken);
+    const sessionManager = getSessionManager()
+    const result = await sessionManager.refreshSession(user.id, sessionToken)
 
     if (!result.success) {
       return NextResponse.json(
         {
           error: result.error || 'Failed to refresh session',
-          code: 'REFRESH_FAILED'
+          code: 'REFRESH_FAILED',
         },
         { status: 401 }
-      );
+      )
     }
 
-    const session = result.session!;
+    const session = result.session!
 
     // Create response with updated session
     const response = NextResponse.json(
@@ -72,40 +75,40 @@ export async function POST(request: NextRequest) {
           userId: session.userId,
           organizationId: session.organizationId,
           lastActivity: session.lastActivity,
-          expiresAt: session.expiresAt
-        }
+          expiresAt: session.expiresAt,
+        },
       },
       { status: 200 }
-    );
+    )
 
     // Update session cookie
-    setSessionCookie(response, sessionToken);
+    setSessionCookie(response, sessionToken)
 
-    return response;
+    return response
   } catch (error) {
-    console.error('[SessionRefresh] Error:', error);
+    console.error('[SessionRefresh] Error:', error)
 
     // Log error to monitoring
     if (process.env.NODE_ENV === 'production') {
       try {
-        const Sentry = await import('@sentry/nextjs');
+        const Sentry = await import('@sentry/nextjs')
         Sentry.captureException(error, {
           tags: {
-            endpoint: 'session-refresh'
-          }
-        });
+            endpoint: 'session-refresh',
+          },
+        })
       } catch (sentryError) {
-        console.error('[SessionRefresh] Failed to log error:', sentryError);
+        console.error('[SessionRefresh] Failed to log error:', sentryError)
       }
     }
 
     return NextResponse.json(
       {
         error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -116,8 +119,8 @@ export async function GET() {
   return NextResponse.json(
     {
       error: 'Method not allowed',
-      code: 'METHOD_NOT_ALLOWED'
+      code: 'METHOD_NOT_ALLOWED',
     },
     { status: 405 }
-  );
+  )
 }

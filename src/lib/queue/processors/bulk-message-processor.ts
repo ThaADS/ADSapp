@@ -1,9 +1,8 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { Job } from 'bullmq';
-import { createClient } from '@/lib/supabase/server';
+import { Job } from 'bullmq'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Bulk Message Processor
@@ -25,42 +24,42 @@ import { createClient } from '@/lib/supabase/server';
  * Contact information for bulk messaging
  */
 export interface BulkMessageContact {
-  id: string;
-  phone: string;
-  name?: string;
-  variables?: Record<string, string>; // For template variable substitution
+  id: string
+  phone: string
+  name?: string
+  variables?: Record<string, string> // For template variable substitution
 }
 
 /**
  * Bulk message job data
  */
 export interface BulkMessageJobData {
-  organizationId: string;
-  userId: string;
-  contacts: BulkMessageContact[];
-  messageContent: string;
-  messageType: 'text' | 'template';
-  templateId?: string;
-  metadata?: Record<string, any>;
+  organizationId: string
+  userId: string
+  contacts: BulkMessageContact[]
+  messageContent: string
+  messageType: 'text' | 'template'
+  templateId?: string
+  metadata?: Record<string, any>
 }
 
 /**
  * Bulk message job result
  */
 export interface BulkMessageJobResult {
-  jobId: string;
-  organizationId: string;
-  totalContacts: number;
-  successCount: number;
-  failureCount: number;
+  jobId: string
+  organizationId: string
+  totalContacts: number
+  successCount: number
+  failureCount: number
   failedContacts: Array<{
-    contactId: string;
-    phone: string;
-    error: string;
-  }>;
-  startedAt: string;
-  completedAt: string;
-  duration: number;
+    contactId: string
+    phone: string
+    error: string
+  }>
+  startedAt: string
+  completedAt: string
+  duration: number
 }
 
 /**
@@ -74,29 +73,29 @@ async function sendWhatsAppMessage(
 ): Promise<{ success: boolean; error?: string; messageId?: string }> {
   try {
     // Get WhatsApp configuration for organization
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const { data: orgConfig, error: configError } = await supabase
       .from('organizations')
       .select('whatsapp_config')
       .eq('id', organizationId)
-      .single();
+      .single()
 
     if (configError) {
-      throw new Error(`Failed to get WhatsApp config: ${configError.message}`);
+      throw new Error(`Failed to get WhatsApp config: ${configError.message}`)
     }
 
     const whatsappConfig = orgConfig.whatsapp_config as {
-      access_token: string;
-      phone_number_id: string;
-    };
+      access_token: string
+      phone_number_id: string
+    }
 
     if (!whatsappConfig?.access_token || !whatsappConfig?.phone_number_id) {
-      throw new Error('WhatsApp not configured for organization');
+      throw new Error('WhatsApp not configured for organization')
     }
 
     // Format phone number (remove non-digits)
-    const formattedPhone = phone.replace(/\D/g, '');
+    const formattedPhone = phone.replace(/\D/g, '')
 
     // Send message via WhatsApp Business API
     const response = await fetch(
@@ -104,29 +103,27 @@ async function sendWhatsAppMessage(
       {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${whatsappConfig.access_token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${whatsappConfig.access_token}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           to: formattedPhone,
           type: 'text',
           text: {
-            body: content
-          }
-        })
+            body: content,
+          },
+        }),
       }
-    );
+    )
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        errorData.error?.message || 'WhatsApp API request failed'
-      );
+      const errorData = await response.json()
+      throw new Error(errorData.error?.message || 'WhatsApp API request failed')
     }
 
-    const data = await response.json();
-    const messageId = data.messages?.[0]?.id;
+    const data = await response.json()
+    const messageId = data.messages?.[0]?.id
 
     // Log message to database
     await supabase.from('messages').insert({
@@ -138,33 +135,29 @@ async function sendWhatsAppMessage(
       direction: 'outbound',
       status: 'sent',
       whatsapp_message_id: messageId,
-      metadata: { bulk_send: true }
-    });
+      metadata: { bulk_send: true },
+    })
 
-    return { success: true, messageId };
+    return { success: true, messageId }
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Failed to send message to ${phone}:`, errorMessage);
-    return { success: false, error: errorMessage };
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error(`Failed to send message to ${phone}:`, errorMessage)
+    return { success: false, error: errorMessage }
   }
 }
 
 /**
  * Substitute variables in message template
  */
-function substituteVariables(
-  template: string,
-  variables: Record<string, string>
-): string {
-  let result = template;
+function substituteVariables(template: string, variables: Record<string, string>): string {
+  let result = template
 
   for (const [key, value] of Object.entries(variables)) {
-    const regex = new RegExp(`{{${key}}}`, 'g');
-    result = result.replace(regex, value);
+    const regex = new RegExp(`{{${key}}}`, 'g')
+    result = result.replace(regex, value)
   }
 
-  return result;
+  return result
 }
 
 /**
@@ -173,40 +166,31 @@ function substituteVariables(
 export async function processBulkMessage(
   job: Job<BulkMessageJobData>
 ): Promise<BulkMessageJobResult> {
-  const startTime = Date.now();
-  const {
-    organizationId,
-    userId,
-    contacts,
-    messageContent,
-    messageType,
-    templateId,
-    metadata
-  } = job.data;
+  const startTime = Date.now()
+  const { organizationId, userId, contacts, messageContent, messageType, templateId, metadata } =
+    job.data
 
-  console.log(
-    `[BulkMessage] Starting job ${job.id} for ${contacts.length} contacts`
-  );
+  console.log(`[BulkMessage] Starting job ${job.id} for ${contacts.length} contacts`)
 
   const results = {
     successCount: 0,
     failureCount: 0,
     failedContacts: [] as Array<{
-      contactId: string;
-      phone: string;
-      error: string;
-    }>
-  };
+      contactId: string
+      phone: string
+      error: string
+    }>,
+  }
 
   // Process each contact
   for (let i = 0; i < contacts.length; i++) {
-    const contact = contacts[i];
+    const contact = contacts[i]
 
     try {
       // Substitute variables if provided
-      let finalMessage = messageContent;
+      let finalMessage = messageContent
       if (contact.variables) {
-        finalMessage = substituteVariables(messageContent, contact.variables);
+        finalMessage = substituteVariables(messageContent, contact.variables)
       }
 
       // Send message
@@ -215,52 +199,50 @@ export async function processBulkMessage(
         finalMessage,
         organizationId,
         contact.id
-      );
+      )
 
       if (result.success) {
-        results.successCount++;
+        results.successCount++
       } else {
-        results.failureCount++;
+        results.failureCount++
         results.failedContacts.push({
           contactId: contact.id,
           phone: contact.phone,
-          error: result.error || 'Unknown error'
-        });
+          error: result.error || 'Unknown error',
+        })
       }
 
       // Update progress
-      const progress = Math.round(((i + 1) / contacts.length) * 100);
-      await job.updateProgress(progress);
+      const progress = Math.round(((i + 1) / contacts.length) * 100)
+      await job.updateProgress(progress)
 
       // Log progress every 10 contacts
       if ((i + 1) % 10 === 0 || i + 1 === contacts.length) {
-        console.log(
-          `[BulkMessage] Job ${job.id}: ${i + 1}/${contacts.length} processed`
-        );
+        console.log(`[BulkMessage] Job ${job.id}: ${i + 1}/${contacts.length} processed`)
       }
 
       // Rate limiting: WhatsApp allows ~80 messages/second
       // Add small delay to be safe (12-13 msg/sec)
       if (i < contacts.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 75));
+        await new Promise(resolve => setTimeout(resolve, 75))
       }
     } catch (error) {
-      results.failureCount++;
+      results.failureCount++
       results.failedContacts.push({
         contactId: contact.id,
         phone: contact.phone,
-        error: error instanceof Error ? error.message : 'Processing error'
-      });
+        error: error instanceof Error ? error.message : 'Processing error',
+      })
 
-      console.error(`[BulkMessage] Error processing contact ${contact.id}:`, error);
+      console.error(`[BulkMessage] Error processing contact ${contact.id}:`, error)
     }
   }
 
-  const endTime = Date.now();
-  const duration = endTime - startTime;
+  const endTime = Date.now()
+  const duration = endTime - startTime
 
   // Log job completion to database
-  const supabase = await createClient();
+  const supabase = await createClient()
   await supabase.from('job_logs').insert({
     job_id: job.id?.toString(),
     job_type: 'bulk_message',
@@ -271,19 +253,17 @@ export async function processBulkMessage(
       total: contacts.length,
       success: results.successCount,
       failed: results.failureCount,
-      duration: duration
+      duration: duration,
     },
     error_details:
-      results.failedContacts.length > 0
-        ? { failed_contacts: results.failedContacts }
-        : null,
+      results.failedContacts.length > 0 ? { failed_contacts: results.failedContacts } : null,
     started_at: new Date(startTime).toISOString(),
-    completed_at: new Date(endTime).toISOString()
-  });
+    completed_at: new Date(endTime).toISOString(),
+  })
 
   console.log(
     `[BulkMessage] Job ${job.id} completed: ${results.successCount} success, ${results.failureCount} failed, ${duration}ms`
-  );
+  )
 
   return {
     jobId: job.id?.toString() || '',
@@ -294,6 +274,6 @@ export async function processBulkMessage(
     failedContacts: results.failedContacts,
     startedAt: new Date(startTime).toISOString(),
     completedAt: new Date(endTime).toISOString(),
-    duration
-  };
+    duration,
+  }
 }

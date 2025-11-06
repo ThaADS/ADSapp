@@ -10,6 +10,7 @@
 ## 🎯 Executive Summary
 
 Dit plan combineert twee kritieke doelen:
+
 1. **Fix alle blockers** om naar 100% readiness te gaan
 2. **Integreer OpenRouter AI** voor intelligente WhatsApp inbox features
 
@@ -20,29 +21,32 @@ Dit plan combineert twee kritieke doelen:
 
 ## 📊 Current Status → Target Status
 
-| Component | Current | Target | Actions |
-|-----------|---------|--------|---------|
-| TypeScript Compilation | ❌ 122 errors | ✅ 0 errors | Fix route handlers, regenerate types |
-| Stripe Configuration | ⚠️ Placeholders | ✅ Production ready | Configure price IDs, webhooks |
-| AI Integration | ❌ Not present | ✅ Full featured | OpenRouter API integration |
-| Git Repository | ⚠️ 75+ uncommitted | ✅ Clean | Commit strategy, branch cleanup |
-| Test Coverage | ✅ 85% | ✅ 95% | Add AI tests, integration tests |
-| Production Build | ❌ Fails | ✅ Succeeds | Fix all blockers |
-| **Overall Readiness** | **75%** | **100%** | Complete all phases |
+| Component              | Current            | Target              | Actions                              |
+| ---------------------- | ------------------ | ------------------- | ------------------------------------ |
+| TypeScript Compilation | ❌ 122 errors      | ✅ 0 errors         | Fix route handlers, regenerate types |
+| Stripe Configuration   | ⚠️ Placeholders    | ✅ Production ready | Configure price IDs, webhooks        |
+| AI Integration         | ❌ Not present     | ✅ Full featured    | OpenRouter API integration           |
+| Git Repository         | ⚠️ 75+ uncommitted | ✅ Clean            | Commit strategy, branch cleanup      |
+| Test Coverage          | ✅ 85%             | ✅ 95%              | Add AI tests, integration tests      |
+| Production Build       | ❌ Fails           | ✅ Succeeds         | Fix all blockers                     |
+| **Overall Readiness**  | **75%**            | **100%**            | Complete all phases                  |
 
 ---
 
 ## 🚀 Implementation Strategy (3 Phases)
 
 ### PHASE 1: Fix Critical Blockers (Priority 1)
+
 **Duration:** 4-6 hours
 **Goal:** Get application to buildable state
 
 ### PHASE 2: OpenRouter AI Integration (Priority 1)
+
 **Duration:** 1-2 days
 **Goal:** Add intelligent AI features
 
 ### PHASE 3: Testing & Launch Prep (Priority 1)
+
 **Duration:** 1-2 days
 **Goal:** Achieve 100% production readiness
 
@@ -53,34 +57,31 @@ Dit plan combineert twee kritieke doelen:
 ### Task 1.1: TypeScript Compilation Errors (2-3 hours)
 
 #### A. Fix Next.js 15 Route Handler Pattern (HIGH PRIORITY)
+
 **Problem:** Next.js 15 changed route handler params to be Promise-based
 
 **Files to Fix (3 critical):**
+
 ```typescript
 // File 1: src/app/api/admin/webhooks/[id]/retry/route.ts
 // File 2: src/app/api/team/invitations/[id]/route.ts
 // File 3: src/app/api/team/members/[id]/route.ts
 
 // ❌ OLD PATTERN (Next.js 14)
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = params.id
   // ... rest of code
 }
 
 // ✅ NEW PATTERN (Next.js 15)
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   // ... rest of code
 }
 ```
 
 **Action Items:**
+
 - [ ] Fix `src/app/api/admin/webhooks/[id]/retry/route.ts`
 - [ ] Fix `src/app/api/team/invitations/[id]/route.ts`
 - [ ] Fix `src/app/api/team/members/[id]/route.ts`
@@ -88,9 +89,11 @@ export async function GET(
 - [ ] Apply pattern to ALL dynamic routes
 
 #### B. Regenerate Database Types (30 min)
+
 **Problem:** Schema drift between migrations and TypeScript types
 
 **Commands:**
+
 ```bash
 # Generate types from Supabase
 npx supabase gen types typescript --linked > src/types/database.ts
@@ -100,44 +103,51 @@ npm run type-check
 ```
 
 **Missing Tables to Add:**
+
 - `message_templates`
 - `bulk_operations`
 - Any other tables from migrations 034-039
 
 #### C. Fix Supabase Client Await Issues (30 min)
+
 **Problem:** `createClient()` returns Promise, not awaited
 
 **Pattern to Find & Fix:**
+
 ```typescript
 // ❌ WRONG
-const supabase = createClient();
-const { data } = await supabase.auth.getUser();
+const supabase = createClient()
+const { data } = await supabase.auth.getUser()
 
 // ✅ CORRECT
-const supabase = await createClient();
-const { data } = await supabase.auth.getUser();
+const supabase = await createClient()
+const { data } = await supabase.auth.getUser()
 ```
 
 **Files to Check:**
+
 - `src/app/api/billing/invoices/route.ts:9`
 - Search all API routes: `grep -r "= createClient()" src/app/api`
 
 #### D. Fix Null Handling Issues (1 hour)
+
 **Problem:** Nullable types not handled properly
 
 **Common Patterns:**
+
 ```typescript
 // ❌ WRONG
-const orgId: string = profile.organization_id;  // Can be null
+const orgId: string = profile.organization_id // Can be null
 
 // ✅ CORRECT
-const orgId = profile.organization_id;
+const orgId = profile.organization_id
 if (!orgId) {
-  return Response.json({ error: 'No organization' }, { status: 400 });
+  return Response.json({ error: 'No organization' }, { status: 400 })
 }
 ```
 
 **Validation:**
+
 ```bash
 # After all fixes
 npm run type-check  # Should show 0 errors
@@ -152,10 +162,12 @@ npm run build       # Should succeed
 #### Create Stripe Products & Prices
 
 **Step 1: Stripe Dashboard Setup**
+
 1. Login to Stripe Dashboard (test mode): https://dashboard.stripe.com/test/products
 2. Create 3 products:
 
 **Product 1: Starter**
+
 - Name: "ADSapp Starter"
 - Description: "Perfect voor kleine bedrijven"
 - Pricing: €29/month (recurring)
@@ -163,6 +175,7 @@ npm run build       # Should succeed
 - Copy Price ID → `price_1xxxxxxxxxxxxx`
 
 **Product 2: Professional**
+
 - Name: "ADSapp Professional"
 - Description: "Voor groeiende teams"
 - Pricing: €79/month (recurring)
@@ -170,6 +183,7 @@ npm run build       # Should succeed
 - Copy Price ID → `price_1xxxxxxxxxxxxx`
 
 **Product 3: Enterprise**
+
 - Name: "ADSapp Enterprise"
 - Description: "Voor grote organisaties"
 - Pricing: €199/month (recurring)
@@ -177,6 +191,7 @@ npm run build       # Should succeed
 - Copy Price ID → `price_1xxxxxxxxxxxxx`
 
 **Step 2: Update Environment Variables**
+
 ```env
 # Update .env.local
 STRIPE_STARTER_PRICE_ID=price_1xxxxxxxxxxxxx      # From Stripe Dashboard
@@ -185,6 +200,7 @@ STRIPE_ENTERPRISE_PRICE_ID=price_1xxxxxxxxxxxxx    # From Stripe Dashboard
 ```
 
 **Step 3: Configure Webhook Endpoint**
+
 ```bash
 # For local testing
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
@@ -200,6 +216,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
 **Step 4: Update Webhook Secret**
+
 ```env
 # After webhook configuration
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx  # From Stripe Dashboard
@@ -212,12 +229,14 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx  # From Stripe Dashboard
 #### Strategy: Clean Commits per Feature Area
 
 **Step 1: Review Unstaged Changes**
+
 ```bash
 git status
 git diff --stat
 ```
 
 **Step 2: Create Feature Commits**
+
 ```bash
 # Commit 1: Documentation cleanup
 git add docs/
@@ -243,6 +262,7 @@ git commit -m "chore: Update configuration for production readiness"
 ```
 
 **Step 3: Remove Temporary Files**
+
 ```bash
 # List of files to delete (temporary documentation)
 rm ADMIN_DASHBOARD_404_ROOT_CAUSE_ANALYSIS.md
@@ -265,12 +285,14 @@ git clean -fd     # Actually delete untracked files
 ### Overview: AI-Powered WhatsApp Features
 
 **OpenRouter Benefits:**
+
 - Access to multiple AI models (GPT-4, Claude, Llama, etc.)
 - Cost-effective pricing
 - Unified API for all models
 - Model fallback capabilities
 
 **Target Features:**
+
 1. **AI-Powered Auto-Responses** - Intelligent replies to common questions
 2. **Smart Message Drafts** - AI-generated response suggestions
 3. **Conversation Summaries** - Automatic conversation summarization
@@ -286,17 +308,20 @@ git clean -fd     # Actually delete untracked files
 #### A. OpenRouter Account Setup
 
 **Step 1: Create Account**
+
 1. Visit https://openrouter.ai/
 2. Sign up with email
 3. Verify account
 
 **Step 2: Generate API Key**
+
 1. Go to Settings → API Keys
 2. Create new key: "ADSapp Production"
 3. Copy key (starts with `sk-or-v1-`)
 4. Add to environment variables
 
 **Step 3: Environment Configuration**
+
 ```env
 # Add to .env.local (NEVER commit this file!)
 OPENROUTER_API_KEY=your_key_here
@@ -309,6 +334,7 @@ OPENROUTER_TEMPERATURE=0.7
 #### B. Create AI Service Architecture
 
 **File Structure:**
+
 ```
 src/lib/ai/
 ├── openrouter.ts           # OpenRouter client wrapper
@@ -323,6 +349,7 @@ src/lib/ai/
 ```
 
 **Database Schema Updates:**
+
 ```sql
 -- Migration: 040_ai_features.sql
 
@@ -419,55 +446,56 @@ CREATE INDEX idx_conversation_ai_metadata_conversation_id ON conversation_ai_met
 ### Task 2.2: OpenRouter Client Implementation (2 hours)
 
 **File: `src/lib/ai/openrouter.ts`**
+
 ```typescript
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server'
 
 export interface OpenRouterMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
+  role: 'system' | 'user' | 'assistant'
+  content: string
 }
 
 export interface OpenRouterRequest {
-  model: string;
-  messages: OpenRouterMessage[];
-  max_tokens?: number;
-  temperature?: number;
-  top_p?: number;
-  frequency_penalty?: number;
-  presence_penalty?: number;
-  stream?: boolean;
+  model: string
+  messages: OpenRouterMessage[]
+  max_tokens?: number
+  temperature?: number
+  top_p?: number
+  frequency_penalty?: number
+  presence_penalty?: number
+  stream?: boolean
 }
 
 export interface OpenRouterResponse {
-  id: string;
-  model: string;
+  id: string
+  model: string
   choices: Array<{
     message: {
-      role: string;
-      content: string;
-    };
-    finish_reason: string;
-  }>;
+      role: string
+      content: string
+    }
+    finish_reason: string
+  }>
   usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
 }
 
 export class OpenRouterClient {
-  private apiKey: string;
-  private baseUrl = 'https://openrouter.ai/api/v1';
-  private defaultModel: string;
-  private fallbackModel: string;
+  private apiKey: string
+  private baseUrl = 'https://openrouter.ai/api/v1'
+  private defaultModel: string
+  private fallbackModel: string
 
   constructor() {
-    this.apiKey = process.env.OPENROUTER_API_KEY || '';
-    this.defaultModel = process.env.OPENROUTER_DEFAULT_MODEL || 'anthropic/claude-3.5-sonnet';
-    this.fallbackModel = process.env.OPENROUTER_FALLBACK_MODEL || 'anthropic/claude-3-haiku';
+    this.apiKey = process.env.OPENROUTER_API_KEY || ''
+    this.defaultModel = process.env.OPENROUTER_DEFAULT_MODEL || 'anthropic/claude-3.5-sonnet'
+    this.fallbackModel = process.env.OPENROUTER_FALLBACK_MODEL || 'anthropic/claude-3-haiku'
 
     if (!this.apiKey) {
-      throw new Error('OPENROUTER_API_KEY not configured');
+      throw new Error('OPENROUTER_API_KEY not configured')
     }
   }
 
@@ -475,14 +503,14 @@ export class OpenRouterClient {
     messages: OpenRouterMessage[],
     options: Partial<OpenRouterRequest> = {}
   ): Promise<OpenRouterResponse> {
-    const model = options.model || this.defaultModel;
+    const model = options.model || this.defaultModel
 
     try {
-      return await this.makeRequest(model, messages, options);
+      return await this.makeRequest(model, messages, options)
     } catch (error) {
       // Fallback to cheaper model on error
-      console.warn(`Primary model ${model} failed, falling back to ${this.fallbackModel}`);
-      return await this.makeRequest(this.fallbackModel, messages, options);
+      console.warn(`Primary model ${model} failed, falling back to ${this.fallbackModel}`)
+      return await this.makeRequest(this.fallbackModel, messages, options)
     }
   }
 
@@ -491,50 +519,46 @@ export class OpenRouterClient {
     messages: OpenRouterMessage[],
     options: Partial<OpenRouterRequest>
   ): Promise<OpenRouterResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': process.env.NEXT_PUBLIC_APP_DOMAIN || 'https://adsapp.nl',
-        'X-Title': 'ADSapp WhatsApp Inbox'
+        'X-Title': 'ADSapp WhatsApp Inbox',
       },
       body: JSON.stringify({
         model,
         messages,
         max_tokens: options.max_tokens || 1000,
         temperature: options.temperature || 0.7,
-        ...options
-      })
-    });
+        ...options,
+      }),
+    })
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenRouter API error: ${error.error?.message || response.statusText}`);
+      const error = await response.json()
+      throw new Error(`OpenRouter API error: ${error.error?.message || response.statusText}`)
     }
 
-    const data: OpenRouterResponse = await response.json();
-    const latency = Date.now() - startTime;
+    const data: OpenRouterResponse = await response.json()
+    const latency = Date.now() - startTime
 
     // Log usage for cost tracking
-    await this.logUsage(model, data.usage, latency);
+    await this.logUsage(model, data.usage, latency)
 
-    return data;
+    return data
   }
 
-  private async logUsage(
-    model: string,
-    usage: OpenRouterResponse['usage'],
-    latencyMs: number
-  ) {
+  private async logUsage(model: string, usage: OpenRouterResponse['usage'], latencyMs: number) {
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       // Calculate approximate cost (model-specific pricing)
-      const costPerMillion = this.getModelCost(model);
-      const costUsd = (usage.total_tokens / 1_000_000) * costPerMillion;
+      const costPerMillion = this.getModelCost(model)
+      const costUsd = (usage.total_tokens / 1_000_000) * costPerMillion
 
       await supabase.from('ai_responses').insert({
         model,
@@ -542,103 +566,104 @@ export class OpenRouterClient {
         cost_usd: costUsd,
         latency_ms: latencyMs,
         prompt: '', // Will be filled by calling function
-        response: '' // Will be filled by calling function
-      });
+        response: '', // Will be filled by calling function
+      })
     } catch (error) {
-      console.error('Failed to log AI usage:', error);
+      console.error('Failed to log AI usage:', error)
     }
   }
 
   private getModelCost(model: string): number {
     // Approximate costs per million tokens (input + output averaged)
     const costs: Record<string, number> = {
-      'anthropic/claude-3.5-sonnet': 3.00,
+      'anthropic/claude-3.5-sonnet': 3.0,
       'anthropic/claude-3-haiku': 0.25,
-      'openai/gpt-4-turbo': 10.00,
-      'openai/gpt-3.5-turbo': 0.50,
-      'meta-llama/llama-3-70b': 0.90,
-      'google/gemini-pro': 0.125
-    };
-    return costs[model] || 1.00;
+      'openai/gpt-4-turbo': 10.0,
+      'openai/gpt-3.5-turbo': 0.5,
+      'meta-llama/llama-3-70b': 0.9,
+      'google/gemini-pro': 0.125,
+    }
+    return costs[model] || 1.0
   }
 
   async getAvailableModels(): Promise<string[]> {
     const response = await fetch(`${this.baseUrl}/models`, {
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`
-      }
-    });
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+    })
 
     if (!response.ok) {
-      throw new Error('Failed to fetch available models');
+      throw new Error('Failed to fetch available models')
     }
 
-    const data = await response.json();
-    return data.data.map((model: any) => model.id);
+    const data = await response.json()
+    return data.data.map((model: any) => model.id)
   }
 }
 
-export const openRouter = new OpenRouterClient();
+export const openRouter = new OpenRouterClient()
 ```
 
 **File: `src/lib/ai/types.ts`**
+
 ```typescript
 export interface AIMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
+  role: 'system' | 'user' | 'assistant'
+  content: string
 }
 
 export interface AIResponse {
-  content: string;
-  model: string;
-  tokensUsed: number;
-  costUsd: number;
-  latencyMs: number;
+  content: string
+  model: string
+  tokensUsed: number
+  costUsd: number
+  latencyMs: number
 }
 
 export interface ConversationContext {
-  conversationId: string;
-  organizationId: string;
+  conversationId: string
+  organizationId: string
   messages: Array<{
-    sender: 'customer' | 'agent';
-    content: string;
-    timestamp: string;
-  }>;
-  customerName?: string;
-  customerPhone: string;
+    sender: 'customer' | 'agent'
+    content: string
+    timestamp: string
+  }>
+  customerName?: string
+  customerPhone: string
 }
 
 export interface AutoResponseConfig {
-  enabled: boolean;
+  enabled: boolean
   conditions: {
-    outsideBusinessHours?: boolean;
-    noAgentAvailable?: boolean;
-    keywords?: string[];
-    maxQueueTime?: number;
-  };
-  tone: 'professional' | 'friendly' | 'casual';
-  language: string;
+    outsideBusinessHours?: boolean
+    noAgentAvailable?: boolean
+    keywords?: string[]
+    maxQueueTime?: number
+  }
+  tone: 'professional' | 'friendly' | 'casual'
+  language: string
 }
 
 export interface DraftSuggestion {
-  content: string;
-  confidence: number;
-  reasoning: string;
+  content: string
+  confidence: number
+  reasoning: string
 }
 
 export interface SentimentAnalysis {
-  sentiment: 'positive' | 'negative' | 'neutral' | 'mixed';
-  score: number; // -1.0 to 1.0
-  topics: string[];
-  urgency: 'low' | 'medium' | 'high';
+  sentiment: 'positive' | 'negative' | 'neutral' | 'mixed'
+  score: number // -1.0 to 1.0
+  topics: string[]
+  urgency: 'low' | 'medium' | 'high'
 }
 
 export interface ConversationSummary {
-  summary: string;
-  keyPoints: string[];
-  nextSteps: string[];
-  resolvedIssues: string[];
-  openQuestions: string[];
+  summary: string
+  keyPoints: string[]
+  nextSteps: string[]
+  resolvedIssues: string[]
+  openQuestions: string[]
 }
 ```
 
@@ -649,9 +674,10 @@ export interface ConversationSummary {
 #### Feature 1: Smart Draft Suggestions (2 hours)
 
 **File: `src/lib/ai/drafts.ts`**
+
 ```typescript
-import { openRouter } from './openrouter';
-import type { ConversationContext, DraftSuggestion } from './types';
+import { openRouter } from './openrouter'
+import type { ConversationContext, DraftSuggestion } from './types'
 
 export async function generateDraftSuggestions(
   context: ConversationContext,
@@ -660,12 +686,12 @@ export async function generateDraftSuggestions(
   const systemPrompt = `Je bent een professionele klantenservice assistent voor WhatsApp.
 Genereer ${count} verschillende antwoord suggesties op het laatste bericht van de klant.
 Houd rekening met de conversatie context en blijf consistent met de toon.
-Wees behulpzaam, empathisch en professioneel.`;
+Wees behulpzaam, empathisch en professioneel.`
 
   const conversationHistory = context.messages
     .slice(-5) // Last 5 messages for context
     .map(msg => `${msg.sender === 'customer' ? 'Klant' : 'Agent'}: ${msg.content}`)
-    .join('\n');
+    .join('\n')
 
   const userPrompt = `Conversatie geschiedenis:
 ${conversationHistory}
@@ -677,41 +703,48 @@ Genereer ${count} verschillende antwoord suggesties als JSON array:
     "tone": "professional/friendly/empathetic",
     "reasoning": "Waarom dit een goed antwoord is..."
   }
-]`;
+]`
 
-  const response = await openRouter.chat([
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt }
-  ], {
-    temperature: 0.8, // Higher for more creative suggestions
-    max_tokens: 1500
-  });
+  const response = await openRouter.chat(
+    [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    {
+      temperature: 0.8, // Higher for more creative suggestions
+      max_tokens: 1500,
+    }
+  )
 
-  const content = response.choices[0].message.content;
-  const suggestions = JSON.parse(content);
+  const content = response.choices[0].message.content
+  const suggestions = JSON.parse(content)
 
   return suggestions.map((sug: any) => ({
     content: sug.content,
     confidence: 0.85, // Could be calculated based on model confidence
-    reasoning: sug.reasoning
-  }));
+    reasoning: sug.reasoning,
+  }))
 }
 ```
 
 **API Endpoint: `src/app/api/ai/drafts/route.ts`**
+
 ```typescript
-import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { generateDraftSuggestions } from '@/lib/ai/drafts';
+import { NextRequest } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { generateDraftSuggestions } from '@/lib/ai/drafts'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's organization
@@ -719,10 +752,10 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile?.organization_id) {
-      return Response.json({ error: 'No organization' }, { status: 403 });
+      return Response.json({ error: 'No organization' }, { status: 403 })
     }
 
     // Check if AI is enabled for this organization
@@ -730,31 +763,33 @@ export async function POST(request: NextRequest) {
       .from('ai_settings')
       .select('enabled, draft_suggestions_enabled')
       .eq('organization_id', profile.organization_id)
-      .single();
+      .single()
 
     if (!aiSettings?.enabled || !aiSettings?.draft_suggestions_enabled) {
-      return Response.json({ error: 'AI features not enabled' }, { status: 403 });
+      return Response.json({ error: 'AI features not enabled' }, { status: 403 })
     }
 
     // Parse request
-    const body = await request.json();
-    const { conversationId, count = 3 } = body;
+    const body = await request.json()
+    const { conversationId, count = 3 } = body
 
     // Get conversation context
     const { data: conversation } = await supabase
       .from('conversations')
-      .select(`
+      .select(
+        `
         id,
         organization_id,
         contact:contacts(name, phone_number),
         messages(sender, content, created_at)
-      `)
+      `
+      )
       .eq('id', conversationId)
       .eq('organization_id', profile.organization_id)
-      .single();
+      .single()
 
     if (!conversation) {
-      return Response.json({ error: 'Conversation not found' }, { status: 404 });
+      return Response.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
     // Build context
@@ -766,23 +801,19 @@ export async function POST(request: NextRequest) {
         .map(msg => ({
           sender: msg.sender,
           content: msg.content,
-          timestamp: msg.created_at
+          timestamp: msg.created_at,
         })),
       customerName: conversation.contact.name,
-      customerPhone: conversation.contact.phone_number
-    };
+      customerPhone: conversation.contact.phone_number,
+    }
 
     // Generate suggestions
-    const suggestions = await generateDraftSuggestions(context, count);
+    const suggestions = await generateDraftSuggestions(context, count)
 
-    return Response.json({ suggestions });
-
+    return Response.json({ suggestions })
   } catch (error) {
-    console.error('Draft generation error:', error);
-    return Response.json(
-      { error: 'Failed to generate drafts' },
-      { status: 500 }
-    );
+    console.error('Draft generation error:', error)
+    return Response.json({ error: 'Failed to generate drafts' }, { status: 500 })
   }
 }
 ```
@@ -790,22 +821,23 @@ export async function POST(request: NextRequest) {
 #### Feature 2: Auto-Response System (2 hours)
 
 **File: `src/lib/ai/auto-response.ts`**
+
 ```typescript
-import { openRouter } from './openrouter';
-import type { ConversationContext, AutoResponseConfig } from './types';
-import { createClient } from '@/lib/supabase/server';
+import { openRouter } from './openrouter'
+import type { ConversationContext, AutoResponseConfig } from './types'
+import { createClient } from '@/lib/supabase/server'
 
 export async function shouldAutoRespond(
   conversationId: string,
   organizationId: string,
   config: AutoResponseConfig
 ): Promise<boolean> {
-  if (!config.enabled) return false;
+  if (!config.enabled) return false
 
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Check conditions
-  const conditions = config.conditions;
+  const conditions = config.conditions
 
   // Outside business hours?
   if (conditions.outsideBusinessHours) {
@@ -813,10 +845,10 @@ export async function shouldAutoRespond(
       .from('organizations')
       .select('business_hours')
       .eq('id', organizationId)
-      .single();
+      .single()
 
     if (orgSettings?.business_hours && !isWithinBusinessHours(orgSettings.business_hours)) {
-      return true;
+      return true
     }
   }
 
@@ -827,10 +859,10 @@ export async function shouldAutoRespond(
       .select('id')
       .eq('organization_id', organizationId)
       .eq('is_active', true)
-      .in('role', ['agent', 'admin', 'owner']);
+      .in('role', ['agent', 'admin', 'owner'])
 
     if (!activeAgents || activeAgents.length === 0) {
-      return true;
+      return true
     }
   }
 
@@ -840,17 +872,17 @@ export async function shouldAutoRespond(
       .from('conversations')
       .select('created_at, last_message_at')
       .eq('id', conversationId)
-      .single();
+      .single()
 
     if (conversation) {
-      const waitTime = Date.now() - new Date(conversation.last_message_at).getTime();
+      const waitTime = Date.now() - new Date(conversation.last_message_at).getTime()
       if (waitTime > conditions.maxQueueTime * 60 * 1000) {
-        return true;
+        return true
       }
     }
   }
 
-  return false;
+  return false
 }
 
 export async function generateAutoResponse(
@@ -860,17 +892,17 @@ export async function generateAutoResponse(
   const toneInstructions = {
     professional: 'Gebruik een professionele, formele toon',
     friendly: 'Gebruik een vriendelijke, warme toon',
-    casual: 'Gebruik een casual, toegankelijke toon'
-  };
+    casual: 'Gebruik een casual, toegankelijke toon',
+  }
 
   const systemPrompt = `Je bent een AI assistent voor klantenservice via WhatsApp.
 ${toneInstructions[config.tone]}.
 Antwoord in het ${config.language}.
 Wees behulpzaam maar duidelijk dat je een automatisch bericht bent.
 Geef aan wanneer een menselijke agent beschikbaar is.
-Houd antwoorden kort (max 2-3 zinnen).`;
+Houd antwoorden kort (max 2-3 zinnen).`
 
-  const lastMessage = context.messages[context.messages.length - 1];
+  const lastMessage = context.messages[context.messages.length - 1]
 
   const userPrompt = `De klant ${context.customerName || context.customerPhone} heeft het volgende bericht gestuurd:
 "${lastMessage.content}"
@@ -879,55 +911,57 @@ Genereer een automatisch antwoord dat:
 1. Erkent hun bericht
 2. Geeft aan dat dit een automatisch antwoord is
 3. Vertelt wanneer een agent beschikbaar is
-4. Biedt eventuele nuttige informatie als dat mogelijk is`;
+4. Biedt eventuele nuttige informatie als dat mogelijk is`
 
-  const response = await openRouter.chat([
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt }
-  ], {
-    temperature: 0.5, // Lower for consistency
-    max_tokens: 300
-  });
+  const response = await openRouter.chat(
+    [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    {
+      temperature: 0.5, // Lower for consistency
+      max_tokens: 300,
+    }
+  )
 
-  return response.choices[0].message.content;
+  return response.choices[0].message.content
 }
 
 function isWithinBusinessHours(businessHours: any): boolean {
   // Implementation to check current time against business hours
-  const now = new Date();
-  const day = now.toLocaleLowerCase();
-  const currentTime = now.getHours() * 100 + now.getMinutes();
+  const now = new Date()
+  const day = now.toLocaleLowerCase()
+  const currentTime = now.getHours() * 100 + now.getMinutes()
 
-  const daySchedule = businessHours[day];
-  if (!daySchedule || !daySchedule.enabled) return false;
+  const daySchedule = businessHours[day]
+  if (!daySchedule || !daySchedule.enabled) return false
 
-  const openTime = parseInt(daySchedule.open.replace(':', ''));
-  const closeTime = parseInt(daySchedule.close.replace(':', ''));
+  const openTime = parseInt(daySchedule.open.replace(':', ''))
+  const closeTime = parseInt(daySchedule.close.replace(':', ''))
 
-  return currentTime >= openTime && currentTime <= closeTime;
+  return currentTime >= openTime && currentTime <= closeTime
 }
 ```
 
 #### Feature 3: Sentiment Analysis (1.5 hours)
 
 **File: `src/lib/ai/sentiment.ts`**
-```typescript
-import { openRouter } from './openrouter';
-import type { ConversationContext, SentimentAnalysis } from './types';
 
-export async function analyzeSentiment(
-  context: ConversationContext
-): Promise<SentimentAnalysis> {
+```typescript
+import { openRouter } from './openrouter'
+import type { ConversationContext, SentimentAnalysis } from './types'
+
+export async function analyzeSentiment(context: ConversationContext): Promise<SentimentAnalysis> {
   const systemPrompt = `Je bent een sentiment analyse expert.
 Analyseer de emotionele toon van klant berichten.
 Geef een sentiment score van -1.0 (zeer negatief) tot 1.0 (zeer positief).
-Identificeer belangrijke topics en urgentie niveau.`;
+Identificeer belangrijke topics en urgentie niveau.`
 
   const messages = context.messages
     .filter(msg => msg.sender === 'customer')
     .slice(-5)
     .map(msg => msg.content)
-    .join('\n\n');
+    .join('\n\n')
 
   const userPrompt = `Analyseer de sentiment van deze klant berichten:
 
@@ -940,44 +974,50 @@ Geef je analyse als JSON:
   "topics": ["topic1", "topic2"],
   "urgency": "low|medium|high",
   "reasoning": "Uitleg van je analyse"
-}`;
+}`
 
-  const response = await openRouter.chat([
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt }
-  ], {
-    temperature: 0.3, // Low for consistent analysis
-    max_tokens: 500
-  });
+  const response = await openRouter.chat(
+    [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    {
+      temperature: 0.3, // Low for consistent analysis
+      max_tokens: 500,
+    }
+  )
 
-  const analysis = JSON.parse(response.choices[0].message.content);
+  const analysis = JSON.parse(response.choices[0].message.content)
 
   return {
     sentiment: analysis.sentiment,
     score: analysis.score,
     topics: analysis.topics,
-    urgency: analysis.urgency
-  };
+    urgency: analysis.urgency,
+  }
 }
 ```
 
 #### Feature 4: Conversation Summarization (1.5 hours)
 
 **File: `src/lib/ai/summarization.ts`**
+
 ```typescript
-import { openRouter } from './openrouter';
-import type { ConversationContext, ConversationSummary } from './types';
+import { openRouter } from './openrouter'
+import type { ConversationContext, ConversationSummary } from './types'
 
 export async function summarizeConversation(
   context: ConversationContext
 ): Promise<ConversationSummary> {
   const systemPrompt = `Je bent een expert in het samenvatten van klantenservice gesprekken.
 Maak een duidelijke, gestructureerde samenvatting.
-Focus op key points, beslissingen, en action items.`;
+Focus op key points, beslissingen, en action items.`
 
   const conversationText = context.messages
-    .map(msg => `${msg.sender === 'customer' ? 'Klant' : 'Agent'} (${msg.timestamp}): ${msg.content}`)
-    .join('\n');
+    .map(
+      msg => `${msg.sender === 'customer' ? 'Klant' : 'Agent'} (${msg.timestamp}): ${msg.content}`
+    )
+    .join('\n')
 
   const userPrompt = `Vat dit gesprek samen:
 
@@ -990,49 +1030,56 @@ Geef een samenvatting als JSON:
   "nextSteps": ["volgende actie 1", "volgende actie 2"],
   "resolvedIssues": ["opgelost probleem 1"],
   "openQuestions": ["open vraag 1"]
-}`;
+}`
 
-  const response = await openRouter.chat([
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt }
-  ], {
-    temperature: 0.5,
-    max_tokens: 800
-  });
+  const response = await openRouter.chat(
+    [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    {
+      temperature: 0.5,
+      max_tokens: 800,
+    }
+  )
 
-  return JSON.parse(response.choices[0].message.content);
+  return JSON.parse(response.choices[0].message.content)
 }
 ```
 
 #### Feature 5: AI Template Generation (1 hour)
 
 **API Endpoint: `src/app/api/ai/templates/generate/route.ts`**
+
 ```typescript
-import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { openRouter } from '@/lib/ai/openrouter';
+import { NextRequest } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { openRouter } from '@/lib/ai/openrouter'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { data: profile } = await supabase
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
-    const body = await request.json();
-    const { purpose, tone = 'professional', language = 'nl' } = body;
+    const body = await request.json()
+    const { purpose, tone = 'professional', language = 'nl' } = body
 
     // Generate template with AI
     const systemPrompt = `Je bent een expert in het schrijven van WhatsApp business templates.
-Schrijf professionele, effectieve templates voor verschillende doeleinden.`;
+Schrijf professionele, effectieve templates voor verschillende doeleinden.`
 
     const userPrompt = `Genereer een WhatsApp business template voor: ${purpose}
 Toon: ${tone}
@@ -1050,17 +1097,20 @@ Geef als JSON:
   "content": "Template tekst met {{1}} variabelen",
   "variables": ["klant_naam", "product_naam"],
   "category": "MARKETING|UTILITY|AUTHENTICATION"
-}`;
+}`
 
-    const response = await openRouter.chat([
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt }
-    ], {
-      temperature: 0.7,
-      max_tokens: 500
-    });
+    const response = await openRouter.chat(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      {
+        temperature: 0.7,
+        max_tokens: 500,
+      }
+    )
 
-    const template = JSON.parse(response.choices[0].message.content);
+    const template = JSON.parse(response.choices[0].message.content)
 
     // Save to database
     const { data: savedTemplate, error } = await supabase
@@ -1073,21 +1123,17 @@ Geef als JSON:
         category: template.category,
         ai_generated: true,
         ai_prompt: purpose,
-        created_by: user.id
+        created_by: user.id,
       })
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
+    if (error) throw error
 
-    return Response.json({ template: savedTemplate });
-
+    return Response.json({ template: savedTemplate })
   } catch (error) {
-    console.error('Template generation error:', error);
-    return Response.json(
-      { error: 'Failed to generate template' },
-      { status: 500 }
-    );
+    console.error('Template generation error:', error)
+    return Response.json({ error: 'Failed to generate template' }, { status: 500 })
   }
 }
 ```
@@ -1099,6 +1145,7 @@ Geef als JSON:
 #### AI Settings Panel
 
 **File: `src/components/dashboard/ai-settings.tsx`**
+
 ```typescript
 'use client';
 
@@ -1269,6 +1316,7 @@ function FeatureToggle({
 #### Draft Suggestions UI
 
 **File: `src/components/inbox/draft-suggestions.tsx`**
+
 ```typescript
 'use client';
 
@@ -1346,6 +1394,7 @@ export function DraftSuggestions({
 ### Task 3.1: Comprehensive Testing (4 hours)
 
 #### Test Plan
+
 ```bash
 # 1. Unit tests for AI functions
 npm run test src/lib/ai/
@@ -1369,33 +1418,32 @@ npm run test:performance
 #### AI-Specific Test Cases
 
 **File: `tests/unit/ai/openrouter.test.ts`**
+
 ```typescript
-import { describe, it, expect, jest } from '@jest/globals';
-import { OpenRouterClient } from '@/lib/ai/openrouter';
+import { describe, it, expect, jest } from '@jest/globals'
+import { OpenRouterClient } from '@/lib/ai/openrouter'
 
 describe('OpenRouterClient', () => {
   it('should initialize with API key', () => {
-    const client = new OpenRouterClient();
-    expect(client).toBeDefined();
-  });
+    const client = new OpenRouterClient()
+    expect(client).toBeDefined()
+  })
 
   it('should generate chat completion', async () => {
-    const client = new OpenRouterClient();
-    const response = await client.chat([
-      { role: 'user', content: 'Hello' }
-    ]);
-    expect(response.choices).toBeDefined();
-    expect(response.choices.length).toBeGreaterThan(0);
-  });
+    const client = new OpenRouterClient()
+    const response = await client.chat([{ role: 'user', content: 'Hello' }])
+    expect(response.choices).toBeDefined()
+    expect(response.choices.length).toBeGreaterThan(0)
+  })
 
   it('should fallback to secondary model on error', async () => {
     // Test implementation
-  });
+  })
 
   it('should track usage and costs', async () => {
     // Test implementation
-  });
-});
+  })
+})
 ```
 
 ### Task 3.2: Production Build & Deploy (2 hours)
@@ -1428,18 +1476,21 @@ git push origin phase-5/week-35-38-soc2-type-ii
 ### Key Performance Indicators (KPIs)
 
 **AI Feature Usage:**
+
 - Draft suggestions acceptance rate: Target >70%
 - Auto-response engagement rate: Target >50%
 - Average response time improvement: Target 30% faster
 - Customer satisfaction with AI responses: Target >4.0/5.0
 
 **Technical Metrics:**
+
 - AI API latency: Target <2 seconds
 - AI API success rate: Target >99%
 - Cost per conversation: Target <$0.10
 - Token efficiency: Track tokens/message ratio
 
 **Business Impact:**
+
 - Agent productivity increase: Target 40%
 - Customer wait time reduction: Target 50%
 - After-hours coverage: Target 24/7
@@ -1448,6 +1499,7 @@ git push origin phase-5/week-35-38-soc2-type-ii
 ### Monitoring Dashboard
 
 **File: `src/app/dashboard/ai-analytics/page.tsx`**
+
 ```typescript
 export default async function AIAnalyticsPage() {
   // Real-time AI usage statistics
@@ -1470,17 +1522,20 @@ export default async function AIAnalyticsPage() {
 ### OpenRouter Pricing Strategy
 
 **Model Selection by Use Case:**
+
 - **Draft Suggestions:** Claude 3.5 Sonnet (high quality) - $3/million tokens
 - **Auto-Response:** Claude 3 Haiku (fast, cheap) - $0.25/million tokens
 - **Sentiment Analysis:** GPT-3.5 Turbo (efficient) - $0.50/million tokens
 - **Summarization:** Claude 3.5 Sonnet (comprehensive) - $3/million tokens
 
 **Estimated Monthly Costs (per organization):**
+
 - Small (100 conversations/month): ~$5-10
 - Medium (1,000 conversations/month): ~$30-50
 - Large (10,000 conversations/month): ~$200-300
 
 **Cost Optimization:**
+
 - Cache common responses
 - Use cheaper models for simple tasks
 - Implement rate limiting
@@ -1492,6 +1547,7 @@ export default async function AIAnalyticsPage() {
 ## 🎯 Launch Checklist
 
 ### Phase 1 Completion (Blockers Fixed)
+
 - [ ] All 122 TypeScript errors resolved
 - [ ] Database types regenerated
 - [ ] Stripe fully configured with real price IDs
@@ -1500,6 +1556,7 @@ export default async function AIAnalyticsPage() {
 - [ ] Git repository clean and committed
 
 ### Phase 2 Completion (AI Integration)
+
 - [ ] OpenRouter account created and API key configured
 - [ ] Database migration 040 applied (AI tables)
 - [ ] OpenRouter client implemented and tested
@@ -1514,6 +1571,7 @@ export default async function AIAnalyticsPage() {
 - [ ] API endpoints tested
 
 ### Phase 3 Completion (Testing & Deploy)
+
 - [ ] Unit tests for AI functions
 - [ ] Integration tests for AI endpoints
 - [ ] E2E tests for AI features
@@ -1524,6 +1582,7 @@ export default async function AIAnalyticsPage() {
 - [ ] Documentation updated
 
 ### Production Readiness (100%)
+
 - [ ] All features working in staging
 - [ ] Load testing completed
 - [ ] Error monitoring configured (Sentry)
@@ -1538,18 +1597,21 @@ export default async function AIAnalyticsPage() {
 ## 📚 Documentation Updates
 
 ### User Documentation
+
 - **AI Features Guide:** How to use AI-powered features
 - **Admin Guide:** Configuring AI settings per organization
 - **Best Practices:** Getting the most out of AI features
 - **Troubleshooting:** Common issues and solutions
 
 ### Technical Documentation
+
 - **API Reference:** All AI endpoints documented
 - **Architecture Diagrams:** AI system architecture
 - **Cost Calculator:** Estimating AI costs
 - **Model Comparison:** When to use which model
 
 ### Training Materials
+
 - **Video Tutorials:** AI feature demonstrations
 - **Quick Start Guide:** 5-minute AI setup
 - **Use Cases:** Real-world examples
@@ -1560,33 +1622,41 @@ export default async function AIAnalyticsPage() {
 ## 🚀 Timeline Summary
 
 ### Week 1: Development
+
 **Day 1-2: Fix Blockers (Phase 1)**
+
 - TypeScript errors: 4-6 hours
 - Stripe config: 1 hour
 - Git cleanup: 30 min
 
 **Day 3-5: AI Integration (Phase 2)**
+
 - OpenRouter setup: 2 hours
 - Core features: 8 hours
 - Frontend UI: 3 hours
 
 ### Week 2: Testing & Launch
+
 **Day 6-7: Testing (Phase 3)**
+
 - Comprehensive testing: 4 hours
 - Bug fixes: 2-4 hours
 
 **Day 8-9: Staging Deploy**
+
 - Deploy to staging
 - Integration testing
 - Performance optimization
 
 **Day 10-12: Soft Launch**
+
 - Beta users (5-10 orgs)
 - Monitor closely
 - Gather feedback
 - Fix issues
 
 **Day 13-14: Production Launch**
+
 - Public announcement
 - Scale monitoring
 - Support readiness
@@ -1596,13 +1666,16 @@ export default async function AIAnalyticsPage() {
 ## 🎉 Expected Outcomes
 
 ### Technical Achievements
+
 ✅ **100% Production Readiness**
+
 - Zero TypeScript errors
 - All tests passing
 - Production build succeeds
 - Performance optimized
 
 ✅ **Game-Changing AI Features**
+
 - Intelligent draft suggestions
 - 24/7 auto-response capability
 - Real-time sentiment analysis
@@ -1610,25 +1683,30 @@ export default async function AIAnalyticsPage() {
 - AI-powered template generation
 
 ✅ **Enterprise-Grade Quality**
+
 - Multi-tenant AI isolation
 - Cost tracking per organization
 - Model fallback for reliability
 - Comprehensive monitoring
 
 ### Business Impact
+
 📈 **Productivity Gains**
+
 - 40% faster response times
 - 50% reduction in repetitive tasks
 - 24/7 customer coverage
 - Improved agent satisfaction
 
 💰 **Cost Efficiency**
+
 - AI costs: $5-300/org/month
 - ROI: Positive within 1 month
 - Scalable pricing model
 - Predictable cost structure
 
 🚀 **Competitive Advantage**
+
 - First-to-market AI WhatsApp inbox
 - Modern AI capabilities
 - Superior customer experience

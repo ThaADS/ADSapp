@@ -63,6 +63,7 @@ The ADSapp platform now includes a production-ready job queue system built on Bu
 ## Installation
 
 Dependencies are already installed:
+
 - `bullmq@^5.61.0` - Job queue library
 - `ioredis@^5.8.1` - Redis client for BullMQ
 - `@types/ioredis@^4.28.10` - TypeScript types
@@ -72,6 +73,7 @@ Dependencies are already installed:
 ### Environment Variables
 
 Required environment variables:
+
 ```env
 # Redis (Upstash)
 UPSTASH_REDIS_REST_URL=https://your-redis-host:6379
@@ -112,10 +114,10 @@ removeOnFail: 1000     // Keep last 1000 failed jobs
 Initialize the queue manager at application startup (e.g., in `src/app/layout.tsx` or server startup):
 
 ```typescript
-import { initializeQueueManager } from '@/lib/queue/queue-manager';
+import { initializeQueueManager } from '@/lib/queue/queue-manager'
 
 // At server startup
-await initializeQueueManager();
+await initializeQueueManager()
 ```
 
 ### 2. Creating Jobs via API
@@ -136,6 +138,7 @@ Authorization: Bearer <token>
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -179,6 +182,7 @@ Authorization: Bearer <token>
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -210,6 +214,7 @@ Authorization: Bearer <token>
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -281,18 +286,19 @@ await queueManager.resumeQueue(QueueName.BULK_MESSAGE);
 Use the admin dashboard component to monitor jobs:
 
 ```tsx
-import { JobDashboard } from '@/components/admin/job-dashboard';
+import { JobDashboard } from '@/components/admin/job-dashboard'
 
 export default function AdminJobsPage() {
   return (
-    <div className="container mx-auto p-6">
+    <div className='container mx-auto p-6'>
       <JobDashboard />
     </div>
-  );
+  )
 }
 ```
 
 Features:
+
 - Real-time queue statistics
 - Job status indicators
 - Recent job history
@@ -343,6 +349,7 @@ CREATE TABLE job_schedules (
 ### Bulk Message Processor
 
 Features:
+
 - WhatsApp Business API integration
 - Variable substitution
 - Rate limiting (12-13 msg/sec)
@@ -350,6 +357,7 @@ Features:
 - Progress updates
 
 Error Handling:
+
 - Individual message failures don't stop the batch
 - Failed messages are logged with error details
 - Retry logic with exponential backoff
@@ -357,6 +365,7 @@ Error Handling:
 ### Contact Import Processor
 
 Features:
+
 - CSV/Excel parsing support
 - Phone number validation and formatting
 - Email validation
@@ -365,6 +374,7 @@ Features:
 - Update existing or skip duplicates
 
 Validation:
+
 - Phone: 10-15 digits with optional country code
 - Email: Standard RFC 5322 format
 - Required fields check
@@ -372,12 +382,14 @@ Validation:
 ### Template Processor
 
 Features:
+
 - Variable extraction and validation
 - Template compilation
 - Personalized message generation
 - Batch processing
 
 Variable Substitution:
+
 ```typescript
 // Template: "Hello {{name}}, your order {{order_id}} is ready!"
 // Variables: { name: "John", order_id: "12345" }
@@ -387,6 +399,7 @@ Variable Substitution:
 ### Email Notification Processor
 
 Features:
+
 - Resend API integration
 - Batch sending (10 emails/sec)
 - HTML and text email support
@@ -394,6 +407,7 @@ Features:
 - Delivery tracking
 
 Email Types:
+
 - `welcome` - Welcome emails
 - `password_reset` - Password reset emails
 - `notification` - General notifications
@@ -429,12 +443,12 @@ Email Types:
 ### Health Checks
 
 ```typescript
-import { getQueueManager } from '@/lib/queue/queue-manager';
+import { getQueueManager } from '@/lib/queue/queue-manager'
 
-const queueManager = getQueueManager();
-const health = await queueManager.healthCheck();
+const queueManager = getQueueManager()
+const health = await queueManager.healthCheck()
 
-console.log(health);
+console.log(health)
 // {
 //   healthy: true,
 //   queues: {
@@ -447,6 +461,7 @@ console.log(health);
 ### Logging
 
 All job processors log to console:
+
 - Job start: `[QueueName] Starting job {id} for {count} items`
 - Progress: `[QueueName] Job {id}: {current}/{total} processed`
 - Completion: `[QueueName] Job {id} completed: {success} success, {failed} failed, {duration}ms`
@@ -455,6 +470,7 @@ All job processors log to console:
 ### Database Analytics
 
 Query job statistics:
+
 ```sql
 -- Get stats for last 30 days
 SELECT * FROM get_organization_job_stats('org-uuid', 30);
@@ -477,18 +493,18 @@ LIMIT 10;
 // Get failed jobs
 const failedJobs = await queueManager.getFailedJobs(
   QueueName.BULK_MESSAGE,
-  0,  // start
-  10  // end
-);
+  0, // start
+  10 // end
+)
 
 // Retry specific job
-await queueManager.retryJob(QueueName.BULK_MESSAGE, failedJobs[0].id);
+await queueManager.retryJob(QueueName.BULK_MESSAGE, failedJobs[0].id)
 
 // Clean up old failed jobs
 await queueManager.cleanFailedJobs(
   QueueName.BULK_MESSAGE,
-  86400000  // 24 hours
-);
+  86400000 // 24 hours
+)
 ```
 
 ## Error Handling
@@ -496,6 +512,7 @@ await queueManager.cleanFailedJobs(
 ### Automatic Retry
 
 All jobs automatically retry on failure:
+
 - Attempts: 3 (configurable per queue)
 - Backoff: Exponential (1s, 2s, 4s)
 - Max timeout: 5 minutes (configurable)
@@ -529,16 +546,16 @@ All jobs automatically retry on failure:
 
 ```typescript
 // Critical: User-initiated, real-time actions
-JobPriority.CRITICAL  // Reply to customer message
+JobPriority.CRITICAL // Reply to customer message
 
 // High: Scheduled, time-sensitive
-JobPriority.HIGH      // Scheduled campaign at 9 AM
+JobPriority.HIGH // Scheduled campaign at 9 AM
 
 // Normal: Background tasks
-JobPriority.NORMAL    // Nightly contact sync
+JobPriority.NORMAL // Nightly contact sync
 
 // Low: Analytics, non-urgent
-JobPriority.LOW       // Generate monthly reports
+JobPriority.LOW // Generate monthly reports
 ```
 
 ### 3. Error Handling
@@ -547,12 +564,12 @@ JobPriority.LOW       // Generate monthly reports
 // In job processor
 try {
   // Process item
-  await processItem(item);
-  successCount++;
+  await processItem(item)
+  successCount++
 } catch (error) {
   // Log error but continue processing
-  failedItems.push({ item, error: error.message });
-  failureCount++;
+  failedItems.push({ item, error: error.message })
+  failureCount++
 }
 ```
 
@@ -561,12 +578,12 @@ try {
 ```typescript
 // Update progress regularly
 for (let i = 0; i < items.length; i++) {
-  await processItem(items[i]);
+  await processItem(items[i])
 
   // Update every 10 items or at completion
   if (i % 10 === 0 || i === items.length - 1) {
-    const progress = Math.round(((i + 1) / items.length) * 100);
-    await job.updateProgress(progress);
+    const progress = Math.round(((i + 1) / items.length) * 100)
+    await job.updateProgress(progress)
   }
 }
 ```
@@ -580,10 +597,10 @@ for (let i = 0; i < items.length; i++) {
 ```typescript
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  await queueManager.shutdown();
-  process.exit(0);
-});
+  console.log('SIGTERM received, shutting down gracefully')
+  await queueManager.shutdown()
+  process.exit(0)
+})
 ```
 
 ## Testing
@@ -591,7 +608,7 @@ process.on('SIGTERM', async () => {
 ### Unit Tests
 
 ```typescript
-import { processBulkMessage } from '@/lib/queue/processors/bulk-message-processor';
+import { processBulkMessage } from '@/lib/queue/processors/bulk-message-processor'
 
 describe('Bulk Message Processor', () => {
   it('should send messages to all contacts', async () => {
@@ -600,20 +617,18 @@ describe('Bulk Message Processor', () => {
       data: {
         organizationId: 'org-uuid',
         userId: 'user-uuid',
-        contacts: [
-          { id: '1', phone: '+1234567890', name: 'Test' }
-        ],
-        messageContent: 'Test message'
+        contacts: [{ id: '1', phone: '+1234567890', name: 'Test' }],
+        messageContent: 'Test message',
       },
-      updateProgress: jest.fn()
-    };
+      updateProgress: jest.fn(),
+    }
 
-    const result = await processBulkMessage(job as any);
+    const result = await processBulkMessage(job as any)
 
-    expect(result.successCount).toBe(1);
-    expect(result.failureCount).toBe(0);
-  });
-});
+    expect(result.successCount).toBe(1)
+    expect(result.failureCount).toBe(0)
+  })
+})
 ```
 
 ### Integration Tests
@@ -625,21 +640,21 @@ describe('Job API', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-token'
+        Authorization: 'Bearer test-token',
       },
       body: JSON.stringify({
         contactIds: ['uuid1', 'uuid2'],
         messageContent: 'Test',
-        priority: 1
-      })
-    });
+        priority: 1,
+      }),
+    })
 
-    expect(response.status).toBe(202);
-    const data = await response.json();
-    expect(data.success).toBe(true);
-    expect(data.jobId).toBeDefined();
-  });
-});
+    expect(response.status).toBe(202)
+    const data = await response.json()
+    expect(data.success).toBe(true)
+    expect(data.jobId).toBeDefined()
+  })
+})
 ```
 
 ## Troubleshooting
@@ -669,6 +684,7 @@ describe('Job API', () => {
 ### Debug Mode
 
 Enable debug logging:
+
 ```typescript
 // In bull-config.ts
 const worker = new Worker(queueName, processor, {
@@ -677,16 +693,16 @@ const worker = new Worker(queueName, processor, {
   autorun: true,
   // Enable debug events
   removeOnComplete: false,
-  removeOnFail: false
-});
+  removeOnFail: false,
+})
 
 worker.on('progress', (job, progress) => {
-  console.log(`Job ${job.id} progress: ${progress}%`);
-});
+  console.log(`Job ${job.id} progress: ${progress}%`)
+})
 
-worker.on('stalled', (jobId) => {
-  console.warn(`Job ${jobId} stalled`);
-});
+worker.on('stalled', jobId => {
+  console.warn(`Job ${jobId} stalled`)
+})
 ```
 
 ## Future Enhancements
@@ -714,6 +730,7 @@ worker.on('stalled', (jobId) => {
 ## Support
 
 For issues or questions:
+
 1. Check logs in `job_logs` table
 2. Review error details in job result
 3. Consult BullMQ documentation: https://docs.bullmq.io

@@ -71,7 +71,7 @@ class MockRedisStorage {
 
   del(...keys: string[]): number {
     let deleted = 0
-    keys.forEach((key) => {
+    keys.forEach(key => {
       if (this.store.delete(key)) deleted++
       if (this.hashes.delete(key)) deleted++
       if (this.sets.delete(key)) deleted++
@@ -82,7 +82,7 @@ class MockRedisStorage {
   }
 
   exists(...keys: string[]): number {
-    return keys.filter((key) => this.store.has(key)).length
+    return keys.filter(key => this.store.has(key)).length
   }
 
   expire(key: string, seconds: number): number {
@@ -133,7 +133,7 @@ class MockRedisStorage {
     const hash = this.hashes.get(key)
     if (!hash) return 0
     let deleted = 0
-    fields.forEach((field) => {
+    fields.forEach(field => {
       if (hash.delete(field)) deleted++
     })
     return deleted
@@ -152,7 +152,7 @@ class MockRedisStorage {
     }
     const set = this.sets.get(key)!
     let added = 0
-    members.forEach((member) => {
+    members.forEach(member => {
       const sizeBefore = set.size
       set.add(member)
       if (set.size > sizeBefore) added++
@@ -168,7 +168,7 @@ class MockRedisStorage {
     const set = this.sets.get(key)
     if (!set) return 0
     let removed = 0
-    members.forEach((member) => {
+    members.forEach(member => {
       if (set.delete(member)) removed++
     })
     return removed
@@ -189,16 +189,14 @@ class MockRedisStorage {
     const zset = this.sortedSets.get(key)
     if (!zset) return []
     const sorted = Array.from(zset.entries()).sort((a, b) => a[1] - b[1])
-    return sorted
-      .slice(start, stop === -1 ? undefined : stop + 1)
-      .map(([member]) => member)
+    return sorted.slice(start, stop === -1 ? undefined : stop + 1).map(([member]) => member)
   }
 
   zrem(key: string, ...members: any[]): number {
     const zset = this.sortedSets.get(key)
     if (!zset) return 0
     let removed = 0
-    members.forEach((member) => {
+    members.forEach(member => {
       if (zset.delete(member)) removed++
     })
     return removed
@@ -255,13 +253,13 @@ class MockRedisStorage {
 
   keys(pattern: string): string[] {
     const regex = new RegExp(pattern.replace(/\*/g, '.*'))
-    return Array.from(this.store.keys()).filter((key) => regex.test(key))
+    return Array.from(this.store.keys()).filter(key => regex.test(key))
   }
 
   scan(cursor: number, options?: { match?: string; count?: number }): [number, string[]] {
     const allKeys = Array.from(this.store.keys())
     const filteredKeys = options?.match
-      ? allKeys.filter((key) => {
+      ? allKeys.filter(key => {
           const regex = new RegExp(options.match!.replace(/\*/g, '.*'))
           return regex.test(key)
         })
@@ -294,9 +292,7 @@ export function createMockRedisClient(storage?: MockRedisStorage): MockRedisClie
     ),
     del: jest.fn((...keys: string[]) => Promise.resolve(store.del(...keys))),
     exists: jest.fn((...keys: string[]) => Promise.resolve(store.exists(...keys))),
-    expire: jest.fn((key: string, seconds: number) =>
-      Promise.resolve(store.expire(key, seconds))
-    ),
+    expire: jest.fn((key: string, seconds: number) => Promise.resolve(store.expire(key, seconds))),
     ttl: jest.fn((key: string) => Promise.resolve(store.ttl(key))),
     incr: jest.fn((key: string) => Promise.resolve(store.incr(key))),
     decr: jest.fn((key: string) => Promise.resolve(store.decr(key))),
@@ -308,28 +304,18 @@ export function createMockRedisClient(storage?: MockRedisStorage): MockRedisClie
       Promise.resolve(store.hdel(key, ...fields))
     ),
     hgetall: jest.fn((key: string) => Promise.resolve(store.hgetall(key))),
-    sadd: jest.fn((key: string, ...members: any[]) =>
-      Promise.resolve(store.sadd(key, ...members))
-    ),
+    sadd: jest.fn((key: string, ...members: any[]) => Promise.resolve(store.sadd(key, ...members))),
     smembers: jest.fn((key: string) => Promise.resolve(store.smembers(key))),
-    srem: jest.fn((key: string, ...members: any[]) =>
-      Promise.resolve(store.srem(key, ...members))
-    ),
+    srem: jest.fn((key: string, ...members: any[]) => Promise.resolve(store.srem(key, ...members))),
     zadd: jest.fn((key: string, score: number, member: any) =>
       Promise.resolve(store.zadd(key, score, member))
     ),
     zrange: jest.fn((key: string, start: number, stop: number) =>
       Promise.resolve(store.zrange(key, start, stop))
     ),
-    zrem: jest.fn((key: string, ...members: any[]) =>
-      Promise.resolve(store.zrem(key, ...members))
-    ),
-    lpush: jest.fn((key: string, ...values: any[]) =>
-      Promise.resolve(store.lpush(key, ...values))
-    ),
-    rpush: jest.fn((key: string, ...values: any[]) =>
-      Promise.resolve(store.rpush(key, ...values))
-    ),
+    zrem: jest.fn((key: string, ...members: any[]) => Promise.resolve(store.zrem(key, ...members))),
+    lpush: jest.fn((key: string, ...values: any[]) => Promise.resolve(store.lpush(key, ...values))),
+    rpush: jest.fn((key: string, ...values: any[]) => Promise.resolve(store.rpush(key, ...values))),
     lpop: jest.fn((key: string) => Promise.resolve(store.lpop(key))),
     rpop: jest.fn((key: string) => Promise.resolve(store.rpop(key))),
     lrange: jest.fn((key: string, start: number, stop: number) =>

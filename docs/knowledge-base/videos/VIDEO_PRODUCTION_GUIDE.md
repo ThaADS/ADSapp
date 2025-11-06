@@ -15,6 +15,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Video Standards
 
 **Resolution & Format**:
+
 - Primary: 1920x1080 (Full HD) @ 30fps
 - Codec: H.264 / AVC
 - Bitrate: 8-10 Mbps (VBR)
@@ -23,6 +24,7 @@ This guide provides comprehensive technical specifications and production standa
 - Aspect Ratio: 16:9
 
 **Audio Standards**:
+
 - Sample Rate: 48 kHz
 - Bit Depth: 24-bit
 - Channels: Stereo (2.0)
@@ -34,12 +36,14 @@ This guide provides comprehensive technical specifications and production standa
 ### Recording Setup
 
 **Software Requirements**:
+
 - **Primary**: OBS Studio 29+ (free, open-source)
 - **Alternative**: Loom Business, Camtasia 2024
 - **Screen Capture**: Full desktop or window-specific
 - **Cursor Enhancement**: CursorHighlighter plugin for OBS
 
 **Recording Settings**:
+
 - Canvas Resolution: 1920x1080
 - Output Resolution: 1920x1080
 - FPS: 30 (constant frame rate)
@@ -48,6 +52,7 @@ This guide provides comprehensive technical specifications and production standa
 - Preset: Quality
 
 **Display Configuration**:
+
 - Primary Monitor: 1920x1080 or higher
 - Browser Zoom: 100% (125% for detailed forms)
 - OS Scaling: 100%
@@ -57,6 +62,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Voice Recording
 
 **Microphone Requirements**:
+
 - **Recommended**: USB condenser microphone (Blue Yeti, Audio-Technica AT2020USB+)
 - **Minimum**: Quality headset microphone with pop filter
 - **Position**: 6-8 inches from mouth, 45° angle
@@ -64,6 +70,7 @@ This guide provides comprehensive technical specifications and production standa
 - **Pop Filter**: Essential for reducing plosives
 
 **Voice Settings**:
+
 - Gain: -12dB to -6dB (peak levels, leave headroom)
 - Noise Gate: -35dB threshold
 - Compression: 3:1 ratio, -20dB threshold
@@ -71,6 +78,7 @@ This guide provides comprehensive technical specifications and production standa
 - De-esser: Moderate (reduce sibilance)
 
 **Voice Direction**:
+
 - Tone: Professional, friendly, conversational
 - Pace: 140-160 words per minute (moderate)
 - Enunciation: Clear, avoid mumbling
@@ -84,6 +92,7 @@ This guide provides comprehensive technical specifications and production standa
 ### User Interface Recording
 
 **Browser Setup**:
+
 - Browser: Chrome or Edge (latest stable)
 - Window Size: 1280x800 (allows for UI scaling)
 - Zoom Level: 100% (125% for forms and inputs)
@@ -92,6 +101,7 @@ This guide provides comprehensive technical specifications and production standa
 - Extensions: Disabled or hidden
 
 **Screen Recording Best Practices**:
+
 - Hide unnecessary tabs and windows
 - Close notification banners
 - Disable operating system notifications
@@ -102,6 +112,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Cursor & Highlighting
 
 **Cursor Enhancement**:
+
 - Size: 1.5x normal (48x48 pixels)
 - Color: Blue (#2563EB) with white border
 - Glow: Subtle blue glow (8px radius, 30% opacity)
@@ -109,6 +120,7 @@ This guide provides comprehensive technical specifications and production standa
 - Movement: Smooth, deliberate (not too fast)
 
 **Highlighting Techniques**:
+
 - **Circles**: Blue stroke (4px), no fill, for attention
 - **Arrows**: Simple blue arrows pointing to elements
 - **Boxes**: Blue border (3px) around UI components
@@ -118,6 +130,7 @@ This guide provides comprehensive technical specifications and production standa
 ### On-Screen Text
 
 **Lower Thirds**:
+
 - Font: Inter SemiBold, 36px
 - Color: White with subtle drop shadow
 - Position: Bottom left, 80px from edge
@@ -126,6 +139,7 @@ This guide provides comprehensive technical specifications and production standa
 - Animation: Smooth slide-in from left
 
 **Callouts & Labels**:
+
 - Font: Inter Medium, 28px
 - Color: White text on blue background
 - Padding: 12px horizontal, 8px vertical
@@ -134,6 +148,7 @@ This guide provides comprehensive technical specifications and production standa
 - Pointer: Arrow connecting to relevant UI element
 
 **Code & Syntax**:
+
 - Font: JetBrains Mono, 24px
 - Color: Syntax highlighting (VS Code Dark+ theme)
 - Background: Dark gray box with rounded corners
@@ -147,6 +162,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Logo & Watermark
 
 **Logo Placement**:
+
 - Position: Top right corner
 - Size: 120x40 pixels
 - Opacity: 15% (subtle, non-distracting)
@@ -154,12 +170,14 @@ This guide provides comprehensive technical specifications and production standa
 - Always visible: Yes
 
 **Intro Animation** (5 seconds):
+
 - Logo reveal with smooth animation
 - Title fade-in: Video title in Inter Bold, 48px
 - Background: Gradient (ADSapp brand blue to lighter blue)
 - Audio: Upbeat intro music (5-second clip)
 
 **Outro Screen** (10 seconds):
+
 - Background: ADSapp brand blue
 - Logo: Center, full color
 - Elements:
@@ -171,17 +189,20 @@ This guide provides comprehensive technical specifications and production standa
 ### Color Palette
 
 **Primary Colors**:
+
 - ADSapp Blue: #2563EB
 - Light Blue: #60A5FA
 - Dark Blue: #1E40AF
 
 **Accent Colors**:
+
 - Success Green: #10B981
 - Warning Yellow: #F59E0B
 - Error Red: #EF4444
 - Neutral Gray: #6B7280
 
 **Background Colors**:
+
 - Light: #F9FAFB
 - Medium: #E5E7EB
 - Dark: #1F2937
@@ -189,14 +210,17 @@ This guide provides comprehensive technical specifications and production standa
 ### Typography
 
 **Primary Font**: Inter (Google Fonts)
+
 - Headings: Inter Bold (700)
 - Body: Inter Medium (500)
 - Captions: Inter Regular (400)
 
 **Code Font**: JetBrains Mono
+
 - Monospaced for code examples
 
 **Font Sizes**:
+
 - Main Title: 48px
 - Section Headers: 36px
 - Body Text: 28px
@@ -210,18 +234,21 @@ This guide provides comprehensive technical specifications and production standa
 ### Transition Standards
 
 **Scene Transitions**:
+
 - Type: Smooth cross-dissolve
 - Duration: 0.3-0.5 seconds
 - No jarring cuts or wipes
 - Maintain audio continuity
 
 **Element Animations**:
+
 - Fade In/Out: 0.3 seconds
 - Slide In: 0.4 seconds with ease-out
 - Scale/Zoom: 0.5 seconds with ease-in-out
 - Highlights: 0.2 seconds pulse animation
 
 **Avoid**:
+
 - Spinning transitions
 - 3D effects
 - Page curls or flips
@@ -231,16 +258,19 @@ This guide provides comprehensive technical specifications and production standa
 ### Annotation Animations
 
 **Appear**:
+
 - Fade in: 0.2 seconds
 - Slight scale from 0.9 to 1.0
 - Ease-out timing
 
 **Emphasis**:
+
 - Gentle pulse: 0.3 seconds
 - Scale from 1.0 to 1.05 to 1.0
 - 2-3 pulses maximum
 
 **Disappear**:
+
 - Fade out: 0.2 seconds
 - Slight scale from 1.0 to 0.95
 - Ease-in timing
@@ -252,6 +282,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Music
 
 **Background Music**:
+
 - Genre: Corporate, upbeat, ambient
 - Tempo: 100-130 BPM
 - Volume: -30dB to -35dB (behind narration)
@@ -260,6 +291,7 @@ This guide provides comprehensive technical specifications and production standa
 - Fade: 2-second fade in/out at scene changes
 
 **Sound Effects**:
+
 - Click Sounds: Subtle, organic
 - Success Chimes: Short, pleasant
 - Notification Pings: Brief, non-intrusive
@@ -269,12 +301,14 @@ This guide provides comprehensive technical specifications and production standa
 ### Voice Mixing
 
 **Narration Levels**:
+
 - Peak: -6dB to -3dB
 - Average: -16 LUFS
 - Dynamic Range: -8dB to -12dB (compressed)
 - No clipping or distortion
 
 **Audio Processing Chain**:
+
 1. Noise Reduction: -12dB to -18dB
 2. EQ: High-pass 80Hz, presence boost 2-4kHz
 3. Compression: 3:1 ratio, -20dB threshold
@@ -283,6 +317,7 @@ This guide provides comprehensive technical specifications and production standa
 6. Normalize: -16 LUFS
 
 **Quality Checks**:
+
 - No mouth clicks or breaths (edit out)
 - Consistent volume throughout
 - No background noise or hum
@@ -296,6 +331,7 @@ This guide provides comprehensive technical specifications and production standa
 ### Closed Captions
 
 **Technical Requirements**:
+
 - Format: SRT or VTT
 - Encoding: UTF-8
 - Line Length: Max 42 characters
@@ -304,6 +340,7 @@ This guide provides comprehensive technical specifications and production standa
 - Position: Bottom center, above lower third
 
 **Caption Content**:
+
 - Verbatim narration
 - Speaker identification (if multiple speakers)
 - Sound effects in [brackets]
@@ -312,6 +349,7 @@ This guide provides comprehensive technical specifications and production standa
 - Acronyms: First use spelled out
 
 **Timing**:
+
 - Sync: ±100ms accuracy
 - On-screen: Minimum 1.5 seconds
 - Gap: Minimum 0.25 seconds between captions
@@ -320,12 +358,14 @@ This guide provides comprehensive technical specifications and production standa
 ### Audio Description
 
 **When Required**:
+
 - Complex visual diagrams
 - UI interactions without narration
 - Text that appears without being read
 - Important visual changes
 
 **Implementation**:
+
 - Extended audio description track
 - Narrate visual-only information
 - Describe UI elements and their actions
@@ -334,12 +374,14 @@ This guide provides comprehensive technical specifications and production standa
 ### Visual Accessibility
 
 **High Contrast Mode**:
+
 - Text contrast: Minimum 4.5:1 ratio
 - UI elements: Minimum 3:1 ratio
 - Never rely on color alone
 - Use icons with color-coding
 
 **Screen Reader Compatibility**:
+
 - All text readable (not in images)
 - Proper heading structure
 - Alt text for any visual-only information
@@ -383,12 +425,14 @@ ADSapp-Video-Tutorials/
 ### Naming Conventions
 
 **Files**:
+
 - Video: `adsapp-[category]-[slug]-[version].mp4`
 - Audio: `[slug]-narration-[raw|processed].wav`
 - Graphics: `[slug]-[element]-[number].png`
 - Captions: `[slug]-captions-[language].srt`
 
 **Versions**:
+
 - Draft: `v0.1`, `v0.2`, etc.
 - Review: `v1.0`, `v1.1`, etc.
 - Final: `final-master.mp4`
@@ -397,11 +441,13 @@ ADSapp-Video-Tutorials/
 ### Backup Strategy
 
 **During Production**:
+
 - Project files: Daily backups to cloud storage
 - Raw footage: Backup after each recording session
 - Exports: Keep all versions until project completion
 
 **After Completion**:
+
 - Master files: Store indefinitely
 - Project files: Archive for 1 year
 - Raw footage: Delete after 3 months (if approved)
@@ -466,6 +512,7 @@ ADSapp-Video-Tutorials/
 ### YouTube
 
 **Upload Settings**:
+
 - Category: Education or Science & Technology
 - Privacy: Public (or Scheduled)
 - Age Restriction: None
@@ -475,6 +522,7 @@ ADSapp-Video-Tutorials/
 - Default License: Standard YouTube License
 
 **Optimization**:
+
 - Title: 50-60 characters, keyword-rich
 - Description: Comprehensive (200-300 words)
 - Tags: 15-20 relevant tags
@@ -484,6 +532,7 @@ ADSapp-Video-Tutorials/
 - Cards: 3-5 cards throughout video
 
 **Playlist Organization**:
+
 - Getting Started Series
 - Core Features Series
 - Advanced Topics Series
@@ -492,6 +541,7 @@ ADSapp-Video-Tutorials/
 ### Vimeo (Enterprise)
 
 **Upload Settings**:
+
 - Privacy: Password protected or Private
 - License: All Rights Reserved
 - Download: Disabled
@@ -499,6 +549,7 @@ ADSapp-Video-Tutorials/
 - Embed: Whitelist only
 
 **Use Cases**:
+
 - Internal training
 - Customer onboarding
 - Enterprise customer private access
@@ -506,6 +557,7 @@ ADSapp-Video-Tutorials/
 ### Help Center Integration
 
 **Embedding**:
+
 - Platform: Wistia or native HTML5 player
 - Controls: Full player controls enabled
 - Autoplay: Disabled
@@ -520,11 +572,13 @@ ADSapp-Video-Tutorials/
 ### File Size Optimization
 
 **Target Sizes**:
+
 - 5-minute video: 80-120 MB
 - 10-minute video: 160-240 MB
 - Bitrate: 8-10 Mbps average
 
 **Optimization Techniques**:
+
 - Two-pass encoding for better quality/size ratio
 - Remove unnecessary frames (idle time)
 - Optimize keyframes (every 2 seconds)
@@ -533,11 +587,13 @@ ADSapp-Video-Tutorials/
 ### Loading Speed
 
 **YouTube**:
+
 - Upload during off-peak hours
 - Use YouTube Studio uploader (more reliable)
 - Wait for HD processing to complete
 
 **Website Embedding**:
+
 - Use lazy loading for below-fold videos
 - Thumbnail image with play button overlay
 - Load player library async
@@ -550,6 +606,7 @@ ADSapp-Video-Tutorials/
 ### Key Metrics to Track
 
 **Engagement**:
+
 - View count
 - Watch time (total and average)
 - Audience retention (where viewers drop off)
@@ -558,6 +615,7 @@ ADSapp-Video-Tutorials/
 - Shares and embeds
 
 **Performance**:
+
 - Click-through rate (thumbnail performance)
 - Traffic sources (search, suggested, external)
 - Audience demographics
@@ -565,6 +623,7 @@ ADSapp-Video-Tutorials/
 - Geography
 
 **Business Impact**:
+
 - Trial sign-ups from video links
 - Support ticket reduction for covered topics
 - Feature adoption rates
@@ -573,6 +632,7 @@ ADSapp-Video-Tutorials/
 ### A/B Testing
 
 **Elements to Test**:
+
 - Thumbnail designs (2-3 variations)
 - Title phrasing
 - Description format
@@ -580,6 +640,7 @@ ADSapp-Video-Tutorials/
 - Intro duration (3 vs 5 vs 10 seconds)
 
 **Testing Process**:
+
 1. Create variations
 2. Run for 7-14 days
 3. Analyze metrics
@@ -592,11 +653,13 @@ ADSapp-Video-Tutorials/
 ### Copyright
 
 **Music**:
+
 - Only use properly licensed music
 - Keep license certificates
 - Credit in description if required
 
 **Software**:
+
 - ADSapp: Own product, full rights
 - Third-party tools: Ensure license allows screen recording
 - Avoid showing copyrighted content
@@ -604,12 +667,14 @@ ADSapp-Video-Tutorials/
 ### Privacy
 
 **Personal Data**:
+
 - Use demo accounts, not real customer data
 - Blur any sensitive information
 - No real phone numbers or emails visible
 - No real customer names
 
 **Compliance**:
+
 - GDPR: No EU customer data without consent
 - CCPA: No California resident data
 - COPPA: Content is not directed at children
@@ -617,6 +682,7 @@ ADSapp-Video-Tutorials/
 ### Accessibility
 
 **Legal Requirements**:
+
 - ADA compliance: Captions and transcripts
 - Section 508: Government contractor compliance
 - WCAG 2.1 Level AA: Web content accessibility
@@ -628,17 +694,20 @@ ADSapp-Video-Tutorials/
 ### Per-Video Cost Estimate
 
 **Labor**:
+
 - Scripting: 2-3 hours @ $50/hr = $100-150
 - Recording: 1-2 hours @ $50/hr = $50-100
 - Editing: 3-5 hours @ $50/hr = $150-250
 - Review: 1 hour @ $50/hr = $50
 
 **Services**:
+
 - Voice talent (if outsourced): $100-200
 - Music licensing: $15-30 per track
 - Graphics (if outsourced): $50-100
 
 **Software**:
+
 - OBS Studio: Free
 - DaVinci Resolve: Free (or $295 Studio)
 - Adobe Premiere Pro: $20/month
@@ -654,11 +723,13 @@ ADSapp-Video-Tutorials/
 ### ROI Justification
 
 **Savings**:
+
 - Support ticket reduction: $10,000-20,000/year
 - Onboarding efficiency: $5,000-10,000/year
 - Feature adoption (increased retention): $30,000-60,000/year
 
 **Revenue**:
+
 - Trial conversion improvement: $50,000-100,000/year
 
 **Total Annual Value**: $95,000-190,000
@@ -671,6 +742,7 @@ ADSapp-Video-Tutorials/
 ### Feedback Collection
 
 **Sources**:
+
 - YouTube comments and ratings
 - In-app feedback forms
 - Support team insights
@@ -678,6 +750,7 @@ ADSapp-Video-Tutorials/
 - User testing sessions
 
 **Action**:
+
 - Review feedback monthly
 - Identify common requests
 - Update videos annually
@@ -686,12 +759,14 @@ ADSapp-Video-Tutorials/
 ### Update Strategy
 
 **When to Update**:
+
 - Major UI changes (within 1 month)
 - Feature additions (quarterly review)
 - User confusion patterns (as needed)
 - Accuracy issues (immediately)
 
 **Update Process**:
+
 1. Identify outdated sections
 2. Re-record specific scenes
 3. Edit into existing video
@@ -704,6 +779,7 @@ ADSapp-Video-Tutorials/
 ## Contact & Support
 
 **Production Team**:
+
 - Video Producer: production@adsapp.com
 - Script Writer: content@adsapp.com
 - Graphic Designer: design@adsapp.com

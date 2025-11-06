@@ -1,7 +1,19 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Download, Play, Pause, FileText, MapPin, Clock, Check, CheckCheck, Image as ImageIcon, Video, Mic } from 'lucide-react'
+import {
+  Download,
+  Play,
+  Pause,
+  FileText,
+  MapPin,
+  Clock,
+  Check,
+  CheckCheck,
+  Image as ImageIcon,
+  Video,
+  Mic,
+} from 'lucide-react'
 import { WhatsAppMediaHandler } from '@/lib/whatsapp/media-handler'
 
 interface Message {
@@ -102,96 +114,92 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
   switch (message.message_type) {
     case 'image':
       return (
-        <div className="max-w-sm">
+        <div className='max-w-sm'>
           {message.media?.url ? (
-            <div className="relative group">
+            <div className='group relative'>
               <img
                 src={message.media.thumbnailUrl || message.media.url}
-                alt="Shared image"
-                className="rounded-lg max-h-64 w-auto cursor-pointer"
+                alt='Shared image'
+                className='max-h-64 w-auto cursor-pointer rounded-lg'
                 onClick={() => window.open(message.media.url, '_blank')}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all duration-200 flex items-center justify-center">
+              <div className='bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 flex items-center justify-center rounded-lg bg-black transition-all duration-200'>
                 <button
                   onClick={handleDownload}
                   disabled={loading}
-                  className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 text-gray-800 p-2 rounded-full transition-opacity duration-200"
+                  className='bg-opacity-90 rounded-full bg-white p-2 text-gray-800 opacity-0 transition-opacity duration-200 group-hover:opacity-100'
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className='h-4 w-4' />
                 </button>
               </div>
             </div>
           ) : (
-            <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-lg">
-              <ImageIcon className="w-8 h-8 text-gray-400" />
+            <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
+              <ImageIcon className='h-8 w-8 text-gray-400' />
               <div>
-                <p className="text-sm font-medium text-gray-900">Image</p>
-                <p className="text-xs text-gray-500">Unable to load image</p>
+                <p className='text-sm font-medium text-gray-900'>Image</p>
+                <p className='text-xs text-gray-500'>Unable to load image</p>
               </div>
             </div>
           )}
-          {message.content && (
-            <p className="mt-2 text-sm text-gray-700">{message.content}</p>
-          )}
+          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
         </div>
       )
 
     case 'video':
       return (
-        <div className="max-w-sm">
+        <div className='max-w-sm'>
           {message.media?.url ? (
-            <div className="relative group">
+            <div className='group relative'>
               <video
                 ref={videoRef}
                 src={message.media.url}
-                className="rounded-lg max-h-64 w-auto"
+                className='max-h-64 w-auto rounded-lg'
                 controls
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
                 onEnded={() => setPlaying(false)}
               />
-              <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-1 rounded">
-                <Video className="w-4 h-4" />
+              <div className='bg-opacity-50 absolute top-2 right-2 rounded bg-black p-1 text-white'>
+                <Video className='h-4 w-4' />
               </div>
             </div>
           ) : (
-            <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-lg">
-              <Video className="w-8 h-8 text-gray-400" />
+            <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
+              <Video className='h-8 w-8 text-gray-400' />
               <div>
-                <p className="text-sm font-medium text-gray-900">Video</p>
-                <p className="text-xs text-gray-500">Unable to load video</p>
+                <p className='text-sm font-medium text-gray-900'>Video</p>
+                <p className='text-xs text-gray-500'>Unable to load video</p>
               </div>
             </div>
           )}
-          {message.content && (
-            <p className="mt-2 text-sm text-gray-700">{message.content}</p>
-          )}
+          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
         </div>
       )
 
     case 'audio':
       return (
-        <div className="max-w-xs">
-          <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-lg">
+        <div className='max-w-xs'>
+          <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
             <button
               onClick={handlePlayAudio}
-              className="flex-shrink-0 w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+              className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-white transition-colors hover:bg-blue-600'
             >
-              {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              {playing ? <Pause className='h-4 w-4' /> : <Play className='h-4 w-4' />}
             </button>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-900">Voice Message</p>
+            <div className='flex-1'>
+              <div className='flex items-center justify-between'>
+                <p className='text-sm font-medium text-gray-900'>Voice Message</p>
                 <button
                   onClick={handleDownload}
                   disabled={loading}
-                  className="text-gray-500 hover:text-gray-700"
+                  className='text-gray-500 hover:text-gray-700'
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className='h-4 w-4' />
                 </button>
               </div>
               {message.media && (
-                <p className="text-xs text-gray-500">{formatFileSize(message.media.fileSize)}</p>
+                <p className='text-xs text-gray-500'>{formatFileSize(message.media.fileSize)}</p>
               )}
             </div>
           </div>
@@ -200,60 +208,54 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
               ref={audioRef}
               src={message.media.url}
               onEnded={() => setPlaying(false)}
-              className="hidden"
+              className='hidden'
             />
           )}
-          {message.content && (
-            <p className="mt-2 text-sm text-gray-700">{message.content}</p>
-          )}
+          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
         </div>
       )
 
     case 'document':
       return (
-        <div className="max-w-sm">
-          <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-lg">
-            <FileText className="w-8 h-8 text-gray-400 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+        <div className='max-w-sm'>
+          <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
+            <FileText className='h-8 w-8 flex-shrink-0 text-gray-400' />
+            <div className='min-w-0 flex-1'>
+              <p className='truncate text-sm font-medium text-gray-900'>
                 {message.media?.filename || 'Document'}
               </p>
               {message.media && (
-                <p className="text-xs text-gray-500">{formatFileSize(message.media.fileSize)}</p>
+                <p className='text-xs text-gray-500'>{formatFileSize(message.media.fileSize)}</p>
               )}
             </div>
             <button
               onClick={handleDownload}
               disabled={loading}
-              className="flex-shrink-0 text-gray-500 hover:text-gray-700"
+              className='flex-shrink-0 text-gray-500 hover:text-gray-700'
             >
-              <Download className="w-4 h-4" />
+              <Download className='h-4 w-4' />
             </button>
           </div>
-          {message.content && (
-            <p className="mt-2 text-sm text-gray-700">{message.content}</p>
-          )}
+          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
         </div>
       )
 
     case 'location':
       return (
-        <div className="max-w-sm">
-          <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-lg">
-            <MapPin className="w-8 h-8 text-red-500 flex-shrink-0" />
+        <div className='max-w-sm'>
+          <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
+            <MapPin className='h-8 w-8 flex-shrink-0 text-red-500' />
             <div>
-              <p className="text-sm font-medium text-gray-900">Location</p>
-              <p className="text-xs text-gray-500">Tap to view on map</p>
+              <p className='text-sm font-medium text-gray-900'>Location</p>
+              <p className='text-xs text-gray-500'>Tap to view on map</p>
             </div>
           </div>
-          {message.content && (
-            <p className="mt-2 text-sm text-gray-700">{message.content}</p>
-          )}
+          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
         </div>
       )
 
     default:
-      return <p className="text-sm text-gray-700">{message.content}</p>
+      return <p className='text-sm text-gray-700'>{message.content}</p>
   }
 }
 
@@ -264,7 +266,7 @@ export default function EnhancedMessageList({
   onMessageRead,
   onLoadMore,
   hasMore,
-  loading
+  loading,
 }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const mediaHandler = new WhatsAppMediaHandler('', '') // Would be initialized with proper tokens
@@ -320,11 +322,11 @@ export default function EnhancedMessageList({
     if (message.sender_type !== 'agent') return null
 
     if (message.read_at) {
-      return <CheckCheck className="w-4 h-4 text-blue-500" />
+      return <CheckCheck className='h-4 w-4 text-blue-500' />
     } else if (message.delivered_at) {
-      return <CheckCheck className="w-4 h-4 text-gray-400" />
+      return <CheckCheck className='h-4 w-4 text-gray-400' />
     } else {
-      return <Check className="w-4 h-4 text-gray-400" />
+      return <Check className='h-4 w-4 text-gray-400' />
     }
   }
 
@@ -371,14 +373,14 @@ export default function EnhancedMessageList({
   const messageGroups = groupMessagesByDate(messages)
 
   return (
-    <div className="flex flex-col h-full">
+    <div className='flex h-full flex-col'>
       {/* Load More Button */}
       {hasMore && (
-        <div className="p-4 text-center border-b border-gray-200">
+        <div className='border-b border-gray-200 p-4 text-center'>
           <button
             onClick={onLoadMore}
             disabled={loading}
-            className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+            className='px-4 py-2 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50'
           >
             {loading ? 'Loading...' : 'Load older messages'}
           </button>
@@ -386,32 +388,33 @@ export default function EnhancedMessageList({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className='flex-1 space-y-4 overflow-y-auto p-4'>
         {messageGroups.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
-            <p className="text-lg font-medium mb-2">No messages yet</p>
-            <p className="text-sm">Start the conversation by sending a message</p>
+          <div className='py-8 text-center text-gray-500'>
+            <p className='mb-2 text-lg font-medium'>No messages yet</p>
+            <p className='text-sm'>Start the conversation by sending a message</p>
           </div>
         ) : (
           messageGroups.map((group, groupIndex) => (
             <div key={groupIndex}>
               {/* Date Header */}
-              <div className="text-center mb-4">
-                <span className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+              <div className='mb-4 text-center'>
+                <span className='rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600'>
                   {formatDateHeader(group.date)}
                 </span>
               </div>
 
               {/* Messages in this date group */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 {group.messages.map((message, messageIndex) => {
-                  const isFromCurrentUser = message.sender_type === 'agent' && message.sender_id === currentUserId
+                  const isFromCurrentUser =
+                    message.sender_type === 'agent' && message.sender_id === currentUserId
                   const isSystem = message.sender_type === 'system'
 
                   if (isSystem) {
                     return (
-                      <div key={message.id} className="text-center">
-                        <span className="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-full">
+                      <div key={message.id} className='text-center'>
+                        <span className='rounded-full bg-yellow-100 px-3 py-1 text-xs text-yellow-800'>
                           {message.content}
                         </span>
                       </div>
@@ -426,21 +429,21 @@ export default function EnhancedMessageList({
                       <div className={`max-w-[70%] ${isFromCurrentUser ? 'order-2' : 'order-1'}`}>
                         {/* Sender Avatar (for agent messages from others) */}
                         {!isFromCurrentUser && message.sender_type === 'agent' && (
-                          <div className="flex items-center space-x-2 mb-1">
+                          <div className='mb-1 flex items-center space-x-2'>
                             {message.sender?.avatar_url ? (
                               <img
                                 src={message.sender.avatar_url}
                                 alt={message.sender.full_name}
-                                className="w-6 h-6 rounded-full"
+                                className='h-6 w-6 rounded-full'
                               />
                             ) : (
-                              <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                <span className="text-xs font-medium text-white">
+                              <div className='flex h-6 w-6 items-center justify-center rounded-full bg-blue-500'>
+                                <span className='text-xs font-medium text-white'>
                                   {message.sender?.full_name?.charAt(0) || 'A'}
                                 </span>
                               </div>
                             )}
-                            <span className="text-xs text-gray-500">
+                            <span className='text-xs text-gray-500'>
                               {message.sender?.full_name || 'Agent'}
                             </span>
                           </div>
@@ -454,19 +457,16 @@ export default function EnhancedMessageList({
                               : 'bg-gray-100 text-gray-900'
                           }`}
                         >
-                          <MediaMessage
-                            message={message}
-                            onDownload={handleMediaDownload}
-                          />
+                          <MediaMessage message={message} onDownload={handleMediaDownload} />
                         </div>
 
                         {/* Message Status and Time */}
                         <div
-                          className={`flex items-center mt-1 space-x-1 ${
+                          className={`mt-1 flex items-center space-x-1 ${
                             isFromCurrentUser ? 'justify-end' : 'justify-start'
                           }`}
                         >
-                          <span className="text-xs text-gray-500">
+                          <span className='text-xs text-gray-500'>
                             {formatTime(message.created_at)}
                           </span>
                           {isFromCurrentUser && getDeliveryStatus(message)}

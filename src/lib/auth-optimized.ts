@@ -24,7 +24,8 @@ export const getUserProfile = cache(async () => {
   // Single optimized query with proper join
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select(`
+    .select(
+      `
       *,
       organization:organizations (
         id,
@@ -37,7 +38,8 @@ export const getUserProfile = cache(async () => {
         created_at,
         updated_at
       )
-    `)
+    `
+    )
     .eq('id', user.id)
     .single()
 

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     // Create response that clears all Supabase cookies
     const response = NextResponse.json({
       success: true,
-      message: 'Session cleared successfully'
+      message: 'Session cleared successfully',
     })
 
     // Clear all Supabase-related cookies
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       'sb-refresh-token',
       'supabase-auth-token',
       'sb-egaiyydjgeqlhthxmvbn-auth-token',
-      'sb-egaiyydjgeqlhthxmvbn-auth-token-code-verifier'
+      'sb-egaiyydjgeqlhthxmvbn-auth-token-code-verifier',
     ]
 
     cookieNames.forEach(name => {
@@ -38,9 +38,6 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Clear session API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

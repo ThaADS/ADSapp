@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type { Profile } from '@/types/database'
 
 // =============================================================================
@@ -279,13 +278,7 @@ export const allUsers: Profile[] = [
   spanishUser,
 ]
 
-export const activeUsers: Profile[] = [
-  ownerUser,
-  adminUser,
-  agentUser,
-  agentUser2,
-  spanishUser,
-]
+export const activeUsers: Profile[] = [ownerUser, adminUser, agentUser, agentUser2, spanishUser]
 
 export const orgTestUsers: Profile[] = [
   ownerUser,
@@ -308,21 +301,21 @@ export const agentUsers: Profile[] = [agentUser, agentUser2, spanishUser]
  * Gets user by ID
  */
 export function getUserById(id: string): Profile | undefined {
-  return allUsers.find((user) => user.id === id)
+  return allUsers.find(user => user.id === id)
 }
 
 /**
  * Gets users by role
  */
 export function getUsersByRole(role: string): Profile[] {
-  return allUsers.filter((user) => user.role === role)
+  return allUsers.filter(user => user.role === role)
 }
 
 /**
  * Gets users by organization
  */
 export function getUsersByOrganization(organizationId: string): Profile[] {
-  return allUsers.filter((user) => user.organization_id === organizationId)
+  return allUsers.filter(user => user.organization_id === organizationId)
 }
 
 /**

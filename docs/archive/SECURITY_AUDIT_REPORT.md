@@ -15,6 +15,7 @@
 **Classification:** MEDIUM RISK - Production deployment requires immediate remediation of critical vulnerabilities
 
 ### Critical Findings Summary
+
 - **Critical Issues:** 8
 - **High Priority Issues:** 12
 - **Medium Priority Issues:** 15
@@ -22,12 +23,14 @@
 - **Total Vulnerabilities:** 42
 
 ### Compliance Status
+
 - **OWASP Top 10:** 65% Coverage ⚠️
 - **GDPR Readiness:** 60% ⚠️
 - **SOC 2 Type II:** 45% 🔴
 - **Multi-Tenant Isolation:** 75% ⚠️
 
 ### Business Impact Assessment
+
 - **Data Breach Risk:** HIGH 🔴
 - **Cross-Tenant Data Leakage Risk:** MEDIUM-HIGH ⚠️
 - **Regulatory Compliance Risk:** HIGH 🔴
@@ -40,6 +43,7 @@
 ### 🔴 CRITICAL: Incomplete Tenant Isolation (Score: 75/100)
 
 #### Current State
+
 - Row Level Security (RLS) policies implemented
 - Basic organization_id filtering in API routes
 - Tenant routing middleware in place
@@ -48,6 +52,7 @@
 #### Vulnerabilities Identified
 
 **C-001: Missing Tenant Validation in API Middleware** [CRITICAL]
+
 - **Location:** `src/lib/api-middleware.ts`
 - **Risk:** Cross-tenant data access possible through API manipulation
 - **Evidence:**
@@ -63,6 +68,7 @@
 - **CWE:** CWE-639 (Authorization Bypass Through User-Controlled Key)
 
 **C-002: RLS Policy Gaps in Database Schema** [CRITICAL]
+
 - **Location:** `supabase/migrations/001_initial_schema.sql`
 - **Risk:** Some tables missing comprehensive RLS policies
 - **Evidence:**
@@ -73,18 +79,20 @@
 - **Recommendation:** Add complete CRUD RLS policies for all tenant-scoped tables
 
 **H-001: Tenant Context Header Injection Risk** [HIGH]
+
 - **Location:** `src/middleware/tenant-routing.ts`
 - **Risk:** Tenant headers (`x-tenant-id`, `x-tenant-subdomain`) set by middleware can be spoofed
 - **Evidence:**
   ```typescript
   // Lines 236-247: Headers set without cryptographic signing
-  response.headers.set('x-tenant-id', tenantContext.organizationId);
-  response.headers.set('x-tenant-subdomain', tenantContext.subdomain || '');
+  response.headers.set('x-tenant-id', tenantContext.organizationId)
+  response.headers.set('x-tenant-subdomain', tenantContext.subdomain || '')
   ```
 - **Impact:** Privilege escalation through header manipulation in downstream services
 - **Recommendation:** Implement signed JWT tokens for tenant context instead of plain headers
 
 **H-002: Missing Tenant ID Validation in Database Queries** [HIGH]
+
 - **Location:** Multiple API routes
 - **Risk:** Direct database queries without tenant validation
 - **Example:** `src/app/api/contacts/route.ts` - Direct Supabase queries without explicit tenant checks in code
@@ -94,30 +102,34 @@
 ### Remediation Plan - Multi-Tenant Isolation
 
 #### Phase 1: Immediate (Critical - 1-3 days)
+
 1. **Implement Universal Tenant Validation Middleware**
+
    ```typescript
    // src/lib/api-middleware.ts enhancement
-   export const withTenantValidation = (handler) => {
+   export const withTenantValidation = handler => {
      return withApiMiddleware(handler, {
        requireOrganization: true,
        validation: {
-         body: (body) => {
+         body: body => {
            // Validate organization_id in request matches user's organization
            if (body.organization_id && body.organization_id !== context.profile.organization_id) {
-             throw new ApiException('Organization mismatch', 403, 'TENANT_VIOLATION');
+             throw new ApiException('Organization mismatch', 403, 'TENANT_VIOLATION')
            }
-           return { success: true };
-         }
-       }
-     });
-   };
+           return { success: true }
+         },
+       },
+     })
+   }
    ```
+
    - **Files to Update:** All `/src/app/api/**/*.ts` routes
    - **Testing:** Automated tests for cross-tenant access attempts
    - **Complexity:** 4/5
    - **Time:** 2 days
 
 2. **Complete RLS Policy Coverage**
+
    ```sql
    -- Add missing RLS policies
    CREATE POLICY "Tenant isolation for webhook_logs INSERT" ON webhook_logs
@@ -134,51 +146,57 @@
      )
    );
    ```
+
    - **Files to Create:** `supabase/migrations/008_complete_rls_policies.sql`
    - **Testing:** RLS policy test suite
    - **Complexity:** 3/5
    - **Time:** 1 day
 
 #### Phase 2: High Priority (1 week)
+
 3. **Implement Signed Tenant Context Tokens**
+
    ```typescript
    // src/lib/tenant-context.ts
-   import jwt from 'jsonwebtoken';
+   import jwt from 'jsonwebtoken'
 
    export function generateTenantContextToken(organizationId: string, subdomain: string) {
      return jwt.sign(
        { organizationId, subdomain, iat: Math.floor(Date.now() / 1000) },
        process.env.TENANT_CONTEXT_SECRET!,
        { expiresIn: '1h', algorithm: 'HS256' }
-     );
+     )
    }
 
    export function verifyTenantContextToken(token: string) {
-     return jwt.verify(token, process.env.TENANT_CONTEXT_SECRET!);
+     return jwt.verify(token, process.env.TENANT_CONTEXT_SECRET!)
    }
    ```
+
    - **Integration:** Replace plain headers with JWT in middleware
    - **Environment Variable:** Add `TENANT_CONTEXT_SECRET`
    - **Complexity:** 4/5
    - **Time:** 3 days
 
 4. **Automated Tenant Isolation Testing**
+
    ```typescript
    // tests/security/tenant-isolation.test.ts
    describe('Tenant Isolation Tests', () => {
      test('User cannot access other tenant data via API', async () => {
-       const tenantAUser = await createTestUser('tenant-a');
-       const tenantBData = await createTestData('tenant-b');
+       const tenantAUser = await createTestUser('tenant-a')
+       const tenantBData = await createTestData('tenant-b')
 
        const response = await request(app)
          .get(`/api/contacts/${tenantBData.contactId}`)
-         .set('Authorization', `Bearer ${tenantAUser.token}`);
+         .set('Authorization', `Bearer ${tenantAUser.token}`)
 
-       expect(response.status).toBe(403);
-       expect(response.body.error).toContain('TENANT_VIOLATION');
-     });
-   });
+       expect(response.status).toBe(403)
+       expect(response.body.error).toContain('TENANT_VIOLATION')
+     })
+   })
    ```
+
    - **Coverage Target:** 100% of API routes
    - **CI/CD Integration:** Required
    - **Complexity:** 3/5
@@ -191,6 +209,7 @@
 ### ⚠️ HIGH: Authentication Security Gaps (Score: 68/100)
 
 #### Current State
+
 - Supabase Auth integration (JWT-based)
 - Basic password policies implemented
 - Role-based access control (RBAC) present
@@ -200,6 +219,7 @@
 #### Vulnerabilities Identified
 
 **C-003: No Multi-Factor Authentication (MFA)** [CRITICAL]
+
 - **Location:** Authentication system
 - **Risk:** Account takeover through credential compromise
 - **Evidence:** No MFA implementation found in codebase
@@ -209,6 +229,7 @@
 - **CWE:** CWE-308 (Use of Single-factor Authentication)
 
 **C-004: Weak Session Management** [CRITICAL]
+
 - **Location:** `src/lib/session-management.ts`
 - **Risk:** Session fixation, session hijacking vulnerabilities
 - **Evidence:**
@@ -221,6 +242,7 @@
 - **Recommendation:** Implement session rotation, device fingerprinting, and suspicious activity detection
 
 **H-003: Insufficient Password Policy Enforcement** [HIGH]
+
 - **Location:** `src/lib/security/validation.ts`
 - **Risk:** Weak passwords allowed despite validation schema
 - **Evidence:**
@@ -235,6 +257,7 @@
 - **CVSS Score:** 7.4 (High)
 
 **H-004: Missing Rate Limiting on Authentication Endpoints** [HIGH]
+
 - **Location:** `src/app/api/auth/signin/route.ts`
 - **Risk:** Brute force attacks on login
 - **Evidence:** No rate limiting middleware applied to signin route
@@ -243,18 +266,20 @@
 - **Impact:** Account enumeration, credential stuffing attacks
 
 **H-005: Super Admin Privilege Escalation Risk** [HIGH]
+
 - **Location:** `src/lib/super-admin.ts`, `src/app/api/admin/dashboard/route.ts`
 - **Risk:** Weak super admin validation allows potential escalation
 - **Evidence:**
   ```typescript
   // Line 23 in admin/dashboard/route.ts:
-  return profile.role === 'owner' || profile.is_super_admin === true;
+  return profile.role === 'owner' || profile.is_super_admin === true
   // Problem: 'owner' role grants super admin access without explicit flag
   ```
 - **Impact:** Regular organization owners could potentially access super admin functions
 - **Recommendation:** Require explicit `is_super_admin === true` AND separate super admin session token
 
 **M-001: No JWT Token Revocation Mechanism** [MEDIUM]
+
 - **Location:** JWT authentication system
 - **Risk:** Compromised tokens remain valid until expiration
 - **Evidence:** No token blacklist or revocation list implementation
@@ -262,6 +287,7 @@
 - **Recommendation:** Implement Redis-based token blacklist or short-lived tokens with refresh mechanism
 
 **M-002: Missing Account Lockout Policy** [MEDIUM]
+
 - **Location:** Authentication system
 - **Risk:** Brute force attacks not effectively prevented
 - **Evidence:** No account lockout after repeated failed login attempts
@@ -272,46 +298,44 @@
 #### Phase 1: Critical (Immediate - 3-5 days)
 
 1. **Implement Multi-Factor Authentication (2FA/TOTP)**
+
    ```typescript
    // src/lib/mfa-implementation.ts
-   import speakeasy from 'speakeasy';
-   import QRCode from 'qrcode';
+   import speakeasy from 'speakeasy'
+   import QRCode from 'qrcode'
 
    export async function enableMFA(userId: string) {
      const secret = speakeasy.generateSecret({
        name: `ADSapp (${userEmail})`,
-       length: 32
-     });
+       length: 32,
+     })
 
      // Store secret in profiles.mfa_secret (encrypted)
      await supabase
        .from('profiles')
        .update({
          mfa_secret: encrypt(secret.base32),
-         mfa_enabled: false // Enable after verification
+         mfa_enabled: false, // Enable after verification
        })
-       .eq('id', userId);
+       .eq('id', userId)
 
-     const qrCode = await QRCode.toDataURL(secret.otpauth_url);
-     return { secret: secret.base32, qrCode };
+     const qrCode = await QRCode.toDataURL(secret.otpauth_url)
+     return { secret: secret.base32, qrCode }
    }
 
    export async function verifyMFA(userId: string, token: string) {
-     const { data } = await supabase
-       .from('profiles')
-       .select('mfa_secret')
-       .eq('id', userId)
-       .single();
+     const { data } = await supabase.from('profiles').select('mfa_secret').eq('id', userId).single()
 
-     const secret = decrypt(data.mfa_secret);
+     const secret = decrypt(data.mfa_secret)
      return speakeasy.totp.verify({
        secret,
        encoding: 'base32',
        token,
-       window: 2 // Allow 60 second time drift
-     });
+       window: 2, // Allow 60 second time drift
+     })
    }
    ```
+
    - **Database Migration:** Add `mfa_secret` (encrypted), `mfa_enabled`, `mfa_backup_codes` to profiles
    - **UI Components:** MFA setup wizard, verification input
    - **Enforcement:** Optional initially, mandatory for admin roles
@@ -320,18 +344,19 @@
    - **Dependencies:** `speakeasy`, `qrcode`, encryption library
 
 2. **Implement Session Security Hardening**
+
    ```typescript
    // src/lib/secure-session.ts
-   import crypto from 'crypto';
+   import crypto from 'crypto'
 
    export interface SecureSessionContext {
-     userId: string;
-     organizationId: string;
-     deviceFingerprint: string;
-     ipAddress: string;
-     userAgent: string;
-     createdAt: number;
-     lastActivity: number;
+     userId: string
+     organizationId: string
+     deviceFingerprint: string
+     ipAddress: string
+     userAgent: string
+     createdAt: number
+     lastActivity: number
    }
 
    export function generateDeviceFingerprint(req: Request): string {
@@ -340,57 +365,60 @@
        req.headers.get('accept-language'),
        req.headers.get('accept-encoding'),
        // Add more browser fingerprinting data
-     ];
-     return crypto.createHash('sha256').update(components.join('|')).digest('hex');
+     ]
+     return crypto.createHash('sha256').update(components.join('|')).digest('hex')
    }
 
    export async function validateSession(sessionId: string, req: Request): Promise<boolean> {
-     const session = await redis.get(`session:${sessionId}`);
-     if (!session) return false;
+     const session = await redis.get(`session:${sessionId}`)
+     if (!session) return false
 
-     const currentFingerprint = generateDeviceFingerprint(req);
-     const currentIp = getClientIP(req);
+     const currentFingerprint = generateDeviceFingerprint(req)
+     const currentIp = getClientIP(req)
 
      // Strict validation
      if (session.deviceFingerprint !== currentFingerprint) {
-       await logSuspiciousActivity('device_mismatch', session.userId);
-       return false;
+       await logSuspiciousActivity('device_mismatch', session.userId)
+       return false
      }
 
      // IP change detection (warning, not block - mobile users change IPs)
      if (session.ipAddress !== currentIp) {
        await logSuspiciousActivity('ip_change', session.userId, {
          oldIp: session.ipAddress,
-         newIp: currentIp
-       });
+         newIp: currentIp,
+       })
      }
 
      // Update last activity
-     session.lastActivity = Date.now();
-     await redis.set(`session:${sessionId}`, JSON.stringify(session), 'EX', 3600);
+     session.lastActivity = Date.now()
+     await redis.set(`session:${sessionId}`, JSON.stringify(session), 'EX', 3600)
 
-     return true;
+     return true
    }
    ```
+
    - **Session Storage:** Migrate to Redis for centralized session management
    - **Session Rotation:** After login, privilege change, sensitive operations
    - **Complexity:** 4/5
    - **Time:** 2 days
 
 3. **Implement Authentication Rate Limiting**
+
    ```typescript
    // Update src/app/api/auth/signin/route.ts
-   import { authRateLimit } from '@/lib/security/rate-limit';
+   import { authRateLimit } from '@/lib/security/rate-limit'
 
    export async function POST(request: NextRequest) {
      // Apply strict rate limiting
-     const rateLimitResult = await authRateLimit(request);
-     if (rateLimitResult) return rateLimitResult; // 429 Too Many Requests
+     const rateLimitResult = await authRateLimit(request)
+     if (rateLimitResult) return rateLimitResult // 429 Too Many Requests
 
      // Existing authentication logic
      // ...
    }
    ```
+
    - **Rate Limits:**
      - Login: 5 attempts / 15 minutes per IP
      - Password Reset: 3 attempts / 1 hour per email
@@ -402,81 +430,85 @@
 #### Phase 2: High Priority (1 week)
 
 4. **Password Security Enhancements**
+
    ```typescript
    // src/lib/password-security.ts
-   import { pwnedPassword } from 'hibp';
+   import { pwnedPassword } from 'hibp'
 
    export async function validatePasswordSecurity(password: string): Promise<{
-     isSecure: boolean;
-     issues: string[];
+     isSecure: boolean
+     issues: string[]
    }> {
-     const issues: string[] = [];
+     const issues: string[] = []
 
      // Check against HaveIBeenPwned database
-     const breachCount = await pwnedPassword(password);
+     const breachCount = await pwnedPassword(password)
      if (breachCount > 0) {
-       issues.push(`Password found in ${breachCount} data breaches`);
+       issues.push(`Password found in ${breachCount} data breaches`)
      }
 
      // Check password history (last 5 passwords)
-     const user = await getCurrentUser();
-     const hashedPassword = await hash(password);
+     const user = await getCurrentUser()
+     const hashedPassword = await hash(password)
      const { data: history } = await supabase
        .from('password_history')
        .select('password_hash')
        .eq('user_id', user.id)
        .order('created_at', { ascending: false })
-       .limit(5);
+       .limit(5)
 
      for (const old of history || []) {
        if (await compare(password, old.password_hash)) {
-         issues.push('Password was used recently');
-         break;
+         issues.push('Password was used recently')
+         break
        }
      }
 
      return {
        isSecure: issues.length === 0,
-       issues
-     };
+       issues,
+     }
    }
    ```
+
    - **Database Migration:** Create `password_history` table
    - **Password Rotation:** Enforce 90-day password change for admin accounts
    - **Complexity:** 3/5
    - **Time:** 2 days
 
 5. **JWT Token Management & Revocation**
+
    ```typescript
    // src/lib/token-management.ts
-   import Redis from 'ioredis';
+   import Redis from 'ioredis'
 
-   const redis = new Redis(process.env.REDIS_URL);
+   const redis = new Redis(process.env.REDIS_URL)
 
    export async function revokeToken(token: string, reason: string) {
-     const decoded = jwt.decode(token);
-     const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
+     const decoded = jwt.decode(token)
+     const expiresIn = decoded.exp - Math.floor(Date.now() / 1000)
 
      await redis.setex(
        `revoked:${token}`,
        expiresIn,
        JSON.stringify({ reason, revokedAt: Date.now() })
-     );
+     )
    }
 
    export async function isTokenRevoked(token: string): Promise<boolean> {
-     const revoked = await redis.get(`revoked:${token}`);
-     return revoked !== null;
+     const revoked = await redis.get(`revoked:${token}`)
+     return revoked !== null
    }
 
    // Middleware integration
    export async function validateJWT(token: string) {
      if (await isTokenRevoked(token)) {
-       throw new Error('Token has been revoked');
+       throw new Error('Token has been revoked')
      }
      // Continue with standard JWT validation
    }
    ```
+
    - **Infrastructure:** Redis instance required
    - **Integration:** Update auth middleware to check revocation
    - **Use Cases:** Logout, password change, role change, suspicious activity
@@ -490,6 +522,7 @@
 ### ⚠️ MEDIUM-HIGH: API Security Vulnerabilities (Score: 70/100)
 
 #### Current State
+
 - Basic input validation with Zod schemas
 - Rate limiting implemented (but not universally applied)
 - CORS configuration present
@@ -499,6 +532,7 @@
 #### Vulnerabilities Identified
 
 **H-006: Incomplete Input Validation Coverage** [HIGH]
+
 - **Location:** Multiple API routes
 - **Risk:** Injection attacks (SQL, NoSQL, XSS)
 - **Evidence:**
@@ -510,6 +544,7 @@
 - **CWE:** CWE-20 (Improper Input Validation)
 
 **H-007: Missing Content Security Policy (CSP) Bypass Risk** [HIGH]
+
 - **Location:** `next.config.ts`
 - **Risk:** Current CSP allows 'unsafe-inline' and 'unsafe-eval'
 - **Evidence:**
@@ -521,6 +556,7 @@
 - **Recommendation:** Remove 'unsafe-inline' and 'unsafe-eval', implement nonce-based CSP
 
 **H-008: SQL Injection Risk Through Supabase RPC Functions** [HIGH]
+
 - **Location:** `src/lib/super-admin.ts` and other locations using `.rpc()`
 - **Risk:** Dynamic SQL in RPC functions without parameter sanitization
 - **Evidence:**
@@ -536,6 +572,7 @@
 - **Recommendation:** Audit all Supabase RPC functions for SQL injection vulnerabilities
 
 **M-003: Insufficient Rate Limiting on Expensive Operations** [MEDIUM]
+
 - **Location:** Various API routes
 - **Risk:** Resource exhaustion attacks
 - **Evidence:**
@@ -546,6 +583,7 @@
 - **Recommendation:** Implement operation-specific rate limits
 
 **M-004: Missing API Request/Response Logging** [MEDIUM]
+
 - **Location:** API middleware
 - **Risk:** Security incidents difficult to investigate
 - **Evidence:** Logging optional in middleware (`logging: true` not enforced)
@@ -553,6 +591,7 @@
 - **Recommendation:** Mandatory logging for all API requests with retention policy
 
 **M-005: Error Messages Leak Implementation Details** [MEDIUM]
+
 - **Location:** Multiple API routes
 - **Risk:** Information disclosure through error messages
 - **Evidence:** Stack traces, database error messages exposed in responses
@@ -560,6 +599,7 @@
 - **Recommendation:** Generic error messages for clients, detailed logging server-side
 
 **L-001: Missing API Versioning Strategy** [LOW]
+
 - **Location:** API routes
 - **Risk:** Breaking changes impact clients
 - **Evidence:** No `/api/v1/` versioning pattern
@@ -571,9 +611,10 @@
 #### Phase 1: High Priority (5-7 days)
 
 1. **Universal Input Validation Enforcement**
+
    ```typescript
    // src/lib/api-validation.ts
-   import { z } from 'zod';
+   import { z } from 'zod'
 
    // Create validation schemas for all routes
    export const contactSchema = z.object({
@@ -582,34 +623,38 @@
      email: emailSchema.optional(),
      tags: z.array(z.string().max(50)).max(20),
      notes: sanitizedTextSchema.optional(),
-   });
+   })
 
    export const bulkMessageSchema = z.object({
      recipientIds: z.array(z.string().uuid()).min(1).max(1000),
      templateId: z.string().uuid(),
      variables: z.record(z.string(), z.string()).optional(),
-   });
+   })
 
    // Middleware wrapper requiring validation
    export const withValidation = <T>(schema: z.ZodSchema<T>, handler) => {
      return async (req: NextRequest) => {
-       const body = await req.json();
-       const result = schema.safeParse(body);
+       const body = await req.json()
+       const result = schema.safeParse(body)
 
        if (!result.success) {
-         return NextResponse.json({
-           error: 'Validation failed',
-           details: result.error.issues.map(i => ({
-             field: i.path.join('.'),
-             message: i.message
-           }))
-         }, { status: 400 });
+         return NextResponse.json(
+           {
+             error: 'Validation failed',
+             details: result.error.issues.map(i => ({
+               field: i.path.join('.'),
+               message: i.message,
+             })),
+           },
+           { status: 400 }
+         )
        }
 
-       return handler(req, result.data);
-     };
-   };
+       return handler(req, result.data)
+     }
+   }
    ```
+
    - **Task:** Create validation schemas for all 60+ API routes
    - **Apply:** Wrap all POST/PUT/PATCH routes with validation middleware
    - **Testing:** Integration tests for each schema
@@ -617,6 +662,7 @@
    - **Time:** 4 days
 
 2. **Implement Strict Content Security Policy**
+
    ```typescript
    // next.config.ts update
    {
@@ -637,6 +683,7 @@
      ].join('; '),
    }
    ```
+
    - **Implementation:** Nonce generation middleware
    - **Update:** All inline scripts/styles to use nonces
    - **Testing:** Verify no CSP violations in production
@@ -644,6 +691,7 @@
    - **Time:** 2 days
 
 3. **Audit Supabase RPC Functions for SQL Injection**
+
    ```sql
    -- Example secure RPC function
    CREATE OR REPLACE FUNCTION log_super_admin_action(
@@ -681,6 +729,7 @@
    END;
    $$ LANGUAGE plpgsql SECURITY DEFINER;
    ```
+
    - **Task:** Review all 15+ RPC functions
    - **Fix:** Ensure parameterized queries, no dynamic SQL concatenation
    - **Testing:** SQL injection penetration testing
@@ -690,6 +739,7 @@
 #### Phase 2: Medium Priority (1-2 weeks)
 
 4. **Implement Operation-Specific Rate Limiting**
+
    ```typescript
    // src/lib/security/advanced-rate-limit.ts
    export const rateLimitConfig = {
@@ -701,13 +751,14 @@
      // Resource-intensive queries
      searchConversations: createRateLimit({ windowMs: 60000, maxRequests: 30 }),
      generateReport: createRateLimit({ windowMs: 60000, maxRequests: 10 }),
-   };
+   }
 
    // Apply to routes
-   export const POST = withStrictRateLimit(async (req) => {
+   export const POST = withStrictRateLimit(async req => {
      // Bulk message logic
-   });
+   })
    ```
+
    - **Configuration:** Per-endpoint rate limit profiles
    - **Storage:** Redis for distributed rate limiting
    - **Monitoring:** Rate limit breach alerts
@@ -715,13 +766,18 @@
    - **Time:** 3 days
 
 5. **Mandatory API Audit Logging**
+
    ```typescript
    // src/lib/api-audit-logger.ts
-   export async function logApiRequest(req: NextRequest, res: NextResponse, context: {
-     user?: { id: string; email: string };
-     duration: number;
-     error?: Error;
-   }) {
+   export async function logApiRequest(
+     req: NextRequest,
+     res: NextResponse,
+     context: {
+       user?: { id: string; email: string }
+       duration: number
+       error?: Error
+     }
+   ) {
      const log = {
        timestamp: new Date().toISOString(),
        method: req.method,
@@ -735,17 +791,18 @@
        duration: context.duration,
        error: context.error?.message,
        errorStack: context.error?.stack,
-     };
+     }
 
      // Store in database with retention policy
-     await supabase.from('api_audit_logs').insert(log);
+     await supabase.from('api_audit_logs').insert(log)
 
      // Stream to SIEM if available
      if (process.env.SIEM_ENDPOINT) {
-       await sendToSIEM(log);
+       await sendToSIEM(log)
      }
    }
    ```
+
    - **Retention:** 90 days for compliance
    - **Analysis:** Enable security analytics
    - **Alerting:** Suspicious pattern detection
@@ -759,6 +816,7 @@
 ### 🔴 CRITICAL: Data Protection Deficiencies (Score: 55/100)
 
 #### Current State
+
 - Supabase handles encryption at rest (AES-256)
 - HTTPS enforced for data in transit
 - **Missing:** Application-level encryption for PII, encryption key management, data classification, data retention policies, secure deletion
@@ -766,6 +824,7 @@
 #### Vulnerabilities Identified
 
 **C-005: No Application-Level Encryption for Sensitive Data** [CRITICAL]
+
 - **Location:** Database schema, message storage
 - **Risk:** Database breach exposes plaintext sensitive data
 - **Evidence:**
@@ -779,6 +838,7 @@
 - **Regulatory Impact:** GDPR fines up to 4% of global revenue
 
 **C-006: Missing Encryption Key Management** [CRITICAL]
+
 - **Location:** Application configuration
 - **Risk:** Encryption keys stored insecurely or not rotated
 - **Evidence:**
@@ -789,6 +849,7 @@
 - **Recommendation:** Integrate AWS KMS, Azure Key Vault, or HashiCorp Vault
 
 **C-007: Inadequate Data Retention & Deletion** [CRITICAL]
+
 - **Location:** Data lifecycle management
 - **Risk:** GDPR "Right to be Forgotten" non-compliance
 - **Evidence:**
@@ -800,6 +861,7 @@
 - **GDPR Violation:** Articles 5(e), 17
 
 **H-009: Logs Contain Sensitive Data** [HIGH]
+
 - **Location:** Application logging, webhook logs
 - **Risk:** PII exposed in log files
 - **Evidence:**
@@ -810,6 +872,7 @@
 - **Recommendation:** Implement log redaction for sensitive fields
 
 **H-010: Missing Data Classification System** [HIGH]
+
 - **Location:** Database schema
 - **Risk:** Inconsistent handling of sensitive data
 - **Evidence:** No data classification metadata (public/internal/confidential/restricted)
@@ -817,6 +880,7 @@
 - **Recommendation:** Implement data classification tags and policies
 
 **M-006: Insecure Media File Storage** [MEDIUM]
+
 - **Location:** `src/lib/media/storage.ts`
 - **Risk:** Uploaded media files lack access control verification
 - **Evidence:** Media URLs potentially accessible without authentication
@@ -824,6 +888,7 @@
 - **Recommendation:** Implement pre-signed URLs with expiration
 
 **M-007: Backup Encryption Status Unknown** [MEDIUM]
+
 - **Location:** Supabase configuration
 - **Risk:** Backup files may be unencrypted or use weak encryption
 - **Evidence:** No documentation on backup encryption standards
@@ -835,57 +900,64 @@
 #### Phase 1: Critical (Immediate - 1 week)
 
 1. **Implement Field-Level Encryption for Sensitive Data**
+
    ```typescript
    // src/lib/encryption/field-encryption.ts
-   import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-   import { getKMSClient } from './kms-client';
+   import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
+   import { getKMSClient } from './kms-client'
 
-   const ALGORITHM = 'aes-256-gcm';
-   const IV_LENGTH = 16;
-   const AUTH_TAG_LENGTH = 16;
+   const ALGORITHM = 'aes-256-gcm'
+   const IV_LENGTH = 16
+   const AUTH_TAG_LENGTH = 16
 
-   export async function encryptField(plaintext: string, context: {
-     fieldName: string;
-     recordId: string;
-     organizationId: string;
-   }): Promise<string> {
+   export async function encryptField(
+     plaintext: string,
+     context: {
+       fieldName: string
+       recordId: string
+       organizationId: string
+     }
+   ): Promise<string> {
      // Get data encryption key from KMS
-     const dek = await getKMSClient().getDataEncryptionKey(context.organizationId);
+     const dek = await getKMSClient().getDataEncryptionKey(context.organizationId)
 
-     const iv = randomBytes(IV_LENGTH);
-     const cipher = createCipheriv(ALGORITHM, Buffer.from(dek, 'hex'), iv);
+     const iv = randomBytes(IV_LENGTH)
+     const cipher = createCipheriv(ALGORITHM, Buffer.from(dek, 'hex'), iv)
 
      // Include context for authenticated encryption
-     const contextString = JSON.stringify(context);
-     cipher.setAAD(Buffer.from(contextString));
+     const contextString = JSON.stringify(context)
+     cipher.setAAD(Buffer.from(contextString))
 
-     let encrypted = cipher.update(plaintext, 'utf8', 'hex');
-     encrypted += cipher.final('hex');
-     const authTag = cipher.getAuthTag();
+     let encrypted = cipher.update(plaintext, 'utf8', 'hex')
+     encrypted += cipher.final('hex')
+     const authTag = cipher.getAuthTag()
 
      // Format: iv:authTag:encrypted
-     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
+     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`
    }
 
-   export async function decryptField(encrypted: string, context: {
-     fieldName: string;
-     recordId: string;
-     organizationId: string;
-   }): Promise<string> {
-     const [ivHex, authTagHex, encryptedData] = encrypted.split(':');
+   export async function decryptField(
+     encrypted: string,
+     context: {
+       fieldName: string
+       recordId: string
+       organizationId: string
+     }
+   ): Promise<string> {
+     const [ivHex, authTagHex, encryptedData] = encrypted.split(':')
 
-     const dek = await getKMSClient().getDataEncryptionKey(context.organizationId);
-     const iv = Buffer.from(ivHex, 'hex');
-     const authTag = Buffer.from(authTagHex, 'hex');
+     const dek = await getKMSClient().getDataEncryptionKey(context.organizationId)
+     const iv = Buffer.from(ivHex, 'hex')
+     const authTag = Buffer.from(authTagHex, 'hex')
 
-     const decipher = createDecipheriv(ALGORITHM, Buffer.from(dek, 'hex'), iv);
-     decipher.setAuthTag(authTag);
-     decipher.setAAD(Buffer.from(JSON.stringify(context)));
+     const decipher = createDecipheriv(ALGORITHM, Buffer.from(dek, 'hex'), iv)
+     decipher.setAuthTag(authTag)
+     decipher.setAAD(Buffer.from(JSON.stringify(context)))
 
-     let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-     decrypted += decipher.final('utf8');
+     let decrypted = decipher.update(encryptedData, 'hex', 'utf8')
+     decrypted += decipher.final('utf8')
 
-     return decrypted;
+     return decrypted
    }
 
    // Database model wrapper
@@ -894,31 +966,32 @@
        const encryptedContent = await encryptField(content, {
          fieldName: 'content',
          recordId: conversationId,
-         organizationId
-       });
+         organizationId,
+       })
 
        await supabase.from('messages').insert({
          conversation_id: conversationId,
          content: encryptedContent,
-         is_encrypted: true
-       });
+         is_encrypted: true,
+       })
      }
 
      static async getMessage(id: string) {
-       const { data } = await supabase.from('messages').select('*').eq('id', id).single();
+       const { data } = await supabase.from('messages').select('*').eq('id', id).single()
 
        if (data.is_encrypted) {
          data.content = await decryptField(data.content, {
            fieldName: 'content',
            recordId: data.conversation_id,
-           organizationId: data.organization_id
-         });
+           organizationId: data.organization_id,
+         })
        }
 
-       return data;
+       return data
      }
    }
    ```
+
    - **Fields to Encrypt:**
      - `messages.content`
      - `contacts.phone_number`
@@ -931,25 +1004,26 @@
    - **Dependencies:** KMS integration (next task)
 
 2. **Integrate Key Management Service (KMS)**
+
    ```typescript
    // src/lib/encryption/kms-client.ts
-   import { KMSClient, GenerateDataKeyCommand, DecryptCommand } from '@aws-sdk/client-kms';
+   import { KMSClient, GenerateDataKeyCommand, DecryptCommand } from '@aws-sdk/client-kms'
 
    class KMSService {
-     private client: KMSClient;
-     private masterKeyId: string;
-     private cache: Map<string, { key: string; expiresAt: number }> = new Map();
+     private client: KMSClient
+     private masterKeyId: string
+     private cache: Map<string, { key: string; expiresAt: number }> = new Map()
 
      constructor() {
-       this.client = new KMSClient({ region: process.env.AWS_REGION });
-       this.masterKeyId = process.env.KMS_MASTER_KEY_ID!;
+       this.client = new KMSClient({ region: process.env.AWS_REGION })
+       this.masterKeyId = process.env.KMS_MASTER_KEY_ID!
      }
 
      async getDataEncryptionKey(organizationId: string): Promise<string> {
        // Check cache first (TTL: 1 hour)
-       const cached = this.cache.get(organizationId);
+       const cached = this.cache.get(organizationId)
        if (cached && cached.expiresAt > Date.now()) {
-         return cached.key;
+         return cached.key
        }
 
        // Generate new DEK for this organization
@@ -958,36 +1032,37 @@
          KeySpec: 'AES_256',
          EncryptionContext: {
            OrganizationId: organizationId,
-           Purpose: 'field-encryption'
-         }
-       });
+           Purpose: 'field-encryption',
+         },
+       })
 
-       const response = await this.client.send(command);
-       const plainKey = Buffer.from(response.Plaintext!).toString('hex');
+       const response = await this.client.send(command)
+       const plainKey = Buffer.from(response.Plaintext!).toString('hex')
 
        // Cache the key
        this.cache.set(organizationId, {
          key: plainKey,
-         expiresAt: Date.now() + 3600000 // 1 hour
-       });
+         expiresAt: Date.now() + 3600000, // 1 hour
+       })
 
        // Store encrypted DEK in database for key rotation
-       await this.storeEncryptedDEK(organizationId, response.CiphertextBlob!);
+       await this.storeEncryptedDEK(organizationId, response.CiphertextBlob!)
 
-       return plainKey;
+       return plainKey
      }
 
      async rotateKeys() {
        // Clear cache to force new key generation
-       this.cache.clear();
+       this.cache.clear()
 
        // Re-encrypt all sensitive data with new keys
        // This is a background job that runs periodically
      }
    }
 
-   export const kmsService = new KMSService();
+   export const kmsService = new KMSService()
    ```
+
    - **KMS Provider Options:**
      - AWS KMS (recommended for AWS deployments)
      - Azure Key Vault (for Azure)
@@ -1001,6 +1076,7 @@
    - **Time:** 3 days
 
 3. **Implement GDPR-Compliant Data Retention & Deletion**
+
    ```typescript
    // src/lib/data-lifecycle/retention-policies.ts
    export const retentionPolicies = {
@@ -1024,68 +1100,74 @@
        deletionMethod: 'hard',
        archiveBefore: false,
      },
-   };
+   }
 
    export async function applyRetentionPolicy(tableName: string) {
-     const policy = retentionPolicies[tableName];
-     if (!policy) return;
+     const policy = retentionPolicies[tableName]
+     if (!policy) return
 
-     const cutoffDate = new Date();
-     cutoffDate.setDate(cutoffDate.getDate() - policy.retention);
+     const cutoffDate = new Date()
+     cutoffDate.setDate(cutoffDate.getDate() - policy.retention)
 
      const { data: expiredRecords } = await supabase
        .from(tableName)
        .select('*')
-       .lt('created_at', cutoffDate.toISOString());
+       .lt('created_at', cutoffDate.toISOString())
 
      if (policy.archiveBefore) {
-       await archiveRecords(tableName, expiredRecords);
+       await archiveRecords(tableName, expiredRecords)
      }
 
      if (policy.deletionMethod === 'hard') {
-       await hardDelete(tableName, expiredRecords);
+       await hardDelete(tableName, expiredRecords)
      } else if (policy.deletionMethod === 'anonymize') {
-       await anonymizeRecords(tableName, expiredRecords);
+       await anonymizeRecords(tableName, expiredRecords)
      }
    }
 
    async function hardDelete(tableName: string, records: any[]) {
-     const ids = records.map(r => r.id);
+     const ids = records.map(r => r.id)
 
      // Secure deletion: Overwrite before delete
      for (const id of ids) {
-       await supabase.from(tableName).update({
-         content: randomBytes(32).toString('hex'),
-         // Overwrite other sensitive fields
-       }).eq('id', id);
+       await supabase
+         .from(tableName)
+         .update({
+           content: randomBytes(32).toString('hex'),
+           // Overwrite other sensitive fields
+         })
+         .eq('id', id)
      }
 
      // Now delete
-     await supabase.from(tableName).delete().in('id', ids);
+     await supabase.from(tableName).delete().in('id', ids)
 
      // Log deletion for audit
-     await logDataDeletion(tableName, ids, 'retention_policy');
+     await logDataDeletion(tableName, ids, 'retention_policy')
    }
 
    async function anonymizeRecords(tableName: string, records: any[]) {
      for (const record of records) {
-       await supabase.from(tableName).update({
-         name: '[Anonymized]',
-         phone_number: null,
-         email: null,
-         // Clear all PII fields
-         anonymized_at: new Date().toISOString()
-       }).eq('id', record.id);
+       await supabase
+         .from(tableName)
+         .update({
+           name: '[Anonymized]',
+           phone_number: null,
+           email: null,
+           // Clear all PII fields
+           anonymized_at: new Date().toISOString(),
+         })
+         .eq('id', record.id)
      }
    }
 
    // GDPR Right to be Forgotten
    export async function deleteUserData(userId: string, reason: string) {
-     const user = await supabase.from('profiles').select('*').eq('id', userId).single();
+     const user = await supabase.from('profiles').select('*').eq('id', userId).single()
 
      // Export user data before deletion (GDPR requirement)
-     const exportedData = await exportAllUserData(userId);
-     await storeDataExport(userId, exportedData);
+     const exportedData = await exportAllUserData(userId)
+     await storeDataExport(userId, exportedData)
 
      // Delete user data across all tables
      await Promise.all([
@@ -1093,12 +1175,13 @@
        supabase.from('conversations').update({ assigned_to: null }).eq('assigned_to', userId),
        supabase.from('profiles').delete().eq('id', userId),
        // Delete from all relevant tables
-     ]);
+     ])
 
      // Log the deletion
-     await logGDPRDeletion(userId, reason);
+     await logGDPRDeletion(userId, reason)
    }
    ```
+
    - **Scheduled Job:** Run retention policies daily via cron
    - **Manual Deletion:** GDPR deletion request API endpoint
    - **Data Export:** Before deletion, export all user data
@@ -1109,6 +1192,7 @@
 #### Phase 2: High Priority (1-2 weeks)
 
 4. **Implement Log Sanitization**
+
    ```typescript
    // src/lib/logging/sanitizer.ts
    const SENSITIVE_FIELDS = [
@@ -1120,47 +1204,49 @@
      'ssn',
      'phone_number',
      'email',
-   ];
+   ]
 
    export function sanitizeLog(data: any): any {
      if (typeof data !== 'object' || data === null) {
-       return data;
+       return data
      }
 
-     const sanitized = Array.isArray(data) ? [] : {};
+     const sanitized = Array.isArray(data) ? [] : {}
 
      for (const [key, value] of Object.entries(data)) {
-       const lowerKey = key.toLowerCase();
+       const lowerKey = key.toLowerCase()
 
        // Redact sensitive fields
        if (SENSITIVE_FIELDS.some(field => lowerKey.includes(field))) {
-         sanitized[key] = '[REDACTED]';
+         sanitized[key] = '[REDACTED]'
        } else if (typeof value === 'object') {
-         sanitized[key] = sanitizeLog(value);
+         sanitized[key] = sanitizeLog(value)
        } else {
-         sanitized[key] = value;
+         sanitized[key] = value
        }
      }
 
-     return sanitized;
+     return sanitized
    }
 
    // Update webhook logging
    async function logWebhook(payload: any, type: string) {
-     const sanitizedPayload = sanitizeLog(payload);
+     const sanitizedPayload = sanitizeLog(payload)
      await supabase.from('webhook_logs').insert({
        webhook_type: type,
        payload: sanitizedPayload,
        processed_at: new Date().toISOString(),
-     });
+     })
    }
    ```
+
    - **Apply:** All logging functions
    - **Testing:** Verify no PII in logs
    - **Complexity:** 2/5
    - **Time:** 2 days
 
 5. **Implement Data Classification System**
+
    ```sql
    -- Database migration for data classification
    CREATE TYPE data_classification AS ENUM ('public', 'internal', 'confidential', 'restricted');
@@ -1187,6 +1273,7 @@
    ('contacts', 'phone_number', 'confidential', true, 1095),
    ('profiles', 'email', 'internal', false, NULL);
    ```
+
    - **Application Layer:** Enforce classification-based security controls
    - **Access Control:** Restrict access based on classification
    - **Audit:** Log access to restricted/confidential data
@@ -1200,6 +1287,7 @@
 ### ⚠️ MEDIUM: Integration Security Gaps (Score: 68/100)
 
 #### Current State
+
 - Stripe webhook signature verification implemented
 - WhatsApp webhook verification present
 - API key management via environment variables
@@ -1208,13 +1296,14 @@
 #### Vulnerabilities Identified
 
 **H-011: Stripe Webhook Signature Verification Bypassed** [HIGH]
+
 - **Location:** `src/app/api/webhooks/stripe/route.ts`
 - **Risk:** Webhook spoofing possible
 - **Evidence:**
   ```typescript
   // Line 8-14: Signature check present but error handling weak
   if (!signature) {
-    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
+    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
   }
   // No additional validation on webhook event contents
   ```
@@ -1223,6 +1312,7 @@
 - **CWE:** CWE-345 (Insufficient Verification of Data Authenticity)
 
 **H-012: WhatsApp Webhook Lacks Replay Attack Protection** [HIGH]
+
 - **Location:** `src/app/api/webhooks/whatsapp/route.ts`
 - **Risk:** Replay attacks can duplicate messages
 - **Evidence:**
@@ -1233,6 +1323,7 @@
 - **Recommendation:** Implement event ID tracking and timestamp validation
 
 **M-008: Environment Variables Stored in Plaintext** [MEDIUM]
+
 - **Location:** `.env`, `next.config.ts`
 - **Risk:** API keys and secrets exposed if environment compromised
 - **Evidence:**
@@ -1248,6 +1339,7 @@
 - **Recommendation:** Use secrets management service (AWS Secrets Manager, Vault)
 
 **M-009: No Secret Rotation Strategy** [MEDIUM]
+
 - **Location:** All API integrations
 - **Risk:** Long-lived secrets increase breach impact
 - **Evidence:** No documented secret rotation process
@@ -1255,6 +1347,7 @@
 - **Recommendation:** Implement 90-day secret rotation policy
 
 **M-010: Missing Webhook Event Deduplication** [MEDIUM]
+
 - **Location:** Webhook handlers
 - **Risk:** Duplicate webhook processing
 - **Evidence:** No idempotency key validation
@@ -1262,6 +1355,7 @@
 - **Recommendation:** Track processed webhook events by ID
 
 **L-002: Third-Party Dependency Vulnerabilities Unknown** [LOW]
+
 - **Location:** `package.json`
 - **Risk:** Vulnerable dependencies
 - **Evidence:** No automated dependency scanning
@@ -1272,71 +1366,73 @@
 #### Phase 1: High Priority (3-5 days)
 
 1. **Enhance Stripe Webhook Security**
+
    ```typescript
    // src/app/api/webhooks/stripe/route.ts
-   import { verifyStripeWebhook } from '@/lib/stripe/webhook-security';
+   import { verifyStripeWebhook } from '@/lib/stripe/webhook-security'
 
    export async function POST(request: NextRequest) {
      try {
-       const body = await request.text();
-       const signature = request.headers.get('stripe-signature');
+       const body = await request.text()
+       const signature = request.headers.get('stripe-signature')
 
        if (!signature) {
-         await logSecurityEvent('stripe_webhook_no_signature', request);
-         return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+         await logSecurityEvent('stripe_webhook_no_signature', request)
+         return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
        }
 
        // Verify signature
-       const event = await StripeService.handleWebhook(body, signature);
+       const event = await StripeService.handleWebhook(body, signature)
 
        // Additional validation
        if (!isValidStripeEvent(event)) {
-         await logSecurityEvent('stripe_webhook_invalid_event', request, { eventId: event.id });
-         return NextResponse.json({ error: 'Invalid event' }, { status: 400 });
+         await logSecurityEvent('stripe_webhook_invalid_event', request, { eventId: event.id })
+         return NextResponse.json({ error: 'Invalid event' }, { status: 400 })
        }
 
        // Check event timestamp (prevent replay attacks)
-       const eventAge = Date.now() - (event.created * 1000);
-       if (eventAge > 300000) { // 5 minutes
+       const eventAge = Date.now() - event.created * 1000
+       if (eventAge > 300000) {
+         // 5 minutes
          await logSecurityEvent('stripe_webhook_old_event', request, {
            eventId: event.id,
-           age: eventAge
-         });
-         return NextResponse.json({ error: 'Event too old' }, { status: 400 });
+           age: eventAge,
+         })
+         return NextResponse.json({ error: 'Event too old' }, { status: 400 })
        }
 
        // Check for duplicate event processing
        if (await isEventProcessed(event.id)) {
-         console.log(`Duplicate Stripe event ${event.id}, skipping`);
-         return NextResponse.json({ received: true, duplicate: true });
+         console.log(`Duplicate Stripe event ${event.id}, skipping`)
+         return NextResponse.json({ received: true, duplicate: true })
        }
 
        // Mark event as processing (idempotency)
-       await markEventProcessing(event.id);
+       await markEventProcessing(event.id)
 
        try {
-         const processor = new StripeWebhookProcessor();
-         await processor.processEvent(event);
+         const processor = new StripeWebhookProcessor()
+         await processor.processEvent(event)
 
-         await markEventProcessed(event.id);
+         await markEventProcessed(event.id)
 
          return NextResponse.json({
            received: true,
            eventId: event.id,
-           eventType: event.type
-         });
+           eventType: event.type,
+         })
        } catch (processingError) {
-         await markEventFailed(event.id, processingError);
-         throw processingError;
+         await markEventFailed(event.id, processingError)
+         throw processingError
        }
      } catch (error) {
-       await logSecurityEvent('stripe_webhook_error', request, { error: error.message });
+       await logSecurityEvent('stripe_webhook_error', request, { error: error.message })
 
        if (error instanceof Error && error.message.includes('signature')) {
-         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
        }
 
-       return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
+       return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
      }
    }
 
@@ -1346,9 +1442,9 @@
        .select('status')
        .eq('event_id', eventId)
        .eq('provider', 'stripe')
-       .single();
+       .single()
 
-     return data?.status === 'processed';
+     return data?.status === 'processed'
    }
 
    async function markEventProcessing(eventId: string) {
@@ -1356,23 +1452,25 @@
        event_id: eventId,
        provider: 'stripe',
        status: 'processing',
-       received_at: new Date().toISOString()
-     });
+       received_at: new Date().toISOString(),
+     })
    }
    ```
+
    - **Database Migration:** Create `webhook_event_log` table
    - **Deduplication:** Track processed events for 30 days
    - **Complexity:** 3/5
    - **Time:** 2 days
 
 2. **Implement WhatsApp Webhook Replay Protection**
+
    ```typescript
    // src/app/api/webhooks/whatsapp/route.ts
    export async function POST(request: NextRequest) {
      try {
-       await webhookRateLimit(request);
+       await webhookRateLimit(request)
 
-       const body: WhatsAppWebhookPayload = await request.json();
+       const body: WhatsAppWebhookPayload = await request.json()
 
        // Validate webhook signature (if WhatsApp provides it)
        // const signature = request.headers.get('x-whatsapp-signature');
@@ -1380,129 +1478,136 @@
 
        // Validate payload structure
        if (!body.entry || !Array.isArray(body.entry)) {
-         return NextResponse.json({ error: 'Invalid webhook payload' }, { status: 400 });
+         return NextResponse.json({ error: 'Invalid webhook payload' }, { status: 400 })
        }
 
        // Process each entry with deduplication
        for (const entry of body.entry) {
          for (const change of entry.changes) {
            // Extract event ID for deduplication
-           const eventId = change.value.metadata?.message_id ||
-                          `${entry.id}_${change.value.metadata?.phone_number_id}_${Date.now()}`;
+           const eventId =
+             change.value.metadata?.message_id ||
+             `${entry.id}_${change.value.metadata?.phone_number_id}_${Date.now()}`
 
            // Check if already processed
            if (await isWebhookEventProcessed(eventId, 'whatsapp')) {
-             console.log(`Duplicate WhatsApp event ${eventId}, skipping`);
-             continue;
+             console.log(`Duplicate WhatsApp event ${eventId}, skipping`)
+             continue
            }
 
            // Validate timestamp (prevent old events)
-           const messageTimestamp = change.value.messages?.[0]?.timestamp;
+           const messageTimestamp = change.value.messages?.[0]?.timestamp
            if (messageTimestamp) {
-             const age = Date.now() / 1000 - parseInt(messageTimestamp);
-             if (age > 3600) { // 1 hour
-               console.log(`Old WhatsApp event ${eventId}, age: ${age}s`);
-               continue;
+             const age = Date.now() / 1000 - parseInt(messageTimestamp)
+             if (age > 3600) {
+               // 1 hour
+               console.log(`Old WhatsApp event ${eventId}, age: ${age}s`)
+               continue
              }
            }
 
            // Mark as processing
-           await markWebhookEventProcessing(eventId, 'whatsapp', change);
+           await markWebhookEventProcessing(eventId, 'whatsapp', change)
 
            try {
              if (change.field === 'messages') {
-               await processMessages(change.value);
+               await processMessages(change.value)
              } else if (change.field === 'message_template_status_update') {
-               await processTemplateStatusUpdate(change.value);
+               await processTemplateStatusUpdate(change.value)
              }
 
-             await markWebhookEventProcessed(eventId, 'whatsapp');
+             await markWebhookEventProcessed(eventId, 'whatsapp')
            } catch (error) {
-             await markWebhookEventFailed(eventId, 'whatsapp', error);
-             throw error;
+             await markWebhookEventFailed(eventId, 'whatsapp', error)
+             throw error
            }
          }
        }
 
-       return NextResponse.json({ success: true });
+       return NextResponse.json({ success: true })
      } catch (error) {
-       console.error('WhatsApp webhook error:', error);
-       return createErrorResponse(error);
+       console.error('WhatsApp webhook error:', error)
+       return createErrorResponse(error)
      }
    }
    ```
+
    - **Event Tracking:** Store processed event IDs for deduplication
    - **Timestamp Validation:** Reject events older than 1 hour
    - **Complexity:** 3/5
    - **Time:** 2 days
 
 3. **Migrate Secrets to Secrets Management Service**
+
    ```typescript
    // src/lib/secrets/secrets-manager.ts
-   import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+   import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager'
 
    class SecretsManager {
-     private client: SecretsManagerClient;
-     private cache: Map<string, { value: string; expiresAt: number }> = new Map();
+     private client: SecretsManagerClient
+     private cache: Map<string, { value: string; expiresAt: number }> = new Map()
 
      constructor() {
-       this.client = new SecretsManagerClient({ region: process.env.AWS_REGION });
+       this.client = new SecretsManagerClient({ region: process.env.AWS_REGION })
      }
 
      async getSecret(secretName: string): Promise<string> {
        // Check cache (TTL: 5 minutes)
-       const cached = this.cache.get(secretName);
+       const cached = this.cache.get(secretName)
        if (cached && cached.expiresAt > Date.now()) {
-         return cached.value;
+         return cached.value
        }
 
        try {
-         const command = new GetSecretValueCommand({ SecretId: secretName });
-         const response = await this.client.send(command);
+         const command = new GetSecretValueCommand({ SecretId: secretName })
+         const response = await this.client.send(command)
 
-         const value = response.SecretString!;
+         const value = response.SecretString!
 
          // Cache the secret
          this.cache.set(secretName, {
            value,
-           expiresAt: Date.now() + 300000 // 5 minutes
-         });
+           expiresAt: Date.now() + 300000, // 5 minutes
+         })
 
-         return value;
+         return value
        } catch (error) {
-         console.error(`Failed to get secret ${secretName}:`, error);
+         console.error(`Failed to get secret ${secretName}:`, error)
 
          // Fallback to environment variable for local development
          if (process.env.NODE_ENV === 'development') {
-           return process.env[secretName] || '';
+           return process.env[secretName] || ''
          }
 
-         throw new Error(`Secret ${secretName} not available`);
+         throw new Error(`Secret ${secretName} not available`)
        }
      }
 
      async rotateSecret(secretName: string, newValue: string) {
        // Implement secret rotation logic
-       await this.client.send(new UpdateSecretCommand({
-         SecretId: secretName,
-         SecretString: newValue
-       }));
+       await this.client.send(
+         new UpdateSecretCommand({
+           SecretId: secretName,
+           SecretString: newValue,
+         })
+       )
 
        // Clear cache
-       this.cache.delete(secretName);
+       this.cache.delete(secretName)
 
        // Log rotation
-       await logSecretRotation(secretName);
+       await logSecretRotation(secretName)
      }
    }
 
-   export const secretsManager = new SecretsManager();
+   export const secretsManager = new SecretsManager()
 
    // Usage example
    export async function getStripeSecretKey(): Promise<string> {
-     return await secretsManager.getSecret('STRIPE_SECRET_KEY');
+     return await secretsManager.getSecret('STRIPE_SECRET_KEY')
    }
    ```
+
    - **Migration Plan:**
      1. Create secrets in AWS Secrets Manager
      2. Update application to use secrets manager
@@ -1520,6 +1625,7 @@
 #### Phase 2: Medium Priority (1 week)
 
 4. **Implement Automated Secret Rotation**
+
    ```typescript
    // src/lib/secrets/rotation-service.ts
    export class SecretRotationService {
@@ -1530,43 +1636,44 @@
          type: 'restricted',
          restrictions: {
            // Define permissions
-         }
-       });
+         },
+       })
 
        // Store new key in secrets manager
-       await secretsManager.rotateSecret('STRIPE_SECRET_KEY', newKey.secret);
+       await secretsManager.rotateSecret('STRIPE_SECRET_KEY', newKey.secret)
 
        // Notify operations team
-       await sendRotationNotification('Stripe API Key', newKey.id);
+       await sendRotationNotification('Stripe API Key', newKey.id)
 
        // Schedule old key deletion (grace period: 7 days)
-       await scheduleKeyDeletion(currentStripeKeyId, 7);
+       await scheduleKeyDeletion(currentStripeKeyId, 7)
      }
 
      async rotateSupabaseServiceKey() {
        // Contact Supabase support to rotate service role key
        // Or use Supabase Management API if available
-       await notifyManualRotationRequired('Supabase Service Role Key');
+       await notifyManualRotationRequired('Supabase Service Role Key')
      }
 
      async rotateWhatsAppToken() {
        // WhatsApp tokens typically don't expire, manual rotation needed
-       await notifyManualRotationRequired('WhatsApp API Token');
+       await notifyManualRotationRequired('WhatsApp API Token')
      }
    }
 
    // Scheduled rotation job (run monthly)
    export async function scheduledSecretRotation() {
-     const rotationService = new SecretRotationService();
+     const rotationService = new SecretRotationService()
 
      try {
-       await rotationService.rotateStripeKeys();
+       await rotationService.rotateStripeKeys()
        // Add other rotations as needed
      } catch (error) {
-       await alertOps('Secret rotation failed', error);
+       await alertOps('Secret rotation failed', error)
      }
    }
    ```
+
    - **Rotation Schedule:** Every 90 days
    - **Automation:** Cron job or AWS Lambda scheduled event
    - **Monitoring:** Alert on rotation failures
@@ -1574,6 +1681,7 @@
    - **Time:** 3 days
 
 5. **Dependency Scanning & Vulnerability Management**
+
    ```yaml
    # .github/workflows/security-scan.yml
    name: Security Scan
@@ -1604,6 +1712,7 @@
          - name: Check for outdated packages
            run: npm outdated || true
    ```
+
    - **Tools:** Snyk, npm audit, Dependabot
    - **Policy:** Address high/critical vulnerabilities within 48 hours
    - **Complexity:** 2/5
@@ -1616,6 +1725,7 @@
 ### ⚠️ MEDIUM: Infrastructure Security Issues (Score: 65/100)
 
 #### Current State
+
 - Next.js security headers configured
 - HTTPS enforced in production
 - CSP implemented (but weak)
@@ -1624,11 +1734,13 @@
 #### Vulnerabilities Identified
 
 **H-013: Weak Content Security Policy (Repeated)** [HIGH]
+
 - **Location:** `next.config.ts`
 - **Issue:** Allows 'unsafe-inline' and 'unsafe-eval'
 - **See:** H-007 in API Security section
 
 **M-011: Missing Web Application Firewall (WAF)** [MEDIUM]
+
 - **Location:** Infrastructure layer
 - **Risk:** No protection against common web attacks
 - **Evidence:** No WAF configuration (Cloudflare, AWS WAF, etc.)
@@ -1636,6 +1748,7 @@
 - **Recommendation:** Implement Cloudflare WAF or AWS WAF
 
 **M-012: No DDoS Protection** [MEDIUM]
+
 - **Location:** Infrastructure layer
 - **Risk:** Service disruption through volumetric attacks
 - **Evidence:** No DDoS mitigation service
@@ -1643,6 +1756,7 @@
 - **Recommendation:** Enable Cloudflare DDoS protection or AWS Shield
 
 **M-013: Security Headers Not Comprehensive** [MEDIUM]
+
 - **Location:** `next.config.ts`
 - **Risk:** Missing security headers
 - **Evidence:**
@@ -1656,6 +1770,7 @@
 - **Recommendation:** Add comprehensive security header suite
 
 **L-003: Production Environment Hardening Incomplete** [LOW]
+
 - **Location:** Build configuration
 - **Risk:** Development artifacts in production
 - **Evidence:**
@@ -1668,6 +1783,7 @@
 - **Recommendation:** Enable strict build checks for production
 
 **L-004: Missing Security Monitoring & Alerting** [LOW]
+
 - **Location:** Monitoring infrastructure
 - **Risk:** Security incidents not detected
 - **Evidence:** No SIEM, no security alerting
@@ -1678,6 +1794,7 @@
 #### Phase 1: High Priority (3-5 days)
 
 1. **Implement Web Application Firewall (WAF)**
+
    ```javascript
    // Cloudflare WAF Configuration
    // Applied via Cloudflare Dashboard or Terraform
@@ -1720,6 +1837,7 @@
      "action": "managed_challenge"
    }
    ```
+
    - **Provider:** Cloudflare (recommended) or AWS WAF
    - **Rules:** OWASP Core Rule Set, rate limiting, bot protection
    - **Monitoring:** WAF dashboard, security events
@@ -1728,6 +1846,7 @@
    - **Time:** 1 day
 
 2. **Enable DDoS Protection**
+
    ```bash
    # Cloudflare DDoS Protection (automatic with Pro plan)
    # No configuration needed, enabled by default
@@ -1739,6 +1858,7 @@
      --resource-arn "arn:aws:elasticloadbalancing:..." \
      --region us-east-1
    ```
+
    - **Provider:** Cloudflare (recommended, included in Pro plan)
    - **Protection:** Layer 3, 4, 7 DDoS mitigation
    - **Monitoring:** Real-time traffic analytics
@@ -1796,6 +1916,7 @@
      ];
    },
    ```
+
    - **Testing:** Use securityheaders.com to validate
    - **Monitoring:** Regular header compliance checks
    - **Complexity:** 2/5
@@ -1804,6 +1925,7 @@
 #### Phase 2: Medium Priority (1 week)
 
 4. **Production Build Hardening**
+
    ```typescript
    // next.config.ts - Remove development shortcuts
    const nextConfig: NextConfig = {
@@ -1833,71 +1955,77 @@
        poweredByHeader: false,
        compress: true,
      }),
-   };
+   }
    ```
+
    - **CI/CD:** Enforce strict builds in production pipeline
    - **Testing:** Validate build passes with all checks enabled
    - **Complexity:** 2/5
    - **Time:** 1 day
 
 5. **Security Monitoring & Alerting**
+
    ```typescript
    // src/lib/monitoring/security-alerts.ts
-   import Sentry from '@sentry/nextjs';
+   import Sentry from '@sentry/nextjs'
 
    export class SecurityMonitor {
      // Authentication anomalies
      async detectAuthAnomaly(userId: string, event: string, context: any) {
-       const recentEvents = await getRecentAuthEvents(userId, '1 hour');
+       const recentEvents = await getRecentAuthEvents(userId, '1 hour')
 
        // Multiple failed login attempts
-       if (event === 'login_failed' && recentEvents.filter(e => e.type === 'login_failed').length >= 5) {
+       if (
+         event === 'login_failed' &&
+         recentEvents.filter(e => e.type === 'login_failed').length >= 5
+       ) {
          await this.alert('AUTH_BRUTE_FORCE', {
            userId,
            attempts: recentEvents.length,
-           ips: recentEvents.map(e => e.ip_address)
-         });
+           ips: recentEvents.map(e => e.ip_address),
+         })
        }
 
        // Login from unusual location
        if (event === 'login_success') {
-         const usualLocations = await getUserUsualLocations(userId);
+         const usualLocations = await getUserUsualLocations(userId)
          if (!usualLocations.includes(context.location)) {
            await this.alert('AUTH_UNUSUAL_LOCATION', {
              userId,
              location: context.location,
-             usualLocations
-           });
+             usualLocations,
+           })
          }
        }
      }
 
      // Data access anomalies
      async detectDataAccessAnomaly(userId: string, resourceType: string, count: number) {
-       const threshold = getAccessThreshold(resourceType);
+       const threshold = getAccessThreshold(resourceType)
 
        if (count > threshold) {
          await this.alert('DATA_ACCESS_ANOMALY', {
            userId,
            resourceType,
            count,
-           threshold
-         });
+           threshold,
+         })
        }
      }
 
      // API abuse detection
      async detectApiAbuse(ip: string, endpoint: string, count: number, window: string) {
-       const rateLimit = getRateLimit(endpoint);
+       const rateLimit = getRateLimit(endpoint)
 
-       if (count > rateLimit.max * 1.5) { // 50% over limit
+       if (count > rateLimit.max * 1.5) {
+         // 50% over limit
          await this.alert('API_ABUSE', {
            ip,
            endpoint,
            count,
            window,
-           limit: rateLimit.max
-         });
+           limit: rateLimit.max,
+         })
        }
      }
 
@@ -1905,8 +2033,8 @@
        // Log to Sentry
        Sentry.captureMessage(`Security Alert: ${type}`, {
          level: 'warning',
-         extra: context
-       });
+         extra: context,
+       })
 
        // Send to SIEM
        if (process.env.SIEM_WEBHOOK_URL) {
@@ -1916,22 +2044,23 @@
            body: JSON.stringify({
              alert_type: type,
              timestamp: new Date().toISOString(),
-             context
-           })
-         });
+             context,
+           }),
+         })
        }
 
        // Critical alerts -> PagerDuty
        if (this.isCritical(type)) {
-         await this.sendToPagerDuty(type, context);
+         await this.sendToPagerDuty(type, context)
        }
      }
 
      private isCritical(type: string): boolean {
-       return ['AUTH_BRUTE_FORCE', 'DATA_BREACH_ATTEMPT', 'PRIVILEGE_ESCALATION'].includes(type);
+       return ['AUTH_BRUTE_FORCE', 'DATA_BREACH_ATTEMPT', 'PRIVILEGE_ESCALATION'].includes(type)
      }
    }
    ```
+
    - **Tools:** Sentry for error tracking, CloudWatch/DataDog for metrics
    - **Alert Channels:** Email, Slack, PagerDuty (for critical)
    - **Dashboards:** Security metrics visualization
@@ -1947,12 +2076,14 @@
 #### GDPR Compliance (60/100) ⚠️
 
 **Compliant:**
+
 - ✅ User consent mechanisms
 - ✅ Privacy policy (assumed)
 - ✅ Data minimization (partial)
 - ✅ Right to access (user data export possible)
 
 **Non-Compliant:**
+
 - ❌ **Art. 32 - Security of Processing:** Missing encryption at rest for PII (C-005)
 - ❌ **Art. 17 - Right to be Forgotten:** No automated deletion process (C-007)
 - ❌ **Art. 5(e) - Storage Limitation:** No data retention policies (C-007)
@@ -1961,6 +2092,7 @@
 - ❌ **Art. 35 - DPIA:** Data Protection Impact Assessment not conducted
 
 **Required Actions:**
+
 1. Implement field-level encryption for PII (Phase 1 remediation)
 2. Create automated data deletion system (Phase 1 remediation)
 3. Establish data retention policies (Phase 1 remediation)
@@ -1973,22 +2105,27 @@
 **Common Criteria Gaps:**
 
 **CC6.1 - Logical Access Controls:**
+
 - ❌ No MFA implementation (C-003)
 - ❌ Weak session management (C-004)
 - ⚠️ Password policies inadequate (H-003)
 
 **CC7.2 - System Monitoring:**
+
 - ❌ No comprehensive security monitoring (L-004)
 - ⚠️ Limited audit logging (M-004)
 
 **CC6.6 - Encryption:**
+
 - ❌ No application-level encryption (C-005)
 - ❌ No key management system (C-006)
 
 **CC6.7 - Restricted Access:**
+
 - ⚠️ Super admin access controls weak (H-005)
 
 **Required Actions:**
+
 1. Implement MFA for all users
 2. Deploy comprehensive security monitoring
 3. Implement encryption and KMS
@@ -1999,18 +2136,18 @@
 
 #### OWASP Top 10 Coverage (65/100) ⚠️
 
-| OWASP Risk | Status | Coverage |
-|------------|--------|----------|
-| A01:2021 - Broken Access Control | ⚠️ Partial | 70% - RLS implemented but gaps exist |
-| A02:2021 - Cryptographic Failures | 🔴 Critical | 40% - No field encryption, weak key management |
-| A03:2021 - Injection | ⚠️ Partial | 75% - Input validation present but incomplete |
-| A04:2021 - Insecure Design | ⚠️ Partial | 65% - Some security patterns missing |
-| A05:2021 - Security Misconfiguration | ⚠️ Partial | 70% - CSP weak, headers incomplete |
-| A06:2021 - Vulnerable Components | ⚠️ Unknown | 50% - No dependency scanning |
-| A07:2021 - Auth Failures | 🔴 Critical | 50% - No MFA, weak session management |
-| A08:2021 - Data Integrity Failures | ⚠️ Partial | 60% - Webhook validation gaps |
-| A09:2021 - Logging Failures | ⚠️ Partial | 60% - Optional logging, PII in logs |
-| A10:2021 - SSRF | ✅ Good | 85% - Limited external requests |
+| OWASP Risk                           | Status      | Coverage                                       |
+| ------------------------------------ | ----------- | ---------------------------------------------- |
+| A01:2021 - Broken Access Control     | ⚠️ Partial  | 70% - RLS implemented but gaps exist           |
+| A02:2021 - Cryptographic Failures    | 🔴 Critical | 40% - No field encryption, weak key management |
+| A03:2021 - Injection                 | ⚠️ Partial  | 75% - Input validation present but incomplete  |
+| A04:2021 - Insecure Design           | ⚠️ Partial  | 65% - Some security patterns missing           |
+| A05:2021 - Security Misconfiguration | ⚠️ Partial  | 70% - CSP weak, headers incomplete             |
+| A06:2021 - Vulnerable Components     | ⚠️ Unknown  | 50% - No dependency scanning                   |
+| A07:2021 - Auth Failures             | 🔴 Critical | 50% - No MFA, weak session management          |
+| A08:2021 - Data Integrity Failures   | ⚠️ Partial  | 60% - Webhook validation gaps                  |
+| A09:2021 - Logging Failures          | ⚠️ Partial  | 60% - Optional logging, PII in logs            |
+| A10:2021 - SSRF                      | ✅ Good     | 85% - Limited external requests                |
 
 **Overall OWASP Coverage:** 65% - Significant gaps in encryption and authentication
 
@@ -2022,15 +2159,15 @@
 
 **Must complete before production deployment**
 
-| ID | Vulnerability | Impact | Effort | Priority |
-|----|---------------|--------|--------|----------|
-| C-001 | Missing Tenant Validation in API | Data breach | 2 days | 🔴 P0 |
-| C-002 | RLS Policy Gaps | Data leakage | 1 day | 🔴 P0 |
-| C-003 | No MFA Implementation | Account takeover | 3 days | 🔴 P0 |
-| C-004 | Weak Session Management | Session hijacking | 2 days | 🔴 P0 |
-| C-005 | No Field-Level Encryption | GDPR violation | 4 days | 🔴 P0 |
-| C-006 | Missing KMS | Key compromise | 3 days | 🔴 P0 |
-| C-007 | No Data Retention/Deletion | GDPR violation | 3 days | 🔴 P0 |
+| ID    | Vulnerability                    | Impact            | Effort | Priority |
+| ----- | -------------------------------- | ----------------- | ------ | -------- |
+| C-001 | Missing Tenant Validation in API | Data breach       | 2 days | 🔴 P0    |
+| C-002 | RLS Policy Gaps                  | Data leakage      | 1 day  | 🔴 P0    |
+| C-003 | No MFA Implementation            | Account takeover  | 3 days | 🔴 P0    |
+| C-004 | Weak Session Management          | Session hijacking | 2 days | 🔴 P0    |
+| C-005 | No Field-Level Encryption        | GDPR violation    | 4 days | 🔴 P0    |
+| C-006 | Missing KMS                      | Key compromise    | 3 days | 🔴 P0    |
+| C-007 | No Data Retention/Deletion       | GDPR violation    | 3 days | 🔴 P0    |
 
 **Total Time:** 18 days (parallelizable to ~10 days with 2-3 engineers)
 **Business Impact:** Blocks production deployment, major regulatory risk
@@ -2039,17 +2176,17 @@
 
 **Address within 1 month**
 
-| ID | Vulnerability | Impact | Effort | Priority |
-|----|---------------|--------|--------|----------|
-| H-001 | Tenant Header Injection | Privilege escalation | 3 days | 🟡 P1 |
-| H-003 | Insufficient Password Policy | Credential attacks | 2 days | 🟡 P1 |
-| H-004 | Missing Auth Rate Limiting | Brute force | 1 day | 🟡 P1 |
-| H-005 | Super Admin Escalation | Unauthorized access | 2 days | 🟡 P1 |
-| H-006 | Incomplete Input Validation | Injection attacks | 4 days | 🟡 P1 |
-| H-007 | Weak CSP | XSS attacks | 2 days | 🟡 P1 |
-| H-011 | Stripe Webhook Security | Payment fraud | 2 days | 🟡 P1 |
-| H-012 | WhatsApp Replay Attacks | Data integrity | 2 days | 🟡 P1 |
-| H-013 | Weak Security Headers | Various attacks | 1 day | 🟡 P1 |
+| ID    | Vulnerability                | Impact               | Effort | Priority |
+| ----- | ---------------------------- | -------------------- | ------ | -------- |
+| H-001 | Tenant Header Injection      | Privilege escalation | 3 days | 🟡 P1    |
+| H-003 | Insufficient Password Policy | Credential attacks   | 2 days | 🟡 P1    |
+| H-004 | Missing Auth Rate Limiting   | Brute force          | 1 day  | 🟡 P1    |
+| H-005 | Super Admin Escalation       | Unauthorized access  | 2 days | 🟡 P1    |
+| H-006 | Incomplete Input Validation  | Injection attacks    | 4 days | 🟡 P1    |
+| H-007 | Weak CSP                     | XSS attacks          | 2 days | 🟡 P1    |
+| H-011 | Stripe Webhook Security      | Payment fraud        | 2 days | 🟡 P1    |
+| H-012 | WhatsApp Replay Attacks      | Data integrity       | 2 days | 🟡 P1    |
+| H-013 | Weak Security Headers        | Various attacks      | 1 day  | 🟡 P1    |
 
 **Total Time:** 19 days (parallelizable to ~8 days)
 **Business Impact:** High security risk, potential data breach
@@ -2058,16 +2195,16 @@
 
 **Ongoing security improvements**
 
-| ID | Vulnerability | Impact | Effort | Priority |
-|----|---------------|--------|--------|----------|
-| M-001 | No JWT Revocation | Compromised tokens | 2 days | 🟢 P2 |
-| M-003 | Insufficient Rate Limiting | DoS attacks | 3 days | 🟢 P2 |
-| M-004 | Missing API Logging | Incident response | 2 days | 🟢 P2 |
-| M-006 | Insecure Media Storage | Unauthorized access | 2 days | 🟢 P2 |
-| M-008 | Plaintext Secrets | Key compromise | 3 days | 🟢 P2 |
-| M-009 | No Secret Rotation | Long-term exposure | 3 days | 🟢 P2 |
-| M-011 | No WAF | Automated attacks | 1 day | 🟢 P2 |
-| M-012 | No DDoS Protection | Service disruption | 1 day | 🟢 P2 |
+| ID    | Vulnerability              | Impact              | Effort | Priority |
+| ----- | -------------------------- | ------------------- | ------ | -------- |
+| M-001 | No JWT Revocation          | Compromised tokens  | 2 days | 🟢 P2    |
+| M-003 | Insufficient Rate Limiting | DoS attacks         | 3 days | 🟢 P2    |
+| M-004 | Missing API Logging        | Incident response   | 2 days | 🟢 P2    |
+| M-006 | Insecure Media Storage     | Unauthorized access | 2 days | 🟢 P2    |
+| M-008 | Plaintext Secrets          | Key compromise      | 3 days | 🟢 P2    |
+| M-009 | No Secret Rotation         | Long-term exposure  | 3 days | 🟢 P2    |
+| M-011 | No WAF                     | Automated attacks   | 1 day  | 🟢 P2    |
+| M-012 | No DDoS Protection         | Service disruption  | 1 day  | 🟢 P2    |
 
 **Total Time:** 17 days (parallelizable to ~6 days)
 **Business Impact:** Moderate security risk, operational efficiency
@@ -2076,12 +2213,12 @@
 
 **Best practices and compliance**
 
-| ID | Vulnerability | Impact | Effort | Priority |
-|----|---------------|--------|--------|----------|
-| L-001 | Missing API Versioning | Breaking changes | 2 days | ⚪ P3 |
-| L-002 | Dependency Vulnerabilities | Various risks | 1 day | ⚪ P3 |
-| L-003 | Production Hardening | Quality issues | 1 day | ⚪ P3 |
-| L-004 | Security Monitoring | Detection gaps | 3 days | ⚪ P3 |
+| ID    | Vulnerability              | Impact           | Effort | Priority |
+| ----- | -------------------------- | ---------------- | ------ | -------- |
+| L-001 | Missing API Versioning     | Breaking changes | 2 days | ⚪ P3    |
+| L-002 | Dependency Vulnerabilities | Various risks    | 1 day  | ⚪ P3    |
+| L-003 | Production Hardening       | Quality issues   | 1 day  | ⚪ P3    |
+| L-004 | Security Monitoring        | Detection gaps   | 3 days | ⚪ P3    |
 
 **Total Time:** 7 days
 **Business Impact:** Operational improvements, long-term stability
@@ -2093,6 +2230,7 @@
 ### Penetration Testing Checklist
 
 **Before Production:**
+
 - [ ] Authentication bypass testing
 - [ ] Multi-tenant isolation testing (cross-tenant data access attempts)
 - [ ] SQL injection testing (all API routes)
@@ -2104,6 +2242,7 @@
 - [ ] Webhook spoofing testing
 
 **Quarterly:**
+
 - [ ] Full penetration test by third-party firm
 - [ ] Vulnerability assessment
 - [ ] Social engineering test
@@ -2194,22 +2333,26 @@ jobs:
 ### Security Incident Classification
 
 **P0 - Critical (< 1 hour response)**
+
 - Active data breach
 - Ransomware attack
 - Complete service outage
 - Credential compromise affecting multiple users
 
 **P1 - High (< 4 hours response)**
+
 - Vulnerability actively exploited
 - Unauthorized access detected
 - Data exposure incident
 
 **P2 - Medium (< 24 hours response)**
+
 - Suspicious activity detected
 - Potential vulnerability discovered
 - Minor data exposure
 
 **P3 - Low (< 7 days response)**
+
 - Security advisory from vendor
 - Non-critical configuration issue
 
@@ -2254,15 +2397,18 @@ jobs:
 ### Breach Notification Requirements
 
 **GDPR (Article 33):**
+
 - Notify supervisory authority within 72 hours
 - Include nature of breach, affected data, consequences, remediation measures
 - Notify affected individuals if high risk
 
 **CCPA:**
+
 - Notify affected California residents without unreasonable delay
 - Notify Attorney General if >500 residents affected
 
 **Communication Template:**
+
 ```
 Subject: Important Security Notice - [Date]
 
@@ -2294,37 +2440,40 @@ ADSapp Security Team
 
 ### Security Scorecard
 
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| Overall Security Score | 72/100 | 90/100 | ⚠️ Below Target |
-| Critical Vulnerabilities | 8 | 0 | 🔴 Immediate Action |
-| High Priority Issues | 12 | <3 | 🔴 Urgent |
-| Mean Time to Remediate (Critical) | N/A | <24h | - |
-| Mean Time to Remediate (High) | N/A | <7 days | - |
-| Multi-Tenant Isolation Score | 75% | 100% | ⚠️ Gaps Exist |
-| GDPR Compliance | 60% | 100% | 🔴 Non-Compliant |
-| SOC 2 Readiness | 45% | 100% | 🔴 Major Gaps |
-| OWASP Top 10 Coverage | 65% | 95% | ⚠️ Improvement Needed |
-| Password Breach Rate | Unknown | <1% | 📊 Need Monitoring |
-| Failed Login Attempts | Unknown | Monitored | 📊 Need Monitoring |
-| Unusual Access Patterns | Unknown | Alerted | 📊 Need Monitoring |
-| API Error Rate (Security) | Unknown | <0.1% | 📊 Need Monitoring |
+| Metric                            | Current | Target    | Status                |
+| --------------------------------- | ------- | --------- | --------------------- |
+| Overall Security Score            | 72/100  | 90/100    | ⚠️ Below Target       |
+| Critical Vulnerabilities          | 8       | 0         | 🔴 Immediate Action   |
+| High Priority Issues              | 12      | <3        | 🔴 Urgent             |
+| Mean Time to Remediate (Critical) | N/A     | <24h      | -                     |
+| Mean Time to Remediate (High)     | N/A     | <7 days   | -                     |
+| Multi-Tenant Isolation Score      | 75%     | 100%      | ⚠️ Gaps Exist         |
+| GDPR Compliance                   | 60%     | 100%      | 🔴 Non-Compliant      |
+| SOC 2 Readiness                   | 45%     | 100%      | 🔴 Major Gaps         |
+| OWASP Top 10 Coverage             | 65%     | 95%       | ⚠️ Improvement Needed |
+| Password Breach Rate              | Unknown | <1%       | 📊 Need Monitoring    |
+| Failed Login Attempts             | Unknown | Monitored | 📊 Need Monitoring    |
+| Unusual Access Patterns           | Unknown | Alerted   | 📊 Need Monitoring    |
+| API Error Rate (Security)         | Unknown | <0.1%     | 📊 Need Monitoring    |
 
 ### Ongoing Monitoring
 
 **Weekly:**
+
 - Failed authentication attempts
 - API abuse incidents
 - Rate limit breaches
 - Suspicious access patterns
 
 **Monthly:**
+
 - Vulnerability scan results
 - Penetration test findings
 - Compliance audit progress
 - Security training completion
 
 **Quarterly:**
+
 - External penetration test
 - SOC 2 audit preparation
 - GDPR compliance review
@@ -2337,21 +2486,25 @@ ADSapp Security Team
 ### Implementation Costs
 
 **Phase 1 (Critical - 2 weeks):**
+
 - Engineering effort: 3 senior engineers × 80 hours = $30,000 - $45,000
 - KMS service (AWS): $1-5/month
 - Compliance tools: $500-1,000 setup
 
 **Phase 2 (High Priority - 1 month):**
+
 - Engineering effort: 2 engineers × 160 hours = $20,000 - $35,000
 - Secrets manager: Included in AWS
 - Security testing tools: $200-500/month
 
 **Phase 3 (Medium Priority - 1 month):**
+
 - Engineering effort: 2 engineers × 120 hours = $15,000 - $25,000
 - WAF (Cloudflare Pro): $20-50/month
 - Security monitoring (Sentry): $26-80/month
 
 **Phase 4 (Low Priority - Ongoing):**
+
 - Engineering effort: 1 engineer × 40 hours/month = $5,000 - $8,000/month
 - Dependency scanning (Snyk): $0-99/month
 - Penetration testing: $5,000 - $15,000/quarter
@@ -2370,12 +2523,14 @@ ADSapp Security Team
 ### ROI Analysis
 
 **Cost of Data Breach (Estimated):**
+
 - Average cost: $4.35M (IBM 2022 report)
 - For small SaaS: $500K - $2M
 - GDPR fines: Up to 4% of global revenue or €20M
 - Reputational damage: Incalculable
 
 **Security Investment ROI:**
+
 - Investment: ~$150K first year
 - Prevented breach cost: $500K - $2M
 - **ROI:** 233% - 1,233%
@@ -2391,12 +2546,14 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 ### Key Findings
 
 **Strengths:**
+
 - ✅ Solid architecture foundation with Next.js and Supabase
 - ✅ RLS policies implemented for basic tenant isolation
 - ✅ Input validation framework with Zod
 - ✅ HTTPS and basic security headers
 
 **Critical Weaknesses:**
+
 - 🔴 No application-level encryption for sensitive data (GDPR violation)
 - 🔴 Missing MFA increases account takeover risk
 - 🔴 Incomplete tenant isolation allows potential cross-tenant data access
@@ -2407,6 +2564,7 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 ### Business Impact
 
 **Immediate Risks:**
+
 - **Regulatory:** GDPR fines up to €20M or 4% of revenue
 - **Financial:** Potential data breach cost $500K - $2M
 - **Reputational:** Customer trust erosion, churn increase
@@ -2418,6 +2576,7 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 **🔴 DO NOT DEPLOY TO PRODUCTION** until Phase 1 (Critical) remediation is complete.
 
 **Minimum Requirements for Production:**
+
 1. ✅ Complete tenant isolation with validation
 2. ✅ Field-level encryption for PII
 3. ✅ MFA implementation
@@ -2431,18 +2590,21 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 ### Recommended Action Plan
 
 **Immediate (Week 1-2):**
+
 1. Assemble security task force (2-3 senior engineers)
 2. Implement Phase 1 critical remediations
 3. Conduct internal security review
 4. Establish security monitoring
 
 **Short-term (Month 1-2):**
+
 1. Complete Phase 2 high priority fixes
 2. Third-party penetration test
 3. Begin SOC 2 preparation
 4. Implement WAF and DDoS protection
 
 **Long-term (Quarter 1-2):**
+
 1. SOC 2 Type II audit
 2. GDPR compliance certification
 3. Ongoing security program
@@ -2451,18 +2613,21 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 ### Success Metrics
 
 **3 Months:**
+
 - Security score: 90/100
 - Zero critical vulnerabilities
 - GDPR compliance: 95%
 - SOC 2 audit scheduled
 
 **6 Months:**
+
 - SOC 2 Type II certified
 - Zero high-priority vulnerabilities
 - Security monitoring fully operational
 - Incident response plan tested
 
 **12 Months:**
+
 - Mature security program
 - Quarterly penetration tests passing
 - Zero security incidents
@@ -2494,10 +2659,12 @@ ADSapp's current security posture presents **MEDIUM-HIGH RISK** for production d
 ### Appendix C: Contact Information
 
 **For Questions:**
+
 - Security Team: security@adsapp.com
 - Emergency: +1-XXX-XXX-XXXX (24/7)
 
 **Responsible Parties:**
+
 - CISO: [Name]
 - Lead Engineer: [Name]
 - Compliance Officer: [Name]

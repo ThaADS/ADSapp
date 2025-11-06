@@ -55,11 +55,7 @@ export function extractCursorParams(request: NextRequest): CursorPaginationParam
 /**
  * Build pagination metadata from query result
  */
-export function buildPaginationMeta(
-  page: number,
-  limit: number,
-  total: number
-): PaginationMeta {
+export function buildPaginationMeta(page: number, limit: number, total: number): PaginationMeta {
   const totalPages = Math.ceil(total / limit)
 
   return {
@@ -68,7 +64,7 @@ export function buildPaginationMeta(
     total,
     totalPages,
     hasNext: page < totalPages,
-    hasPrev: page > 1
+    hasPrev: page > 1,
   }
 }
 
@@ -104,20 +100,20 @@ export function buildCursorPaginationResult<T extends Record<string, any>>(
   // Remove extra item used for hasNext check
   const items = hasNext ? data.slice(0, limit) : data
 
-  const nextCursor = hasNext && items.length > 0
-    ? encodeCursor({ [cursorField]: items[items.length - 1][cursorField] })
-    : undefined
+  const nextCursor =
+    hasNext && items.length > 0
+      ? encodeCursor({ [cursorField]: items[items.length - 1][cursorField] })
+      : undefined
 
-  const prevCursor = hasPrev && items.length > 0
-    ? encodeCursor({ [cursorField]: items[0][cursorField] })
-    : undefined
+  const prevCursor =
+    hasPrev && items.length > 0 ? encodeCursor({ [cursorField]: items[0][cursorField] }) : undefined
 
   return {
     data: items,
     hasNext,
     hasPrev,
     nextCursor,
-    prevCursor
+    prevCursor,
   }
 }
 
@@ -169,7 +165,9 @@ export function extractSortParams(
   const { searchParams } = new URL(request.url)
 
   const sortBy = searchParams.get('sort_by') || searchParams.get('sortBy') || defaultField
-  const sortOrder = (searchParams.get('sort_order') || searchParams.get('sortOrder') || defaultOrder) as 'asc' | 'desc'
+  const sortOrder = (searchParams.get('sort_order') ||
+    searchParams.get('sortOrder') ||
+    defaultOrder) as 'asc' | 'desc'
 
   // Validate sort field
   if (!allowedFields.includes(sortBy)) {
@@ -210,10 +208,13 @@ export function extractFilters(
 export function applyFilters(
   query: any,
   filters: Record<string, any>,
-  filterConfig: Record<string, {
-    operator?: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'ilike' | 'in'
-    transform?: (value: any) => any
-  }> = {}
+  filterConfig: Record<
+    string,
+    {
+      operator?: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'ilike' | 'in'
+      transform?: (value: any) => any
+    }
+  > = {}
 ) {
   let filteredQuery = query
 
@@ -248,7 +249,10 @@ export function applyFilters(
         filteredQuery = filteredQuery.ilike(key, transformedValue)
         break
       case 'in':
-        filteredQuery = filteredQuery.in(key, Array.isArray(transformedValue) ? transformedValue : [transformedValue])
+        filteredQuery = filteredQuery.in(
+          key,
+          Array.isArray(transformedValue) ? transformedValue : [transformedValue]
+        )
         break
     }
   }
@@ -259,17 +263,11 @@ export function applyFilters(
 /**
  * Build search query
  */
-export function buildSearchQuery(
-  query: any,
-  searchTerm: string,
-  searchFields: string[]
-) {
+export function buildSearchQuery(query: any, searchTerm: string, searchFields: string[]) {
   if (!searchTerm || searchFields.length === 0) {
     return query
   }
 
   // Build OR condition for each search field
-  return query.or(
-    searchFields.map(field => `${field}.ilike.%${searchTerm}%`).join(',')
-  )
+  return query.or(searchFields.map(field => `${field}.ilike.%${searchTerm}%`).join(','))
 }

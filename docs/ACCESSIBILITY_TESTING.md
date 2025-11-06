@@ -26,16 +26,19 @@ npm run test:watch tests/accessibility
 Install the axe DevTools browser extension:
 
 **Chrome/Edge**
+
 1. Visit [Chrome Web Store](https://chrome.google.com/webstore)
 2. Search for "axe DevTools"
 3. Click "Add to Chrome/Edge"
 
 **Firefox**
+
 1. Visit [Firefox Add-ons](https://addons.mozilla.org)
 2. Search for "axe DevTools"
 3. Click "Add to Firefox"
 
 **Usage**:
+
 ```
 1. Open the page you want to test
 2. Open DevTools (F12)
@@ -60,6 +63,7 @@ npx lighthouse https://yourapp.com --only-categories=accessibility --view
 ```
 
 **Target Scores**:
+
 - Accessibility: 95+
 - Performance: 90+
 - Best Practices: 90+
@@ -84,6 +88,7 @@ npx pa11y-ci --sitemap https://yourapp.com/sitemap.xml
 #### Test Procedure
 
 **Step 1: Basic Navigation**
+
 ```
 1. Disconnect mouse/trackpad
 2. Press Tab to navigate forward
@@ -93,6 +98,7 @@ npx pa11y-ci --sitemap https://yourapp.com/sitemap.xml
 ```
 
 **Step 2: Interactive Elements**
+
 ```
 ✓ Buttons: Press Enter or Space to activate
 ✓ Links: Press Enter to follow
@@ -106,6 +112,7 @@ npx pa11y-ci --sitemap https://yourapp.com/sitemap.xml
 ```
 
 **Step 3: Modal Dialogs**
+
 ```
 ✓ Focus traps within modal
 ✓ Escape key closes modal
@@ -114,6 +121,7 @@ npx pa11y-ci --sitemap https://yourapp.com/sitemap.xml
 ```
 
 **Step 4: Forms**
+
 ```
 ✓ Tab through all form fields in logical order
 ✓ Error messages are announced
@@ -123,27 +131,29 @@ npx pa11y-ci --sitemap https://yourapp.com/sitemap.xml
 
 #### Keyboard Shortcuts Reference
 
-| Key | Action |
-|-----|--------|
-| Tab | Move focus forward |
-| Shift+Tab | Move focus backward |
-| Enter | Activate button/link |
-| Space | Activate button, toggle checkbox |
-| Escape | Close modal/dropdown |
-| Arrow keys | Navigate within components |
-| Home | Jump to first item |
-| End | Jump to last item |
+| Key        | Action                           |
+| ---------- | -------------------------------- |
+| Tab        | Move focus forward               |
+| Shift+Tab  | Move focus backward              |
+| Enter      | Activate button/link             |
+| Space      | Activate button, toggle checkbox |
+| Escape     | Close modal/dropdown             |
+| Arrow keys | Navigate within components       |
+| Home       | Jump to first item               |
+| End        | Jump to last item                |
 
 ### Screen Reader Testing
 
 #### NVDA (Windows)
 
 **Installation**:
+
 1. Download from [nvaccess.org](https://www.nvaccess.org/)
 2. Run installer
 3. Follow setup wizard
 
 **Basic Commands**:
+
 ```
 Ctrl+Alt+N: Start/Stop NVDA
 Insert+Down Arrow: Read current line
@@ -157,6 +167,7 @@ Insert+F7: List all headings/links
 ```
 
 **Testing Checklist**:
+
 - [ ] All images have descriptive alt text
 - [ ] Heading structure is logical (h1 → h2 → h3)
 - [ ] Landmark regions are announced
@@ -169,11 +180,13 @@ Insert+F7: List all headings/links
 #### VoiceOver (Mac)
 
 **Activation**:
+
 ```bash
 Cmd+F5: Turn VoiceOver on/off
 ```
 
 **Basic Commands**:
+
 ```
 VO = Ctrl+Option
 
@@ -188,6 +201,7 @@ VO+Shift+Up Arrow: Stop interacting
 ```
 
 **Testing Procedure**:
+
 ```
 1. Enable VoiceOver (Cmd+F5)
 2. Navigate to the page
@@ -207,18 +221,19 @@ VO+Shift+Up Arrow: Stop interacting
 Test across multiple browser/screen reader combinations:
 
 | Browser | Screen Reader | Platform | Priority |
-|---------|---------------|----------|----------|
-| Chrome | NVDA | Windows | High |
-| Firefox | NVDA | Windows | High |
-| Safari | VoiceOver | macOS | High |
-| Edge | Narrator | Windows | Medium |
-| Chrome | JAWS | Windows | Medium |
+| ------- | ------------- | -------- | -------- |
+| Chrome  | NVDA          | Windows  | High     |
+| Firefox | NVDA          | Windows  | High     |
+| Safari  | VoiceOver     | macOS    | High     |
+| Edge    | Narrator      | Windows  | Medium   |
+| Chrome  | JAWS          | Windows  | Medium   |
 
 ### Color Contrast Testing
 
 #### Tools
 
 **WebAIM Contrast Checker**
+
 1. Visit [webaim.org/resources/contrastchecker](https://webaim.org/resources/contrastchecker/)
 2. Enter foreground and background colors
 3. Verify contrast ratio meets requirements:
@@ -227,6 +242,7 @@ Test across multiple browser/screen reader combinations:
    - UI components: 3:1 minimum
 
 **Chrome DevTools**
+
 ```
 1. Open DevTools (F12)
 2. Select element with Inspect tool
@@ -236,23 +252,25 @@ Test across multiple browser/screen reader combinations:
 ```
 
 **Color Oracle**
+
 - Download from [colororacle.org](https://www.colororacle.org/)
 - Simulates color blindness
 - Test your application with different color vision deficiencies
 
 #### Color Contrast Requirements
 
-| Element Type | Contrast Ratio |
-|--------------|----------------|
-| Body text | 4.5:1 (AA) |
-| Large text (18pt+) | 3:1 (AA) |
-| UI components | 3:1 (AA) |
-| Graphical objects | 3:1 (AA) |
-| Focus indicators | 3:1 (AA) |
+| Element Type       | Contrast Ratio |
+| ------------------ | -------------- |
+| Body text          | 4.5:1 (AA)     |
+| Large text (18pt+) | 3:1 (AA)       |
+| UI components      | 3:1 (AA)       |
+| Graphical objects  | 3:1 (AA)       |
+| Focus indicators   | 3:1 (AA)       |
 
 ### Zoom and Reflow Testing
 
 **Test Procedure**:
+
 ```
 1. Open the application in browser
 2. Zoom to 200% (Ctrl/Cmd + Plus)
@@ -268,10 +286,12 @@ Test across multiple browser/screen reader combinations:
 ### Touch Target Testing
 
 **Requirements**:
+
 - Minimum touch target size: 44x44 CSS pixels
 - Adequate spacing between targets: 8px minimum
 
 **Test Procedure**:
+
 ```
 1. Open browser DevTools
 2. Toggle device toolbar (Ctrl+Shift+M)
@@ -288,6 +308,7 @@ Test across multiple browser/screen reader combinations:
 When creating a new component:
 
 #### General
+
 - [ ] Semantic HTML elements used
 - [ ] Keyboard accessible
 - [ ] Screen reader friendly
@@ -296,6 +317,7 @@ When creating a new component:
 - [ ] Touch targets adequate size
 
 #### Interactive Elements
+
 - [ ] Proper ARIA roles/attributes
 - [ ] Focus indicators visible
 - [ ] Keyboard shortcuts documented
@@ -303,6 +325,7 @@ When creating a new component:
 - [ ] No keyboard traps
 
 #### Forms
+
 - [ ] Labels associated with inputs
 - [ ] Required fields indicated
 - [ ] Error messages clear and helpful
@@ -311,12 +334,14 @@ When creating a new component:
 - [ ] Can submit with Enter key
 
 #### Images and Media
+
 - [ ] Alt text provided
 - [ ] Decorative images have empty alt
 - [ ] Complex images have detailed descriptions
 - [ ] Icons have text alternatives
 
 #### Dynamic Content
+
 - [ ] Updates announced to screen readers
 - [ ] Loading states indicated
 - [ ] Live regions implemented correctly
@@ -327,24 +352,28 @@ When creating a new component:
 For each page/view:
 
 #### Structure
+
 - [ ] Page title is descriptive
 - [ ] Heading hierarchy is correct
 - [ ] Landmarks are present (header, nav, main, footer)
 - [ ] Skip links functional
 
 #### Navigation
+
 - [ ] Multiple ways to navigate (menu, search, breadcrumbs)
 - [ ] Current page indicated
 - [ ] Navigation order is logical
 - [ ] Links have descriptive text
 
 #### Content
+
 - [ ] Language declared (lang attribute)
 - [ ] Text alternatives for non-text content
 - [ ] Color not sole means of conveying information
 - [ ] Text can be resized without loss of functionality
 
 #### Interactive
+
 - [ ] All functionality keyboard accessible
 - [ ] No time limits (or can be extended)
 - [ ] No content flashes
@@ -385,6 +414,7 @@ jobs:
 ### User Feedback
 
 Provide accessibility feedback channels:
+
 - Email: accessibility@adsapp.com
 - In-app feedback form
 - GitHub issues with `accessibility` label
@@ -394,11 +424,13 @@ Provide accessibility feedback channels:
 ### Issue: Missing Alt Text
 
 **Problem**:
+
 ```tsx
-<img src="profile.jpg" />
+<img src='profile.jpg' />
 ```
 
 **Fix**:
+
 ```tsx
 <img src="profile.jpg" alt="User profile picture" />
 
@@ -409,6 +441,7 @@ Provide accessibility feedback channels:
 ### Issue: Poor Color Contrast
 
 **Problem**:
+
 ```css
 .text-gray-400 {
   color: #9ca3af; /* 2.8:1 contrast - fails */
@@ -416,6 +449,7 @@ Provide accessibility feedback channels:
 ```
 
 **Fix**:
+
 ```css
 .text-gray-600 {
   color: #4b5563; /* 7.1:1 contrast - passes */
@@ -425,6 +459,7 @@ Provide accessibility feedback channels:
 ### Issue: No Focus Indicator
 
 **Problem**:
+
 ```css
 button:focus {
   outline: none; /* Bad! */
@@ -432,6 +467,7 @@ button:focus {
 ```
 
 **Fix**:
+
 ```css
 button:focus {
   outline: 3px solid #2563eb;
@@ -442,12 +478,14 @@ button:focus {
 ### Issue: Unlabeled Form Input
 
 **Problem**:
+
 ```tsx
 <div>Email</div>
 <input type="email" />
 ```
 
 **Fix**:
+
 ```tsx
 <label htmlFor="email">Email</label>
 <input id="email" type="email" />
@@ -456,22 +494,21 @@ button:focus {
 ### Issue: Keyboard Trap
 
 **Problem**:
+
 ```tsx
-<div onKeyDown={(e) => e.preventDefault()}>
-  {/* Content */}
-</div>
+<div onKeyDown={e => e.preventDefault()}>{/* Content */}</div>
 ```
 
 **Fix**:
+
 ```tsx
-<FocusTrap active={isModalOpen}>
-  {/* Content */}
-</FocusTrap>
+<FocusTrap active={isModalOpen}>{/* Content */}</FocusTrap>
 ```
 
 ## Resources
 
 ### Testing Tools
+
 - [axe DevTools](https://www.deque.com/axe/devtools/)
 - [WAVE](https://wave.webaim.org/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
@@ -479,12 +516,14 @@ button:focus {
 - [Color Contrast Analyzer](https://www.tpgi.com/color-contrast-checker/)
 
 ### Screen Readers
+
 - [NVDA](https://www.nvaccess.org/) - Free, Windows
 - [VoiceOver](https://www.apple.com/accessibility/voiceover/) - Built-in, Mac/iOS
 - [JAWS](https://www.freedomscientific.com/products/software/jaws/) - Commercial, Windows
 - [TalkBack](https://support.google.com/accessibility/android/answer/6283677) - Built-in, Android
 
 ### Documentation
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
 - [WebAIM Articles](https://webaim.org/articles/)
@@ -493,6 +532,7 @@ button:focus {
 ## Support
 
 For questions or issues:
+
 - Technical: accessibility@adsapp.com
 - GitHub: Create an issue with `accessibility` label
 - Slack: #accessibility channel (internal)

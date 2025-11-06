@@ -8,11 +8,13 @@
 ## ✅ Migrations to Apply
 
 ### 1. Team Invitations & License Management (V2 - FIXED)
+
 **File**: `supabase/migrations/20251105_team_invitations_licenses_v2.sql`
 **Purpose**: Enable team member invitations with license seat management
 **Status**: ✅ FIXED - No more "column status does not exist" error
 
 ### 2. WhatsApp Credentials Enhancement
+
 **File**: `supabase/migrations/20251105_whatsapp_credentials_enhancement.sql`
 **Purpose**: Add access_token and webhook_verify_token columns to organizations
 **Status**: ✅ READY
@@ -24,6 +26,7 @@
 ### Option 1: Supabase Dashboard (Recommended)
 
 #### Step 1: Apply Team Invitations Migration
+
 ```
 1. Open Supabase Dashboard: https://supabase.com/dashboard
 2. Select your project
@@ -38,11 +41,13 @@
 ```
 
 **Expected output**:
+
 ```
 Success. No rows returned
 ```
 
 **Verification**:
+
 ```sql
 -- Run this query to verify:
 SELECT column_name, data_type
@@ -56,6 +61,7 @@ ORDER BY ordinal_position;
 ---
 
 #### Step 2: Apply WhatsApp Credentials Migration
+
 ```
 1. Still in SQL Editor
 2. Click "New Query" (or clear previous)
@@ -68,6 +74,7 @@ ORDER BY ordinal_position;
 ```
 
 **Verification**:
+
 ```sql
 -- Run this query to verify:
 SELECT column_name, data_type
@@ -85,6 +92,7 @@ AND column_name IN ('whatsapp_access_token', 'whatsapp_webhook_verify_token');
 ### Option 2: Supabase CLI (If Linked)
 
 #### Prerequisites
+
 ```bash
 # Check if project is linked
 npx supabase status
@@ -94,6 +102,7 @@ npx supabase link --project-ref YOUR_PROJECT_REF
 ```
 
 #### Apply Migrations
+
 ```bash
 # Push all pending migrations
 npx supabase db push
@@ -108,6 +117,7 @@ npx supabase db execute --file supabase/migrations/20251105_whatsapp_credentials
 ## 🧪 Testing After Migration
 
 ### Test 1: Verify Team Invitations Table
+
 ```sql
 -- Should return empty result (no errors)
 SELECT * FROM team_invitations LIMIT 1;
@@ -126,6 +136,7 @@ WHERE tablename = 'team_invitations';
 ```
 
 ### Test 2: Verify Organizations Columns
+
 ```sql
 -- Should return your existing organizations with new columns
 SELECT
@@ -142,6 +153,7 @@ LIMIT 5;
 ```
 
 ### Test 3: Verify Functions
+
 ```sql
 -- Test check_available_licenses function
 SELECT * FROM check_available_licenses(
@@ -154,6 +166,7 @@ SELECT * FROM check_available_licenses(
 ```
 
 ### Test 4: Test Invitation Creation (via API)
+
 ```bash
 # Make sure dev server is running
 npm run dev
@@ -175,24 +188,28 @@ curl -X POST http://localhost:3000/api/team/invitations \
 ## 🚨 Troubleshooting
 
 ### Error: "column status does not exist"
+
 **Cause**: Using old migration file (`20251105_team_invitations_licenses_simple.sql`)
 **Solution**: Use V2 file (`20251105_team_invitations_licenses_v2.sql`) instead
 
 ---
 
 ### Error: "relation already exists"
+
 **Cause**: Migration was partially applied
 **Solution**: V2 migration is idempotent - safe to re-run. It will skip existing objects.
 
 ---
 
 ### Error: "constraint already exists"
+
 **Cause**: Constraint from previous attempt exists
 **Solution**: V2 migration checks for existing constraints before adding - safe to re-run.
 
 ---
 
 ### Error: "permission denied"
+
 **Cause**: Not using service role or proper permissions
 **Solution**: Ensure you're logged into Supabase Dashboard with project owner/admin access
 
@@ -201,6 +218,7 @@ curl -X POST http://localhost:3000/api/team/invitations \
 ## 🔄 Rollback (If Needed)
 
 ### Rollback Team Invitations
+
 ```sql
 -- WARNING: This will delete all invitation data
 DROP TABLE IF EXISTS team_invitations CASCADE;
@@ -218,6 +236,7 @@ DROP FUNCTION IF EXISTS accept_team_invitation(TEXT, UUID);
 ```
 
 ### Rollback WhatsApp Credentials
+
 ```sql
 -- WARNING: This will delete access tokens
 ALTER TABLE organizations DROP COLUMN IF EXISTS whatsapp_access_token;
@@ -245,6 +264,7 @@ After applying both migrations:
 ## 📊 Expected Schema After Migration
 
 ### team_invitations table
+
 ```
 - id (UUID, PK)
 - organization_id (UUID, FK → organizations)
@@ -261,6 +281,7 @@ After applying both migrations:
 ```
 
 ### organizations table (new columns)
+
 ```
 + max_team_members (INTEGER, DEFAULT 1, NOT NULL)
 + used_team_members (INTEGER, DEFAULT 1, NOT NULL)
@@ -273,6 +294,7 @@ After applying both migrations:
 ## 🎯 Next Steps After Migration
 
 1. **Test Onboarding Flow**
+
    ```bash
    # Start dev server
    npm run dev
@@ -283,6 +305,7 @@ After applying both migrations:
    ```
 
 2. **Run E2E Tests**
+
    ```bash
    # Run onboarding E2E tests
    npm run test:e2e -- tests/e2e/onboarding-whatsapp-setup.spec.ts
@@ -312,5 +335,5 @@ If you encounter issues:
 
 ---
 
-*Last Updated: 2025-11-05*
-*Status: Ready for Application*
+_Last Updated: 2025-11-05_
+_Status: Ready for Application_

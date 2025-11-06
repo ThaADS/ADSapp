@@ -1,7 +1,12 @@
 // @ts-nocheck - Database types need regeneration
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,7 +61,6 @@ export async function PUT(
     const updatedNote = updatedNotes.find((n: any) => n.id === noteId)
 
     return createSuccessResponse({ note: updatedNote })
-
   } catch (error) {
     console.error('Error updating note:', error)
     return createErrorResponse(error)
@@ -88,9 +92,7 @@ export async function DELETE(
     }
 
     // Remove note
-    const updatedNotes = (conversation.notes || []).filter(
-      (note: any) => note.id !== noteId
-    )
+    const updatedNotes = (conversation.notes || []).filter((note: any) => note.id !== noteId)
 
     // Save updated notes
     const { error } = await supabase
@@ -103,7 +105,6 @@ export async function DELETE(
     }
 
     return createSuccessResponse({ message: 'Note deleted successfully' })
-
   } catch (error) {
     console.error('Error deleting note:', error)
     return createErrorResponse(error)

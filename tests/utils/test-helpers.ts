@@ -8,15 +8,8 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { v4 as uuidv4 } from 'uuid'
-import type {
-  Organization,
-  Profile,
-  Contact,
-  Conversation,
-  Message,
-} from '@/types/database'
+import type { Organization, Profile, Contact, Conversation, Message } from '@/types/database'
 
 // TODO WEEK 5+: Create MessageTemplate and AutomationRule types in database.ts
 // For now, these are commented out as they don't exist in the current schema
@@ -53,7 +46,9 @@ export interface MockSupabaseClient {
  * @param overrides - Optional overrides for specific methods
  * @returns Mocked Supabase client
  */
-export function createMockSupabaseClient(overrides?: Partial<MockSupabaseClient>): MockSupabaseClient {
+export function createMockSupabaseClient(
+  overrides?: Partial<MockSupabaseClient>
+): MockSupabaseClient {
   const mockClient: MockSupabaseClient = {
     from: jest.fn((table: string) => ({
       select: jest.fn().mockReturnThis(),
@@ -156,7 +151,8 @@ export function createMockOrganization(overrides?: Partial<Organization>): Organ
     id,
     name: overrides?.name || `Test Organization ${id.slice(0, 8)}`,
     slug: overrides?.slug || `org-${id.slice(0, 8)}`,
-    whatsapp_business_account_id: overrides?.whatsapp_business_account_id || 'test-business-account',
+    whatsapp_business_account_id:
+      overrides?.whatsapp_business_account_id || 'test-business-account',
     whatsapp_phone_number_id: overrides?.whatsapp_phone_number_id || 'test-phone-number',
     subscription_status: overrides?.subscription_status || 'active',
     subscription_tier: overrides?.subscription_tier || 'professional',
@@ -184,7 +180,8 @@ export function createMockContact(overrides?: Partial<Contact>): Contact {
     id,
     organization_id: overrides?.organization_id || uuidv4(),
     whatsapp_id: overrides?.whatsapp_id || `wa-${id.slice(0, 8)}`,
-    phone_number: overrides?.phone_number || `+1555${Math.floor(1000000 + Math.random() * 9000000)}`,
+    phone_number:
+      overrides?.phone_number || `+1555${Math.floor(1000000 + Math.random() * 9000000)}`,
     name: overrides?.name || `Test Contact ${id.slice(0, 8)}`,
     profile_picture_url: overrides?.profile_picture_url || null,
     tags: overrides?.tags || [],
@@ -308,7 +305,10 @@ export function generateMockUsers(count: number, overrides?: Partial<Profile>): 
 /**
  * Generates multiple mock organizations
  */
-export function generateMockOrganizations(count: number, overrides?: Partial<Organization>): Organization[] {
+export function generateMockOrganizations(
+  count: number,
+  overrides?: Partial<Organization>
+): Organization[] {
   return Array.from({ length: count }, () => createMockOrganization(overrides))
 }
 
@@ -322,7 +322,10 @@ export function generateMockContacts(count: number, overrides?: Partial<Contact>
 /**
  * Generates multiple mock conversations
  */
-export function generateMockConversations(count: number, overrides?: Partial<Conversation>): Conversation[] {
+export function generateMockConversations(
+  count: number,
+  overrides?: Partial<Conversation>
+): Conversation[] {
   return Array.from({ length: count }, () => createMockConversation(overrides))
 }
 
@@ -340,20 +343,17 @@ export function generateMockMessages(count: number, overrides?: Partial<Message>
 /**
  * Wait for async operations to complete
  */
-export const waitForAsync = (): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, 0))
+export const waitForAsync = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0))
 
 /**
  * Wait for a specific amount of time
  */
-export const wait = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+export const wait = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
 /**
  * Flush all pending promises
  */
-export const flushPromises = (): Promise<void> =>
-  new Promise((resolve) => setImmediate(resolve))
+export const flushPromises = (): Promise<void> => new Promise(resolve => setImmediate(resolve))
 
 /**
  * Create a mock Date that can be controlled in tests

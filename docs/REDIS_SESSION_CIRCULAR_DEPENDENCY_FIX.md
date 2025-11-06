@@ -12,6 +12,7 @@
 **User Report**: "het probleem is dat het al gewerkt heeft met redis" (Redis was 100% working before)
 
 **Error**:
+
 ```
 ReferenceError: Cannot access 'k' before initialization
 ```
@@ -101,41 +102,43 @@ function getDefaultConfig(): Required<Omit<SessionMiddlewareConfig, 'sessionMana
 ```
 
 **Then in validateSession() (line 124)**:
+
 ```typescript
 export async function validateSession(
   request: NextRequest,
   config: SessionMiddlewareConfig = {}
 ): Promise<NextResponse | null> {
-  const fullConfig = { ...getDefaultConfig(), ...config };
+  const fullConfig = { ...getDefaultConfig(), ...config }
 
   // ✅ Lazy initialize only when function is EXECUTED
-  const sessionManager = fullConfig.sessionManager || getSessionManager();
+  const sessionManager = fullConfig.sessionManager || getSessionManager()
 
   // ... rest of function
 }
 ```
 
 **Additional Safety in checkSessionHealth() (line 533)**:
+
 ```typescript
 export async function checkSessionHealth(): Promise<{
-  healthy: boolean;
-  latency: number;
-  error?: string;
+  healthy: boolean
+  latency: number
+  error?: string
 }> {
   try {
-    const manager = getSessionManager();
-    const store = manager.getStore();
+    const manager = getSessionManager()
+    const store = manager.getStore()
 
     // ✅ Add null check for Redis store
     if (!store) {
       return {
         healthy: false,
         latency: -1,
-        error: 'Redis store not initialized'
-      };
+        error: 'Redis store not initialized',
+      }
     }
 
-    return await store.getHealthStatus();
+    return await store.getHealthStatus()
   } catch (error) {
     // ... error handling
   }
@@ -149,15 +152,18 @@ export async function checkSessionHealth(): Promise<{
 ### File: `src/lib/middleware/session.ts`
 
 **1. Change getDefaultConfig() return type and implementation** (lines 67-81):
+
 - Changed return type to explicitly mark `sessionManager` as `undefined`
 - Set `sessionManager: undefined` instead of `getSessionManager()`
 - Added comment explaining lazy initialization
 
 **2. Add lazy initialization in validateSession()** (line 124):
+
 - Added: `const sessionManager = fullConfig.sessionManager || getSessionManager();`
 - Ensures SessionManager is only created when function executes, not at module load
 
 **3. Add null safety in checkSessionHealth()** (lines 533-539):
+
 - Added null check for Redis store before calling health status
 - Provides graceful degradation if Redis not available
 
@@ -166,18 +172,23 @@ export async function checkSessionHealth(): Promise<{
 ## Verification
 
 ### Build Test
+
 ```bash
 npm run build
 ```
+
 **Result**: ✅ SUCCESS - No errors, clean build
 
 ### Dev Server Test
+
 ```bash
 npm run dev
 ```
+
 **Result**: ✅ SUCCESS - "Ready in 3.1s" with no errors
 
 ### Redis Functionality
+
 - ✅ Redis session management restored to 100% working state
 - ✅ Fallback to database-only mode still works if Redis unavailable
 - ✅ No breaking changes to existing session functionality
@@ -187,33 +198,38 @@ npm run dev
 ## Key Learnings
 
 ### 1. Module-Level vs Runtime Initialization
+
 **Problem**: Code executed at module load time can cause circular dependencies
 **Solution**: Always use lazy initialization for complex services
 
 ### 2. Function Definition vs Execution
+
 ```typescript
 // ❌ BAD: Executes at module load
 function getConfig() {
-  return { service: createService() };
+  return { service: createService() }
 }
 
 // ✅ GOOD: Executes at function call
 function getConfig() {
-  return { service: undefined };
+  return { service: undefined }
 }
 function useConfig() {
-  const config = getConfig();
-  const service = config.service || createService();  // Lazy
+  const config = getConfig()
+  const service = config.service || createService() // Lazy
 }
 ```
 
 ### 3. Misleading Error Messages
+
 - Compiled/minified code can show cryptic variable names
 - The error location (demo-context.tsx) was NOT the root cause
 - Always trace the import chain and initialization sequence
 
 ### 4. TypeScript Type Safety
+
 Using proper TypeScript types helped catch the undefined case:
+
 ```typescript
 Required<Omit<SessionMiddlewareConfig, 'sessionManager'>> & { sessionManager: undefined }
 ```
@@ -223,30 +239,33 @@ Required<Omit<SessionMiddlewareConfig, 'sessionManager'>> & { sessionManager: un
 ## Prevention Strategy
 
 ### 1. Code Review Checklist
+
 - [ ] No service initialization in default config objects
 - [ ] No database/Redis calls at module level
 - [ ] Use lazy initialization for all external services
 - [ ] Add null checks for optional services
 
 ### 2. Development Guidelines
+
 ```typescript
 // Pattern: Lazy Service Initialization
 interface Config {
-  service?: ServiceType;
+  service?: ServiceType
 }
 
 function getDefaultConfig(): Config {
   return {
-    service: undefined  // ✅ Lazy
-  };
+    service: undefined, // ✅ Lazy
+  }
 }
 
 function useConfig(config: Config) {
-  const service = config.service || createService();  // Initialize when needed
+  const service = config.service || createService() // Initialize when needed
 }
 ```
 
 ### 3. Testing Strategy
+
 - Test builds after session management changes
 - Test dev server startup
 - Test with and without Redis configuration
@@ -266,15 +285,18 @@ function useConfig(config: Config) {
 ## Rollback Plan
 
 If issues arise, revert commit with:
+
 ```bash
 git diff HEAD src/lib/middleware/session.ts  # Review changes
 git checkout HEAD~1 -- src/lib/middleware/session.ts  # Revert if needed
 ```
 
 Or manually change line 79 back to:
+
 ```typescript
 sessionManager: getSessionManager()
 ```
+
 (But this will re-introduce the circular dependency)
 
 ---
@@ -282,12 +304,14 @@ sessionManager: getSessionManager()
 ## Related Systems
 
 ### Affected Components
+
 - ✅ Redis session management (FIXED)
 - ✅ Session middleware (IMPROVED)
 - ✅ Authentication flow (WORKING)
 - ✅ Multi-tenant session isolation (WORKING)
 
 ### Not Affected
+
 - ✅ Supabase authentication
 - ✅ Database-only session fallback
 - ✅ Client-side demo functionality

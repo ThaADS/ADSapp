@@ -37,6 +37,7 @@
 ## Optimizations Implemented
 
 ### 1. Layout Caching ⚡
+
 **File**: `src/app/dashboard/layout.tsx`
 
 ```typescript
@@ -45,10 +46,12 @@ export const revalidate = 300
 ```
 
 **Impact**: Layout (nav + header) cached for 5 minutes
+
 - Profile data fetched ONCE, reused across all tabs
 - Eliminates redundant `requireOrganization()` calls
 
 ### 2. Page-Level Caching ⚡
+
 **Files**: All dashboard pages
 
 ```typescript
@@ -63,6 +66,7 @@ export const revalidate = 300
 ```
 
 **Impact**:
+
 - Pages cached, no re-renders on navigation
 - Only fetches new data after cache expires
 - Client components handle real-time updates
@@ -72,6 +76,7 @@ export const revalidate = 300
 ## Performance Improvements
 
 ### Before Optimization
+
 ```
 Tab Switch Timeline:
 1. Click navigation → 0ms
@@ -84,6 +89,7 @@ TOTAL: 1100-3384ms (1-3.4 seconds!)
 ```
 
 ### After Optimization
+
 ```
 Tab Switch Timeline:
 1. Click navigation → 0ms
@@ -100,22 +106,23 @@ TOTAL: 110-250ms (0.1-0.25 seconds!)
 
 ## Cache Strategy Per Page
 
-| Page | Revalidate | Reason |
-|------|------------|--------|
-| **Layout** | 300s (5min) | Profile data rarely changes |
-| **Dashboard** | 30s | Stats update frequently |
-| **Inbox** | 60s | Real-time via WebSocket client-side |
-| **Contacts** | 60s | Updated via API, not critical |
-| **Templates** | 300s (5min) | Rarely change |
-| **Automation** | 300s (5min) | Config rarely changes |
-| **WhatsApp** | 300s (5min) | Status cached |
-| **Settings** | 300s (5min) | Updated via API |
+| Page           | Revalidate  | Reason                              |
+| -------------- | ----------- | ----------------------------------- |
+| **Layout**     | 300s (5min) | Profile data rarely changes         |
+| **Dashboard**  | 30s         | Stats update frequently             |
+| **Inbox**      | 60s         | Real-time via WebSocket client-side |
+| **Contacts**   | 60s         | Updated via API, not critical       |
+| **Templates**  | 300s (5min) | Rarely change                       |
+| **Automation** | 300s (5min) | Config rarely changes               |
+| **WhatsApp**   | 300s (5min) | Status cached                       |
+| **Settings**   | 300s (5min) | Updated via API                     |
 
 ---
 
 ## Additional Optimizations Possible
 
 ### 1. Client-Side Navigation Prefetching (Future)
+
 ```typescript
 // Prefetch all dashboard pages on mount
 useEffect(() => {
@@ -126,12 +133,14 @@ useEffect(() => {
 ```
 
 ### 2. Parallel Route Segments (Future)
+
 ```typescript
 // Load multiple sections in parallel
 // @see Next.js 15 Parallel Routes
 ```
 
 ### 3. Streaming SSR (Future)
+
 ```typescript
 // Stream page content as it loads
 export const dynamic = 'force-dynamic'
@@ -143,12 +152,14 @@ export const fetchCache = 'force-no-store'
 ## Testing Results
 
 ### Manual Testing (Local Dev Server)
+
 - ✅ Dashboard → Inbox: **~200ms** (was 2800ms)
 - ✅ Inbox → Contacts: **~150ms** (was 1900ms)
 - ✅ Contacts → Templates: **~180ms** (was 1700ms)
 - ✅ Templates → Settings: **~160ms** (was 2100ms)
 
 ### Expected Production Performance
+
 - Even faster due to edge caching
 - CDN caching of static assets
 - Smaller network latency
@@ -158,12 +169,14 @@ export const fetchCache = 'force-no-store'
 ## User Experience Impact
 
 **Before**:
+
 - 😤 Frustrating 1-3 second delays
 - 😤 "Stroperig" feeling
 - 😤 Every click felt slow
 - ❌ Almost unacceptable
 
 **After**:
+
 - ⚡ Instant tab switches (<250ms)
 - ⚡ Smooth navigation
 - ⚡ Feels responsive and snappy

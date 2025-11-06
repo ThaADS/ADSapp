@@ -60,7 +60,7 @@ export class InvoiceManager {
       { attemptNumber: 2, action: 'email', delayHours: 24 },
       { attemptNumber: 3, action: 'suspend', delayHours: 72 },
       { attemptNumber: 4, action: 'cancel', delayHours: 168 },
-    ]
+    ],
   }
 
   async createInvoiceRecord(stripeInvoice: Stripe.Invoice): Promise<void> {
@@ -79,22 +79,29 @@ export class InvoiceManager {
       organization_id: organizationId,
       stripe_invoice_id: stripeInvoice.id,
       customer_id: stripeInvoice.customer as string,
-      subscription_id: stripeInvoice.subscription as string || undefined,
+      subscription_id: (stripeInvoice.subscription as string) || undefined,
       status: stripeInvoice.status as any,
       amount: stripeInvoice.amount_due,
       subtotal: stripeInvoice.subtotal,
       tax: stripeInvoice.tax || 0,
       discount: stripeInvoice.discount?.amount || 0,
       currency: stripeInvoice.currency,
-      due_date: stripeInvoice.due_date ? new Date(stripeInvoice.due_date * 1000).toISOString() : null,
-      period_start: stripeInvoice.period_start ? new Date(stripeInvoice.period_start * 1000).toISOString() : null,
-      period_end: stripeInvoice.period_end ? new Date(stripeInvoice.period_end * 1000).toISOString() : null,
+      due_date: stripeInvoice.due_date
+        ? new Date(stripeInvoice.due_date * 1000).toISOString()
+        : null,
+      period_start: stripeInvoice.period_start
+        ? new Date(stripeInvoice.period_start * 1000).toISOString()
+        : null,
+      period_end: stripeInvoice.period_end
+        ? new Date(stripeInvoice.period_end * 1000).toISOString()
+        : null,
       invoice_number: stripeInvoice.number || '',
       invoice_url: stripeInvoice.hosted_invoice_url,
       pdf_url: stripeInvoice.invoice_pdf,
       attempt_count: stripeInvoice.attempt_count || 0,
-      next_payment_attempt: stripeInvoice.next_payment_attempt ?
-        new Date(stripeInvoice.next_payment_attempt * 1000).toISOString() : null,
+      next_payment_attempt: stripeInvoice.next_payment_attempt
+        ? new Date(stripeInvoice.next_payment_attempt * 1000).toISOString()
+        : null,
       line_items: lineItems,
       created_at: new Date(stripeInvoice.created * 1000).toISOString(),
       updated_at: new Date().toISOString(),
@@ -103,7 +110,7 @@ export class InvoiceManager {
     await supabase
       .from('invoices')
       .upsert(invoiceData)
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         ...invoiceData,
         updated_at: new Date().toISOString(),
@@ -365,15 +372,18 @@ export class InvoiceManager {
     }
 
     const paidInvoices = invoices.filter(i => i.status === 'paid')
-    const failedPayments = invoices.filter(i => i.status === 'uncollectible' ||
-      (i.status === 'open' && i.attempt_count >= this.defaultRetryConfig.maxAttempts))
+    const failedPayments = invoices.filter(
+      i =>
+        i.status === 'uncollectible' ||
+        (i.status === 'open' && i.attempt_count >= this.defaultRetryConfig.maxAttempts)
+    )
 
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.amount, 0)
-    const averageInvoiceAmount = invoices.length > 0 ?
-      invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length : 0
+    const averageInvoiceAmount =
+      invoices.length > 0 ? invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length : 0
 
-    const paymentSuccessRate = invoices.length > 0 ?
-      (paidInvoices.length / invoices.length) * 100 : 0
+    const paymentSuccessRate =
+      invoices.length > 0 ? (paidInvoices.length / invoices.length) * 100 : 0
 
     return {
       totalRevenue,
@@ -428,8 +438,9 @@ export class InvoiceManager {
   }
 
   private async handlePaymentRetry(invoiceId: string, attemptCount: number): Promise<void> {
-    const escalationRule = this.defaultRetryConfig.escalationRules
-      .find(rule => rule.attemptNumber === attemptCount)
+    const escalationRule = this.defaultRetryConfig.escalationRules.find(
+      rule => rule.attemptNumber === attemptCount
+    )
 
     if (!escalationRule) return
 
@@ -470,8 +481,13 @@ export class InvoiceManager {
     console.log(`Sending ${type} notification for invoice ${invoiceId}`)
   }
 
-  private async sendPaymentRetryNotification(invoiceId: string, attemptCount: number): Promise<void> {
-    console.log(`Sending payment retry notification for invoice ${invoiceId}, attempt ${attemptCount}`)
+  private async sendPaymentRetryNotification(
+    invoiceId: string,
+    attemptCount: number
+  ): Promise<void> {
+    console.log(
+      `Sending payment retry notification for invoice ${invoiceId}, attempt ${attemptCount}`
+    )
   }
 
   private async suspendOrganizationAccess(invoiceId: string): Promise<void> {

@@ -66,36 +66,36 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Profile Overview */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-        <div className="p-6">
-          <div className="flex items-center space-x-5">
-            <div className="flex-shrink-0">
-              <div className="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center">
+      <div className='rounded-lg border border-gray-200 bg-white shadow-sm'>
+        <div className='p-6'>
+          <div className='flex items-center space-x-5'>
+            <div className='flex-shrink-0'>
+              <div className='flex h-20 w-20 items-center justify-center rounded-full bg-gray-300'>
                 {profile.avatar_url ? (
                   <img
-                    className="h-20 w-20 rounded-full"
+                    className='h-20 w-20 rounded-full'
                     src={profile.avatar_url}
                     alt={profile.full_name || 'Profile'}
                   />
                 ) : (
-                  <UserIcon className="h-8 w-8 text-gray-600" />
+                  <UserIcon className='h-8 w-8 text-gray-600' />
                 )}
               </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-2xl font-bold text-gray-900 sm:truncate">
+            <div className='min-w-0 flex-1'>
+              <h2 className='text-2xl font-bold text-gray-900 sm:truncate'>
                 {profile.full_name || 'No name set'}
               </h2>
-              <div className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
-                <div className="mt-2 flex items-center text-sm text-gray-500">
-                  <EnvelopeIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
+              <div className='mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6'>
+                <div className='mt-2 flex items-center text-sm text-gray-500'>
+                  <EnvelopeIcon className='mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400' />
                   {profile.email}
                 </div>
                 {profile.organization && (
-                  <div className="mt-2 flex items-center text-sm text-gray-500">
-                    <UserIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
+                  <div className='mt-2 flex items-center text-sm text-gray-500'>
+                    <UserIcon className='mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400' />
                     {profile.organization.name}
                   </div>
                 )}
@@ -106,79 +106,77 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
       </div>
 
       {/* Edit Profile Form */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Personal Information
-          </h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className='rounded-lg border border-gray-200 bg-white shadow-sm'>
+        <div className='p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Personal Information</h3>
+
+          <form onSubmit={handleSubmit} className='space-y-6'>
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
-                <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
+                <label htmlFor='full_name' className='block text-sm font-medium text-gray-700'>
                   Full Name
                 </label>
                 <input
-                  type="text"
-                  name="full_name"
-                  id="full_name"
+                  type='text'
+                  name='full_name'
+                  id='full_name'
                   value={formData.full_name}
                   onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
-                  placeholder="Enter your full name"
+                  className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
+                  placeholder='Enter your full name'
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                <label htmlFor='phone' className='block text-sm font-medium text-gray-700'>
                   Phone Number
                 </label>
                 <input
-                  type="tel"
-                  name="phone"
-                  id="phone"
+                  type='tel'
+                  name='phone'
+                  id='phone'
                   value={formData.phone}
                   onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
-                  placeholder="Enter your phone number"
+                  className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
+                  placeholder='Enter your phone number'
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
                   Email Address
                 </label>
                 <input
-                  type="email"
-                  name="email"
-                  id="email"
+                  type='email'
+                  name='email'
+                  id='email'
                   value={profile.email || ''}
                   disabled
-                  className="mt-1 block w-full border border-gray-300 rounded-lg bg-gray-50 text-gray-500 sm:text-sm px-3 py-2"
+                  className='mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 sm:text-sm'
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className='mt-1 text-xs text-gray-500'>
                   Email cannot be changed. Contact support if you need to update your email.
                 </p>
               </div>
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-                <div className="text-sm text-red-700">{error}</div>
+              <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
+                <div className='text-sm text-red-700'>{error}</div>
               </div>
             )}
 
             {message && (
-              <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
-                <div className="text-sm text-emerald-700">{message}</div>
+              <div className='rounded-lg border border-emerald-200 bg-emerald-50 p-4'>
+                <div className='text-sm text-emerald-700'>{message}</div>
               </div>
             )}
 
-            <div className="flex justify-end">
+            <div className='flex justify-end'>
               <button
-                type="submit"
+                type='submit'
                 disabled={loading}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>
@@ -188,23 +186,19 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
       </div>
 
       {/* Security Settings */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Security
-          </h3>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+      <div className='rounded-lg border border-gray-200 bg-white shadow-sm'>
+        <div className='p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Security</h3>
+
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between'>
               <div>
-                <h4 className="text-sm font-medium text-gray-900">Password</h4>
-                <p className="text-sm text-gray-500">
-                  Last updated: Never or unknown
-                </p>
+                <h4 className='text-sm font-medium text-gray-900'>Password</h4>
+                <p className='text-sm text-gray-500'>Last updated: Never or unknown</p>
               </div>
               <a
-                href="/auth/forgot-password"
-                className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
+                href='/auth/forgot-password'
+                className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
               >
                 Change Password
               </a>

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -27,9 +27,9 @@ body {
 
 /* Ensure light background for all dashboard elements by default */
 .dashboard-container,
-[class*="dashboard"],
-[class*="sidebar"],
-nav[class*="nav"] {
+[class*='dashboard'],
+[class*='sidebar'],
+nav[class*='nav'] {
   background-color: #ffffff;
   color: #171717;
 }

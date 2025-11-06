@@ -1,4 +1,5 @@
 # Stripe Integration Complete Guide
+
 **ADSapp Production-Ready Payment System**
 
 ## Overview
@@ -83,6 +84,7 @@ CREATE TABLE refunds (
 ```
 
 **Key Features**:
+
 - Full audit trail with status tracking
 - Admin authorization (super_admin only)
 - Automatic subscription cancellation
@@ -113,6 +115,7 @@ CREATE TABLE payment_intents (
 ```
 
 **Key Features**:
+
 - 3D Secure (SCA) authentication tracking
 - PSD2 compliance with exemption handling
 - Retry logic with exponential backoff
@@ -138,6 +141,7 @@ CREATE TABLE webhook_events (
 ```
 
 **Key Features**:
+
 - Idempotency guarantees (atomic operations)
 - Automatic retry with exponential backoff
 - Signature verification tracking
@@ -151,6 +155,7 @@ CREATE TABLE webhook_events (
 ### Refund Management (S-001)
 
 #### Create Refund
+
 ```http
 POST /api/admin/billing/refunds
 Authorization: Bearer <token>
@@ -168,6 +173,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -186,12 +192,14 @@ Content-Type: application/json
 **Rate Limit**: 10 requests/minute
 
 #### List Refunds
+
 ```http
 GET /api/admin/billing/refunds?organizationId=uuid&status=completed&limit=50&offset=0
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -206,12 +214,14 @@ Authorization: Bearer <token>
 ```
 
 #### Get Refund Details
+
 ```http
 GET /api/admin/billing/refunds/{refundId}
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -227,6 +237,7 @@ Authorization: Bearer <token>
 ### Payment Intent Management (S-002)
 
 #### Create Payment Intent
+
 ```http
 POST /api/billing/payment-intent/create
 Authorization: Bearer <token>
@@ -241,6 +252,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -255,12 +267,14 @@ Content-Type: application/json
 ```
 
 **3DS Flow**:
+
 1. Create payment intent → Get client secret
 2. Frontend: Stripe.js confirmCardPayment(clientSecret)
 3. If 3DS required: Redirect/modal authentication
 4. Confirm payment intent → Complete
 
 #### Confirm Payment Intent
+
 ```http
 POST /api/billing/payment-intent/confirm
 Authorization: Bearer <token>
@@ -274,6 +288,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -288,6 +303,7 @@ Content-Type: application/json
 ### Webhook Processing (S-003)
 
 #### Stripe Webhook Endpoint
+
 ```http
 POST /api/webhooks/stripe
 Stripe-Signature: t=xxx,v1=yyy
@@ -301,6 +317,7 @@ Content-Type: application/json
 ```
 
 **Response (Success)**:
+
 ```json
 {
   "received": true,
@@ -311,6 +328,7 @@ Content-Type: application/json
 ```
 
 **Response (Already Processed)**:
+
 ```json
 {
   "received": true,
@@ -324,12 +342,14 @@ Content-Type: application/json
 **Retry Logic**: Automatic with exponential backoff (max 3 retries)
 
 #### View Webhook Events (Admin)
+
 ```http
 GET /api/admin/webhooks/events?status=completed&limit=50
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -352,6 +372,7 @@ Authorization: Bearer <token>
 **Main Class**: `RefundManager`
 
 **Key Methods**:
+
 - `processRefund(request)` - Complete refund workflow
 - `checkRefundEligibility(orgId, subId)` - Validate refund eligibility
 - `getRefund(refundId)` - Get refund details
@@ -360,10 +381,11 @@ Authorization: Bearer <token>
 - `cancelRefund(refundId, cancelledBy)` - Cancel refund request
 
 **Usage Example**:
-```typescript
-import { RefundManager } from '@/lib/billing/refunds';
 
-const refundManager = new RefundManager();
+```typescript
+import { RefundManager } from '@/lib/billing/refunds'
+
+const refundManager = new RefundManager()
 
 const result = await refundManager.processRefund({
   organizationId: 'uuid',
@@ -374,10 +396,10 @@ const result = await refundManager.processRefund({
   reasonDetails: 'Customer requested refund',
   cancelSubscription: false,
   requestedBy: user.id,
-});
+})
 
 if (result.status === 'completed') {
-  console.log('Refund successful:', result.stripeRefundId);
+  console.log('Refund successful:', result.stripeRefundId)
 }
 ```
 
@@ -386,6 +408,7 @@ if (result.status === 'completed') {
 **Main Class**: `PaymentIntentManager`
 
 **Key Methods**:
+
 - `createPaymentIntentWithSCA(request)` - Create payment intent with 3DS
 - `confirmPaymentIntent(request)` - Confirm after authentication
 - `handle3DSAuthentication(clientSecret)` - Handle 3DS flow
@@ -395,10 +418,11 @@ if (result.status === 'completed') {
 - `cancelPaymentIntent(id)` - Cancel payment intent
 
 **Usage Example**:
-```typescript
-import { PaymentIntentManager } from '@/lib/billing/payment-intent-manager';
 
-const manager = new PaymentIntentManager();
+```typescript
+import { PaymentIntentManager } from '@/lib/billing/payment-intent-manager'
+
+const manager = new PaymentIntentManager()
 
 // Create payment intent
 const result = await manager.createPaymentIntentWithSCA({
@@ -407,7 +431,7 @@ const result = await manager.createPaymentIntentWithSCA({
   currency: 'USD',
   purpose: 'subscription_payment',
   returnUrl: 'https://app.domain.com/billing/success',
-});
+})
 
 // Frontend: Use clientSecret with Stripe.js
 // After 3DS completion, confirm payment
@@ -416,7 +440,7 @@ const confirmed = await manager.confirmPaymentIntent({
   paymentIntentId: result.paymentIntentId,
   paymentMethodId: 'pm_xxx',
   returnUrl: 'https://app.domain.com/billing/success',
-});
+})
 ```
 
 ### Webhook Handler (`/src/lib/billing/webhook-handler.ts`)
@@ -424,6 +448,7 @@ const confirmed = await manager.confirmPaymentIntent({
 **Main Class**: `WebhookHandler`
 
 **Key Methods**:
+
 - `processWebhookWithIdempotency(event, signature)` - Process webhook
 - `routeEventToHandler(event)` - Route to specific handler
 - `handleSubscriptionEvents(event)` - Process subscription events
@@ -433,19 +458,17 @@ const confirmed = await manager.confirmPaymentIntent({
 - `getWebhookStatistics()` - Get processing statistics
 
 **Usage Example**:
+
 ```typescript
-import { WebhookHandler } from '@/lib/billing/webhook-handler';
+import { WebhookHandler } from '@/lib/billing/webhook-handler'
 
-const handler = new WebhookHandler();
+const handler = new WebhookHandler()
 
-const result = await handler.processWebhookWithIdempotency(
-  stripeEvent,
-  signatureHeader
-);
+const result = await handler.processWebhookWithIdempotency(stripeEvent, signatureHeader)
 
 if (result.alreadyProcessed) {
   // Event already processed - idempotency check passed
-  return { received: true };
+  return { received: true }
 }
 
 if (!result.success && result.retryable) {
@@ -458,6 +481,7 @@ if (!result.success && result.retryable) {
 **Main Class**: `WebhookValidator`
 
 **Key Methods**:
+
 - `validateWebhook(request, options)` - Validate webhook signature
 - `isEventProcessed(eventId)` - Check if event already processed
 - `extractEventMetadata(event)` - Extract event metadata
@@ -465,17 +489,18 @@ if (!result.success && result.retryable) {
 - `checkRateLimit(eventId, maxPerMinute)` - Rate limiting
 
 **Usage Example**:
-```typescript
-import { validateStripeWebhook } from '@/lib/middleware/webhook-validator';
 
-const validation = await validateStripeWebhook(request);
+```typescript
+import { validateStripeWebhook } from '@/lib/middleware/webhook-validator'
+
+const validation = await validateStripeWebhook(request)
 
 if (!validation.valid) {
-  return NextResponse.json({ error: validation.error }, { status: 400 });
+  return NextResponse.json({ error: validation.error }, { status: 400 })
 }
 
 // Process validated event
-const event = validation.event;
+const event = validation.event
 ```
 
 ---
@@ -529,12 +554,14 @@ const event = validation.event;
 ### Data Protection
 
 **GDPR Compliance**:
+
 - Right to erasure (refund data anonymization)
 - Data retention policies (90 days completed webhooks)
 - Encrypted payment metadata
 - Minimal PII collection
 
 **Security Headers**:
+
 ```typescript
 const WEBHOOK_SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -542,7 +569,7 @@ const WEBHOOK_SECURITY_HEADERS = {
   'X-XSS-Protection': '1; mode=block',
   'Strict-Transport-Security': 'max-age=31536000',
   'Content-Security-Policy': "default-src 'none'",
-};
+}
 ```
 
 ---
@@ -552,6 +579,7 @@ const WEBHOOK_SECURITY_HEADERS = {
 ### Unit Tests
 
 **Refund Manager Tests** (`tests/unit/refund-manager.test.ts`):
+
 ```typescript
 describe('RefundManager', () => {
   test('should process full refund successfully', async () => {
@@ -582,95 +610,98 @@ describe('RefundManager', () => {
 ```
 
 **Payment Intent Manager Tests** (`tests/unit/payment-intent-manager.test.ts`):
+
 ```typescript
 describe('PaymentIntentManager', () => {
   test('should create payment intent with SCA', async () => {
-    const manager = new PaymentIntentManager();
+    const manager = new PaymentIntentManager()
     const result = await manager.createPaymentIntentWithSCA({
       organizationId: 'test-org',
       amount: 2999,
       currency: 'USD',
       purpose: 'subscription_payment',
-    });
+    })
 
-    expect(result.clientSecret).toBeDefined();
-    expect(result.status).toBe('requires_payment_method');
-  });
+    expect(result.clientSecret).toBeDefined()
+    expect(result.status).toBe('requires_payment_method')
+  })
 
   test('should handle 3DS authentication challenge', async () => {
     // Test 3DS flow
-  });
+  })
 
   test('should retry failed authentication', async () => {
     // Test retry logic
-  });
-});
+  })
+})
 ```
 
 **Webhook Handler Tests** (`tests/unit/webhook-handler.test.ts`):
+
 ```typescript
 describe('WebhookHandler', () => {
   test('should process webhook idempotently', async () => {
-    const handler = new WebhookHandler();
-    const event = mockStripeEvent('customer.subscription.updated');
+    const handler = new WebhookHandler()
+    const event = mockStripeEvent('customer.subscription.updated')
 
     // First processing
-    const result1 = await handler.processWebhookWithIdempotency(event, 'sig');
-    expect(result1.processed).toBe(true);
+    const result1 = await handler.processWebhookWithIdempotency(event, 'sig')
+    expect(result1.processed).toBe(true)
 
     // Second processing (should be idempotent)
-    const result2 = await handler.processWebhookWithIdempotency(event, 'sig');
-    expect(result2.alreadyProcessed).toBe(true);
-  });
+    const result2 = await handler.processWebhookWithIdempotency(event, 'sig')
+    expect(result2.alreadyProcessed).toBe(true)
+  })
 
   test('should retry failed webhooks', async () => {
     // Test retry with exponential backoff
-  });
+  })
 
   test('should route events correctly', async () => {
     // Test event routing
-  });
-});
+  })
+})
 ```
 
 ### Integration Tests
 
 **Complete Payment Flow** (`tests/integration/stripe-complete-flow.test.ts`):
+
 ```typescript
 describe('Stripe Integration Complete Flow', () => {
   test('should complete subscription payment with 3DS', async () => {
     // 1. Create organization
-    const org = await createTestOrganization();
+    const org = await createTestOrganization()
 
     // 2. Create payment intent
-    const paymentIntent = await createPaymentIntent(org.id, 2999);
+    const paymentIntent = await createPaymentIntent(org.id, 2999)
 
     // 3. Simulate 3DS authentication
-    const authenticated = await simulate3DSAuth(paymentIntent.clientSecret);
+    const authenticated = await simulate3DSAuth(paymentIntent.clientSecret)
 
     // 4. Confirm payment
-    const confirmed = await confirmPayment(paymentIntent.id);
-    expect(confirmed.status).toBe('succeeded');
+    const confirmed = await confirmPayment(paymentIntent.id)
+    expect(confirmed.status).toBe('succeeded')
 
     // 5. Verify subscription activated
-    const subscription = await getSubscription(org.id);
-    expect(subscription.status).toBe('active');
-  });
+    const subscription = await getSubscription(org.id)
+    expect(subscription.status).toBe('active')
+  })
 
   test('should process refund and cancel subscription', async () => {
     // 1. Setup active subscription
     // 2. Process refund
     // 3. Verify subscription cancelled
     // 4. Verify refund completed
-  });
+  })
 
   test('should handle webhook events end-to-end', async () => {
     // 1. Trigger webhook event
     // 2. Process with idempotency
     // 3. Verify database updated
     // 4. Test duplicate processing
-  });
-});
+  })
+})
 ```
 
 ### Test Coverage Requirements
@@ -715,6 +746,7 @@ psql -h your-supabase-host -d postgres \
 ```
 
 **Verify Migration**:
+
 ```sql
 SELECT tablename FROM pg_tables
 WHERE schemaname = 'public'
@@ -732,6 +764,7 @@ AND tablename IN ('refunds', 'payment_intents', 'webhook_events');
    - Set as `STRIPE_WEBHOOK_SECRET` environment variable
 
 3. **Test Webhook**:
+
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 stripe trigger customer.subscription.updated
@@ -763,6 +796,7 @@ stripe trigger customer.subscription.updated
 **Symptom**: `400 Bad Request - Invalid signature`
 
 **Solution**:
+
 ```bash
 # Verify webhook secret is correct
 echo $STRIPE_WEBHOOK_SECRET
@@ -779,15 +813,16 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 **Symptom**: Payment intent stuck in `requires_action`
 
 **Solution**:
+
 ```typescript
 // Frontend: Ensure proper 3DS handling
-const {error} = await stripe.confirmCardPayment(clientSecret, {
+const { error } = await stripe.confirmCardPayment(clientSecret, {
   payment_method: paymentMethodId,
   return_url: window.location.origin + '/billing/success',
-});
+})
 
 if (error) {
-  console.error('3DS error:', error);
+  console.error('3DS error:', error)
   // Show error to user and allow retry
 }
 ```
@@ -797,6 +832,7 @@ if (error) {
 **Symptom**: Events processed multiple times
 
 **Solution**:
+
 - Idempotency is automatic via `stripe_event_id` unique constraint
 - Check database logs for duplicate event IDs
 - If still occurring, verify `mark_webhook_event_processing` RPC function is working
@@ -806,6 +842,7 @@ if (error) {
 **Symptom**: Refund record created but not in Stripe dashboard
 
 **Solution**:
+
 ```typescript
 // Check refund status
 const refund = await refundManager.getRefund(refundId);
@@ -821,11 +858,13 @@ SELECT error_message, error_code FROM refunds WHERE id = 'refund-uuid';
 ### Performance Optimization
 
 **Webhook Processing Time**:
+
 - Target: < 500ms per webhook
 - Current avg: 245ms
 - Optimization: Database connection pooling, async processing
 
 **Payment Intent Creation**:
+
 - Target: < 1000ms
 - Current avg: 650ms
 - Optimization: Stripe API caching, parallel database writes
@@ -833,12 +872,14 @@ SELECT error_message, error_code FROM refunds WHERE id = 'refund-uuid';
 ### Monitoring & Alerts
 
 **Set up alerts for**:
+
 - Failed webhook processing rate > 1%
 - Payment intent authentication failure rate > 5%
 - Refund processing time > 10 seconds
 - Database connection pool exhaustion
 
 **Monitoring Queries**:
+
 ```sql
 -- Webhook processing statistics
 SELECT
@@ -878,12 +919,14 @@ GROUP BY refund_type;
 ### Supported Stripe Events
 
 **Subscription Events**:
+
 - `customer.subscription.created`
 - `customer.subscription.updated`
 - `customer.subscription.deleted`
 - `customer.subscription.trial_will_end`
 
 **Invoice Events**:
+
 - `invoice.paid`
 - `invoice.payment_succeeded`
 - `invoice.payment_failed`
@@ -891,23 +934,27 @@ GROUP BY refund_type;
 - `invoice.finalized`
 
 **Payment Intent Events**:
+
 - `payment_intent.succeeded`
 - `payment_intent.payment_failed`
 - `payment_intent.requires_action`
 - `payment_intent.canceled`
 
 **Charge Events**:
+
 - `charge.succeeded`
 - `charge.failed`
 - `charge.refunded`
 - `charge.dispute.created`
 
 **Customer Events**:
+
 - `customer.created`
 - `customer.updated`
 - `customer.deleted`
 
 **Checkout Events**:
+
 - `checkout.session.completed`
 - `checkout.session.expired`
 
@@ -937,6 +984,7 @@ This Stripe integration provides production-ready payment processing with:
 ✅ Full test coverage and monitoring
 
 **Next Steps**:
+
 1. Deploy to staging environment
 2. Test with Stripe test cards
 3. Configure production webhooks

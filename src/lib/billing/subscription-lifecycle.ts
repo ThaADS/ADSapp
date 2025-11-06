@@ -91,10 +91,7 @@ export class SubscriptionLifecycleManager {
     // Calculate proration if needed
     let prorationAmount = 0
     if (options.prorate) {
-      prorationAmount = await this.calculateProration(
-        currentSubscription,
-        newPlan.stripePriceId
-      )
+      prorationAmount = await this.calculateProration(currentSubscription, newPlan.stripePriceId)
     }
 
     // Update the subscription
@@ -173,16 +170,15 @@ export class SubscriptionLifecycleManager {
 
     const usageViolations = this.checkUsageViolations(currentUsage, newLimits)
     if (usageViolations.length > 0) {
-      throw new Error(`Cannot downgrade: Current usage exceeds new plan limits: ${usageViolations.join(', ')}`)
+      throw new Error(
+        `Cannot downgrade: Current usage exceeds new plan limits: ${usageViolations.join(', ')}`
+      )
     }
 
     // Calculate proration (usually a credit for downgrade)
     let prorationAmount = 0
     if (options.prorate) {
-      prorationAmount = await this.calculateProration(
-        currentSubscription,
-        newPlan.stripePriceId
-      )
+      prorationAmount = await this.calculateProration(currentSubscription, newPlan.stripePriceId)
     }
 
     // Update the subscription
@@ -293,17 +289,15 @@ export class SubscriptionLifecycleManager {
     })
 
     // Store cancellation details
-    await supabase
-      .from('subscription_cancellations')
-      .insert({
-        organization_id: organizationId,
-        subscription_id: org.stripe_subscription_id,
-        reason: options.reason,
-        feedback: options.feedback,
-        immediate: options.immediate,
-        cancelled_at: new Date().toISOString(),
-        effective_date: effectiveDate.toISOString(),
-      })
+    await supabase.from('subscription_cancellations').insert({
+      organization_id: organizationId,
+      subscription_id: org.stripe_subscription_id,
+      reason: options.reason,
+      feedback: options.feedback,
+      immediate: options.immediate,
+      cancelled_at: new Date().toISOString(),
+      effective_date: effectiveDate.toISOString(),
+    })
 
     // Send cancellation notification
     await this.getNotificationService().sendSubscriptionCancellation(organizationId)
@@ -345,7 +339,11 @@ export class SubscriptionLifecycleManager {
 
         if (existingSubscription.status === 'canceled') {
           // Create new subscription
-          subscription = await this.createNewSubscription(org.stripe_customer_id, planId, organizationId)
+          subscription = await this.createNewSubscription(
+            org.stripe_customer_id,
+            planId,
+            organizationId
+          )
         } else {
           // Update existing subscription
           subscription = await stripe.subscriptions.update(org.stripe_subscription_id, {
@@ -360,11 +358,19 @@ export class SubscriptionLifecycleManager {
         }
       } catch (error) {
         // Create new subscription if existing one is not found
-        subscription = await this.createNewSubscription(org.stripe_customer_id, planId, organizationId)
+        subscription = await this.createNewSubscription(
+          org.stripe_customer_id,
+          planId,
+          organizationId
+        )
       }
     } else {
       // Create new subscription
-      subscription = await this.createNewSubscription(org.stripe_customer_id, planId, organizationId)
+      subscription = await this.createNewSubscription(
+        org.stripe_customer_id,
+        planId,
+        organizationId
+      )
     }
 
     // Update organization
@@ -472,9 +478,7 @@ export class SubscriptionLifecycleManager {
     }
   }
 
-  async getSubscriptionHistory(
-    organizationId: string
-  ): Promise<SubscriptionChange[]> {
+  async getSubscriptionHistory(organizationId: string): Promise<SubscriptionChange[]> {
     const supabase = await this.supabase
 
     const { data: changes } = await supabase
@@ -581,17 +585,15 @@ export class SubscriptionLifecycleManager {
   ): Promise<void> {
     const supabase = await this.supabase
 
-    await supabase
-      .from('subscription_changes')
-      .insert({
-        organization_id: organizationId,
-        from_plan: change.from,
-        to_plan: change.to,
-        effective_date: change.effectiveDate.toISOString(),
-        proration_amount: change.prorationAmount || 0,
-        reason: change.reason,
-        created_at: new Date().toISOString(),
-      })
+    await supabase.from('subscription_changes').insert({
+      organization_id: organizationId,
+      from_plan: change.from,
+      to_plan: change.to,
+      effective_date: change.effectiveDate.toISOString(),
+      proration_amount: change.prorationAmount || 0,
+      reason: change.reason,
+      created_at: new Date().toISOString(),
+    })
   }
 
   private async offerRetentionDiscount(organizationId: string): Promise<void> {
@@ -599,7 +601,10 @@ export class SubscriptionLifecycleManager {
     console.log(`Offering retention discount to organization ${organizationId}`)
   }
 
-  private async finalizeCancellation(organizationId: string, subscriptionId: string): Promise<void> {
+  private async finalizeCancellation(
+    organizationId: string,
+    subscriptionId: string
+  ): Promise<void> {
     const supabase = await this.supabase
 
     await supabase

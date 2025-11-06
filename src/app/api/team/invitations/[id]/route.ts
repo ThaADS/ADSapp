@@ -1,12 +1,11 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { InvitationCancelledResponse } from '@/types/team';
-import { canManageTeam } from '@/lib/team/roles';
-import { cancelInvitation } from '@/lib/team/invitations';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { InvitationCancelledResponse } from '@/types/team'
+import { canManageTeam } from '@/lib/team/roles'
+import { cancelInvitation } from '@/lib/team/invitations'
 
 /**
  * DELETE /api/team/invitations/[id]
@@ -17,25 +16,22 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
-    const { id: invitationId } = await params;
+    const supabase = await createClient()
+    const { id: invitationId } = await params
 
     // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(invitationId)) {
-      return NextResponse.json(
-        { error: 'Invalid invitation ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid invitation ID format' }, { status: 400 })
     }
 
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's profile
@@ -43,13 +39,10 @@ export async function DELETE(
       .from('profiles')
       .select('organization_id, role, permissions')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Get the invitation
@@ -57,13 +50,10 @@ export async function DELETE(
       .from('team_invitations')
       .select('*')
       .eq('id', invitationId)
-      .single();
+      .single()
 
     if (invitationError || !invitation) {
-      return NextResponse.json(
-        { error: 'Invitation not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Invitation not found' }, { status: 404 })
     }
 
     // Verify invitation belongs to user's organization
@@ -71,19 +61,19 @@ export async function DELETE(
       return NextResponse.json(
         { error: 'Forbidden: Cannot cancel invitations from other organizations' },
         { status: 403 }
-      );
+      )
     }
 
     // Verify user has permission to cancel invitation
     // Can cancel if: has team.manage permission OR is the one who sent the invitation
-    const hasManagePermission = canManageTeam(profile.role, profile.permissions);
-    const isInviter = invitation.invited_by === user.id;
+    const hasManagePermission = canManageTeam(profile.role, profile.permissions)
+    const isInviter = invitation.invited_by === user.id
 
     if (!hasManagePermission && !isInviter) {
       return NextResponse.json(
         { error: 'Forbidden: Insufficient permissions to cancel this invitation' },
         { status: 403 }
-      );
+      )
     }
 
     // Check if invitation is already accepted or cancelled
@@ -91,18 +81,15 @@ export async function DELETE(
       return NextResponse.json(
         { error: 'Cannot cancel an invitation that has already been accepted' },
         { status: 422 }
-      );
+      )
     }
 
     if (invitation.cancelled_at) {
-      return NextResponse.json(
-        { error: 'Invitation is already cancelled' },
-        { status: 422 }
-      );
+      return NextResponse.json({ error: 'Invitation is already cancelled' }, { status: 422 })
     }
 
     // Cancel the invitation
-    await cancelInvitation(invitationId);
+    await cancelInvitation(invitationId)
 
     // Log audit event
     await supabase.from('audit_logs').insert({
@@ -115,19 +102,15 @@ export async function DELETE(
         email: invitation.email,
         role: invitation.role,
       },
-    });
+    })
 
     const response: InvitationCancelledResponse = {
       message: 'Invitation cancelled successfully',
-    };
+    }
 
-    return NextResponse.json(response);
-
+    return NextResponse.json(response)
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/team/invitations/[id]:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Unexpected error in DELETE /api/team/invitations/[id]:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -156,7 +156,10 @@ export class ABTestingFramework {
       name: string
       description: string
       business_scenario: BusinessScenario
-      variants: Omit<ABTestVariant, 'id' | 'session_count' | 'conversion_count' | 'conversion_rate' | 'metrics_data'>[]
+      variants: Omit<
+        ABTestVariant,
+        'id' | 'session_count' | 'conversion_count' | 'conversion_rate' | 'metrics_data'
+      >[]
       metrics: ABTestMetric[]
       traffic_allocation: number
       confidence_level: number
@@ -182,7 +185,7 @@ export class ABTestingFramework {
         session_count: 0,
         conversion_count: 0,
         conversion_rate: 0,
-        metrics_data: {}
+        metrics_data: {},
       }))
 
       // Ensure traffic splits add up to 100%
@@ -202,7 +205,7 @@ export class ABTestingFramework {
         minimum_sample_size: testConfig.minimum_sample_size,
         created_by: createdBy,
         created_at: now,
-        updated_at: now
+        updated_at: now,
       }
 
       // Store test in database
@@ -220,7 +223,7 @@ export class ABTestingFramework {
           metrics: test.metrics,
           confidence_level: test.confidence_level,
           minimum_sample_size: test.minimum_sample_size,
-          created_by: test.created_by
+          created_by: test.created_by,
         })
         .select()
         .single()
@@ -232,7 +235,7 @@ export class ABTestingFramework {
       console.error('Error creating A/B test:', error)
       return {
         test: null as any,
-        error: error instanceof Error ? error.message : 'Failed to create test'
+        error: error instanceof Error ? error.message : 'Failed to create test',
       }
     }
   }
@@ -263,7 +266,7 @@ export class ABTestingFramework {
         .update({
           status: 'running',
           start_date: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', testId)
 
@@ -279,7 +282,7 @@ export class ABTestingFramework {
       console.error('Error starting A/B test:', error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to start test'
+        error: error instanceof Error ? error.message : 'Failed to start test',
       }
     }
   }
@@ -319,7 +322,7 @@ export class ABTestingFramework {
         user_agent: userAgent,
         ip_address: ipAddress,
         conversion_completed: false,
-        session_metrics: {}
+        session_metrics: {},
       }
 
       // Store assignment
@@ -355,7 +358,7 @@ export class ABTestingFramework {
           conversion_completed: true,
           conversion_value: conversionValue,
           session_metrics: { ...assignment.session_metrics, ...additionalMetrics },
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('session_id', sessionId)
 
@@ -395,7 +398,8 @@ export class ABTestingFramework {
         const variantAssignments = assignments.filter(a => a.variant_id === variant.id)
         const variantSessions = variantAssignments.length
         const variantConversions = variantAssignments.filter(a => a.conversion_completed).length
-        const conversionRate = variantSessions > 0 ? (variantConversions / variantSessions) * 100 : 0
+        const conversionRate =
+          variantSessions > 0 ? (variantConversions / variantSessions) * 100 : 0
 
         // Calculate confidence interval
         const confidenceInterval = this.calculateConfidenceInterval(
@@ -406,12 +410,13 @@ export class ABTestingFramework {
 
         // Calculate improvement over control
         const controlVariant = test.variants.find(v => v.is_control)
-        const controlConversions = assignments.filter(a =>
-          a.variant_id === controlVariant?.id && a.conversion_completed
+        const controlConversions = assignments.filter(
+          a => a.variant_id === controlVariant?.id && a.conversion_completed
         ).length
         const controlSessions = assignments.filter(a => a.variant_id === controlVariant?.id).length
         const controlRate = controlSessions > 0 ? (controlConversions / controlSessions) * 100 : 0
-        const improvementOverControl = controlRate > 0 ? ((conversionRate - controlRate) / controlRate) * 100 : 0
+        const improvementOverControl =
+          controlRate > 0 ? ((conversionRate - controlRate) / controlRate) * 100 : 0
 
         // Calculate statistical significance
         const significance = this.calculateStatisticalSignificance(
@@ -437,15 +442,22 @@ export class ABTestingFramework {
           confidence_interval: confidenceInterval,
           statistical_significance: significance.p_value,
           improvement_over_control: improvementOverControl,
-          metrics_performance: metricsPerformance
+          metrics_performance: metricsPerformance,
         })
       }
 
       // Calculate overall statistical significance
-      const overallSignificance = this.calculateOverallSignificance(variantResults, test.confidence_level)
+      const overallSignificance = this.calculateOverallSignificance(
+        variantResults,
+        test.confidence_level
+      )
 
       // Generate recommendations
-      const recommendations = this.generateRecommendations(variantResults, overallSignificance, test)
+      const recommendations = this.generateRecommendations(
+        variantResults,
+        overallSignificance,
+        test
+      )
 
       // Calculate confidence intervals for all metrics
       const confidenceIntervals = this.calculateAllConfidenceIntervals(variantResults, test)
@@ -463,7 +475,7 @@ export class ABTestingFramework {
         recommendations,
         confidence_intervals: confidenceIntervals,
         effect_size: effectSize,
-        generated_at: new Date().toISOString()
+        generated_at: new Date().toISOString(),
       }
 
       // Store results
@@ -506,12 +518,12 @@ export class ABTestingFramework {
       // Beta distribution parameters (using uniform prior: alpha=1, beta=1)
       const controlPosterior = {
         alpha: 1 + controlConversions,
-        beta: 1 + controlSessions - controlConversions
+        beta: 1 + controlSessions - controlConversions,
       }
 
       const treatmentPosterior = {
         alpha: 1 + treatmentConversions,
-        beta: 1 + treatmentSessions - treatmentConversions
+        beta: 1 + treatmentSessions - treatmentConversions,
       }
 
       // Monte Carlo simulation to calculate probability of beating control
@@ -538,12 +550,13 @@ export class ABTestingFramework {
           alpha: treatmentPosterior.alpha,
           beta: treatmentPosterior.beta,
           mean: treatmentPosterior.alpha / (treatmentPosterior.alpha + treatmentPosterior.beta),
-          variance: (treatmentPosterior.alpha * treatmentPosterior.beta) /
-                   (Math.pow(treatmentPosterior.alpha + treatmentPosterior.beta, 2) *
-                    (treatmentPosterior.alpha + treatmentPosterior.beta + 1))
+          variance:
+            (treatmentPosterior.alpha * treatmentPosterior.beta) /
+            (Math.pow(treatmentPosterior.alpha + treatmentPosterior.beta, 2) *
+              (treatmentPosterior.alpha + treatmentPosterior.beta + 1)),
         },
         credible_interval: credibleInterval,
-        recommendation
+        recommendation,
       }
     } catch (error) {
       console.error('Error performing Bayesian analysis:', error)
@@ -576,9 +589,10 @@ export class ABTestingFramework {
         const results = await this.calculateResults(testId)
         if (results) {
           // Find the variant with the highest conversion rate and statistical significance
-          const significantVariants = results.variant_results.filter(v =>
-            v.statistical_significance < (1 - test.confidence_level / 100) &&
-            v.improvement_over_control > 0
+          const significantVariants = results.variant_results.filter(
+            v =>
+              v.statistical_significance < 1 - test.confidence_level / 100 &&
+              v.improvement_over_control > 0
           )
 
           if (significantVariants.length > 0) {
@@ -596,7 +610,7 @@ export class ABTestingFramework {
           status: 'completed',
           end_date: new Date().toISOString(),
           winner_variant_id: winnerVariantId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', testId)
 
@@ -610,13 +624,15 @@ export class ABTestingFramework {
 
       return {
         success: true,
-        winner: winnerVariantId ? test.variants.find(v => v.id === winnerVariantId)?.name : undefined
+        winner: winnerVariantId
+          ? test.variants.find(v => v.id === winnerVariantId)?.name
+          : undefined,
       }
     } catch (error) {
       console.error('Error stopping A/B test:', error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to stop test'
+        error: error instanceof Error ? error.message : 'Failed to stop test',
       }
     }
   }
@@ -654,7 +670,10 @@ export class ABTestingFramework {
       return { valid: false, error: 'Test must have exactly one control variant' }
     }
 
-    const totalTrafficSplit = config.variants.reduce((sum: number, v: any) => sum + v.traffic_split, 0)
+    const totalTrafficSplit = config.variants.reduce(
+      (sum: number, v: any) => sum + v.traffic_split,
+      0
+    )
     if (Math.abs(totalTrafficSplit - 100) > 0.01) {
       return { valid: false, error: 'Variant traffic splits must sum to 100%' }
     }
@@ -738,26 +757,24 @@ export class ABTestingFramework {
     let hash = 0
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
+      hash = (hash << 5) - hash + char
       hash = hash & hash // Convert to 32-bit integer
     }
     return Math.abs(hash)
   }
 
   private async storeAssignment(assignment: ABTestAssignment): Promise<void> {
-    await this.supabase
-      .from('ab_test_assignments')
-      .insert({
-        session_id: assignment.session_id,
-        test_id: assignment.test_id,
-        variant_id: assignment.variant_id,
-        assigned_at: assignment.assigned_at,
-        user_agent: assignment.user_agent,
-        ip_address: assignment.ip_address,
-        conversion_completed: assignment.conversion_completed,
-        conversion_value: assignment.conversion_value,
-        session_metrics: assignment.session_metrics
-      })
+    await this.supabase.from('ab_test_assignments').insert({
+      session_id: assignment.session_id,
+      test_id: assignment.test_id,
+      variant_id: assignment.variant_id,
+      assigned_at: assignment.assigned_at,
+      user_agent: assignment.user_agent,
+      ip_address: assignment.ip_address,
+      conversion_completed: assignment.conversion_completed,
+      conversion_value: assignment.conversion_value,
+      session_metrics: assignment.session_metrics,
+    })
   }
 
   private async incrementVariantSessions(testId: string, variantId: string): Promise<void> {
@@ -789,13 +806,14 @@ export class ABTestingFramework {
 
     if (variant) {
       const newConversionCount = variant.conversion_count + 1
-      const conversionRate = variant.session_count > 0 ? (newConversionCount / variant.session_count) * 100 : 0
+      const conversionRate =
+        variant.session_count > 0 ? (newConversionCount / variant.session_count) * 100 : 0
 
       await this.supabase
         .from('ab_test_variants')
         .update({
           conversion_count: newConversionCount,
-          conversion_rate: conversionRate
+          conversion_rate: conversionRate,
         })
         .eq('test_id', testId)
         .eq('variant_id', variantId)
@@ -850,7 +868,7 @@ export class ABTestingFramework {
 
     return {
       lower: Math.max(0, (p - margin) * 100),
-      upper: Math.min(100, (p + margin) * 100)
+      upper: Math.min(100, (p + margin) * 100),
     }
   }
 
@@ -858,7 +876,7 @@ export class ABTestingFramework {
     const zScores: Record<number, number> = {
       90: 1.645,
       95: 1.96,
-      99: 2.576
+      99: 2.576,
     }
     return zScores[confidenceLevel] || 1.96
   }
@@ -876,15 +894,18 @@ export class ABTestingFramework {
         is_significant: false,
         power: 0,
         effect_size: 0,
-        sample_size_recommendation: 1000
+        sample_size_recommendation: 1000,
       }
     }
 
     const p1 = treatmentConversions / treatmentSessions
     const p2 = controlConversions / controlSessions
-    const pooledP = (treatmentConversions + controlConversions) / (treatmentSessions + controlSessions)
+    const pooledP =
+      (treatmentConversions + controlConversions) / (treatmentSessions + controlSessions)
 
-    const standardError = Math.sqrt(pooledP * (1 - pooledP) * (1/treatmentSessions + 1/controlSessions))
+    const standardError = Math.sqrt(
+      pooledP * (1 - pooledP) * (1 / treatmentSessions + 1 / controlSessions)
+    )
     const zScore = Math.abs(p1 - p2) / standardError
 
     // Calculate p-value (two-tailed test)
@@ -899,24 +920,24 @@ export class ABTestingFramework {
       is_significant: pValue < 0.05,
       power: power,
       effect_size: effectSize,
-      sample_size_recommendation: this.calculateSampleSizeRecommendation(effectSize, 0.8, 0.05)
+      sample_size_recommendation: this.calculateSampleSizeRecommendation(effectSize, 0.8, 0.05),
     }
   }
 
   private normalCDF(z: number): number {
     // Approximation of the standard normal cumulative distribution function
-    const a1 =  0.254829592
+    const a1 = 0.254829592
     const a2 = -0.284496736
-    const a3 =  1.421413741
+    const a3 = 1.421413741
     const a4 = -1.453152027
-    const a5 =  1.061405429
-    const p  =  0.3275911
+    const a5 = 1.061405429
+    const p = 0.3275911
 
     const sign = z < 0 ? -1 : 1
     z = Math.abs(z) / Math.sqrt(2.0)
 
     const t = 1.0 / (1.0 + p * z)
-    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-z * z)
+    const y = 1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-z * z)
 
     return 0.5 * (1.0 + sign * y)
   }
@@ -932,12 +953,16 @@ export class ABTestingFramework {
     return this.normalCDF(ncp - 1.96)
   }
 
-  private calculateSampleSizeRecommendation(effectSize: number, power: number, alpha: number): number {
+  private calculateSampleSizeRecommendation(
+    effectSize: number,
+    power: number,
+    alpha: number
+  ): number {
     // Simplified sample size calculation for two proportions
     const zAlpha = this.getZScore((1 - alpha) * 100)
     const zBeta = this.getZScore(power * 100)
 
-    return Math.ceil(2 * Math.pow(zAlpha + zBeta, 2) / Math.pow(effectSize, 2))
+    return Math.ceil((2 * Math.pow(zAlpha + zBeta, 2)) / Math.pow(effectSize, 2))
   }
 
   private calculateMetricValue(assignments: ABTestAssignment[], metric: ABTestMetric): number {
@@ -947,13 +972,24 @@ export class ABTestingFramework {
       case 'conversion':
         return (assignments.filter(a => a.conversion_completed).length / assignments.length) * 100
       case 'revenue':
-        return assignments.reduce((sum, a) => sum + (a.conversion_value || 0), 0) / assignments.length
+        return (
+          assignments.reduce((sum, a) => sum + (a.conversion_value || 0), 0) / assignments.length
+        )
       case 'time_spent':
-        return assignments.reduce((sum, a) => sum + (a.session_metrics.time_spent || 0), 0) / assignments.length
+        return (
+          assignments.reduce((sum, a) => sum + (a.session_metrics.time_spent || 0), 0) /
+          assignments.length
+        )
       case 'engagement':
-        return assignments.reduce((sum, a) => sum + (a.session_metrics.engagement_score || 0), 0) / assignments.length
+        return (
+          assignments.reduce((sum, a) => sum + (a.session_metrics.engagement_score || 0), 0) /
+          assignments.length
+        )
       default:
-        return assignments.reduce((sum, a) => sum + (a.session_metrics[metric.name] || 0), 0) / assignments.length
+        return (
+          assignments.reduce((sum, a) => sum + (a.session_metrics[metric.name] || 0), 0) /
+          assignments.length
+        )
     }
   }
 
@@ -962,7 +998,9 @@ export class ABTestingFramework {
     confidenceLevel: number
   ): StatisticalSignificance {
     // Find the best performing non-control variant
-    const nonControlVariants = variantResults.filter(v => !v.variant_name.toLowerCase().includes('control'))
+    const nonControlVariants = variantResults.filter(
+      v => !v.variant_name.toLowerCase().includes('control')
+    )
     if (nonControlVariants.length === 0) {
       return {
         p_value: 1,
@@ -970,7 +1008,7 @@ export class ABTestingFramework {
         is_significant: false,
         power: 0,
         effect_size: 0,
-        sample_size_recommendation: 1000
+        sample_size_recommendation: 1000,
       }
     }
 
@@ -981,10 +1019,10 @@ export class ABTestingFramework {
     return {
       p_value: bestVariant.statistical_significance,
       confidence_level: confidenceLevel,
-      is_significant: bestVariant.statistical_significance < (1 - confidenceLevel / 100),
+      is_significant: bestVariant.statistical_significance < 1 - confidenceLevel / 100,
       power: 0.8, // Placeholder
       effect_size: Math.abs(bestVariant.improvement_over_control) / 100,
-      sample_size_recommendation: 1000 // Placeholder
+      sample_size_recommendation: 1000, // Placeholder
     }
   }
 
@@ -999,19 +1037,28 @@ export class ABTestingFramework {
       const bestVariant = variantResults.reduce((best, current) =>
         current.conversion_rate > best.conversion_rate ? current : best
       )
-      recommendations.push(`Deploy ${bestVariant.variant_name} - it shows a statistically significant improvement`)
+      recommendations.push(
+        `Deploy ${bestVariant.variant_name} - it shows a statistically significant improvement`
+      )
     } else {
       recommendations.push('Continue testing - no statistically significant winner found yet')
 
-      if (significance.sample_size_recommendation > variantResults.reduce((sum, v) => sum + v.sessions, 0)) {
-        recommendations.push(`Increase sample size to ${significance.sample_size_recommendation} for better power`)
+      if (
+        significance.sample_size_recommendation >
+        variantResults.reduce((sum, v) => sum + v.sessions, 0)
+      ) {
+        recommendations.push(
+          `Increase sample size to ${significance.sample_size_recommendation} for better power`
+        )
       }
     }
 
     // Add specific recommendations based on performance
     const lowPerformingVariants = variantResults.filter(v => v.conversion_rate < 1)
     if (lowPerformingVariants.length > 0) {
-      recommendations.push('Consider stopping low-performing variants to allocate more traffic to promising ones')
+      recommendations.push(
+        'Consider stopping low-performing variants to allocate more traffic to promising ones'
+      )
     }
 
     return recommendations
@@ -1030,7 +1077,7 @@ export class ABTestingFramework {
           variant_id: variant.variant_id,
           lower_bound: variant.confidence_interval.lower,
           upper_bound: variant.confidence_interval.upper,
-          confidence_level: test.confidence_level
+          confidence_level: test.confidence_level,
         })
       }
     }
@@ -1039,7 +1086,9 @@ export class ABTestingFramework {
   }
 
   private calculateEffectSize(variantResults: VariantResult[]): number {
-    const controlVariant = variantResults.find(v => v.variant_name.toLowerCase().includes('control'))
+    const controlVariant = variantResults.find(v =>
+      v.variant_name.toLowerCase().includes('control')
+    )
     if (!controlVariant) return 0
 
     const treatmentVariants = variantResults.filter(v => v !== controlVariant)
@@ -1056,13 +1105,11 @@ export class ABTestingFramework {
   }
 
   private async storeTestResults(testId: string, results: ABTestResults): Promise<void> {
-    await this.supabase
-      .from('ab_test_results')
-      .upsert({
-        test_id: testId,
-        results_data: results,
-        generated_at: results.generated_at
-      })
+    await this.supabase.from('ab_test_results').upsert({
+      test_id: testId,
+      results_data: results,
+      generated_at: results.generated_at,
+    })
   }
 
   private monteCarloSimulation(
@@ -1106,7 +1153,8 @@ export class ABTestingFramework {
   ): number {
     // Simplified expected loss calculation
     const controlMean = controlPosterior.alpha / (controlPosterior.alpha + controlPosterior.beta)
-    const treatmentMean = treatmentPosterior.alpha / (treatmentPosterior.alpha + treatmentPosterior.beta)
+    const treatmentMean =
+      treatmentPosterior.alpha / (treatmentPosterior.alpha + treatmentPosterior.beta)
 
     return Math.max(0, controlMean - treatmentMean)
   }
@@ -1117,14 +1165,15 @@ export class ABTestingFramework {
   ): { lower: number; upper: number } {
     // Simplified credible interval calculation
     const mean = posterior.alpha / (posterior.alpha + posterior.beta)
-    const variance = (posterior.alpha * posterior.beta) /
-                    (Math.pow(posterior.alpha + posterior.beta, 2) * (posterior.alpha + posterior.beta + 1))
+    const variance =
+      (posterior.alpha * posterior.beta) /
+      (Math.pow(posterior.alpha + posterior.beta, 2) * (posterior.alpha + posterior.beta + 1))
     const std = Math.sqrt(variance)
     const z = this.getZScore(probability * 100)
 
     return {
       lower: Math.max(0, mean - z * std),
-      upper: Math.min(1, mean + z * std)
+      upper: Math.min(1, mean + z * std),
     }
   }
 
@@ -1165,7 +1214,8 @@ export class ABTestingFramework {
     const startDate = new Date(test.start_date)
     const daysSinceStart = (Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)
 
-    if (daysSinceStart > 30) { // 30 days maximum
+    if (daysSinceStart > 30) {
+      // 30 days maximum
       await this.stopTest(testId, 'Maximum test duration reached', true)
       return
     }
@@ -1182,14 +1232,12 @@ export class ABTestingFramework {
   }
 
   private async logTestEvent(testId: string, eventType: string, data: any): Promise<void> {
-    await this.supabase
-      .from('ab_test_events')
-      .insert({
-        test_id: testId,
-        event_type: eventType,
-        event_data: data,
-        timestamp: new Date().toISOString()
-      })
+    await this.supabase.from('ab_test_events').insert({
+      test_id: testId,
+      event_type: eventType,
+      event_data: data,
+      timestamp: new Date().toISOString(),
+    })
   }
 }
 
@@ -1210,10 +1258,11 @@ export const ABTestingUtils = {
     const p2 = p1 * (1 + minimumDetectableEffect / 100)
 
     const zAlpha = 1.96 // For alpha = 0.05
-    const zBeta = 0.84  // For power = 0.8
+    const zBeta = 0.84 // For power = 0.8
 
     const pooledP = (p1 + p2) / 2
-    const sampleSize = 2 * Math.pow(zAlpha + zBeta, 2) * pooledP * (1 - pooledP) / Math.pow(p2 - p1, 2)
+    const sampleSize =
+      (2 * Math.pow(zAlpha + zBeta, 2) * pooledP * (1 - pooledP)) / Math.pow(p2 - p1, 2)
 
     return Math.ceil(sampleSize)
   },
@@ -1253,5 +1302,5 @@ export const ABTestingUtils = {
       : `Not statistically significant (p-value: ${results.statistical_significance.p_value.toFixed(4)})`
 
     return { summary, recommendation, significance }
-  }
+  },
 }

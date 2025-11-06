@@ -5,6 +5,7 @@ Complete guide for running end-to-end tests for the ADSapp WhatsApp Business Inb
 ## Overview
 
 The E2E test suite validates critical user journeys across all user roles:
+
 - **Super Admin**: System-wide administration
 - **Owner**: Organization management and configuration
 - **Admin**: Team and workflow management
@@ -60,6 +61,7 @@ PLAYWRIGHT_TEST_MODE=production npx playwright test
 ```
 
 **Advantages:**
+
 - No Next.js dev overlay blocking clicks
 - Accurate production performance testing
 - Stable and reliable test execution
@@ -79,10 +81,12 @@ PLAYWRIGHT_TEST_MODE=development npx playwright test
 ```
 
 **Advantages:**
+
 - Faster startup if dev server already running
 - Real-time code changes during test development
 
 **Disadvantages:**
+
 - Next.js dev overlay can interfere with tests
 - Slower page loads due to compilation
 
@@ -127,12 +131,12 @@ npx playwright test --project=webkit
 
 The test suite uses pre-configured demo accounts:
 
-| Role | Email | Password | Access Level |
-|------|-------|----------|--------------|
-| Super Admin | super@admin.com | Admin2024!Super | System-wide |
-| Owner | owner@demo-company.com | Demo2024!Owner | Organization |
-| Admin | admin@demo-company.com | Demo2024!Admin | Team |
-| Agent | agent@demo-company.com | Demo2024!Agent | Inbox |
+| Role        | Email                  | Password        | Access Level |
+| ----------- | ---------------------- | --------------- | ------------ |
+| Super Admin | super@admin.com        | Admin2024!Super | System-wide  |
+| Owner       | owner@demo-company.com | Demo2024!Owner  | Organization |
+| Admin       | admin@demo-company.com | Demo2024!Admin  | Team         |
+| Agent       | agent@demo-company.com | Demo2024!Agent  | Inbox        |
 
 **Note:** Ensure these accounts exist in your Supabase database before running tests.
 
@@ -157,15 +161,15 @@ These states are reused across tests for faster execution.
 Tests can use pre-authenticated page fixtures:
 
 ```typescript
-import { test, expect } from './auth-fixtures';
+import { test, expect } from './auth-fixtures'
 
 test.describe('Owner Dashboard', () => {
   test('should access settings', async ({ ownerPage }) => {
     // Already authenticated as owner
-    await ownerPage.goto('/dashboard/settings/organization');
-    await expect(ownerPage.locator('h1')).toContainText('Organization Settings');
-  });
-});
+    await ownerPage.goto('/dashboard/settings/organization')
+    await expect(ownerPage.locator('h1')).toContainText('Organization Settings')
+  })
+})
 ```
 
 ### Manual Authentication
@@ -173,15 +177,15 @@ test.describe('Owner Dashboard', () => {
 For tests requiring fresh authentication:
 
 ```typescript
-import { test, expect, TEST_USERS } from './auth-fixtures';
+import { test, expect, TEST_USERS } from './auth-fixtures'
 
 test('manual login', async ({ page }) => {
-  await page.goto('/auth/signin');
-  await page.fill('input[type="email"]', TEST_USERS.owner.email);
-  await page.fill('input[type="password"]', TEST_USERS.owner.password);
-  await page.click('button[type="submit"]');
-  await page.waitForURL('**/dashboard');
-});
+  await page.goto('/auth/signin')
+  await page.fill('input[type="email"]', TEST_USERS.owner.email)
+  await page.fill('input[type="password"]', TEST_USERS.owner.password)
+  await page.click('button[type="submit"]')
+  await page.waitForURL('**/dashboard')
+})
 ```
 
 ## Test Structure
@@ -299,6 +303,7 @@ npx playwright show-trace test-results/<trace-file>.zip
 **Cause:** Authentication state not properly saved or expired.
 
 **Solution:**
+
 ```bash
 # Delete auth cache and re-run
 rm -rf .auth/
@@ -310,6 +315,7 @@ npm run test:e2e
 **Cause:** Running tests in development mode.
 
 **Solution:**
+
 ```bash
 # Use production mode
 run-e2e-tests.bat
@@ -322,6 +328,7 @@ set PLAYWRIGHT_TEST_MODE=production
 **Cause:** Port 3000 already in use.
 
 **Solution:**
+
 ```bash
 # Kill existing processes
 taskkill /F /IM node.exe
@@ -335,6 +342,7 @@ set PLAYWRIGHT_BASE_URL=http://localhost:3001
 **Cause:** Development server compilation.
 
 **Solution:**
+
 - Use production mode (pre-compiled)
 - Increase timeouts in `playwright.config.ts`
 - Reduce parallel workers
@@ -344,6 +352,7 @@ set PLAYWRIGHT_BASE_URL=http://localhost:3001
 **Cause:** Demo accounts don't exist in database.
 
 **Solution:**
+
 1. Check Supabase database for user accounts
 2. Run seed scripts to create demo accounts
 3. Verify credentials match `TEST_USERS` in `auth-fixtures.ts`
@@ -351,6 +360,7 @@ set PLAYWRIGHT_BASE_URL=http://localhost:3001
 ### Debug Steps
 
 1. **Run with headed mode:**
+
    ```bash
    run-e2e-tests.bat headed
    ```
@@ -359,11 +369,13 @@ set PLAYWRIGHT_BASE_URL=http://localhost:3001
    View `test-results/screenshots/` for failure images
 
 3. **Enable debug logging:**
+
    ```bash
    DEBUG=pw:api npx playwright test
    ```
 
 4. **Use UI mode for interactive debugging:**
+
    ```bash
    npm run test:e2e:ui
    ```
@@ -384,30 +396,30 @@ set PLAYWRIGHT_BASE_URL=http://localhost:3001
 ### Example Test
 
 ```typescript
-import { test, expect } from './auth-fixtures';
+import { test, expect } from './auth-fixtures'
 
 test.describe('Business Hours Feature', () => {
   test.beforeEach(async ({ ownerPage }) => {
     // Navigate to settings
-    await ownerPage.goto('/dashboard/settings/organization');
-    await ownerPage.waitForSelector('h1:has-text("Organization Settings")');
-  });
+    await ownerPage.goto('/dashboard/settings/organization')
+    await ownerPage.waitForSelector('h1:has-text("Organization Settings")')
+  })
 
   test('should update business hours', async ({ ownerPage }) => {
     // Find business hours section
-    const mondayCheckbox = ownerPage.locator('[data-testid="business-hours-monday"]');
+    const mondayCheckbox = ownerPage.locator('[data-testid="business-hours-monday"]')
 
     // Toggle Monday
-    await mondayCheckbox.check();
-    await expect(mondayCheckbox).toBeChecked();
+    await mondayCheckbox.check()
+    await expect(mondayCheckbox).toBeChecked()
 
     // Save changes
-    await ownerPage.click('button:has-text("Save")');
+    await ownerPage.click('button:has-text("Save")')
 
     // Verify success
-    await expect(ownerPage.locator('.toast-success')).toBeVisible();
-  });
-});
+    await expect(ownerPage.locator('.toast-success')).toBeVisible()
+  })
+})
 ```
 
 ## Performance Optimization
@@ -474,7 +486,7 @@ export const TEST_USERS = {
     role: 'owner',
   },
   // ... other users
-};
+}
 ```
 
 ### Add New Tests
@@ -494,6 +506,7 @@ export const TEST_USERS = {
 ## Support
 
 For issues or questions:
+
 1. Check this README
 2. Review test-results/ artifacts
 3. Check ADSapp documentation

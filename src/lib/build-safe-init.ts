@@ -6,7 +6,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 export function isBuildTime(): boolean {
   // Check if we're in a build environment
   return (
@@ -36,16 +35,15 @@ export function requireEnvVar(name: string): string {
   return value
 }
 
-export function createBuildSafeService<T>(
-  createService: () => T,
-  serviceName: string
-): T {
+export function createBuildSafeService<T>(createService: () => T, serviceName: string): T {
   if (isBuildTime()) {
     // Return a proxy that throws meaningful errors during build
     return new Proxy({} as T, {
       get(target, prop) {
-        throw new Error(`${serviceName} cannot be used during build time. Property: ${String(prop)}`)
-      }
+        throw new Error(
+          `${serviceName} cannot be used during build time. Property: ${String(prop)}`
+        )
+      },
     })
   }
 

@@ -19,7 +19,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         } as DemoStatusResponse,
         { status: 400 }
       )
@@ -34,7 +34,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         } as DemoStatusResponse,
         { status: 500 }
       )
@@ -50,7 +50,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: result.error || 'Session not found'
+          error: result.error || 'Session not found',
         } as DemoStatusResponse,
         { status: 404 }
       )
@@ -67,7 +67,7 @@ export async function GET(
       event_type: 'api_call',
       action: 'session_status_checked',
       category: 'demo',
-      label: result.session.business_scenario
+      label: result.session.business_scenario,
     })
 
     const response: DemoStatusResponse = {
@@ -75,19 +75,18 @@ export async function GET(
       data: {
         session: result.session,
         is_valid: result.isValid,
-        time_remaining_minutes: timeRemainingMinutes
-      }
+        time_remaining_minutes: timeRemainingMinutes,
+      },
     }
 
     return NextResponse.json(response)
-
   } catch (error) {
     console.error('Error checking demo session status:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to check session status'
+        error: 'Failed to check session status',
       } as DemoStatusResponse,
       { status: 500 }
     )
@@ -111,7 +110,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         },
         { status: 400 }
       )
@@ -124,7 +123,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          error: 'Step is required for progress update'
+          error: 'Step is required for progress update',
         },
         { status: 400 }
       )
@@ -138,7 +137,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -148,18 +147,13 @@ export async function PATCH(
 
     // Update session progress
     const sessionManager = new DemoSessionManager(supabase)
-    const updateResult = await sessionManager.updateProgress(
-      token,
-      step,
-      feature_used,
-      metadata
-    )
+    const updateResult = await sessionManager.updateProgress(token, step, feature_used, metadata)
 
     if (!updateResult) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to update progress - session may be invalid or expired'
+          error: 'Failed to update progress - session may be invalid or expired',
         },
         { status: 400 }
       )
@@ -172,7 +166,7 @@ export async function PATCH(
       return NextResponse.json(
         {
           success: false,
-          error: 'Session not found after update'
+          error: 'Session not found after update',
         },
         { status: 404 }
       )
@@ -183,17 +177,16 @@ export async function PATCH(
       data: {
         session: result.session,
         is_valid: result.isValid,
-        progress_updated: true
-      }
+        progress_updated: true,
+      },
     })
-
   } catch (error) {
     console.error('Error updating demo session progress:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update session progress'
+        error: 'Failed to update session progress',
       },
       { status: 500 }
     )
@@ -217,7 +210,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid session token'
+          error: 'Invalid session token',
         },
         { status: 400 }
       )
@@ -230,7 +223,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Cannot extend session by more than 30 minutes'
+          error: 'Cannot extend session by more than 30 minutes',
         },
         { status: 400 }
       )
@@ -244,7 +237,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -260,7 +253,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Session not found or invalid'
+          error: 'Session not found or invalid',
         },
         { status: 404 }
       )
@@ -275,7 +268,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'Maximum session extensions reached'
+          error: 'Maximum session extensions reached',
         },
         { status: 400 }
       )
@@ -293,7 +286,7 @@ export async function POST(
       category: 'demo',
       label: result.session.business_scenario,
       value: extend_minutes,
-      metadata: { reason, new_expiry: newExpiry.toISOString() }
+      metadata: { reason, new_expiry: newExpiry.toISOString() },
     })
 
     return NextResponse.json({
@@ -301,17 +294,16 @@ export async function POST(
       data: {
         extended_by_minutes: extend_minutes,
         new_expiry: newExpiry.toISOString(),
-        extensions_remaining: 2 - extensionCount - 1
-      }
+        extensions_remaining: 2 - extensionCount - 1,
+      },
     })
-
   } catch (error) {
     console.error('Error extending demo session:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to extend session'
+        error: 'Failed to extend session',
       },
       { status: 500 }
     )

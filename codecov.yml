@@ -6,53 +6,53 @@ coverage:
   status:
     project:
       default:
-        target: 80%              # Overall project coverage target
-        threshold: 2%            # Allow 2% decrease before failure
-        if_ci_failed: error      # Fail if CI tests fail
+        target: 80% # Overall project coverage target
+        threshold: 2% # Allow 2% decrease before failure
+        if_ci_failed: error # Fail if CI tests fail
 
     patch:
       default:
-        target: 80%              # Coverage for new code
-        threshold: 5%            # More lenient for patches
+        target: 80% # Coverage for new code
+        threshold: 5% # More lenient for patches
         if_ci_failed: error
 
-# File-specific requirements
-  range: 70..100                 # Red (70%) to green (100%)
+  # File-specific requirements
+  range: 70..100 # Red (70%) to green (100%)
   round: down
   precision: 2
 
 # Comment configuration
 comment:
-  layout: "reach,diff,flags,files,footer"
-  behavior: default              # Update existing comment
-  require_changes: false         # Always comment
-  require_base: false            # Comment on first PR
-  require_head: true             # Require head report
+  layout: 'reach,diff,flags,files,footer'
+  behavior: default # Update existing comment
+  require_changes: false # Always comment
+  require_base: false # Comment on first PR
+  require_head: true # Require head report
 
 # GitHub checks
 github_checks:
-  annotations: true              # Show annotations on GitHub
+  annotations: true # Show annotations on GitHub
 
 # Ignore patterns
 ignore:
-  - "**/*.test.ts"
-  - "**/*.test.tsx"
-  - "**/*.spec.ts"
-  - "**/*.spec.tsx"
-  - "**/tests/**"
-  - "**/__tests__/**"
-  - "**/__mocks__/**"
-  - "**/node_modules/**"
-  - "**/.next/**"
-  - "**/coverage/**"
-  - "**/*.config.js"
-  - "**/*.config.ts"
-  - "**/next-env.d.ts"
-  - "**/middleware.ts"
-  - "**/*.stories.tsx"
-  - "**/supabase/migrations/**"
-  - "**/scripts/**"
-  - "**/docs/**"
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '**/tests/**'
+  - '**/__tests__/**'
+  - '**/__mocks__/**'
+  - '**/node_modules/**'
+  - '**/.next/**'
+  - '**/coverage/**'
+  - '**/*.config.js'
+  - '**/*.config.ts'
+  - '**/next-env.d.ts'
+  - '**/middleware.ts'
+  - '**/*.stories.tsx'
+  - '**/supabase/migrations/**'
+  - '**/scripts/**'
+  - '**/docs/**'
 
 # Flags for different test types
 flags:

@@ -27,16 +27,19 @@ Comprehensive post-production editing guidelines for professional, consistent vi
 ### Recommended Editing Software
 
 **Professional Tier**:
+
 - Adobe Premiere Pro CC (Industry standard)
 - Final Cut Pro X (Mac, excellent performance)
 - DaVinci Resolve Studio ($295, powerful color + editing)
 
 **Budget Tier**:
+
 - DaVinci Resolve (Free version, very capable)
 - Camtasia (Great for screen recordings)
 - ScreenFlow (Mac, screen recording focused)
 
 ### Project Settings
+
 ```
 Sequence Settings:
 - Frame Size: 1920x1080 (1080p)
@@ -52,6 +55,7 @@ Export Settings:
 ```
 
 ### Folder Structure
+
 ```
 ADSapp_Video_[##]_[Title]/
 ├── 01_Raw_Footage/
@@ -83,6 +87,7 @@ ADSapp_Video_[##]_[Title]/
 ## Phase 1: Ingest and Organization (30-60 min per video)
 
 ### Import Media
+
 - [ ] Import all video takes to project
 - [ ] Import audio separately if recorded in post
 - [ ] Import graphics assets (logos, icons, callouts)
@@ -91,10 +96,11 @@ ADSapp_Video_[##]_[Title]/
 - [ ] Verify all media linked correctly
 
 ### Organize Footage
+
 - [ ] Create bins for each video
 - [ ] Label clips clearly:
-  `V01_Welcome_Take01.mp4`
-  `V01_Welcome_Take02_BEST.mp4`
+      `V01_Welcome_Take01.mp4`
+      `V01_Welcome_Take02_BEST.mp4`
 - [ ] Color-code clips:
   - Green = Best take
   - Yellow = Alternate take
@@ -103,6 +109,7 @@ ADSapp_Video_[##]_[Title]/
 - [ ] Transcribe narration if not already done
 
 ### Create Sequences
+
 - [ ] Create sequence for each video
 - [ ] Name: `ADSapp_V[##]_[Title]_Edit_v01`
 - [ ] Verify sequence settings match project specs
@@ -116,6 +123,7 @@ ADSapp_Video_[##]_[Title]/
 ## Phase 2: Assembly Edit (2-3 hours per video)
 
 ### Build Rough Cut
+
 - [ ] Lay down best takes in order
 - [ ] Use script as guide
 - [ ] Include all content, don't worry about timing yet
@@ -123,6 +131,7 @@ ADSapp_Video_[##]_[Title]/
 - [ ] Leave gaps for graphics and callouts
 
 ### Audio Selection
+
 - [ ] Choose best audio takes
 - [ ] Mark breaths to remove
 - [ ] Note sections needing audio repair
@@ -130,6 +139,7 @@ ADSapp_Video_[##]_[Title]/
 - [ ] Add placeholder silence for timing
 
 ### Structure Check
+
 - [ ] Verify all script points covered
 - [ ] Check introduction hooks audience
 - [ ] Confirm logical section flow
@@ -143,6 +153,7 @@ ADSapp_Video_[##]_[Title]/
 ### Timing and Pacing
 
 **Target Pace**:
+
 - Introduction: Fast (10-30 seconds)
 - Tutorial sections: Moderate (viewers follow along)
 - Complex steps: Slower (give time to comprehend)
@@ -156,6 +167,7 @@ ADSapp_Video_[##]_[Title]/
 4. **Freeze Frames**: Pause on important UI elements (1-2 seconds)
 
 ### Cut Points
+
 - [ ] Remove all "ums," "uhs," "likes"
 - [ ] Eliminate long pauses (> 2 seconds)
 - [ ] Cut out mistakes and retakes
@@ -164,6 +176,7 @@ ADSapp_Video_[##]_[Title]/
 - [ ] Remove loading screens or render waits
 
 ### Rhythm and Flow
+
 - [ ] Vary pace to maintain engagement
 - [ ] Build energy toward conclusions
 - [ ] Allow breathing room after complex concepts
@@ -175,9 +188,11 @@ ADSapp_Video_[##]_[Title]/
 ## Phase 4: Graphics and Callouts (2-3 hours per video)
 
 ### Lower Thirds
+
 **When to Use**: Speaker introductions, section titles
 
 **Design Specs**:
+
 - Position: Bottom third of frame
 - Font: Inter Bold 32pt
 - Background: ADSapp blue (#007AFF) with 80% opacity
@@ -185,12 +200,15 @@ ADSapp_Video_[##]_[Title]/
 - Safe zone: 10% margin from edges
 
 **Standard Lower Thirds**:
+
 - Video title card: 5 seconds at start
 - Section headers: 3 seconds each
 - Speaker name: 5 seconds on first appearance
 
 ### Callouts and Annotations
+
 **Types**:
+
 1. **Arrows**: Point to specific UI elements
 2. **Boxes**: Highlight areas of interest
 3. **Text Labels**: Explain features or actions
@@ -198,6 +216,7 @@ ADSapp_Video_[##]_[Title]/
 5. **Numbers**: Step sequences (1, 2, 3)
 
 **Design Standards**:
+
 - Color: ADSapp blue (#007AFF) primary, yellow (#FF9500) for warnings
 - Line Weight: 4-6px
 - Text: Inter Regular 24pt
@@ -205,6 +224,7 @@ ADSapp_Video_[##]_[Title]/
 - Timing: Appear as element is discussed, disappear after
 
 **Best Practices**:
+
 - Don't over-annotate (clutters screen)
 - Use sparingly for truly important elements
 - Match annotation duration to narration
@@ -214,17 +234,20 @@ ADSapp_Video_[##]_[Title]/
 ### Animated Graphics
 
 **Icon Animations**:
+
 - Feature icons appear with subtle bounce
 - Duration: 0.5s
 - Easing: Ease out
 
 **Workflow Diagrams**:
+
 - Build step-by-step with narration
 - Each element appears individually
 - Connect with animated lines
 - Color-code by function
 
 **Chart Animations**:
+
 - Numbers count up from zero
 - Line graphs draw in smoothly
 - Bar charts grow from bottom
@@ -234,6 +257,7 @@ ADSapp_Video_[##]_[Title]/
 ### Text Overlays
 
 **Key Takeaways**:
+
 ```
 Format:
 ✓ Key Point Here
@@ -247,6 +271,7 @@ Background: Semi-transparent dark (#000 @ 70%)
 ```
 
 **Keyboard Shortcuts**:
+
 ```
 Format:
 ⌘ + K  |  Ctrl + K
@@ -262,6 +287,7 @@ Font: Courier New 28pt (monospace)
 ## Phase 5: Audio Post-Production (1-2 hours per video)
 
 ### Audio Levels (Target Mix)
+
 ```
 Narration Peak: -3dB to -6dB
 Narration Average: -12dB to -15dB
@@ -300,6 +326,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Music Integration
 
 **Background Music Requirements**:
+
 - Royalty-free or properly licensed
 - Instrumental only (no vocals)
 - Non-distracting (avoid strong melodies)
@@ -307,12 +334,14 @@ Ambient/Room Tone: -40dB to -50dB
 - Loop-able for different durations
 
 **Music Placement**:
+
 - Introduction: 0:00-0:30 (energetic)
 - Sections: Subtle underscore throughout
 - Conclusion: Last 30 seconds (builds momentum)
 - Transitions: Subtle musical cues
 
 **Mixing Music**:
+
 - [ ] Use ducking/side-chain compression
 - [ ] Lower music when narration starts
 - [ ] Raise slightly during pauses
@@ -322,6 +351,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Sound Effects
 
 **When to Use**:
+
 - UI interactions (clicks, swipes)
 - Notifications and alerts
 - Success/completion moments
@@ -329,6 +359,7 @@ Ambient/Room Tone: -40dB to -50dB
 - Error or warning situations
 
 **Sourcing**:
+
 - Freesound.org
 - ZapSplat
 - Epidemic Sound
@@ -336,6 +367,7 @@ Ambient/Room Tone: -40dB to -50dB
 - Create custom if needed
 
 **Integration**:
+
 - Match to on-screen action precisely (within 2 frames)
 - Keep subtle (don't overpower narration)
 - Use consistently for similar actions
@@ -348,12 +380,14 @@ Ambient/Room Tone: -40dB to -50dB
 ### Primary Color Correction
 
 **Goals**:
+
 - Consistent white balance across all shots
 - Proper exposure (not too bright or dark)
 - Accurate skin tones (if presenter on camera)
 - Vibrant but realistic colors
 
 **Process**:
+
 1. **Set White Balance**: Use white/gray card reference
 2. **Adjust Exposure**: Histogram should be balanced
 3. **Contrast**: Add definition without crushing blacks
@@ -362,12 +396,14 @@ Ambient/Room Tone: -40dB to -50dB
 ### Color Grading for Brand
 
 **ADSapp Color Profile**:
+
 - Slight cool tone (modern, tech-forward)
 - Boost blues for brand alignment
 - Maintain accurate UI colors
 - Avoid heavy grading that looks "filtered"
 
 **LUT (Look-Up Table)**:
+
 - Create consistent look across all videos
 - Apply as adjustment layer
 - Fine-tune per shot as needed
@@ -375,6 +411,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Screen Recordings
 
 **Special Considerations**:
+
 - Don't grade UI heavily (colors should be accurate)
 - Slight sharpening acceptable (1.0-1.2)
 - Ensure text remains readable
@@ -387,16 +424,19 @@ Ambient/Room Tone: -40dB to -50dB
 ### Transition Types
 
 **Primary**: Straight Cuts (90% of edits)
+
 - Fast, clean, professional
 - No unnecessary "flash"
 
 **Secondary**: Dissolves/Cross Fade (10% of edits)
+
 - Between major sections
 - Time passage
 - Softening effect
 - Duration: 0.3-0.5 seconds
 
 **Avoid**:
+
 - Star wipes, page curls, etc.
 - Over-the-top transitions
 - Anything distracting
@@ -404,18 +444,21 @@ Ambient/Room Tone: -40dB to -50dB
 ### Effects and Filters
 
 **Zoom/Pan (Push In)**:
+
 - Highlight specific UI element
 - Duration: 1-2 seconds
 - Max zoom: 150% (maintain quality)
 - Ease in and out smoothly
 
 **Picture-in-Picture**:
+
 - Show presenter explaining while UI visible
 - Position: Bottom right corner
 - Size: 20% of frame
 - Border: 2px white for separation
 
 **Screen Shake**:
+
 - Avoid unless showing error/problem
 - Subtle if used (2-3px movement)
 
@@ -428,6 +471,7 @@ Ambient/Room Tone: -40dB to -50dB
 **Format**: SRT (SubRip) or VTT (WebVTT)
 
 **Styling**:
+
 - Font: Arial or Helvetica
 - Size: 24-28pt (readable on mobile)
 - Color: White text, black background (or semi-transparent)
@@ -436,12 +480,14 @@ Ambient/Room Tone: -40dB to -50dB
 - Max Characters per Line: 42
 
 **Timing**:
+
 - Sync precisely with audio
 - 3-word minimum per caption
 - Display 1-6 seconds (reading time)
 - 0.3s gap between captions minimum
 
 **Accuracy**:
+
 - [ ] Word-for-word transcription
 - [ ] Proper punctuation
 - [ ] No errors or typos
@@ -449,6 +495,7 @@ Ambient/Room Tone: -40dB to -50dB
 - [ ] [Music Playing] for background music
 
 ### Accessibility Checklist
+
 - [ ] Captions cover 100% of narration
 - [ ] Sound effects described in captions
 - [ ] Text overlays readable (high contrast)
@@ -459,12 +506,14 @@ Ambient/Room Tone: -40dB to -50dB
 ### Creating Captions
 
 **Options**:
+
 1. **Manual**: Type in editor (most accurate, time-consuming)
 2. **Auto + Edit**: YouTube auto-captions + corrections (fast, needs cleanup)
 3. **Service**: Rev.com ($1.50/min), Descript auto-transcription
 4. **Software**: Premiere Auto-transcribe, Descript
 
 **Process**:
+
 1. Export audio/video to caption service or software
 2. Import generated captions
 3. Review and correct errors
@@ -479,6 +528,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Technical QC Checklist
 
 **Video**:
+
 - [ ] Resolution: 1920x1080
 - [ ] Frame rate: 30fps consistent
 - [ ] No dropped frames
@@ -488,6 +538,7 @@ Ambient/Room Tone: -40dB to -50dB
 - [ ] Thumbnail looks good at small size
 
 **Audio**:
+
 - [ ] Levels consistent (-3dB to -6dB peak)
 - [ ] No clipping or distortion
 - [ ] Background music not overpowering
@@ -496,6 +547,7 @@ Ambient/Room Tone: -40dB to -50dB
 - [ ] Clean start and end (no pops)
 
 **Content**:
+
 - [ ] All script points covered
 - [ ] No factual errors
 - [ ] Demonstrations work correctly
@@ -504,6 +556,7 @@ Ambient/Room Tone: -40dB to -50dB
 - [ ] Calls-to-action clear
 
 **Branding**:
+
 - [ ] Logo appears correctly
 - [ ] Colors match brand guidelines
 - [ ] Fonts consistent
@@ -513,6 +566,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Review Process
 
 **Self-Review**:
+
 1. Watch video start to finish without pausing
 2. Make notes of issues (timestamps)
 3. Watch again at 1.5x speed (pacing check)
@@ -520,6 +574,7 @@ Ambient/Room Tone: -40dB to -50dB
 5. Listen with eyes closed (audio quality)
 
 **Peer Review**:
+
 1. Share draft with 2-3 colleagues
 2. Ask specific questions:
    - "Is this step clear?"
@@ -529,6 +584,7 @@ Ambient/Room Tone: -40dB to -50dB
 4. Re-export if significant changes
 
 **Test View**:
+
 1. Watch on different devices:
    - Desktop (1080p)
    - Tablet (720p)
@@ -544,6 +600,7 @@ Ambient/Room Tone: -40dB to -50dB
 ### Export Settings
 
 **Master File** (Archive Quality):
+
 ```
 Format: ProRes 422 or H.264 High Profile
 Resolution: 1920x1080
@@ -554,6 +611,7 @@ Use: Archive, re-editing later
 ```
 
 **YouTube Upload** (Distribution Quality):
+
 ```
 Format: H.264 (MP4)
 Resolution: 1920x1080
@@ -564,6 +622,7 @@ Max File Size: < 128GB (YouTube limit)
 ```
 
 **Social Media** (Optimized):
+
 ```
 Instagram/Facebook:
 - Square: 1080x1080
@@ -582,6 +641,7 @@ Twitter:
 ```
 
 ### Export Checklist
+
 - [ ] Verify export settings one more time
 - [ ] Sufficient disk space (2-5GB per video)
 - [ ] Close other applications (faster export)
@@ -591,6 +651,7 @@ Twitter:
 - [ ] Don't interrupt or shut down during export
 
 ### Post-Export Verification
+
 - [ ] Play exported file start to finish
 - [ ] Check first 10 seconds (intro)
 - [ ] Scrub through for glitches
@@ -600,6 +661,7 @@ Twitter:
 - [ ] Compare to master timeline (spot check)
 
 ### Deliverables Checklist
+
 - [ ] Final video (MP4)
 - [ ] Captions file (SRT)
 - [ ] Thumbnail (1280x720 JPG)
@@ -613,6 +675,7 @@ Twitter:
 ## Thumbnail Creation
 
 ### Design Specs
+
 ```
 Dimensions: 1280x720px
 Format: JPG or PNG
@@ -624,6 +687,7 @@ Safe Zone: 10% margin from edges
 ### Design Elements
 
 **Must Include**:
+
 - Video number (V01, V02, etc.)
 - Clear, short title (5-7 words max)
 - ADSapp branding/logo
@@ -631,6 +695,7 @@ Safe Zone: 10% margin from edges
 - High contrast for small display
 
 **Design Tips**:
+
 - Use bold, sans-serif fonts (readable small)
 - Limit to 3 colors + black/white
 - Avoid small text (illegible at 160x90px)
@@ -638,6 +703,7 @@ Safe Zone: 10% margin from edges
 - Consistent template across series
 
 **Tools**:
+
 - Canva (easiest, templates available)
 - Photoshop (most flexible)
 - Figma (collaborative)
@@ -661,11 +727,11 @@ Safe Zone: 10% margin from edges
 
 ## Editing Timeline Estimate
 
-| Video Type | Footage | Editing Hours |
-|------------|---------|---------------|
-| Simple Tutorial (5-7 min) | 15-20 min | 4-6 hours |
-| Standard Feature (8-10 min) | 25-35 min | 6-8 hours |
-| Advanced Feature (12-15 min) | 40-50 min | 8-12 hours |
+| Video Type                   | Footage   | Editing Hours |
+| ---------------------------- | --------- | ------------- |
+| Simple Tutorial (5-7 min)    | 15-20 min | 4-6 hours     |
+| Standard Feature (8-10 min)  | 25-35 min | 6-8 hours     |
+| Advanced Feature (12-15 min) | 40-50 min | 8-12 hours    |
 
 **Total for 20 Videos**: 120-160 hours (15-20 full days)
 
@@ -689,6 +755,7 @@ Safe Zone: 10% margin from edges
 **Editing guidelines complete! Your videos are now production-ready.**
 
 **Next Steps**:
+
 1. Upload to YouTube/platform
 2. Add metadata (title, description, tags)
 3. Create playlist structure

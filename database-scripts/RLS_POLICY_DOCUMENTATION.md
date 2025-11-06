@@ -1,6 +1,7 @@
 # Row Level Security (RLS) Policy Documentation
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Architecture](#architecture)
 3. [Implementation Patterns](#implementation-patterns)
@@ -26,12 +27,14 @@ Row Level Security (RLS) is a PostgreSQL feature that allows you to control whic
 ### Why RLS is Critical
 
 **Without RLS:**
+
 - Application bugs could expose other organizations' data
 - SQL injection attacks could bypass application-level security
 - Direct database access tools would see all data
 - Compliance violations (GDPR, HIPAA, SOC 2)
 
 **With RLS:**
+
 - Database enforces security even if application has bugs
 - Defense in depth: multiple security layers
 - Compliance-friendly: data isolation at infrastructure level
@@ -93,6 +96,7 @@ Table: {table_name}
 Two reusable functions simplify policy logic:
 
 #### `get_user_organization()`
+
 Returns the organization_id for the current authenticated user.
 
 ```sql
@@ -109,11 +113,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 ```
 
 **Usage:**
+
 - Eliminates repetitive subqueries in policies
 - Cached during query execution (STABLE)
 - Security definer ensures consistent execution
 
 #### `is_super_admin()`
+
 Checks if the current user is a super admin.
 
 ```sql
@@ -130,6 +136,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 ```
 
 **Usage:**
+
 - Provides super admin bypass for all policies
 - Enables platform management capabilities
 - Consistent super admin checks across all tables
@@ -200,6 +207,7 @@ CREATE POLICY "Admins can update {table_name}"
 ```
 
 **Used in:**
+
 - `billing_subscriptions`
 - `whatsapp_integrations`
 - `team_members`
@@ -228,6 +236,7 @@ CREATE POLICY "Users can view their organization's messages"
 ```
 
 **Used in:**
+
 - `messages` (via conversations)
 - `contact_tags` (via contacts)
 - `conversation_assignments` (via conversations)
@@ -239,6 +248,7 @@ CREATE POLICY "Users can view their organization's messages"
 ### 1. Organizations Table
 
 **Special Handling:**
+
 - Root tenant entity
 - Users can only view their own organization
 - Only admins can update
@@ -275,6 +285,7 @@ CREATE POLICY "Admins can update organization"
 ### 2. Profiles Table
 
 **Special Handling:**
+
 - Links users to organizations
 - Users can view org profiles
 - Users can only update their own profile
@@ -326,6 +337,7 @@ CREATE POLICY "Admins can delete profiles"
 ### 3. Notifications Table
 
 **Special Handling:**
+
 - Personal to each user (not organization-scoped)
 - Users can only see their own notifications
 - No organization_id check
@@ -356,6 +368,7 @@ CREATE POLICY "Users can update their own notifications"
 ### 4. Audit Logs Table
 
 **Special Handling:**
+
 - Immutable records for compliance
 - Users can view (transparency)
 - System creates (service role)
@@ -387,6 +400,7 @@ CREATE POLICY "Super admins can delete audit_logs"
 ### 5. API Keys Table
 
 **Special Handling:**
+
 - Highly sensitive data
 - Only admins can view/manage
 - Regular users have no access
@@ -522,57 +536,53 @@ Update `database-scripts/audit-rls-policies.sql` to include your new table in co
 
 ```typescript
 describe('New Feature Table RLS', () => {
-  let org1: Organization;
-  let org2: Organization;
-  let user1Client: SupabaseClient; // Org1 user
-  let user2Client: SupabaseClient; // Org2 user
-  let superAdminClient: SupabaseClient;
+  let org1: Organization
+  let org2: Organization
+  let user1Client: SupabaseClient // Org1 user
+  let user2Client: SupabaseClient // Org2 user
+  let superAdminClient: SupabaseClient
 
   beforeAll(async () => {
     // Setup test organizations and users
     // See tests/integration/rls-policies.test.ts for full example
-  });
+  })
 
   test('Users can view only their organization data', async () => {
     const { data } = await user1Client
       .from('new_feature_table')
       .select('*')
-      .eq('organization_id', org1.id);
+      .eq('organization_id', org1.id)
 
-    expect(data).toBeTruthy();
-    expect(data!.every(row => row.organization_id === org1.id)).toBe(true);
-  });
+    expect(data).toBeTruthy()
+    expect(data!.every(row => row.organization_id === org1.id)).toBe(true)
+  })
 
   test('Users cannot view other organization data', async () => {
     const { data } = await user1Client
       .from('new_feature_table')
       .select('*')
-      .eq('organization_id', org2.id);
+      .eq('organization_id', org2.id)
 
-    expect(data).toBeTruthy();
-    expect(data!.length).toBe(0);
-  });
+    expect(data).toBeTruthy()
+    expect(data!.length).toBe(0)
+  })
 
   test('Users cannot insert into other organizations', async () => {
-    const { error } = await user1Client
-      .from('new_feature_table')
-      .insert({
-        organization_id: org2.id,
-        name: 'Hacked'
-      });
+    const { error } = await user1Client.from('new_feature_table').insert({
+      organization_id: org2.id,
+      name: 'Hacked',
+    })
 
-    expect(error).toBeTruthy();
-  });
+    expect(error).toBeTruthy()
+  })
 
   test('Super admin can access all organizations', async () => {
-    const { data } = await superAdminClient
-      .from('new_feature_table')
-      .select('*');
+    const { data } = await superAdminClient.from('new_feature_table').select('*')
 
-    expect(data).toBeTruthy();
+    expect(data).toBeTruthy()
     // Should see data from multiple orgs
-  });
-});
+  })
+})
 ```
 
 ### Manual Testing with psql
@@ -631,16 +641,19 @@ UPDATE contacts SET name = 'Test' WHERE organization_id = '{any_org_id}';
 #### Issue 1: "Permission denied for table"
 
 **Symptoms:**
+
 ```
 Error: permission denied for table {table_name}
 ```
 
 **Causes:**
+
 1. RLS is not enabled on the table
 2. No policies exist for the table
 3. User role doesn't have base table permissions
 
 **Solutions:**
+
 ```sql
 -- Check if RLS is enabled
 SELECT tablename, rowsecurity
@@ -660,16 +673,19 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON {table_name} TO authenticated;
 #### Issue 2: "Policy violation" or "New row violates RLS policy"
 
 **Symptoms:**
+
 ```
 Error: new row violates row-level security policy for table "{table_name}"
 ```
 
 **Causes:**
+
 1. Trying to insert with wrong organization_id
 2. WITH CHECK condition failing
 3. User not in any organization
 
 **Solutions:**
+
 ```sql
 -- Check user's organization
 SELECT organization_id FROM profiles WHERE id = auth.uid();
@@ -686,15 +702,18 @@ WHERE tablename = '{table_name}' AND cmd = 'a';
 #### Issue 3: Can't see any data (empty results)
 
 **Symptoms:**
+
 - SELECT queries return 0 rows
 - User expects to see data but gets nothing
 
 **Causes:**
+
 1. User not associated with an organization
 2. No data exists for user's organization
 3. USING clause too restrictive
 
 **Solutions:**
+
 ```sql
 -- Verify user has organization
 SELECT id, organization_id, role FROM profiles WHERE id = auth.uid();
@@ -713,15 +732,18 @@ WHERE tablename = '{table_name}' AND cmd = 'r';
 #### Issue 4: Super admin bypass not working
 
 **Symptoms:**
+
 - Super admin user sees same restrictions as regular users
 - Cannot access other organizations' data
 
 **Causes:**
+
 1. `is_super_admin` field not set in profiles
 2. Super admin bypass not in policy
 3. Helper function not working
 
 **Solutions:**
+
 ```sql
 -- Verify super admin flag
 SELECT id, email, is_super_admin FROM profiles WHERE id = auth.uid();
@@ -742,15 +764,18 @@ SELECT is_super_admin();
 #### Issue 5: Performance issues with RLS
 
 **Symptoms:**
+
 - Queries slow after enabling RLS
 - Timeout errors on large tables
 
 **Causes:**
+
 1. Missing index on organization_id
 2. Complex policy logic
 3. Subqueries in policies not optimized
 
 **Solutions:**
+
 ```sql
 -- Add index on organization_id
 CREATE INDEX CONCURRENTLY idx_{table}_org_id
@@ -775,6 +800,7 @@ SELECT * FROM {table_name} WHERE organization_id = get_user_organization();
 ### Debugging Queries
 
 #### Check Current User Context
+
 ```sql
 SELECT
   current_user AS "Database Role",
@@ -784,6 +810,7 @@ SELECT
 ```
 
 #### View All Policies for a Table
+
 ```sql
 SELECT
   schemaname,
@@ -802,6 +829,7 @@ WHERE tablename = '{table_name}';
 ```
 
 #### Test Policy Logic Manually
+
 ```sql
 -- Simulate policy check
 WITH user_context AS (
@@ -829,11 +857,13 @@ LIMIT 10;
 ### 1. Always Use Helper Functions
 
 ✅ **Good:**
+
 ```sql
 USING (organization_id = get_user_organization() OR is_super_admin())
 ```
 
 ❌ **Bad:**
+
 ```sql
 USING (
   organization_id IN (
@@ -847,6 +877,7 @@ USING (
 ### 2. Use SECURITY DEFINER Functions Carefully
 
 ✅ **Good:**
+
 ```sql
 CREATE FUNCTION get_user_organization()
 RETURNS UUID AS $$
@@ -857,6 +888,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 ```
 
 ❌ **Bad:**
+
 ```sql
 CREATE FUNCTION dangerous_function()
 RETURNS TABLE(...) AS $$
@@ -884,15 +916,24 @@ CREATE INDEX CONCURRENTLY idx_{table}_organization_id ON {table}(organization_id
 ### 4. Test Both Positive and Negative Cases
 
 ```typescript
-test('Users CAN access their org data', async () => { /* ... */ });
-test('Users CANNOT access other org data', async () => { /* ... */ });
-test('Users CANNOT insert into other orgs', async () => { /* ... */ });
-test('Super admin CAN access all orgs', async () => { /* ... */ });
+test('Users CAN access their org data', async () => {
+  /* ... */
+})
+test('Users CANNOT access other org data', async () => {
+  /* ... */
+})
+test('Users CANNOT insert into other orgs', async () => {
+  /* ... */
+})
+test('Super admin CAN access all orgs', async () => {
+  /* ... */
+})
 ```
 
 ### 5. Use Descriptive Policy Names
 
 ✅ **Good:**
+
 ```sql
 "Users can view their organization's contacts"
 "Admins can delete their organization's templates"
@@ -900,6 +941,7 @@ test('Super admin CAN access all orgs', async () => { /* ... */ });
 ```
 
 ❌ **Bad:**
+
 ```sql
 "select_policy"
 "policy_1"
@@ -970,15 +1012,15 @@ SELECT * FROM rls_performance_metrics WHERE table_size > '100 MB';
 
 ### Quick Reference
 
-| Pattern | Use Case | Example Tables |
-|---------|----------|----------------|
-| Standard Multi-Tenant | Direct organization_id column | contacts, conversations, templates |
-| Admin-Only Modification | Sensitive configuration | billing, api_keys, webhooks |
-| Relationship-Based | No direct organization_id | messages, contact_tags |
-| Personal Access | User-specific data | notifications |
-| Immutable Records | Compliance & audit | audit_logs |
-| Root Entity | Tenant management | organizations |
-| User Linking | Auth & permissions | profiles |
+| Pattern                 | Use Case                      | Example Tables                     |
+| ----------------------- | ----------------------------- | ---------------------------------- |
+| Standard Multi-Tenant   | Direct organization_id column | contacts, conversations, templates |
+| Admin-Only Modification | Sensitive configuration       | billing, api_keys, webhooks        |
+| Relationship-Based      | No direct organization_id     | messages, contact_tags             |
+| Personal Access         | User-specific data            | notifications                      |
+| Immutable Records       | Compliance & audit            | audit_logs                         |
+| Root Entity             | Tenant management             | organizations                      |
+| User Linking            | Auth & permissions            | profiles                           |
 
 ### Resources
 

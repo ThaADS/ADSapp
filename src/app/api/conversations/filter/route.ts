@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -11,7 +10,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -52,7 +54,8 @@ export async function GET(request: NextRequest) {
     // Build the query
     let query = supabase
       .from('conversations')
-      .select(`
+      .select(
+        `
         *,
         contact:contacts!conversations_contact_id_fkey (
           id,
@@ -70,7 +73,9 @@ export async function GET(request: NextRequest) {
           message_type,
           sender_type
         )
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('organization_id', organizationId)
       .order('created_at', { foreignTable: 'messages', ascending: false })
       .limit(1, { foreignTable: 'messages' })
@@ -124,14 +129,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Format the response
-    const formattedConversations = conversations?.map(conv => ({
-      ...conv,
-      last_message: conv.last_message?.[0] || null
-    })) || []
+    const formattedConversations =
+      conversations?.map(conv => ({
+        ...conv,
+        last_message: conv.last_message?.[0] || null,
+      })) || []
 
     const response: any = {
       conversations: formattedConversations,
-      totalCount: count || 0
+      totalCount: count || 0,
     }
 
     // Add aggregations if requested
@@ -162,7 +168,7 @@ export async function GET(request: NextRequest) {
         response.aggregations = {
           statusCounts,
           priorityCounts,
-          tagCounts
+          tagCounts,
         }
       }
     }
@@ -170,9 +176,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response)
   } catch (error) {
     console.error('Unexpected error in conversations filter:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

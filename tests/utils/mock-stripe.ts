@@ -8,15 +8,12 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type Stripe from 'stripe'
 
 /**
  * Mock Stripe Customer data
  */
-export function createMockStripeCustomer(
-  overrides?: Partial<Stripe.Customer>
-): Stripe.Customer {
+export function createMockStripeCustomer(overrides?: Partial<Stripe.Customer>): Stripe.Customer {
   const id = overrides?.id || `cus_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
   return {
     id,
@@ -55,8 +52,7 @@ export function createMockStripeCustomer(
 export function createMockStripeSubscription(
   overrides?: Partial<Stripe.Subscription>
 ): Stripe.Subscription {
-  const id =
-    overrides?.id || `sub_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
+  const id = overrides?.id || `sub_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
   const now = Math.floor(Date.now() / 1000)
 
   return {
@@ -230,10 +226,7 @@ export function createMockStripePaymentIntent(
 /**
  * Mock Stripe Webhook Event
  */
-export function createMockStripeWebhookEvent(
-  type: string,
-  data: any
-): Stripe.Event {
+export function createMockStripeWebhookEvent(type: string, data: any): Stripe.Event {
   return {
     id: `evt_test_${Date.now()}_${Math.random().toString(36).substring(7)}`,
     object: 'event',
@@ -257,11 +250,8 @@ export function createMockStripeWebhookEvent(
 /**
  * Mock Stripe Price data
  */
-export function createMockStripePrice(
-  overrides?: Partial<Stripe.Price>
-): Stripe.Price {
-  const id =
-    overrides?.id || `price_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
+export function createMockStripePrice(overrides?: Partial<Stripe.Price>): Stripe.Price {
+  const id = overrides?.id || `price_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
   const now = Math.floor(Date.now() / 1000)
 
   return {
@@ -297,11 +287,8 @@ export function createMockStripePrice(
 /**
  * Mock Stripe Product data
  */
-export function createMockStripeProduct(
-  overrides?: Partial<Stripe.Product>
-): Stripe.Product {
-  const id =
-    overrides?.id || `prod_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
+export function createMockStripeProduct(overrides?: Partial<Stripe.Product>): Stripe.Product {
+  const id = overrides?.id || `prod_test_${Date.now()}_${Math.random().toString(36).substring(7)}`
   const now = Math.floor(Date.now() / 1000)
 
   return {
@@ -335,9 +322,7 @@ export function createMockStripeClient() {
       create: jest.fn((params: Stripe.CustomerCreateParams) =>
         Promise.resolve(createMockStripeCustomer(params))
       ),
-      retrieve: jest.fn((id: string) =>
-        Promise.resolve(createMockStripeCustomer({ id }))
-      ),
+      retrieve: jest.fn((id: string) => Promise.resolve(createMockStripeCustomer({ id }))),
       update: jest.fn((id: string, params: Stripe.CustomerUpdateParams) =>
         Promise.resolve(createMockStripeCustomer({ id, ...params }))
       ),
@@ -357,9 +342,7 @@ export function createMockStripeClient() {
       create: jest.fn((params: Stripe.SubscriptionCreateParams) =>
         Promise.resolve(createMockStripeSubscription({ customer: params.customer as string }))
       ),
-      retrieve: jest.fn((id: string) =>
-        Promise.resolve(createMockStripeSubscription({ id }))
-      ),
+      retrieve: jest.fn((id: string) => Promise.resolve(createMockStripeSubscription({ id }))),
       update: jest.fn((id: string, params: Stripe.SubscriptionUpdateParams) =>
         Promise.resolve(createMockStripeSubscription({ id, ...params }))
       ),
@@ -379,9 +362,7 @@ export function createMockStripeClient() {
       create: jest.fn((params: Stripe.PaymentIntentCreateParams) =>
         Promise.resolve(createMockStripePaymentIntent({ amount: params.amount }))
       ),
-      retrieve: jest.fn((id: string) =>
-        Promise.resolve(createMockStripePaymentIntent({ id }))
-      ),
+      retrieve: jest.fn((id: string) => Promise.resolve(createMockStripePaymentIntent({ id }))),
       confirm: jest.fn((id: string) =>
         Promise.resolve(createMockStripePaymentIntent({ id, status: 'succeeded' }))
       ),
@@ -396,9 +377,7 @@ export function createMockStripeClient() {
       }),
     },
     prices: {
-      retrieve: jest.fn((id: string) =>
-        Promise.resolve(createMockStripePrice({ id }))
-      ),
+      retrieve: jest.fn((id: string) => Promise.resolve(createMockStripePrice({ id }))),
       list: jest.fn(() =>
         Promise.resolve({
           object: 'list',
@@ -409,9 +388,7 @@ export function createMockStripeClient() {
       ),
     },
     products: {
-      retrieve: jest.fn((id: string) =>
-        Promise.resolve(createMockStripeProduct({ id }))
-      ),
+      retrieve: jest.fn((id: string) => Promise.resolve(createMockStripeProduct({ id }))),
       list: jest.fn(() =>
         Promise.resolve({
           object: 'list',

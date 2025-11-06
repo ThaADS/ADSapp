@@ -7,22 +7,14 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-export { default as BrandingCustomizer } from './BrandingCustomizer';
-export { default as DomainManager } from './DomainManager';
-export { default as UsageDashboard } from './UsageDashboard';
+export { default as BrandingCustomizer } from './BrandingCustomizer'
+export { default as DomainManager } from './DomainManager'
+export { default as UsageDashboard } from './UsageDashboard'
 
 // Export types for convenience
-export type {
-  BrandingConfig,
-  TenantBranding,
-  EmailTemplate,
-} from '../../../lib/tenant-branding';
+export type { BrandingConfig, TenantBranding, EmailTemplate } from '../../../lib/tenant-branding'
 
-export type {
-  TenantDomain,
-  TenantContext,
-} from '../../../middleware/tenant-routing';
+export type { TenantDomain, TenantContext } from '../../../middleware/tenant-routing'
 
 export type {
   UsageEvent,
@@ -30,4 +22,4 @@ export type {
   UsageLimit,
   UsageAlert,
   UsageReport,
-} from '../../../lib/usage-tracking';
+} from '../../../lib/usage-tracking'

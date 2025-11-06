@@ -9,20 +9,24 @@
 ## ✅ Wat is Aangemaakt
 
 ### Database Tables (2)
+
 1. ✅ **team_invitations** - Accessible and ready
 2. ✅ **api_keys** - Accessible and ready
 
 ### RLS Policies (8)
+
 - ✅ team_invitations: SELECT, INSERT, UPDATE, DELETE (4 policies)
 - ✅ api_keys: SELECT, INSERT, UPDATE, DELETE (4 policies)
 
 ### Helper Functions (4)
+
 - ✅ `generate_invitation_token()` - Secure token generation
 - ✅ `cleanup_expired_invitations()` - Automatic cleanup
 - ✅ `log_invitation_event()` - Audit logging trigger
 - ✅ `log_api_key_event()` - Audit logging trigger
 
 ### Security Features
+
 - ✅ Row Level Security enabled
 - ✅ Multi-tenant isolation via organization_id
 - ✅ Owner/admin only access control
@@ -36,6 +40,7 @@
 ## 🎯 Nu Beschikbaar
 
 ### Team Invitations Features
+
 - ✅ Invite team members via email
 - ✅ Role assignment (admin/agent/viewer)
 - ✅ Secure invitation tokens (7-day expiry)
@@ -44,6 +49,7 @@
 - ✅ Full audit trail
 
 ### API Keys Features
+
 - ✅ Generate secure API keys
 - ✅ SHA-256 hashed storage (never plaintext!)
 - ✅ Key prefix for identification (adp_xxxxxxxx)
@@ -58,6 +64,7 @@
 ### Test 1: Team Invitation Flow (3 minuten)
 
 1. **Navigate to Team Management**
+
    ```
    http://localhost:3000/dashboard/settings/team
    ```
@@ -69,12 +76,14 @@
    - Click "Send Invitation"
 
 3. **Verify Database**
+
    ```sql
    SELECT email, role, token, expires_at, created_at
    FROM team_invitations
    ORDER BY created_at DESC
    LIMIT 1;
    ```
+
    Expected: 1 row met jouw test email
 
 4. **Check Email Sent**
@@ -94,6 +103,7 @@
 ### Test 2: API Key Generation (2 minuten)
 
 1. **Navigate to Integrations**
+
    ```
    http://localhost:3000/dashboard/settings/integrations
    ```
@@ -105,11 +115,13 @@
    - Copy the generated key (starts with `adp_`)
 
 3. **Verify Database**
+
    ```sql
    SELECT name, key_prefix, key_hash, created_at
    FROM api_keys
    WHERE name = 'Test Key';
    ```
+
    Expected:
    - `key_prefix`: adp_xxxxxxxx (first 8 chars)
    - `key_hash`: Long SHA-256 hash (NOT the plaintext key!)
@@ -161,6 +173,7 @@ LIMIT 10;
 ```
 
 Expected events:
+
 - `invitation.created`
 - `invitation.accepted` (after acceptance)
 - `invitation.cancelled` (if cancelled)
@@ -172,10 +185,12 @@ Expected events:
 ## 📊 Status Update
 
 ### Before Migration: 75%
+
 - Team Invitations: 95% (UI ready, waiting for database)
 - API Keys: 95% (UI ready, waiting for database)
 
 ### After Migration: 78% ✅
+
 - Team Invitations: **100%** ✅ Fully functional
 - API Keys: **100%** ✅ Fully functional
 - Overall Progress: **+3%**
@@ -185,6 +200,7 @@ Expected events:
 ## 🎯 What's Next
 
 ### Immediate Testing (Now)
+
 - [ ] Test team invitation flow
 - [ ] Test API key generation
 - [ ] Verify audit logging
@@ -193,16 +209,19 @@ Expected events:
 ### Remaining Quick Wins (Later)
 
 #### Quick Win 5: Business Hours Storage (2 uur)
+
 **Status**: Not started
 **What**: Database column + save/load implementation
 **Impact**: Business hours will persist across sessions
 
 #### Quick Win 6: Logo Upload (3 uur)
+
 **Status**: Not started
 **What**: Supabase Storage integration + file upload
 **Impact**: Custom organization logos
 
 #### Quick Win 7: Integration Status (2 uur)
+
 **Status**: Not started
 **What**: Real health check endpoints for services
 **Impact**: Live status for Stripe, WhatsApp, Email
@@ -212,33 +231,44 @@ Expected events:
 ## 🔧 Troubleshooting
 
 ### Issue: Can't see team invitations
+
 **Check**:
+
 ```sql
 -- Verify table exists and is accessible
 SELECT COUNT(*) FROM team_invitations;
 ```
+
 **Solution**: Make sure you're logged in as owner/admin
 
 ### Issue: API key generation fails
+
 **Check**:
+
 ```sql
 -- Verify table structure
 \d api_keys
 ```
+
 **Solution**: Check browser console for error details
 
 ### Issue: Email not sending
+
 **Check**:
+
 - Resend API key configured: `RESEND_API_KEY` in `.env.local`
 - Resend dashboard: https://resend.com/emails
-**Solution**: Check email service logs
+  **Solution**: Check email service logs
 
 ### Issue: RLS blocking access
+
 **Check**:
+
 ```sql
 -- Check your organization_id
 SELECT id, organization_id, role FROM profiles WHERE id = auth.uid();
 ```
+
 **Solution**: Verify organization_id matches between tables
 
 ---
@@ -246,11 +276,13 @@ SELECT id, organization_id, role FROM profiles WHERE id = auth.uid();
 ## 📁 Migration Files
 
 ### Created/Modified:
+
 - ✅ `supabase/migrations/037_team_invitations_FIXED.sql` - Applied successfully
 - ✅ `src/components/error-boundary.tsx` - Error handling
 - ✅ `MIGRATION_SUCCESS.md` - This file
 
 ### Documentation:
+
 - `APPLY_MIGRATION_NOW.md` - Application guide
 - `MIGRATION_INSTRUCTIONS.md` - Detailed steps
 - `MIGRATION_037_STATUS.md` - Technical details
@@ -258,7 +290,9 @@ SELECT id, organization_id, role FROM profiles WHERE id = auth.uid();
 - `CLICK_HERE.md` - Direct links
 
 ### Cleanup Possible:
+
 Since migration is successful, you can archive these guides:
+
 ```bash
 mkdir -p docs/migrations
 mv APPLY_MIGRATION_NOW.md docs/migrations/
@@ -272,6 +306,7 @@ mv CLICK_HERE.md docs/migrations/
 ## 🎊 Accomplishments
 
 ### Migration 037 ✅
+
 - [x] Type compatibility issues resolved
 - [x] team_invitations table created
 - [x] api_keys table created
@@ -282,6 +317,7 @@ mv CLICK_HERE.md docs/migrations/
 - [x] Ready for production use
 
 ### Overall Progress
+
 - **Previous**: 75%
 - **Current**: 78%
 - **Next Milestone**: 85% (after remaining quick wins)

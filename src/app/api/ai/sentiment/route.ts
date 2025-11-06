@@ -4,19 +4,22 @@
  */
 
 // @ts-nocheck - Type definitions need review
-import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { analyzeSentiment, getSentimentTrend } from '@/lib/ai/sentiment';
-import type { ConversationContext } from '@/lib/ai/types';
+import { NextRequest } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { analyzeSentiment, getSentimentTrend } from '@/lib/ai/sentiment'
+import type { ConversationContext } from '@/lib/ai/types'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's organization
@@ -24,29 +27,29 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile?.organization_id) {
-      return Response.json({ error: 'Organization not found' }, { status: 404 });
+      return Response.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // Parse request body
-    const body = await request.json();
-    const { conversationId, action } = body;
+    const body = await request.json()
+    const { conversationId, action } = body
 
     if (!conversationId) {
-      return Response.json({ error: 'conversationId is required' }, { status: 400 });
+      return Response.json({ error: 'conversationId is required' }, { status: 400 })
     }
 
     // Handle trend analysis action
     if (action === 'trend') {
-      const trend = await getSentimentTrend(conversationId);
+      const trend = await getSentimentTrend(conversationId)
 
       return Response.json({
         success: true,
         trend,
         conversationId,
-      });
+      })
     }
 
     // Verify conversation access
@@ -54,14 +57,14 @@ export async function POST(request: NextRequest) {
       .from('conversations')
       .select('id, organization_id, contact_id')
       .eq('id', conversationId)
-      .single();
+      .single()
 
     if (convError || !conversation) {
-      return Response.json({ error: 'Conversation not found' }, { status: 404 });
+      return Response.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
     if (conversation.organization_id !== profile.organization_id) {
-      return Response.json({ error: 'Access denied' }, { status: 403 });
+      return Response.json({ error: 'Access denied' }, { status: 403 })
     }
 
     // Get recent messages (last 20 for sentiment context)
@@ -70,12 +73,15 @@ export async function POST(request: NextRequest) {
       .select('id, content, sender_type, created_at')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(20)
 
     if (!messages || messages.length === 0) {
-      return Response.json({
-        error: 'No messages found for analysis',
-      }, { status: 400 });
+      return Response.json(
+        {
+          error: 'No messages found for analysis',
+        },
+        { status: 400 }
+      )
     }
 
     // Get contact information
@@ -83,7 +89,7 @@ export async function POST(request: NextRequest) {
       .from('contacts')
       .select('name, phone_number')
       .eq('id', conversation.contact_id)
-      .single();
+      .single()
 
     // Build conversation context
     const context: ConversationContext = {
@@ -96,26 +102,25 @@ export async function POST(request: NextRequest) {
       })),
       customerName: contact?.name,
       customerPhone: contact?.phone_number ?? '',
-    };
+    }
 
     // Analyze sentiment
-    const analysis = await analyzeSentiment(context);
+    const analysis = await analyzeSentiment(context)
 
     return Response.json({
       success: true,
       analysis,
       conversationId,
       analyzedAt: new Date().toISOString(),
-    });
-
+    })
   } catch (error) {
-    console.error('Sentiment analysis error:', error);
+    console.error('Sentiment analysis error:', error)
     return Response.json(
       {
         error: 'Failed to analyze sentiment',
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined,
       },
       { status: 500 }
-    );
+    )
   }
 }

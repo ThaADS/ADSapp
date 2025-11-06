@@ -1,20 +1,19 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const supabase = await createClient()
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -33,11 +32,13 @@ export async function GET(
     // Get conversation with all details
     const { data: conversation, error: convError } = await supabase
       .from('conversations')
-      .select(`
+      .select(
+        `
         *,
         contact:contacts(*),
         assigned_agent:profiles(*)
-      `)
+      `
+      )
       .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
@@ -50,10 +51,12 @@ export async function GET(
     // Get all messages for the conversation
     const { data: messages, error: msgError } = await supabase
       .from('messages')
-      .select(`
+      .select(
+        `
         *,
         sender:profiles(*)
-      `)
+      `
+      )
       .eq('conversation_id', id)
       .order('created_at', { ascending: true })
 
@@ -76,21 +79,24 @@ export async function GET(
         phone_number: conversation.contact.phone_number,
         whatsapp_id: conversation.contact.whatsapp_id,
       },
-      assigned_agent: conversation.assigned_agent ? {
-        name: conversation.assigned_agent.full_name,
-        email: conversation.assigned_agent.email,
-      } : null,
-      messages: messages?.map(msg => ({
-        id: msg.id,
-        content: msg.content,
-        message_type: msg.message_type,
-        sender_type: msg.sender_type,
-        sender_name: msg.sender?.full_name || conversation.contact.name,
-        timestamp: msg.created_at,
-        is_read: msg.is_read,
-        delivered_at: msg.delivered_at,
-        read_at: msg.read_at,
-      })) || [],
+      assigned_agent: conversation.assigned_agent
+        ? {
+            name: conversation.assigned_agent.full_name,
+            email: conversation.assigned_agent.email,
+          }
+        : null,
+      messages:
+        messages?.map(msg => ({
+          id: msg.id,
+          content: msg.content,
+          message_type: msg.message_type,
+          sender_type: msg.sender_type,
+          sender_name: msg.sender?.full_name || conversation.contact.name,
+          timestamp: msg.created_at,
+          is_read: msg.is_read,
+          delivered_at: msg.delivered_at,
+          read_at: msg.read_at,
+        })) || [],
       exported_at: new Date().toISOString(),
       exported_by: {
         name: profile.full_name,

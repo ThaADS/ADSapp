@@ -10,9 +10,9 @@
  * @module api/gdpr/data-portability
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { DataExportService } from '@/lib/gdpr/data-export';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { DataExportService } from '@/lib/gdpr/data-export'
 
 /**
  * POST /api/gdpr/data-portability
@@ -30,19 +30,16 @@ import { DataExportService } from '@/lib/gdpr/data-export';
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get authenticated user
     const {
       data: { user },
-      error: authError
-    } = await supabase.auth.getUser();
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user profile
@@ -50,13 +47,10 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile || !profile.organization_id) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Export user data in JSON format (machine-readable)
@@ -64,16 +58,15 @@ export async function POST(request: NextRequest) {
       user.id,
       profile.organization_id,
       'json'
-    );
+    )
 
     console.log(
       `[API][GDPR] User ${user.id} requested portable data package (size: ${exportResult.size_bytes} bytes)`
-    );
+    )
 
     // Parse JSON data for response
-    const portableData = typeof exportResult.data === 'string'
-      ? JSON.parse(exportResult.data)
-      : exportResult.data;
+    const portableData =
+      typeof exportResult.data === 'string' ? JSON.parse(exportResult.data) : exportResult.data
 
     return NextResponse.json(
       {
@@ -85,9 +78,10 @@ export async function POST(request: NextRequest) {
             format: 'JSON (machine-readable)',
             generated_at: exportResult.generated_at,
             expires_at: exportResult.expires_at,
-            legal_notice: 'This data is provided in accordance with GDPR Article 20. You may transfer this data to another service provider.'
-          }
-        }
+            legal_notice:
+              'This data is provided in accordance with GDPR Article 20. You may transfer this data to another service provider.',
+          },
+        },
       },
       {
         status: 200,
@@ -95,20 +89,20 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
           'X-GDPR-Article': '20',
           'X-Data-Format': 'portable-json',
-          'X-Export-Size': exportResult.size_bytes.toString()
-        }
+          'X-Export-Size': exportResult.size_bytes.toString(),
+        },
       }
-    );
+    )
   } catch (error) {
-    console.error('[API][GDPR] Data portability error:', error);
+    console.error('[API][GDPR] Data portability error:', error)
 
     return NextResponse.json(
       {
         error: 'Failed to generate portable data package',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -120,7 +114,8 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     gdpr_article: 'Article 20 - Right to Data Portability',
-    description: 'Receive your personal data in a structured, commonly used, and machine-readable format',
+    description:
+      'Receive your personal data in a structured, commonly used, and machine-readable format',
     format: 'JSON',
     included_data: [
       'user_profile',
@@ -128,16 +123,16 @@ export async function GET() {
       'contacts',
       'conversations',
       'messages',
-      'preferences'
+      'preferences',
     ],
     excluded_data: [
       'billing_information (retained for legal compliance)',
       'audit_logs (system security)',
-      'data_from_other_users'
+      'data_from_other_users',
     ],
     usage: 'This data can be transferred to another service provider',
     expiry: '7 days',
     legal_basis: 'GDPR Article 20',
-    response_time: 'Immediate'
-  });
+    response_time: 'Immediate',
+  })
 }

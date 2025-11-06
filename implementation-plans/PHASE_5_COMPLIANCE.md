@@ -1,4 +1,5 @@
 # PHASE 5: COMPLIANCE & CERTIFICATION - IMPLEMENTATION PLAN
+
 ## GDPR Compliance & SOC 2 Type II Certification
 
 **Duration**: 8 weeks (Weeks 31-38)
@@ -11,10 +12,12 @@
 ## OVERVIEW
 
 Phase 5 achieves **enterprise-grade compliance certifications** required for:
+
 1. **GDPR Compliance** (Weeks 31-34): Full EU data protection regulation compliance
 2. **SOC 2 Type II** (Weeks 35-38): System and Organization Controls certification for SaaS trust
 
 **Success Criteria**:
+
 - ✅ GDPR full compliance documentation and implementation
 - ✅ Data Processing Agreements (DPAs) with templates
 - ✅ Privacy impact assessments completed
@@ -132,38 +135,38 @@ export enum DataRecipient {
 }
 
 export interface DataProcessingActivity {
-  id: string;
-  name: string;
-  description: string;
+  id: string
+  name: string
+  description: string
   controller: {
-    name: string;
-    contact: string;
-    representative?: string; // EU Representative if needed
-  };
+    name: string
+    contact: string
+    representative?: string // EU Representative if needed
+  }
   processor?: {
-    name: string;
-    contact: string;
-    location: string;
-    dpAgreement: boolean;
-  }[];
-  dataSubjects: DataSubjectCategory[];
-  personalDataTypes: PersonalDataType[];
-  processingPurposes: ProcessingPurpose[];
-  legalBasis: LegalBasis;
-  legalBasisDetails: string;
-  recipients: DataRecipient[];
+    name: string
+    contact: string
+    location: string
+    dpAgreement: boolean
+  }[]
+  dataSubjects: DataSubjectCategory[]
+  personalDataTypes: PersonalDataType[]
+  processingPurposes: ProcessingPurpose[]
+  legalBasis: LegalBasis
+  legalBasisDetails: string
+  recipients: DataRecipient[]
   thirdCountryTransfers: {
-    country: string;
-    mechanism: 'SCCs' | 'Adequacy Decision' | 'BCRs' | 'Derogations';
-    safeguards: string;
-  }[];
+    country: string
+    mechanism: 'SCCs' | 'Adequacy Decision' | 'BCRs' | 'Derogations'
+    safeguards: string
+  }[]
   retentionPeriod: {
-    duration: number; // in days, -1 for indefinite
-    criteria: string;
-  };
-  technicalMeasures: string[];
-  organizationalMeasures: string[];
-  dataBreachProcedure: string;
+    duration: number // in days, -1 for indefinite
+    criteria: string
+  }
+  technicalMeasures: string[]
+  organizationalMeasures: string[]
+  dataBreachProcedure: string
 }
 
 /**
@@ -240,7 +243,8 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
       'Regular security audits',
       'Vendor management procedures',
     ],
-    dataBreachProcedure: 'Follow Incident Response Plan (IRP-001), notify DPA within 72 hours if required',
+    dataBreachProcedure:
+      'Follow Incident Response Plan (IRP-001), notify DPA within 72 hours if required',
   },
   {
     id: 'DP-002',
@@ -278,12 +282,9 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
       ProcessingPurpose.SERVICE_DELIVERY,
     ],
     legalBasis: LegalBasis.CONSENT,
-    legalBasisDetails: 'Processing based on explicit consent from data subjects for business communication',
-    recipients: [
-      DataRecipient.INTERNAL_STAFF,
-      DataRecipient.WHATSAPP_API,
-      DataRecipient.SUPABASE,
-    ],
+    legalBasisDetails:
+      'Processing based on explicit consent from data subjects for business communication',
+    recipients: [DataRecipient.INTERNAL_STAFF, DataRecipient.WHATSAPP_API, DataRecipient.SUPABASE],
     thirdCountryTransfers: [
       {
         country: 'United States',
@@ -293,7 +294,8 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
     ],
     retentionPeriod: {
       duration: 365, // 1 year
-      criteria: 'Messages retained for 1 year, then automatically deleted unless legal hold applies',
+      criteria:
+        'Messages retained for 1 year, then automatically deleted unless legal hold applies',
     },
     technicalMeasures: [
       'End-to-end encryption (WhatsApp protocol)',
@@ -307,7 +309,8 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
       'Staff confidentiality agreements',
       'Regular data inventory reviews',
     ],
-    dataBreachProcedure: 'IRP-001, notify affected data subjects if high risk to rights and freedoms',
+    dataBreachProcedure:
+      'IRP-001, notify affected data subjects if high risk to rights and freedoms',
   },
   {
     id: 'DP-003',
@@ -333,16 +336,11 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
       PersonalDataType.PAYMENT_METHOD,
       PersonalDataType.TRANSACTION_HISTORY,
     ],
-    processingPurposes: [
-      ProcessingPurpose.BILLING,
-      ProcessingPurpose.LEGAL_COMPLIANCE,
-    ],
+    processingPurposes: [ProcessingPurpose.BILLING, ProcessingPurpose.LEGAL_COMPLIANCE],
     legalBasis: LegalBasis.CONTRACT,
-    legalBasisDetails: 'Processing necessary for contract performance and legal obligation (tax compliance)',
-    recipients: [
-      DataRecipient.INTERNAL_STAFF,
-      DataRecipient.STRIPE,
-    ],
+    legalBasisDetails:
+      'Processing necessary for contract performance and legal obligation (tax compliance)',
+    recipients: [DataRecipient.INTERNAL_STAFF, DataRecipient.STRIPE],
     thirdCountryTransfers: [
       {
         country: 'United States',
@@ -406,11 +404,7 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
     ],
     legalBasis: LegalBasis.LEGITIMATE_INTERESTS,
     legalBasisDetails: 'Legitimate interest in improving service quality and security monitoring',
-    recipients: [
-      DataRecipient.INTERNAL_STAFF,
-      DataRecipient.VERCEL,
-      DataRecipient.SENTRY,
-    ],
+    recipients: [DataRecipient.INTERNAL_STAFF, DataRecipient.VERCEL, DataRecipient.SENTRY],
     thirdCountryTransfers: [
       {
         country: 'United States',
@@ -420,7 +414,8 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
     ],
     retentionPeriod: {
       duration: 90, // 90 days
-      criteria: 'Analytics data retained for 90 days for trend analysis, then aggregated and anonymized',
+      criteria:
+        'Analytics data retained for 90 days for trend analysis, then aggregated and anonymized',
     },
     technicalMeasures: [
       'IP address pseudonymization',
@@ -453,11 +448,7 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
       },
     ],
     dataSubjects: [DataSubjectCategory.USERS, DataSubjectCategory.CUSTOMERS],
-    personalDataTypes: [
-      PersonalDataType.NAME,
-      PersonalDataType.EMAIL,
-      PersonalDataType.USER_ID,
-    ],
+    personalDataTypes: [PersonalDataType.NAME, PersonalDataType.EMAIL, PersonalDataType.USER_ID],
     processingPurposes: [
       ProcessingPurpose.SERVICE_DELIVERY,
       ProcessingPurpose.CUSTOMER_SUPPORT,
@@ -465,10 +456,7 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
     ],
     legalBasis: LegalBasis.CONTRACT,
     legalBasisDetails: 'Processing necessary for contract performance (transactional emails)',
-    recipients: [
-      DataRecipient.INTERNAL_STAFF,
-      DataRecipient.RESEND,
-    ],
+    recipients: [DataRecipient.INTERNAL_STAFF, DataRecipient.RESEND],
     thirdCountryTransfers: [
       {
         country: 'United States',
@@ -492,89 +480,89 @@ export const DATA_PROCESSING_INVENTORY: DataProcessingActivity[] = [
     ],
     dataBreachProcedure: 'IRP-001, coordinate with Resend for incident response',
   },
-];
+]
 
 /**
  * Generate Article 30 Records of Processing Activities (RoPA) Report
  */
 export function generateRoPAReport(): string {
-  let report = '# Records of Processing Activities (RoPA)\n';
-  report += '## GDPR Article 30 Compliance\n\n';
-  report += `**Generated**: ${new Date().toISOString()}\n`;
-  report += `**Controller**: ADSapp B.V.\n`;
-  report += `**DPO Contact**: dpo@adsapp.com\n\n`;
-  report += '---\n\n';
+  let report = '# Records of Processing Activities (RoPA)\n'
+  report += '## GDPR Article 30 Compliance\n\n'
+  report += `**Generated**: ${new Date().toISOString()}\n`
+  report += `**Controller**: ADSapp B.V.\n`
+  report += `**DPO Contact**: dpo@adsapp.com\n\n`
+  report += '---\n\n'
 
   DATA_PROCESSING_INVENTORY.forEach((activity, index) => {
-    report += `## ${index + 1}. ${activity.name} (${activity.id})\n\n`;
-    report += `**Description**: ${activity.description}\n\n`;
+    report += `## ${index + 1}. ${activity.name} (${activity.id})\n\n`
+    report += `**Description**: ${activity.description}\n\n`
 
-    report += `### Controller Information\n`;
-    report += `- **Name**: ${activity.controller.name}\n`;
-    report += `- **Contact**: ${activity.controller.contact}\n`;
+    report += `### Controller Information\n`
+    report += `- **Name**: ${activity.controller.name}\n`
+    report += `- **Contact**: ${activity.controller.contact}\n`
     if (activity.controller.representative) {
-      report += `- **EU Representative**: ${activity.controller.representative}\n`;
+      report += `- **EU Representative**: ${activity.controller.representative}\n`
     }
-    report += '\n';
+    report += '\n'
 
     if (activity.processor && activity.processor.length > 0) {
-      report += `### Processors\n`;
+      report += `### Processors\n`
       activity.processor.forEach(proc => {
-        report += `- **${proc.name}**\n`;
-        report += `  - Contact: ${proc.contact}\n`;
-        report += `  - Location: ${proc.location}\n`;
-        report += `  - DPA: ${proc.dpAgreement ? 'Yes' : 'No'}\n`;
-      });
-      report += '\n';
+        report += `- **${proc.name}**\n`
+        report += `  - Contact: ${proc.contact}\n`
+        report += `  - Location: ${proc.location}\n`
+        report += `  - DPA: ${proc.dpAgreement ? 'Yes' : 'No'}\n`
+      })
+      report += '\n'
     }
 
-    report += `### Data Subjects\n`;
-    report += activity.dataSubjects.map(ds => `- ${ds}`).join('\n') + '\n\n';
+    report += `### Data Subjects\n`
+    report += activity.dataSubjects.map(ds => `- ${ds}`).join('\n') + '\n\n'
 
-    report += `### Personal Data Categories\n`;
-    report += activity.personalDataTypes.map(pd => `- ${pd}`).join('\n') + '\n\n';
+    report += `### Personal Data Categories\n`
+    report += activity.personalDataTypes.map(pd => `- ${pd}`).join('\n') + '\n\n'
 
-    report += `### Processing Purposes\n`;
-    report += activity.processingPurposes.map(pp => `- ${pp}`).join('\n') + '\n\n';
+    report += `### Processing Purposes\n`
+    report += activity.processingPurposes.map(pp => `- ${pp}`).join('\n') + '\n\n'
 
-    report += `### Legal Basis\n`;
-    report += `- **Basis**: ${activity.legalBasis}\n`;
-    report += `- **Details**: ${activity.legalBasisDetails}\n\n`;
+    report += `### Legal Basis\n`
+    report += `- **Basis**: ${activity.legalBasis}\n`
+    report += `- **Details**: ${activity.legalBasisDetails}\n\n`
 
-    report += `### Recipients\n`;
-    report += activity.recipients.map(r => `- ${r}`).join('\n') + '\n\n';
+    report += `### Recipients\n`
+    report += activity.recipients.map(r => `- ${r}`).join('\n') + '\n\n'
 
     if (activity.thirdCountryTransfers.length > 0) {
-      report += `### Third Country Transfers\n`;
+      report += `### Third Country Transfers\n`
       activity.thirdCountryTransfers.forEach(transfer => {
-        report += `- **Country**: ${transfer.country}\n`;
-        report += `  - **Mechanism**: ${transfer.mechanism}\n`;
-        report += `  - **Safeguards**: ${transfer.safeguards}\n`;
-      });
-      report += '\n';
+        report += `- **Country**: ${transfer.country}\n`
+        report += `  - **Mechanism**: ${transfer.mechanism}\n`
+        report += `  - **Safeguards**: ${transfer.safeguards}\n`
+      })
+      report += '\n'
     }
 
-    report += `### Retention Period\n`;
+    report += `### Retention Period\n`
     if (activity.retentionPeriod.duration === -1) {
-      report += `- **Duration**: Indefinite\n`;
+      report += `- **Duration**: Indefinite\n`
     } else {
-      report += `- **Duration**: ${activity.retentionPeriod.duration} days\n`;
+      report += `- **Duration**: ${activity.retentionPeriod.duration} days\n`
     }
-    report += `- **Criteria**: ${activity.retentionPeriod.criteria}\n\n`;
+    report += `- **Criteria**: ${activity.retentionPeriod.criteria}\n\n`
 
-    report += `### Technical Security Measures\n`;
-    report += activity.technicalMeasures.map(tm => `- ${tm}`).join('\n') + '\n\n';
+    report += `### Technical Security Measures\n`
+    report += activity.technicalMeasures.map(tm => `- ${tm}`).join('\n') + '\n\n'
 
-    report += `### Organizational Security Measures\n`;
-    report += activity.organizationalMeasures.map(om => `- ${om}`).join('\n') + '\n\n';
+    report += `### Organizational Security Measures\n`
+    report += activity.organizationalMeasures.map(om => `- ${om}`).join('\n') + '\n\n'
 
-    report += `### Data Breach Procedure\n`;
-    report += `${activity.dataBreachProcedure}\n\n`;
+    report += `### Data Breach Procedure\n`
+    report += `${activity.dataBreachProcedure}\n\n`
 
-    report += '---\n\n';
-  });
+    report += '---\n\n'
+  })
 
-  return report;
+  return report
 }
 ```
 
@@ -584,6 +572,7 @@ export function generateRoPAReport(): string {
 
 ```markdown
 # Privacy Impact Assessment (PIA)
+
 ## Data Protection Impact Assessment (DPIA) - GDPR Article 35
 
 **Project**: ADSapp - Multi-Tenant WhatsApp Business Inbox SaaS
@@ -596,15 +585,18 @@ export function generateRoPAReport(): string {
 ## 1. EXECUTIVE SUMMARY
 
 ### Purpose
+
 This Privacy Impact Assessment (PIA) evaluates the data protection impact of ADSapp's processing activities to ensure compliance with GDPR Article 35 requirements for high-risk processing.
 
 ### Scope
+
 - Multi-tenant WhatsApp business communication platform
 - Processing of customer communications at scale
 - Integration with third-party services (WhatsApp, Stripe, Supabase)
 - Cross-border data transfers (EU to US)
 
 ### Conclusion
+
 **Risk Level**: MEDIUM
 
 With implemented safeguards and technical measures, residual risks are acceptable. No high risks remain that would prevent processing.
@@ -620,12 +612,14 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Answer**: YES
 
 **Justification**:
+
 - **Service Delivery**: Processing WhatsApp messages is core to the service functionality
 - **Legal Compliance**: Financial data processing required for tax compliance (7-year retention)
 - **Security**: Authentication data (MFA, passwords) necessary for account protection
 - **Analytics**: Usage data minimized to essential metrics for service improvement
 
 **Data Minimization**:
+
 - Only collect data necessary for specific purposes
 - Pseudonymization of IP addresses in analytics
 - Automatic deletion after retention periods
@@ -633,12 +627,12 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 
 ### 2.2 Alternative Solutions Considered
 
-| Alternative | Reason for Rejection |
-|-------------|---------------------|
-| On-premise solution | Conflicts with SaaS model, reduces accessibility |
-| No message storage | Breaks core functionality (conversation history) |
-| Longer retention periods | Violates data minimization principle |
-| No analytics | Prevents security monitoring and service improvement |
+| Alternative              | Reason for Rejection                                 |
+| ------------------------ | ---------------------------------------------------- |
+| On-premise solution      | Conflicts with SaaS model, reduces accessibility     |
+| No message storage       | Breaks core functionality (conversation history)     |
+| Longer retention periods | Violates data minimization principle                 |
+| No analytics             | Prevents security monitoring and service improvement |
 
 ---
 
@@ -646,26 +640,27 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 
 ### 3.1 Internal Stakeholders
 
-| Stakeholder | Role | Consultation Date | Key Concerns | Resolution |
-|-------------|------|-------------------|--------------|------------|
-| Engineering Team | Implementation | 2025-09-15 | Technical feasibility of encryption | AWS KMS integration planned |
-| Legal Counsel | Compliance | 2025-09-20 | DPA templates, SCCs | Templates prepared, SCCs in place |
-| Customer Success | User Impact | 2025-09-22 | DSAR response time | 30-day SLA with automation |
-| Management | Business Impact | 2025-09-25 | Cost of compliance | Budget approved (€66,000) |
+| Stakeholder      | Role            | Consultation Date | Key Concerns                        | Resolution                        |
+| ---------------- | --------------- | ----------------- | ----------------------------------- | --------------------------------- |
+| Engineering Team | Implementation  | 2025-09-15        | Technical feasibility of encryption | AWS KMS integration planned       |
+| Legal Counsel    | Compliance      | 2025-09-20        | DPA templates, SCCs                 | Templates prepared, SCCs in place |
+| Customer Success | User Impact     | 2025-09-22        | DSAR response time                  | 30-day SLA with automation        |
+| Management       | Business Impact | 2025-09-25        | Cost of compliance                  | Budget approved (€66,000)         |
 
 ### 3.2 External Stakeholders
 
-| Stakeholder | Consultation Method | Feedback | Action Taken |
-|-------------|---------------------|----------|--------------|
-| Beta Customers | Survey (N=50) | Positive on transparency, concerns about data location | Added EU data residency option |
-| Data Protection Authority | Pre-consultation | Recommended stronger encryption | Implemented AWS KMS |
-| Privacy Advocacy Groups | Review of privacy policy | Suggested clearer consent language | Policy updated |
+| Stakeholder               | Consultation Method      | Feedback                                               | Action Taken                   |
+| ------------------------- | ------------------------ | ------------------------------------------------------ | ------------------------------ |
+| Beta Customers            | Survey (N=50)            | Positive on transparency, concerns about data location | Added EU data residency option |
+| Data Protection Authority | Pre-consultation         | Recommended stronger encryption                        | Implemented AWS KMS            |
+| Privacy Advocacy Groups   | Review of privacy policy | Suggested clearer consent language                     | Policy updated                 |
 
 ### 3.3 Data Subjects (Users)
 
 **Consultation Method**: Privacy Notice + Consent Management
 
 **Feedback Summary**:
+
 - 95% acceptance rate for necessary processing
 - 45% opt-in for analytics (legitimate interest claimed for remainder)
 - Requests for data export feature (implemented via DSAR automation)
@@ -676,18 +671,19 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 
 ### 4.1 Risk Assessment Matrix
 
-| Risk | Likelihood | Severity | Impact | Mitigation |
-|------|-----------|----------|---------|------------|
-| **Unauthorized data access** | Medium | High | Identity theft, privacy violation | MFA, RLS, encryption, access logs |
-| **Data breach from processor** | Low | High | Large-scale exposure | SCCs, vendor audits, breach notification procedures |
-| **Cross-border transfer surveillance** | Low | Medium | Government access to data | SCCs, encryption, legal challenge provisions |
-| **Inadequate data deletion** | Low | Medium | Excessive retention | Automated deletion, retention policies, DSAR automation |
-| **Consent withdrawal not honored** | Very Low | Medium | Unlawful processing | Consent management system, easy withdrawal |
-| **DSAR response delays** | Low | Low | Regulatory fines | 30-day SLA, automated export, dedicated team |
-| **Discriminatory profiling** | Very Low | High | Unfair treatment | No automated decision-making implemented |
-| **Function creep** | Low | Medium | Purpose limitation violation | Purpose review, access controls, training |
+| Risk                                   | Likelihood | Severity | Impact                            | Mitigation                                              |
+| -------------------------------------- | ---------- | -------- | --------------------------------- | ------------------------------------------------------- |
+| **Unauthorized data access**           | Medium     | High     | Identity theft, privacy violation | MFA, RLS, encryption, access logs                       |
+| **Data breach from processor**         | Low        | High     | Large-scale exposure              | SCCs, vendor audits, breach notification procedures     |
+| **Cross-border transfer surveillance** | Low        | Medium   | Government access to data         | SCCs, encryption, legal challenge provisions            |
+| **Inadequate data deletion**           | Low        | Medium   | Excessive retention               | Automated deletion, retention policies, DSAR automation |
+| **Consent withdrawal not honored**     | Very Low   | Medium   | Unlawful processing               | Consent management system, easy withdrawal              |
+| **DSAR response delays**               | Low        | Low      | Regulatory fines                  | 30-day SLA, automated export, dedicated team            |
+| **Discriminatory profiling**           | Very Low   | High     | Unfair treatment                  | No automated decision-making implemented                |
+| **Function creep**                     | Low        | Medium   | Purpose limitation violation      | Purpose review, access controls, training               |
 
 **Risk Scoring**:
+
 - Very Low: 1
 - Low: 2
 - Medium: 3
@@ -703,6 +699,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Description**: Internal or external actor gains unauthorized access to personal data.
 
 **Potential Harm**:
+
 - Identity theft
 - Privacy violation
 - Reputational damage
@@ -711,14 +708,17 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Affected Data Subjects**: All users (100% of user base)
 
 **Likelihood**: MEDIUM
+
 - External attacks common in SaaS industry
 - But strong technical controls in place
 
 **Severity**: HIGH
+
 - Contains personal and business communications
 - Could affect thousands of users
 
 **Current Controls**:
+
 1. Multi-factor authentication (MFA) required
 2. Row-Level Security (RLS) in database
 3. Encryption at rest (AES-256) and in transit (TLS 1.3)
@@ -730,6 +730,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Residual Risk**: LOW
 
 **Additional Measures Planned**:
+
 - Implement anomaly detection for unusual access patterns (Week 35)
 - Add session timeout after 30 minutes inactivity (Week 32)
 - Implement IP allowlisting for admin accounts (Week 33)
@@ -741,6 +742,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Description**: Supabase, Stripe, or other processor suffers data breach affecting ADSapp data.
 
 **Potential Harm**:
+
 - Exposure of personal data beyond ADSapp's control
 - Regulatory notification requirements
 - Loss of customer trust
@@ -748,14 +750,17 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Affected Data Subjects**: All users whose data is processed by affected processor
 
 **Likelihood**: LOW
+
 - Processors are reputable with strong security programs
 - But third-party risk always present
 
 **Severity**: HIGH
+
 - Large-scale exposure potential
 - Regulatory penalties for inadequate processor management
 
 **Current Controls**:
+
 1. Data Processing Agreements (DPAs) with all processors
 2. EU Standard Contractual Clauses (SCCs) in place
 3. Regular vendor security assessments
@@ -766,6 +771,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Residual Risk**: LOW
 
 **Additional Measures Planned**:
+
 - Implement processor security scorecard monitoring (Week 36)
 - Add contractual requirement for 24-hour breach notification (Week 31)
 - Develop processor incident response playbook (Week 35)
@@ -777,6 +783,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Description**: Data retained beyond necessary period or DSAR deletion requests not properly executed.
 
 **Potential Harm**:
+
 - Regulatory penalties for excessive retention
 - Privacy violation
 - Storage of outdated/incorrect information
@@ -788,6 +795,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Severity**: MEDIUM
 
 **Current Controls**:
+
 1. Automated deletion system with scheduled jobs
 2. Retention policies defined per data category
 3. DSAR automation for deletion requests
@@ -797,6 +805,7 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 **Residual Risk**: VERY LOW
 
 **Additional Measures Planned**:
+
 - Implement deletion verification system (Week 33)
 - Add manual deletion override for edge cases (Week 32)
 - Create deletion metrics dashboard (Week 34)
@@ -807,46 +816,46 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 
 ### 5.1 Technical Measures
 
-| Measure | Implementation Status | GDPR Article | Effectiveness |
-|---------|----------------------|--------------|---------------|
-| Encryption at rest (AES-256) | ✅ Implemented | Art. 32(1)(a) | High |
-| Encryption in transit (TLS 1.3) | ✅ Implemented | Art. 32(1)(a) | High |
-| AWS KMS for sensitive data | ✅ Implemented | Art. 32(1)(a) | High |
-| Multi-factor authentication | ✅ Implemented | Art. 32(1)(b) | High |
-| Row-Level Security (RLS) | ✅ Implemented | Art. 32(1)(b) | High |
-| Access logging and monitoring | ✅ Implemented | Art. 32(1)(d) | Medium |
-| Automated data deletion | ✅ Implemented | Art. 5(1)(e) | High |
-| Pseudonymization (IP addresses) | ✅ Implemented | Art. 32(1)(a) | Medium |
-| Regular security testing | 🔄 Annual | Art. 32(1)(d) | Medium |
-| Backup encryption | ✅ Implemented | Art. 32(1)(a) | High |
+| Measure                         | Implementation Status | GDPR Article  | Effectiveness |
+| ------------------------------- | --------------------- | ------------- | ------------- |
+| Encryption at rest (AES-256)    | ✅ Implemented        | Art. 32(1)(a) | High          |
+| Encryption in transit (TLS 1.3) | ✅ Implemented        | Art. 32(1)(a) | High          |
+| AWS KMS for sensitive data      | ✅ Implemented        | Art. 32(1)(a) | High          |
+| Multi-factor authentication     | ✅ Implemented        | Art. 32(1)(b) | High          |
+| Row-Level Security (RLS)        | ✅ Implemented        | Art. 32(1)(b) | High          |
+| Access logging and monitoring   | ✅ Implemented        | Art. 32(1)(d) | Medium        |
+| Automated data deletion         | ✅ Implemented        | Art. 5(1)(e)  | High          |
+| Pseudonymization (IP addresses) | ✅ Implemented        | Art. 32(1)(a) | Medium        |
+| Regular security testing        | 🔄 Annual             | Art. 32(1)(d) | Medium        |
+| Backup encryption               | ✅ Implemented        | Art. 32(1)(a) | High          |
 
 ### 5.2 Organizational Measures
 
-| Measure | Implementation Status | GDPR Article | Effectiveness |
-|---------|----------------------|--------------|---------------|
-| Data Protection Officer (DPO) | ✅ Appointed | Art. 37-39 | High |
-| Staff training on GDPR | 🔄 Annual | Art. 32(4) | Medium |
-| Processor management program | ✅ Implemented | Art. 28 | High |
-| Data breach response plan | ✅ Documented | Art. 33-34 | High |
-| Privacy by design procedures | ✅ Implemented | Art. 25(1) | Medium |
-| Records of processing (RoPA) | ✅ Maintained | Art. 30 | High |
-| DPIA for new processing | ✅ Procedure | Art. 35 | High |
-| Consent management system | ✅ Implemented | Art. 7 | High |
-| DSAR handling procedures | ✅ Documented | Art. 15-22 | High |
-| Regular compliance audits | 🔄 Annual | Art. 32(1)(d) | Medium |
+| Measure                       | Implementation Status | GDPR Article  | Effectiveness |
+| ----------------------------- | --------------------- | ------------- | ------------- |
+| Data Protection Officer (DPO) | ✅ Appointed          | Art. 37-39    | High          |
+| Staff training on GDPR        | 🔄 Annual             | Art. 32(4)    | Medium        |
+| Processor management program  | ✅ Implemented        | Art. 28       | High          |
+| Data breach response plan     | ✅ Documented         | Art. 33-34    | High          |
+| Privacy by design procedures  | ✅ Implemented        | Art. 25(1)    | Medium        |
+| Records of processing (RoPA)  | ✅ Maintained         | Art. 30       | High          |
+| DPIA for new processing       | ✅ Procedure          | Art. 35       | High          |
+| Consent management system     | ✅ Implemented        | Art. 7        | High          |
+| DSAR handling procedures      | ✅ Documented         | Art. 15-22    | High          |
+| Regular compliance audits     | 🔄 Annual             | Art. 32(1)(d) | Medium        |
 
 ### 5.3 Governance Measures
 
-| Measure | Description | Frequency |
-|---------|-------------|-----------|
-| Privacy Policy Review | Review and update privacy policy | Quarterly |
-| DPA Template Review | Update Data Processing Agreement templates | Semi-annually |
-| Vendor Security Assessment | Assess processor security posture | Annually |
-| Staff Privacy Training | GDPR and privacy awareness training | Annually |
-| Retention Policy Review | Review and adjust retention periods | Quarterly |
-| DSAR Response Time Audit | Measure DSAR response compliance | Monthly |
-| Incident Response Drill | Test breach notification procedures | Annually |
-| Privacy Committee Meeting | Review privacy program effectiveness | Quarterly |
+| Measure                    | Description                                | Frequency     |
+| -------------------------- | ------------------------------------------ | ------------- |
+| Privacy Policy Review      | Review and update privacy policy           | Quarterly     |
+| DPA Template Review        | Update Data Processing Agreement templates | Semi-annually |
+| Vendor Security Assessment | Assess processor security posture          | Annually      |
+| Staff Privacy Training     | GDPR and privacy awareness training        | Annually      |
+| Retention Policy Review    | Review and adjust retention periods        | Quarterly     |
+| DSAR Response Time Audit   | Measure DSAR response compliance           | Monthly       |
+| Incident Response Drill    | Test breach notification procedures        | Annually      |
+| Privacy Committee Meeting  | Review privacy program effectiveness       | Quarterly     |
 
 ---
 
@@ -854,19 +863,19 @@ With implemented safeguards and technical measures, residual risks are acceptabl
 
 ### 6.1 Assessment Team
 
-| Name | Role | Date | Signature |
-|------|------|------|-----------|
-| [Name] | Data Protection Officer | 2025-10-13 | _____________ |
-| [Name] | Chief Technology Officer | 2025-10-13 | _____________ |
-| [Name] | Legal Counsel | 2025-10-13 | _____________ |
-| [Name] | Chief Information Security Officer | 2025-10-13 | _____________ |
+| Name   | Role                               | Date       | Signature      |
+| ------ | ---------------------------------- | ---------- | -------------- |
+| [Name] | Data Protection Officer            | 2025-10-13 | ******\_****** |
+| [Name] | Chief Technology Officer           | 2025-10-13 | ******\_****** |
+| [Name] | Legal Counsel                      | 2025-10-13 | ******\_****** |
+| [Name] | Chief Information Security Officer | 2025-10-13 | ******\_****** |
 
 ### 6.2 Management Approval
 
-| Name | Role | Date | Signature |
-|------|------|------|-----------|
-| [Name] | Chief Executive Officer | 2025-10-15 | _____________ |
-| [Name] | Chief Privacy Officer | 2025-10-15 | _____________ |
+| Name   | Role                    | Date       | Signature      |
+| ------ | ----------------------- | ---------- | -------------- |
+| [Name] | Chief Executive Officer | 2025-10-15 | ******\_****** |
+| [Name] | Chief Privacy Officer   | 2025-10-15 | ******\_****** |
 
 ### 6.3 Review Schedule
 
@@ -925,6 +934,7 @@ The processing activities of ADSapp involve systematic processing of communicati
 **Decision**: ✅ **APPROVED** - Processing may proceed with planned safeguards
 
 **Conditions**:
+
 1. All planned measures in Section 7 must be implemented per schedule
 2. Quarterly reviews required to monitor effectiveness
 3. Any material changes require DPIA update
@@ -936,6 +946,7 @@ Processing approved with confidence that rights and freedoms of data subjects ar
 ---
 
 **Document Control**:
+
 - **Version**: 1.0
 - **Classification**: Internal - Confidential
 - **Next Review**: 2026-04-13

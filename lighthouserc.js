@@ -40,7 +40,7 @@ module.exports = {
         // Accessibility
         'color-contrast': 'error',
         'image-alt': 'error',
-        'label': 'error',
+        label: 'error',
         'link-name': 'error',
 
         // Best practices
@@ -51,7 +51,7 @@ module.exports = {
         // SEO
         'meta-description': 'error',
         'document-title': 'error',
-        'hreflang': 'warn',
+        hreflang: 'warn',
       },
     },
     upload: {

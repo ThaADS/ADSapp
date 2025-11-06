@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       system: {
         memory: getMemoryUsage(),
         nodeVersion: process.version,
-      }
+      },
     }
 
     // Check Supabase connection
@@ -74,23 +74,22 @@ export async function GET(request: NextRequest) {
     }
 
     const responseTime = Date.now() - startTime
-    const statusCode = healthStatus.status === 'healthy' ? 200 :
-                      healthStatus.status === 'degraded' ? 200 : 503
+    const statusCode =
+      healthStatus.status === 'healthy' ? 200 : healthStatus.status === 'degraded' ? 200 : 503
 
     return NextResponse.json(
       {
         ...healthStatus,
-        responseTime: `${responseTime}ms`
+        responseTime: `${responseTime}ms`,
       },
       {
         status: statusCode,
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       }
     )
-
   } catch (error) {
     console.error('Health check failed:', error)
 
@@ -99,14 +98,14 @@ export async function GET(request: NextRequest) {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         error: error instanceof Error ? error.message : 'Unknown error',
-        responseTime: `${Date.now() - startTime}ms`
+        responseTime: `${Date.now() - startTime}ms`,
       },
       {
         status: 503,
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       }
     )
   }
@@ -117,11 +116,7 @@ async function checkSupabase() {
 
   try {
     const supabase = await createClient()
-    const { error } = await supabase
-      .from('profiles')
-      .select('count')
-      .limit(1)
-      .single()
+    const { error } = await supabase.from('profiles').select('count').limit(1).single()
 
     const responseTime = Date.now() - checkStart
 
@@ -131,22 +126,21 @@ async function checkSupabase() {
         status: 'down' as const,
         responseTime,
         error: error.message,
-        lastCheck: new Date().toISOString()
+        lastCheck: new Date().toISOString(),
       }
     }
 
     return {
-      status: responseTime < 1000 ? 'up' as const : 'degraded' as const,
+      status: responseTime < 1000 ? ('up' as const) : ('degraded' as const),
       responseTime,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
-
   } catch (error) {
     return {
       status: 'down' as const,
       responseTime: Date.now() - checkStart,
       error: error instanceof Error ? error.message : 'Connection failed',
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
   }
 }
@@ -158,23 +152,22 @@ async function checkRedis() {
     // Simple Redis ping check
     const response = await fetch('http://redis:6379', {
       method: 'GET',
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(5000),
     })
 
     const responseTime = Date.now() - checkStart
 
     return {
-      status: response.ok ? 'up' as const : 'down' as const,
+      status: response.ok ? ('up' as const) : ('down' as const),
       responseTime,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
-
   } catch (error) {
     return {
       status: 'down' as const,
       responseTime: Date.now() - checkStart,
       error: error instanceof Error ? error.message : 'Connection failed',
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
   }
 }
@@ -188,33 +181,32 @@ async function checkStripe() {
         status: 'degraded' as const,
         responseTime: 0,
         error: 'Stripe not configured',
-        lastCheck: new Date().toISOString()
+        lastCheck: new Date().toISOString(),
       }
     }
 
     // Simple Stripe API call to verify connection
     const response = await fetch('https://api.stripe.com/v1/account', {
       headers: {
-        'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
       },
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(5000),
     })
 
     const responseTime = Date.now() - checkStart
 
     return {
-      status: response.ok ? 'up' as const : 'down' as const,
+      status: response.ok ? ('up' as const) : ('down' as const),
       responseTime,
       error: response.ok ? undefined : `HTTP ${response.status}`,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
-
   } catch (error) {
     return {
       status: 'down' as const,
       responseTime: Date.now() - checkStart,
       error: error instanceof Error ? error.message : 'Connection failed',
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
   }
 }
@@ -228,7 +220,7 @@ async function checkWhatsApp() {
         status: 'degraded' as const,
         responseTime: 0,
         error: 'WhatsApp not configured',
-        lastCheck: new Date().toISOString()
+        lastCheck: new Date().toISOString(),
       }
     }
 
@@ -237,27 +229,26 @@ async function checkWhatsApp() {
       `https://graph.facebook.com/v18.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}`,
       {
         headers: {
-          'Authorization': `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
         },
-        signal: AbortSignal.timeout(5000)
+        signal: AbortSignal.timeout(5000),
       }
     )
 
     const responseTime = Date.now() - checkStart
 
     return {
-      status: response.ok ? 'up' as const : 'down' as const,
+      status: response.ok ? ('up' as const) : ('down' as const),
       responseTime,
       error: response.ok ? undefined : `HTTP ${response.status}`,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
-
   } catch (error) {
     return {
       status: 'down' as const,
       responseTime: Date.now() - checkStart,
       error: error instanceof Error ? error.message : 'Connection failed',
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     }
   }
 }
@@ -270,7 +261,7 @@ function getMemoryUsage() {
   return {
     used: Math.round(usedMemory / 1024 / 1024), // MB
     total: Math.round(totalMemory / 1024 / 1024), // MB
-    percentage: Math.round((usedMemory / totalMemory) * 100)
+    percentage: Math.round((usedMemory / totalMemory) * 100),
   }
 }
 

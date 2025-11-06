@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { DemoSessionManager } from '@/lib/demo'
-import {
-  SimulateMessageRequest,
-  SimulateMessageResponse,
-  BusinessScenario
-} from '@/types/demo'
+import { SimulateMessageRequest, SimulateMessageResponse, BusinessScenario } from '@/types/demo'
 
 /**
  * Simulate incoming WhatsApp messages for demo sessions
@@ -21,7 +17,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         } as SimulateMessageResponse,
         { status: 401 }
       )
@@ -35,7 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'contact_phone, content, and message_type are required'
+          error: 'contact_phone, content, and message_type are required',
         } as SimulateMessageResponse,
         { status: 400 }
       )
@@ -47,7 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid message_type. Must be one of: text, image, document'
+          error: 'Invalid message_type. Must be one of: text, image, document',
         } as SimulateMessageResponse,
         { status: 400 }
       )
@@ -59,7 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid sender_type. Must be either contact or agent'
+          error: 'Invalid sender_type. Must be either contact or agent',
         } as SimulateMessageResponse,
         { status: 400 }
       )
@@ -74,7 +70,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         } as SimulateMessageResponse,
         { status: 500 }
       )
@@ -90,7 +86,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         } as SimulateMessageResponse,
         { status: 401 }
       )
@@ -99,7 +95,12 @@ export async function POST(request: NextRequest) {
     const organizationId = sessionResult.session.organization_id
 
     // Find or create contact
-    const contact = await findOrCreateContact(supabase, organizationId, body.contact_phone, sessionResult.session.business_scenario)
+    const contact = await findOrCreateContact(
+      supabase,
+      organizationId,
+      body.contact_phone,
+      sessionResult.session.business_scenario
+    )
 
     // Find or create conversation
     const conversation = await findOrCreateConversation(supabase, organizationId, contact.id)
@@ -120,7 +121,7 @@ export async function POST(request: NextRequest) {
       media_mime_type: body.message_type !== 'text' ? getDemoMimeType(body.message_type) : null,
       is_read: body.sender_type === 'agent', // Agent messages are marked as read
       whatsapp_message_id: `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     }
 
     const { data: message, error: messageError } = await supabase
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to create message'
+          error: 'Failed to create message',
         } as SimulateMessageResponse,
         { status: 500 }
       )
@@ -167,8 +168,8 @@ export async function POST(request: NextRequest) {
         contact_phone: body.contact_phone,
         message_length: body.content.length,
         has_delay: !!body.delay_seconds,
-        trigger_automation: !!body.trigger_automation
-      }
+        trigger_automation: !!body.trigger_automation,
+      },
     })
 
     // Update session progress
@@ -178,7 +179,7 @@ export async function POST(request: NextRequest) {
       'simulate_whatsapp_message',
       {
         message_type: body.message_type,
-        sender_type: body.sender_type
+        sender_type: body.sender_type,
       }
     )
 
@@ -187,19 +188,18 @@ export async function POST(request: NextRequest) {
       data: {
         message_id: message.id,
         conversation_id: conversation.id,
-        processed_at: new Date().toISOString()
-      }
+        processed_at: new Date().toISOString(),
+      },
     }
 
     return NextResponse.json(response, { status: 201 })
-
   } catch (error) {
     console.error('Error simulating message:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to simulate message. Please try again.'
+        error: 'Failed to simulate message. Please try again.',
       } as SimulateMessageResponse,
       { status: 500 }
     )
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         },
         { status: 401 }
       )
@@ -234,7 +234,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -250,7 +250,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         },
         { status: 401 }
       )
@@ -271,24 +271,23 @@ export async function GET(request: NextRequest) {
       data: {
         session_info: {
           scenario: sessionResult.session.business_scenario,
-          organization_id: sessionResult.session.organization_id
+          organization_id: sessionResult.session.organization_id,
         },
         available_contacts: contacts || [],
         message_types: ['text', 'image', 'document'],
         sender_types: ['contact', 'agent'],
         max_delay_seconds: 30,
         message_templates: messageTemplates,
-        automation_available: true
-      }
+        automation_available: true,
+      },
     })
-
   } catch (error) {
     console.error('Error getting simulation options:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to get simulation options'
+        error: 'Failed to get simulation options',
       },
       { status: 500 }
     )
@@ -309,7 +308,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Session token required in Authorization header'
+          error: 'Session token required in Authorization header',
         },
         { status: 401 }
       )
@@ -323,7 +322,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'messages array is required and must not be empty'
+          error: 'messages array is required and must not be empty',
         },
         { status: 400 }
       )
@@ -333,7 +332,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Maximum 20 messages allowed per batch'
+          error: 'Maximum 20 messages allowed per batch',
         },
         { status: 400 }
       )
@@ -347,7 +346,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Service configuration error'
+          error: 'Service configuration error',
         },
         { status: 500 }
       )
@@ -363,7 +362,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid or expired session'
+          error: 'Invalid or expired session',
         },
         { status: 401 }
       )
@@ -381,7 +380,7 @@ export async function PUT(request: NextRequest) {
         if (!messageData.contact_phone || !messageData.content || !messageData.message_type) {
           errors.push({
             index: i,
-            error: 'Missing required fields: contact_phone, content, message_type'
+            error: 'Missing required fields: contact_phone, content, message_type',
           })
           continue
         }
@@ -397,19 +396,18 @@ export async function PUT(request: NextRequest) {
         results.push({
           index: i,
           message_id: result.message_id,
-          conversation_id: result.conversation_id
+          conversation_id: result.conversation_id,
         })
 
         // Add delay between messages to make it more realistic
         if (i < messages.length - 1) {
           await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000))
         }
-
       } catch (error) {
         console.error(`Error processing message ${i}:`, error)
         errors.push({
           index: i,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
     }
@@ -424,8 +422,8 @@ export async function PUT(request: NextRequest) {
       metadata: {
         total_messages: messages.length,
         successful: results.length,
-        failed: errors.length
-      }
+        failed: errors.length,
+      },
     })
 
     return NextResponse.json({
@@ -436,17 +434,16 @@ export async function PUT(request: NextRequest) {
         successful: results.length,
         failed: errors.length,
         results: results,
-        errors: errors.length > 0 ? errors : undefined
-      }
+        errors: errors.length > 0 ? errors : undefined,
+      },
     })
-
   } catch (error) {
     console.error('Error in batch message simulation:', error)
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to process batch messages'
+        error: 'Failed to process batch messages',
       },
       { status: 500 }
     )
@@ -455,7 +452,12 @@ export async function PUT(request: NextRequest) {
 
 // Helper functions
 
-async function findOrCreateContact(supabase: any, organizationId: string, phoneNumber: string, scenario: BusinessScenario) {
+async function findOrCreateContact(
+  supabase: any,
+  organizationId: string,
+  phoneNumber: string,
+  scenario: BusinessScenario
+) {
   // Try to find existing contact
   const { data: existingContact } = await supabase
     .from('contacts')
@@ -478,7 +480,7 @@ async function findOrCreateContact(supabase: any, organizationId: string, phoneN
     notes: `Demo contact for ${scenario} scenario`,
     is_blocked: false,
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   }
 
   const { data: newContact, error } = await supabase
@@ -516,7 +518,7 @@ async function findOrCreateConversation(supabase: any, organizationId: string, c
     priority: 'medium',
     subject: 'Demo conversation',
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   }
 
   const { data: newConversation, error } = await supabase
@@ -532,8 +534,18 @@ async function findOrCreateConversation(supabase: any, organizationId: string, c
   return newConversation
 }
 
-async function simulateSingleMessage(supabase: any, organizationId: string, messageData: any, scenario: BusinessScenario) {
-  const contact = await findOrCreateContact(supabase, organizationId, messageData.contact_phone, scenario)
+async function simulateSingleMessage(
+  supabase: any,
+  organizationId: string,
+  messageData: any,
+  scenario: BusinessScenario
+) {
+  const contact = await findOrCreateContact(
+    supabase,
+    organizationId,
+    messageData.contact_phone,
+    scenario
+  )
   const conversation = await findOrCreateConversation(supabase, organizationId, contact.id)
 
   const message = {
@@ -541,10 +553,11 @@ async function simulateSingleMessage(supabase: any, organizationId: string, mess
     sender_type: messageData.sender_type || 'contact',
     content: messageData.content,
     message_type: messageData.message_type || 'text',
-    media_url: messageData.message_type !== 'text' ? generateDemoMediaUrl(messageData.message_type) : null,
+    media_url:
+      messageData.message_type !== 'text' ? generateDemoMediaUrl(messageData.message_type) : null,
     is_read: messageData.sender_type === 'agent',
     whatsapp_message_id: `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   }
 
   const { data: newMessage, error } = await supabase
@@ -570,7 +583,7 @@ async function simulateSingleMessage(supabase: any, organizationId: string, mess
 
   return {
     message_id: newMessage.id,
-    conversation_id: conversation.id
+    conversation_id: conversation.id,
   }
 }
 
@@ -585,7 +598,7 @@ function generateDemoContactName(phoneNumber: string, scenario: BusinessScenario
     automotive: ['Car Buyer', 'Auto Enthusiast', 'Driver'],
     travel: ['Traveler', 'Adventure Seeker', 'Tourist'],
     fitness: ['Fitness Enthusiast', 'Gym Member', 'Health Conscious'],
-    generic: ['Demo User', 'Customer', 'Client']
+    generic: ['Demo User', 'Customer', 'Client'],
   }
 
   const scenarioNames = names[scenario] || names.generic
@@ -604,7 +617,7 @@ function getScenarioTags(scenario: BusinessScenario): string[] {
     automotive: ['buyer', 'automotive'],
     travel: ['traveler', 'tourism'],
     fitness: ['member', 'fitness'],
-    generic: ['demo', 'customer']
+    generic: ['demo', 'customer'],
   }
 
   return tags[scenario] || tags.generic
@@ -639,18 +652,27 @@ function getScenarioMessageTemplates(scenario: BusinessScenario) {
     retail: [
       { sender: 'contact', content: 'Hi! Do you have this item in stock?', type: 'text' },
       { sender: 'contact', content: 'What are your store hours?', type: 'text' },
-      { sender: 'agent', content: 'Hello! Yes, we have that item available. Would you like me to reserve it for you?', type: 'text' }
+      {
+        sender: 'agent',
+        content:
+          'Hello! Yes, we have that item available. Would you like me to reserve it for you?',
+        type: 'text',
+      },
     ],
     restaurant: [
-      { sender: 'contact', content: 'I\'d like to make a reservation for tonight', type: 'text' },
+      { sender: 'contact', content: "I'd like to make a reservation for tonight", type: 'text' },
       { sender: 'contact', content: 'Do you have any vegan options?', type: 'text' },
-      { sender: 'agent', content: 'Of course! What time would you prefer for your reservation?', type: 'text' }
+      {
+        sender: 'agent',
+        content: 'Of course! What time would you prefer for your reservation?',
+        type: 'text',
+      },
     ],
     // Add more scenarios as needed
     generic: [
       { sender: 'contact', content: 'Hello, I have a question', type: 'text' },
-      { sender: 'agent', content: 'Hi! How can I help you today?', type: 'text' }
-    ]
+      { sender: 'agent', content: 'Hi! How can I help you today?', type: 'text' },
+    ],
   }
 
   return templates[scenario] || templates.generic

@@ -11,11 +11,7 @@ export default async function DashboardPage() {
   const supabase = await createClient()
 
   // Fetch dashboard data
-  const [
-    { data: conversations },
-    { data: messages },
-    { data: contacts },
-  ] = await Promise.all([
+  const [{ data: conversations }, { data: messages }, { data: contacts }] = await Promise.all([
     supabase
       .from('conversations')
       .select('*, contact:contacts(*), last_message:messages(*)')
@@ -31,10 +27,7 @@ export default async function DashboardPage() {
       .order('created_at', { ascending: false })
       .limit(10),
 
-    supabase
-      .from('contacts')
-      .select('*')
-      .eq('organization_id', profile.organization_id)
+    supabase.from('contacts').select('*').eq('organization_id', profile.organization_id),
   ])
 
   const stats = {
@@ -45,13 +38,13 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        <h1 className='text-2xl leading-7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight'>
           Dashboard
         </h1>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className='mt-2 text-sm text-gray-500'>
           Welcome back, {profile.full_name}. Here's what's happening with your WhatsApp inbox.
         </p>
       </div>

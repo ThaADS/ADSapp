@@ -9,6 +9,7 @@
 The "Forgot your password?" link on the signin page (`/auth/signin`) was not clickable. It had `href="#"` which did nothing when clicked.
 
 **User Report:**
+
 > "de forgot password functie werkt niet, je kan er niet op klikken"
 
 ## Solution
@@ -18,17 +19,19 @@ The "Forgot your password?" link on the signin page (`/auth/signin`) was not cli
 **File:** `src/components/auth/signin-form.tsx`
 
 **Before:**
+
 ```tsx
-<a href="#" className="font-medium text-green-600 hover:text-green-500">
+<a href='#' className='font-medium text-green-600 hover:text-green-500'>
   Forgot your password?
 </a>
 ```
 
 **After:**
+
 ```tsx
 import Link from 'next/link'
 
-<Link href="/auth/forgot-password" className="font-medium text-green-600 hover:text-green-500">
+;<Link href='/auth/forgot-password' className='font-medium text-green-600 hover:text-green-500'>
   Forgot your password?
 </Link>
 ```
@@ -42,12 +45,14 @@ The complete forgot password system is now fully functional:
 **Component:** `src/components/auth/forgot-password-form.tsx`
 
 **Features:**
+
 - Email input field
 - Supabase `resetPasswordForEmail()` integration
 - Success/error message display
 - Email sent confirmation
 
 **Flow:**
+
 ```
 User clicks "Forgot your password?"
     ↓
@@ -65,6 +70,7 @@ Supabase sends password reset email
 **Component:** `src/components/auth/reset-password-form.tsx`
 
 **Features:**
+
 - New password input
 - Confirm password input
 - Password validation (min 6 characters)
@@ -72,6 +78,7 @@ Supabase sends password reset email
 - Supabase `updateUser()` integration
 
 **Flow:**
+
 ```
 User clicks link in email
     ↓
@@ -171,17 +178,20 @@ Redirect to /auth/signin with success message
 ### Test 4: Validation
 
 **Password Too Short:**
+
 1. At `/auth/reset-password`
 2. Enter password: "test"
 3. **Expected:** Error: "Password must be at least 6 characters"
 
 **Passwords Don't Match:**
+
 1. At `/auth/reset-password`
 2. Enter password: "password123"
 3. Enter confirm: "password456"
 4. **Expected:** Error: "Passwords do not match"
 
 **Invalid Email:**
+
 1. At `/auth/forgot-password`
 2. Enter invalid email: "notanemail"
 3. **Expected:** HTML5 validation prevents submission
@@ -189,17 +199,20 @@ Redirect to /auth/signin with success message
 ## Security Features
 
 ✅ **Secure Password Reset:**
+
 - Token-based reset via Supabase Auth
 - Reset link expires after use
 - Reset link expires after time limit (configurable in Supabase)
 
 ✅ **Validation:**
+
 - Email format validation
 - Password minimum length (6 characters)
 - Password confirmation matching
 - Client-side and server-side validation
 
 ✅ **User Experience:**
+
 - Clear success/error messages
 - Loading states during API calls
 - Disabled buttons during processing
@@ -208,11 +221,13 @@ Redirect to /auth/signin with success message
 ## Related Files
 
 ### Pages
+
 1. `src/app/auth/signin/page.tsx` - Sign in page with forgot password link
 2. `src/app/auth/forgot-password/page.tsx` - Request password reset
 3. `src/app/auth/reset-password/page.tsx` - Set new password
 
 ### Components
+
 1. `src/components/auth/signin-form.tsx` - **MODIFIED** - Fixed link
 2. `src/components/auth/forgot-password-form.tsx` - Request reset form
 3. `src/components/auth/reset-password-form.tsx` - New password form
@@ -222,6 +237,7 @@ Redirect to /auth/signin with success message
 Make sure Supabase email templates are configured:
 
 **Supabase Dashboard:**
+
 1. Go to Authentication → Email Templates
 2. Configure "Reset Password" template
 3. Set redirect URL to: `{{ .SiteURL }}/auth/reset-password`
@@ -230,16 +246,19 @@ Make sure Supabase email templates are configured:
 ## Production Considerations
 
 **Email Configuration:**
+
 - In production, use a custom SMTP provider (SendGrid, AWS SES, etc.)
 - Configure custom email templates with branding
 - Set up proper SPF/DKIM records for email deliverability
 
 **Security:**
+
 - Reset links expire after 1 hour (Supabase default)
 - Users must be authenticated to reset password
 - Old password is not required (security best practice for "forgot password")
 
 **User Experience:**
+
 - Add rate limiting for password reset requests
 - Log password reset attempts for security monitoring
 - Consider adding CAPTCHA for reset requests to prevent abuse
@@ -247,6 +266,7 @@ Make sure Supabase email templates are configured:
 ## Status
 
 ✅ **All Components Working:**
+
 - Forgot password link clickable
 - Email request form functional
 - Password reset form functional

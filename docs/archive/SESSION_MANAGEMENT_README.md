@@ -7,6 +7,7 @@ Enterprise-grade session management system for ADSapp implementing **C-004: Sess
 **Security Objective**: Fix CVSS 7.5 vulnerability "Session Management Issues"
 
 ### Key Features
+
 - ✅ 30-minute inactivity timeout
 - ✅ Secure session storage with Upstash Redis
 - ✅ Session regeneration on privilege changes
@@ -143,9 +144,9 @@ npm run test tests/integration/session-flow.test.ts
 ### Creating a Session
 
 ```typescript
-import { getSessionManager } from '@/lib/session/manager';
+import { getSessionManager } from '@/lib/session/manager'
 
-const manager = getSessionManager();
+const manager = getSessionManager()
 
 const { session, token } = await manager.createSession({
   userId: 'user-123',
@@ -154,34 +155,34 @@ const { session, token } = await manager.createSession({
   deviceInfo: {
     userAgent: req.headers.get('user-agent') || '',
     ip: getClientIp(req),
-    platform: 'web'
-  }
-});
+    platform: 'web',
+  },
+})
 
 // Set cookie with session token
 response.cookies.set('adsapp_session', token, {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',
-  maxAge: 30 * 60 // 30 minutes
-});
+  maxAge: 30 * 60, // 30 minutes
+})
 ```
 
 ### Validating a Session
 
 ```typescript
-import { validateSession, getSessionContext } from '@/lib/middleware/session';
+import { validateSession, getSessionContext } from '@/lib/middleware/session'
 
 export async function GET(request: NextRequest) {
   // Validate session
-  const validation = await validateSession(request);
-  if (validation) return validation; // Returns error response if invalid
+  const validation = await validateSession(request)
+  if (validation) return validation // Returns error response if invalid
 
   // Get session context
-  const context = getSessionContext(request);
-  console.log('User:', context.userId);
-  console.log('Organization:', context.organizationId);
-  console.log('Expires:', context.expiresAt);
+  const context = getSessionContext(request)
+  console.log('User:', context.userId)
+  console.log('Organization:', context.organizationId)
+  console.log('Expires:', context.expiresAt)
 
   // Your business logic here
 }
@@ -193,24 +194,24 @@ export async function GET(request: NextRequest) {
 // Client-side: Send POST to /api/auth/session/refresh
 const response = await fetch('/api/auth/session/refresh', {
   method: 'POST',
-  credentials: 'include' // Include cookies
-});
+  credentials: 'include', // Include cookies
+})
 
-const { success, session } = await response.json();
+const { success, session } = await response.json()
 ```
 
 ### Listing Active Sessions
 
 ```typescript
 // Client-side: Get all active sessions
-const response = await fetch('/api/auth/session/list');
-const { sessions, totalSessions } = await response.json();
+const response = await fetch('/api/auth/session/list')
+const { sessions, totalSessions } = await response.json()
 
 sessions.forEach(session => {
-  console.log('Device:', session.deviceInfo.platform);
-  console.log('Last Activity:', session.lastActivity);
-  console.log('Current:', session.isCurrent);
-});
+  console.log('Device:', session.deviceInfo.platform)
+  console.log('Last Activity:', session.lastActivity)
+  console.log('Current:', session.isCurrent)
+})
 ```
 
 ### Revoking a Session
@@ -221,18 +222,18 @@ await fetch('/api/auth/session/revoke', {
   method: 'DELETE',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    sessionToken: 'token-to-revoke'
-  })
-});
+    sessionToken: 'token-to-revoke',
+  }),
+})
 
 // Revoke all sessions (e.g., on password change)
 await fetch('/api/auth/session/revoke-all', {
   method: 'DELETE',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    reason: 'password_changed'
-  })
-});
+    reason: 'password_changed',
+  }),
+})
 ```
 
 ## API Endpoints
@@ -244,6 +245,7 @@ Refresh an active session, extending its TTL.
 **Request**: No body required (uses session cookie)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -261,6 +263,7 @@ Refresh an active session, extending its TTL.
 List all active sessions for the authenticated user.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -288,6 +291,7 @@ List all active sessions for the authenticated user.
 Revoke a specific session.
 
 **Request**:
+
 ```json
 {
   "sessionToken": "token-to-revoke" // Optional, defaults to current
@@ -295,6 +299,7 @@ Revoke a specific session.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -307,6 +312,7 @@ Revoke a specific session.
 Revoke all user sessions.
 
 **Request**:
+
 ```json
 {
   "reason": "password_changed" // Required
@@ -314,12 +320,14 @@ Revoke all user sessions.
 ```
 
 Valid reasons:
+
 - `password_changed`
 - `security_event`
 - `user_action`
 - `account_compromise`
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -441,11 +449,11 @@ npm run test:coverage
 ### Health Check
 
 ```typescript
-import { checkSessionHealth } from '@/lib/middleware/session';
+import { checkSessionHealth } from '@/lib/middleware/session'
 
-const health = await checkSessionHealth();
+const health = await checkSessionHealth()
 if (!health.healthy) {
-  console.error('Redis unhealthy:', health.error);
+  console.error('Redis unhealthy:', health.error)
   // Alert operations team
 }
 ```
@@ -453,19 +461,20 @@ if (!health.healthy) {
 ### Session Metrics
 
 ```typescript
-import { getSessionManager } from '@/lib/session/manager';
+import { getSessionManager } from '@/lib/session/manager'
 
-const manager = getSessionManager();
-const stats = await manager.getStore().getUserSessionStats(userId);
+const manager = getSessionManager()
+const stats = await manager.getStore().getUserSessionStats(userId)
 
-console.log('Total Sessions:', stats.totalSessions);
-console.log('Active Sessions:', stats.activeSessions);
-console.log('Revoked Sessions:', stats.revokedSessions);
+console.log('Total Sessions:', stats.totalSessions)
+console.log('Active Sessions:', stats.activeSessions)
+console.log('Revoked Sessions:', stats.revokedSessions)
 ```
 
 ### Audit Events
 
 All session operations are logged:
+
 - `session_created`: New session created
 - `session_validated`: Session validated successfully
 - `session_refreshed`: Session activity updated
@@ -476,6 +485,7 @@ All session operations are logged:
 - `security_event`: Security-related event
 
 Events are logged to:
+
 - **Development**: Console
 - **Production**: Sentry + Custom monitoring
 
@@ -486,11 +496,13 @@ Events are logged to:
 **Symptom**: Users logged out unexpectedly
 
 **Causes**:
+
 1. Redis connection lost
 2. Session expired (30 min inactivity)
 3. Session revoked (security event)
 
 **Solution**:
+
 1. Check Redis health: `checkSessionHealth()`
 2. Review session timeout configuration
 3. Check audit logs for revocation events
@@ -500,10 +512,12 @@ Events are logged to:
 **Symptom**: Old sessions evicted when new sessions created
 
 **Causes**:
+
 1. User exceeds 5 concurrent sessions
 2. Multiple devices/browsers
 
 **Solution**:
+
 1. User should revoke unused sessions
 2. Increase `MAX_CONCURRENT_SESSIONS` if needed
 3. Review active sessions via `/api/auth/session/list`
@@ -513,11 +527,13 @@ Events are logged to:
 **Symptom**: User role changes not triggering session regeneration
 
 **Causes**:
+
 1. Role not updated in database
 2. Session middleware not applied
 3. Cache issue
 
 **Solution**:
+
 1. Verify role in `profiles` table
 2. Ensure `validateSession` middleware used
 3. Clear Redis cache if needed
@@ -532,8 +548,8 @@ const store = new RedisSessionStore({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
   sessionTimeoutMinutes: 30,
-  maxConcurrentSessions: 5
-});
+  maxConcurrentSessions: 5,
+})
 ```
 
 ### Caching Strategy
@@ -571,6 +587,7 @@ ORDER BY last_activity DESC;
 ## Security Compliance
 
 ✅ **OWASP Session Management**
+
 - Secure cookie attributes (HttpOnly, Secure, SameSite)
 - Session timeout enforcement
 - Session regeneration on privilege change
@@ -578,6 +595,7 @@ ORDER BY last_activity DESC;
 - Session revocation capability
 
 ✅ **CVSS 7.5 Vulnerability Addressed**
+
 - 30-minute inactivity timeout
 - Secure Redis storage
 - Privilege change detection
@@ -588,14 +606,17 @@ ORDER BY last_activity DESC;
 ### Maintenance Tasks
 
 **Daily**:
+
 - Monitor Redis health
 - Review audit logs for anomalies
 
 **Weekly**:
+
 - Analyze session metrics
 - Review revocation patterns
 
 **Monthly**:
+
 - Database cleanup (old revoked sessions)
 - Performance optimization review
 - Security audit

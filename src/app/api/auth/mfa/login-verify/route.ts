@@ -7,30 +7,24 @@
  * Security: Used during authentication process (before full session)
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { verifyMFAToken, isValidMFATokenFormat } from '@/lib/auth/mfa';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { verifyMFAToken, isValidMFATokenFormat } from '@/lib/auth/mfa'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Parse request body
-    const body = await request.json();
-    const { userId, token } = body;
+    const body = await request.json()
+    const { userId, token } = body
 
     if (!userId || typeof userId !== 'string') {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
     }
 
     if (!token || typeof token !== 'string') {
-      return NextResponse.json(
-        { error: 'Verification token is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Verification token is required' }, { status: 400 })
     }
 
     // Validate token format
@@ -38,11 +32,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid token format. Must be 6 digits or XXXX-XXXX backup code.' },
         { status: 400 }
-      );
+      )
     }
 
     // Verify MFA token
-    const result = await verifyMFAToken(userId, token);
+    const result = await verifyMFAToken(userId, token)
 
     if (!result.valid) {
       // TODO WEEK 5+: Create audit_logs table for security auditing
@@ -57,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: result.error || 'Invalid verification code' },
         { status: 401 }
-      );
+      )
     }
 
     // TODO WEEK 5+: Create audit_logs table for security auditing
@@ -71,13 +65,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'MFA verification successful',
-    });
+    })
   } catch (error) {
-    console.error('[MFA Login Verification Error]:', error);
+    console.error('[MFA Login Verification Error]:', error)
 
-    return NextResponse.json(
-      { error: 'Failed to verify MFA token' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to verify MFA token' }, { status: 500 })
   }
 }

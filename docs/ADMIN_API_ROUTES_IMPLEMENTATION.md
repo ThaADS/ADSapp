@@ -1,15 +1,18 @@
 # Admin API Routes Implementation Summary
 
 ## Overview
+
 Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. All routes follow established patterns from the codebase with proper authentication, error handling, and data aggregation.
 
 ## Routes Created
 
 ### 1. Analytics Route
+
 **File**: `src/app/api/admin/analytics/route.ts`
 **Endpoint**: `GET /api/admin/analytics?range={7d|30d|90d|1y}`
 
 **Features**:
+
 - Time-series analytics data for dashboard charts
 - Metrics with percentage change calculations:
   - User growth (total users, change vs previous period)
@@ -20,6 +23,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - Supports multiple time ranges: 7d, 30d, 90d, 1y
 
 **Response Format**:
+
 ```json
 {
   "userGrowth": { "total": 150, "change": 12.5 },
@@ -37,10 +41,12 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 ### 2. Billing Metrics Route
+
 **File**: `src/app/api/admin/billing/metrics/route.ts`
 **Endpoint**: `GET /api/admin/billing/metrics`
 
 **Features**:
+
 - High-level billing KPIs for dashboard
 - Metrics calculated:
   - MRR (Monthly Recurring Revenue)
@@ -52,14 +58,15 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - Subscription distribution by tier
 
 **Response Format**:
+
 ```json
 {
-  "mrr": 4485.00,
-  "arr": 53820.00,
+  "mrr": 4485.0,
+  "arr": 53820.0,
   "activeSubscriptions": 45,
   "churnRate": 2.5,
   "avgRevenuePerOrg": 99.67,
-  "actualMonthlyRevenue": 4512.50,
+  "actualMonthlyRevenue": 4512.5,
   "metrics": {
     "totalOrganizations": 48,
     "activeOrganizations": 45,
@@ -70,10 +77,12 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 ### 3. Billing Subscriptions Route
+
 **File**: `src/app/api/admin/billing/subscriptions/route.ts`
 **Endpoint**: `GET /api/admin/billing/subscriptions`
 
 **Features**:
+
 - Detailed subscription list for billing dashboard
 - Includes for each subscription:
   - Organization details (name, slug)
@@ -87,6 +96,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - Summary statistics
 
 **Response Format**:
+
 ```json
 {
   "subscriptions": [
@@ -124,10 +134,12 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 ### 4. Webhooks Main Route
+
 **File**: `src/app/api/admin/webhooks/route.ts`
 **Endpoint**: `GET /api/admin/webhooks?limit=50&offset=0&eventType=xxx&status=xxx`
 
 **Features**:
+
 - Main webhook events listing endpoint
 - Moved from `/events` sub-path to main `/webhooks` path
 - Pagination support (limit, offset)
@@ -136,6 +148,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - Lists available event types and statuses for filters
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -172,10 +185,12 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 ### 5. Webhooks Stats Route
+
 **File**: `src/app/api/admin/webhooks/stats/route.ts`
 **Endpoint**: `GET /api/admin/webhooks/stats`
 
 **Features**:
+
 - Comprehensive webhook processing statistics
 - Metrics calculated:
   - Total events count
@@ -188,6 +203,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - Recent errors (last 24 hours)
 
 **Response Format**:
+
 ```json
 {
   "total": 1234,
@@ -220,12 +236,15 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 ### 6. Webhooks Retry Route
+
 **File**: `src/app/api/admin/webhooks/[id]/retry/route.ts`
 **Endpoints**:
+
 - `POST /api/admin/webhooks/{eventId}/retry` - Retry failed webhook
 - `GET /api/admin/webhooks/{eventId}/retry` - Check retry status
 
 **Features**:
+
 - Manual retry of failed webhook events
 - Validation:
   - Event ID must be valid UUID
@@ -236,6 +255,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 - GET endpoint provides retry eligibility check
 
 **POST Response Format**:
+
 ```json
 {
   "success": true,
@@ -247,6 +267,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ```
 
 **GET Response Format**:
+
 ```json
 {
   "event": {
@@ -272,30 +293,35 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ## Implementation Details
 
 ### Authentication & Authorization
+
 - All routes use `adminMiddleware` from `@/lib/middleware`
 - Validates super admin access via `is_super_admin` field in profiles table
 - Returns 401 for unauthenticated requests
 - Returns 403 for non-super-admin users
 
 ### Error Handling
+
 - Consistent error response format across all routes
 - Proper HTTP status codes (400, 401, 403, 404, 500)
 - Error logging to console for debugging
 - Graceful fallbacks for missing data
 
 ### Database Queries
+
 - Uses RLS-enabled Supabase client for data access
 - Parallel queries with `Promise.all()` for performance
 - Proper date range filtering for time-series data
 - Efficient aggregation queries
 
 ### Data Validation
+
 - UUID format validation for route parameters
 - Query parameter parsing with defaults
 - Null/undefined checks for optional fields
 - Type-safe database queries
 
 ### Performance Optimizations
+
 - Parallel database queries where possible
 - Efficient aggregation using reduce operations
 - Limited result sets for large data (e.g., 1000 events max for stats)
@@ -304,6 +330,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ## Schema Fixes Applied
 
 ### Webhook Events Table
+
 - Field name: `created_at` (not `received_at`)
 - Status enum: `'processing' | 'completed' | 'failed'` (no `'pending'`)
 - Updated all routes to use correct field names and status values
@@ -329,6 +356,7 @@ Created 6 missing backend API routes to fix 404 errors on admin dashboard tabs. 
 ## API Documentation
 
 All routes are documented with:
+
 - JSDoc comments explaining purpose
 - Clear parameter descriptions
 - Response format examples

@@ -1,32 +1,31 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { randomBytes } from 'crypto';
-import { TeamInvitation, UserRole } from '@/types/team';
-import { createClient } from '@/lib/supabase/server';
+import { randomBytes } from 'crypto'
+import { TeamInvitation, UserRole } from '@/types/team'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Generate a secure random token for invitation
  */
 export function generateInvitationToken(): string {
-  return randomBytes(32).toString('hex');
+  return randomBytes(32).toString('hex')
 }
 
 /**
  * Get invitation expiration date (7 days from now)
  */
 export function getInvitationExpiry(): Date {
-  const expiry = new Date();
-  expiry.setDate(expiry.getDate() + 7);
-  return expiry;
+  const expiry = new Date()
+  expiry.setDate(expiry.getDate() + 7)
+  return expiry
 }
 
 /**
  * Check if invitation is expired
  */
 export function isInvitationExpired(expiresAt: string): boolean {
-  return new Date(expiresAt) < new Date();
+  return new Date(expiresAt) < new Date()
 }
 
 /**
@@ -37,7 +36,7 @@ export function isInvitationValid(invitation: TeamInvitation): boolean {
     !invitation.accepted_at &&
     !invitation.cancelled_at &&
     !isInvitationExpired(invitation.expires_at)
-  );
+  )
 }
 
 /**
@@ -50,7 +49,7 @@ export async function createInvitation(
   permissions: Record<string, boolean>,
   invitedBy: string
 ): Promise<TeamInvitation> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Check if user is already a member
   const { data: existingMember } = await supabase
@@ -58,10 +57,10 @@ export async function createInvitation(
     .select('id')
     .eq('organization_id', organizationId)
     .eq('email', email)
-    .single();
+    .single()
 
   if (existingMember) {
-    throw new Error('User is already a member of this organization');
+    throw new Error('User is already a member of this organization')
   }
 
   // Check if there's a pending invitation
@@ -72,15 +71,15 @@ export async function createInvitation(
     .eq('email', email)
     .is('accepted_at', null)
     .is('cancelled_at', null)
-    .single();
+    .single()
 
   if (existingInvitation) {
-    throw new Error('An invitation is already pending for this email');
+    throw new Error('An invitation is already pending for this email')
   }
 
   // Create invitation
-  const token = generateInvitationToken();
-  const expiresAt = getInvitationExpiry();
+  const token = generateInvitationToken()
+  const expiresAt = getInvitationExpiry()
 
   const { data: invitation, error } = await supabase
     .from('team_invitations')
@@ -94,45 +93,43 @@ export async function createInvitation(
       expires_at: expiresAt.toISOString(),
     })
     .select()
-    .single();
+    .single()
 
   if (error) {
-    throw new Error(`Failed to create invitation: ${error.message}`);
+    throw new Error(`Failed to create invitation: ${error.message}`)
   }
 
-  return invitation as TeamInvitation;
+  return invitation as TeamInvitation
 }
 
 /**
  * Get invitation by token
  */
-export async function getInvitationByToken(
-  token: string
-): Promise<TeamInvitation | null> {
-  const supabase = await createClient();
+export async function getInvitationByToken(token: string): Promise<TeamInvitation | null> {
+  const supabase = await createClient()
 
   const { data: invitation } = await supabase
     .from('team_invitations')
     .select('*')
     .eq('token', token)
-    .single();
+    .single()
 
-  return invitation as TeamInvitation | null;
+  return invitation as TeamInvitation | null
 }
 
 /**
  * Cancel an invitation
  */
 export async function cancelInvitation(invitationId: string): Promise<void> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('team_invitations')
     .update({ cancelled_at: new Date().toISOString() })
-    .eq('id', invitationId);
+    .eq('id', invitationId)
 
   if (error) {
-    throw new Error(`Failed to cancel invitation: ${error.message}`);
+    throw new Error(`Failed to cancel invitation: ${error.message}`)
   }
 }
 
@@ -144,69 +141,67 @@ export async function acceptInvitation(
   userId: string,
   fullName: string
 ): Promise<void> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Get invitation
-  const invitation = await getInvitationByToken(token);
+  const invitation = await getInvitationByToken(token)
   if (!invitation) {
-    throw new Error('Invitation not found');
+    throw new Error('Invitation not found')
   }
 
   // Validate invitation
   if (!isInvitationValid(invitation)) {
-    throw new Error('Invitation is no longer valid');
+    throw new Error('Invitation is no longer valid')
   }
 
   // Create profile
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert({
-      id: userId,
-      organization_id: invitation.organization_id,
-      email: invitation.email,
-      full_name: fullName,
-      role: invitation.role,
-      permissions: invitation.permissions,
-    });
+  const { error: profileError } = await supabase.from('profiles').insert({
+    id: userId,
+    organization_id: invitation.organization_id,
+    email: invitation.email,
+    full_name: fullName,
+    role: invitation.role,
+    permissions: invitation.permissions,
+  })
 
   if (profileError) {
-    throw new Error(`Failed to create profile: ${profileError.message}`);
+    throw new Error(`Failed to create profile: ${profileError.message}`)
   }
 
   // Mark invitation as accepted
   const { error: updateError } = await supabase
     .from('team_invitations')
     .update({ accepted_at: new Date().toISOString() })
-    .eq('id', invitation.id);
+    .eq('id', invitation.id)
 
   if (updateError) {
-    throw new Error(`Failed to mark invitation as accepted: ${updateError.message}`);
+    throw new Error(`Failed to mark invitation as accepted: ${updateError.message}`)
   }
 }
 
 /**
  * Get pending invitations for an organization
  */
-export async function getPendingInvitations(
-  organizationId: string
-): Promise<TeamInvitation[]> {
-  const supabase = await createClient();
+export async function getPendingInvitations(organizationId: string): Promise<TeamInvitation[]> {
+  const supabase = await createClient()
 
   const { data: invitations } = await supabase
     .from('team_invitations')
-    .select(`
+    .select(
+      `
       *,
       invited_by_profile:profiles!team_invitations_invited_by_fkey(
         full_name,
         email
       )
-    `)
+    `
+    )
     .eq('organization_id', organizationId)
     .is('accepted_at', null)
     .is('cancelled_at', null)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
-  return (invitations || []) as TeamInvitation[];
+  return (invitations || []) as TeamInvitation[]
 }
 
 /**
@@ -214,18 +209,18 @@ export async function getPendingInvitations(
  * Should be called periodically (e.g., via cron job)
  */
 export async function cleanupExpiredInvitations(): Promise<number> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('team_invitations')
     .delete()
     .lt('expires_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
     .is('accepted_at', null)
-    .select('id');
+    .select('id')
 
   if (error) {
-    throw new Error(`Failed to clean up invitations: ${error.message}`);
+    throw new Error(`Failed to clean up invitations: ${error.message}`)
   }
 
-  return data?.length || 0;
+  return data?.length || 0
 }

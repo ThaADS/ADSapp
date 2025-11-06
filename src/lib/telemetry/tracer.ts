@@ -8,11 +8,13 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NodeSDK } from '@opentelemetry/sdk-node'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
 import { Resource } from '@opentelemetry/resources'
-import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
+import {
+  SEMRESATTRS_SERVICE_NAME,
+  SEMRESATTRS_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
@@ -53,14 +55,10 @@ export async function initializeTracer() {
         // Fine-tune instrumentations
         '@opentelemetry/instrumentation-http': {
           enabled: true,
-          ignoreIncomingRequestHook: (req) => {
+          ignoreIncomingRequestHook: req => {
             // Ignore health check and static file requests
             const url = req.url || ''
-            return (
-              url.includes('/_next/') ||
-              url.includes('/favicon.ico') ||
-              url === '/api/health'
-            )
+            return url.includes('/_next/') || url.includes('/favicon.ico') || url === '/api/health'
           },
           requestHook: (span, request) => {
             // Add custom attributes to HTTP spans
@@ -76,12 +74,13 @@ export async function initializeTracer() {
       }),
     ],
     // Configure metric reader for production
-    metricReader: process.env.NODE_ENV === 'production'
-      ? new PeriodicExportingMetricReader({
-          exporter: traceExporter as any,
-          exportIntervalMillis: 60000, // Export every minute
-        })
-      : undefined,
+    metricReader:
+      process.env.NODE_ENV === 'production'
+        ? new PeriodicExportingMetricReader({
+            exporter: traceExporter as any,
+            exportIntervalMillis: 60000, // Export every minute
+          })
+        : undefined,
   })
 
   // Start SDK
@@ -156,7 +155,7 @@ export async function traceAsync<T>(
   attributes?: Record<string, any>
 ): Promise<T> {
   const tracer = getTracer()
-  return tracer.startActiveSpan(spanName, { attributes }, async (span) => {
+  return tracer.startActiveSpan(spanName, { attributes }, async span => {
     try {
       const result = await fn(span)
       span.setStatus({ code: SpanStatusCode.OK })
@@ -183,7 +182,7 @@ export function traceSync<T>(
   attributes?: Record<string, any>
 ): T {
   const tracer = getTracer()
-  return tracer.startActiveSpan(spanName, { attributes }, (span) => {
+  return tracer.startActiveSpan(spanName, { attributes }, span => {
     try {
       const result = fn(span)
       span.setStatus({ code: SpanStatusCode.OK })
@@ -270,17 +269,14 @@ export function shouldSample(url: string): boolean {
   const environment = process.env.NODE_ENV || 'development'
 
   // Always sample critical endpoints
-  const criticalEndpoints = [
-    '/api/webhooks/',
-    '/api/billing/',
-    '/api/auth/',
-  ]
+  const criticalEndpoints = ['/api/webhooks/', '/api/billing/', '/api/auth/']
 
   if (criticalEndpoints.some(endpoint => url.includes(endpoint))) {
     return true
   }
 
   // Use configured sampling rate
-  const samplingRate = SAMPLING_CONFIG[environment as keyof typeof SAMPLING_CONFIG] || SAMPLING_CONFIG.production
+  const samplingRate =
+    SAMPLING_CONFIG[environment as keyof typeof SAMPLING_CONFIG] || SAMPLING_CONFIG.production
   return Math.random() < samplingRate
 }

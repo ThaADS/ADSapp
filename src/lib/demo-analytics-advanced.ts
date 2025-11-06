@@ -174,12 +174,12 @@ export class AdvancedDemoAnalytics {
         x_position: position.x,
         y_position: position.y,
         click_count: interactionType === 'click' ? 1 : 0,
-        hover_duration_seconds: interactionType === 'hover' ? (duration || 0) : 0,
+        hover_duration_seconds: interactionType === 'hover' ? duration || 0 : 0,
         element_type: elementData?.type || 'unknown',
         element_text: elementData?.text,
         viewport_width: viewportSize?.width || 1920,
         viewport_height: viewportSize?.height || 1080,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
 
       const { data, error } = await this.supabase
@@ -188,7 +188,7 @@ export class AdvancedDemoAnalytics {
           session_id: sessionId,
           ...heatMapData,
           interaction_type: interactionType,
-          element_metadata: elementData || {}
+          element_metadata: elementData || {},
         })
         .select()
         .single()
@@ -224,7 +224,7 @@ export class AdvancedDemoAnalytics {
         timestamp: event.created_at,
         duration_seconds: event.duration_seconds || 0,
         success: this.isSuccessfulAction(event.activity_type),
-        metadata: event.activity_data || {}
+        metadata: event.activity_data || {},
       }))
 
       const totalDuration = this.calculateTotalDuration(steps)
@@ -240,7 +240,7 @@ export class AdvancedDemoAnalytics {
         conversion_completed: conversionCompleted,
         drop_off_point: dropOffPoint,
         engagement_score: engagementScore,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }
 
       // Store the journey for future analysis
@@ -261,9 +261,7 @@ export class AdvancedDemoAnalytics {
     timeRange?: { start: string; end: string }
   ): Promise<DropOffAnalysis[]> {
     try {
-      let query = this.supabase
-        .from('demo_session_activities')
-        .select(`
+      let query = this.supabase.from('demo_session_activities').select(`
           *,
           demo_sessions!inner(business_scenario, status)
         `)
@@ -273,9 +271,7 @@ export class AdvancedDemoAnalytics {
       }
 
       if (timeRange) {
-        query = query
-          .gte('created_at', timeRange.start)
-          .lte('created_at', timeRange.end)
+        query = query.gte('created_at', timeRange.start).lte('created_at', timeRange.end)
       }
 
       const { data: activities, error } = await query
@@ -308,10 +304,12 @@ export class AdvancedDemoAnalytics {
     try {
       let query = this.supabase
         .from('demo_session_activities')
-        .select(`
+        .select(
+          `
           *,
           demo_sessions!inner(business_scenario, status)
-        `)
+        `
+        )
         .eq('activity_type', 'feature_interaction')
 
       if (businessScenario) {
@@ -319,9 +317,7 @@ export class AdvancedDemoAnalytics {
       }
 
       if (timeRange) {
-        query = query
-          .gte('created_at', timeRange.start)
-          .lte('created_at', timeRange.end)
+        query = query.gte('created_at', timeRange.start).lte('created_at', timeRange.end)
       }
 
       const { data: featureActivities, error } = await query
@@ -388,14 +384,14 @@ export class AdvancedDemoAnalytics {
         liveInteractions,
         trendingFeatures,
         alerts,
-        performanceIndicators
+        performanceIndicators,
       ] = await Promise.all([
         this.getActiveSessionsCount(),
         this.getCurrentConversions(),
         this.getLiveInteractions(),
         this.getTrendingFeatures(),
         this.checkAlertConditions(),
-        this.getPerformanceIndicators()
+        this.getPerformanceIndicators(),
       ])
 
       return {
@@ -404,7 +400,7 @@ export class AdvancedDemoAnalytics {
         live_interactions: liveInteractions,
         trending_features: trendingFeatures,
         alert_conditions: alerts,
-        performance_indicators: performanceIndicators
+        performance_indicators: performanceIndicators,
       }
     } catch (error) {
       console.error('Error getting real-time metrics:', error)
@@ -414,7 +410,7 @@ export class AdvancedDemoAnalytics {
         live_interactions: [],
         trending_features: [],
         alert_conditions: [],
-        performance_indicators: []
+        performance_indicators: [],
       }
     }
   }
@@ -436,7 +432,7 @@ export class AdvancedDemoAnalytics {
         {
           event: '*',
           schema: 'public',
-          table: 'demo_session_activities'
+          table: 'demo_session_activities',
         },
         async () => {
           const metrics = await this.getRealTimeMetrics()
@@ -486,7 +482,7 @@ export class AdvancedDemoAnalytics {
       'conversation_opened',
       'template_used',
       'automation_triggered',
-      'signup_clicked'
+      'signup_clicked',
     ]
     return successActions.includes(actionType)
   }
@@ -497,9 +493,8 @@ export class AdvancedDemoAnalytics {
   }
 
   private checkConversionCompletion(events: any[]): boolean {
-    return events.some(event =>
-      event.activity_type === 'signup_clicked' ||
-      event.activity_type === 'conversion'
+    return events.some(
+      event => event.activity_type === 'signup_clicked' || event.activity_type === 'conversion'
     )
   }
 
@@ -513,32 +508,27 @@ export class AdvancedDemoAnalytics {
     return undefined
   }
 
-  private calculateEngagementScore(
-    steps: UserJourneyStep[],
-    totalDuration: number
-  ): number {
+  private calculateEngagementScore(steps: UserJourneyStep[], totalDuration: number): number {
     if (steps.length === 0) return 0
 
     const interactionScore = Math.min(steps.length * 10, 100)
-    const timeScore = Math.min(totalDuration / 60 * 5, 100) // 5 points per minute, max 100
-    const successScore = steps.filter(s => s.success).length / steps.length * 100
+    const timeScore = Math.min((totalDuration / 60) * 5, 100) // 5 points per minute, max 100
+    const successScore = (steps.filter(s => s.success).length / steps.length) * 100
 
     return Math.round((interactionScore + timeScore + successScore) / 3)
   }
 
   private async storeUserJourney(journey: UserJourney): Promise<void> {
     try {
-      await this.supabase
-        .from('demo_user_journeys')
-        .insert({
-          session_id: journey.session_id,
-          journey_id: journey.journey_id,
-          steps: journey.steps,
-          total_duration_seconds: journey.total_duration_seconds,
-          conversion_completed: journey.conversion_completed,
-          drop_off_point: journey.drop_off_point,
-          engagement_score: journey.engagement_score
-        })
+      await this.supabase.from('demo_user_journeys').insert({
+        session_id: journey.session_id,
+        journey_id: journey.journey_id,
+        steps: journey.steps,
+        total_duration_seconds: journey.total_duration_seconds,
+        conversion_completed: journey.conversion_completed,
+        drop_off_point: journey.drop_off_point,
+        engagement_score: journey.engagement_score,
+      })
     } catch (error) {
       console.error('Error storing user journey:', error)
     }
@@ -553,10 +543,7 @@ export class AdvancedDemoAnalytics {
     }, {})
   }
 
-  private async analyzePageDropOff(
-    pagePath: string,
-    activities: any[]
-  ): Promise<DropOffAnalysis> {
+  private async analyzePageDropOff(pagePath: string, activities: any[]): Promise<DropOffAnalysis> {
     const totalVisitors = new Set(activities.map(a => a.session_id)).size
     const sessionsWithNextAction = new Set()
     const nextActions: Record<string, number> = {}
@@ -564,20 +551,23 @@ export class AdvancedDemoAnalytics {
     // Analyze what users did after visiting this page
     for (const activity of activities) {
       // Check if there are subsequent activities
-      const hasNext = activities.some(a =>
-        a.session_id === activity.session_id &&
-        new Date(a.created_at) > new Date(activity.created_at)
+      const hasNext = activities.some(
+        a =>
+          a.session_id === activity.session_id &&
+          new Date(a.created_at) > new Date(activity.created_at)
       )
 
       if (hasNext) {
         sessionsWithNextAction.add(activity.session_id)
         // Count next actions
-        const nextActivity = activities.find(a =>
-          a.session_id === activity.session_id &&
-          new Date(a.created_at) > new Date(activity.created_at)
+        const nextActivity = activities.find(
+          a =>
+            a.session_id === activity.session_id &&
+            new Date(a.created_at) > new Date(activity.created_at)
         )
         if (nextActivity) {
-          nextActions[nextActivity.activity_type] = (nextActions[nextActivity.activity_type] || 0) + 1
+          nextActions[nextActivity.activity_type] =
+            (nextActions[nextActivity.activity_type] || 0) + 1
         }
       }
     }
@@ -593,7 +583,7 @@ export class AdvancedDemoAnalytics {
       drop_off_rate: dropOffRate,
       next_actions: Object.entries(nextActions).map(([action, count]) => ({ action, count })),
       common_exit_points: this.identifyCommonExitPoints(activities),
-      improvement_suggestions: this.generateImprovementSuggestions(pagePath, dropOffRate)
+      improvement_suggestions: this.generateImprovementSuggestions(pagePath, dropOffRate),
     }
   }
 
@@ -612,14 +602,15 @@ export class AdvancedDemoAnalytics {
   ): Promise<FeatureEngagement> {
     const totalInteractions = activities.length
     const uniqueUsers = new Set(activities.map(a => a.session_id)).size
-    const averageTimeSpent = activities.reduce((sum, a) => sum + (a.duration_seconds || 0), 0) / activities.length
+    const averageTimeSpent =
+      activities.reduce((sum, a) => sum + (a.duration_seconds || 0), 0) / activities.length
 
     // Calculate completion rate based on successful interactions
-    const completedInteractions = activities.filter(a =>
-      a.activity_data?.completed === true ||
-      a.activity_data?.success === true
+    const completedInteractions = activities.filter(
+      a => a.activity_data?.completed === true || a.activity_data?.success === true
     ).length
-    const completionRate = totalInteractions > 0 ? (completedInteractions / totalInteractions) * 100 : 0
+    const completionRate =
+      totalInteractions > 0 ? (completedInteractions / totalInteractions) * 100 : 0
 
     // Analyze popular paths to this feature
     const popularPaths = this.extractPopularPaths(activities)
@@ -633,7 +624,10 @@ export class AdvancedDemoAnalytics {
     )
 
     // Calculate correlation with conversion
-    const correlationWithConversion = await this.calculateConversionCorrelation(featureName, activities)
+    const correlationWithConversion = await this.calculateConversionCorrelation(
+      featureName,
+      activities
+    )
 
     return {
       feature_name: featureName,
@@ -643,7 +637,7 @@ export class AdvancedDemoAnalytics {
       completion_rate: completionRate,
       popular_paths: popularPaths,
       engagement_score: engagementScore,
-      correlation_with_conversion: correlationWithConversion
+      correlation_with_conversion: correlationWithConversion,
     }
   }
 
@@ -666,7 +660,7 @@ export class AdvancedDemoAnalytics {
       score: score,
       confidence: this.calculateConfidence(features),
       factors: this.identifyKeyFactors(features),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
   }
 
@@ -679,7 +673,7 @@ export class AdvancedDemoAnalytics {
       score: score,
       confidence: this.calculateConfidence(features),
       factors: this.identifyEngagementFactors(features),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
   }
 
@@ -692,23 +686,21 @@ export class AdvancedDemoAnalytics {
       score: score,
       confidence: this.calculateConfidence(features),
       factors: this.identifyChurnFactors(features),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
   }
 
   private async storePredictiveScores(sessionId: string, scores: PredictiveScore[]): Promise<void> {
     try {
       for (const score of scores) {
-        await this.supabase
-          .from('demo_predictive_scores')
-          .insert({
-            session_id: sessionId,
-            model_type: this.getModelType(score),
-            score: score.score,
-            confidence: score.confidence,
-            factors: score.factors,
-            timestamp: score.timestamp
-          })
+        await this.supabase.from('demo_predictive_scores').insert({
+          session_id: sessionId,
+          model_type: this.getModelType(score),
+          score: score.score,
+          confidence: score.confidence,
+          factors: score.factors,
+          timestamp: score.timestamp,
+        })
       }
     } catch (error) {
       console.error('Error storing predictive scores:', error)
@@ -738,13 +730,15 @@ export class AdvancedDemoAnalytics {
   private async getLiveInteractions(): Promise<LiveInteraction[]> {
     const { data, error } = await this.supabase
       .from('demo_session_activities')
-      .select(`
+      .select(
+        `
         session_id,
         page_path,
         activity_type,
         created_at,
         demo_sessions(user_agent)
-      `)
+      `
+      )
       .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
       .order('created_at', { ascending: false })
       .limit(20)
@@ -756,7 +750,7 @@ export class AdvancedDemoAnalytics {
       page_path: item.page_path || '',
       action: item.activity_type,
       timestamp: item.created_at,
-      user_agent: (item.demo_sessions as any)?.user_agent || ''
+      user_agent: (item.demo_sessions as any)?.user_agent || '',
     }))
   }
 
@@ -799,7 +793,7 @@ export class AdvancedDemoAnalytics {
       pageViews: sessionData.filter(d => d.activity_type === 'page_view').length,
       interactions: sessionData.filter(d => d.activity_type === 'feature_interaction').length,
       timeSpent: sessionData.reduce((sum, d) => sum + (d.duration_seconds || 0), 0),
-      signupClicks: sessionData.filter(d => d.activity_type === 'signup_clicked').length
+      signupClicks: sessionData.filter(d => d.activity_type === 'signup_clicked').length,
     }
   }
 
@@ -808,7 +802,7 @@ export class AdvancedDemoAnalytics {
     let score = 0
     score += Math.min(features.pageViews * 10, 40)
     score += Math.min(features.interactions * 15, 30)
-    score += Math.min(features.timeSpent / 60 * 20, 20)
+    score += Math.min((features.timeSpent / 60) * 20, 20)
     score += features.signupClicks * 10
     return Math.min(score, 100)
   }
@@ -819,7 +813,9 @@ export class AdvancedDemoAnalytics {
     return Math.min(dataPoints * 20, 100)
   }
 
-  private identifyKeyFactors(features: Record<string, number>): { factor: string; weight: number }[] {
+  private identifyKeyFactors(
+    features: Record<string, number>
+  ): { factor: string; weight: number }[] {
     return Object.entries(features)
       .map(([factor, value]) => ({ factor, weight: value / 100 }))
       .sort((a, b) => b.weight - a.weight)
@@ -830,7 +826,7 @@ export class AdvancedDemoAnalytics {
     return {
       sessionLength: sessionData.length,
       uniquePages: new Set(sessionData.map(d => d.page_path)).size,
-      repeatActions: sessionData.length - new Set(sessionData.map(d => d.activity_type)).size
+      repeatActions: sessionData.length - new Set(sessionData.map(d => d.activity_type)).size,
     }
   }
 
@@ -842,7 +838,9 @@ export class AdvancedDemoAnalytics {
     return Math.min(score, 100)
   }
 
-  private identifyEngagementFactors(features: Record<string, number>): { factor: string; weight: number }[] {
+  private identifyEngagementFactors(
+    features: Record<string, number>
+  ): { factor: string; weight: number }[] {
     return Object.entries(features)
       .map(([factor, value]) => ({ factor, weight: value / 100 }))
       .sort((a, b) => b.weight - a.weight)
@@ -850,13 +848,14 @@ export class AdvancedDemoAnalytics {
 
   private extractChurnFeatures(sessionData: any[]): Record<string, number> {
     const now = new Date()
-    const lastActivity = sessionData.length > 0 ? new Date(sessionData[sessionData.length - 1].created_at) : now
+    const lastActivity =
+      sessionData.length > 0 ? new Date(sessionData[sessionData.length - 1].created_at) : now
     const timeSinceLastActivity = (now.getTime() - lastActivity.getTime()) / (1000 * 60) // minutes
 
     return {
       timeSinceLastActivity,
       errorCount: sessionData.filter(d => d.activity_type === 'error').length,
-      incompleteActions: sessionData.filter(d => d.activity_data?.completed === false).length
+      incompleteActions: sessionData.filter(d => d.activity_data?.completed === false).length,
     }
   }
 
@@ -868,7 +867,9 @@ export class AdvancedDemoAnalytics {
     return Math.min(score, 100)
   }
 
-  private identifyChurnFactors(features: Record<string, number>): { factor: string; weight: number }[] {
+  private identifyChurnFactors(
+    features: Record<string, number>
+  ): { factor: string; weight: number }[] {
     return Object.entries(features)
       .map(([factor, value]) => ({ factor, weight: value / 100 }))
       .sort((a, b) => b.weight - a.weight)
@@ -887,7 +888,7 @@ export class AdvancedDemoAnalytics {
       '/inbox': 'Inbox Management',
       '/contacts': 'Contact Management',
       '/analytics': 'Analytics View',
-      '/settings': 'Settings Configuration'
+      '/settings': 'Settings Configuration',
     }
     return pathMapping[pagePath] || 'Unknown Step'
   }
@@ -949,10 +950,10 @@ export class AdvancedDemoAnalytics {
     averageTimeSpent: number,
     completionRate: number
   ): number {
-    const interactionScore = Math.min(totalInteractions / 10 * 25, 25)
-    const userScore = Math.min(uniqueUsers / 5 * 25, 25)
-    const timeScore = Math.min(averageTimeSpent / 30 * 25, 25)
-    const completionScore = completionRate / 100 * 25
+    const interactionScore = Math.min((totalInteractions / 10) * 25, 25)
+    const userScore = Math.min((uniqueUsers / 5) * 25, 25)
+    const timeScore = Math.min((averageTimeSpent / 30) * 25, 25)
+    const completionScore = (completionRate / 100) * 25
 
     return Math.round(interactionScore + userScore + timeScore + completionScore)
   }
@@ -1036,10 +1037,12 @@ export const DemoAnalyticsUtils = {
     topDropOffPoints: string[]
   } {
     const totalSessions = journeys.length
-    const averageEngagement = journeys.reduce((sum, j) => sum + j.engagement_score, 0) / totalSessions
+    const averageEngagement =
+      journeys.reduce((sum, j) => sum + j.engagement_score, 0) / totalSessions
     const conversions = journeys.filter(j => j.conversion_completed).length
     const conversionRate = this.calculateConversionRate(totalSessions, conversions)
-    const averageDuration = journeys.reduce((sum, j) => sum + j.total_duration_seconds, 0) / totalSessions
+    const averageDuration =
+      journeys.reduce((sum, j) => sum + j.total_duration_seconds, 0) / totalSessions
 
     const dropOffCounts: Record<string, number> = {}
     journeys.forEach(j => {
@@ -1058,7 +1061,7 @@ export const DemoAnalyticsUtils = {
       averageEngagement: Math.round(averageEngagement),
       conversionRate: Math.round(conversionRate * 100) / 100,
       averageDuration: Math.round(averageDuration),
-      topDropOffPoints
+      topDropOffPoints,
     }
-  }
+  },
 }

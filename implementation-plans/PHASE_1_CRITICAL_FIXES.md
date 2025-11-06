@@ -1,4 +1,5 @@
 # PHASE 1: CRITICAL FIXES - IMPLEMENTATION PLAN
+
 ## Security, Testing, & Stripe Completion to 100%
 
 **Duration**: 4 weeks (Weeks 1-4)
@@ -11,6 +12,7 @@
 ## OVERVIEW
 
 Phase 1 addresses all **BLOCKING** production deployment issues:
+
 1. 8 critical security vulnerabilities (CVSS 7.0-9.1)
 2. Zero unit/integration test coverage
 3. Multi-tenant isolation unverified
@@ -18,6 +20,7 @@ Phase 1 addresses all **BLOCKING** production deployment issues:
 5. Missing production infrastructure (Redis, job queue)
 
 **Success Criteria**:
+
 - ✅ All 8 critical security issues resolved
 - ✅ 270+ tests created (60% critical path coverage)
 - ✅ Multi-tenant isolation 100% verified
@@ -40,9 +43,9 @@ Phase 1 addresses all **BLOCKING** production deployment issues:
 **File**: `src/lib/middleware/tenant-validation.ts`
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { getUserOrganization } from '@/lib/auth/get-user-org';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getUserOrganization } from '@/lib/auth/get-user-org'
 
 /**
  * Tenant Validation Middleware
@@ -52,31 +55,31 @@ import { getUserOrganization } from '@/lib/auth/get-user-org';
  * @returns Response with tenant context or 403 Forbidden
  */
 export async function validateTenantAccess(request: NextRequest) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // 1. Verify user authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
 
   if (authError || !user) {
-    return NextResponse.json(
-      { error: 'Authentication required' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
   }
 
   // 2. Get user's organization from JWT or database
-  const userOrg = await getUserOrganization(user.id);
+  const userOrg = await getUserOrganization(user.id)
 
   if (!userOrg) {
     return NextResponse.json(
       { error: 'User not associated with any organization' },
       { status: 403 }
-    );
+    )
   }
 
   // 3. Validate tenant context in request
-  const requestedOrgId = request.headers.get('x-organization-id') ||
-                         request.nextUrl.searchParams.get('organization_id');
+  const requestedOrgId =
+    request.headers.get('x-organization-id') || request.nextUrl.searchParams.get('organization_id')
 
   if (requestedOrgId && requestedOrgId !== userOrg.id) {
     // Attempting to access different organization's data
@@ -86,26 +89,26 @@ export async function validateTenantAccess(request: NextRequest) {
       requestedOrg: requestedOrgId,
       path: request.nextUrl.pathname,
       method: request.method,
-      timestamp: new Date().toISOString()
-    });
+      timestamp: new Date().toISOString(),
+    })
 
     return NextResponse.json(
       { error: 'Forbidden: Access to this organization denied' },
       { status: 403 }
-    );
+    )
   }
 
   // 4. Attach tenant context to request for downstream use
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-user-id', user.id);
-  requestHeaders.set('x-organization-id', userOrg.id);
-  requestHeaders.set('x-user-role', userOrg.role);
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-user-id', user.id)
+  requestHeaders.set('x-organization-id', userOrg.id)
+  requestHeaders.set('x-user-role', userOrg.role)
 
   return NextResponse.next({
     request: {
       headers: requestHeaders,
     },
-  });
+  })
 }
 
 /**
@@ -116,7 +119,7 @@ export function getTenantContext(request: NextRequest) {
     userId: request.headers.get('x-user-id')!,
     organizationId: request.headers.get('x-organization-id')!,
     userRole: request.headers.get('x-user-role') as 'owner' | 'admin' | 'agent',
-  };
+  }
 }
 ```
 
@@ -125,9 +128,9 @@ export function getTenantContext(request: NextRequest) {
 **File**: `src/app/api/middleware.ts`
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { validateTenantAccess } from '@/lib/middleware/tenant-validation';
-import { rateLimitMiddleware } from '@/lib/middleware/rate-limit';
+import { NextRequest, NextResponse } from 'next/server'
+import { validateTenantAccess } from '@/lib/middleware/tenant-validation'
+import { rateLimitMiddleware } from '@/lib/middleware/rate-limit'
 
 // Public routes that don't require tenant validation
 const PUBLIC_ROUTES = [
@@ -138,39 +141,37 @@ const PUBLIC_ROUTES = [
   '/api/health',
   '/api/webhooks/stripe', // Validated via signature
   '/api/webhooks/whatsapp', // Validated via signature
-];
+]
 
 // Super admin routes with special validation
-const SUPER_ADMIN_ROUTES = [
-  '/api/admin',
-];
+const SUPER_ADMIN_ROUTES = ['/api/admin']
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
   // 1. Skip public routes
   if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
-    return NextResponse.next();
+    return NextResponse.next()
   }
 
   // 2. Apply rate limiting to all routes
-  const rateLimitResponse = await rateLimitMiddleware(request);
+  const rateLimitResponse = await rateLimitMiddleware(request)
   if (rateLimitResponse.status === 429) {
-    return rateLimitResponse;
+    return rateLimitResponse
   }
 
   // 3. Super admin routes - validate super admin role
   if (SUPER_ADMIN_ROUTES.some(route => pathname.startsWith(route))) {
-    return validateSuperAdminAccess(request);
+    return validateSuperAdminAccess(request)
   }
 
   // 4. Standard tenant validation for all other API routes
-  return validateTenantAccess(request);
+  return validateTenantAccess(request)
 }
 
 export const config = {
   matcher: '/api/:path*',
-};
+}
 ```
 
 #### Step 3: Update All API Routes with Tenant Context (8 hours)
@@ -178,46 +179,44 @@ export const config = {
 **Example**: `src/app/api/contacts/route.ts`
 
 **Before**:
+
 ```typescript
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // ❌ No tenant validation!
-  const { data, error } = await supabase
-    .from('contacts')
-    .select('*');
+  const { data, error } = await supabase.from('contacts').select('*')
 
-  return NextResponse.json(data);
+  return NextResponse.json(data)
 }
 ```
 
 **After**:
+
 ```typescript
-import { getTenantContext } from '@/lib/middleware/tenant-validation';
+import { getTenantContext } from '@/lib/middleware/tenant-validation'
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
-  const { organizationId, userId } = getTenantContext(request);
+  const supabase = await createClient()
+  const { organizationId, userId } = getTenantContext(request)
 
   // ✅ Tenant-scoped query (RLS will also enforce this at DB level)
   const { data, error } = await supabase
     .from('contacts')
     .select('*')
-    .eq('organization_id', organizationId); // Explicit tenant filter
+    .eq('organization_id', organizationId) // Explicit tenant filter
 
   if (error) {
-    console.error('[API] Error fetching contacts:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch contacts' },
-      { status: 500 }
-    );
+    console.error('[API] Error fetching contacts:', error)
+    return NextResponse.json({ error: 'Failed to fetch contacts' }, { status: 500 })
   }
 
-  return NextResponse.json({ data, count: data.length });
+  return NextResponse.json({ data, count: data.length })
 }
 ```
 
 **Routes to Update** (67 total):
+
 - `/api/contacts/*` (8 routes)
 - `/api/conversations/*` (10 routes)
 - `/api/templates/*` (8 routes)
@@ -631,14 +630,14 @@ WHERE schemaname = 'public'
 **File**: `tests/integration/rls-policies.test.ts`
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { createClient } from '@supabase/supabase-js'
+import { describe, it, expect, beforeAll } from '@jest/globals'
 
 describe('RLS Policy Enforcement', () => {
-  let userAClient: any;
-  let userBClient: any;
-  let orgAId: string;
-  let orgBId: string;
+  let userAClient: any
+  let userBClient: any
+  let orgAId: string
+  let orgBId: string
 
   beforeAll(async () => {
     // Set up test users in different organizations
@@ -646,59 +645,48 @@ describe('RLS Policy Enforcement', () => {
     userAClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    )
 
     await userAClient.auth.signInWithPassword({
       email: 'userA@orgA.com',
-      password: 'testpass123'
-    });
+      password: 'testpass123',
+    })
 
-    const { data: profileA } = await userAClient
-      .from('profiles')
-      .select('organization_id')
-      .single();
+    const { data: profileA } = await userAClient.from('profiles').select('organization_id').single()
 
-    orgAId = profileA.organization_id;
+    orgAId = profileA.organization_id
 
     // User B in Organization B
     userBClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    )
 
     await userBClient.auth.signInWithPassword({
       email: 'userB@orgB.com',
-      password: 'testpass123'
-    });
+      password: 'testpass123',
+    })
 
-    const { data: profileB } = await userBClient
-      .from('profiles')
-      .select('organization_id')
-      .single();
+    const { data: profileB } = await userBClient.from('profiles').select('organization_id').single()
 
-    orgBId = profileB.organization_id;
-  });
+    orgBId = profileB.organization_id
+  })
 
   describe('Organizations Table', () => {
     it('should allow users to view only their organization', async () => {
-      const { data, error } = await userAClient
-        .from('organizations')
-        .select('*');
+      const { data, error } = await userAClient.from('organizations').select('*')
 
-      expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      expect(data[0].id).toBe(orgAId);
-    });
+      expect(error).toBeNull()
+      expect(data).toHaveLength(1)
+      expect(data[0].id).toBe(orgAId)
+    })
 
     it('should prevent users from viewing other organizations', async () => {
-      const { data, error } = await userAClient
-        .from('organizations')
-        .select('*')
-        .eq('id', orgBId);
+      const { data, error } = await userAClient.from('organizations').select('*').eq('id', orgBId)
 
-      expect(data).toHaveLength(0); // RLS blocks access
-    });
-  });
+      expect(data).toHaveLength(0) // RLS blocks access
+    })
+  })
 
   describe('Contacts Table', () => {
     it('should allow users to view only their organization contacts', async () => {
@@ -708,48 +696,40 @@ describe('RLS Policy Enforcement', () => {
         .insert({
           organization_id: orgAId,
           name: 'Contact A',
-          phone_number: '+1234567890'
+          phone_number: '+1234567890',
         })
         .select()
-        .single();
+        .single()
 
       // User A can see it
-      const { data: viewA } = await userAClient
-        .from('contacts')
-        .select('*')
-        .eq('id', contactA.id);
+      const { data: viewA } = await userAClient.from('contacts').select('*').eq('id', contactA.id)
 
-      expect(viewA).toHaveLength(1);
+      expect(viewA).toHaveLength(1)
 
       // User B cannot see it
-      const { data: viewB } = await userBClient
-        .from('contacts')
-        .select('*')
-        .eq('id', contactA.id);
+      const { data: viewB } = await userBClient.from('contacts').select('*').eq('id', contactA.id)
 
-      expect(viewB).toHaveLength(0); // RLS blocks access
-    });
+      expect(viewB).toHaveLength(0) // RLS blocks access
+    })
 
     it('should prevent cross-tenant data insertion', async () => {
       // User A tries to create contact in Org B
-      const { data, error } = await userAClient
-        .from('contacts')
-        .insert({
-          organization_id: orgBId, // Different org!
-          name: 'Malicious Contact',
-          phone_number: '+9876543210'
-        });
+      const { data, error } = await userAClient.from('contacts').insert({
+        organization_id: orgBId, // Different org!
+        name: 'Malicious Contact',
+        phone_number: '+9876543210',
+      })
 
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain('new row violates row-level security policy');
-    });
-  });
+      expect(error).not.toBeNull()
+      expect(error?.message).toContain('new row violates row-level security policy')
+    })
+  })
 
   describe('Conversations Table', () => {
     it('should enforce tenant isolation on conversations', async () => {
       // Similar tests for conversations...
-    });
-  });
+    })
+  })
 
   describe('Messages Table', () => {
     it('should enforce tenant isolation via conversation relationship', async () => {
@@ -758,10 +738,10 @@ describe('RLS Policy Enforcement', () => {
         .from('conversations')
         .insert({
           organization_id: orgAId,
-          status: 'open'
+          status: 'open',
         })
         .select()
-        .single();
+        .single()
 
       // Create message in that conversation
       const { data: msg } = await userAClient
@@ -769,23 +749,20 @@ describe('RLS Policy Enforcement', () => {
         .insert({
           conversation_id: conv.id,
           content: 'Test message',
-          message_type: 'text'
+          message_type: 'text',
         })
         .select()
-        .single();
+        .single()
 
       // User B cannot see message
-      const { data: viewB } = await userBClient
-        .from('messages')
-        .select('*')
-        .eq('id', msg.id);
+      const { data: viewB } = await userBClient.from('messages').select('*').eq('id', msg.id)
 
-      expect(viewB).toHaveLength(0);
-    });
-  });
+      expect(viewB).toHaveLength(0)
+    })
+  })
 
   // Add 15+ more test scenarios for each table...
-});
+})
 ```
 
 **Test Coverage Target**: 20+ RLS tests per critical table
@@ -801,123 +778,119 @@ describe('RLS Policy Enforcement', () => {
 **File**: `src/lib/auth/mfa.ts`
 
 ```typescript
-import { createClient } from '@/lib/supabase/server';
-import { authenticator } from 'otplib';
-import QRCode from 'qrcode';
+import { createClient } from '@/lib/supabase/server'
+import { authenticator } from 'otplib'
+import QRCode from 'qrcode'
 
 /**
  * MFA Management Service
  * Implements TOTP-based two-factor authentication
  */
 export class MFAService {
-  private appName = 'ADSapp';
+  private appName = 'ADSapp'
 
   /**
    * Generate MFA secret and QR code for user enrollment
    */
   async generateMFASecret(userId: string): Promise<{
-    secret: string;
-    qrCodeUrl: string;
-    backupCodes: string[];
+    secret: string
+    qrCodeUrl: string
+    backupCodes: string[]
   }> {
     // Generate TOTP secret
-    const secret = authenticator.generateSecret();
+    const secret = authenticator.generateSecret()
 
     // Generate QR code
-    const supabase = await createClient();
+    const supabase = await createClient()
     const { data: profile } = await supabase
       .from('profiles')
       .select('email')
       .eq('id', userId)
-      .single();
+      .single()
 
-    const otpauthUrl = authenticator.keyuri(
-      profile.email,
-      this.appName,
-      secret
-    );
+    const otpauthUrl = authenticator.keyuri(profile.email, this.appName, secret)
 
-    const qrCodeUrl = await QRCode.toDataURL(otpauthUrl);
+    const qrCodeUrl = await QRCode.toDataURL(otpauthUrl)
 
     // Generate backup codes (10 codes)
-    const backupCodes = this.generateBackupCodes(10);
+    const backupCodes = this.generateBackupCodes(10)
 
     // Store encrypted secret and backup codes
-    await this.storeMFASecret(userId, secret, backupCodes);
+    await this.storeMFASecret(userId, secret, backupCodes)
 
     return {
       secret,
       qrCodeUrl,
-      backupCodes
-    };
+      backupCodes,
+    }
   }
 
   /**
    * Verify MFA token during enrollment
    */
   async verifyMFAEnrollment(userId: string, token: string): Promise<boolean> {
-    const secret = await this.getMFASecret(userId);
+    const secret = await this.getMFASecret(userId)
 
     if (!secret) {
-      throw new Error('MFA secret not found');
+      throw new Error('MFA secret not found')
     }
 
     const isValid = authenticator.verify({
       token,
-      secret
-    });
+      secret,
+    })
 
     if (isValid) {
       // Enable MFA for user
-      await this.enableMFA(userId);
+      await this.enableMFA(userId)
     }
 
-    return isValid;
+    return isValid
   }
 
   /**
    * Verify MFA token during login
    */
   async verifyMFALogin(userId: string, token: string): Promise<boolean> {
-    const secret = await this.getMFASecret(userId);
+    const secret = await this.getMFASecret(userId)
 
     if (!secret) {
-      return false;
+      return false
     }
 
     // Check if it's a TOTP token
     const isTOTPValid = authenticator.verify({
       token,
-      secret
-    });
+      secret,
+    })
 
     if (isTOTPValid) {
-      return true;
+      return true
     }
 
     // Check if it's a backup code
-    const isBackupCode = await this.verifyBackupCode(userId, token);
+    const isBackupCode = await this.verifyBackupCode(userId, token)
 
-    return isBackupCode;
+    return isBackupCode
   }
 
   /**
    * Generate cryptographically secure backup codes
    */
   private generateBackupCodes(count: number): string[] {
-    const codes: string[] = [];
+    const codes: string[] = []
 
     for (let i = 0; i < count; i++) {
       // Generate 8-character alphanumeric code
       const code = Array.from(crypto.getRandomValues(new Uint8Array(4)))
         .map(b => b.toString(16).padStart(2, '0'))
         .join('')
-        .toUpperCase();
+        .toUpperCase()
 
-      codes.push(code);
+      codes.push(code)
     }
 
-    return codes;
+    return codes
   }
 
   /**
@@ -928,12 +901,10 @@ export class MFAService {
     secret: string,
     backupCodes: string[]
   ): Promise<void> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Hash backup codes before storage
-    const hashedBackupCodes = await Promise.all(
-      backupCodes.map(code => this.hashBackupCode(code))
-    );
+    const hashedBackupCodes = await Promise.all(backupCodes.map(code => this.hashBackupCode(code)))
 
     await supabase
       .from('profiles')
@@ -941,89 +912,86 @@ export class MFAService {
         mfa_secret: secret, // Should be encrypted at rest
         mfa_backup_codes: hashedBackupCodes,
         mfa_enabled: false, // Not enabled until verified
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', userId);
+      .eq('id', userId)
   }
 
   /**
    * Get MFA secret for user
    */
   private async getMFASecret(userId: string): Promise<string | null> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const { data } = await supabase
       .from('profiles')
       .select('mfa_secret, mfa_enabled')
       .eq('id', userId)
-      .single();
+      .single()
 
     if (!data?.mfa_enabled) {
-      return null;
+      return null
     }
 
-    return data.mfa_secret;
+    return data.mfa_secret
   }
 
   /**
    * Enable MFA for user after successful verification
    */
   private async enableMFA(userId: string): Promise<void> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     await supabase
       .from('profiles')
       .update({
         mfa_enabled: true,
-        mfa_enrolled_at: new Date().toISOString()
+        mfa_enrolled_at: new Date().toISOString(),
       })
-      .eq('id', userId);
+      .eq('id', userId)
   }
 
   /**
    * Verify backup code
    */
   private async verifyBackupCode(userId: string, code: string): Promise<boolean> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const { data } = await supabase
       .from('profiles')
       .select('mfa_backup_codes')
       .eq('id', userId)
-      .single();
+      .single()
 
     if (!data?.mfa_backup_codes) {
-      return false;
+      return false
     }
 
-    const hashedCode = await this.hashBackupCode(code);
-    const codeIndex = data.mfa_backup_codes.indexOf(hashedCode);
+    const hashedCode = await this.hashBackupCode(code)
+    const codeIndex = data.mfa_backup_codes.indexOf(hashedCode)
 
     if (codeIndex === -1) {
-      return false;
+      return false
     }
 
     // Remove used backup code
-    const updatedCodes = [...data.mfa_backup_codes];
-    updatedCodes.splice(codeIndex, 1);
+    const updatedCodes = [...data.mfa_backup_codes]
+    updatedCodes.splice(codeIndex, 1)
 
-    await supabase
-      .from('profiles')
-      .update({ mfa_backup_codes: updatedCodes })
-      .eq('id', userId);
+    await supabase.from('profiles').update({ mfa_backup_codes: updatedCodes }).eq('id', userId)
 
-    return true;
+    return true
   }
 
   /**
    * Hash backup code for secure storage
    */
   private async hashBackupCode(code: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(code);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const encoder = new TextEncoder()
+    const data = encoder.encode(code)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
   }
 }
 ```
@@ -1033,28 +1001,25 @@ export class MFAService {
 **File**: `src/app/api/auth/mfa/enroll/route.ts`
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { MFAService } from '@/lib/auth/mfa';
-import { getTenantContext } from '@/lib/middleware/tenant-validation';
+import { NextRequest, NextResponse } from 'next/server'
+import { MFAService } from '@/lib/auth/mfa'
+import { getTenantContext } from '@/lib/middleware/tenant-validation'
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = getTenantContext(request);
+    const { userId } = getTenantContext(request)
 
-    const mfaService = new MFAService();
-    const { secret, qrCodeUrl, backupCodes } = await mfaService.generateMFASecret(userId);
+    const mfaService = new MFAService()
+    const { secret, qrCodeUrl, backupCodes } = await mfaService.generateMFASecret(userId)
 
     return NextResponse.json({
       qrCodeUrl,
       backupCodes,
       // Don't send secret to client, only QR code
-    });
+    })
   } catch (error) {
-    console.error('[MFA] Enrollment error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate MFA enrollment' },
-      { status: 500 }
-    );
+    console.error('[MFA] Enrollment error:', error)
+    return NextResponse.json({ error: 'Failed to generate MFA enrollment' }, { status: 500 })
   }
 }
 ```
@@ -1064,36 +1029,27 @@ export async function POST(request: NextRequest) {
 ```typescript
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = getTenantContext(request);
-    const { token } = await request.json();
+    const { userId } = getTenantContext(request)
+    const { token } = await request.json()
 
     if (!token || token.length !== 6) {
-      return NextResponse.json(
-        { error: 'Invalid MFA token format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid MFA token format' }, { status: 400 })
     }
 
-    const mfaService = new MFAService();
-    const isValid = await mfaService.verifyMFAEnrollment(userId, token);
+    const mfaService = new MFAService()
+    const isValid = await mfaService.verifyMFAEnrollment(userId, token)
 
     if (!isValid) {
-      return NextResponse.json(
-        { error: 'Invalid MFA token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid MFA token' }, { status: 401 })
     }
 
     return NextResponse.json({
       success: true,
-      message: 'MFA enabled successfully'
-    });
+      message: 'MFA enabled successfully',
+    })
   } catch (error) {
-    console.error('[MFA] Verification error:', error);
-    return NextResponse.json(
-      { error: 'Failed to verify MFA token' },
-      { status: 500 }
-    );
+    console.error('[MFA] Verification error:', error)
+    return NextResponse.json({ error: 'Failed to verify MFA token' }, { status: 500 })
   }
 }
 ```
@@ -1229,6 +1185,7 @@ export function MFAEnrollment() {
 ```
 
 **Deliverables - Week 1-2**:
+
 - ✅ C-001: Tenant validation in all 67 API routes
 - ✅ C-002: Complete RLS coverage on 30+ tables
 - ✅ C-003: MFA enrollment and verification system
@@ -1245,12 +1202,12 @@ export function MFAEnrollment() {
 **File**: `tests/setup/jest.setup.ts`
 
 ```typescript
-import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
+import '@testing-library/jest-dom'
+import { TextEncoder, TextDecoder } from 'util'
 
 // Polyfills for Node.js environment
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder as any;
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder as any
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -1259,15 +1216,15 @@ jest.mock('next/navigation', () => ({
       push: jest.fn(),
       replace: jest.fn(),
       prefetch: jest.fn(),
-    };
+    }
   },
   useSearchParams() {
-    return new URLSearchParams();
+    return new URLSearchParams()
   },
   usePathname() {
-    return '/';
+    return '/'
   },
-}));
+}))
 
 // Mock Supabase client
 jest.mock('@/lib/supabase/client', () => ({
@@ -1279,18 +1236,18 @@ jest.mock('@/lib/supabase/client', () => ({
       signOut: jest.fn(),
     },
   })),
-}));
+}))
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321'
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key'
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key'
 ```
 
 **File**: `tests/factories/user-factory.ts`
 
 ```typescript
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker'
 
 export class UserFactory {
   static createOwner(overrides?: Partial<any>) {
@@ -1302,7 +1259,7 @@ export class UserFactory {
       organization_id: faker.string.uuid(),
       created_at: new Date().toISOString(),
       ...overrides,
-    };
+    }
   }
 
   static createAdmin(overrides?: Partial<any>) {
@@ -1310,7 +1267,7 @@ export class UserFactory {
       ...this.createOwner(),
       role: 'admin' as const,
       ...overrides,
-    };
+    }
   }
 
   static createAgent(overrides?: Partial<any>) {
@@ -1318,7 +1275,7 @@ export class UserFactory {
       ...this.createOwner(),
       role: 'agent' as const,
       ...overrides,
-    };
+    }
   }
 }
 ```

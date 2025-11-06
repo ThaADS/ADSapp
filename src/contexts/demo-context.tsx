@@ -1,71 +1,71 @@
-"use client";
+'use client'
 
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react'
 
 // Demo scenario types
-export type DemoScenario = 'ecommerce' | 'support' | 'restaurant' | 'agency';
+export type DemoScenario = 'ecommerce' | 'support' | 'restaurant' | 'agency'
 
 // Demo step types
 export interface DemoStep {
-  id: string;
-  title: string;
-  description: string;
-  component: string;
-  completed: boolean;
-  required: boolean;
+  id: string
+  title: string
+  description: string
+  component: string
+  completed: boolean
+  required: boolean
 }
 
 // Demo message types
 export interface DemoMessage {
-  id: string;
-  type: 'incoming' | 'outgoing';
-  content: string;
-  timestamp: Date;
-  sender: string;
-  avatar?: string;
-  status?: 'sent' | 'delivered' | 'read';
-  messageType?: 'text' | 'image' | 'document' | 'template';
+  id: string
+  type: 'incoming' | 'outgoing'
+  content: string
+  timestamp: Date
+  sender: string
+  avatar?: string
+  status?: 'sent' | 'delivered' | 'read'
+  messageType?: 'text' | 'image' | 'document' | 'template'
 }
 
 // Demo conversation
 export interface DemoConversation {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  avatar: string;
-  lastMessage: string;
-  lastMessageTime: Date;
-  unreadCount: number;
-  status: 'active' | 'resolved' | 'pending';
-  assignedTo?: string;
-  tags: string[];
-  messages: DemoMessage[];
+  id: string
+  customerName: string
+  customerPhone: string
+  avatar: string
+  lastMessage: string
+  lastMessageTime: Date
+  unreadCount: number
+  status: 'active' | 'resolved' | 'pending'
+  assignedTo?: string
+  tags: string[]
+  messages: DemoMessage[]
 }
 
 // Demo state interface
 export interface DemoState {
-  isActive: boolean;
-  scenario: DemoScenario;
-  currentStep: number;
-  progress: number;
-  steps: DemoStep[];
-  conversations: DemoConversation[];
-  activeConversationId: string | null;
-  isSimulating: boolean;
-  simulationSpeed: number;
-  showTour: boolean;
-  tourStep: number;
+  isActive: boolean
+  scenario: DemoScenario
+  currentStep: number
+  progress: number
+  steps: DemoStep[]
+  conversations: DemoConversation[]
+  activeConversationId: string | null
+  isSimulating: boolean
+  simulationSpeed: number
+  showTour: boolean
+  tourStep: number
   analytics: {
-    startTime: Date | null;
-    completedSteps: number;
-    timeSpent: number;
-    interactionCount: number;
-  };
+    startTime: Date | null
+    completedSteps: number
+    timeSpent: number
+    interactionCount: number
+  }
   settings: {
-    autoAdvance: boolean;
-    showHints: boolean;
-    enableSound: boolean;
-  };
+    autoAdvance: boolean
+    showHints: boolean
+    enableSound: boolean
+  }
 }
 
 // Demo actions
@@ -88,19 +88,23 @@ type DemoAction =
   | { type: 'SET_TOUR_STEP'; step: number }
   | { type: 'UPDATE_ANALYTICS'; data: Partial<DemoState['analytics']> }
   | { type: 'UPDATE_SETTINGS'; settings: Partial<DemoState['settings']> }
-  | { type: 'INCREMENT_INTERACTION' };
+  | { type: 'INCREMENT_INTERACTION' }
 
 // Demo scenarios configuration
-export const DEMO_SCENARIOS: Record<DemoScenario, {
-  name: string;
-  description: string;
-  icon: string;
-  steps: DemoStep[];
-  conversations: DemoConversation[];
-}> = {
+export const DEMO_SCENARIOS: Record<
+  DemoScenario,
+  {
+    name: string
+    description: string
+    icon: string
+    steps: DemoStep[]
+    conversations: DemoConversation[]
+  }
+> = {
   ecommerce: {
     name: 'E-commerce Store',
-    description: 'Handle order inquiries, shipping updates, and customer support for an online store',
+    description:
+      'Handle order inquiries, shipping updates, and customer support for an online store',
     icon: '🛒',
     steps: [
       {
@@ -199,7 +203,8 @@ export const DEMO_SCENARIOS: Record<DemoScenario, {
           {
             id: 'msg-3',
             type: 'outgoing',
-            content: 'Your package is scheduled to arrive tomorrow between 2-6 PM. You\'ll receive a tracking notification.',
+            content:
+              "Your package is scheduled to arrive tomorrow between 2-6 PM. You'll receive a tracking notification.",
             timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
             sender: 'You',
             status: 'read',
@@ -297,7 +302,7 @@ export const DEMO_SCENARIOS: Record<DemoScenario, {
       {
         id: 'take-order',
         title: 'Take Food Order',
-        description: 'Process a customer\'s food order via WhatsApp',
+        description: "Process a customer's food order via WhatsApp",
         component: 'TakeOrderStep',
         completed: false,
         required: true,
@@ -325,7 +330,7 @@ export const DEMO_SCENARIOS: Record<DemoScenario, {
         customerName: 'Emma Wilson',
         customerPhone: '+1234567893',
         avatar: 'EW',
-        lastMessage: 'Hi, I\'d like to place an order for delivery',
+        lastMessage: "Hi, I'd like to place an order for delivery",
         lastMessageTime: new Date(Date.now() - 3 * 60 * 1000),
         unreadCount: 1,
         status: 'active',
@@ -334,7 +339,7 @@ export const DEMO_SCENARIOS: Record<DemoScenario, {
           {
             id: 'msg-1',
             type: 'incoming',
-            content: 'Hi, I\'d like to place an order for delivery',
+            content: "Hi, I'd like to place an order for delivery",
             timestamp: new Date(Date.now() - 3 * 60 * 1000),
             sender: 'Emma Wilson',
             status: 'read',
@@ -407,7 +412,7 @@ export const DEMO_SCENARIOS: Record<DemoScenario, {
       },
     ],
   },
-};
+}
 
 // Initial state
 const initialState: DemoState = {
@@ -433,13 +438,13 @@ const initialState: DemoState = {
     showHints: true,
     enableSound: false,
   },
-};
+}
 
 // Reducer function
 function demoReducer(state: DemoState, action: DemoAction): DemoState {
   switch (action.type) {
     case 'START_DEMO':
-      const scenarioData = DEMO_SCENARIOS[action.scenario];
+      const scenarioData = DEMO_SCENARIOS[action.scenario]
       return {
         ...state,
         isActive: true,
@@ -455,7 +460,7 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           completedSteps: 0,
           interactionCount: 0,
         },
-      };
+      }
 
     case 'END_DEMO':
       return {
@@ -463,10 +468,10 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
         isActive: false,
         showTour: false,
         isSimulating: false,
-      };
+      }
 
     case 'RESET_DEMO':
-      const resetScenarioData = DEMO_SCENARIOS[state.scenario];
+      const resetScenarioData = DEMO_SCENARIOS[state.scenario]
       return {
         ...state,
         currentStep: 0,
@@ -482,10 +487,10 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           completedSteps: 0,
           interactionCount: 0,
         },
-      };
+      }
 
     case 'SET_SCENARIO':
-      const newScenarioData = DEMO_SCENARIOS[action.scenario];
+      const newScenarioData = DEMO_SCENARIOS[action.scenario]
       return {
         ...state,
         scenario: action.scenario,
@@ -494,37 +499,37 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
         steps: newScenarioData.steps,
         conversations: newScenarioData.conversations,
         activeConversationId: newScenarioData.conversations[0]?.id || null,
-      };
+      }
 
     case 'NEXT_STEP':
-      const nextStep = Math.min(state.currentStep + 1, state.steps.length - 1);
+      const nextStep = Math.min(state.currentStep + 1, state.steps.length - 1)
       return {
         ...state,
         currentStep: nextStep,
         progress: ((nextStep + 1) / state.steps.length) * 100,
-      };
+      }
 
     case 'PREVIOUS_STEP':
-      const prevStep = Math.max(state.currentStep - 1, 0);
+      const prevStep = Math.max(state.currentStep - 1, 0)
       return {
         ...state,
         currentStep: prevStep,
         progress: ((prevStep + 1) / state.steps.length) * 100,
-      };
+      }
 
     case 'SET_STEP':
-      const setStep = Math.max(0, Math.min(action.step, state.steps.length - 1));
+      const setStep = Math.max(0, Math.min(action.step, state.steps.length - 1))
       return {
         ...state,
         currentStep: setStep,
         progress: ((setStep + 1) / state.steps.length) * 100,
-      };
+      }
 
     case 'COMPLETE_STEP':
       const updatedSteps = state.steps.map(step =>
         step.id === action.stepId ? { ...step, completed: true } : step
-      );
-      const completedCount = updatedSteps.filter(step => step.completed).length;
+      )
+      const completedCount = updatedSteps.filter(step => step.completed).length
       return {
         ...state,
         steps: updatedSteps,
@@ -533,21 +538,21 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           ...state.analytics,
           completedSteps: completedCount,
         },
-      };
+      }
 
     case 'SET_ACTIVE_CONVERSATION':
       return {
         ...state,
         activeConversationId: action.conversationId,
-      };
+      }
 
     case 'ADD_MESSAGE':
-      const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       const newMessage: DemoMessage = {
         ...action.message,
         id: messageId,
         timestamp: new Date(),
-      };
+      }
 
       return {
         ...state,
@@ -562,44 +567,44 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
               }
             : conv
         ),
-      };
+      }
 
     case 'START_SIMULATION':
       return {
         ...state,
         isSimulating: true,
-      };
+      }
 
     case 'STOP_SIMULATION':
       return {
         ...state,
         isSimulating: false,
-      };
+      }
 
     case 'SET_SIMULATION_SPEED':
       return {
         ...state,
         simulationSpeed: action.speed,
-      };
+      }
 
     case 'SHOW_TOUR':
       return {
         ...state,
         showTour: true,
         tourStep: 0,
-      };
+      }
 
     case 'HIDE_TOUR':
       return {
         ...state,
         showTour: false,
-      };
+      }
 
     case 'SET_TOUR_STEP':
       return {
         ...state,
         tourStep: action.step,
-      };
+      }
 
     case 'UPDATE_ANALYTICS':
       return {
@@ -608,7 +613,7 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           ...state.analytics,
           ...action.data,
         },
-      };
+      }
 
     case 'UPDATE_SETTINGS':
       return {
@@ -617,7 +622,7 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           ...state.settings,
           ...action.settings,
         },
-      };
+      }
 
     case 'INCREMENT_INTERACTION':
       return {
@@ -626,22 +631,22 @@ function demoReducer(state: DemoState, action: DemoAction): DemoState {
           ...state.analytics,
           interactionCount: state.analytics.interactionCount + 1,
         },
-      };
+      }
 
     default:
-      return state;
+      return state
   }
 }
 
 // Context
 const DemoContext = createContext<{
-  state: DemoState;
-  dispatch: React.Dispatch<DemoAction>;
-} | null>(null);
+  state: DemoState
+  dispatch: React.Dispatch<DemoAction>
+} | null>(null)
 
 // Provider component
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(demoReducer, initialState);
+  const [state, dispatch] = useReducer(demoReducer, initialState)
 
   // Auto-save demo progress
   useEffect(() => {
@@ -652,58 +657,54 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         currentStep: state.currentStep,
         completedSteps: state.steps.filter(s => s.completed).map(s => s.id),
         analytics: state.analytics,
-      };
-      localStorage.setItem('adsapp-demo-progress', JSON.stringify(demoData));
+      }
+      localStorage.setItem('adsapp-demo-progress', JSON.stringify(demoData))
     }
-  }, [state.isActive, state.scenario, state.currentStep, state.steps, state.analytics]);
+  }, [state.isActive, state.scenario, state.currentStep, state.steps, state.analytics])
 
   // Load demo progress on mount
   useEffect(() => {
     // Only access localStorage in browser environment
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return
 
-    const savedProgress = localStorage.getItem('adsapp-demo-progress');
+    const savedProgress = localStorage.getItem('adsapp-demo-progress')
     if (savedProgress) {
       try {
-        const data = JSON.parse(savedProgress);
+        const data = JSON.parse(savedProgress)
         if (data.scenario && DEMO_SCENARIOS[data.scenario]) {
-          dispatch({ type: 'SET_SCENARIO', scenario: data.scenario });
+          dispatch({ type: 'SET_SCENARIO', scenario: data.scenario })
           if (data.currentStep !== undefined) {
-            dispatch({ type: 'SET_STEP', step: data.currentStep });
+            dispatch({ type: 'SET_STEP', step: data.currentStep })
           }
           if (data.completedSteps && Array.isArray(data.completedSteps)) {
             data.completedSteps.forEach((stepId: string) => {
-              dispatch({ type: 'COMPLETE_STEP', stepId });
-            });
+              dispatch({ type: 'COMPLETE_STEP', stepId })
+            })
           }
           if (data.analytics) {
-            dispatch({ type: 'UPDATE_ANALYTICS', data: data.analytics });
+            dispatch({ type: 'UPDATE_ANALYTICS', data: data.analytics })
           }
         }
       } catch (error) {
-        console.warn('Failed to load demo progress:', error);
+        console.warn('Failed to load demo progress:', error)
       }
     }
-  }, []);
+  }, [])
 
-  return (
-    <DemoContext.Provider value={{ state, dispatch }}>
-      {children}
-    </DemoContext.Provider>
-  );
+  return <DemoContext.Provider value={{ state, dispatch }}>{children}</DemoContext.Provider>
 }
 
 // Custom hooks
 export function useDemo() {
-  const context = useContext(DemoContext);
+  const context = useContext(DemoContext)
   if (!context) {
-    throw new Error('useDemo must be used within a DemoProvider');
+    throw new Error('useDemo must be used within a DemoProvider')
   }
-  return context;
+  return context
 }
 
 export function useDemoActions() {
-  const { dispatch } = useDemo();
+  const { dispatch } = useDemo()
 
   return {
     startDemo: (scenario: DemoScenario) => dispatch({ type: 'START_DEMO', scenario }),
@@ -714,7 +715,8 @@ export function useDemoActions() {
     previousStep: () => dispatch({ type: 'PREVIOUS_STEP' }),
     setStep: (step: number) => dispatch({ type: 'SET_STEP', step }),
     completeStep: (stepId: string) => dispatch({ type: 'COMPLETE_STEP', stepId }),
-    setActiveConversation: (id: string | null) => dispatch({ type: 'SET_ACTIVE_CONVERSATION', conversationId: id }),
+    setActiveConversation: (id: string | null) =>
+      dispatch({ type: 'SET_ACTIVE_CONVERSATION', conversationId: id }),
     addMessage: (conversationId: string, message: Omit<DemoMessage, 'id' | 'timestamp'>) =>
       dispatch({ type: 'ADD_MESSAGE', conversationId, message }),
     startSimulation: () => dispatch({ type: 'START_SIMULATION' }),
@@ -723,42 +725,44 @@ export function useDemoActions() {
     showTour: () => dispatch({ type: 'SHOW_TOUR' }),
     hideTour: () => dispatch({ type: 'HIDE_TOUR' }),
     setTourStep: (step: number) => dispatch({ type: 'SET_TOUR_STEP', step }),
-    updateAnalytics: (data: Partial<DemoState['analytics']>) => dispatch({ type: 'UPDATE_ANALYTICS', data }),
-    updateSettings: (settings: Partial<DemoState['settings']>) => dispatch({ type: 'UPDATE_SETTINGS', settings }),
+    updateAnalytics: (data: Partial<DemoState['analytics']>) =>
+      dispatch({ type: 'UPDATE_ANALYTICS', data }),
+    updateSettings: (settings: Partial<DemoState['settings']>) =>
+      dispatch({ type: 'UPDATE_SETTINGS', settings }),
     incrementInteraction: () => dispatch({ type: 'INCREMENT_INTERACTION' }),
-  };
+  }
 }
 
 export function useDemoAnalytics() {
-  const { state } = useDemo();
+  const { state } = useDemo()
 
   const getTimeSpent = () => {
-    if (!state.analytics.startTime) return 0;
-    return Math.floor((Date.now() - state.analytics.startTime.getTime()) / 1000);
-  };
+    if (!state.analytics.startTime) return 0
+    return Math.floor((Date.now() - state.analytics.startTime.getTime()) / 1000)
+  }
 
   const getCompletionRate = () => {
-    if (state.steps.length === 0) return 0;
-    return (state.analytics.completedSteps / state.steps.length) * 100;
-  };
+    if (state.steps.length === 0) return 0
+    return (state.analytics.completedSteps / state.steps.length) * 100
+  }
 
   const getEngagementScore = () => {
-    const timeSpent = getTimeSpent();
-    const interactions = state.analytics.interactionCount;
-    const completionRate = getCompletionRate();
+    const timeSpent = getTimeSpent()
+    const interactions = state.analytics.interactionCount
+    const completionRate = getCompletionRate()
 
     // Simple engagement calculation
-    const timeScore = Math.min(timeSpent / 600, 1) * 30; // Max 30 points for 10 minutes
-    const interactionScore = Math.min(interactions / 20, 1) * 40; // Max 40 points for 20 interactions
-    const completionScore = (completionRate / 100) * 30; // Max 30 points for completion
+    const timeScore = Math.min(timeSpent / 600, 1) * 30 // Max 30 points for 10 minutes
+    const interactionScore = Math.min(interactions / 20, 1) * 40 // Max 40 points for 20 interactions
+    const completionScore = (completionRate / 100) * 30 // Max 30 points for completion
 
-    return Math.round(timeScore + interactionScore + completionScore);
-  };
+    return Math.round(timeScore + interactionScore + completionScore)
+  }
 
   return {
     timeSpent: getTimeSpent(),
     completionRate: getCompletionRate(),
     engagementScore: getEngagementScore(),
     analytics: state.analytics,
-  };
+  }
 }

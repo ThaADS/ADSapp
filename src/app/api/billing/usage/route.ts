@@ -29,9 +29,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ usage })
   } catch (error) {
     console.error('Usage API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get usage data' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to get usage data' }, { status: 500 })
   }
 }

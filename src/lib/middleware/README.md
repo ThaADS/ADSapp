@@ -5,6 +5,7 @@ Comprehensive middleware infrastructure for securing multi-tenant API routes in 
 ## Overview
 
 This middleware provides:
+
 - **Tenant Validation**: Prevents cross-tenant data access
 - **Rate Limiting**: Protects against abuse and DDoS attacks
 - **Middleware Composition**: Flexible combination of security layers
@@ -15,34 +16,34 @@ This middleware provides:
 ### Basic Usage in API Routes
 
 ```typescript
-import { NextRequest } from 'next/server';
-import { standardApiMiddleware, getTenantContext } from '@/lib/middleware';
-import { createClient } from '@/lib/supabase/server';
-import { createSuccessResponse, createErrorResponse } from '@/lib/api-utils';
+import { NextRequest } from 'next/server'
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
+import { createClient } from '@/lib/supabase/server'
+import { createSuccessResponse, createErrorResponse } from '@/lib/api-utils'
 
 export async function GET(request: NextRequest) {
   // Apply tenant validation and rate limiting
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   // Extract tenant context from request headers
-  const { userId, organizationId } = getTenantContext(request);
+  const { userId, organizationId } = getTenantContext(request)
 
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Query is automatically scoped to user's organization
     const { data: contacts, error } = await supabase
       .from('contacts')
       .select('*')
       .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
-    if (error) throw error;
+    if (error) throw error
 
-    return createSuccessResponse({ contacts });
+    return createSuccessResponse({ contacts })
   } catch (error) {
-    return createErrorResponse(error);
+    return createErrorResponse(error)
   }
 }
 ```
@@ -54,21 +55,22 @@ export async function GET(request: NextRequest) {
 Ensures all requests are scoped to the authenticated user's organization.
 
 ```typescript
-import { validateTenantAccess, getTenantContext } from '@/lib/middleware';
+import { validateTenantAccess, getTenantContext } from '@/lib/middleware'
 
 export async function POST(request: NextRequest) {
   // Validate tenant access
-  const validation = await validateTenantAccess(request);
-  if (validation) return validation; // Returns error if validation fails
+  const validation = await validateTenantAccess(request)
+  if (validation) return validation // Returns error if validation fails
 
   // Get tenant context
-  const { userId, organizationId, userRole } = getTenantContext(request);
+  const { userId, organizationId, userRole } = getTenantContext(request)
 
   // Your API logic here...
 }
 ```
 
 **Features:**
+
 - JWT authentication verification
 - Organization membership validation
 - Cross-tenant access prevention
@@ -80,20 +82,21 @@ export async function POST(request: NextRequest) {
 Protects endpoints from abuse with configurable rate limits.
 
 ```typescript
-import { createRateLimiter, rateLimitConfigs } from '@/lib/middleware';
+import { createRateLimiter, rateLimitConfigs } from '@/lib/middleware'
 
 // Standard rate limiting (100 req/min)
-const rateLimit = createRateLimiter(rateLimitConfigs.standard);
+const rateLimit = createRateLimiter(rateLimitConfigs.standard)
 
 export async function GET(request: NextRequest) {
-  const limitResponse = await rateLimit(request);
-  if (limitResponse) return limitResponse;
+  const limitResponse = await rateLimit(request)
+  if (limitResponse) return limitResponse
 
   // Your API logic here...
 }
 ```
 
 **Available Configurations:**
+
 - `standard`: 100 requests per minute
 - `strict`: 30 requests per minute (sensitive operations)
 - `relaxed`: 300 requests per minute (read operations)
@@ -110,18 +113,18 @@ import {
   composeMiddleware,
   validateTenantAccess,
   createRateLimiter,
-  rateLimitConfigs
-} from '@/lib/middleware';
+  rateLimitConfigs,
+} from '@/lib/middleware'
 
 // Create custom middleware stack
 const customMiddleware = composeMiddleware(
   validateTenantAccess,
   createRateLimiter(rateLimitConfigs.strict)
-);
+)
 
 export async function DELETE(request: NextRequest) {
-  const response = await customMiddleware(request);
-  if (response) return response;
+  const response = await customMiddleware(request)
+  if (response) return response
 
   // Your API logic here...
 }
@@ -130,57 +133,61 @@ export async function DELETE(request: NextRequest) {
 ## Pre-configured Middleware
 
 ### Standard API Middleware
+
 For most API endpoints (tenant validation + standard rate limit).
 
 ```typescript
-import { standardApiMiddleware, getTenantContext } from '@/lib/middleware';
+import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
-  const response = await standardApiMiddleware(request);
-  if (response) return response;
+  const response = await standardApiMiddleware(request)
+  if (response) return response
 
-  const { organizationId } = getTenantContext(request);
+  const { organizationId } = getTenantContext(request)
   // Your logic...
 }
 ```
 
 ### Strict API Middleware
+
 For sensitive operations (tenant validation + strict rate limit).
 
 ```typescript
-import { strictApiMiddleware, getTenantContext } from '@/lib/middleware';
+import { strictApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function POST(request: NextRequest) {
-  const response = await strictApiMiddleware(request);
-  if (response) return response;
+  const response = await strictApiMiddleware(request)
+  if (response) return response
 
   // Your logic for sensitive operation...
 }
 ```
 
 ### Public API Middleware
+
 For public endpoints (rate limiting only, no tenant validation).
 
 ```typescript
-import { publicApiMiddleware } from '@/lib/middleware';
+import { publicApiMiddleware } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
-  const response = await publicApiMiddleware(request);
-  if (response) return response;
+  const response = await publicApiMiddleware(request)
+  if (response) return response
 
   // Public endpoint logic...
 }
 ```
 
 ### Auth Middleware
+
 For authentication endpoints (strict rate limiting).
 
 ```typescript
-import { authMiddleware } from '@/lib/middleware';
+import { authMiddleware } from '@/lib/middleware'
 
 export async function POST(request: NextRequest) {
-  const response = await authMiddleware(request);
-  if (response) return response;
+  const response = await authMiddleware(request)
+  if (response) return response
 
   // Authentication logic...
 }
@@ -193,17 +200,17 @@ export async function POST(request: NextRequest) {
 Create rate limiters with custom configurations.
 
 ```typescript
-import { createRateLimiter } from '@/lib/middleware';
+import { createRateLimiter } from '@/lib/middleware'
 
 const customRateLimit = createRateLimiter({
   windowMs: 30000, // 30 seconds
   maxRequests: 50, // 50 requests per 30 seconds
-  message: 'Custom rate limit exceeded'
-});
+  message: 'Custom rate limit exceeded',
+})
 
 export async function POST(request: NextRequest) {
-  const limitResponse = await customRateLimit(request);
-  if (limitResponse) return limitResponse;
+  const limitResponse = await customRateLimit(request)
+  if (limitResponse) return limitResponse
 
   // Your logic...
 }
@@ -214,16 +221,16 @@ export async function POST(request: NextRequest) {
 Rate limit by authenticated user instead of IP address.
 
 ```typescript
-import { createUserRateLimiter, rateLimitConfigs } from '@/lib/middleware';
+import { createUserRateLimiter, rateLimitConfigs } from '@/lib/middleware'
 
 const userRateLimit = createUserRateLimiter({
   windowMs: 60000,
-  maxRequests: 30 // 30 requests per minute per user
-});
+  maxRequests: 30, // 30 requests per minute per user
+})
 
 export async function POST(request: NextRequest) {
-  const limitResponse = await userRateLimit(request);
-  if (limitResponse) return limitResponse;
+  const limitResponse = await userRateLimit(request)
+  if (limitResponse) return limitResponse
 
   // Your logic...
 }
@@ -234,16 +241,16 @@ export async function POST(request: NextRequest) {
 Rate limit by organization for fair resource allocation.
 
 ```typescript
-import { createOrgRateLimiter, rateLimitConfigs } from '@/lib/middleware';
+import { createOrgRateLimiter, rateLimitConfigs } from '@/lib/middleware'
 
 const orgRateLimit = createOrgRateLimiter({
   windowMs: 60000,
-  maxRequests: 1000 // 1000 requests per minute per organization
-});
+  maxRequests: 1000, // 1000 requests per minute per organization
+})
 
 export async function GET(request: NextRequest) {
-  const limitResponse = await orgRateLimit(request);
-  if (limitResponse) return limitResponse;
+  const limitResponse = await orgRateLimit(request)
+  if (limitResponse) return limitResponse
 
   // Your logic...
 }
@@ -254,17 +261,17 @@ export async function GET(request: NextRequest) {
 Apply middleware only when certain conditions are met.
 
 ```typescript
-import { conditionalMiddleware, createRateLimiter, rateLimitConfigs } from '@/lib/middleware';
+import { conditionalMiddleware, createRateLimiter, rateLimitConfigs } from '@/lib/middleware'
 
 // Only rate limit POST requests
 const conditionalLimit = conditionalMiddleware(
-  (req) => req.method === 'POST',
+  req => req.method === 'POST',
   createRateLimiter(rateLimitConfigs.strict)
-);
+)
 
 export async function POST(request: NextRequest) {
-  const response = await conditionalLimit(request);
-  if (response) return response;
+  const response = await conditionalLimit(request)
+  if (response) return response
 
   // Your logic...
 }
@@ -275,36 +282,26 @@ export async function POST(request: NextRequest) {
 Validate that a resource belongs to the user's organization.
 
 ```typescript
-import {
-  standardApiMiddleware,
-  getTenantContext,
-  validateResourceAccess
-} from '@/lib/middleware';
-import { createClient } from '@/lib/supabase/server';
+import { standardApiMiddleware, getTenantContext, validateResourceAccess } from '@/lib/middleware'
+import { createClient } from '@/lib/supabase/server'
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const response = await standardApiMiddleware(request);
-  if (response) return response;
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const response = await standardApiMiddleware(request)
+  if (response) return response
 
-  const context = getTenantContext(request);
-  const supabase = await createClient();
+  const context = getTenantContext(request)
+  const supabase = await createClient()
 
   // Fetch the resource
   const { data: contact } = await supabase
     .from('contacts')
     .select('organization_id')
     .eq('id', params.id)
-    .single();
+    .single()
 
   // Validate ownership
   if (!contact || !validateResourceAccess(contact.organization_id, context)) {
-    return NextResponse.json(
-      { error: 'Contact not found or access denied' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'Contact not found or access denied' }, { status: 404 })
   }
 
   // Proceed with deletion...
@@ -318,11 +315,10 @@ export async function DELETE(
 Extract tenant context in API routes after middleware has run.
 
 ```typescript
-import { getTenantContextFromHeaders } from '@/lib/api-utils';
+import { getTenantContextFromHeaders } from '@/lib/api-utils'
 
 export async function GET(request: NextRequest) {
-  const { userId, organizationId, userRole, isSuperAdmin } =
-    getTenantContextFromHeaders(request);
+  const { userId, organizationId, userRole, isSuperAdmin } = getTenantContextFromHeaders(request)
 
   // Use tenant context in your logic...
 }
@@ -333,14 +329,14 @@ export async function GET(request: NextRequest) {
 Validate resource ownership and throw ApiException if access denied.
 
 ```typescript
-import { validateResourceOwnership, getTenantContextFromHeaders } from '@/lib/api-utils';
+import { validateResourceOwnership, getTenantContextFromHeaders } from '@/lib/api-utils'
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const { organizationId, isSuperAdmin } = getTenantContextFromHeaders(request);
-  const resource = await fetchResource(params.id);
+  const { organizationId, isSuperAdmin } = getTenantContextFromHeaders(request)
+  const resource = await fetchResource(params.id)
 
   // Throws ApiException if access denied
-  validateResourceOwnership(resource.organization_id, organizationId, isSuperAdmin);
+  validateResourceOwnership(resource.organization_id, organizationId, isSuperAdmin)
 
   // Proceed with update...
 }
@@ -351,17 +347,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 Create Supabase query automatically scoped to organization.
 
 ```typescript
-import { createTenantScopedQuery, getTenantContextFromHeaders } from '@/lib/api-utils';
-import { createClient } from '@/lib/supabase/server';
+import { createTenantScopedQuery, getTenantContextFromHeaders } from '@/lib/api-utils'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
-  const { organizationId } = getTenantContextFromHeaders(request);
+  const supabase = await createClient()
+  const { organizationId } = getTenantContextFromHeaders(request)
 
   // Automatically filters by organization_id
   const { data } = await createTenantScopedQuery(supabase, 'contacts', organizationId)
     .eq('is_blocked', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
   // Use data...
 }
@@ -375,24 +371,24 @@ For production environments, use Redis for distributed rate limiting across mult
 
 ```typescript
 // lib/redis.ts
-import Redis from 'ioredis';
+import Redis from 'ioredis'
 
-export const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+export const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379')
 ```
 
 ### Use Redis Rate Limiter
 
 ```typescript
-import { RedisRateLimiter, rateLimitConfigs } from '@/lib/middleware';
-import { redis } from '@/lib/redis';
+import { RedisRateLimiter, rateLimitConfigs } from '@/lib/middleware'
+import { redis } from '@/lib/redis'
 
-const redisRateLimiter = new RedisRateLimiter(redis);
+const redisRateLimiter = new RedisRateLimiter(redis)
 
-const rateLimit = redisRateLimiter.createMiddleware(rateLimitConfigs.standard);
+const rateLimit = redisRateLimiter.createMiddleware(rateLimitConfigs.standard)
 
 export async function GET(request: NextRequest) {
-  const limitResponse = await rateLimit(request);
-  if (limitResponse) return limitResponse;
+  const limitResponse = await rateLimit(request)
+  if (limitResponse) return limitResponse
 
   // Your logic...
 }
@@ -405,7 +401,7 @@ export async function GET(request: NextRequest) {
 3. **Use Super Admin Checks**: Properly handle super admin access patterns
 4. **Log Security Events**: All cross-tenant attempts are logged for monitoring
 5. **Rate Limit Appropriately**: Use stricter limits for sensitive operations
-6. **Monitor Headers**: Check X-RateLimit-* headers in responses
+6. **Monitor Headers**: Check X-RateLimit-\* headers in responses
 
 ## Testing
 
@@ -418,6 +414,7 @@ npm run test tests/integration/tenant-validation.test.ts
 ## Error Responses
 
 ### 401 Unauthorized
+
 ```json
 {
   "error": "Authentication required",
@@ -426,6 +423,7 @@ npm run test tests/integration/tenant-validation.test.ts
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "error": "Forbidden: Access to this organization denied",
@@ -434,6 +432,7 @@ npm run test tests/integration/tenant-validation.test.ts
 ```
 
 ### 429 Too Many Requests
+
 ```json
 {
   "error": "Too many requests",
@@ -443,6 +442,7 @@ npm run test tests/integration/tenant-validation.test.ts
 ```
 
 **Headers:**
+
 - `X-RateLimit-Limit`: Maximum requests allowed
 - `X-RateLimit-Remaining`: Remaining requests in window
 - `X-RateLimit-Reset`: Unix timestamp when limit resets
@@ -453,42 +453,42 @@ npm run test tests/integration/tenant-validation.test.ts
 ### Migrating Existing API Routes
 
 **Before:**
+
 ```typescript
 export async function GET(request: NextRequest) {
-  const user = await requireAuthenticatedUser();
-  const userOrg = await getUserOrganization(user.id);
+  const user = await requireAuthenticatedUser()
+  const userOrg = await getUserOrganization(user.id)
 
   const { data } = await supabase
     .from('contacts')
     .select('*')
-    .eq('organization_id', userOrg.organization_id);
+    .eq('organization_id', userOrg.organization_id)
 
-  return createSuccessResponse({ contacts: data });
+  return createSuccessResponse({ contacts: data })
 }
 ```
 
 **After:**
+
 ```typescript
 export async function GET(request: NextRequest) {
   // Apply middleware
-  const response = await standardApiMiddleware(request);
-  if (response) return response;
+  const response = await standardApiMiddleware(request)
+  if (response) return response
 
   // Get tenant context from headers
-  const { organizationId } = getTenantContext(request);
+  const { organizationId } = getTenantContext(request)
 
-  const { data } = await supabase
-    .from('contacts')
-    .select('*')
-    .eq('organization_id', organizationId);
+  const { data } = await supabase.from('contacts').select('*').eq('organization_id', organizationId)
 
-  return createSuccessResponse({ contacts: data });
+  return createSuccessResponse({ contacts: data })
 }
 ```
 
 ## Support
 
 For issues or questions about the middleware:
+
 1. Check this documentation
 2. Review integration tests for examples
 3. Contact the backend team

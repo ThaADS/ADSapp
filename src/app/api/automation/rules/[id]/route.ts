@@ -1,47 +1,47 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { id } = await params
     const supabase = await createClient()
 
     const { data: rule, error } = await supabase
       .from('automation_rules')
-      .select(`
+      .select(
+        `
         *,
         profiles:created_by (
           id,
           full_name,
           email
         )
-      `)
+      `
+      )
       .eq('id', id)
       .eq('organization_id', organizationId)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Automation rule not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Automation rule not found' }, { status: 404 })
       }
       throw error
     }
@@ -49,37 +49,26 @@ export async function GET(
     return createSuccessResponse({
       ...rule,
       execution_count: 0, // TODO: Implement execution logging
-      last_executed_at: null
+      last_executed_at: null,
     })
-
   } catch (error) {
     console.error('Error fetching automation rule:', error)
     return createErrorResponse(error)
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { id } = await params
-    const body = await request.json();
-    const {
-      name,
-      description,
-      trigger_type,
-      trigger_conditions,
-      actions,
-      is_active
-    } = body
+    const body = await request.json()
+    const { name, description, trigger_type, trigger_conditions, actions, is_active } = body
 
     const supabase = await createClient()
 
@@ -93,10 +82,7 @@ export async function PUT(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Automation rule not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Automation rule not found' }, { status: 404 })
       }
       throw fetchError
     }
@@ -106,10 +92,7 @@ export async function PUT(
 
     if (name !== undefined) {
       if (!name || typeof name !== 'string' || name.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Rule name must be a non-empty string' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Rule name must be a non-empty string' }, { status: 400 })
       }
 
       // Check for duplicate name
@@ -139,7 +122,10 @@ export async function PUT(
     if (trigger_type !== undefined) {
       if (!['keyword', 'business_hours', 'unassigned', 'first_message'].includes(trigger_type)) {
         return NextResponse.json(
-          { error: 'Invalid trigger_type. Must be one of: keyword, business_hours, unassigned, first_message' },
+          {
+            error:
+              'Invalid trigger_type. Must be one of: keyword, business_hours, unassigned, first_message',
+          },
           { status: 400 }
         )
       }
@@ -148,27 +134,27 @@ export async function PUT(
 
     if (trigger_conditions !== undefined) {
       if (typeof trigger_conditions !== 'object') {
-        return NextResponse.json(
-          { error: 'trigger_conditions must be an object' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'trigger_conditions must be an object' }, { status: 400 })
       }
       updateData.trigger_conditions = trigger_conditions
     }
 
     if (actions !== undefined) {
       if (!Array.isArray(actions) || actions.length === 0) {
-        return NextResponse.json(
-          { error: 'actions must be a non-empty array' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'actions must be a non-empty array' }, { status: 400 })
       }
 
       // Validate actions structure
       for (const action of actions) {
-        if (!action.type || !['send_message', 'add_tag', 'assign_agent', 'create_ticket'].includes(action.type)) {
+        if (
+          !action.type ||
+          !['send_message', 'add_tag', 'assign_agent', 'create_ticket'].includes(action.type)
+        ) {
           return NextResponse.json(
-            { error: 'Invalid action type. Must be one of: send_message, add_tag, assign_agent, create_ticket' },
+            {
+              error:
+                'Invalid action type. Must be one of: send_message, add_tag, assign_agent, create_ticket',
+            },
             { status: 400 }
           )
         }
@@ -186,10 +172,7 @@ export async function PUT(
 
     if (is_active !== undefined) {
       if (typeof is_active !== 'boolean') {
-        return NextResponse.json(
-          { error: 'is_active must be a boolean' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'is_active must be a boolean' }, { status: 400 })
       }
       updateData.is_active = is_active
     }
@@ -198,7 +181,7 @@ export async function PUT(
       return createSuccessResponse({
         ...existingRule,
         execution_count: 0,
-        last_executed_at: null
+        last_executed_at: null,
       })
     }
 
@@ -208,14 +191,16 @@ export async function PUT(
       .update(updateData)
       .eq('id', id)
       .eq('organization_id', organizationId)
-      .select(`
+      .select(
+        `
         *,
         profiles:created_by (
           id,
           full_name,
           email
         )
-      `)
+      `
+      )
       .single()
 
     if (updateError) {
@@ -225,9 +210,8 @@ export async function PUT(
     return createSuccessResponse({
       ...updatedRule,
       execution_count: 0,
-      last_executed_at: null
+      last_executed_at: null,
     })
-
   } catch (error) {
     console.error('Error updating automation rule:', error)
     return createErrorResponse(error)
@@ -239,12 +223,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { id } = await params
     const supabase = await createClient()
@@ -259,10 +243,7 @@ export async function DELETE(
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Automation rule not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Automation rule not found' }, { status: 404 })
       }
       throw fetchError
     }
@@ -279,9 +260,8 @@ export async function DELETE(
     }
 
     return createSuccessResponse({
-      message: 'Automation rule deleted successfully'
+      message: 'Automation rule deleted successfully',
     })
-
   } catch (error) {
     console.error('Error deleting automation rule:', error)
     return createErrorResponse(error)

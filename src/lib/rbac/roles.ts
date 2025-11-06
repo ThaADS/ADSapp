@@ -136,10 +136,7 @@ export async function deleteRole(roleId: string): Promise<void> {
     throw new Error('Cannot delete system roles')
   }
 
-  const { error } = await supabase
-    .from('roles')
-    .delete()
-    .eq('id', roleId)
+  const { error } = await supabase.from('roles').delete().eq('id', roleId)
 
   if (error) {
     throw new Error(`Failed to delete role: ${error.message}`)
@@ -189,10 +186,7 @@ export async function assignRole(
 /**
  * Revoke role from user
  */
-export async function revokeRole(
-  userId: string,
-  roleId: string
-): Promise<void> {
+export async function revokeRole(userId: string, roleId: string): Promise<void> {
   const supabase = await createClient()
 
   const { error } = await supabase

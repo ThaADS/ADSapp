@@ -135,6 +135,7 @@ supabase/migrations/
 ### Multi-Tenant Isolation
 
 Each organization (tenant) has:
+
 - **Unique Data Encryption Key (DEK)**: Generated from KMS
 - **Encryption Context**: Tenant ID embedded in KMS requests
 - **Row Level Security (RLS)**: Database-level access control
@@ -142,13 +143,13 @@ Each organization (tenant) has:
 
 ### Access Control Matrix
 
-| Role | Key Generation | Key Rotation | View Keys | Health Checks |
-|------|---------------|--------------|-----------|---------------|
-| **Super Admin** | ✅ | ✅ | ✅ All | ✅ |
-| **Org Owner** | ❌ | ❌ | ✅ Own | ❌ |
-| **Agent** | ❌ | ❌ | ❌ | ❌ |
-| **Service Role** | ✅ | ✅ | ✅ All | ✅ |
-| **Cron Job** | ❌ | ✅ | ✅ All | ✅ |
+| Role             | Key Generation | Key Rotation | View Keys | Health Checks |
+| ---------------- | -------------- | ------------ | --------- | ------------- |
+| **Super Admin**  | ✅             | ✅           | ✅ All    | ✅            |
+| **Org Owner**    | ❌             | ❌           | ✅ Own    | ❌            |
+| **Agent**        | ❌             | ❌           | ❌        | ❌            |
+| **Service Role** | ✅             | ✅           | ✅ All    | ✅            |
+| **Cron Job**     | ❌             | ✅           | ✅ All    | ✅            |
 
 ### Encryption Context
 
@@ -163,6 +164,7 @@ Every KMS operation includes encryption context for additional security:
 ```
 
 This prevents:
+
 - **Cross-tenant key usage**: DEK encrypted for Tenant A cannot be used by Tenant B
 - **Replay attacks**: Timestamp validation prevents reuse of old requests
 - **Purpose mismatch**: Keys are bound to specific use cases
@@ -223,20 +225,13 @@ Create IAM policy for application:
     {
       "Sid": "AllowKMSKeyUsage",
       "Effect": "Allow",
-      "Action": [
-        "kms:Decrypt",
-        "kms:Encrypt",
-        "kms:GenerateDataKey",
-        "kms:DescribeKey"
-      ],
+      "Action": ["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey", "kms:DescribeKey"],
       "Resource": "arn:aws:kms:us-east-1:123456789012:key/<KEY_ID>"
     },
     {
       "Sid": "AllowKMSAliasUsage",
       "Effect": "Allow",
-      "Action": [
-        "kms:ListAliases"
-      ],
+      "Action": ["kms:ListAliases"],
       "Resource": "*"
     }
   ]
@@ -267,35 +262,38 @@ AWS_KMS_KEY_ID=alias/adsapp-production-encryption
 
 ```typescript
 // Test KMS connectivity
-import { getKMSClient } from '@/lib/security/kms-client';
+import { getKMSClient } from '@/lib/security/kms-client'
 
-const kmsClient = getKMSClient();
-const connected = await kmsClient.testConnection();
+const kmsClient = getKMSClient()
+const connected = await kmsClient.testConnection()
 
 if (connected) {
-  console.log('✅ KMS connected successfully');
+  console.log('✅ KMS connected successfully')
 
   // Get key metadata
-  const metadata = await kmsClient.getKeyMetadata();
-  console.log('Key State:', metadata.state);
-  console.log('Rotation Enabled:', metadata.rotationEnabled);
+  const metadata = await kmsClient.getKeyMetadata()
+  console.log('Key State:', metadata.state)
+  console.log('Rotation Enabled:', metadata.rotationEnabled)
 } else {
-  console.error('❌ KMS connection failed');
+  console.error('❌ KMS connection failed')
 }
 ```
 
 ### Cost Optimization
 
 AWS KMS pricing (as of 2025):
+
 - **Key storage**: $1/month per master key
 - **Requests**: $0.03 per 10,000 requests
 
 **Optimization strategies**:
+
 1. **Key caching**: 90% reduction in API calls (1-hour TTL)
 2. **Batch operations**: Group multiple tenant operations
 3. **Single master key**: Use one master key for all tenants (envelope encryption)
 
 **Estimated cost for 1000 tenants**:
+
 - Master key: $1/month
 - Requests (with caching): ~$5-10/month
 - **Total**: ~$11/month
@@ -386,20 +384,20 @@ AZURE_KEY_NAME=adsapp-encryption-key
 
 ```typescript
 // Test Azure Key Vault connectivity
-import { getAzureKVClient } from '@/lib/security/azure-kv-client';
+import { getAzureKVClient } from '@/lib/security/azure-kv-client'
 
-const azureClient = getAzureKVClient();
-const connected = await azureClient.testConnection();
+const azureClient = getAzureKVClient()
+const connected = await azureClient.testConnection()
 
 if (connected) {
-  console.log('✅ Azure Key Vault connected successfully');
+  console.log('✅ Azure Key Vault connected successfully')
 
   // Get key metadata
-  const metadata = await azureClient.getKeyMetadata();
-  console.log('Key Enabled:', metadata.enabled);
-  console.log('Key Name:', metadata.keyName);
+  const metadata = await azureClient.getKeyMetadata()
+  console.log('Key Enabled:', metadata.enabled)
+  console.log('Key Name:', metadata.keyName)
 } else {
-  console.error('❌ Azure Key Vault connection failed');
+  console.error('❌ Azure Key Vault connection failed')
 }
 ```
 
@@ -411,10 +409,10 @@ if (connected) {
 
 ```typescript
 // 1. Application requests encryption key for tenant
-import { getKeyManager } from '@/lib/security/key-manager';
+import { getKeyManager } from '@/lib/security/key-manager'
 
-const keyManager = getKeyManager();
-const encryptionKey = await keyManager.getEncryptionKey(tenantId);
+const keyManager = getKeyManager()
+const encryptionKey = await keyManager.getEncryptionKey(tenantId)
 
 // Behind the scenes:
 // 1. Check if key exists in database
@@ -428,14 +426,10 @@ const encryptionKey = await keyManager.getEncryptionKey(tenantId);
 
 ```typescript
 // Field-level encryption with KMS keys
-import { encryptWithKMS, decryptWithKMS } from '@/lib/crypto/encryption';
+import { encryptWithKMS, decryptWithKMS } from '@/lib/crypto/encryption'
 
 // Encrypt phone number
-const encrypted = await encryptWithKMS(
-  '+1234567890',
-  'tenant-uuid',
-  { version: 'v1' }
-);
+const encrypted = await encryptWithKMS('+1234567890', 'tenant-uuid', { version: 'v1' })
 
 // Store in database
 await supabase.from('contacts').insert({
@@ -445,16 +439,12 @@ await supabase.from('contacts').insert({
     algorithm: encrypted.algorithm,
   }),
   organization_id: tenantId,
-});
+})
 
 // Decrypt phone number
-const decrypted = await decryptWithKMS(
-  encrypted.encrypted,
-  encrypted.version,
-  tenantId
-);
+const decrypted = await decryptWithKMS(encrypted.encrypted, encrypted.version, tenantId)
 
-console.log('Phone:', decrypted.plaintext); // '+1234567890'
+console.log('Phone:', decrypted.plaintext) // '+1234567890'
 ```
 
 ### Database Schema
@@ -524,10 +514,11 @@ Keys automatically rotate every **90 days** with a **7-day warning period**.
    - Monitoring alerts triggered
 
 2. **Rotation Execution**:
+
    ```typescript
    // Triggered by cron job or manual API call
-   const keyManager = getKeyManager();
-   await keyManager.rotateKey(tenantId);
+   const keyManager = getKeyManager()
+   await keyManager.rotateKey(tenantId)
 
    // Process:
    // 1. Generate new DEK from KMS
@@ -538,16 +529,17 @@ Keys automatically rotate every **90 days** with a **7-day warning period**.
    ```
 
 3. **Data Re-encryption (Background)**:
+
    ```typescript
    // Optional: Re-encrypt existing data with new key
-   import { getKeyRotationService } from '@/lib/security/key-rotation';
+   import { getKeyRotationService } from '@/lib/security/key-rotation'
 
-   const rotationService = getKeyRotationService();
+   const rotationService = getKeyRotationService()
    await rotationService.rotateWithReEncryption(tenantId, {
      batchSize: 100,
      maxConcurrent: 5,
      batchDelay: 100, // ms between batches
-   });
+   })
 
    // Process:
    // 1. Decrypt data with old key
@@ -587,14 +579,14 @@ curl -X POST https://your-domain.com/api/kms/rotate \
 
 ```typescript
 // Rotate single tenant
-import { getKeyManager } from '@/lib/security/key-manager';
+import { getKeyManager } from '@/lib/security/key-manager'
 
-const keyManager = getKeyManager();
-const newKey = await keyManager.rotateKey('tenant-uuid');
+const keyManager = getKeyManager()
+const newKey = await keyManager.rotateKey('tenant-uuid')
 
 // Rotate all tenants
-const result = await keyManager.rotateKeys();
-console.log(`Rotated: ${result.rotated}, Failed: ${result.failed}`);
+const result = await keyManager.rotateKeys()
+console.log(`Rotated: ${result.rotated}, Failed: ${result.failed}`)
 ```
 
 ### Cron Job Setup
@@ -623,7 +615,7 @@ name: KMS Key Rotation
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+    - cron: '0 2 * * *' # Daily at 2 AM UTC
 
 jobs:
   rotate:
@@ -639,16 +631,16 @@ jobs:
 
 ```javascript
 // Lambda function
-exports.handler = async (event) => {
+exports.handler = async event => {
   const response = await fetch('https://your-domain.com/api/kms/rotate', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${process.env.CRON_SECRET}`,
+      Authorization: `Bearer ${process.env.CRON_SECRET}`,
     },
-  });
+  })
 
-  return response.json();
-};
+  return response.json()
+}
 ```
 
 ---
@@ -690,9 +682,7 @@ curl https://your-domain.com/api/kms/health \
       "tenantsNeedingRotation": 3
     }
   },
-  "recommendations": [
-    "3 tenants need key rotation soon"
-  ]
+  "recommendations": ["3 tenants need key rotation soon"]
 }
 ```
 
@@ -704,14 +694,14 @@ curl https://your-domain.com/api/kms/health \
 
 ### Metrics to Monitor
 
-| Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
-| KMS Latency | < 100ms | > 500ms |
-| Cache Hit Rate | > 85% | < 70% |
-| Expired Keys | 0 | > 0 |
-| Keys Near Expiration | < 10 | > 20 |
-| Rotation Failures | 0 | > 0 |
-| API Error Rate | < 1% | > 5% |
+| Metric               | Target  | Alert Threshold |
+| -------------------- | ------- | --------------- |
+| KMS Latency          | < 100ms | > 500ms         |
+| Cache Hit Rate       | > 85%   | < 70%           |
+| Expired Keys         | 0       | > 0             |
+| Keys Near Expiration | < 10    | > 20            |
+| Rotation Failures    | 0       | > 0             |
+| API Error Rate       | < 1%    | > 5%            |
 
 ### Logging
 
@@ -766,6 +756,7 @@ ORDER BY
 **Problem**: AWS/Azure credentials compromised or revoked
 
 **Recovery**:
+
 1. **Immediate**: Restore from backup credentials
 2. **Short-term**: Regenerate IAM role/service principal
 3. **Long-term**: Implement credential rotation policy
@@ -788,6 +779,7 @@ curl https://your-domain.com/api/kms/health \
 **Problem**: Database corrupted or lost
 
 **Recovery**:
+
 1. **Restore database** from latest backup
 2. **Verify encryption_keys table** integrity
 3. **Test decryption** on sample records
@@ -814,6 +806,7 @@ WHERE o.id IS NULL;
 **Critical**: This is an **unrecoverable scenario**. All encrypted data is permanently lost.
 
 **Prevention**:
+
 1. **Enable key deletion protection** in AWS KMS
 2. **Set deletion window** to maximum (30 days)
 3. **Configure CloudWatch alarms** for deletion attempts
@@ -858,6 +851,7 @@ COPY (
 **Note**: Encrypted DEKs can be safely backed up because they require KMS master key to decrypt.
 
 #### DO NOT Backup:
+
 - ❌ Plaintext DEKs (never persisted)
 - ❌ KMS master keys (managed by AWS/Azure)
 - ❌ Cache contents (ephemeral)
@@ -889,6 +883,7 @@ COPY (
 ✅ **Recital 83**: Regular testing and evaluation
 
 **Evidence**:
+
 - Encryption keys rotated every 90 days
 - Audit trail in `key_rotation_log`
 - Health monitoring endpoint
@@ -901,6 +896,7 @@ COPY (
 ✅ **CC7.2**: Detection of security incidents
 
 **Controls**:
+
 - IAM role-based access to KMS
 - Row Level Security in database
 - Comprehensive audit logging
@@ -931,6 +927,7 @@ COPY (
 **Cause**: Missing environment variable
 
 **Solution**:
+
 ```bash
 # Check if variable is set
 echo $AWS_KMS_KEY_ID
@@ -948,6 +945,7 @@ vercel --prod
 **Cause**: Insufficient IAM permissions
 
 **Solution**:
+
 ```bash
 # Verify IAM permissions
 aws kms describe-key --key-id $AWS_KMS_KEY_ID
@@ -963,19 +961,20 @@ aws iam attach-user-policy \
 **Cause**: Encrypted DEK doesn't match KMS key or encryption context changed
 
 **Solution**:
+
 ```typescript
 // Regenerate key for tenant
-import { getKeyManager } from '@/lib/security/key-manager';
+import { getKeyManager } from '@/lib/security/key-manager'
 
-const keyManager = getKeyManager();
+const keyManager = getKeyManager()
 
 // Force key refresh
 const newKey = await keyManager.getEncryptionKey(tenantId, {
-  forceRefresh: true
-});
+  forceRefresh: true,
+})
 
 // If still fails, rotate key
-await keyManager.rotateKey(tenantId);
+await keyManager.rotateKey(tenantId)
 ```
 
 #### Issue 4: High KMS latency (> 500ms)
@@ -983,6 +982,7 @@ await keyManager.rotateKey(tenantId);
 **Cause**: Network issues or cache disabled
 
 **Solution**:
+
 ```bash
 # Check cache hit rate
 curl https://your-domain.com/api/kms/health \
@@ -999,6 +999,7 @@ KMS_CACHE_TTL_SECONDS=7200  # 2 hours
 **Cause**: Key rotation failed or never created
 
 **Solution**:
+
 ```sql
 -- Check key status
 SELECT * FROM encryption_keys
@@ -1019,6 +1020,7 @@ DEBUG=kms:*
 ```
 
 Output:
+
 ```
 [KMS Audit] {"timestamp":"2025-10-14T12:00:00Z","operation":"generateDataKey","tenantId":"...","success":true}
 [KMS Audit] {"timestamp":"2025-10-14T12:00:01Z","operation":"decryptDataKey","tenantId":"...","success":true}
@@ -1045,6 +1047,7 @@ This KMS implementation provides:
 ✅ **Flexibility**: AWS KMS or Azure Key Vault support
 
 **Next Steps**:
+
 1. Complete AWS KMS or Azure Key Vault setup
 2. Configure environment variables
 3. Run health check: `GET /api/kms/health`

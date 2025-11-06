@@ -6,7 +6,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createClientClient } from '@/lib/supabase/client'
 import { authenticator } from 'otplib'
@@ -143,10 +142,7 @@ export class MFAManager {
   }
 
   // MFA Setup Methods
-  async setupTOTP(
-    userId: string,
-    name: string = 'Authenticator App'
-  ): Promise<MFASetupResult> {
+  async setupTOTP(userId: string, name: string = 'Authenticator App'): Promise<MFASetupResult> {
     // Get user info for TOTP setup
     const { data: profile } = await this.supabase
       .from('profiles')
@@ -169,7 +165,7 @@ export class MFAManager {
       algorithm: policy.totpSettings.algorithm,
       digits: policy.totpSettings.digits,
       period: policy.totpSettings.period,
-      window: policy.totpSettings.window
+      window: policy.totpSettings.window,
     }
 
     // Generate QR code
@@ -192,8 +188,8 @@ export class MFAManager {
           accountName,
           algorithm: policy.totpSettings.algorithm,
           digits: policy.totpSettings.digits,
-          period: policy.totpSettings.period
-        } as TOTPMetadata)
+          period: policy.totpSettings.period,
+        } as TOTPMetadata),
       })
       .select()
       .single()
@@ -203,7 +199,7 @@ export class MFAManager {
     return {
       method: this.parseMFAMethod(method),
       qrCode: qrCodeDataUrl,
-      verificationRequired: true
+      verificationRequired: true,
     }
   }
 
@@ -231,8 +227,8 @@ export class MFAManager {
           phoneNumber,
           countryCode,
           isVerified: false,
-          verificationAttempts: 0
-        } as SMSMetadata)
+          verificationAttempts: 0,
+        } as SMSMetadata),
       })
       .select()
       .single()
@@ -244,15 +240,11 @@ export class MFAManager {
 
     return {
       method: this.parseMFAMethod(method),
-      verificationRequired: true
+      verificationRequired: true,
     }
   }
 
-  async setupEmail(
-    userId: string,
-    email: string,
-    name: string = 'Email'
-  ): Promise<MFASetupResult> {
+  async setupEmail(userId: string, email: string, name: string = 'Email'): Promise<MFASetupResult> {
     // Validate email format
     if (!this.isValidEmail(email)) {
       throw new Error('Invalid email format')
@@ -270,8 +262,8 @@ export class MFAManager {
         metadata: JSON.stringify({
           email,
           isVerified: false,
-          verificationAttempts: 0
-        } as EmailMetadata)
+          verificationAttempts: 0,
+        } as EmailMetadata),
       })
       .select()
       .single()
@@ -283,7 +275,7 @@ export class MFAManager {
 
     return {
       method: this.parseMFAMethod(method),
-      verificationRequired: true
+      verificationRequired: true,
     }
   }
 
@@ -293,7 +285,7 @@ export class MFAManager {
     for (let i = 0; i < 10; i++) {
       codes.push({
         code: crypto.randomBytes(4).toString('hex').toUpperCase(),
-        isUsed: false
+        isUsed: false,
       })
     }
 
@@ -309,8 +301,8 @@ export class MFAManager {
         metadata: JSON.stringify({
           codes,
           generatedAt: new Date(),
-          usedCount: 0
-        } as BackupCodesMetadata)
+          usedCount: 0,
+        } as BackupCodesMetadata),
       })
       .select()
       .single()
@@ -320,7 +312,7 @@ export class MFAManager {
     return {
       method: this.parseMFAMethod(method),
       backupCodes: codes.map(c => c.code),
-      verificationRequired: false
+      verificationRequired: false,
     }
   }
 
@@ -356,7 +348,7 @@ export class MFAManager {
         .update({
           is_enabled: true,
           is_verified: true,
-          verified_at: new Date().toISOString()
+          verified_at: new Date().toISOString(),
         })
         .eq('id', methodId)
 
@@ -418,7 +410,7 @@ export class MFAManager {
         method_id: selectedMethod.id,
         code: challengeCode,
         expires_at: expiresAt.toISOString(),
-        max_attempts: 3
+        max_attempts: 3,
       })
       .select()
       .single()
@@ -437,7 +429,7 @@ export class MFAManager {
       maxAttempts: challenge.max_attempts,
       isCompleted: challenge.is_completed || false,
       completedAt: challenge.completed_at ? new Date(challenge.completed_at) : undefined,
-      createdAt: new Date(challenge.created_at)
+      createdAt: new Date(challenge.created_at),
     }
   }
 
@@ -495,7 +487,7 @@ export class MFAManager {
       .update({
         attempts: challenge.attempts + 1,
         is_completed: isValid,
-        completed_at: isValid ? new Date().toISOString() : null
+        completed_at: isValid ? new Date().toISOString() : null,
       })
       .eq('id', challengeId)
 
@@ -509,14 +501,14 @@ export class MFAManager {
       return {
         success: true,
         methodUsed: challenge.challenge_type,
-        backupCodeUsed
+        backupCodeUsed,
       }
     }
 
     return {
       success: false,
       error: 'Invalid verification code',
-      remainingAttempts: challenge.max_attempts - (challenge.attempts + 1)
+      remainingAttempts: challenge.max_attempts - (challenge.attempts + 1),
     }
   }
 
@@ -548,24 +540,15 @@ export class MFAManager {
       .eq('user_id', method.user_id)
 
     // Set this method as primary
-    await this.supabase
-      .from('mfa_methods')
-      .update({ is_primary: true })
-      .eq('id', methodId)
+    await this.supabase.from('mfa_methods').update({ is_primary: true }).eq('id', methodId)
   }
 
   async disableMFAMethod(methodId: string): Promise<void> {
-    await this.supabase
-      .from('mfa_methods')
-      .update({ is_enabled: false })
-      .eq('id', methodId)
+    await this.supabase.from('mfa_methods').update({ is_enabled: false }).eq('id', methodId)
   }
 
   async deleteMFAMethod(methodId: string): Promise<void> {
-    await this.supabase
-      .from('mfa_methods')
-      .delete()
-      .eq('id', methodId)
+    await this.supabase.from('mfa_methods').delete().eq('id', methodId)
   }
 
   async isMFAEnabled(userId: string): Promise<boolean> {
@@ -615,7 +598,7 @@ export class MFAManager {
       totpSettings: JSON.parse(policy.totp_settings),
       smsSettings: JSON.parse(policy.sms_settings),
       emailSettings: JSON.parse(policy.email_settings),
-      enforcementRules: JSON.parse(policy.enforcement_rules)
+      enforcementRules: JSON.parse(policy.enforcement_rules),
     }
   }
 
@@ -632,7 +615,9 @@ export class MFAManager {
         totp_settings: policy.totpSettings ? JSON.stringify(policy.totpSettings) : undefined,
         sms_settings: policy.smsSettings ? JSON.stringify(policy.smsSettings) : undefined,
         email_settings: policy.emailSettings ? JSON.stringify(policy.emailSettings) : undefined,
-        enforcement_rules: policy.enforcementRules ? JSON.stringify(policy.enforcementRules) : undefined
+        enforcement_rules: policy.enforcementRules
+          ? JSON.stringify(policy.enforcementRules)
+          : undefined,
       })
       .select()
       .single()
@@ -648,7 +633,7 @@ export class MFAManager {
       algorithm: metadata.algorithm,
       digits: metadata.digits,
       period: metadata.period,
-      window: 1
+      window: 1,
     }
 
     return authenticator.verify({ token, secret: metadata.secret })
@@ -717,7 +702,7 @@ export class MFAManager {
       .from('mfa_methods')
       .update({
         metadata: JSON.stringify(metadata),
-        last_used: new Date().toISOString()
+        last_used: new Date().toISOString(),
       })
       .eq('id', method.id)
 
@@ -780,7 +765,7 @@ export class MFAManager {
           <p>Your verification code is: <strong>${verificationCode}</strong></p>
           <p>This code will expire in 5 minutes.</p>
         `,
-        text: `Your verification code is: ${verificationCode}. This code will expire in 5 minutes.`
+        text: `Your verification code is: ${verificationCode}. This code will expire in 5 minutes.`,
       })
     }
   }
@@ -809,7 +794,7 @@ export class MFAManager {
           <p>Your verification code is: <strong>${code}</strong></p>
           <p>This code will expire in 5 minutes.</p>
         `,
-        text: `Your verification code is: ${code}. This code will expire in 5 minutes.`
+        text: `Your verification code is: ${code}. This code will expire in 5 minutes.`,
       })
     }
   }
@@ -838,25 +823,25 @@ export class MFAManager {
         algorithm: 'SHA1',
         digits: 6,
         period: 30,
-        window: 1
+        window: 1,
       },
       smsSettings: {
         enabled: true,
         provider: 'twilio',
         maxAttemptsPerDay: 10,
-        rateLimitMinutes: 1
+        rateLimitMinutes: 1,
       },
       emailSettings: {
         enabled: true,
         maxAttemptsPerDay: 10,
-        rateLimitMinutes: 1
+        rateLimitMinutes: 1,
       },
       enforcementRules: {
         requireForAdmins: true,
         requireForPrivilegedActions: false,
         exemptTrustedDevices: false,
-        trustedDeviceExpirationDays: 30
-      }
+        trustedDeviceExpirationDays: 30,
+      },
     }
   }
 
@@ -872,7 +857,7 @@ export class MFAManager {
       metadata: JSON.parse(data.metadata),
       createdAt: new Date(data.created_at),
       lastUsed: data.last_used ? new Date(data.last_used) : undefined,
-      verifiedAt: data.verified_at ? new Date(data.verified_at) : undefined
+      verifiedAt: data.verified_at ? new Date(data.verified_at) : undefined,
     }
   }
 }

@@ -1,4 +1,4 @@
-import { UserRole, UserPermissions } from '@/types/team';
+import { UserRole, UserPermissions } from '@/types/team'
 
 // Role hierarchy levels (higher number = more authority)
 const ROLE_LEVELS: Record<UserRole, number> = {
@@ -6,7 +6,7 @@ const ROLE_LEVELS: Record<UserRole, number> = {
   admin: 3,
   agent: 2,
   viewer: 1,
-};
+}
 
 // Default permissions for each role
 const DEFAULT_PERMISSIONS: Record<UserRole, UserPermissions> = {
@@ -90,20 +90,20 @@ const DEFAULT_PERMISSIONS: Record<UserRole, UserPermissions> = {
     'settings.view': true,
     'settings.manage': false,
   },
-};
+}
 
 /**
  * Get numeric level for a role
  */
 export function getRoleLevel(role: UserRole): number {
-  return ROLE_LEVELS[role];
+  return ROLE_LEVELS[role]
 }
 
 /**
  * Get default permissions for a role
  */
 export function getDefaultPermissions(role: UserRole): UserPermissions {
-  return { ...DEFAULT_PERMISSIONS[role] };
+  return { ...DEFAULT_PERMISSIONS[role] }
 }
 
 /**
@@ -111,7 +111,7 @@ export function getDefaultPermissions(role: UserRole): UserPermissions {
  * Actor must have higher authority level than target
  */
 export function canManageRole(actorRole: UserRole, targetRole: UserRole): boolean {
-  return getRoleLevel(actorRole) > getRoleLevel(targetRole);
+  return getRoleLevel(actorRole) > getRoleLevel(targetRole)
 }
 
 /**
@@ -119,7 +119,7 @@ export function canManageRole(actorRole: UserRole, targetRole: UserRole): boolea
  * Actor can assign roles at their level or below
  */
 export function canAssignRole(actorRole: UserRole, roleToAssign: UserRole): boolean {
-  return getRoleLevel(actorRole) >= getRoleLevel(roleToAssign);
+  return getRoleLevel(actorRole) >= getRoleLevel(roleToAssign)
 }
 
 /**
@@ -132,33 +132,33 @@ export function hasPermission(
 ): boolean {
   // Owner has all permissions
   if (role === 'owner') {
-    return true;
+    return true
   }
 
   // Check explicit permission
   if (permissions[requiredPermission] === true) {
-    return true;
+    return true
   }
 
   // Check wildcard permissions (e.g., 'conversations.*' grants 'conversations.view')
-  const permissionParts = requiredPermission.split('.');
+  const permissionParts = requiredPermission.split('.')
   if (permissionParts.length === 2) {
-    const wildcardPermission = `${permissionParts[0]}.*`;
+    const wildcardPermission = `${permissionParts[0]}.*`
     if (permissions[wildcardPermission] === true) {
-      return true;
+      return true
     }
   }
 
   // Check default role permissions
-  const defaultPerms = DEFAULT_PERMISSIONS[role];
-  return defaultPerms[requiredPermission as keyof UserPermissions] === true;
+  const defaultPerms = DEFAULT_PERMISSIONS[role]
+  return defaultPerms[requiredPermission as keyof UserPermissions] === true
 }
 
 /**
  * Check if user can manage team (invite, remove members, change roles)
  */
 export function canManageTeam(role: UserRole, permissions: Record<string, boolean>): boolean {
-  return hasPermission(role, permissions, 'team.manage');
+  return hasPermission(role, permissions, 'team.manage')
 }
 
 /**
@@ -173,20 +173,20 @@ export function validateRoleChange(
 ): string | null {
   // Cannot change your own role
   if (isTargetSelf) {
-    return 'Cannot modify your own role';
+    return 'Cannot modify your own role'
   }
 
   // Must have higher authority than target's current role
   if (!canManageRole(actorRole, targetCurrentRole)) {
-    return `Insufficient permissions to modify ${targetCurrentRole} role`;
+    return `Insufficient permissions to modify ${targetCurrentRole} role`
   }
 
   // Cannot assign role higher than your own
   if (!canAssignRole(actorRole, targetNewRole)) {
-    return `Cannot assign ${targetNewRole} role (requires ${targetNewRole} or higher)`;
+    return `Cannot assign ${targetNewRole} role (requires ${targetNewRole} or higher)`
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -201,31 +201,31 @@ export function validateMemberRemoval(
 ): string | null {
   // Cannot remove yourself
   if (isTargetSelf) {
-    return 'Cannot remove yourself from the team';
+    return 'Cannot remove yourself from the team'
   }
 
   // Cannot remove last owner
   if (targetRole === 'owner' && isLastOwner) {
-    return 'Cannot remove the last owner. Assign another owner first';
+    return 'Cannot remove the last owner. Assign another owner first'
   }
 
   // Must have higher authority than target
   if (!canManageRole(actorRole, targetRole)) {
-    return `Insufficient permissions to remove ${targetRole}`;
+    return `Insufficient permissions to remove ${targetRole}`
   }
 
-  return null;
+  return null
 }
 
 /**
  * Get all roles that an actor can assign
  */
 export function getAssignableRoles(actorRole: UserRole): UserRole[] {
-  const actorLevel = getRoleLevel(actorRole);
+  const actorLevel = getRoleLevel(actorRole)
   return Object.entries(ROLE_LEVELS)
     .filter(([, level]) => level <= actorLevel)
     .map(([role]) => role as UserRole)
-    .sort((a, b) => getRoleLevel(b) - getRoleLevel(a));
+    .sort((a, b) => getRoleLevel(b) - getRoleLevel(a))
 }
 
 /**
@@ -235,8 +235,8 @@ export function mergePermissions(
   role: UserRole,
   customPermissions: Record<string, boolean> = {}
 ): UserPermissions {
-  const defaultPerms = getDefaultPermissions(role);
-  return { ...defaultPerms, ...customPermissions };
+  const defaultPerms = getDefaultPermissions(role)
+  return { ...defaultPerms, ...customPermissions }
 }
 
 /**
@@ -244,11 +244,7 @@ export function mergePermissions(
  * Returns array of invalid permission keys
  */
 export function validatePermissions(permissions: Record<string, boolean>): string[] {
-  const validPermissions = new Set(
-    Object.keys(DEFAULT_PERMISSIONS.owner)
-  );
+  const validPermissions = new Set(Object.keys(DEFAULT_PERMISSIONS.owner))
 
-  return Object.keys(permissions).filter(
-    (perm) => !validPermissions.has(perm)
-  );
+  return Object.keys(permissions).filter(perm => !validPermissions.has(perm))
 }

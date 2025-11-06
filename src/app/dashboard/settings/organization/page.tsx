@@ -16,10 +16,10 @@ export default async function OrganizationSettingsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Organization Settings</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className='text-2xl font-bold text-gray-900'>Organization Settings</h1>
+        <p className='mt-1 text-sm text-gray-600'>
           Manage your organization details, branding, and general settings.
         </p>
       </div>
@@ -30,7 +30,7 @@ export default async function OrganizationSettingsPage() {
 
       {/* White-Label Branding Section */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">White-Label Branding</h2>
+        <h2 className='mb-4 text-xl font-semibold text-gray-900'>White-Label Branding</h2>
         <SettingsErrorBoundary>
           <WhiteLabelBranding
             organizationId={profile.organization_id!}

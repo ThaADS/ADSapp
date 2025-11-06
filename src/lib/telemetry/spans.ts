@@ -16,15 +16,11 @@ export async function traceConversationOperation<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  const result = await withSpan(
-    `conversation.${operation}`,
-    fn,
-    {
-      'conversation.id': conversationId,
-      'conversation.operation': operation,
-      ...attributes,
-    }
-  )
+  const result = await withSpan(`conversation.${operation}`, fn, {
+    'conversation.id': conversationId,
+    'conversation.operation': operation,
+    ...attributes,
+  })
 
   // Record business metrics
   if (operation === 'create') {
@@ -45,15 +41,11 @@ export async function traceContactOperation<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  const result = await withSpan(
-    `contact.${operation}`,
-    fn,
-    {
-      'contact.id': contactId,
-      'contact.operation': operation,
-      ...attributes,
-    }
-  )
+  const result = await withSpan(`contact.${operation}`, fn, {
+    'contact.id': contactId,
+    'contact.operation': operation,
+    ...attributes,
+  })
 
   // Record business metrics
   if (operation === 'create') {
@@ -72,15 +64,11 @@ export async function traceTemplateUsage<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  const result = await withSpan(
-    'template.use',
-    fn,
-    {
-      'template.id': templateId,
-      'template.name': templateName,
-      ...attributes,
-    }
-  )
+  const result = await withSpan('template.use', fn, {
+    'template.id': templateId,
+    'template.name': templateName,
+    ...attributes,
+  })
 
   recordBusinessEvent('template_used', { templateId })
 
@@ -96,15 +84,11 @@ export async function traceAutomationExecution<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  const result = await withSpan(
-    'automation.execute',
-    fn,
-    {
-      'automation.id': workflowId,
-      'automation.name': workflowName,
-      ...attributes,
-    }
-  )
+  const result = await withSpan('automation.execute', fn, {
+    'automation.id': workflowId,
+    'automation.name': workflowName,
+    ...attributes,
+  })
 
   recordBusinessEvent('automation_triggered', { workflowId })
 
@@ -148,15 +132,11 @@ export async function traceExport<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `export.${exportType}`,
-    fn,
-    {
-      'export.type': exportType,
-      'export.format': format,
-      ...attributes,
-    }
-  )
+  return withSpan(`export.${exportType}`, fn, {
+    'export.type': exportType,
+    'export.format': format,
+    ...attributes,
+  })
 }
 
 /**
@@ -196,15 +176,11 @@ export async function traceWebhookProcessing<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `webhook.${source}`,
-    fn,
-    {
-      'webhook.source': source,
-      'webhook.event_type': eventType,
-      ...attributes,
-    }
-  )
+  return withSpan(`webhook.${source}`, fn, {
+    'webhook.source': source,
+    'webhook.event_type': eventType,
+    ...attributes,
+  })
 }
 
 /**
@@ -216,15 +192,11 @@ export async function traceAnalytics<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    'analytics.compute',
-    fn,
-    {
-      'analytics.metric': metricName,
-      'analytics.time_range': timeRange,
-      ...attributes,
-    }
-  )
+  return withSpan('analytics.compute', fn, {
+    'analytics.metric': metricName,
+    'analytics.time_range': timeRange,
+    ...attributes,
+  })
 }
 
 /**
@@ -236,15 +208,11 @@ export async function traceCacheOperation<T>(
   fn: () => Promise<T>,
   attributes?: Record<string, any>
 ): Promise<T> {
-  return withSpan(
-    `cache.${operation}`,
-    fn,
-    {
-      'cache.key': cacheKey,
-      'cache.operation': operation,
-      ...attributes,
-    }
-  )
+  return withSpan(`cache.${operation}`, fn, {
+    'cache.key': cacheKey,
+    'cache.operation': operation,
+    ...attributes,
+  })
 }
 
 /**
@@ -274,7 +242,10 @@ export function addBusinessContext(context: {
 
   // Add any other context attributes
   Object.entries(context).forEach(([key, value]) => {
-    if (!['organizationId', 'userId', 'conversationId', 'contactId'].includes(key) && value !== undefined) {
+    if (
+      !['organizationId', 'userId', 'conversationId', 'contactId'].includes(key) &&
+      value !== undefined
+    ) {
       attributes[key] = value
     }
   })

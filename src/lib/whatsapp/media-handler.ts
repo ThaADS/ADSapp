@@ -65,7 +65,7 @@ export class WhatsAppMediaHandler {
         .from('whatsapp-media')
         .upload(storagePath, buffer, {
           contentType: mediaInfo.mime_type,
-          cacheControl: '3600'
+          cacheControl: '3600',
         })
 
       if (uploadError) {
@@ -95,24 +95,22 @@ export class WhatsAppMediaHandler {
         thumbnailUrl,
         downloadUrl: urlData.publicUrl,
         uploadedAt: new Date(),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       }
 
       // Store media info in database
-      const { error: dbError } = await this.supabase
-        .from('message_media')
-        .insert({
-          id: mediaFile.id,
-          message_id: messageId,
-          whatsapp_media_id: mediaId,
-          filename: mediaFile.filename,
-          mime_type: mediaFile.mimeType,
-          file_size: mediaFile.fileSize,
-          storage_path: storagePath,
-          url: mediaFile.url,
-          thumbnail_url: thumbnailUrl,
-          expires_at: mediaFile.expiresAt?.toISOString()
-        })
+      const { error: dbError } = await this.supabase.from('message_media').insert({
+        id: mediaFile.id,
+        message_id: messageId,
+        whatsapp_media_id: mediaId,
+        filename: mediaFile.filename,
+        mime_type: mediaFile.mimeType,
+        file_size: mediaFile.fileSize,
+        storage_path: storagePath,
+        url: mediaFile.url,
+        thumbnail_url: thumbnailUrl,
+        expires_at: mediaFile.expiresAt?.toISOString(),
+      })
 
       if (dbError) {
         console.error('Failed to store media info:', dbError)
@@ -121,7 +119,9 @@ export class WhatsAppMediaHandler {
 
       return mediaFile
     } catch (error) {
-      throw new Error(`Media download failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Media download failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -146,13 +146,16 @@ export class WhatsAppMediaHandler {
       formData.append('messaging_product', 'whatsapp')
       formData.append('type', this.getMediaType(mimeType))
 
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.client.phoneNumberId}/media`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.client.accessToken}`,
-        },
-        body: formData,
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.client.phoneNumberId}/media`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.client.accessToken}`,
+          },
+          body: formData,
+        }
+      )
 
       if (!response.ok) {
         const error = await response.json()
@@ -163,12 +166,12 @@ export class WhatsAppMediaHandler {
       return {
         success: true,
         mediaId: result.id,
-        url: result.url
+        url: result.url,
       }
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       }
     }
   }
@@ -176,10 +179,12 @@ export class WhatsAppMediaHandler {
   /**
    * Get media information from WhatsApp API
    */
-  private async getMediaInfo(mediaId: string): Promise<{ url: string; mime_type: string; sha256: string; file_size: number; id: string }> {
+  private async getMediaInfo(
+    mediaId: string
+  ): Promise<{ url: string; mime_type: string; sha256: string; file_size: number; id: string }> {
     const response = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
       headers: {
-        'Authorization': `Bearer ${this.client.accessToken}`,
+        Authorization: `Bearer ${this.client.accessToken}`,
       },
     })
 
@@ -197,7 +202,7 @@ export class WhatsAppMediaHandler {
   private async downloadMediaFile(url: string): Promise<Response> {
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${this.client.accessToken}`,
+        Authorization: `Bearer ${this.client.accessToken}`,
       },
     })
 
@@ -229,7 +234,7 @@ export class WhatsAppMediaHandler {
         .from('whatsapp-media')
         .upload(thumbnailPath, buffer, {
           contentType: mimeType,
-          cacheControl: '3600'
+          cacheControl: '3600',
         })
 
       if (error) {
@@ -277,7 +282,7 @@ export class WhatsAppMediaHandler {
       'application/vnd.ms-excel': 'xls',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
       'text/plain': 'txt',
-      'text/csv': 'csv'
+      'text/csv': 'csv',
     }
 
     return mimeMap[mimeType] || 'bin'
@@ -321,10 +326,12 @@ export class WhatsAppMediaHandler {
     try {
       const { data, error } = await this.supabase
         .from('message_media')
-        .select(`
+        .select(
+          `
           *,
           message:messages(id, conversation_id, created_at)
-        `)
+        `
+        )
         .eq('message.conversation_id', conversationId)
         .order('created_at', { ascending: false })
 
@@ -332,21 +339,25 @@ export class WhatsAppMediaHandler {
         throw new Error(`Failed to get conversation media: ${error.message}`)
       }
 
-      return data?.map(item => ({
-        id: item.id,
-        messageId: item.message_id,
-        whatsappMediaId: item.whatsapp_media_id,
-        filename: item.filename,
-        mimeType: item.mime_type,
-        fileSize: item.file_size,
-        url: item.url,
-        thumbnailUrl: item.thumbnail_url,
-        downloadUrl: item.url,
-        uploadedAt: new Date(item.created_at),
-        expiresAt: item.expires_at ? new Date(item.expires_at) : undefined
-      })) || []
+      return (
+        data?.map(item => ({
+          id: item.id,
+          messageId: item.message_id,
+          whatsappMediaId: item.whatsapp_media_id,
+          filename: item.filename,
+          mimeType: item.mime_type,
+          fileSize: item.file_size,
+          url: item.url,
+          thumbnailUrl: item.thumbnail_url,
+          downloadUrl: item.url,
+          uploadedAt: new Date(item.created_at),
+          expiresAt: item.expires_at ? new Date(item.expires_at) : undefined,
+        })) || []
+      )
     } catch (error) {
-      throw new Error(`Failed to get conversation media: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get conversation media: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -370,7 +381,8 @@ export class WhatsAppMediaHandler {
     try {
       let query = this.supabase
         .from('message_media')
-        .select(`
+        .select(
+          `
           *,
           message:messages!inner(
             id,
@@ -379,7 +391,9 @@ export class WhatsAppMediaHandler {
               organization_id
             )
           )
-        `, { count: 'exact' })
+        `,
+          { count: 'exact' }
+        )
         .eq('message.conversation.organization_id', organizationId)
 
       // Apply filters
@@ -408,27 +422,30 @@ export class WhatsAppMediaHandler {
         throw new Error(`Failed to get media gallery: ${error.message}`)
       }
 
-      const media: MediaFile[] = data?.map(item => ({
-        id: item.id,
-        messageId: item.message_id,
-        whatsappMediaId: item.whatsapp_media_id,
-        filename: item.filename,
-        mimeType: item.mime_type,
-        fileSize: item.file_size,
-        url: item.url,
-        thumbnailUrl: item.thumbnail_url,
-        downloadUrl: item.url,
-        uploadedAt: new Date(item.created_at),
-        expiresAt: item.expires_at ? new Date(item.expires_at) : undefined
-      })) || []
+      const media: MediaFile[] =
+        data?.map(item => ({
+          id: item.id,
+          messageId: item.message_id,
+          whatsappMediaId: item.whatsapp_media_id,
+          filename: item.filename,
+          mimeType: item.mime_type,
+          fileSize: item.file_size,
+          url: item.url,
+          thumbnailUrl: item.thumbnail_url,
+          downloadUrl: item.url,
+          uploadedAt: new Date(item.created_at),
+          expiresAt: item.expires_at ? new Date(item.expires_at) : undefined,
+        })) || []
 
       return {
         media,
         total: count || 0,
-        hasMore: (offset + limit) < (count || 0)
+        hasMore: offset + limit < (count || 0),
       }
     } catch (error) {
-      throw new Error(`Failed to get media gallery: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get media gallery: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -482,24 +499,28 @@ export class WhatsAppMediaHandler {
    */
   static getFileSizeLimits(): Record<string, number> {
     return {
-      image: 5 * 1024 * 1024,     // 5MB
-      video: 16 * 1024 * 1024,    // 16MB
-      audio: 16 * 1024 * 1024,    // 16MB
-      document: 100 * 1024 * 1024  // 100MB
+      image: 5 * 1024 * 1024, // 5MB
+      video: 16 * 1024 * 1024, // 16MB
+      audio: 16 * 1024 * 1024, // 16MB
+      document: 100 * 1024 * 1024, // 100MB
     }
   }
 
   /**
    * Validate media file before upload
    */
-  static validateMediaFile(file: File): { valid: boolean, errors: string[] } {
+  static validateMediaFile(file: File): { valid: boolean; errors: string[] } {
     const errors: string[] = []
     const limits = WhatsAppMediaHandler.getFileSizeLimits()
 
     // Check file size
-    const mediaType = file.type.startsWith('image/') ? 'image' :
-                     file.type.startsWith('video/') ? 'video' :
-                     file.type.startsWith('audio/') ? 'audio' : 'document'
+    const mediaType = file.type.startsWith('image/')
+      ? 'image'
+      : file.type.startsWith('video/')
+        ? 'video'
+        : file.type.startsWith('audio/')
+          ? 'audio'
+          : 'document'
 
     if (file.size > limits[mediaType]) {
       errors.push(`File size exceeds limit of ${limits[mediaType] / (1024 * 1024)}MB`)
@@ -508,18 +529,28 @@ export class WhatsAppMediaHandler {
     // Check supported formats
     const supportedTypes = [
       // Images
-      'image/jpeg', 'image/png', 'image/webp',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
       // Videos
-      'video/mp4', 'video/3gpp',
+      'video/mp4',
+      'video/3gpp',
       // Audio
-      'audio/aac', 'audio/mp4', 'audio/mpeg', 'audio/amr', 'audio/ogg',
+      'audio/aac',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/amr',
+      'audio/ogg',
       // Documents
-      'application/pdf', 'application/vnd.ms-powerpoint',
-      'application/msword', 'application/vnd.ms-excel',
+      'application/pdf',
+      'application/vnd.ms-powerpoint',
+      'application/msword',
+      'application/vnd.ms-excel',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'text/plain', 'text/csv'
+      'text/plain',
+      'text/csv',
     ]
 
     if (!supportedTypes.includes(file.type)) {
@@ -528,7 +559,7 @@ export class WhatsAppMediaHandler {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     }
   }
 }
@@ -574,14 +605,16 @@ export class MediaGalleryManager {
     try {
       const { data, error } = await this.supabase
         .from('message_media')
-        .select(`
+        .select(
+          `
           mime_type,
           file_size,
           created_at,
           message:messages!inner(
             conversation:conversations!inner(organization_id)
           )
-        `)
+        `
+        )
         .eq('message.conversation.organization_id', organizationId)
 
       if (error) {
@@ -595,10 +628,10 @@ export class MediaGalleryManager {
           images: 0,
           videos: 0,
           audio: 0,
-          documents: 0
+          documents: 0,
         },
         recentUploads: 0,
-        storageUsed: ''
+        storageUsed: '',
       }
 
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -619,7 +652,9 @@ export class MediaGalleryManager {
 
       return stats
     } catch (error) {
-      throw new Error(`Failed to get media stats: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get media stats: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 

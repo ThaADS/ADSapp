@@ -1,6 +1,11 @@
 // @ts-nocheck - Type definitions need review
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,10 +16,7 @@ export async function POST(request: NextRequest) {
     const { content, variables, whatsappTemplate } = body
 
     if (!content) {
-      return NextResponse.json(
-        { error: 'Content is required for validation' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Content is required for validation' }, { status: 400 })
     }
 
     const validationResults = {
@@ -25,9 +27,9 @@ export async function POST(request: NextRequest) {
       variableValidation: {
         detected: [],
         missing: [],
-        unused: []
+        unused: [],
       },
-      whatsappValidation: null
+      whatsappValidation: null,
     }
 
     // Basic content validation
@@ -83,14 +85,15 @@ export async function POST(request: NextRequest) {
     validationResults.suggestions.push(...qualitySuggestions)
 
     return createSuccessResponse(validationResults)
-
   } catch (error) {
     console.error('Template validation error:', error)
     return createErrorResponse(error)
   }
 }
 
-function extractVariablesFromContent(content: string): Array<{ name: string; position: number; type: 'simple' | 'whatsapp' }> {
+function extractVariablesFromContent(
+  content: string
+): Array<{ name: string; position: number; type: 'simple' | 'whatsapp' }> {
   const variables = []
 
   // Match {{variable}} pattern (WhatsApp style)
@@ -99,7 +102,7 @@ function extractVariablesFromContent(content: string): Array<{ name: string; pos
     variables.push({
       name: match[1],
       position: match.index,
-      type: 'whatsapp'
+      type: 'whatsapp',
     })
   }
 
@@ -107,16 +110,16 @@ function extractVariablesFromContent(content: string): Array<{ name: string; pos
   const simpleMatches = content.matchAll(/\{(\w+)\}/g)
   for (const match of simpleMatches) {
     // Skip if already captured as WhatsApp variable
-    const isWhatsApp = variables.some(v =>
-      v.position <= match.index &&
-      v.position + v.name.length + 4 >= match.index + match[0].length
+    const isWhatsApp = variables.some(
+      v =>
+        v.position <= match.index && v.position + v.name.length + 4 >= match.index + match[0].length
     )
 
     if (!isWhatsApp) {
       variables.push({
         name: match[1],
         position: match.index,
-        type: 'simple'
+        type: 'simple',
       })
     }
   }
@@ -134,7 +137,7 @@ function validateWhatsAppTemplate(whatsappTemplate: any): {
     isValid: true,
     errors: [],
     warnings: [],
-    suggestions: []
+    suggestions: [],
   }
 
   // Required fields
@@ -144,7 +147,9 @@ function validateWhatsAppTemplate(whatsappTemplate: any): {
   } else {
     // Name validation
     if (!/^[a-z0-9_]+$/.test(whatsappTemplate.name)) {
-      validation.errors.push('WhatsApp template name must contain only lowercase letters, numbers, and underscores')
+      validation.errors.push(
+        'WhatsApp template name must contain only lowercase letters, numbers, and underscores'
+      )
       validation.isValid = false
     }
 
@@ -165,7 +170,9 @@ function validateWhatsAppTemplate(whatsappTemplate: any): {
   } else {
     const validCategories = ['AUTHENTICATION', 'MARKETING', 'UTILITY']
     if (!validCategories.includes(whatsappTemplate.category)) {
-      validation.errors.push(`WhatsApp template category must be one of: ${validCategories.join(', ')}`)
+      validation.errors.push(
+        `WhatsApp template category must be one of: ${validCategories.join(', ')}`
+      )
       validation.isValid = false
     }
   }
@@ -229,7 +236,9 @@ function validateWhatsAppTemplate(whatsappTemplate: any): {
 
         case 'BUTTONS':
           if (!component.buttons || !Array.isArray(component.buttons)) {
-            validation.errors.push(`Component ${index + 1}: BUTTONS component must have buttons array`)
+            validation.errors.push(
+              `Component ${index + 1}: BUTTONS component must have buttons array`
+            )
             validation.isValid = false
           } else if (component.buttons.length > 3) {
             validation.errors.push(`Component ${index + 1}: Maximum 3 buttons allowed`)
@@ -242,11 +251,15 @@ function validateWhatsAppTemplate(whatsappTemplate: any): {
 
   // Category-specific validations
   if (whatsappTemplate.category === 'MARKETING') {
-    validation.warnings.push('Marketing templates require pre-approval and may take longer to approve')
+    validation.warnings.push(
+      'Marketing templates require pre-approval and may take longer to approve'
+    )
   }
 
   if (whatsappTemplate.category === 'AUTHENTICATION') {
-    validation.suggestions.push('Authentication templates should include clear instructions for the user')
+    validation.suggestions.push(
+      'Authentication templates should include clear instructions for the user'
+    )
   }
 
   // General suggestions

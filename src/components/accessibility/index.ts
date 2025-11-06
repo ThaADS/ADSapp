@@ -7,29 +7,18 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 export {
   AccessibilityProvider,
   useAccessibility,
   withAccessibility,
-  useKeyboardShortcuts
-} from './accessibility-provider';
+  useKeyboardShortcuts,
+} from './accessibility-provider'
 
 // Skip links and utilities
-export {
-  SkipLinks,
-  VisuallyHidden,
-  LiveRegion,
-  FocusIndicator
-} from './skip-links';
+export { SkipLinks, VisuallyHidden, LiveRegion, FocusIndicator } from './skip-links'
 
 // Focus management
-export {
-  FocusTrap,
-  ModalFocusTrap,
-  useFocusManagement,
-  useScopedKeyboard
-} from './focus-trap';
+export { FocusTrap, ModalFocusTrap, useFocusManagement, useScopedKeyboard } from './focus-trap'
 
 // ARIA helpers
 export {
@@ -41,21 +30,14 @@ export {
   AccessibleProgressBar,
   AccessibleTabs,
   AccessibleDisclosure,
-  AccessibleList
-} from './aria-helpers';
+  AccessibleList,
+} from './aria-helpers'
 
 // Modal components
-export {
-  AccessibleModal,
-  AccessibleConfirmDialog,
-  useAccessibleModal
-} from './accessible-modal';
+export { AccessibleModal, AccessibleConfirmDialog, useAccessibleModal } from './accessible-modal'
 
 // Dropdown components
-export {
-  AccessibleDropdown,
-  useAccessibleDropdown
-} from './accessible-dropdown';
+export { AccessibleDropdown, useAccessibleDropdown } from './accessible-dropdown'
 
 // Form components
 export {
@@ -64,17 +46,11 @@ export {
   AccessibleCheckbox,
   AccessibleRadioGroup,
   AccessibleForm,
-  useAccessibleForm
-} from './accessible-form';
+  useAccessibleForm,
+} from './accessible-form'
 
 // Preferences components
-export {
-  AccessibilityPreferences,
-  AccessibilityQuickToggle
-} from './accessibility-preferences';
+export { AccessibilityPreferences, AccessibilityQuickToggle } from './accessibility-preferences'
 
 // Types
-export type {
-  AccessibilityState,
-  AccessibilityAction
-} from './accessibility-provider';
+export type { AccessibilityState, AccessibilityAction } from './accessibility-provider'

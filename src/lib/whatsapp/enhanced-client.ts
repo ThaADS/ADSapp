@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 
 export interface WhatsAppMedia {
@@ -18,7 +17,18 @@ export interface WhatsAppMessage {
   id: string
   from: string
   timestamp: string
-  type: 'text' | 'image' | 'document' | 'audio' | 'video' | 'location' | 'contacts' | 'sticker' | 'button' | 'list' | 'interactive'
+  type:
+    | 'text'
+    | 'image'
+    | 'document'
+    | 'audio'
+    | 'video'
+    | 'location'
+    | 'contacts'
+    | 'sticker'
+    | 'button'
+    | 'list'
+    | 'interactive'
   text?: {
     body: string
   }
@@ -130,14 +140,11 @@ export class EnhancedWhatsAppClient {
   async downloadMedia(mediaId: string): Promise<Buffer> {
     try {
       // First, get the media URL
-      const mediaResponse = await fetch(
-        `${this.baseUrl}/${this.apiVersion}/${mediaId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${this.accessToken}`
-          }
-        }
-      )
+      const mediaResponse = await fetch(`${this.baseUrl}/${this.apiVersion}/${mediaId}`, {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      })
 
       if (!mediaResponse.ok) {
         throw new Error(`Failed to get media URL: ${mediaResponse.statusText}`)
@@ -148,8 +155,8 @@ export class EnhancedWhatsAppClient {
       // Download the actual media file
       const fileResponse = await fetch(mediaData.url, {
         headers: {
-          'Authorization': `Bearer ${this.accessToken}`
-        }
+          Authorization: `Bearer ${this.accessToken}`,
+        },
       })
 
       if (!fileResponse.ok) {
@@ -172,16 +179,13 @@ export class EnhancedWhatsAppClient {
       formData.append('type', type)
       formData.append('messaging_product', 'whatsapp')
 
-      const response = await fetch(
-        `${this.baseUrl}/${this.apiVersion}/media`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.accessToken}`
-          },
-          body: formData
-        }
-      )
+      const response = await fetch(`${this.baseUrl}/${this.apiVersion}/media`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+        body: formData,
+      })
 
       if (!response.ok) {
         throw new Error(`Failed to upload media: ${response.statusText}`)
@@ -195,23 +199,24 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async sendMessage(phoneNumberId: string, to: string, message: Record<string, unknown>): Promise<string> {
+  async sendMessage(
+    phoneNumberId: string,
+    to: string,
+    message: Record<string, unknown>
+  ): Promise<string> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to,
-            ...message
-          })
-        }
-      )
+      const response = await fetch(`${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to,
+          ...message,
+        }),
+      })
 
       if (!response.ok) {
         const errorData = await response.json()
@@ -228,21 +233,18 @@ export class EnhancedWhatsAppClient {
 
   async markAsRead(phoneNumberId: string, messageId: string): Promise<void> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            status: 'read',
-            message_id: messageId
-          })
-        }
-      )
+      const response = await fetch(`${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          status: 'read',
+          message_id: messageId,
+        }),
+      })
 
       if (!response.ok) {
         throw new Error(`Failed to mark message as read: ${response.statusText}`)
@@ -259,8 +261,8 @@ export class EnhancedWhatsAppClient {
         `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}?fields=verified_name,display_phone_number,quality_rating,messaging_limit_tier`,
         {
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`
-          }
+            Authorization: `Bearer ${this.accessToken}`,
+          },
         }
       )
 
@@ -275,17 +277,20 @@ export class EnhancedWhatsAppClient {
     }
   }
 
-  async createTemplate(businessAccountId: string, template: Record<string, unknown>): Promise<string> {
+  async createTemplate(
+    businessAccountId: string,
+    template: Record<string, unknown>
+  ): Promise<string> {
     try {
       const response = await fetch(
         `${this.baseUrl}/${this.apiVersion}/${businessAccountId}/message_templates`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${this.accessToken}`,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(template)
+          body: JSON.stringify(template),
         }
       )
 
@@ -308,8 +313,8 @@ export class EnhancedWhatsAppClient {
         `${this.baseUrl}/${this.apiVersion}/${businessAccountId}/message_templates`,
         {
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`
-          }
+            Authorization: `Bearer ${this.accessToken}`,
+          },
         }
       )
 
@@ -332,12 +337,12 @@ export class EnhancedWhatsAppClient {
         {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${this.accessToken}`,
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: templateName
-          })
+            name: templateName,
+          }),
         }
       )
 

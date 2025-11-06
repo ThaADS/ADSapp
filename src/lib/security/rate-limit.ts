@@ -22,9 +22,12 @@ class RateLimiter {
 
   constructor() {
     // Clean up expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup()
-    }, 5 * 60 * 1000)
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup()
+      },
+      5 * 60 * 1000
+    )
   }
 
   private cleanup() {
@@ -36,7 +39,10 @@ class RateLimiter {
     })
   }
 
-  async isRateLimited(key: string, options: RateLimitOptions): Promise<{
+  async isRateLimited(
+    key: string,
+    options: RateLimitOptions
+  ): Promise<{
     limited: boolean
     remaining: number
     resetTime: number
@@ -49,7 +55,7 @@ class RateLimiter {
     if (!this.store[key] || this.store[key].resetTime < now) {
       this.store[key] = {
         count: 0,
-        resetTime: windowEnd
+        resetTime: windowEnd,
       }
     }
 
@@ -60,7 +66,7 @@ class RateLimiter {
       return {
         limited: true,
         remaining: 0,
-        resetTime: entry.resetTime
+        resetTime: entry.resetTime,
       }
     }
 
@@ -70,7 +76,7 @@ class RateLimiter {
     return {
       limited: false,
       remaining: options.maxRequests - entry.count,
-      resetTime: entry.resetTime
+      resetTime: entry.resetTime,
     }
   }
 }
@@ -79,9 +85,7 @@ const rateLimiter = new RateLimiter()
 
 export function createRateLimit(options: RateLimitOptions) {
   return async function rateLimit(request: NextRequest): Promise<NextResponse | null> {
-    const key = options.keyGenerator
-      ? options.keyGenerator(request)
-      : getDefaultKey(request)
+    const key = options.keyGenerator ? options.keyGenerator(request) : getDefaultKey(request)
 
     const result = await rateLimiter.isRateLimited(key, options)
 
@@ -95,11 +99,11 @@ export function createRateLimit(options: RateLimitOptions) {
       return NextResponse.json(
         {
           error: options.message || 'Too many requests',
-          retryAfter: Math.ceil((result.resetTime - Date.now()) / 1000)
+          retryAfter: Math.ceil((result.resetTime - Date.now()) / 1000),
         },
         {
           status: 429,
-          headers
+          headers,
         }
       )
     }
@@ -124,25 +128,25 @@ function getDefaultKey(request: NextRequest): string {
 export const authRateLimit = createRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 5, // 5 attempts per 15 minutes
-  message: 'Too many authentication attempts, please try again later'
+  message: 'Too many authentication attempts, please try again later',
 })
 
 export const apiRateLimit = createRateLimit({
   windowMs: 60 * 1000, // 1 minute
   maxRequests: 60, // 60 requests per minute
-  message: 'API rate limit exceeded'
+  message: 'API rate limit exceeded',
 })
 
 export const strictRateLimit = createRateLimit({
   windowMs: 60 * 1000, // 1 minute
   maxRequests: 10, // 10 requests per minute
-  message: 'Rate limit exceeded'
+  message: 'Rate limit exceeded',
 })
 
 export const passwordResetRateLimit = createRateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   maxRequests: 3, // 3 attempts per hour
-  message: 'Too many password reset attempts, please try again later'
+  message: 'Too many password reset attempts, please try again later',
 })
 
 // Advanced rate limiting with Redis (for production use)
@@ -153,7 +157,10 @@ export class RedisRateLimiter {
     this.redis = redisClient
   }
 
-  async isRateLimited(key: string, options: RateLimitOptions): Promise<{
+  async isRateLimited(
+    key: string,
+    options: RateLimitOptions
+  ): Promise<{
     limited: boolean
     remaining: number
     resetTime: number
@@ -176,14 +183,14 @@ export class RedisRateLimiter {
         return {
           limited: true,
           remaining: 0,
-          resetTime: windowEnd
+          resetTime: windowEnd,
         }
       }
 
       return {
         limited: false,
         remaining: options.maxRequests - count,
-        resetTime: windowEnd
+        resetTime: windowEnd,
       }
     } catch (error) {
       console.error('Redis rate limiting error:', error)
@@ -191,7 +198,7 @@ export class RedisRateLimiter {
       return {
         limited: false,
         remaining: options.maxRequests,
-        resetTime: windowEnd
+        resetTime: windowEnd,
       }
     }
   }
@@ -201,7 +208,7 @@ export class RedisRateLimiter {
 export const ddosProtection = createRateLimit({
   windowMs: 1000, // 1 second
   maxRequests: 100, // 100 requests per second
-  message: 'Request rate too high, possible DDoS attack detected'
+  message: 'Request rate too high, possible DDoS attack detected',
 })
 
 // IP-based rate limiting
@@ -212,7 +219,7 @@ export function createIpRateLimit(options: RateLimitOptions) {
       const forwarded = request.headers.get('x-forwarded-for')
       const realIp = request.headers.get('x-real-ip')
       return forwarded?.split(',')[0] || realIp || 'unknown'
-    }
+    },
   })
 }
 
@@ -235,7 +242,7 @@ export function createUserRateLimit(options: RateLimitOptions) {
         }
       }
       return getDefaultKey(request)
-    }
+    },
   })
 }
 

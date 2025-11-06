@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth'
@@ -29,7 +28,7 @@ export function createErrorResponse(error: unknown): NextResponse {
     return NextResponse.json(
       {
         error: error.message,
-        code: error.code
+        code: error.code,
       },
       { status: error.statusCode }
     )
@@ -40,7 +39,7 @@ export function createErrorResponse(error: unknown): NextResponse {
     return NextResponse.json(
       {
         error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
     )
@@ -49,17 +48,20 @@ export function createErrorResponse(error: unknown): NextResponse {
   return NextResponse.json(
     {
       error: 'Unknown error occurred',
-      code: 'UNKNOWN_ERROR'
+      code: 'UNKNOWN_ERROR',
     },
     { status: 500 }
   )
 }
 
 export function createSuccessResponse(data: any, statusCode: number = 200): NextResponse {
-  return NextResponse.json({
-    success: true,
-    data
-  }, { status: statusCode })
+  return NextResponse.json(
+    {
+      success: true,
+      data,
+    },
+    { status: statusCode }
+  )
 }
 
 export async function validateRequest(request: NextRequest, schema?: any): Promise<any> {
@@ -120,9 +122,7 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 
 export function rateLimit(options: RateLimitOptions) {
   return async (request: NextRequest) => {
-    const key = options.keyGenerator
-      ? options.keyGenerator(request)
-      : request.ip || 'anonymous'
+    const key = options.keyGenerator ? options.keyGenerator(request) : request.ip || 'anonymous'
 
     const now = Date.now()
     const windowStart = now - options.windowMs
@@ -139,17 +139,13 @@ export function rateLimit(options: RateLimitOptions) {
     if (!current || current.resetTime < now) {
       rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + options.windowMs
+        resetTime: now + options.windowMs,
       })
       return true
     }
 
     if (current.count >= options.max) {
-      throw new ApiException(
-        'Too many requests',
-        429,
-        'RATE_LIMIT_EXCEEDED'
-      )
+      throw new ApiException('Too many requests', 429, 'RATE_LIMIT_EXCEEDED')
     }
 
     current.count++
@@ -182,11 +178,7 @@ export function validateSortOrder(request: NextRequest, allowedFields: string[])
   }
 
   if (!['asc', 'desc'].includes(sortOrder)) {
-    throw new ApiException(
-      'Invalid sort order. Must be "asc" or "desc"',
-      400,
-      'INVALID_SORT_ORDER'
-    )
+    throw new ApiException('Invalid sort order. Must be "asc" or "desc"', 400, 'INVALID_SORT_ORDER')
   }
 
   return { sortBy, sortOrder, ascending: sortOrder === 'asc' }
@@ -214,19 +206,19 @@ export function validateSortOrder(request: NextRequest, allowedFields: string[])
  * ```
  */
 export function getTenantContextFromHeaders(request: NextRequest): {
-  userId: string;
-  organizationId: string;
-  userRole: string;
-  userEmail: string;
-  isSuperAdmin: boolean;
+  userId: string
+  organizationId: string
+  userRole: string
+  userEmail: string
+  isSuperAdmin: boolean
 } {
   return {
     userId: request.headers.get('x-user-id') || '',
     organizationId: request.headers.get('x-organization-id') || '',
     userRole: request.headers.get('x-user-role') || 'agent',
     userEmail: request.headers.get('x-user-email') || '',
-    isSuperAdmin: request.headers.get('x-is-super-admin') === 'true'
-  };
+    isSuperAdmin: request.headers.get('x-is-super-admin') === 'true',
+  }
 }
 
 /**
@@ -256,10 +248,10 @@ export async function validateOrganizationAccess(
   userOrgId: string
 ): Promise<boolean> {
   // If no specific organization requested, allow (will use user's org)
-  if (!requestOrgId) return true;
+  if (!requestOrgId) return true
 
   // Check if requested organization matches user's organization
-  return requestOrgId === userOrgId;
+  return requestOrgId === userOrgId
 }
 
 /**
@@ -285,12 +277,8 @@ export async function validateOrganizationAccess(
  * }
  * ```
  */
-export function createTenantScopedQuery(
-  supabase: any,
-  tableName: string,
-  organizationId: string
-) {
-  return supabase.from(tableName).select('*').eq('organization_id', organizationId);
+export function createTenantScopedQuery(supabase: any, tableName: string, organizationId: string) {
+  return supabase.from(tableName).select('*').eq('organization_id', organizationId)
 }
 
 /**
@@ -323,7 +311,7 @@ export function validateResourceOwnership(
   isSuperAdmin: boolean = false
 ): void {
   // Super admins can access all resources
-  if (isSuperAdmin) return;
+  if (isSuperAdmin) return
 
   // Check if resource belongs to user's organization
   if (resourceOrgId !== userOrgId) {
@@ -331,6 +319,6 @@ export function validateResourceOwnership(
       'Access denied: Resource does not belong to your organization',
       403,
       'FORBIDDEN'
-    );
+    )
   }
 }

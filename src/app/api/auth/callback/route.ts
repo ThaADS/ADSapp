@@ -15,11 +15,15 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Auth callback error:', error)
-      return NextResponse.redirect(new URL('/auth/signin?error=auth_callback_error', requestUrl.origin))
+      return NextResponse.redirect(
+        new URL('/auth/signin?error=auth_callback_error', requestUrl.origin)
+      )
     }
 
     // Get the authenticated user
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (user) {
       // Check if user has a profile and organization

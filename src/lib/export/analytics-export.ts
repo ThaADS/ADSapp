@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 
 export interface ExportOptions {
@@ -89,26 +88,28 @@ export class AnalyticsExporter {
 
   private exportToCSV(data: any) {
     const csvRows = []
-    
+
     // Add headers
     const headers = Object.keys(data).join(',')
     csvRows.push(headers)
 
     // Add data rows
     const maxLength = Math.max(...Object.values(data).map((arr: any) => arr.length))
-    
+
     for (let i = 0; i < maxLength; i++) {
-      const row = Object.keys(data).map(key => {
-        const item = data[key][i]
-        return item ? JSON.stringify(item) : ''
-      }).join(',')
+      const row = Object.keys(data)
+        .map(key => {
+          const item = data[key][i]
+          return item ? JSON.stringify(item) : ''
+        })
+        .join(',')
       csvRows.push(row)
     }
 
     return {
       content: csvRows.join('\n'),
       filename: `analytics-export-${new Date().toISOString().split('T')[0]}.csv`,
-      mimeType: 'text/csv'
+      mimeType: 'text/csv',
     }
   }
 
@@ -116,11 +117,11 @@ export class AnalyticsExporter {
     // For now, return CSV format with Excel MIME type
     // In production, you'd use a library like xlsx
     const csvData = this.exportToCSV(data)
-    
+
     return {
       content: csvData.content,
       filename: `analytics-export-${new Date().toISOString().split('T')[0]}.xlsx`,
-      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     }
   }
 
@@ -130,15 +131,17 @@ export class AnalyticsExporter {
       Analytics Export Report
       Generated: ${new Date().toISOString()}
       
-      ${Object.entries(data).map(([key, value]) => 
-        `${key.toUpperCase()}: ${Array.isArray(value) ? value.length : 0} items`
-      ).join('\n')}
+      ${Object.entries(data)
+        .map(
+          ([key, value]) => `${key.toUpperCase()}: ${Array.isArray(value) ? value.length : 0} items`
+        )
+        .join('\n')}
     `
 
     return {
       content,
       filename: `analytics-export-${new Date().toISOString().split('T')[0]}.pdf`,
-      mimeType: 'application/pdf'
+      mimeType: 'application/pdf',
     }
   }
 }

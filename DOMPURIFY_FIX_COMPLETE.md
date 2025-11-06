@@ -1,12 +1,15 @@
 # DOMPurify Production Build Fix - Complete ✅
 
 ## Problem Fixed
+
 Production build was failing with error:
+
 ```
 ENOENT: no such file or directory, open '.next/server/app/api/browser/default-stylesheet.css'
 ```
 
 ## Root Cause
+
 - `isomorphic-dompurify` package attempted to import CSS during Next.js server-side rendering
 - This is incompatible with Next.js 15 App Router in production builds
 - Only affected `/api/organizations/logo` route (SVG sanitization)
@@ -15,15 +18,19 @@ ENOENT: no such file or directory, open '.next/server/app/api/browser/default-st
 ## Solution Implemented
 
 ### 1. Package Changes
+
 **Removed:**
+
 - `isomorphic-dompurify@2.29.0` (problematic package)
 
 **Added:**
+
 - `dompurify@3.3.0` (core sanitization library)
 - `jsdom@27.0.1` (server-side DOM implementation)
 - `@types/jsdom@27.0.0` (TypeScript definitions)
 
 **Retained:**
+
 - `@types/dompurify@3.0.5` (TypeScript definitions)
 
 ### 2. Code Changes
@@ -31,35 +38,38 @@ ENOENT: no such file or directory, open '.next/server/app/api/browser/default-st
 **File Modified:** `src/app/api/organizations/logo/route.ts`
 
 **Before:**
+
 ```typescript
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from 'isomorphic-dompurify'
 
 // In the route handler:
 const cleanSVG = DOMPurify.sanitize(svgContent, {
   USE_PROFILES: { svg: true, svgFilters: true },
   // ... configuration
-});
+})
 ```
 
 **After:**
+
 ```typescript
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom'
+import DOMPurify from 'dompurify'
 
 // In the route handler:
 // Create JSDOM window for server-side DOMPurify
-const window = new JSDOM('').window;
-const purify = DOMPurify(window as unknown as Window);
+const window = new JSDOM('').window
+const purify = DOMPurify(window as unknown as Window)
 
 const cleanSVG = purify.sanitize(svgContent, {
   USE_PROFILES: { svg: true, svgFilters: true },
   // ... configuration
-});
+})
 ```
 
 ### 3. Security Configuration Maintained
 
 All security rules remain identical:
+
 - ✅ `USE_PROFILES: { svg: true, svgFilters: true }`
 - ✅ `ADD_TAGS: ['use', 'defs', 'pattern', 'mask', 'clipPath']`
 - ✅ `FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed']`
@@ -69,6 +79,7 @@ All security rules remain identical:
 ## Verification Results
 
 ### Build Success ✅
+
 ```bash
 npm run build
 # ✓ Compiled with warnings (pre-existing)
@@ -78,6 +89,7 @@ npm run build
 ```
 
 ### Route Built Successfully ✅
+
 ```
 .next/server/app/api/organizations/logo/
 ├── route.js (32KB)
@@ -86,6 +98,7 @@ npm run build
 ```
 
 ### No CSS Files in API Routes ✅
+
 ```bash
 find .next/server/app/api -name "*.css"
 # (no results - correct!)
@@ -94,10 +107,12 @@ find .next/server/app/api -name "*.css"
 ## Impact Assessment
 
 ### What Changed
+
 - ✅ DOMPurify implementation approach (isomorphic → jsdom-based)
 - ✅ Package dependencies (removed isomorphic-dompurify, added jsdom)
 
 ### What Stayed the Same
+
 - ✅ Exact same security sanitization rules
 - ✅ Same API behavior and functionality
 - ✅ Same error handling
@@ -108,6 +123,7 @@ find .next/server/app/api -name "*.css"
 ## Technical Details
 
 ### Why This Works
+
 1. **JSDOM** provides a server-side DOM implementation
 2. **DOMPurify** requires a DOM window to operate
 3. We create a minimal JSDOM window instance
@@ -116,6 +132,7 @@ find .next/server/app/api -name "*.css"
 6. No CSS dependencies or browser-specific code
 
 ### Performance Considerations
+
 - JSDOM window creation is lightweight (empty DOM)
 - Instance created per request (no shared state)
 - Minimal overhead compared to previous approach
@@ -124,6 +141,7 @@ find .next/server/app/api -name "*.css"
 ## Testing Recommendations
 
 ### Before Deploying to Production
+
 1. **Functional Testing:**
    - Upload valid SVG logo → Should sanitize and store correctly
    - Upload SVG with script tags → Should strip dangerous content
@@ -144,6 +162,7 @@ find .next/server/app/api -name "*.css"
    - Storage bucket URL generation
 
 ### Verification Commands
+
 ```bash
 # Build test
 npm run build

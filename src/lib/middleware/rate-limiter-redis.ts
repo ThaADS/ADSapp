@@ -12,82 +12,82 @@
  * - Custom rate limit rules
  */
 
-import { NextRequest } from 'next/server';
-import { getRedisClient, increment, expire } from '../cache/redis-client';
+import { NextRequest } from 'next/server'
+import { getRedisClient, increment, expire } from '../cache/redis-client'
 
 export interface RateLimitConfig {
-  windowMs: number; // Time window in milliseconds
-  maxRequests: number; // Max requests per window
-  keyPrefix: string; // Redis key prefix
-  skipSuccessfulRequests?: boolean; // Don't count successful requests
-  skipFailedRequests?: boolean; // Don't count failed requests
-  enableHeaders?: boolean; // Add rate limit headers to response
-  message?: string; // Custom error message
+  windowMs: number // Time window in milliseconds
+  maxRequests: number // Max requests per window
+  keyPrefix: string // Redis key prefix
+  skipSuccessfulRequests?: boolean // Don't count successful requests
+  skipFailedRequests?: boolean // Don't count failed requests
+  enableHeaders?: boolean // Add rate limit headers to response
+  message?: string // Custom error message
 }
 
 export interface RateLimitResult {
-  allowed: boolean;
-  limit: number;
-  current: number;
-  remaining: number;
-  resetTime: number; // Unix timestamp
-  retryAfter?: number; // Seconds until reset
+  allowed: boolean
+  limit: number
+  current: number
+  remaining: number
+  resetTime: number // Unix timestamp
+  retryAfter?: number // Seconds until reset
 }
 
 export interface RateLimitRule {
-  name: string;
-  config: RateLimitConfig;
-  condition?: (req: NextRequest) => boolean;
+  name: string
+  config: RateLimitConfig
+  condition?: (req: NextRequest) => boolean
 }
 
 /**
  * Rate limiter class
  */
 export class RateLimiter {
-  private config: RateLimitConfig;
+  private config: RateLimitConfig
 
   constructor(config: RateLimitConfig) {
-    this.config = config;
+    this.config = config
   }
 
   /**
    * Check if request is allowed
    */
   async check(identifier: string): Promise<RateLimitResult> {
-    const redis = getRedisClient();
+    const redis = getRedisClient()
 
     // Fallback to allowing request if Redis is unavailable
     if (!redis) {
-      console.warn('[RateLimiter] Redis unavailable - allowing request');
+      console.warn('[RateLimiter] Redis unavailable - allowing request')
       return {
         allowed: true,
         limit: this.config.maxRequests,
         current: 0,
         remaining: this.config.maxRequests,
         resetTime: Date.now() + this.config.windowMs,
-      };
+      }
     }
 
     try {
-      const now = Date.now();
-      const windowStart = now - this.config.windowMs;
-      const key = `${this.config.keyPrefix}:${identifier}`;
+      const now = Date.now()
+      const windowStart = now - this.config.windowMs
+      const key = `${this.config.keyPrefix}:${identifier}`
 
       // Use sliding window counter
-      const current = await this.incrementCounter(key);
+      const current = await this.incrementCounter(key)
 
       // Set expiry on first request
       if (current === 1) {
-        const ttlSeconds = Math.ceil(this.config.windowMs / 1000);
-        await expire(key, ttlSeconds);
+        const ttlSeconds = Math.ceil(this.config.windowMs / 1000)
+        await expire(key, ttlSeconds)
       }
 
       // Calculate remaining requests
-      const remaining = Math.max(0, this.config.maxRequests - current);
-      const resetTime = now + this.config.windowMs;
+      const remaining = Math.max(0, this.config.maxRequests - current)
+      const resetTime = now + this.config.windowMs
 
       // Check if limit exceeded
-      const allowed = current <= this.config.maxRequests;
+      const allowed = current <= this.config.maxRequests
 
       return {
         allowed,
@@ -96,9 +96,9 @@ export class RateLimiter {
         remaining,
         resetTime,
         retryAfter: allowed ? undefined : Math.ceil(this.config.windowMs / 1000),
-      };
+      }
     } catch (error) {
-      console.error('[RateLimiter] Check error:', error);
+      console.error('[RateLimiter] Check error:', error)
       // Fail open - allow request on error
       return {
         allowed: true,
@@ -106,7 +106,7 @@ export class RateLimiter {
         current: 0,
         remaining: this.config.maxRequests,
         resetTime: Date.now() + this.config.windowMs,
-      };
+      }
     }
   }
 
@@ -114,14 +114,14 @@ export class RateLimiter {
    * Reset rate limit for identifier
    */
   async reset(identifier: string): Promise<void> {
-    const redis = getRedisClient();
-    if (!redis) return;
+    const redis = getRedisClient()
+    if (!redis) return
 
     try {
-      const key = `${this.config.keyPrefix}:${identifier}`;
-      await redis.del(key);
+      const key = `${this.config.keyPrefix}:${identifier}`
+      await redis.del(key)
     } catch (error) {
-      console.error('[RateLimiter] Reset error:', error);
+      console.error('[RateLimiter] Reset error:', error)
     }
   }
 
@@ -129,16 +129,16 @@ export class RateLimiter {
    * Get current usage for identifier
    */
   async getUsage(identifier: string): Promise<number> {
-    const redis = getRedisClient();
-    if (!redis) return 0;
+    const redis = getRedisClient()
+    if (!redis) return 0
 
     try {
-      const key = `${this.config.keyPrefix}:${identifier}`;
-      const count = await redis.get<number>(key);
-      return count || 0;
+      const key = `${this.config.keyPrefix}:${identifier}`
+      const count = await redis.get<number>(key)
+      return count || 0
     } catch (error) {
-      console.error('[RateLimiter] Get usage error:', error);
-      return 0;
+      console.error('[RateLimiter] Get usage error:', error)
+      return 0
     }
   }
 
@@ -146,7 +146,7 @@ export class RateLimiter {
    * Increment counter atomically
    */
   private async incrementCounter(key: string): Promise<number> {
-    return await increment(key, 1);
+    return await increment(key, 1)
   }
 }
 
@@ -162,9 +162,9 @@ export function createRateLimiter(
     enableHeaders: true,
     message: 'Too many requests',
     ...config,
-  };
+  }
 
-  return new RateLimiter(defaultConfig);
+  return new RateLimiter(defaultConfig)
 }
 
 /**
@@ -176,24 +176,24 @@ export function getIdentifier(
 ): string {
   switch (type) {
     case 'ip':
-      return getIP(request);
+      return getIP(request)
 
     case 'user':
-      const userId = request.headers.get('x-user-id');
-      return userId || getIP(request);
+      const userId = request.headers.get('x-user-id')
+      return userId || getIP(request)
 
     case 'tenant':
-      const tenantId = request.headers.get('x-tenant-id');
-      return tenantId || 'default';
+      const tenantId = request.headers.get('x-tenant-id')
+      return tenantId || 'default'
 
     case 'combined':
-      const user = request.headers.get('x-user-id');
-      const tenant = request.headers.get('x-tenant-id');
-      const ip = getIP(request);
-      return `${tenant || 'default'}:${user || ip}`;
+      const user = request.headers.get('x-user-id')
+      const tenant = request.headers.get('x-tenant-id')
+      const ip = getIP(request)
+      return `${tenant || 'default'}:${user || ip}`
 
     default:
-      return getIP(request);
+      return getIP(request)
   }
 }
 
@@ -202,18 +202,18 @@ export function getIdentifier(
  */
 function getIP(request: NextRequest): string {
   // Check various headers for IP
-  const forwarded = request.headers.get('x-forwarded-for');
+  const forwarded = request.headers.get('x-forwarded-for')
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(',')[0].trim()
   }
 
-  const realIP = request.headers.get('x-real-ip');
+  const realIP = request.headers.get('x-real-ip')
   if (realIP) {
-    return realIP;
+    return realIP
   }
 
   // Fallback
-  return 'unknown';
+  return 'unknown'
 }
 
 /**
@@ -224,8 +224,8 @@ export async function applyRateLimit(
   limiter: RateLimiter,
   identifier?: string
 ): Promise<RateLimitResult> {
-  const id = identifier || getIdentifier(request, 'combined');
-  return await limiter.check(id);
+  const id = identifier || getIdentifier(request, 'combined')
+  return await limiter.check(id)
 }
 
 /**
@@ -236,44 +236,44 @@ export function createRateLimitHeaders(result: RateLimitResult): Record<string, 
     'x-ratelimit-limit': result.limit.toString(),
     'x-ratelimit-remaining': result.remaining.toString(),
     'x-ratelimit-reset': result.resetTime.toString(),
-  };
-
-  if (result.retryAfter !== undefined) {
-    headers['retry-after'] = result.retryAfter.toString();
   }
 
-  return headers;
+  if (result.retryAfter !== undefined) {
+    headers['retry-after'] = result.retryAfter.toString()
+  }
+
+  return headers
 }
 
 /**
  * Multi-tier rate limiter with different limits
  */
 export class MultiTierRateLimiter {
-  private rules: RateLimitRule[];
+  private rules: RateLimitRule[]
 
   constructor(rules: RateLimitRule[]) {
-    this.rules = rules;
+    this.rules = rules
   }
 
   /**
    * Check all rules and return most restrictive result
    */
   async check(request: NextRequest, identifier: string): Promise<RateLimitResult> {
-    const results: RateLimitResult[] = [];
+    const results: RateLimitResult[] = []
 
     for (const rule of this.rules) {
       // Skip rule if condition doesn't match
       if (rule.condition && !rule.condition(request)) {
-        continue;
+        continue
       }
 
-      const limiter = new RateLimiter(rule.config);
-      const result = await limiter.check(identifier);
-      results.push(result);
+      const limiter = new RateLimiter(rule.config)
+      const result = await limiter.check(identifier)
+      results.push(result)
 
       // Early exit if any rule blocks
       if (!result.allowed) {
-        return result;
+        return result
       }
     }
 
@@ -285,13 +285,11 @@ export class MultiTierRateLimiter {
         current: 0,
         remaining: Infinity,
         resetTime: Date.now() + 60000,
-      };
+      }
     }
 
     // Find result with least remaining requests
-    return results.reduce((prev, current) =>
-      current.remaining < prev.remaining ? current : prev
-    );
+    return results.reduce((prev, current) => (current.remaining < prev.remaining ? current : prev))
   }
 }
 
@@ -326,7 +324,7 @@ export function createMultiTierRateLimiter(): MultiTierRateLimiter {
         maxRequests: 200,
         enableHeaders: true,
       },
-      condition: (req) => req.headers.has('x-user-id'),
+      condition: req => req.headers.has('x-user-id'),
     },
     {
       name: 'auth-endpoints',
@@ -337,14 +335,14 @@ export function createMultiTierRateLimiter(): MultiTierRateLimiter {
         enableHeaders: true,
         message: 'Too many authentication attempts',
       },
-      condition: (req) => {
-        const path = new URL(req.url).pathname;
-        return path.startsWith('/api/auth');
+      condition: req => {
+        const path = new URL(req.url).pathname
+        return path.startsWith('/api/auth')
       },
     },
-  ];
+  ]
 
-  return new MultiTierRateLimiter(rules);
+  return new MultiTierRateLimiter(rules)
 }
 
 /**
@@ -354,27 +352,27 @@ export function withRateLimit(
   handler: (req: NextRequest) => Promise<Response>,
   limiter: RateLimiter | MultiTierRateLimiter,
   options: {
-    identifierType?: 'ip' | 'user' | 'tenant' | 'combined';
-    onLimitExceeded?: (req: NextRequest, result: RateLimitResult) => Response;
+    identifierType?: 'ip' | 'user' | 'tenant' | 'combined'
+    onLimitExceeded?: (req: NextRequest, result: RateLimitResult) => Response
   } = {}
 ) {
   return async (req: NextRequest): Promise<Response> => {
-    const identifier = getIdentifier(req, options.identifierType);
+    const identifier = getIdentifier(req, options.identifierType)
 
-    let result: RateLimitResult;
+    let result: RateLimitResult
     if (limiter instanceof MultiTierRateLimiter) {
-      result = await limiter.check(req, identifier);
+      result = await limiter.check(req, identifier)
     } else {
-      result = await limiter.check(identifier);
+      result = await limiter.check(identifier)
     }
 
     // Add rate limit headers
-    const headers = createRateLimitHeaders(result);
+    const headers = createRateLimitHeaders(result)
 
     // Check if rate limit exceeded
     if (!result.allowed) {
       if (options.onLimitExceeded) {
-        return options.onLimitExceeded(req, result);
+        return options.onLimitExceeded(req, result)
       }
 
       return new Response(
@@ -390,17 +388,17 @@ export function withRateLimit(
             ...headers,
           },
         }
-      );
+      )
     }
 
     // Execute handler and add headers
-    const response = await handler(req);
+    const response = await handler(req)
     Object.entries(headers).forEach(([key, value]) => {
-      response.headers.set(key, value);
-    });
+      response.headers.set(key, value)
+    })
 
-    return response;
-  };
+    return response
+  }
 }
 
 /**
@@ -415,7 +413,7 @@ export function createTenantRateLimiter(
     windowMs: 60000, // 1 minute
     maxRequests: 500,
     ...config,
-  });
+  })
 }
 
 /**
@@ -430,5 +428,5 @@ export function createEndpointRateLimiter(
     windowMs: 60000, // 1 minute
     maxRequests: 100,
     ...config,
-  });
+  })
 }

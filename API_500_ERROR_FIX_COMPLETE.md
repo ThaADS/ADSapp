@@ -9,6 +9,7 @@
 ## Root Cause Analysis
 
 ### Error Details
+
 ```
 PostgreSQL Error: code: '22P02'
 Message: invalid input syntax for type uuid: ""
@@ -18,44 +19,47 @@ Location: .eq('organization_id', "")
 ### The Problem Chain
 
 1. **Middleware Sets Headers** ✅
+
    ```typescript
    // src/lib/middleware/tenant-validation.ts:151-168
-   const requestHeaders = new Headers(request.headers);
-   requestHeaders.set('x-user-id', user.id);
-   requestHeaders.set('x-organization-id', userOrg.organization_id);
+   const requestHeaders = new Headers(request.headers)
+   requestHeaders.set('x-user-id', user.id)
+   requestHeaders.set('x-organization-id', userOrg.organization_id)
 
-   return null; // ❌ PROBLEM: Headers NOT propagated in Next.js 15!
+   return null // ❌ PROBLEM: Headers NOT propagated in Next.js 15!
    ```
 
 2. **API Routes Try to Read Headers** ❌
+
    ```typescript
    // Both /api/tags and /api/contacts did this:
-   const middlewareResponse = await standardApiMiddleware(request);
-   const { organizationId } = getTenantContext(request); // Returns ''!
+   const middlewareResponse = await standardApiMiddleware(request)
+   const { organizationId } = getTenantContext(request) // Returns ''!
    ```
 
 3. **getTenantContext Returns Empty Strings** ❌
+
    ```typescript
    // src/lib/api-utils.ts:216-230
    export function getTenantContextFromHeaders(request: NextRequest) {
      return {
        organizationId: request.headers.get('x-organization-id') || '', // Returns ''
        // ... other headers also empty
-     };
+     }
    }
    ```
 
 4. **Database Query Fails** ❌
    ```typescript
-   const { data } = await supabase
-     .from('tags')
-     .eq('organization_id', '') // ← Empty string as UUID = PostgreSQL error
+   const { data } = await supabase.from('tags').eq('organization_id', '') // ← Empty string as UUID = PostgreSQL error
    ```
 
 ### Root Cause
+
 **Next.js 15 API routes do NOT receive headers when middleware returns `null`.**
 
 This is a known Next.js 15 behavior change. When middleware returns:
+
 - `NextResponse.next()` → Headers propagated ✅
 - `null` → Headers NOT propagated ❌
 
@@ -72,6 +76,7 @@ Instead of relying on broken middleware header propagation, query the user's org
 #### 1. `/api/tags/route.ts` - GET Handler
 
 **Before** (Lines 12-20):
+
 ```typescript
 export async function GET(request: NextRequest) {
   const middlewareResponse = await standardApiMiddleware(request);
@@ -83,6 +88,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **After**:
+
 ```typescript
 export async function GET(request: NextRequest) {
   try {
@@ -98,6 +104,7 @@ export async function GET(request: NextRequest) {
 #### 2. `/api/tags/route.ts` - POST Handler
 
 **Before** (Lines 78-86):
+
 ```typescript
 export async function POST(request: NextRequest) {
   const middlewareResponse = await standardApiMiddleware(request);
@@ -109,6 +116,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **After**:
+
 ```typescript
 export async function POST(request: NextRequest) {
   try {
@@ -124,6 +132,7 @@ export async function POST(request: NextRequest) {
 #### 3. `/api/contacts/route.ts` - GET Handler
 
 **Before** (Lines 6-13):
+
 ```typescript
 export async function GET(request: NextRequest) {
   const middlewareResponse = await standardApiMiddleware(request);
@@ -135,6 +144,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **After**:
+
 ```typescript
 export async function GET(request: NextRequest) {
   try {
@@ -150,6 +160,7 @@ export async function GET(request: NextRequest) {
 #### 4. `/api/contacts/route.ts` - POST Handler
 
 **Before** (Lines 103-110):
+
 ```typescript
 export async function POST(request: NextRequest) {
   const middlewareResponse = await standardApiMiddleware(request);
@@ -161,6 +172,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **After**:
+
 ```typescript
 export async function POST(request: NextRequest) {
   try {
@@ -178,6 +190,7 @@ export async function POST(request: NextRequest) {
 ## Helper Functions Used
 
 ### `requireAuthenticatedUser()`
+
 Located in: `src/lib/api-utils.ts:86-94`
 
 ```typescript
@@ -195,6 +208,7 @@ export async function requireAuthenticatedUser() {
 **Purpose**: Validates user authentication and returns authenticated user object.
 
 ### `getUserOrganization(userId)`
+
 Located in: `src/lib/api-utils.ts:96-110`
 
 ```typescript
@@ -222,16 +236,19 @@ export async function getUserOrganization(userId: string) {
 ## Technical Benefits
 
 ### 1. Reliability ✅
+
 - **Direct Database Query**: No dependency on middleware header propagation
 - **Guaranteed Valid UUID**: Always returns real organization_id or throws proper error
 - **Proper Error Handling**: Clear error messages when authentication or organization lookup fails
 
 ### 2. Security ✅
+
 - **Authentication Still Required**: `requireAuthenticatedUser()` validates session
 - **RLS Still Active**: Supabase Row Level Security policies still enforce tenant isolation
 - **No Bypass Risk**: Can't fake headers since we query database directly
 
 ### 3. Performance Impact
+
 - **Minimal Overhead**: 1 additional database query per API request
 - **Cached Connections**: Supabase connection pooling minimizes latency
 - **Trade-off Justified**: Reliability > 50-100ms extra latency
@@ -241,21 +258,26 @@ export async function getUserOrganization(userId: string) {
 ## Verification
 
 ### TypeScript Check
+
 ```bash
 npm run type-check
 ```
+
 **Result**: ✅ 0 errors
 
 ### Dev Server Status
+
 ```
 ✓ Ready in 4.5s
 Local: http://localhost:3002
 ```
+
 **Result**: ✅ Running without compilation errors
 
 ### Expected API Behavior
 
 #### Before Fix:
+
 ```bash
 curl http://localhost:3002/api/tags
 # → HTTP 500
@@ -263,6 +285,7 @@ curl http://localhost:3002/api/tags
 ```
 
 #### After Fix:
+
 ```bash
 curl http://localhost:3002/api/tags
 # → HTTP 200 (authenticated users)
@@ -276,6 +299,7 @@ curl http://localhost:3002/api/tags
 This same middleware header propagation issue affects **multiple admin API routes**:
 
 ### Admin Routes with Same Pattern (Pending Fix):
+
 - `/api/admin/billing/subscriptions` (GET)
 - `/api/admin/webhooks` (GET, POST)
 - `/api/admin/analytics` (GET)
@@ -283,6 +307,7 @@ This same middleware header propagation issue affects **multiple admin API route
 These routes use `adminMiddleware()` which has the same `return null` problem.
 
 ### Recommended Next Steps:
+
 1. ✅ `/api/tags` - FIXED
 2. ✅ `/api/contacts` - FIXED
 3. ⏳ Apply same pattern to `/api/admin/*` routes
@@ -293,35 +318,37 @@ These routes use `adminMiddleware()` which has the same `return null` problem.
 ## Lessons Learned
 
 ### Next.js 15 Middleware Behavior
+
 - **Breaking Change**: Middleware header propagation changed in Next.js 15
 - **Solution**: Don't rely on middleware headers in API routes
 - **Pattern**: Query organization directly from database in each API route
 
 ### Middleware Purpose Shift
+
 Middleware should focus on:
+
 - ✅ Authentication checks (redirect to login)
 - ✅ Rate limiting
 - ✅ Request logging
 - ❌ NOT passing data to API routes via headers
 
 ### Proper API Route Pattern
+
 ```typescript
 export async function GET(request: NextRequest) {
   try {
     // 1. Authenticate
-    const user = await requireAuthenticatedUser();
+    const user = await requireAuthenticatedUser()
 
     // 2. Get organization context
-    const userOrg = await getUserOrganization(user.id);
+    const userOrg = await getUserOrganization(user.id)
 
     // 3. Use context for database queries
-    const { data } = await supabase
-      .from('table')
-      .eq('organization_id', userOrg.organization_id)
+    const { data } = await supabase.from('table').eq('organization_id', userOrg.organization_id)
 
-    return createSuccessResponse(data);
+    return createSuccessResponse(data)
   } catch (error) {
-    return createErrorResponse(error);
+    return createErrorResponse(error)
   }
 }
 ```

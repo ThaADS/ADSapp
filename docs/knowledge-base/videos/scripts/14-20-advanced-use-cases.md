@@ -32,6 +32,7 @@ This file contains scripts for advanced features (14-17) and industry use cases 
 **NARRATION**: "Let's build a real workflow: automated lead qualification. When a new customer messages, we'll ask questions, score their responses, and route them appropriately."
 
 **SCREEN ACTION**: Build workflow step-by-step:
+
 1. Trigger: New conversation from unknown contact
 2. Action: Send greeting with qualification question
 3. Wait: Customer response with timeout
@@ -47,6 +48,7 @@ This file contains scripts for advanced features (14-17) and industry use cases 
 **NARRATION**: "Variables make workflows personal. Capture customer data and use it throughout the workflow."
 
 **SCREEN ACTION**: Demonstrate variable usage:
+
 - {{customer.name}} for personalization
 - {{response.text}} to capture answers
 - {{conversation.tag}} for categorization
@@ -59,6 +61,7 @@ This file contains scripts for advanced features (14-17) and industry use cases 
 **NARRATION**: "Time-based triggers handle scheduled tasks and delayed actions."
 
 **SCREEN ACTION**: Configure time-based rules:
+
 - Business hours routing
 - After-hours auto-responses
 - Follow-up reminders (24h, 48h, 7 days)
@@ -104,6 +107,7 @@ This file contains scripts for advanced features (14-17) and industry use cases 
 **SCREEN ACTION**: Navigate to Settings → Integrations → Webhooks
 
 **CALLOUT**: "Webhook Events:
+
 - message.received
 - message.sent
 - conversation.assigned
@@ -138,6 +142,7 @@ POST /templates - Create template"
 **SCREEN ACTION**: Build integration workflow:
 
 **Example 1: Salesforce**
+
 - Webhook receives message.received
 - Extract contact details
 - Search Salesforce for matching contact
@@ -146,6 +151,7 @@ POST /templates - Create template"
 - Add conversation note to activity history
 
 **Example 2: HubSpot**
+
 - Use Zapier connector
 - Trigger: New contact in ADSapp
 - Action: Create contact in HubSpot
@@ -162,7 +168,7 @@ POST /templates - Create template"
 ```javascript
 // Receive ADSapp webhook
 app.post('/webhook/adsapp', (req, res) => {
-  const { event, data } = req.body;
+  const { event, data } = req.body
 
   if (event === 'message.received') {
     // Post to Slack
@@ -170,12 +176,12 @@ app.post('/webhook/adsapp', (req, res) => {
       channel: '#customer-inquiries',
       text: `New message from ${data.contact.name}`,
       message: data.message.content,
-      link: `https://app.adsapp.com/conversations/${data.conversation.id}`
-    });
+      link: `https://app.adsapp.com/conversations/${data.conversation.id}`,
+    })
   }
 
-  res.status(200).send('OK');
-});
+  res.status(200).send('OK')
+})
 ```
 
 **CALLOUT**: "Custom Integration: Webhooks → Your Logic → Third-party APIs"
@@ -185,6 +191,7 @@ app.post('/webhook/adsapp', (req, res) => {
 **NARRATION**: "No code? Use Zapier to connect ADSapp to 5,000+ apps. Create automated workflows in minutes."
 
 **SCREEN ACTION**: Build Zapier automation:
+
 1. Trigger: New message in ADSapp
 2. Action: Create row in Google Sheets
 3. Action: Send email via Gmail
@@ -208,21 +215,27 @@ app.post('/webhook/adsapp', (req, res) => {
 ## Script Outline
 
 ### Introduction (0:00-0:30)
+
 Data ownership and custom analysis capabilities.
 
 ### Section 1: Report Builder (0:30-3:00)
+
 Drag-and-drop report builder. Select metrics, dimensions, filters. Save custom reports.
 
 ### Section 2: Scheduled Reports (3:00-5:00)
+
 Automate report delivery via email. Daily, weekly, monthly schedules. Multiple recipients.
 
 ### Section 3: Data Export Formats (5:00-7:00)
+
 Export to CSV, Excel, JSON, PDF. Full data export vs filtered data. Maintain data privacy.
 
 ### Section 4: Advanced Analytics (7:00-9:00)
+
 Cohort analysis. Funnel reports. Trend analysis. Custom dashboards.
 
 ### Conclusion (9:00-10:00)
+
 Custom reporting mastered, data accessible, insights actionable.
 
 ---
@@ -249,6 +262,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **SCREEN ACTION**: Configure role-based permissions
 
 **CALLOUT**: "Security Layers:
+
 - Role-based access control
 - Two-factor authentication
 - IP whitelisting
@@ -262,6 +276,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **SCREEN ACTION**: Show encryption indicators, data handling workflows
 
 **CALLOUT**: "Data Security:
+
 - End-to-end encryption
 - Encrypted at rest
 - Secure transmission (TLS 1.3)
@@ -273,6 +288,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **NARRATION**: "GDPR compliance requires specific capabilities for European customers."
 
 **SCREEN ACTION**: Demonstrate GDPR features:
+
 - Customer data export (data portability)
 - Right to be forgotten (deletion)
 - Consent management
@@ -288,6 +304,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **SCREEN ACTION**: View audit log interface showing various activities
 
 **CALLOUT**: "Audit Events:
+
 - User logins
 - Permission changes
 - Data exports
@@ -331,6 +348,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **NARRATION**: "Handle product questions to increase conversion."
 
 **SCREEN ACTION**: Build workflow:
+
 - Customer asks about product
 - Bot provides product details from catalog
 - Agent jumps in for complex questions
@@ -344,6 +362,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **NARRATION**: "Automate order updates to reduce support volume."
 
 **SCREEN ACTION**: Integration demonstration:
+
 - Order placed → Webhook triggers
 - Send order confirmation via WhatsApp template
 - Provide tracking link
@@ -357,6 +376,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **NARRATION**: "Handle common post-purchase inquiries efficiently."
 
 **SCREEN ACTION**: Support workflows:
+
 - Order status lookup by order number
 - Delivery issue resolution
 - Product usage questions
@@ -370,6 +390,7 @@ Custom reporting mastered, data accessible, insights actionable.
 **NARRATION**: "Streamline return process for customer satisfaction."
 
 **SCREEN ACTION**: Return workflow:
+
 - Customer initiates return request
 - Automated eligibility check
 - Generate return label
@@ -395,21 +416,27 @@ Custom reporting mastered, data accessible, insights actionable.
 ## Script Outline
 
 ### Introduction (0:00-0:30)
+
 Real estate thrives on quick responses and relationship building via WhatsApp.
 
 ### Section 1: Lead Capture and Qualification (0:30-3:00)
+
 Automated greeting for new leads. Qualification questions: budget, timeline, preferences. Tag and score based on responses.
 
 ### Section 2: Property Matching (3:00-5:00)
+
 Integration with property database. Automated property suggestions based on criteria. Rich media: photos, videos, virtual tours. Follow-up on property interest.
 
 ### Section 3: Viewing Scheduling (5:00-7:00)
+
 Calendar integration for availability. Automated scheduling flow. Reminders before viewing. Post-viewing follow-up.
 
 ### Section 4: Nurture Sequences (7:00-9:00)
+
 Long-term follow-up for prospects not ready yet. Market updates and new listings. Relationship maintenance. Re-engagement campaigns.
 
 ### Conclusion (9:00-10:00)
+
 Real estate workflows active, lead conversion optimized, relationships maintained.
 
 ---
@@ -434,6 +461,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **NARRATION**: "Healthcare has strict privacy requirements. Configure ADSapp for HIPAA compliance."
 
 **SCREEN ACTION**: Show privacy settings:
+
 - Limit message content to appointment details only
 - No PHI in messages
 - Secure patient verification
@@ -447,6 +475,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **NARRATION**: "Automated appointment booking reduces admin workload."
 
 **SCREEN ACTION**: Build booking workflow:
+
 1. Patient requests appointment
 2. Bot asks for preferred dates/times
 3. Check calendar availability
@@ -461,6 +490,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **NARRATION**: "Automated reminders reduce no-shows significantly."
 
 **SCREEN ACTION**: Configure reminder sequence:
+
 - 7 days before: Initial reminder
 - 3 days before: Confirmation request
 - 1 day before: Final reminder with directions
@@ -475,6 +505,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **NARRATION**: "Make rescheduling easy to maintain patient relationships."
 
 **SCREEN ACTION**: Rescheduling workflow:
+
 - Patient requests change
 - Automated slot suggestions
 - One-click rescheduling
@@ -488,6 +519,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **NARRATION**: "Follow-up messages improve care and patient satisfaction."
 
 **SCREEN ACTION**: Follow-up workflow:
+
 - Post-visit feedback request
 - Prescription reminders
 - Follow-up appointment booking
@@ -504,6 +536,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **CALLOUT**: "Healthcare Results: 40% Fewer No-Shows | 90% Patient Satisfaction | Full Compliance"
 
 **CTA TEXT ON SCREEN**:
+
 - "Complete Video Series | Explore ADSapp Further"
 - "Start Free Trial: adsapp.com"
 - "Full Documentation: docs.adsapp.com"
@@ -519,6 +552,7 @@ Real estate workflows active, lead conversion optimized, relationships maintaine
 **Graphics**: Workflow diagrams, integration maps, result metrics
 
 **Key Visuals Needed**:
+
 - Complex workflow builders in action
 - API integration demonstrations
 - Industry-specific dashboards

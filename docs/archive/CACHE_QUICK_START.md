@@ -39,39 +39,33 @@ npm run migration:apply
 ## Step 4: Add Caching to Your API (5 minutes)
 
 ### Before (No Cache):
+
 ```typescript
 export async function GET(req: NextRequest) {
-  const { tenantId } = await getUserContext(req);
+  const { tenantId } = await getUserContext(req)
 
   const conversations = await supabase
     .from('conversations')
     .select('*')
-    .eq('organization_id', tenantId);
+    .eq('organization_id', tenantId)
 
-  return NextResponse.json(conversations);
+  return NextResponse.json(conversations)
 }
 ```
 
 ### After (With Cache):
+
 ```typescript
-import { getCached } from '@/lib/cache';
+import { getCached } from '@/lib/cache'
 
 export async function GET(req: NextRequest) {
-  const { tenantId } = await getUserContext(req);
+  const { tenantId } = await getUserContext(req)
 
-  const conversations = await getCached(
-    tenantId,
-    'conversations',
-    'list',
-    async () => {
-      return await supabase
-        .from('conversations')
-        .select('*')
-        .eq('organization_id', tenantId);
-    }
-  );
+  const conversations = await getCached(tenantId, 'conversations', 'list', async () => {
+    return await supabase.from('conversations').select('*').eq('organization_id', tenantId)
+  })
 
-  return NextResponse.json(conversations);
+  return NextResponse.json(conversations)
 }
 ```
 
@@ -80,21 +74,19 @@ export async function GET(req: NextRequest) {
 Update your mutation handlers:
 
 ```typescript
-import { invalidateCache } from '@/lib/cache';
+import { invalidateCache } from '@/lib/cache'
 
 export async function POST(req: NextRequest) {
-  const { tenantId } = await getUserContext(req);
-  const data = await req.json();
+  const { tenantId } = await getUserContext(req)
+  const data = await req.json()
 
   // Create conversation
-  const conversation = await supabase
-    .from('conversations')
-    .insert(data);
+  const conversation = await supabase.from('conversations').insert(data)
 
   // Invalidate cache
-  await invalidateCache(tenantId, 'conversations');
+  await invalidateCache(tenantId, 'conversations')
 
-  return NextResponse.json(conversation);
+  return NextResponse.json(conversation)
 }
 ```
 
@@ -105,71 +97,79 @@ Your API is now cached and will be **10-20x faster**.
 ## Verify It's Working
 
 ### Check Cache Hit Rate:
+
 ```typescript
-import { getCacheAnalytics } from '@/lib/cache';
+import { getCacheAnalytics } from '@/lib/cache'
 
-const analytics = getCacheAnalytics();
-const metrics = analytics.getCurrentMetrics();
+const analytics = getCacheAnalytics()
+const metrics = analytics.getCurrentMetrics()
 
-console.log('Hit Rate:', metrics.combined.overallHitRate, '%');
-console.log('Avg Latency:', metrics.combined.averageLatency, 'ms');
+console.log('Hit Rate:', metrics.combined.overallHitRate, '%')
+console.log('Avg Latency:', metrics.combined.averageLatency, 'ms')
 ```
 
 ### Monitor Health:
-```typescript
-import { checkCacheHealth } from '@/lib/cache';
 
-const health = await checkCacheHealth();
-console.log('Status:', health.status); // 'healthy' | 'degraded' | 'critical'
-console.log('Score:', health.score); // 0-100
+```typescript
+import { checkCacheHealth } from '@/lib/cache'
+
+const health = await checkCacheHealth()
+console.log('Status:', health.status) // 'healthy' | 'degraded' | 'critical'
+console.log('Score:', health.score) // 0-100
 ```
 
 ## Common Patterns
 
 ### Pattern 1: List Queries
+
 ```typescript
-const items = await getCached(tenantId, 'contacts', 'list', fetchContacts);
+const items = await getCached(tenantId, 'contacts', 'list', fetchContacts)
 ```
 
 ### Pattern 2: Single Item
+
 ```typescript
-const item = await getCached(tenantId, 'contact', contactId, () => fetchContact(contactId));
+const item = await getCached(tenantId, 'contact', contactId, () => fetchContact(contactId))
 ```
 
 ### Pattern 3: Dashboard Stats
+
 ```typescript
-const stats = await getCached(tenantId, 'dashboard', 'stats', fetchDashboardStats);
+const stats = await getCached(tenantId, 'dashboard', 'stats', fetchDashboardStats)
 ```
 
 ### Pattern 4: Cache Middleware
+
 ```typescript
-import { withCache } from '@/lib/middleware/cache-middleware';
+import { withCache } from '@/lib/middleware/cache-middleware'
 
 export const GET = withCache(
-  async (req) => {
-    const data = await fetchData();
-    return NextResponse.json(data);
+  async req => {
+    const data = await fetchData()
+    return NextResponse.json(data)
   },
   { defaultTTL: 300 } // 5 minutes
-);
+)
 ```
 
 ### Pattern 5: Rate Limiting
+
 ```typescript
-import { withRateLimit, createRateLimiter } from '@/lib/middleware/rate-limiter-redis';
+import { withRateLimit, createRateLimiter } from '@/lib/middleware/rate-limiter-redis'
 
 const limiter = createRateLimiter({
   keyPrefix: 'rate:api',
   windowMs: 60000,
   maxRequests: 100,
-});
+})
 
-export const POST = withRateLimit(handler, limiter);
+export const POST = withRateLimit(handler, limiter)
 ```
 
 ## Expected Results
 
 After implementing caching:
+
 - ✅ API response time: **250ms → 15ms** (94% faster)
 - ✅ Database queries: **-80% reduction**
 - ✅ Cost: **-70% savings**

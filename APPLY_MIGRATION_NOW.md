@@ -44,6 +44,7 @@ You should see output like this:
 ### ⚠️ If You See an Error
 
 **Type Mismatch Error**:
+
 ```
 ERROR: foreign key constraint cannot be implemented
 DETAIL: ... incompatible types ...
@@ -52,6 +53,7 @@ DETAIL: ... incompatible types ...
 → Take a screenshot and send it to me. The diagnostic query will show the actual type.
 
 **Syntax Error**:
+
 ```
 ERROR: syntax error at or near ...
 ```
@@ -59,6 +61,7 @@ ERROR: syntax error at or near ...
 → You may have copied only part of the file. Try copying again.
 
 **Permission Error**:
+
 ```
 ERROR: permission denied ...
 ```
@@ -80,6 +83,7 @@ AND table_schema = 'public';
 ```
 
 Expected result:
+
 ```
 team_invitations  | 4
 api_keys         | 4
@@ -102,10 +106,12 @@ The migration is now applied. You can now:
 ## What Changed?
 
 Before migration:
+
 - ❌ Team invitations: UI only (no database)
 - ❌ API keys: Mock data only
 
 After migration:
+
 - ✅ Team invitations: Fully functional with email
 - ✅ API keys: Fully functional with hashing
 - ✅ Audit logging for all changes
@@ -125,6 +131,7 @@ After migration:
 ---
 
 **Summary**:
+
 1. Open Supabase Dashboard → SQL Editor
 2. Copy `037_team_invitations_FIXED.sql`
 3. Paste and Run

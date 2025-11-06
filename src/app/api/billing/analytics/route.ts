@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
@@ -13,10 +12,7 @@ export async function GET(request: NextRequest) {
     const organizationId = request.headers.get('X-Organization-ID')
 
     if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization ID is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Organization ID is required' }, { status: 400 })
     }
 
     const supabase = await createClient()
@@ -29,10 +25,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (!org) {
-      return NextResponse.json(
-        { error: 'Organization not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // Calculate date range
@@ -89,17 +82,19 @@ export async function GET(request: NextRequest) {
 
     // Calculate revenue metrics
     const paidInvoices = invoices?.filter(inv => inv.status === 'paid') || []
-    const failedInvoices = invoices?.filter(inv =>
-      inv.status === 'uncollectible' ||
-      (inv.status === 'open' && inv.attempt_count >= 3)
-    ) || []
+    const failedInvoices =
+      invoices?.filter(
+        inv => inv.status === 'uncollectible' || (inv.status === 'open' && inv.attempt_count >= 3)
+      ) || []
 
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.amount, 0)
-    const averageInvoiceAmount = invoices?.length ?
-      invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length : 0
+    const averageInvoiceAmount = invoices?.length
+      ? invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length
+      : 0
 
-    const paymentSuccessRate = invoices?.length ?
-      (paidInvoices.length / invoices.length) * 100 : 100
+    const paymentSuccessRate = invoices?.length
+      ? (paidInvoices.length / invoices.length) * 100
+      : 100
 
     // Calculate MRR/ARR (simplified - assumes subscription is active)
     const currentPlan = await getPlanDetails(org.subscription_tier)
@@ -121,11 +116,13 @@ export async function GET(request: NextRequest) {
     //   .lte('created_at', previousEndDate.toISOString())
 
     const previousInvoices: any[] = []
-    const previousRevenue = previousInvoices?.filter(inv => inv.status === 'paid')
-      .reduce((sum, inv) => sum + inv.amount, 0) || 0
+    const previousRevenue =
+      previousInvoices
+        ?.filter(inv => inv.status === 'paid')
+        .reduce((sum, inv) => sum + inv.amount, 0) || 0
 
-    const revenueGrowth = previousRevenue > 0 ?
-      ((totalRevenue - previousRevenue) / previousRevenue) * 100 : 0
+    const revenueGrowth =
+      previousRevenue > 0 ? ((totalRevenue - previousRevenue) / previousRevenue) * 100 : 0
 
     // Generate historical data
     const revenueHistory = generateRevenueHistory(invoices || [], period, startDate, endDate)
@@ -134,21 +131,24 @@ export async function GET(request: NextRequest) {
     const planDistribution = calculatePlanDistribution(subscriptionHistory || [], currentPlan)
 
     // Calculate usage totals
-    const totalUsage = usageData?.reduce((acc, usage) => ({
-      messages: acc.messages + (usage.messages_sent || 0),
-      users: acc.users + (usage.users_active || 0),
-      contacts: acc.contacts + (usage.contacts_managed || 0),
-      automations: acc.automations + (usage.automation_runs || 0),
-      apiCalls: acc.apiCalls + (usage.api_calls || 0),
-      storage: acc.storage + (usage.storage_used || 0),
-    }), {
-      messages: 0,
-      users: 0,
-      contacts: 0,
-      automations: 0,
-      apiCalls: 0,
-      storage: 0,
-    }) || {
+    const totalUsage = usageData?.reduce(
+      (acc, usage) => ({
+        messages: acc.messages + (usage.messages_sent || 0),
+        users: acc.users + (usage.users_active || 0),
+        contacts: acc.contacts + (usage.contacts_managed || 0),
+        automations: acc.automations + (usage.automation_runs || 0),
+        apiCalls: acc.apiCalls + (usage.api_calls || 0),
+        storage: acc.storage + (usage.storage_used || 0),
+      }),
+      {
+        messages: 0,
+        users: 0,
+        contacts: 0,
+        automations: 0,
+        apiCalls: 0,
+        storage: 0,
+      }
+    ) || {
       messages: 0,
       users: 0,
       contacts: 0,
@@ -157,8 +157,8 @@ export async function GET(request: NextRequest) {
       storage: 0,
     }
 
-    const overageCharges = usageData?.reduce((sum, usage) =>
-      sum + (usage.overage_charges || 0), 0) || 0
+    const overageCharges =
+      usageData?.reduce((sum, usage) => sum + (usage.overage_charges || 0), 0) || 0
 
     // Calculate customer lifecycle (simplified)
     const customerLifetime = 365 // Default to 1 year
@@ -172,7 +172,8 @@ export async function GET(request: NextRequest) {
       totalSubscriptions: 1, // Single organization
       activeSubscriptions: org.subscription_tier === 'cancelled' ? 0 : 1,
       newSubscriptions: subscriptionHistory?.filter(s => s.reason === 'upgrade').length || 0,
-      churnedSubscriptions: subscriptionHistory?.filter(s => s.reason === 'cancellation').length || 0,
+      churnedSubscriptions:
+        subscriptionHistory?.filter(s => s.reason === 'cancellation').length || 0,
       churnRate: 0, // Would need more historical data to calculate properly
       successfulPayments: paidInvoices.length,
       failedPayments: failedInvoices.length,
@@ -192,10 +193,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(analyticsData)
   } catch (error) {
     console.error('Analytics API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
@@ -210,9 +208,9 @@ async function getPlanDetails(planId: string) {
 }
 
 interface Invoice {
-  created_at: string;
-  status: string;
-  amount: number;
+  created_at: string
+  status: string
+  amount: number
 }
 
 function generateRevenueHistory(
@@ -257,15 +255,18 @@ function generateRevenueHistory(
 }
 
 interface SubscriptionHistory {
-  plan_id: string;
-  effective_date: string;
+  plan_id: string
+  effective_date: string
 }
 
 interface CurrentPlan {
-  price: number;
+  price: number
 }
 
-function calculatePlanDistribution(subscriptionHistory: SubscriptionHistory[], currentPlan: CurrentPlan | undefined) {
+function calculatePlanDistribution(
+  subscriptionHistory: SubscriptionHistory[],
+  currentPlan: CurrentPlan | undefined
+) {
   // Simplified for single organization
   return [
     {

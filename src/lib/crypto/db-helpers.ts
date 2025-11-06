@@ -16,10 +16,10 @@
  * @module crypto/db-helpers
  */
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/types/database';
-import { FieldEncryptor, fieldEncryptor } from './field-encryptor';
-import { ENCRYPTED_FIELDS } from './types';
+import { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+import { FieldEncryptor, fieldEncryptor } from './field-encryptor'
+import { ENCRYPTED_FIELDS } from './types'
 
 /**
  * Encrypted database client that transparently handles encryption/decryption
@@ -36,39 +36,37 @@ export class EncryptedSupabaseClient {
    * @param contact - Contact data to insert
    * @returns Insert result with encrypted fields
    */
-  async insertContact(
-    contact: Database['public']['Tables']['contacts']['Insert']
-  ): Promise<{
-    data: Database['public']['Tables']['contacts']['Row'] | null;
-    error: Error | null;
+  async insertContact(contact: Database['public']['Tables']['contacts']['Insert']): Promise<{
+    data: Database['public']['Tables']['contacts']['Row'] | null
+    error: Error | null
   }> {
     try {
       // Encrypt PII fields
-      const encryptedContact = this.encryptor.encryptContact(contact);
+      const encryptedContact = this.encryptor.encryptContact(contact)
 
       // Perform insert
       const { data, error } = await this.client
         .from('contacts')
         .insert(encryptedContact)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the returned data for consistency
       if (data) {
-        const decryptedData = this.encryptor.decryptContact(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptContact(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -83,12 +81,12 @@ export class EncryptedSupabaseClient {
     id: string,
     updates: Database['public']['Tables']['contacts']['Update']
   ): Promise<{
-    data: Database['public']['Tables']['contacts']['Row'] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['contacts']['Row'] | null
+    error: Error | null
   }> {
     try {
       // Encrypt PII fields in updates
-      const encryptedUpdates = this.encryptor.encryptContact(updates);
+      const encryptedUpdates = this.encryptor.encryptContact(updates)
 
       // Perform update
       const { data, error } = await this.client
@@ -96,24 +94,24 @@ export class EncryptedSupabaseClient {
         .update(encryptedUpdates)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the returned data
       if (data) {
-        const decryptedData = this.encryptor.decryptContact(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptContact(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -124,33 +122,31 @@ export class EncryptedSupabaseClient {
    * @returns Array of contacts with decrypted fields
    */
   async selectContacts(organizationId: string): Promise<{
-    data: Database['public']['Tables']['contacts']['Row'][] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['contacts']['Row'][] | null
+    error: Error | null
   }> {
     try {
       const { data, error } = await this.client
         .from('contacts')
         .select('*')
-        .eq('organization_id', organizationId);
+        .eq('organization_id', organizationId)
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt all contacts
       if (data) {
-        const decryptedData = data.map((contact) =>
-          this.encryptor.decryptContact(contact)
-        );
-        return { data: decryptedData, error: null };
+        const decryptedData = data.map(contact => this.encryptor.decryptContact(contact))
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -161,32 +157,28 @@ export class EncryptedSupabaseClient {
    * @returns Contact with decrypted fields
    */
   async selectContactById(id: string): Promise<{
-    data: Database['public']['Tables']['contacts']['Row'] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['contacts']['Row'] | null
+    error: Error | null
   }> {
     try {
-      const { data, error } = await this.client
-        .from('contacts')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await this.client.from('contacts').select('*').eq('id', id).single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the contact
       if (data) {
-        const decryptedData = this.encryptor.decryptContact(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptContact(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -196,39 +188,37 @@ export class EncryptedSupabaseClient {
    * @param profile - Profile data to insert
    * @returns Insert result with encrypted fields
    */
-  async insertProfile(
-    profile: Database['public']['Tables']['profiles']['Insert']
-  ): Promise<{
-    data: Database['public']['Tables']['profiles']['Row'] | null;
-    error: Error | null;
+  async insertProfile(profile: Database['public']['Tables']['profiles']['Insert']): Promise<{
+    data: Database['public']['Tables']['profiles']['Row'] | null
+    error: Error | null
   }> {
     try {
       // Encrypt PII fields
-      const encryptedProfile = this.encryptor.encryptProfile(profile);
+      const encryptedProfile = this.encryptor.encryptProfile(profile)
 
       // Perform insert
       const { data, error } = await this.client
         .from('profiles')
         .insert(encryptedProfile)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the returned data
       if (data) {
-        const decryptedData = this.encryptor.decryptProfile(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptProfile(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -243,12 +233,12 @@ export class EncryptedSupabaseClient {
     id: string,
     updates: Database['public']['Tables']['profiles']['Update']
   ): Promise<{
-    data: Database['public']['Tables']['profiles']['Row'] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['profiles']['Row'] | null
+    error: Error | null
   }> {
     try {
       // Encrypt PII fields in updates
-      const encryptedUpdates = this.encryptor.encryptProfile(updates);
+      const encryptedUpdates = this.encryptor.encryptProfile(updates)
 
       // Perform update
       const { data, error } = await this.client
@@ -256,24 +246,24 @@ export class EncryptedSupabaseClient {
         .update(encryptedUpdates)
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the returned data
       if (data) {
-        const decryptedData = this.encryptor.decryptProfile(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptProfile(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -284,33 +274,31 @@ export class EncryptedSupabaseClient {
    * @returns Array of profiles with decrypted fields
    */
   async selectProfiles(organizationId: string): Promise<{
-    data: Database['public']['Tables']['profiles']['Row'][] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['profiles']['Row'][] | null
+    error: Error | null
   }> {
     try {
       const { data, error } = await this.client
         .from('profiles')
         .select('*')
-        .eq('organization_id', organizationId);
+        .eq('organization_id', organizationId)
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt all profiles
       if (data) {
-        const decryptedData = data.map((profile) =>
-          this.encryptor.decryptProfile(profile)
-        );
-        return { data: decryptedData, error: null };
+        const decryptedData = data.map(profile => this.encryptor.decryptProfile(profile))
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -321,32 +309,28 @@ export class EncryptedSupabaseClient {
    * @returns Profile with decrypted fields
    */
   async selectProfileById(id: string): Promise<{
-    data: Database['public']['Tables']['profiles']['Row'] | null;
-    error: Error | null;
+    data: Database['public']['Tables']['profiles']['Row'] | null
+    error: Error | null
   }> {
     try {
-      const { data, error } = await this.client
-        .from('profiles')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await this.client.from('profiles').select('*').eq('id', id).single()
 
       if (error) {
-        return { data: null, error };
+        return { data: null, error }
       }
 
       // Decrypt the profile
       if (data) {
-        const decryptedData = this.encryptor.decryptProfile(data);
-        return { data: decryptedData, error: null };
+        const decryptedData = this.encryptor.decryptProfile(data)
+        return { data: decryptedData, error: null }
       }
 
-      return { data, error: null };
+      return { data, error: null }
     } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      }
     }
   }
 
@@ -356,7 +340,7 @@ export class EncryptedSupabaseClient {
    * @returns Supabase client
    */
   getClient(): SupabaseClient<Database> {
-    return this.client;
+    return this.client
   }
 }
 
@@ -371,7 +355,7 @@ export function createEncryptedClient(
   client: SupabaseClient<Database>,
   encryptor?: FieldEncryptor
 ): EncryptedSupabaseClient {
-  return new EncryptedSupabaseClient(client, encryptor);
+  return new EncryptedSupabaseClient(client, encryptor)
 }
 
 /**
@@ -385,14 +369,14 @@ export function encryptBeforeWrite<T extends Record<string, unknown>>(
   tableName: keyof typeof ENCRYPTED_FIELDS,
   data: T
 ): T {
-  const encryptor = fieldEncryptor;
-  const fieldsToEncrypt = ENCRYPTED_FIELDS[tableName];
+  const encryptor = fieldEncryptor
+  const fieldsToEncrypt = ENCRYPTED_FIELDS[tableName]
 
   if (!fieldsToEncrypt || fieldsToEncrypt.length === 0) {
-    return data;
+    return data
   }
 
-  return encryptor.encryptRecord(data, fieldsToEncrypt as (keyof T)[]);
+  return encryptor.encryptRecord(data, fieldsToEncrypt as (keyof T)[])
 }
 
 /**
@@ -406,14 +390,14 @@ export function decryptAfterRead<T extends Record<string, unknown>>(
   tableName: keyof typeof ENCRYPTED_FIELDS,
   data: T
 ): T {
-  const encryptor = fieldEncryptor;
-  const fieldsToDecrypt = ENCRYPTED_FIELDS[tableName];
+  const encryptor = fieldEncryptor
+  const fieldsToDecrypt = ENCRYPTED_FIELDS[tableName]
 
   if (!fieldsToDecrypt || fieldsToDecrypt.length === 0) {
-    return data;
+    return data
   }
 
-  return encryptor.decryptRecord(data, fieldsToDecrypt as (keyof T)[]);
+  return encryptor.decryptRecord(data, fieldsToDecrypt as (keyof T)[])
 }
 
 /**
@@ -427,7 +411,7 @@ export function encryptRecords<T extends Record<string, unknown>>(
   tableName: keyof typeof ENCRYPTED_FIELDS,
   records: T[]
 ): T[] {
-  return records.map((record) => encryptBeforeWrite(tableName, record));
+  return records.map(record => encryptBeforeWrite(tableName, record))
 }
 
 /**
@@ -441,7 +425,7 @@ export function decryptRecords<T extends Record<string, unknown>>(
   tableName: keyof typeof ENCRYPTED_FIELDS,
   records: T[]
 ): T[] {
-  return records.map((record) => decryptAfterRead(tableName, record));
+  return records.map(record => decryptAfterRead(tableName, record))
 }
 
 /**
@@ -459,7 +443,7 @@ export async function encryptionMiddleware<T extends Record<string, unknown>>(
   tableName: keyof typeof ENCRYPTED_FIELDS,
   data: T
 ): Promise<T> {
-  return encryptBeforeWrite(tableName, data);
+  return encryptBeforeWrite(tableName, data)
 }
 
 /**
@@ -478,9 +462,9 @@ export async function decryptionMiddleware<T extends Record<string, unknown>>(
   data: T | T[]
 ): Promise<T | T[]> {
   if (Array.isArray(data)) {
-    return decryptRecords(tableName, data);
+    return decryptRecords(tableName, data)
   }
-  return decryptAfterRead(tableName, data);
+  return decryptAfterRead(tableName, data)
 }
 
 /**
@@ -495,13 +479,10 @@ export function createEncryptionHooks(client: SupabaseClient<Database>) {
      * Insert with automatic encryption
      */
     async insertWithEncryption<
-      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables']
-    >(
-      tableName: TableName,
-      data: Database['public']['Tables'][TableName]['Insert']
-    ) {
-      const encrypted = encryptBeforeWrite(tableName, data);
-      const result = await client.from(tableName).insert(encrypted).select();
+      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables'],
+    >(tableName: TableName, data: Database['public']['Tables'][TableName]['Insert']) {
+      const encrypted = encryptBeforeWrite(tableName, data)
+      const result = await client.from(tableName).insert(encrypted).select()
 
       if (result.data) {
         return {
@@ -510,28 +491,24 @@ export function createEncryptionHooks(client: SupabaseClient<Database>) {
             tableName,
             result.data as Record<string, unknown>[]
           ) as typeof result.data,
-        };
+        }
       }
 
-      return result;
+      return result
     },
 
     /**
      * Update with automatic encryption
      */
     async updateWithEncryption<
-      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables']
+      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables'],
     >(
       tableName: TableName,
       id: string,
       updates: Database['public']['Tables'][TableName]['Update']
     ) {
-      const encrypted = encryptBeforeWrite(tableName, updates);
-      const result = await client
-        .from(tableName)
-        .update(encrypted)
-        .eq('id', id)
-        .select();
+      const encrypted = encryptBeforeWrite(tableName, updates)
+      const result = await client.from(tableName).update(encrypted).eq('id', id).select()
 
       if (result.data) {
         return {
@@ -540,19 +517,19 @@ export function createEncryptionHooks(client: SupabaseClient<Database>) {
             tableName,
             result.data as Record<string, unknown>[]
           ) as typeof result.data,
-        };
+        }
       }
 
-      return result;
+      return result
     },
 
     /**
      * Select with automatic decryption
      */
     async selectWithDecryption<
-      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables']
+      TableName extends keyof typeof ENCRYPTED_FIELDS & keyof Database['public']['Tables'],
     >(tableName: TableName, query?: string) {
-      const result = await client.from(tableName).select(query || '*');
+      const result = await client.from(tableName).select(query || '*')
 
       if (result.data) {
         return {
@@ -561,12 +538,12 @@ export function createEncryptionHooks(client: SupabaseClient<Database>) {
             tableName,
             result.data as Record<string, unknown>[]
           ) as typeof result.data,
-        };
+        }
       }
 
-      return result;
+      return result
     },
-  };
+  }
 }
 
 /**
@@ -575,34 +552,34 @@ export function createEncryptionHooks(client: SupabaseClient<Database>) {
  * @returns Verification result
  */
 export function verifyDatabaseEncryption(): {
-  configured: boolean;
-  tablesConfigured: string[];
-  fieldsConfigured: Record<string, string[]>;
-  warnings: string[];
+  configured: boolean
+  tablesConfigured: string[]
+  fieldsConfigured: Record<string, string[]>
+  warnings: string[]
 } {
-  const warnings: string[] = [];
-  const tablesConfigured = Object.keys(ENCRYPTED_FIELDS);
-  const fieldsConfigured: Record<string, string[]> = {};
+  const warnings: string[] = []
+  const tablesConfigured = Object.keys(ENCRYPTED_FIELDS)
+  const fieldsConfigured: Record<string, string[]> = {}
 
   // Check each table configuration
   for (const [table, fields] of Object.entries(ENCRYPTED_FIELDS)) {
-    fieldsConfigured[table] = fields;
+    fieldsConfigured[table] = fields
 
     if (fields.length === 0) {
-      warnings.push(`Table '${table}' has no encrypted fields configured`);
+      warnings.push(`Table '${table}' has no encrypted fields configured`)
     }
   }
 
   // Check if encryption key is available
   try {
-    const { healthy } = FieldEncryptor.verifyEncryption();
+    const { healthy } = FieldEncryptor.verifyEncryption()
     if (!healthy) {
-      warnings.push('Encryption system is not healthy');
+      warnings.push('Encryption system is not healthy')
     }
   } catch (error) {
     warnings.push(
       `Encryption verification failed: ${error instanceof Error ? error.message : String(error)}`
-    );
+    )
   }
 
   return {
@@ -610,5 +587,5 @@ export function verifyDatabaseEncryption(): {
     tablesConfigured,
     fieldsConfigured,
     warnings,
-  };
+  }
 }

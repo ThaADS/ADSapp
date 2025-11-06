@@ -3,6 +3,7 @@
 ## Overview
 
 ADSapp implements a comprehensive Role-Based Access Control (RBAC) system with:
+
 - **Hierarchical roles** with priority-based resolution
 - **Granular permissions** for 50+ resource/action combinations
 - **Conditional access** based on ownership, team, organization
@@ -42,21 +43,25 @@ ADSapp implements a comprehensive Role-Based Access Control (RBAC) system with:
 ### Tables
 
 **roles**
+
 - Defines roles with permissions and priority
 - System roles cannot be modified/deleted
 - Organization-specific custom roles supported
 
 **user_roles**
+
 - Many-to-many relationship between users and roles
 - Support for role expiration
 - Tracks who granted the role
 
 **permission_overrides**
+
 - User-specific permission exceptions
 - Can allow or deny specific actions
 - Optional resource-level granularity
 
 **rbac_audit_log**
+
 - Complete audit trail
 - Records all permission changes
 - Includes actor, target, and metadata
@@ -66,36 +71,43 @@ ADSapp implements a comprehensive Role-Based Access Control (RBAC) system with:
 ### System Roles
 
 **Super Admin (Priority: 1000)**
+
 - Platform-wide access
 - All resources, all actions
 - Cannot be deleted or modified
 
 **Organization Owner (Priority: 900)**
+
 - Full organizational control
 - Manage all resources within organization
 - Assign roles, manage billing
 
 **Organization Admin (Priority: 800)**
+
 - Management access
 - Cannot manage ownership or billing
 - Full conversation and contact management
 
 **Team Lead (Priority: 700)**
+
 - Team-level management
 - Access to team resources only
 - Limited administrative capabilities
 
 **Supervisor (Priority: 650)**
+
 - Monitoring and reporting
 - Read-only access to conversations
 - Full report generation
 
 **Agent (Priority: 600)**
+
 - Conversation handling
 - Own conversations and contacts
 - Template usage
 
 **Billing Manager (Priority: 500)**
+
 - Financial management
 - Billing and subscription access
 - Analytics and reports
@@ -156,22 +168,27 @@ ADSapp implements a comprehensive Role-Based Access Control (RBAC) system with:
 ### Conditions
 
 **own**
+
 - User owns the resource
 - Checks: `created_by`, `assigned_to`, `user_id`
 
 **team**
+
 - Resource belongs to user's team
 - Checks: `team_id` matching
 
 **organization**
+
 - Resource belongs to user's organization
 - Checks: `organization_id` matching
 
 **tags**
+
 - Resource has specific tags
 - Array-based matching
 
 **status**
+
 - Resource has specific status
 - Status value matching
 
@@ -209,17 +226,13 @@ async function handler(request: NextRequest, context: any) {
 export const PUT = withRbac(handler, {
   resource: 'conversations',
   action: 'update',
-  getResourceId: async (request) => {
+  getResourceId: async request => {
     const url = new URL(request.url)
     return url.pathname.split('/').pop()
   },
   getResourceData: async (request, context, resourceId) => {
     const supabase = await createClient()
-    const { data } = await supabase
-      .from('conversations')
-      .select('*')
-      .eq('id', resourceId)
-      .single()
+    const { data } = await supabase.from('conversations').select('*').eq('id', resourceId).single()
     return data
   },
 })
@@ -250,12 +263,7 @@ async function handler(request: NextRequest, context: any) {
   const { user, profile } = context
 
   // Require permission (throws if denied)
-  await requirePermission(
-    user.id,
-    profile.organization_id,
-    'contacts',
-    'export'
-  )
+  await requirePermission(user.id, profile.organization_id, 'contacts', 'export')
 
   // Permission granted, proceed
   const contacts = await exportContacts()
@@ -380,27 +388,27 @@ LIMIT 100;
 
 ### Organization Owner
 
-| Resource | Create | Read | Update | Delete | Special |
-|----------|--------|------|--------|--------|---------|
-| Organizations | ✅ | ✅ | ✅ | ✅ | - |
-| Users | ✅ | ✅ | ✅ | ✅ | - |
-| Roles | ✅ | ✅ | ✅ | ✅ | - |
-| Conversations | ✅ | ✅ | ✅ | ✅ | Assign, Close |
-| Contacts | ✅ | ✅ | ✅ | ✅ | Export, Import |
-| Templates | ✅ | ✅ | ✅ | ✅ | Use |
-| Automation | ✅ | ✅ | ✅ | ✅ | - |
-| Analytics | - | ✅ | - | - | Export |
-| Billing | ✅ | ✅ | ✅ | - | - |
-| Settings | ✅ | ✅ | ✅ | - | - |
+| Resource      | Create | Read | Update | Delete | Special        |
+| ------------- | ------ | ---- | ------ | ------ | -------------- |
+| Organizations | ✅     | ✅   | ✅     | ✅     | -              |
+| Users         | ✅     | ✅   | ✅     | ✅     | -              |
+| Roles         | ✅     | ✅   | ✅     | ✅     | -              |
+| Conversations | ✅     | ✅   | ✅     | ✅     | Assign, Close  |
+| Contacts      | ✅     | ✅   | ✅     | ✅     | Export, Import |
+| Templates     | ✅     | ✅   | ✅     | ✅     | Use            |
+| Automation    | ✅     | ✅   | ✅     | ✅     | -              |
+| Analytics     | -      | ✅   | -      | -      | Export         |
+| Billing       | ✅     | ✅   | ✅     | -      | -              |
+| Settings      | ✅     | ✅   | ✅     | -      | -              |
 
 ### Agent
 
-| Resource | Create | Read | Update | Delete | Special |
-|----------|--------|------|--------|--------|---------|
-| Conversations | ✅ | ✅ | ✅ (own) | ❌ | Close (own) |
-| Contacts | ✅ | ✅ | ✅ (own) | ❌ | - |
-| Messages | ✅ (own) | ✅ | ❌ | ❌ | - |
-| Templates | ❌ | ✅ | ❌ | ❌ | Use |
+| Resource      | Create   | Read | Update   | Delete | Special     |
+| ------------- | -------- | ---- | -------- | ------ | ----------- |
+| Conversations | ✅       | ✅   | ✅ (own) | ❌     | Close (own) |
+| Contacts      | ✅       | ✅   | ✅ (own) | ❌     | -           |
+| Messages      | ✅ (own) | ✅   | ❌       | ❌     | -           |
+| Templates     | ❌       | ✅   | ❌       | ❌     | Use         |
 
 **(own)** = Only resources owned by the user
 
@@ -445,6 +453,7 @@ await redis.set(`permissions:${userId}`, JSON.stringify(permissions), 'EX', 300)
 ### Database Indexes
 
 All critical queries are indexed:
+
 - `user_roles(user_id, is_active)`
 - `roles(organization_id, priority)`
 - `permission_overrides(user_id, resource, action)`
@@ -487,9 +496,9 @@ import { recordRbacEvent } from '@/lib/telemetry'
 ```typescript
 // Map old roles to new RBAC system
 const roleMapping = {
-  'admin': 'organization_admin',
-  'manager': 'team_lead',
-  'support': 'agent',
+  admin: 'organization_admin',
+  manager: 'team_lead',
+  support: 'agent',
 }
 
 // Migrate users
@@ -513,6 +522,7 @@ for (const user of users) {
 ## Support
 
 For issues or questions:
+
 - Check audit logs for permission denials
 - Review role permissions in database
 - Contact security team for override requests

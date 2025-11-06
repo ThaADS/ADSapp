@@ -8,17 +8,11 @@ export async function POST(request: NextRequest) {
     const { paymentMethodId } = await request.json()
 
     if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization ID is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Organization ID is required' }, { status: 400 })
     }
 
     if (!paymentMethodId) {
-      return NextResponse.json(
-        { error: 'Payment method ID is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Payment method ID is required' }, { status: 400 })
     }
 
     const paymentMethodManager = new PaymentMethodManager()

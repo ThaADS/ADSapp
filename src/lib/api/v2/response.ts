@@ -6,7 +6,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -74,14 +73,14 @@ export function createV2SuccessResponse<T>(
       version: options.version || 'v2',
       timestamp: new Date().toISOString(),
       requestId,
-      ...(processingTime !== undefined && { processingTime })
-    }
+      ...(processingTime !== undefined && { processingTime }),
+    },
   }
 
   // Add HATEOAS links if endpoint provided
   if (options.endpoint) {
     response.links = {
-      self: `${options.baseUrl || ''}${options.endpoint}`
+      self: `${options.baseUrl || ''}${options.endpoint}`,
     }
   }
 
@@ -91,9 +90,9 @@ export function createV2SuccessResponse<T>(
       'X-Request-ID': requestId,
       'X-API-Version': options.version || 'v2',
       ...(processingTime !== undefined && {
-        'X-Processing-Time-MS': processingTime.toString()
-      })
-    }
+        'X-Processing-Time-MS': processingTime.toString(),
+      }),
+    },
   })
 }
 
@@ -118,22 +117,22 @@ export function createV2ErrorResponse(
       code,
       message,
       ...(options.details && { details: options.details }),
-      ...(options.field && { field: options.field })
+      ...(options.field && { field: options.field }),
     },
     meta: {
       version: options.version || 'v2',
       timestamp: new Date().toISOString(),
       requestId,
-      ...(processingTime !== undefined && { processingTime })
-    }
+      ...(processingTime !== undefined && { processingTime }),
+    },
   }
 
   return NextResponse.json(response, {
     status,
     headers: {
       'X-Request-ID': requestId,
-      'X-API-Version': options.version || 'v2'
-    }
+      'X-API-Version': options.version || 'v2',
+    },
   })
 }
 
@@ -159,13 +158,13 @@ export function createV2ListResponse<T>(
       version: options.version || 'v2',
       timestamp: new Date().toISOString(),
       requestId,
-      ...(processingTime !== undefined && { processingTime })
+      ...(processingTime !== undefined && { processingTime }),
     },
     links: {
       self: `${baseUrl}${endpoint}?page=${pagination.page}&limit=${pagination.limit}`,
       first: `${baseUrl}${endpoint}?page=1&limit=${pagination.limit}`,
-      last: `${baseUrl}${endpoint}?page=${pagination.totalPages}&limit=${pagination.limit}`
-    }
+      last: `${baseUrl}${endpoint}?page=${pagination.totalPages}&limit=${pagination.limit}`,
+    },
   }
 
   // Add next/prev links
@@ -185,9 +184,9 @@ export function createV2ListResponse<T>(
       'X-Total-Pages': pagination.totalPages.toString(),
       'X-Current-Page': pagination.page.toString(),
       ...(processingTime !== undefined && {
-        'X-Processing-Time-MS': processingTime.toString()
-      })
-    }
+        'X-Processing-Time-MS': processingTime.toString(),
+      }),
+    },
   })
 }
 
@@ -210,30 +209,28 @@ export function createV2CreatedResponse<T>(
   if (body && typeof body === 'object') {
     body.links = {
       self: resourceUrl,
-      ...(body.links || {})
+      ...(body.links || {}),
     }
   }
 
   return new NextResponse(JSON.stringify(body), {
     status: 201,
-    headers
+    headers,
   })
 }
 
 /**
  * Build no content response (204)
  */
-export function createV2NoContentResponse(
-  options: ResponseBuilderOptions = {}
-): NextResponse {
+export function createV2NoContentResponse(options: ResponseBuilderOptions = {}): NextResponse {
   const requestId = options.requestId || uuidv4()
 
   return new NextResponse(null, {
     status: 204,
     headers: {
       'X-Request-ID': requestId,
-      'X-API-Version': options.version || 'v2'
-    }
+      'X-API-Version': options.version || 'v2',
+    },
   })
 }
 
@@ -251,17 +248,17 @@ export function createV2AcceptedResponse(
     data: {
       status: 'accepted',
       statusUrl,
-      ...(options.estimatedTime && { estimatedCompletionTime: options.estimatedTime })
+      ...(options.estimatedTime && { estimatedCompletionTime: options.estimatedTime }),
     },
     meta: {
       version: options.version || 'v2',
       timestamp: new Date().toISOString(),
-      requestId
+      requestId,
     },
     links: {
       self: statusUrl,
-      status: statusUrl
-    }
+      status: statusUrl,
+    },
   }
 
   return NextResponse.json(response, {
@@ -269,8 +266,8 @@ export function createV2AcceptedResponse(
     headers: {
       'X-Request-ID': requestId,
       'X-API-Version': options.version || 'v2',
-      'Location': statusUrl
-    }
+      Location: statusUrl,
+    },
   })
 }
 
@@ -279,52 +276,22 @@ export function createV2AcceptedResponse(
  */
 export const V2Errors = {
   notFound: (resource: string, options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'RESOURCE_NOT_FOUND',
-      `${resource} not found`,
-      options,
-      404
-    ),
+    createV2ErrorResponse('RESOURCE_NOT_FOUND', `${resource} not found`, options, 404),
 
   unauthorized: (message: string = 'Authentication required', options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'UNAUTHORIZED',
-      message,
-      options,
-      401
-    ),
+    createV2ErrorResponse('UNAUTHORIZED', message, options, 401),
 
   forbidden: (message: string = 'Access denied', options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'FORBIDDEN',
-      message,
-      options,
-      403
-    ),
+    createV2ErrorResponse('FORBIDDEN', message, options, 403),
 
   badRequest: (message: string, details?: any, options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'BAD_REQUEST',
-      message,
-      { ...options, details },
-      400
-    ),
+    createV2ErrorResponse('BAD_REQUEST', message, { ...options, details }, 400),
 
   validationError: (field: string, message: string, options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'VALIDATION_ERROR',
-      message,
-      { ...options, field },
-      422
-    ),
+    createV2ErrorResponse('VALIDATION_ERROR', message, { ...options, field }, 422),
 
   conflict: (message: string, options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'CONFLICT',
-      message,
-      options,
-      409
-    ),
+    createV2ErrorResponse('CONFLICT', message, options, 409),
 
   tooManyRequests: (retryAfter?: number, options?: ResponseBuilderOptions) => {
     const response = createV2ErrorResponse(
@@ -344,20 +311,12 @@ export const V2Errors = {
   },
 
   internalError: (message: string = 'Internal server error', options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'INTERNAL_ERROR',
-      message,
-      options,
-      500
-    ),
+    createV2ErrorResponse('INTERNAL_ERROR', message, options, 500),
 
-  serviceUnavailable: (message: string = 'Service temporarily unavailable', options?: ResponseBuilderOptions) =>
-    createV2ErrorResponse(
-      'SERVICE_UNAVAILABLE',
-      message,
-      options,
-      503
-    )
+  serviceUnavailable: (
+    message: string = 'Service temporarily unavailable',
+    options?: ResponseBuilderOptions
+  ) => createV2ErrorResponse('SERVICE_UNAVAILABLE', message, options, 503),
 }
 
 /**
@@ -369,7 +328,7 @@ export function buildResourceLinks(
   baseUrl: string = ''
 ): Record<string, string> {
   const links: Record<string, string> = {
-    self: `${baseUrl}/api/v2/${resourceType}/${resourceId}`
+    self: `${baseUrl}/api/v2/${resourceType}/${resourceId}`,
   }
 
   // Add common resource-specific links

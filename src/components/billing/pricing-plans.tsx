@@ -7,67 +7,67 @@ interface PricingPlansProps {
 
 export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: PricingPlansProps) {
   return (
-    <div className="bg-white shadow rounded-lg">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-medium text-gray-900">Available Plans</h2>
-        <p className="text-sm text-gray-500">Choose the plan that fits your needs</p>
+    <div className='rounded-lg bg-white shadow'>
+      <div className='border-b border-gray-200 px-6 py-4'>
+        <h2 className='text-lg font-medium text-gray-900'>Available Plans</h2>
+        <p className='text-sm text-gray-500'>Choose the plan that fits your needs</p>
       </div>
-      <div className="p-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className='p-6'>
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
           {Object.entries(plans).map(([planId, plan]: [string, any]) => {
             const isCurrent = planId === currentPlan
 
             return (
               <div
                 key={planId}
-                className={`border rounded-lg p-6 relative ${
+                className={`relative rounded-lg border p-6 ${
                   isCurrent
                     ? 'border-green-500 bg-green-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 {isCurrent && (
-                  <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                  <span className='absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-green-500 px-2 py-1 text-xs text-white'>
                     Current
                   </span>
                 )}
 
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
+                <div className='text-center'>
+                  <h3 className='text-lg font-semibold text-gray-900'>{plan.name}</h3>
+                  <p className='mt-1 text-sm text-gray-500'>{plan.description}</p>
 
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
-                    <span className="text-gray-500">/{plan.interval}</span>
+                  <div className='mt-4'>
+                    <span className='text-4xl font-bold text-gray-900'>${plan.price}</span>
+                    <span className='text-gray-500'>/{plan.interval}</span>
                   </div>
                 </div>
 
-                <ul className="mt-6 space-y-3">
+                <ul className='mt-6 space-y-3'>
                   {plan.features.map((feature: string, index: number) => (
-                    <li key={index} className="flex items-start">
+                    <li key={index} className='flex items-start'>
                       <svg
-                        className="h-5 w-5 text-green-500 mr-3 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        className='mr-3 h-5 w-5 flex-shrink-0 text-green-500'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
                       >
                         <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
                           strokeWidth={2}
-                          d="M5 13l4 4L19 7"
+                          d='M5 13l4 4L19 7'
                         />
                       </svg>
-                      <span className="text-sm text-gray-600">{feature}</span>
+                      <span className='text-sm text-gray-600'>{feature}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="mt-6">
+                <div className='mt-6'>
                   {isCurrent ? (
                     <button
                       disabled
-                      className="w-full py-2 px-4 border border-green-300 rounded-md text-sm font-medium text-green-700 bg-green-50 cursor-not-allowed"
+                      className='w-full cursor-not-allowed rounded-md border border-green-300 bg-green-50 px-4 py-2 text-sm font-medium text-green-700'
                     >
                       Current Plan
                     </button>
@@ -75,7 +75,7 @@ export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: Prici
                     <button
                       onClick={() => onUpgrade(planId)}
                       disabled={isLoading}
-                      className="w-full py-2 px-4 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className='w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                     >
                       {isLoading ? 'Loading...' : 'Upgrade'}
                     </button>
@@ -86,9 +86,14 @@ export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: Prici
           })}
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className='mt-8 text-center text-sm text-gray-500'>
           <p>All plans include a 14-day free trial. Cancel anytime.</p>
-          <p className="mt-1">Need a custom plan? <a href="mailto:sales@adsapp.com" className="text-green-600 hover:text-green-500">Contact us</a></p>
+          <p className='mt-1'>
+            Need a custom plan?{' '}
+            <a href='mailto:sales@adsapp.com' className='text-green-600 hover:text-green-500'>
+              Contact us
+            </a>
+          </p>
         </div>
       </div>
     </div>

@@ -155,7 +155,7 @@ export async function parseResponse(response: any): Promise<ApiTestResponse> {
   return {
     status: response.status,
     data,
-    headers: response.headers
+    headers: response.headers,
   }
 }
 
@@ -246,11 +246,14 @@ export function mockAuthMiddlewareFailure(error: string = 'Unauthorized'): void 
 /**
  * Validates request body against schema
  */
-export function validateRequestBody(body: any, requiredFields: string[]): {
+export function validateRequestBody(
+  body: any,
+  requiredFields: string[]
+): {
   valid: boolean
   missingFields: string[]
 } {
-  const missingFields = requiredFields.filter((field) => !(field in body))
+  const missingFields = requiredFields.filter(field => !(field in body))
   return {
     valid: missingFields.length === 0,
     missingFields,
@@ -260,13 +263,11 @@ export function validateRequestBody(body: any, requiredFields: string[]): {
 /**
  * Creates invalid request bodies for testing validation
  */
-export function createInvalidRequestBodies(
-  validBody: Record<string, any>
-): Record<string, any>[] {
+export function createInvalidRequestBodies(validBody: Record<string, any>): Record<string, any>[] {
   const invalidBodies: Record<string, any>[] = []
 
   // Missing each required field
-  Object.keys(validBody).forEach((key) => {
+  Object.keys(validBody).forEach(key => {
     const body = { ...validBody }
     delete body[key]
     invalidBodies.push(body)
@@ -326,7 +327,7 @@ export function mockDatabaseError(message: string): {
  * Mocks tenant isolation check
  */
 export function mockTenantIsolation(organizationId: string): jest.Mock {
-  return jest.fn().mockImplementation((query) => {
+  return jest.fn().mockImplementation(query => {
     return {
       ...query,
       eq: jest.fn((field: string, value: string) => {
@@ -346,9 +347,10 @@ export function mockTenantIsolation(organizationId: string): jest.Mock {
 /**
  * Simulates rate limit reached
  */
-export function simulateRateLimit(
-  maxRequests: number = 100
-): { shouldBlock: boolean; remaining: number } {
+export function simulateRateLimit(maxRequests: number = 100): {
+  shouldBlock: boolean
+  remaining: number
+} {
   return {
     shouldBlock: true,
     remaining: 0,
@@ -358,9 +360,10 @@ export function simulateRateLimit(
 /**
  * Simulates rate limit not reached
  */
-export function simulateRateLimitOk(
-  remaining: number = 95
-): { shouldBlock: boolean; remaining: number } {
+export function simulateRateLimitOk(remaining: number = 95): {
+  shouldBlock: boolean
+  remaining: number
+} {
   return {
     shouldBlock: false,
     remaining,
@@ -410,10 +413,7 @@ export function createApiError(
   customMessage?: string
 ): NextResponse {
   const error = ApiErrors[errorType]
-  return NextResponse.json(
-    { error: customMessage || error.message },
-    { status: error.status }
-  )
+  return NextResponse.json({ error: customMessage || error.message }, { status: error.status })
 }
 
 // =============================================================================
@@ -423,7 +423,10 @@ export function createApiError(
 /**
  * Creates pagination parameters
  */
-export function createPaginationParams(page = 1, limit = 20): {
+export function createPaginationParams(
+  page = 1,
+  limit = 20
+): {
   page: number
   limit: number
   offset: number

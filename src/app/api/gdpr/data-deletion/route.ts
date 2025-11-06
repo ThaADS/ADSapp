@@ -17,11 +17,10 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { DataDeletionService } from '@/lib/gdpr/data-deletion';
-import type { DeletionRequestType } from '@/lib/gdpr/types';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { DataDeletionService } from '@/lib/gdpr/data-deletion'
+import type { DeletionRequestType } from '@/lib/gdpr/types'
 
 /**
  * POST /api/gdpr/data-deletion
@@ -41,19 +40,16 @@ import type { DeletionRequestType } from '@/lib/gdpr/types';
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get authenticated user
     const {
       data: { user },
-      error: authError
-    } = await supabase.auth.getUser();
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user profile
@@ -61,51 +57,42 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile || !profile.organization_id) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Parse request body
-    const body = await request.json();
+    const body = await request.json()
     const {
       request_type,
       contact_id,
-      reason
+      reason,
     }: {
-      request_type: DeletionRequestType;
-      contact_id?: string;
-      reason?: string;
-    } = body;
+      request_type: DeletionRequestType
+      contact_id?: string
+      reason?: string
+    } = body
 
     // Validate request type
     const validTypes: DeletionRequestType[] = [
       'user_account',
       'contact_data',
       'conversation_data',
-      'all_personal_data'
-    ];
+      'all_personal_data',
+    ]
 
     if (!validTypes.includes(request_type)) {
-      return NextResponse.json(
-        { error: 'Invalid request_type' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid request_type' }, { status: 400 })
     }
 
     // Validate contact_id for contact/conversation requests
-    if (
-      (request_type === 'contact_data' || request_type === 'conversation_data') &&
-      !contact_id
-    ) {
+    if ((request_type === 'contact_data' || request_type === 'conversation_data') && !contact_id) {
       return NextResponse.json(
         { error: 'contact_id is required for contact or conversation data deletion' },
         { status: 400 }
-      );
+      )
     }
 
     // If contact_id provided, verify access
@@ -115,13 +102,10 @@ export async function POST(request: NextRequest) {
         .select('id')
         .eq('id', contact_id)
         .eq('organization_id', profile.organization_id)
-        .single();
+        .single()
 
       if (!contact) {
-        return NextResponse.json(
-          { error: 'Contact not found or access denied' },
-          { status: 403 }
-        );
+        return NextResponse.json({ error: 'Contact not found or access denied' }, { status: 403 })
       }
     }
 
@@ -130,16 +114,19 @@ export async function POST(request: NextRequest) {
       {
         organization_id: profile.organization_id,
         request_type,
-        user_id: request_type === 'user_account' || request_type === 'all_personal_data' ? user.id : undefined,
+        user_id:
+          request_type === 'user_account' || request_type === 'all_personal_data'
+            ? user.id
+            : undefined,
         contact_id,
-        reason
+        reason,
       },
       user.id
-    );
+    )
 
     console.log(
       `[API][GDPR] User ${user.id} created deletion request ${deletionRequest.id} (type: ${request_type})`
-    );
+    )
 
     // Send verification email (implement email service)
     // await sendVerificationEmail(user.email, deletionRequest.verification_token);
@@ -152,21 +139,21 @@ export async function POST(request: NextRequest) {
           status: deletionRequest.status,
           verification_required: true,
           verification_expires_at: deletionRequest.verification_expires_at,
-          message: 'Deletion request created. Please check your email to verify this request.'
-        }
+          message: 'Deletion request created. Please check your email to verify this request.',
+        },
       },
       { status: 201 }
-    );
+    )
   } catch (error) {
-    console.error('[API][GDPR] Deletion request creation error:', error);
+    console.error('[API][GDPR] Deletion request creation error:', error)
 
     return NextResponse.json(
       {
         error: 'Failed to create deletion request',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -177,19 +164,16 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get authenticated user
     const {
       data: { user },
-      error: authError
-    } = await supabase.auth.getUser();
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's deletion requests
@@ -197,25 +181,25 @@ export async function GET() {
       .from('deletion_requests')
       .select('*')
       .eq('requested_by', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (error) {
-      throw error;
+      throw error
     }
 
     return NextResponse.json({
       success: true,
-      data: requests || []
-    });
+      data: requests || [],
+    })
   } catch (error) {
-    console.error('[API][GDPR] Error fetching deletion requests:', error);
+    console.error('[API][GDPR] Error fetching deletion requests:', error)
 
     return NextResponse.json(
       {
         error: 'Failed to fetch deletion requests',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    );
+    )
   }
 }

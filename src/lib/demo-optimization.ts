@@ -30,7 +30,12 @@ export interface DemoOptimizer {
 }
 
 export interface OptimizationGoal {
-  metric: 'conversion_rate' | 'engagement_score' | 'feature_adoption' | 'time_to_conversion' | 'lead_quality'
+  metric:
+    | 'conversion_rate'
+    | 'engagement_score'
+    | 'feature_adoption'
+    | 'time_to_conversion'
+    | 'lead_quality'
   target_value: number
   weight: number
   improvement_type: 'maximize' | 'minimize'
@@ -177,7 +182,11 @@ export interface ExternalFactor {
 export interface OptimizationRecommendation {
   id: string
   optimizer_id: string
-  recommendation_type: 'configuration_change' | 'new_test' | 'traffic_reallocation' | 'winner_deployment'
+  recommendation_type:
+    | 'configuration_change'
+    | 'new_test'
+    | 'traffic_reallocation'
+    | 'winner_deployment'
   title: string
   description: string
   expected_impact: number
@@ -268,12 +277,12 @@ export class DemoScenarioOptimizer {
           average_session_duration: 0,
           feature_adoption_rate: 0,
           lead_quality_score: 0,
-          confidence_interval: { lower: 0, upper: 0 }
+          confidence_interval: { lower: 0, upper: 0 },
         },
         is_control: true,
         traffic_allocation: 50,
         status: 'active',
-        created_at: now
+        created_at: now,
       }
 
       const optimizer: DemoOptimizer = {
@@ -292,7 +301,7 @@ export class DemoScenarioOptimizer {
         created_at: now,
         updated_at: now,
         last_optimization: now,
-        status: 'active'
+        status: 'active',
       }
 
       // Store optimizer
@@ -313,7 +322,7 @@ export class DemoScenarioOptimizer {
       console.error('Error creating demo optimizer:', error)
       return {
         optimizer: null as any,
-        error: error instanceof Error ? error.message : 'Failed to create optimizer'
+        error: error instanceof Error ? error.message : 'Failed to create optimizer',
       }
     }
   }
@@ -328,16 +337,24 @@ export class DemoScenarioOptimizer {
     // Generate variants based on optimization strategy
     switch (optimizer.optimization_strategy) {
       case 'conservative':
-        variants.push(...await this.generateConservativeVariants(baseConfig, optimizer.optimization_goals))
+        variants.push(
+          ...(await this.generateConservativeVariants(baseConfig, optimizer.optimization_goals))
+        )
         break
       case 'aggressive':
-        variants.push(...await this.generateAggressiveVariants(baseConfig, optimizer.optimization_goals))
+        variants.push(
+          ...(await this.generateAggressiveVariants(baseConfig, optimizer.optimization_goals))
+        )
         break
       case 'balanced':
-        variants.push(...await this.generateBalancedVariants(baseConfig, optimizer.optimization_goals))
+        variants.push(
+          ...(await this.generateBalancedVariants(baseConfig, optimizer.optimization_goals))
+        )
         break
       case 'exploratory':
-        variants.push(...await this.generateExploratoryVariants(baseConfig, optimizer.optimization_goals))
+        variants.push(
+          ...(await this.generateExploratoryVariants(baseConfig, optimizer.optimization_goals))
+        )
         break
     }
 
@@ -405,14 +422,14 @@ export class DemoScenarioOptimizer {
       return {
         recommendations: recommendations.sort((a, b) => b.priority_score - a.priority_score),
         actions_taken: actionsTaken,
-        next_optimization: nextOptimization
+        next_optimization: nextOptimization,
       }
     } catch (error) {
       console.error('Error analyzing and optimizing:', error)
       return {
         recommendations: [],
         actions_taken: [],
-        next_optimization: undefined
+        next_optimization: undefined,
       }
     }
   }
@@ -434,14 +451,16 @@ export class DemoScenarioOptimizer {
 
       const currentPerformance = await this.calculateCurrentPerformance(optimizer)
       const baselinePerformance = this.getBaselinePerformance(optimizer)
-      const improvementOverBaseline = this.calculateImprovement(currentPerformance, baselinePerformance)
+      const improvementOverBaseline = this.calculateImprovement(
+        currentPerformance,
+        baselinePerformance
+      )
 
       // Get test history
       const testHistory = await this.getOptimizerTestHistory(optimizerId)
       const totalTests = testHistory.length
-      const successfulOptimizations = testHistory.filter(test =>
-        test.results?.statistical_significance?.is_significant &&
-        test.winner_deployed
+      const successfulOptimizations = testHistory.filter(
+        test => test.results?.statistical_significance?.is_significant && test.winner_deployed
       ).length
 
       // Calculate ROI impact
@@ -456,7 +475,7 @@ export class DemoScenarioOptimizer {
         total_tests_run: totalTests,
         successful_optimizations: successfulOptimizations,
         roi_impact: roiImpact,
-        top_winning_changes: topWinningChanges
+        top_winning_changes: topWinningChanges,
       }
     } catch (error) {
       console.error('Error getting optimization summary:', error)
@@ -469,13 +488,13 @@ export class DemoScenarioOptimizer {
           average_session_duration: 0,
           feature_adoption_rate: 0,
           lead_quality_score: 0,
-          confidence_interval: { lower: 0, upper: 0 }
+          confidence_interval: { lower: 0, upper: 0 },
         },
         improvement_over_baseline: 0,
         total_tests_run: 0,
         successful_optimizations: 0,
         roi_impact: 0,
-        top_winning_changes: []
+        top_winning_changes: [],
       }
     }
   }
@@ -493,7 +512,7 @@ export class DemoScenarioOptimizer {
       optimizers_processed: 0,
       total_recommendations: 0,
       auto_actions_taken: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     }
 
     try {
@@ -508,7 +527,6 @@ export class DemoScenarioOptimizer {
 
           // Check auto-optimization rules
           await this.processAutoOptimizationRules(optimizer)
-
         } catch (error) {
           const errorMsg = `Error processing optimizer ${optimizer.id}: ${error instanceof Error ? error.message : 'Unknown error'}`
           results.errors.push(errorMsg)
@@ -518,7 +536,6 @@ export class DemoScenarioOptimizer {
 
       // Clean up completed optimizers
       await this.cleanupCompletedOptimizers()
-
     } catch (error) {
       const errorMsg = `Error in optimization cycle: ${error instanceof Error ? error.message : 'Unknown error'}`
       results.errors.push(errorMsg)
@@ -574,9 +591,9 @@ export class DemoScenarioOptimizer {
               condition: 'session_duration > 300',
               action: 'show_signup_modal',
               timing: 300,
-              active: true
-            }
-          ]
+              active: true,
+            },
+          ],
         },
         ui_configuration: {
           color_scheme: 'blue',
@@ -585,23 +602,23 @@ export class DemoScenarioOptimizer {
           cta_style: 'button',
           cta_text: 'Start Free Trial',
           progress_indicators: true,
-          help_tooltips: true
+          help_tooltips: true,
         },
         content_strategy: {
           value_proposition: 'Streamline your retail operations with our all-in-one platform',
           feature_descriptions: {
             inventory_management: 'Track stock levels and automate reordering',
             customer_analytics: 'Understand customer behavior and preferences',
-            order_processing: 'Streamline order fulfillment and shipping'
+            order_processing: 'Streamline order fulfillment and shipping',
           },
           use_case_examples: [
             'Reduce stockouts by 50%',
             'Increase customer retention by 25%',
-            'Process orders 3x faster'
+            'Process orders 3x faster',
           ],
           social_proof_elements: ['5000+ retailers trust our platform'],
           urgency_messaging: ['Limited time: 30% off first year'],
-          benefit_highlights: ['Save 10 hours per week', 'Increase sales by 20%']
+          benefit_highlights: ['Save 10 hours per week', 'Increase sales by 20%'],
         },
         flow_optimization: {
           entry_point: 'homepage',
@@ -612,8 +629,8 @@ export class DemoScenarioOptimizer {
               description: 'Explore how our platform can transform your retail business',
               duration_seconds: 30,
               interactive: false,
-              required: true
-            }
+              required: true,
+            },
           ],
           feature_sequence: ['inventory_management', 'customer_analytics', 'order_processing'],
           conversion_path: [
@@ -622,18 +639,18 @@ export class DemoScenarioOptimizer {
               trigger_condition: 'features_used >= 2',
               action_type: 'modal',
               content: 'Ready to transform your business?',
-              timing: 'conditional'
-            }
+              timing: 'conditional',
+            },
           ],
           exit_intent_handling: {
             enabled: true,
             trigger_delay: 2000,
             offer_type: 'trial_extension',
             message: 'Wait! Get 15 more days to explore all features',
-            conversion_boost: 15
-          }
+            conversion_boost: 15,
+          },
         },
-        personalization_rules: []
+        personalization_rules: [],
       },
       // Add other scenarios...
       generic: {
@@ -643,7 +660,7 @@ export class DemoScenarioOptimizer {
           guided_tour_enabled: true,
           feature_highlights: ['dashboard', 'analytics', 'automation'],
           demo_duration_target: 300,
-          conversion_triggers: []
+          conversion_triggers: [],
         },
         ui_configuration: {
           color_scheme: 'blue',
@@ -652,7 +669,7 @@ export class DemoScenarioOptimizer {
           cta_style: 'button',
           cta_text: 'Get Started',
           progress_indicators: true,
-          help_tooltips: true
+          help_tooltips: true,
         },
         content_strategy: {
           value_proposition: 'Powerful tools for modern businesses',
@@ -660,7 +677,7 @@ export class DemoScenarioOptimizer {
           use_case_examples: [],
           social_proof_elements: [],
           urgency_messaging: [],
-          benefit_highlights: []
+          benefit_highlights: [],
         },
         flow_optimization: {
           entry_point: 'homepage',
@@ -672,11 +689,11 @@ export class DemoScenarioOptimizer {
             trigger_delay: 0,
             offer_type: 'trial_extension',
             message: '',
-            conversion_boost: 0
-          }
+            conversion_boost: 0,
+          },
         },
-        personalization_rules: []
-      }
+        personalization_rules: [],
+      },
     }
 
     return configurations[scenario] || configurations.generic
@@ -691,21 +708,29 @@ export class DemoScenarioOptimizer {
     // Conservative approach: small, incremental changes
     if (goals.some(g => g.metric === 'conversion_rate')) {
       // Test CTA text variations
-      const ctaVariant = this.createConfigVariant(baseConfig, {
-        property: 'ui_configuration.cta_text',
-        new_value: 'Start Your Free Trial Today',
-        reason: 'More specific CTA text may improve conversion'
-      }, 'CTA Text Optimization')
+      const ctaVariant = this.createConfigVariant(
+        baseConfig,
+        {
+          property: 'ui_configuration.cta_text',
+          new_value: 'Start Your Free Trial Today',
+          reason: 'More specific CTA text may improve conversion',
+        },
+        'CTA Text Optimization'
+      )
       variants.push(ctaVariant)
     }
 
     if (goals.some(g => g.metric === 'engagement_score')) {
       // Test guided tour improvements
-      const tourVariant = this.createConfigVariant(baseConfig, {
-        property: 'scenario_settings.guided_tour_enabled',
-        new_value: true,
-        reason: 'Enhanced guided tour may improve engagement'
-      }, 'Enhanced Guided Tour')
+      const tourVariant = this.createConfigVariant(
+        baseConfig,
+        {
+          property: 'scenario_settings.guided_tour_enabled',
+          new_value: true,
+          reason: 'Enhanced guided tour may improve engagement',
+        },
+        'Enhanced Guided Tour'
+      )
       variants.push(tourVariant)
     }
 
@@ -721,11 +746,15 @@ export class DemoScenarioOptimizer {
     // Aggressive approach: major changes
     if (goals.some(g => g.metric === 'conversion_rate')) {
       // Complete flow redesign
-      const flowVariant = this.createConfigVariant(baseConfig, {
-        property: 'flow_optimization.entry_point',
-        new_value: 'direct_demo',
-        reason: 'Skip homepage, go directly to demo for higher conversion'
-      }, 'Direct Demo Entry')
+      const flowVariant = this.createConfigVariant(
+        baseConfig,
+        {
+          property: 'flow_optimization.entry_point',
+          new_value: 'direct_demo',
+          reason: 'Skip homepage, go directly to demo for higher conversion',
+        },
+        'Direct Demo Entry'
+      )
       variants.push(flowVariant)
     }
 
@@ -739,11 +768,15 @@ export class DemoScenarioOptimizer {
     const variants: DemoVariant[] = []
 
     // Balanced approach: moderate changes with good impact potential
-    const colorVariant = this.createConfigVariant(baseConfig, {
-      property: 'ui_configuration.color_scheme',
-      new_value: 'green',
-      reason: 'Green color scheme may improve trust and conversion'
-    }, 'Green Color Scheme')
+    const colorVariant = this.createConfigVariant(
+      baseConfig,
+      {
+        property: 'ui_configuration.color_scheme',
+        new_value: 'green',
+        reason: 'Green color scheme may improve trust and conversion',
+      },
+      'Green Color Scheme'
+    )
     variants.push(colorVariant)
 
     return variants
@@ -756,25 +789,29 @@ export class DemoScenarioOptimizer {
     const variants: DemoVariant[] = []
 
     // Exploratory approach: test novel ideas
-    const personalizedVariant = this.createConfigVariant(baseConfig, {
-      property: 'personalization_rules',
-      new_value: [
-        {
-          rule_id: 'first_time_visitor',
-          trigger_conditions: { is_new_visitor: true },
-          modifications: [
-            {
-              property: 'content_strategy.value_proposition',
-              new_value: 'See why thousands of businesses choose our platform',
-              reason: 'Social proof for new visitors'
-            }
-          ],
-          target_audience: 'new_visitors',
-          expected_impact: 15
-        }
-      ],
-      reason: 'Personalized experience for different visitor types'
-    }, 'Personalized Experience')
+    const personalizedVariant = this.createConfigVariant(
+      baseConfig,
+      {
+        property: 'personalization_rules',
+        new_value: [
+          {
+            rule_id: 'first_time_visitor',
+            trigger_conditions: { is_new_visitor: true },
+            modifications: [
+              {
+                property: 'content_strategy.value_proposition',
+                new_value: 'See why thousands of businesses choose our platform',
+                reason: 'Social proof for new visitors',
+              },
+            ],
+            target_audience: 'new_visitors',
+            expected_impact: 15,
+          },
+        ],
+        reason: 'Personalized experience for different visitor types',
+      },
+      'Personalized Experience'
+    )
     variants.push(personalizedVariant)
 
     return variants
@@ -808,12 +845,12 @@ export class DemoScenarioOptimizer {
         average_session_duration: 0,
         feature_adoption_rate: 0,
         lead_quality_score: 0,
-        confidence_interval: { lower: 0, upper: 0 }
+        confidence_interval: { lower: 0, upper: 0 },
       },
       is_control: false,
       traffic_allocation: 25,
       status: 'active',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     }
   }
 
@@ -834,7 +871,7 @@ export class DemoScenarioOptimizer {
       status: optimizer.status,
       created_at: optimizer.created_at,
       updated_at: optimizer.updated_at,
-      last_optimization: optimizer.last_optimization
+      last_optimization: optimizer.last_optimization,
     })
   }
 
@@ -844,34 +881,39 @@ export class DemoScenarioOptimizer {
       description: variant.description,
       traffic_split: variant.traffic_allocation,
       configuration: variant.configuration,
-      is_control: variant.is_control
+      is_control: variant.is_control,
     }))
 
-    await this.abTesting.createTest({
-      name: `${optimizer.name} - Optimization Test`,
-      description: `Auto-generated optimization test for ${optimizer.business_scenario}`,
-      business_scenario: optimizer.business_scenario,
-      variants: testVariants,
-      metrics: optimizer.optimization_goals.map(goal => ({
-        name: goal.metric,
-        type: this.mapGoalMetricToTestMetric(goal.metric),
-        goal: goal.improvement_type === 'maximize' ? 'increase' : 'decrease',
-        primary: goal.weight > 0.5,
-        weight: goal.weight
-      })),
-      traffic_allocation: 100,
-      confidence_level: optimizer.confidence_threshold,
-      minimum_sample_size: optimizer.minimum_sample_size
-    }, 'system')
+    await this.abTesting.createTest(
+      {
+        name: `${optimizer.name} - Optimization Test`,
+        description: `Auto-generated optimization test for ${optimizer.business_scenario}`,
+        business_scenario: optimizer.business_scenario,
+        variants: testVariants,
+        metrics: optimizer.optimization_goals.map(goal => ({
+          name: goal.metric,
+          type: this.mapGoalMetricToTestMetric(goal.metric),
+          goal: goal.improvement_type === 'maximize' ? 'increase' : 'decrease',
+          primary: goal.weight > 0.5,
+          weight: goal.weight,
+        })),
+        traffic_allocation: 100,
+        confidence_level: optimizer.confidence_threshold,
+        minimum_sample_size: optimizer.minimum_sample_size,
+      },
+      'system'
+    )
   }
 
-  private mapGoalMetricToTestMetric(metric: string): 'conversion' | 'engagement' | 'revenue' | 'time_spent' | 'custom' {
+  private mapGoalMetricToTestMetric(
+    metric: string
+  ): 'conversion' | 'engagement' | 'revenue' | 'time_spent' | 'custom' {
     const mapping: Record<string, any> = {
       conversion_rate: 'conversion',
       engagement_score: 'engagement',
       lead_quality: 'revenue',
       time_to_conversion: 'time_spent',
-      feature_adoption: 'custom'
+      feature_adoption: 'custom',
     }
     return mapping[metric] || 'custom'
   }
@@ -925,7 +967,7 @@ export class DemoScenarioOptimizer {
         test_variants: optimizer.test_variants,
         performance_history: optimizer.performance_history,
         updated_at: optimizer.updated_at,
-        last_optimization: optimizer.last_optimization
+        last_optimization: optimizer.last_optimization,
       })
       .eq('id', optimizer.id)
 
@@ -933,20 +975,62 @@ export class DemoScenarioOptimizer {
   }
 
   // Additional helper methods would be implemented here...
-  private async generateNextOptimizationRound(optimizer: DemoOptimizer, results: ABTestResults): Promise<DemoVariant[]> { return [] }
-  private async createFollowUpTest(optimizer: DemoOptimizer, variants: DemoVariant[]): Promise<void> {}
-  private async createWinnerRecommendation(optimizer: DemoOptimizer, winner: any, results: ABTestResults): Promise<OptimizationRecommendation> { return {} as OptimizationRecommendation }
-  private async analyzeInProgressTest(optimizer: DemoOptimizer, test: ABTest, results: ABTestResults): Promise<OptimizationRecommendation[]> { return [] }
-  private async generateGeneralRecommendations(optimizer: DemoOptimizer): Promise<OptimizationRecommendation[]> { return [] }
+  private async generateNextOptimizationRound(
+    optimizer: DemoOptimizer,
+    results: ABTestResults
+  ): Promise<DemoVariant[]> {
+    return []
+  }
+  private async createFollowUpTest(
+    optimizer: DemoOptimizer,
+    variants: DemoVariant[]
+  ): Promise<void> {}
+  private async createWinnerRecommendation(
+    optimizer: DemoOptimizer,
+    winner: any,
+    results: ABTestResults
+  ): Promise<OptimizationRecommendation> {
+    return {} as OptimizationRecommendation
+  }
+  private async analyzeInProgressTest(
+    optimizer: DemoOptimizer,
+    test: ABTest,
+    results: ABTestResults
+  ): Promise<OptimizationRecommendation[]> {
+    return []
+  }
+  private async generateGeneralRecommendations(
+    optimizer: DemoOptimizer
+  ): Promise<OptimizationRecommendation[]> {
+    return []
+  }
   private async updatePerformanceHistory(optimizer: DemoOptimizer): Promise<void> {}
-  private calculateNextOptimizationDate(optimizer: DemoOptimizer): Date { return new Date() }
-  private async calculateCurrentPerformance(optimizer: DemoOptimizer): Promise<VariantMetrics> { return {} as VariantMetrics }
-  private getBaselinePerformance(optimizer: DemoOptimizer): VariantMetrics { return {} as VariantMetrics }
-  private calculateImprovement(current: VariantMetrics, baseline: VariantMetrics): number { return 0 }
-  private async getOptimizerTestHistory(optimizerId: string): Promise<any[]> { return [] }
-  private async calculateROIImpact(optimizer: DemoOptimizer): Promise<number> { return 0 }
-  private async identifyTopWinningChanges(testHistory: any[]): Promise<ConfigurationModification[]> { return [] }
-  private async getActiveOptimizers(): Promise<DemoOptimizer[]> { return Array.from(this.activeOptimizers.values()) }
+  private calculateNextOptimizationDate(optimizer: DemoOptimizer): Date {
+    return new Date()
+  }
+  private async calculateCurrentPerformance(optimizer: DemoOptimizer): Promise<VariantMetrics> {
+    return {} as VariantMetrics
+  }
+  private getBaselinePerformance(optimizer: DemoOptimizer): VariantMetrics {
+    return {} as VariantMetrics
+  }
+  private calculateImprovement(current: VariantMetrics, baseline: VariantMetrics): number {
+    return 0
+  }
+  private async getOptimizerTestHistory(optimizerId: string): Promise<any[]> {
+    return []
+  }
+  private async calculateROIImpact(optimizer: DemoOptimizer): Promise<number> {
+    return 0
+  }
+  private async identifyTopWinningChanges(
+    testHistory: any[]
+  ): Promise<ConfigurationModification[]> {
+    return []
+  }
+  private async getActiveOptimizers(): Promise<DemoOptimizer[]> {
+    return Array.from(this.activeOptimizers.values())
+  }
   private async processAutoOptimizationRules(optimizer: DemoOptimizer): Promise<void> {}
   private async cleanupCompletedOptimizers(): Promise<void> {}
 }
@@ -977,14 +1061,20 @@ export const DemoOptimizationUtils = {
   } {
     const improvementPercent = summary.improvement_over_baseline
     const performanceGrade =
-      improvementPercent >= 20 ? 'A' :
-      improvementPercent >= 10 ? 'B' :
-      improvementPercent >= 5 ? 'C' :
-      improvementPercent >= 0 ? 'D' : 'F'
+      improvementPercent >= 20
+        ? 'A'
+        : improvementPercent >= 10
+          ? 'B'
+          : improvementPercent >= 5
+            ? 'C'
+            : improvementPercent >= 0
+              ? 'D'
+              : 'F'
 
-    const improvementSummary = improvementPercent > 0
-      ? `${improvementPercent.toFixed(1)}% improvement over baseline`
-      : 'No significant improvement detected'
+    const improvementSummary =
+      improvementPercent > 0
+        ? `${improvementPercent.toFixed(1)}% improvement over baseline`
+        : 'No significant improvement detected'
 
     const nextActions = []
     if (performanceGrade === 'A') {
@@ -999,5 +1089,5 @@ export const DemoOptimizationUtils = {
     }
 
     return { performanceGrade, improvementSummary, nextActions }
-  }
+  },
 }

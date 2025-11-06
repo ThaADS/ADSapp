@@ -49,102 +49,99 @@ const ROLE_LABELS = {
 } as const
 
 // Memoized TeamMemberRow component
-const TeamMemberRow = memo(({
-  member,
-  currentUserId,
-  ownerCount,
-  onEdit,
-  onDelete
-}: {
-  member: TeamMember
-  currentUserId: string
-  ownerCount: number
-  onEdit: (member: TeamMember) => void
-  onDelete: (member: TeamMember) => void
-}) => {
-  const formatLastSeen = useCallback((lastSeen: string | null) => {
-    if (!lastSeen) return 'Never'
-    const date = new Date(lastSeen)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-    const minutes = Math.floor(diff / 60000)
+const TeamMemberRow = memo(
+  ({
+    member,
+    currentUserId,
+    ownerCount,
+    onEdit,
+    onDelete,
+  }: {
+    member: TeamMember
+    currentUserId: string
+    ownerCount: number
+    onEdit: (member: TeamMember) => void
+    onDelete: (member: TeamMember) => void
+  }) => {
+    const formatLastSeen = useCallback((lastSeen: string | null) => {
+      if (!lastSeen) return 'Never'
+      const date = new Date(lastSeen)
+      const now = new Date()
+      const diff = now.getTime() - date.getTime()
+      const minutes = Math.floor(diff / 60000)
 
-    if (minutes < 1) return 'Just now'
-    if (minutes < 60) return `${minutes}m ago`
-    if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`
-    return `${Math.floor(minutes / 1440)}d ago`
-  }, [])
+      if (minutes < 1) return 'Just now'
+      if (minutes < 60) return `${minutes}m ago`
+      if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`
+      return `${Math.floor(minutes / 1440)}d ago`
+    }, [])
 
-  const canEdit = member.id !== currentUserId
-  const canDelete = member.id !== currentUserId &&
-                    !(member.role === 'owner' && ownerCount <= 1)
+    const canEdit = member.id !== currentUserId
+    const canDelete = member.id !== currentUserId && !(member.role === 'owner' && ownerCount <= 1)
 
-  return (
-    <tr key={member.id} className="hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10">
-            {member.avatar_url ? (
-              <img
-                className="h-10 w-10 rounded-full"
-                src={member.avatar_url}
-                alt=""
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-600">
-                  {member.full_name?.[0] || member.email[0].toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
-              {member.full_name || 'No name set'}
-              {member.id === currentUserId && (
-                <span className="ml-2 text-xs text-gray-500">(You)</span>
+    return (
+      <tr key={member.id} className='hover:bg-gray-50'>
+        <td className='px-6 py-4 whitespace-nowrap'>
+          <div className='flex items-center'>
+            <div className='h-10 w-10 flex-shrink-0'>
+              {member.avatar_url ? (
+                <img className='h-10 w-10 rounded-full' src={member.avatar_url} alt='' />
+              ) : (
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300'>
+                  <span className='text-sm font-medium text-gray-600'>
+                    {member.full_name?.[0] || member.email[0].toUpperCase()}
+                  </span>
+                </div>
               )}
             </div>
-            <div className="text-sm text-gray-500">{member.email}</div>
+            <div className='ml-4'>
+              <div className='text-sm font-medium text-gray-900'>
+                {member.full_name || 'No name set'}
+                {member.id === currentUserId && (
+                  <span className='ml-2 text-xs text-gray-500'>(You)</span>
+                )}
+              </div>
+              <div className='text-sm text-gray-500'>{member.email}</div>
+            </div>
           </div>
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            ROLE_COLORS[member.role]
-          }`}
-        >
-          {ROLE_LABELS[member.role]}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        <div className="flex items-center">
-          <ClockIcon className="h-4 w-4 mr-1 text-gray-400" />
-          {formatLastSeen(member.last_seen_at)}
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => onEdit(member)}
-            disabled={!canEdit}
-            className="text-emerald-600 hover:text-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed"
+        </td>
+        <td className='px-6 py-4 whitespace-nowrap'>
+          <span
+            className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${
+              ROLE_COLORS[member.role]
+            }`}
           >
-            <PencilIcon className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => onDelete(member)}
-            disabled={!canDelete}
-            className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </button>
-        </div>
-      </td>
-    </tr>
-  )
-})
+            {ROLE_LABELS[member.role]}
+          </span>
+        </td>
+        <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-500'>
+          <div className='flex items-center'>
+            <ClockIcon className='mr-1 h-4 w-4 text-gray-400' />
+            {formatLastSeen(member.last_seen_at)}
+          </div>
+        </td>
+        <td className='px-6 py-4 text-right text-sm font-medium whitespace-nowrap'>
+          <div className='flex justify-end space-x-2'>
+            <button
+              onClick={() => onEdit(member)}
+              disabled={!canEdit}
+              className='text-emerald-600 hover:text-emerald-900 disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              <PencilIcon className='h-5 w-5' />
+            </button>
+            <button
+              onClick={() => onDelete(member)}
+              disabled={!canDelete}
+              className='text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              <TrashIcon className='h-5 w-5' />
+            </button>
+          </div>
+        </td>
+      </tr>
+    )
+  }
+)
 
 TeamMemberRow.displayName = 'TeamMemberRow'
 
@@ -177,7 +174,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
   // Memoize owner count calculation
   const ownerCount = useMemo(
-    () => teamMembers.filter((m) => m.role === 'owner').length,
+    () => teamMembers.filter(m => m.role === 'owner').length,
     [teamMembers]
   )
 
@@ -216,61 +213,67 @@ export function TeamManagement({ profile }: TeamManagementProps) {
     loadTeamData()
   }, [loadTeamData])
 
-  const handleInviteMember = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    setActionLoading(true)
-    setError('')
-    setMessage('')
+  const handleInviteMember = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setActionLoading(true)
+      setError('')
+      setMessage('')
 
-    try {
-      setMessage(`Invitation sent to ${inviteForm.email}`)
-      setShowInviteModal(false)
-      setInviteForm({
-        email: '',
-        role: 'agent',
-        customPermissions: {
-          canManageContacts: false,
-          canManageConversations: true,
-          canViewAnalytics: false,
-          canManageTemplates: false,
-        },
-      })
+      try {
+        setMessage(`Invitation sent to ${inviteForm.email}`)
+        setShowInviteModal(false)
+        setInviteForm({
+          email: '',
+          role: 'agent',
+          customPermissions: {
+            canManageContacts: false,
+            canManageConversations: true,
+            canViewAnalytics: false,
+            canManageTemplates: false,
+          },
+        })
 
-      await loadTeamData()
-    } catch (err) {
-      setError('Failed to send invitation')
-    } finally {
-      setActionLoading(false)
-    }
-  }, [inviteForm.email, loadTeamData])
+        await loadTeamData()
+      } catch (err) {
+        setError('Failed to send invitation')
+      } finally {
+        setActionLoading(false)
+      }
+    },
+    [inviteForm.email, loadTeamData]
+  )
 
-  const handleUpdateRole = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedMember) return
+  const handleUpdateRole = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      if (!selectedMember) return
 
-    setActionLoading(true)
-    setError('')
-    setMessage('')
+      setActionLoading(true)
+      setError('')
+      setMessage('')
 
-    try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: editForm.role })
-        .eq('id', selectedMember.id)
+      try {
+        const supabase = createClient()
+        const { error } = await supabase
+          .from('profiles')
+          .update({ role: editForm.role })
+          .eq('id', selectedMember.id)
 
-      if (error) throw error
+        if (error) throw error
 
-      setMessage('Role updated successfully')
-      setShowEditModal(false)
-      setSelectedMember(null)
-      await loadTeamData()
-    } catch (err) {
-      setError('Failed to update role')
-    } finally {
-      setActionLoading(false)
-    }
-  }, [selectedMember, editForm.role, loadTeamData])
+        setMessage('Role updated successfully')
+        setShowEditModal(false)
+        setSelectedMember(null)
+        await loadTeamData()
+      } catch (err) {
+        setError('Failed to update role')
+      } finally {
+        setActionLoading(false)
+      }
+    },
+    [selectedMember, editForm.role, loadTeamData]
+  )
 
   const handleRemoveMember = useCallback(async () => {
     if (!selectedMember) return
@@ -310,7 +313,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
   }, [selectedMember, profile.id, ownerCount, loadTeamData])
 
   const handleCancelInvitation = useCallback((invitationId: string) => {
-    setPendingInvitations(prev => prev.filter((i) => i.id !== invitationId))
+    setPendingInvitations(prev => prev.filter(i => i.id !== invitationId))
     setMessage('Invitation cancelled')
   }, [])
 
@@ -327,62 +330,62 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading team data...</div>
+      <div className='flex h-64 items-center justify-center'>
+        <div className='text-gray-500'>Loading team data...</div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header Actions */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-600">
+      <div className='flex items-center justify-between'>
+        <div className='text-sm text-gray-600'>
           {teamMembers.length} team member{teamMembers.length !== 1 ? 's' : ''}
         </div>
         <button
           onClick={() => setShowInviteModal(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          className='inline-flex items-center rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
         >
-          <UserPlusIcon className="h-5 w-5 mr-2" />
+          <UserPlusIcon className='mr-2 h-5 w-5' />
           Invite Member
         </button>
       </div>
 
       {/* Messages */}
       {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="text-sm text-red-700">{error}</div>
+        <div className='rounded-md bg-red-50 p-4'>
+          <div className='text-sm text-red-700'>{error}</div>
         </div>
       )}
 
       {message && (
-        <div className="rounded-md bg-emerald-50 p-4">
-          <div className="text-sm text-emerald-700">{message}</div>
+        <div className='rounded-md bg-emerald-50 p-4'>
+          <div className='text-sm text-emerald-700'>{message}</div>
         </div>
       )}
 
       {/* Team Members Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className='overflow-hidden rounded-lg bg-white shadow'>
+        <table className='min-w-full divide-y divide-gray-200'>
+          <thead className='bg-gray-50'>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Member
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Role
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Last Seen
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {teamMembers.map((member) => (
+          <tbody className='divide-y divide-gray-200 bg-white'>
+            {teamMembers.map(member => (
               <TeamMemberRow
                 key={member.id}
                 member={member}
@@ -398,22 +401,20 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
       {/* Pending Invitations */}
       {pendingInvitations.length > 0 && (
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+        <div className='rounded-lg bg-white shadow'>
+          <div className='px-4 py-5 sm:p-6'>
+            <h3 className='mb-4 text-lg leading-6 font-medium text-gray-900'>
               Pending Invitations
             </h3>
-            <div className="space-y-3">
-              {pendingInvitations.map((invitation) => (
+            <div className='space-y-3'>
+              {pendingInvitations.map(invitation => (
                 <div
                   key={invitation.id}
-                  className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+                  className='flex items-center justify-between border-b border-gray-200 py-3 last:border-b-0'
                 >
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">
-                      {invitation.email}
-                    </div>
-                    <div className="text-xs text-gray-500">
+                  <div className='flex-1'>
+                    <div className='text-sm font-medium text-gray-900'>{invitation.email}</div>
+                    <div className='text-xs text-gray-500'>
                       Role: {ROLE_LABELS[invitation.role as keyof typeof ROLE_LABELS]} • Expires in{' '}
                       {Math.ceil(
                         (new Date(invitation.expires_at).getTime() - Date.now()) /
@@ -424,7 +425,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
                   </div>
                   <button
                     onClick={() => handleCancelInvitation(invitation.id)}
-                    className="text-red-600 hover:text-red-900"
+                    className='text-red-600 hover:text-red-900'
                   >
                     Cancel
                   </button>

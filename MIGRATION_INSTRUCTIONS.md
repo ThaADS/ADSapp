@@ -1,6 +1,7 @@
 # Migration 037: Team Invitations & API Keys - Application Instructions
 
 ## Problem Solved
+
 The original migration had a type compatibility issue. The **FIXED** version includes diagnostic queries and better error handling.
 
 ## Apply Migration Manually
@@ -27,6 +28,7 @@ Since DDL statements cannot be executed via the Supabase JS client or connection
 
 5. **Check for Success Messages**
    You should see:
+
    ```
    NOTICE: organizations.id type: uuid
    Success. No rows returned
@@ -34,6 +36,7 @@ Since DDL statements cannot be executed via the Supabase JS client or connection
 
 6. **Verify Tables Created**
    Run this verification query in a new SQL Editor tab:
+
    ```sql
    -- Check tables exist
    SELECT table_name
@@ -61,6 +64,7 @@ Since DDL statements cannot be executed via the Supabase JS client or connection
 ## What This Migration Creates
 
 ### Tables:
+
 1. **team_invitations** - Stores pending team member invitations
    - Invitation tokens with expiry
    - Email-based invitations
@@ -74,18 +78,21 @@ Since DDL statements cannot be executed via the Supabase JS client or connection
    - Revocation support
 
 ### Security:
+
 - Row Level Security (RLS) enabled on both tables
 - 4 policies per table (SELECT, INSERT, UPDATE, DELETE)
 - Multi-tenant isolation via organization_id
 - Only owner/admin can manage invitations and keys
 
 ### Functions:
+
 - `generate_invitation_token()` - Creates unique secure tokens
 - `cleanup_expired_invitations()` - Removes expired invitations
 - `log_invitation_event()` - Audit trail for invitations
 - `log_api_key_event()` - Audit trail for API keys
 
 ### Triggers:
+
 - Auto-update `updated_at` timestamps
 - Automatic audit logging for all changes
 
@@ -114,7 +121,9 @@ Once the migration is applied successfully:
 ## Troubleshooting
 
 ### If you get type mismatch error again:
+
 The diagnostic query at the top of the migration will show you the actual type:
+
 ```
 NOTICE: organizations.id type: uuid
 ```
@@ -122,7 +131,9 @@ NOTICE: organizations.id type: uuid
 If it shows something OTHER than `uuid`, that's the root cause. Let me know what type it shows.
 
 ### If foreign key constraint fails:
+
 Run this to check if organizations table exists and has the expected structure:
+
 ```sql
 SELECT column_name, data_type, udt_name
 FROM information_schema.columns
@@ -131,14 +142,17 @@ ORDER BY ordinal_position;
 ```
 
 ### If you need to retry:
+
 The migration includes `DROP TABLE IF EXISTS` statements, so you can safely re-run it.
 
 ## Estimated Time
+
 - **Copy/paste and execute**: 30 seconds
 - **Verification queries**: 1 minute
 - **Total**: < 2 minutes
 
 ## Next Steps After Migration
+
 1. Test team invitation flow end-to-end
 2. Test API key generation and usage
 3. Verify email sending works (Resend API key is configured)

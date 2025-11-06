@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 import crypto from 'crypto'
@@ -28,7 +27,7 @@ import {
   DEFAULT_DEMO_SECURITY_POLICY,
   DemoStatus,
   DemoEventType,
-  TrackAnalyticsRequest
+  TrackAnalyticsRequest,
 } from '@/types/demo'
 import { Database } from '@/types/database'
 
@@ -80,7 +79,7 @@ export class DemoSessionManager {
           name: DEMO_SCENARIOS[businessScenario].name,
           slug: `demo-${businessScenario}-${Date.now()}`,
           subscription_status: 'trial',
-          subscription_tier: 'professional'
+          subscription_tier: 'professional',
         })
         .select()
         .single()
@@ -109,7 +108,7 @@ export class DemoSessionManager {
           interactions_count: 0,
           features_explored: [],
           time_spent_minutes: 0,
-          last_activity_at: new Date().toISOString()
+          last_activity_at: new Date().toISOString(),
         },
         analytics: {
           session_id: sessionId,
@@ -121,9 +120,9 @@ export class DemoSessionManager {
             page_load_times: {},
             api_response_times: {},
             error_count: 0,
-            bounce_rate: 0
-          }
-        }
+            bounce_rate: 0,
+          },
+        },
       }
 
       // Store session in cache/database (using a demo_sessions table)
@@ -139,7 +138,7 @@ export class DemoSessionManager {
         action: 'demo_session_created',
         category: 'demo',
         label: businessScenario,
-        metadata: { ...metadata, ip_address: ipAddress }
+        metadata: { ...metadata, ip_address: ipAddress },
       })
 
       return { session, organization }
@@ -148,7 +147,7 @@ export class DemoSessionManager {
       return {
         session: null as any,
         organization: null as any,
-        error: error instanceof Error ? error.message : 'Failed to create demo session'
+        error: error instanceof Error ? error.message : 'Failed to create demo session',
       }
     }
   }
@@ -156,7 +155,9 @@ export class DemoSessionManager {
   /**
    * Validate and retrieve an active demo session
    */
-  async getSession(token: string): Promise<{ session: DemoSession | null; isValid: boolean; error?: string }> {
+  async getSession(
+    token: string
+  ): Promise<{ session: DemoSession | null; isValid: boolean; error?: string }> {
     try {
       const session = await this.retrieveSession(token)
 
@@ -188,7 +189,7 @@ export class DemoSessionManager {
       return {
         session: null,
         isValid: false,
-        error: error instanceof Error ? error.message : 'Session validation failed'
+        error: error instanceof Error ? error.message : 'Session validation failed',
       }
     }
   }
@@ -196,7 +197,9 @@ export class DemoSessionManager {
   /**
    * Reset demo data for a session
    */
-  async resetSessionData(token: string): Promise<{ success: boolean; itemsReset?: any; error?: string }> {
+  async resetSessionData(
+    token: string
+  ): Promise<{ success: boolean; itemsReset?: any; error?: string }> {
     try {
       const { session, isValid } = await this.getSession(token)
 
@@ -205,7 +208,10 @@ export class DemoSessionManager {
       }
 
       const dataSeeder = new DemoDataSeeder(this.supabase)
-      const itemsReset = await dataSeeder.resetAndReseed(session.organization_id, session.business_scenario)
+      const itemsReset = await dataSeeder.resetAndReseed(
+        session.organization_id,
+        session.business_scenario
+      )
 
       // Reset progress
       session.progress = {
@@ -215,7 +221,7 @@ export class DemoSessionManager {
         interactions_count: 0,
         features_explored: [],
         time_spent_minutes: 0,
-        last_activity_at: new Date().toISOString()
+        last_activity_at: new Date().toISOString(),
       }
 
       await this.updateSession(session)
@@ -225,7 +231,7 @@ export class DemoSessionManager {
         event_type: 'click',
         action: 'demo_data_reset',
         category: 'demo',
-        label: session.business_scenario
+        label: session.business_scenario,
       })
 
       return { success: true, itemsReset }
@@ -233,7 +239,7 @@ export class DemoSessionManager {
       console.error('Error resetting session data:', error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to reset demo data'
+        error: error instanceof Error ? error.message : 'Failed to reset demo data',
       }
     }
   }
@@ -274,7 +280,9 @@ export class DemoSessionManager {
       // Calculate time spent
       const startTime = new Date(session.created_at)
       const now = new Date()
-      session.progress.time_spent_minutes = Math.floor((now.getTime() - startTime.getTime()) / (1000 * 60))
+      session.progress.time_spent_minutes = Math.floor(
+        (now.getTime() - startTime.getTime()) / (1000 * 60)
+      )
       session.progress.last_activity_at = now.toISOString()
 
       await this.updateSession(session)
@@ -286,7 +294,7 @@ export class DemoSessionManager {
         category: 'demo',
         label: step,
         value: session.progress.completion_percentage,
-        metadata
+        metadata,
       })
 
       return true
@@ -310,7 +318,7 @@ export class DemoSessionManager {
         label: eventData.label,
         value: eventData.value,
         metadata: eventData.metadata,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
 
       // Store event (implement your preferred storage method)
@@ -336,7 +344,10 @@ export class DemoSessionManager {
       }
 
       // Check sessions in the last hour
-      const sessionsInLastHour = await this.getSessionsInWindow(ipAddress, this.securityPolicy.rate_limit_window_minutes)
+      const sessionsInLastHour = await this.getSessionsInWindow(
+        ipAddress,
+        this.securityPolicy.rate_limit_window_minutes
+      )
 
       if (sessionsInLastHour >= this.securityPolicy.max_sessions_per_hour) {
         return { allowed: false, reason: 'Rate limit exceeded for this IP' }
@@ -453,7 +464,11 @@ export class DemoDataSeeder {
       await this.createContacts(organizationId, sampleData.contacts)
 
       // Create conversations and messages
-      await this.createConversationsWithMessages(organizationId, sampleData.conversations, sampleData.messages)
+      await this.createConversationsWithMessages(
+        organizationId,
+        sampleData.conversations,
+        sampleData.messages
+      )
 
       // Create templates
       await this.createTemplates(organizationId, sampleData.templates)
@@ -468,10 +483,13 @@ export class DemoDataSeeder {
   /**
    * Reset and reseed organization data
    */
-  async resetAndReseed(organizationId: string, scenario: BusinessScenario): Promise<{
-    contacts: number;
-    conversations: number;
-    messages: number;
+  async resetAndReseed(
+    organizationId: string,
+    scenario: BusinessScenario
+  ): Promise<{
+    contacts: number
+    conversations: number
+    messages: number
   }> {
     try {
       // Delete existing data
@@ -485,7 +503,7 @@ export class DemoDataSeeder {
       return {
         contacts: deletedContacts,
         conversations: deletedConversations,
-        messages: deletedMessages
+        messages: deletedMessages,
       }
     } catch (error) {
       console.error('Error resetting demo data:', error)
@@ -504,7 +522,7 @@ export class DemoDataSeeder {
       conversations: this.generateConversations(scenario, 8),
       messages: this.generateMessages(scenario, 25),
       templates: this.generateTemplates(scenario),
-      automation_rules: this.generateAutomationRules(scenario)
+      automation_rules: this.generateAutomationRules(scenario),
     }
   }
 
@@ -522,7 +540,9 @@ export class DemoDataSeeder {
         whatsapp_id: `wa_${i}_${Date.now()}`,
         tags: this.getScenarioTags(scenario),
         notes: this.getScenarioNotes(scenario),
-        last_interaction: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
+        last_interaction: new Date(
+          Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
       })
     }
 
@@ -534,8 +554,18 @@ export class DemoDataSeeder {
    */
   private generateConversations(scenario: BusinessScenario, count: number): DemoConversation[] {
     const conversations: DemoConversation[] = []
-    const statuses: Array<'open' | 'pending' | 'resolved' | 'closed'> = ['open', 'pending', 'resolved', 'closed']
-    const priorities: Array<'low' | 'medium' | 'high' | 'urgent'> = ['low', 'medium', 'high', 'urgent']
+    const statuses: Array<'open' | 'pending' | 'resolved' | 'closed'> = [
+      'open',
+      'pending',
+      'resolved',
+      'closed',
+    ]
+    const priorities: Array<'low' | 'medium' | 'high' | 'urgent'> = [
+      'low',
+      'medium',
+      'high',
+      'urgent',
+    ]
 
     for (let i = 0; i < count; i++) {
       conversations.push({
@@ -544,7 +574,7 @@ export class DemoDataSeeder {
         priority: priorities[Math.floor(Math.random() * priorities.length)],
         subject: this.getScenarioSubject(scenario, i),
         created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        last_message_at: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString()
+        last_message_at: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
       })
     }
 
@@ -566,7 +596,7 @@ export class DemoDataSeeder {
         content: this.getScenarioMessage(scenario, i),
         message_type: messageTypes[Math.floor(Math.random() * messageTypes.length)],
         created_at: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-        is_read: Math.random() > 0.3
+        is_read: Math.random() > 0.3,
       })
     }
 
@@ -581,7 +611,7 @@ export class DemoDataSeeder {
     return templates.map(template => ({
       ...template,
       language: 'en',
-      variables: this.extractVariables(template.content)
+      variables: this.extractVariables(template.content),
     }))
   }
 
@@ -595,16 +625,92 @@ export class DemoDataSeeder {
   // Scenario-specific data generators
   private getScenarioNames(scenario: BusinessScenario): string[] {
     const nameMap: Record<BusinessScenario, string[]> = {
-      retail: ['Sarah Johnson', 'Mike Chen', 'Emma Davis', 'James Wilson', 'Lisa Garcia', 'David Brown', 'Maria Rodriguez', 'John Smith'],
-      restaurant: ['Tony Martinez', 'Sofia Rossi', 'Marco Benedetti', 'Isabella Romano', 'Giuseppe Conti', 'Francesca Marino', 'Andrea Ricci'],
-      real_estate: ['Robert Thompson', 'Jennifer Lee', 'Michael Anderson', 'Amanda White', 'Christopher Moore', 'Nicole Taylor', 'Kevin Martin'],
-      healthcare: ['Dr. Patricia Johnson', 'Nurse Williams', 'Mary Anderson', 'Dr. James Miller', 'Susan Davis', 'Dr. Karen Wilson'],
-      education: ['Student Alex', 'Student Jamie', 'Student Taylor', 'Student Morgan', 'Student Casey', 'Student Riley', 'Student Avery'],
-      ecommerce: ['Tech Buyer Sam', 'Gadget Lover Pat', 'Smart Home Jane', 'Gamer Alex', 'Professional Mike', 'Student Sarah'],
-      automotive: ['Car Buyer Tom', 'Family Driver Sue', 'Speed Enthusiast Max', 'Eco Driver Emma', 'Truck Buyer Joe', 'Luxury Seeker Ana'],
-      travel: ['Adventure Seeker', 'Family Traveler', 'Business Traveler', 'Honeymoon Couple', 'Solo Backpacker', 'Luxury Tourist'],
-      fitness: ['Gym Member Sam', 'Yoga Enthusiast', 'CrossFit Athlete', 'Runner Maria', 'Weightlifter John', 'Pilates Lover'],
-      generic: ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams', 'Charlie Brown', 'Diana Davis', 'Frank Miller']
+      retail: [
+        'Sarah Johnson',
+        'Mike Chen',
+        'Emma Davis',
+        'James Wilson',
+        'Lisa Garcia',
+        'David Brown',
+        'Maria Rodriguez',
+        'John Smith',
+      ],
+      restaurant: [
+        'Tony Martinez',
+        'Sofia Rossi',
+        'Marco Benedetti',
+        'Isabella Romano',
+        'Giuseppe Conti',
+        'Francesca Marino',
+        'Andrea Ricci',
+      ],
+      real_estate: [
+        'Robert Thompson',
+        'Jennifer Lee',
+        'Michael Anderson',
+        'Amanda White',
+        'Christopher Moore',
+        'Nicole Taylor',
+        'Kevin Martin',
+      ],
+      healthcare: [
+        'Dr. Patricia Johnson',
+        'Nurse Williams',
+        'Mary Anderson',
+        'Dr. James Miller',
+        'Susan Davis',
+        'Dr. Karen Wilson',
+      ],
+      education: [
+        'Student Alex',
+        'Student Jamie',
+        'Student Taylor',
+        'Student Morgan',
+        'Student Casey',
+        'Student Riley',
+        'Student Avery',
+      ],
+      ecommerce: [
+        'Tech Buyer Sam',
+        'Gadget Lover Pat',
+        'Smart Home Jane',
+        'Gamer Alex',
+        'Professional Mike',
+        'Student Sarah',
+      ],
+      automotive: [
+        'Car Buyer Tom',
+        'Family Driver Sue',
+        'Speed Enthusiast Max',
+        'Eco Driver Emma',
+        'Truck Buyer Joe',
+        'Luxury Seeker Ana',
+      ],
+      travel: [
+        'Adventure Seeker',
+        'Family Traveler',
+        'Business Traveler',
+        'Honeymoon Couple',
+        'Solo Backpacker',
+        'Luxury Tourist',
+      ],
+      fitness: [
+        'Gym Member Sam',
+        'Yoga Enthusiast',
+        'CrossFit Athlete',
+        'Runner Maria',
+        'Weightlifter John',
+        'Pilates Lover',
+      ],
+      generic: [
+        'John Doe',
+        'Jane Smith',
+        'Bob Johnson',
+        'Alice Williams',
+        'Charlie Brown',
+        'Diana Davis',
+        'Frank Miller',
+      ],
     }
     return nameMap[scenario] || nameMap.generic
   }
@@ -620,7 +726,7 @@ export class DemoDataSeeder {
       automotive: ['test-drive-completed', 'financing-interested'],
       travel: ['frequent-traveler', 'group-booking'],
       fitness: ['active-member', 'personal-training'],
-      generic: ['important', 'follow-up']
+      generic: ['important', 'follow-up'],
     }
     return tagMap[scenario] || tagMap.generic
   }
@@ -636,23 +742,53 @@ export class DemoDataSeeder {
       automotive: 'Looking for eco-friendly vehicles',
       travel: 'Prefers adventure travel packages',
       fitness: 'Interested in strength training programs',
-      generic: 'Important customer notes'
+      generic: 'Important customer notes',
     }
     return noteMap[scenario] || noteMap.generic
   }
 
   private getScenarioSubject(scenario: BusinessScenario, index: number): string {
     const subjectMap: Record<BusinessScenario, string[]> = {
-      retail: ['Order Status Inquiry', 'Size Exchange Request', 'Return Process', 'Product Recommendation'],
-      restaurant: ['Table Reservation', 'Takeout Order', 'Catering Inquiry', 'Special Dietary Requirements'],
-      real_estate: ['Property Viewing', 'Market Analysis Request', 'Financing Options', 'Investment Opportunity'],
-      healthcare: ['Appointment Booking', 'Prescription Refill', 'Test Results Inquiry', 'Health Consultation'],
+      retail: [
+        'Order Status Inquiry',
+        'Size Exchange Request',
+        'Return Process',
+        'Product Recommendation',
+      ],
+      restaurant: [
+        'Table Reservation',
+        'Takeout Order',
+        'Catering Inquiry',
+        'Special Dietary Requirements',
+      ],
+      real_estate: [
+        'Property Viewing',
+        'Market Analysis Request',
+        'Financing Options',
+        'Investment Opportunity',
+      ],
+      healthcare: [
+        'Appointment Booking',
+        'Prescription Refill',
+        'Test Results Inquiry',
+        'Health Consultation',
+      ],
       education: ['Course Enrollment', 'Assignment Help', 'Grade Inquiry', 'Academic Support'],
       ecommerce: ['Order Tracking', 'Product Support', 'Warranty Claim', 'Technical Issue'],
-      automotive: ['Test Drive Request', 'Service Appointment', 'Finance Application', 'Vehicle Inquiry'],
-      travel: ['Trip Planning', 'Booking Assistance', 'Travel Insurance', 'Destination Information'],
+      automotive: [
+        'Test Drive Request',
+        'Service Appointment',
+        'Finance Application',
+        'Vehicle Inquiry',
+      ],
+      travel: [
+        'Trip Planning',
+        'Booking Assistance',
+        'Travel Insurance',
+        'Destination Information',
+      ],
       fitness: ['Class Booking', 'Personal Training', 'Membership Inquiry', 'Fitness Consultation'],
-      generic: ['General Inquiry', 'Support Request', 'Information Needed', 'Service Question']
+      generic: ['General Inquiry', 'Support Request', 'Information Needed', 'Service Question'],
     }
     const subjects = subjectMap[scenario] || subjectMap.generic
     return subjects[index % subjects.length]
@@ -663,107 +799,111 @@ export class DemoDataSeeder {
       retail: [
         'Hi! I placed an order last week and wanted to check the status.',
         'Could you help me with a size exchange?',
-        'The item I received doesn\'t fit properly.',
-        'Do you have this in a different color?'
+        "The item I received doesn't fit properly.",
+        'Do you have this in a different color?',
       ],
       restaurant: [
-        'I\'d like to make a reservation for tonight.',
+        "I'd like to make a reservation for tonight.",
         'Can I place a takeout order?',
         'Do you have any vegan options available?',
-        'What are your hours for delivery?'
+        'What are your hours for delivery?',
       ],
       real_estate: [
-        'I\'m interested in scheduling a viewing.',
+        "I'm interested in scheduling a viewing.",
         'Could you provide more details about this property?',
-        'What\'s the current market trend in this area?',
-        'Do you have financing options available?'
+        "What's the current market trend in this area?",
+        'Do you have financing options available?',
       ],
       healthcare: [
         'I need to schedule an appointment.',
         'When will my test results be ready?',
         'I need a prescription refill.',
-        'Can I consult about my symptoms?'
+        'Can I consult about my symptoms?',
       ],
       education: [
         'How do I enroll in the advanced course?',
         'I need help with my assignment.',
         'When are the exam dates?',
-        'What are the course requirements?'
+        'What are the course requirements?',
       ],
       ecommerce: [
         'Where is my order?',
-        'The product isn\'t working as expected.',
+        "The product isn't working as expected.",
         'I need to return this item.',
-        'Do you have technical support?'
+        'Do you have technical support?',
       ],
       automotive: [
-        'I\'d like to schedule a test drive.',
+        "I'd like to schedule a test drive.",
         'What financing options do you offer?',
         'Can you service my current vehicle?',
-        'Tell me more about this model.'
+        'Tell me more about this model.',
       ],
       travel: [
         'I need help planning a trip.',
         'What packages do you recommend?',
         'Can you book flights and hotels?',
-        'What\'s included in this tour?'
+        "What's included in this tour?",
       ],
       fitness: [
         'I want to book a fitness class.',
         'Do you offer personal training?',
         'What are your membership rates?',
-        'Can you create a workout plan?'
+        'Can you create a workout plan?',
       ],
       generic: [
         'I have a question about your service.',
         'Could you provide more information?',
         'I need assistance with something.',
-        'How can you help me?'
-      ]
+        'How can you help me?',
+      ],
     }
     const messages = messageMap[scenario] || messageMap.generic
     return messages[index % messages.length]
   }
 
-  private getScenarioTemplates(scenario: BusinessScenario): Omit<DemoTemplate, 'language' | 'variables'>[] {
+  private getScenarioTemplates(
+    scenario: BusinessScenario
+  ): Omit<DemoTemplate, 'language' | 'variables'>[] {
     const templateMap: Record<BusinessScenario, Omit<DemoTemplate, 'language' | 'variables'>[]> = {
       retail: [
         {
           name: 'Order Confirmation',
-          content: 'Hi {{customer_name}}! Your order #{{order_number}} has been confirmed and will be shipped within 24 hours.',
-          category: 'orders'
+          content:
+            'Hi {{customer_name}}! Your order #{{order_number}} has been confirmed and will be shipped within 24 hours.',
+          category: 'orders',
         },
         {
           name: 'Shipping Update',
           content: 'Your order #{{order_number}} is on its way! Track it here: {{tracking_link}}',
-          category: 'shipping'
-        }
+          category: 'shipping',
+        },
       ],
       restaurant: [
         {
           name: 'Reservation Confirmation',
-          content: 'Your table for {{party_size}} is confirmed for {{date}} at {{time}}. See you soon!',
-          category: 'reservations'
+          content:
+            'Your table for {{party_size}} is confirmed for {{date}} at {{time}}. See you soon!',
+          category: 'reservations',
         },
         {
           name: 'Order Ready',
           content: 'Hi {{customer_name}}, your takeout order is ready for pickup!',
-          category: 'orders'
-        }
+          category: 'orders',
+        },
       ],
       // Add more scenarios...
       generic: [
         {
           name: 'Welcome Message',
           content: 'Welcome {{customer_name}}! How can we help you today?',
-          category: 'general'
+          category: 'general',
         },
         {
           name: 'Thank You',
-          content: 'Thank you for contacting us. We\'ll get back to you within 24 hours.',
-          category: 'general'
-        }
-      ]
+          content: "Thank you for contacting us. We'll get back to you within 24 hours.",
+          category: 'general',
+        },
+      ],
     }
     return templateMap[scenario] || templateMap.generic
   }
@@ -775,15 +915,15 @@ export class DemoDataSeeder {
         trigger: 'new_contact',
         conditions: { is_first_message: true },
         actions: { send_template: 'welcome_message' },
-        is_active: true
+        is_active: true,
       },
       {
         name: 'Auto-assign to Agent',
         trigger: 'new_conversation',
         conditions: { business_hours: true },
         actions: { assign_to: 'available_agent' },
-        is_active: true
-      }
+        is_active: true,
+      },
     ]
   }
 
@@ -807,7 +947,7 @@ export class DemoDataSeeder {
         profile_picture_url: contact.profile_picture_url,
         tags: contact.tags,
         notes: contact.notes,
-        last_message_at: contact.last_interaction
+        last_message_at: contact.last_interaction,
       })
     }
   }
@@ -835,7 +975,7 @@ export class DemoDataSeeder {
             status: conversation.status,
             priority: conversation.priority,
             subject: conversation.subject,
-            last_message_at: conversation.last_message_at
+            last_message_at: conversation.last_message_at,
           })
           .select()
           .single()
@@ -854,7 +994,7 @@ export class DemoDataSeeder {
               message_type: message.message_type,
               media_url: message.media_url,
               is_read: message.is_read,
-              created_at: message.created_at
+              created_at: message.created_at,
             })
           }
         }
@@ -919,7 +1059,11 @@ export class DemoSecurityPolicy {
   /**
    * Validate if a new session can be created for this IP
    */
-  validateNewSession(ipAddress: string, currentSessions: number, sessionsInWindow: number): {
+  validateNewSession(
+    ipAddress: string,
+    currentSessions: number,
+    sessionsInWindow: number
+  ): {
     allowed: boolean
     reason?: string
   } {
@@ -932,7 +1076,10 @@ export class DemoSecurityPolicy {
     }
 
     if (sessionsInWindow >= this.policy.max_sessions_per_hour) {
-      return { allowed: false, reason: 'Rate limit exceeded - too many sessions created in the last hour' }
+      return {
+        allowed: false,
+        reason: 'Rate limit exceeded - too many sessions created in the last hour',
+      }
     }
 
     return { allowed: true }
@@ -1030,8 +1177,13 @@ export const DemoUtils = {
       totalEvents: analytics.events.length,
       totalPageViews: analytics.page_views.length,
       featuresUsed: analytics.feature_usage.length,
-      completionRate: analytics.conversion_funnel.filter(step => step.completed).length / analytics.conversion_funnel.length * 100,
-      averagePageLoadTime: Object.values(analytics.performance_metrics.page_load_times).reduce((a, b) => a + b, 0) / Object.keys(analytics.performance_metrics.page_load_times).length || 0
+      completionRate:
+        (analytics.conversion_funnel.filter(step => step.completed).length /
+          analytics.conversion_funnel.length) *
+        100,
+      averagePageLoadTime:
+        Object.values(analytics.performance_metrics.page_load_times).reduce((a, b) => a + b, 0) /
+          Object.keys(analytics.performance_metrics.page_load_times).length || 0,
     }
-  }
+  },
 }

@@ -28,19 +28,15 @@ export function createTracedSupabaseClient(client: SupabaseClient) {
       if (prop === 'rpc') {
         return async function (fnName: string, params?: any) {
           const startTime = Date.now()
-          return traceDbQuery(
-            'rpc',
-            fnName,
-            async () => {
-              const result = await (original as any).call(target, fnName, params)
-              const duration = Date.now() - startTime
-              recordDatabaseQuery(duration, {
-                operation: 'rpc',
-                function: fnName,
-              })
-              return result
-            }
-          )
+          return traceDbQuery('rpc', fnName, async () => {
+            const result = await (original as any).call(target, fnName, params)
+            const duration = Date.now() - startTime
+            recordDatabaseQuery(duration, {
+              operation: 'rpc',
+              function: fnName,
+            })
+            return result
+          })
         }
       }
 
@@ -55,7 +51,7 @@ export function createTracedSupabaseClient(client: SupabaseClient) {
 function wrapQueryBuilder(queryBuilder: any, tableName: string) {
   const operations = ['select', 'insert', 'update', 'delete', 'upsert']
 
-  operations.forEach((operation) => {
+  operations.forEach(operation => {
     const original = queryBuilder[operation]
     if (original) {
       queryBuilder[operation] = function (...args: any[]) {
@@ -63,7 +59,7 @@ function wrapQueryBuilder(queryBuilder: any, tableName: string) {
 
         // Wrap the final execution methods
         const executionMethods = ['single', 'maybeSingle', 'then', 'catch']
-        executionMethods.forEach((method) => {
+        executionMethods.forEach(method => {
           if (result[method]) {
             const originalMethod = result[method]
             result[method] = async function (...methodArgs: any[]) {

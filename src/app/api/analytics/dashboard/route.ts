@@ -1,5 +1,10 @@
 import { NextRequest } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database'
@@ -99,78 +104,99 @@ export async function GET(request: NextRequest) {
     const metrics = await getOverviewMetrics(supabase, profile.organization_id!, startDate, endDate)
 
     // Get conversation metrics
-    const conversationMetrics = await getConversationMetrics(supabase, profile.organization_id!, startDate, endDate)
+    const conversationMetrics = await getConversationMetrics(
+      supabase,
+      profile.organization_id!,
+      startDate,
+      endDate
+    )
 
     // Get message trends
-    const messageTrends = await getMessageTrends(supabase, profile.organization_id!, startDate, endDate, timeframe)
+    const messageTrends = await getMessageTrends(
+      supabase,
+      profile.organization_id!,
+      startDate,
+      endDate,
+      timeframe
+    )
 
     // Get response times
-    const responseTimes = await getResponseTimes(supabase, profile.organization_id!, startDate, endDate)
+    const responseTimes = await getResponseTimes(
+      supabase,
+      profile.organization_id!,
+      startDate,
+      endDate
+    )
 
     // Get top agents
     const topAgents = await getTopAgents(supabase, profile.organization_id!, startDate, endDate)
 
     // Get contact sources
-    const contactSources = await getContactSources(supabase, profile.organization_id!, startDate, endDate)
+    const contactSources = await getContactSources(
+      supabase,
+      profile.organization_id!,
+      startDate,
+      endDate
+    )
 
     return createSuccessResponse({
       timeframe,
       dateRange: {
         start: startDate.toISOString(),
-        end: endDate.toISOString()
+        end: endDate.toISOString(),
       },
       metrics,
       conversationMetrics,
       messageTrends,
       responseTimes,
       topAgents,
-      contactSources
+      contactSources,
     })
-
   } catch (error) {
     console.error('Analytics dashboard error:', error)
     return createErrorResponse(error)
   }
 }
 
-async function getOverviewMetrics(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<OverviewMetrics> {
-  const [
-    messagesResult,
-    conversationsResult,
-    contactsResult,
-    activeUsersResult
-  ] = await Promise.all([
-    // Total messages in period
-    supabase
-      .from('messages')
-      .select('sender_type, created_at')
-      .eq('organization_id', organizationId)
-      .gte('created_at', startDate.toISOString())
-      .lte('created_at', endDate.toISOString()),
+async function getOverviewMetrics(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<OverviewMetrics> {
+  const [messagesResult, conversationsResult, contactsResult, activeUsersResult] =
+    await Promise.all([
+      // Total messages in period
+      supabase
+        .from('messages')
+        .select('sender_type, created_at')
+        .eq('organization_id', organizationId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString()),
 
-    // Conversations in period
-    supabase
-      .from('conversations')
-      .select('status, created_at, last_message_at')
-      .eq('organization_id', organizationId)
-      .gte('created_at', startDate.toISOString())
-      .lte('created_at', endDate.toISOString()),
+      // Conversations in period
+      supabase
+        .from('conversations')
+        .select('status, created_at, last_message_at')
+        .eq('organization_id', organizationId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString()),
 
-    // New contacts in period
-    supabase
-      .from('contacts')
-      .select('created_at')
-      .eq('organization_id', organizationId)
-      .gte('created_at', startDate.toISOString())
-      .lte('created_at', endDate.toISOString()),
+      // New contacts in period
+      supabase
+        .from('contacts')
+        .select('created_at')
+        .eq('organization_id', organizationId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString()),
 
-    // Active users
-    supabase
-      .from('profiles')
-      .select('last_seen_at')
-      .eq('organization_id', organizationId)
-      .gte('last_seen_at', startDate.toISOString())
-  ])
+      // Active users
+      supabase
+        .from('profiles')
+        .select('last_seen_at')
+        .eq('organization_id', organizationId)
+        .gte('last_seen_at', startDate.toISOString()),
+    ])
 
   const messages = messagesResult.data || []
   const conversations = conversationsResult.data || []
@@ -187,11 +213,16 @@ async function getOverviewMetrics(supabase: TypedSupabaseClient, organizationId:
     newConversations: conversations.length,
     resolvedConversations: conversations.filter(c => c.status === 'resolved').length,
     newContacts: contacts.length,
-    activeUsers: activeUsers.length
+    activeUsers: activeUsers.length,
   }
 }
 
-async function getConversationMetrics(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ConversationMetrics> {
+async function getConversationMetrics(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<ConversationMetrics> {
   const { data: conversations } = await supabase
     .from('conversations')
     .select('status, created_at, last_message_at, assigned_to')
@@ -201,10 +232,13 @@ async function getConversationMetrics(supabase: TypedSupabaseClient, organizatio
 
   const convs = conversations || []
 
-  const statusDistribution = convs.reduce((acc, conv) => {
-    acc[conv.status] = (acc[conv.status] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
+  const statusDistribution = convs.reduce(
+    (acc, conv) => {
+      acc[conv.status] = (acc[conv.status] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
 
   const assigned = convs.filter(c => c.assigned_to).length
   const unassigned = convs.length - assigned
@@ -214,11 +248,17 @@ async function getConversationMetrics(supabase: TypedSupabaseClient, organizatio
     statusDistribution,
     assigned,
     unassigned,
-    assignmentRate: convs.length > 0 ? Math.round((assigned / convs.length) * 100) : 0
+    assignmentRate: convs.length > 0 ? Math.round((assigned / convs.length) * 100) : 0,
   }
 }
 
-async function getMessageTrends(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date, timeframe: string): Promise<MessageTrend[]> {
+async function getMessageTrends(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date,
+  timeframe: string
+): Promise<MessageTrend[]> {
   const { data: messages } = await supabase
     .from('messages')
     .select('sender_type, created_at')
@@ -231,35 +271,44 @@ async function getMessageTrends(supabase: TypedSupabaseClient, organizationId: s
 
   // Group messages by time period
   const groupBy = timeframe === '1d' ? 'hour' : 'day'
-  const trends = msgs.reduce((acc, msg) => {
-    const date = new Date(msg.created_at)
-    const key = groupBy === 'hour'
-      ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:00`
-      : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  const trends = msgs.reduce(
+    (acc, msg) => {
+      const date = new Date(msg.created_at)
+      const key =
+        groupBy === 'hour'
+          ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:00`
+          : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 
-    if (!acc[key]) {
-      acc[key] = { inbound: 0, outbound: 0, total: 0 }
-    }
+      if (!acc[key]) {
+        acc[key] = { inbound: 0, outbound: 0, total: 0 }
+      }
 
-    if (msg.sender_type === 'contact') {
-      acc[key].inbound++
-    } else if (msg.sender_type === 'agent') {
-      acc[key].outbound++
-    }
-    acc[key].total++
+      if (msg.sender_type === 'contact') {
+        acc[key].inbound++
+      } else if (msg.sender_type === 'agent') {
+        acc[key].outbound++
+      }
+      acc[key].total++
 
-    return acc
-  }, {} as Record<string, { inbound: number; outbound: number; total: number }>)
+      return acc
+    },
+    {} as Record<string, { inbound: number; outbound: number; total: number }>
+  )
 
   return Object.entries(trends)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([period, data]) => ({
       period,
-      ...data
+      ...data,
     }))
 }
 
-async function getResponseTimes(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ResponseTimes> {
+async function getResponseTimes(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<ResponseTimes> {
   // This is a simplified version - in production, you'd want to track actual response times
   const { data: conversations } = await supabase
     .from('conversations')
@@ -280,22 +329,29 @@ async function getResponseTimes(supabase: TypedSupabaseClient, organizationId: s
     })
     .filter(time => time > 0)
 
-  const avgResponseTime = responseTimes.length > 0
-    ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
-    : 0
+  const avgResponseTime =
+    responseTimes.length > 0
+      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+      : 0
 
-  const medianResponseTime = responseTimes.length > 0
-    ? responseTimes.sort((a, b) => a - b)[Math.floor(responseTimes.length / 2)]
-    : 0
+  const medianResponseTime =
+    responseTimes.length > 0
+      ? responseTimes.sort((a, b) => a - b)[Math.floor(responseTimes.length / 2)]
+      : 0
 
   return {
     averageMinutes: Math.round(avgResponseTime / (1000 * 60)),
     medianMinutes: Math.round(medianResponseTime / (1000 * 60)),
-    sampleSize: responseTimes.length
+    sampleSize: responseTimes.length,
   }
 }
 
-async function getTopAgents(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<AgentStats[]> {
+async function getTopAgents(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<AgentStats[]> {
   const { data: messages } = await supabase
     .from('messages')
     .select('sender_id, profiles(full_name)')
@@ -307,27 +363,35 @@ async function getTopAgents(supabase: TypedSupabaseClient, organizationId: strin
 
   const msgs = messages || []
 
-  const agentStats = msgs.reduce((acc, msg) => {
-    const agentId = msg.sender_id
-    if (agentId && !acc[agentId]) {
-      acc[agentId] = {
-        id: agentId,
-        name: (msg.profiles as { full_name?: string } | null)?.full_name || 'Unknown',
-        messageCount: 0
+  const agentStats = msgs.reduce(
+    (acc, msg) => {
+      const agentId = msg.sender_id
+      if (agentId && !acc[agentId]) {
+        acc[agentId] = {
+          id: agentId,
+          name: (msg.profiles as { full_name?: string } | null)?.full_name || 'Unknown',
+          messageCount: 0,
+        }
       }
-    }
-    if (agentId) {
-      acc[agentId].messageCount++
-    }
-    return acc
-  }, {} as Record<string, AgentStats>)
+      if (agentId) {
+        acc[agentId].messageCount++
+      }
+      return acc
+    },
+    {} as Record<string, AgentStats>
+  )
 
   return Object.values(agentStats)
     .sort((a, b) => b.messageCount - a.messageCount)
     .slice(0, 10)
 }
 
-async function getContactSources(supabase: TypedSupabaseClient, organizationId: string, startDate: Date, endDate: Date): Promise<ContactSource[]> {
+async function getContactSources(
+  supabase: TypedSupabaseClient,
+  organizationId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<ContactSource[]> {
   // TODO: Phase 3 - Add metadata column to contacts table for source tracking
   // For now, return count of all contacts as 'direct' source
   const { data: contacts } = await supabase

@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 import { WhatsAppClient } from './client'
 import crypto from 'crypto'
@@ -58,38 +57,38 @@ export class WhatsAppBusinessAPI {
         id: 'verify_credentials',
         title: 'Verify API Credentials',
         description: 'Testing access token and app credentials',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'verify_phone_number',
         title: 'Verify Phone Number',
         description: 'Validating WhatsApp Business phone number',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'setup_webhook',
         title: 'Configure Webhook',
         description: 'Setting up webhook URL and verification',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'test_messaging',
         title: 'Test Messaging',
         description: 'Sending test message to verify integration',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'setup_business_profile',
         title: 'Setup Business Profile',
         description: 'Configuring business information and profile',
-        status: 'pending'
+        status: 'pending',
       },
       {
         id: 'save_configuration',
         title: 'Save Configuration',
         description: 'Storing configuration in database',
-        status: 'pending'
-      }
+        status: 'pending',
+      },
     ]
 
     // Step 1: Verify API Credentials
@@ -177,7 +176,7 @@ export class WhatsAppBusinessAPI {
     try {
       const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.appId}`, {
         headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
+          Authorization: `Bearer ${this.config.accessToken}`,
         },
       })
 
@@ -193,20 +192,30 @@ export class WhatsAppBusinessAPI {
 
       return true
     } catch (error) {
-      throw new Error(`Credential verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Credential verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
   /**
    * Get phone number information and verification status
    */
-  async getPhoneNumberInfo(): Promise<{ id: string; display_phone_number: string; verified_name?: string; status?: string }> {
+  async getPhoneNumberInfo(): Promise<{
+    id: string
+    display_phone_number: string
+    verified_name?: string
+    status?: string
+  }> {
     try {
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.phoneNumberId}`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-        },
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.config.phoneNumberId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.accessToken}`,
+          },
+        }
+      )
 
       if (!response.ok) {
         throw new Error('Failed to get phone number information')
@@ -214,7 +223,9 @@ export class WhatsAppBusinessAPI {
 
       return await response.json()
     } catch (error) {
-      throw new Error(`Phone number verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Phone number verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -225,19 +236,22 @@ export class WhatsAppBusinessAPI {
     try {
       const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/whatsapp`
 
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.appId}/subscriptions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          object: 'whatsapp_business_account',
-          callback_url: webhookUrl,
-          verify_token: this.config.webhookVerifyToken,
-          fields: ['messages', 'message_deliveries', 'message_reads', 'message_reactions']
-        }),
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.config.appId}/subscriptions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.config.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            object: 'whatsapp_business_account',
+            callback_url: webhookUrl,
+            verify_token: this.config.webhookVerifyToken,
+            fields: ['messages', 'message_deliveries', 'message_reads', 'message_reactions'],
+          }),
+        }
+      )
 
       if (!response.ok) {
         const error = await response.json()
@@ -246,7 +260,9 @@ export class WhatsAppBusinessAPI {
 
       return true
     } catch (error) {
-      throw new Error(`Webhook configuration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Webhook configuration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -260,7 +276,9 @@ export class WhatsAppBusinessAPI {
       await this.client.sendTextMessage(this.config.phoneNumber, testMessage)
       return true
     } catch (error) {
-      throw new Error(`Test message failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Test message failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -269,11 +287,14 @@ export class WhatsAppBusinessAPI {
    */
   async getBusinessProfile(): Promise<BusinessProfile> {
     try {
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.businessAccountId}`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-        },
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.config.businessAccountId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.accessToken}`,
+          },
+        }
+      )
 
       if (!response.ok) {
         throw new Error('Failed to get business profile')
@@ -286,10 +307,12 @@ export class WhatsAppBusinessAPI {
         description: profile.description,
         email: profile.email,
         websites: profile.websites || [],
-        profilePictureUrl: profile.profile_picture_url
+        profilePictureUrl: profile.profile_picture_url,
       }
     } catch (error) {
-      throw new Error(`Failed to get business profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to get business profile: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -306,14 +329,17 @@ export class WhatsAppBusinessAPI {
       if (profile.email) updateData.email = profile.email
       if (profile.websites) updateData.websites = profile.websites
 
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.businessAccountId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.config.businessAccountId}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.config.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        }
+      )
 
       if (!response.ok) {
         const error = await response.json()
@@ -322,7 +348,9 @@ export class WhatsAppBusinessAPI {
 
       return true
     } catch (error) {
-      throw new Error(`Failed to update business profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to update business profile: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -338,7 +366,7 @@ export class WhatsAppBusinessAPI {
         .update({
           whatsapp_business_account_id: this.config.businessAccountId,
           whatsapp_phone_number_id: this.config.phoneNumberId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', organizationId)
 
@@ -351,7 +379,9 @@ export class WhatsAppBusinessAPI {
 
       return true
     } catch (error) {
-      throw new Error(`Failed to save configuration: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to save configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
@@ -361,10 +391,7 @@ export class WhatsAppBusinessAPI {
   static validateWebhook(signature: string, payload: string, appSecret: string): boolean {
     // crypto is now imported at the top
 
-    const expectedSignature = crypto
-      .createHmac('sha256', appSecret)
-      .update(payload)
-      .digest('hex')
+    const expectedSignature = crypto.createHmac('sha256', appSecret).update(payload).digest('hex')
 
     return crypto.timingSafeEqual(
       Buffer.from(signature.replace('sha256=', '')),
@@ -392,11 +419,14 @@ export class WhatsAppBusinessAPI {
    */
   async getRateLimits(): Promise<{ messaging: { rate_limit: number; rate_limit_hit: boolean } }> {
     try {
-      const response = await fetch(`https://graph.facebook.com/v18.0/${this.config.phoneNumberId}/insights`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-        },
-      })
+      const response = await fetch(
+        `https://graph.facebook.com/v18.0/${this.config.phoneNumberId}/insights`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.accessToken}`,
+          },
+        }
+      )
 
       if (!response.ok) {
         throw new Error('Failed to get rate limits')
@@ -422,7 +452,7 @@ export class WhatsAppBusinessAPI {
       api: false,
       webhook: false,
       phoneNumber: false,
-      businessAccount: false
+      businessAccount: false,
     }
 
     try {
@@ -440,7 +470,6 @@ export class WhatsAppBusinessAPI {
 
       // Test webhook (would require actual webhook endpoint test)
       health.webhook = true // Assume webhook is working if other tests pass
-
     } catch (error) {
       console.error('Health check failed:', error)
     }
@@ -475,7 +504,7 @@ export class WhatsAppConfigManager {
         businessAccountId: organization.whatsapp_business_account_id!,
         phoneNumberId: organization.whatsapp_phone_number_id,
         phoneNumber: organization.whatsapp_phone_number || '',
-        webhookVerifyToken: process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!
+        webhookVerifyToken: process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!,
       }
     } catch (error) {
       console.error('Failed to get WhatsApp config:', error)
@@ -513,7 +542,9 @@ export class WhatsAppConfigManager {
     } catch (error) {
       return {
         valid: false,
-        errors: [`Configuration test failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Configuration test failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       }
     }
   }

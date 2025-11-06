@@ -108,18 +108,43 @@ export class PasswordPolicyManager {
   constructor() {
     this.supabase = createClient()
     this.commonPasswords = new Set([
-      'password', '123456', '123456789', 'qwerty', 'abc123', 'password123',
-      'admin', 'letmein', 'welcome', 'monkey', '1234567890', 'password1',
-      'qwerty123', 'welcome123', 'admin123', 'root', 'toor', 'pass'
+      'password',
+      '123456',
+      '123456789',
+      'qwerty',
+      'abc123',
+      'password123',
+      'admin',
+      'letmein',
+      'welcome',
+      'monkey',
+      '1234567890',
+      'password1',
+      'qwerty123',
+      'welcome123',
+      'admin123',
+      'root',
+      'toor',
+      'pass',
     ])
     this.keyboardPatterns = [
-      'qwerty', 'asdf', 'zxcv', '1234', 'abcd', 'qwertyuiop',
-      'asdfghjkl', 'zxcvbnm', '123456789', 'abcdefg'
+      'qwerty',
+      'asdf',
+      'zxcv',
+      '1234',
+      'abcd',
+      'qwertyuiop',
+      'asdfghjkl',
+      'zxcvbnm',
+      '123456789',
+      'abcdefg',
     ]
   }
 
   // Policy Management
-  async createPasswordPolicy(policy: Omit<PasswordPolicy, 'id' | 'createdAt' | 'updatedAt'>): Promise<PasswordPolicy> {
+  async createPasswordPolicy(
+    policy: Omit<PasswordPolicy, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<PasswordPolicy> {
     const { data, error } = await this.supabase
       .from('password_policies')
       .insert({
@@ -128,7 +153,7 @@ export class PasswordPolicyManager {
         is_active: policy.isActive,
         rules: JSON.stringify(policy.rules),
         enforcement: JSON.stringify(policy.enforcement),
-        created_by: policy.createdBy
+        created_by: policy.createdBy,
       })
       .select()
       .single()
@@ -149,7 +174,10 @@ export class PasswordPolicyManager {
     return this.parsePolicy(data)
   }
 
-  async updatePasswordPolicy(policyId: string, updates: Partial<PasswordPolicy>): Promise<PasswordPolicy> {
+  async updatePasswordPolicy(
+    policyId: string,
+    updates: Partial<PasswordPolicy>
+  ): Promise<PasswordPolicy> {
     const { data, error } = await this.supabase
       .from('password_policies')
       .update({
@@ -157,7 +185,7 @@ export class PasswordPolicyManager {
         is_active: updates.isActive,
         rules: updates.rules ? JSON.stringify(updates.rules) : undefined,
         enforcement: updates.enforcement ? JSON.stringify(updates.enforcement) : undefined,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', policyId)
       .select()
@@ -206,7 +234,9 @@ export class PasswordPolicyManager {
 
     if (rules.requireSpecialChars) {
       const specialChars = rules.specialCharsSet || '!@#$%^&*()_+-=[]{}|;:,.<>?'
-      const hasSpecialChar = new RegExp(`[${specialChars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}]`).test(password)
+      const hasSpecialChar = new RegExp(
+        `[${specialChars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}]`
+      ).test(password)
       if (!hasSpecialChar) {
         errors.push('Password must contain at least one special character')
         suggestions.push(`Add a special character (${specialChars})`)
@@ -237,7 +267,9 @@ export class PasswordPolicyManager {
     if (rules.preventRepeatingChars) {
       const maxRepeating = this.getMaxRepeatingChars(password)
       if (maxRepeating > rules.maxRepeatingChars) {
-        errors.push(`Password cannot have more than ${rules.maxRepeatingChars} repeating characters`)
+        errors.push(
+          `Password cannot have more than ${rules.maxRepeatingChars} repeating characters`
+        )
         suggestions.push('Reduce repeating characters')
       }
     }
@@ -249,7 +281,10 @@ export class PasswordPolicyManager {
     }
 
     // Custom dictionary check
-    if (rules.customDictionary.length > 0 && this.containsDictionaryWord(password, rules.customDictionary)) {
+    if (
+      rules.customDictionary.length > 0 &&
+      this.containsDictionaryWord(password, rules.customDictionary)
+    ) {
       errors.push('Password contains restricted words')
       suggestions.push('Avoid using restricted words or terms')
     }
@@ -257,21 +292,29 @@ export class PasswordPolicyManager {
     // Entropy check
     const entropy = this.calculateEntropy(password)
     if (entropy < rules.entropyMinimum) {
-      warnings.push(`Password entropy is ${entropy.toFixed(1)} bits, recommended minimum is ${rules.entropyMinimum} bits`)
+      warnings.push(
+        `Password entropy is ${entropy.toFixed(1)} bits, recommended minimum is ${rules.entropyMinimum} bits`
+      )
       suggestions.push('Use a longer password with more character variety')
     }
 
     // Breach check
-    if (policy.enforcement.requireBreachCheck && await this.isBreachedPassword(password)) {
+    if (policy.enforcement.requireBreachCheck && (await this.isBreachedPassword(password))) {
       errors.push('This password has been found in data breaches and should not be used')
       suggestions.push('Choose a completely different password')
     }
 
     // Password history check
     if (userId && policy.enforcement.preventReuse) {
-      const isReused = await this.isPasswordReused(userId, password, policy.enforcement.passwordHistoryCount)
+      const isReused = await this.isPasswordReused(
+        userId,
+        password,
+        policy.enforcement.passwordHistoryCount
+      )
       if (isReused) {
-        errors.push(`Cannot reuse any of your last ${policy.enforcement.passwordHistoryCount} passwords`)
+        errors.push(
+          `Cannot reuse any of your last ${policy.enforcement.passwordHistoryCount} passwords`
+        )
         suggestions.push('Choose a password you have not used recently')
       }
     }
@@ -289,7 +332,7 @@ export class PasswordPolicyManager {
       suggestions,
       entropy,
       estimatedCrackTime,
-      strengthLevel
+      strengthLevel,
     }
   }
 
@@ -297,12 +340,10 @@ export class PasswordPolicyManager {
   async savePasswordHistory(userId: string, password: string): Promise<void> {
     const passwordHash = await bcrypt.hash(password, 12)
 
-    await this.supabase
-      .from('password_history')
-      .insert({
-        user_id: userId,
-        password_hash: passwordHash
-      })
+    await this.supabase.from('password_history').insert({
+      user_id: userId,
+      password_hash: passwordHash,
+    })
 
     // Clean up old history based on policy
     const policy = await this.getUserPasswordPolicy(userId)
@@ -321,14 +362,15 @@ export class PasswordPolicyManager {
 
     if (history && history.length > 0) {
       const idsToDelete = history.map(h => h.id)
-      await this.supabase
-        .from('password_history')
-        .delete()
-        .in('id', idsToDelete)
+      await this.supabase.from('password_history').delete().in('id', idsToDelete)
     }
   }
 
-  private async isPasswordReused(userId: string, password: string, historyCount: number): Promise<boolean> {
+  private async isPasswordReused(
+    userId: string,
+    password: string,
+    historyCount: number
+  ): Promise<boolean> {
     const { data: history } = await this.supabase
       .from('password_history')
       .select('password_hash')
@@ -348,7 +390,10 @@ export class PasswordPolicyManager {
   }
 
   // Account Lockout Management
-  async recordPasswordFailure(userId: string, organizationId: string): Promise<AccountLockout | null> {
+  async recordPasswordFailure(
+    userId: string,
+    organizationId: string
+  ): Promise<AccountLockout | null> {
     const policy = await this.getPasswordPolicy(organizationId)
 
     if (!policy.enforcement.lockoutOnFailures) {
@@ -365,14 +410,12 @@ export class PasswordPolicyManager {
     const failureCount = (existing?.failure_count || 0) + 1
 
     // Update failure count
-    await this.supabase
-      .from('login_attempts')
-      .upsert({
-        user_id: userId,
-        organization_id: organizationId,
-        failure_count: failureCount,
-        last_attempt: new Date().toISOString()
-      })
+    await this.supabase.from('login_attempts').upsert({
+      user_id: userId,
+      organization_id: organizationId,
+      failure_count: failureCount,
+      last_attempt: new Date().toISOString(),
+    })
 
     // Check if lockout threshold reached
     if (failureCount >= policy.enforcement.maxFailureAttempts) {
@@ -400,7 +443,7 @@ export class PasswordPolicyManager {
         reason,
         attempt_count: attemptCount,
         locked_until: lockedUntil.toISOString(),
-        locked_by: lockedBy
+        locked_by: lockedBy,
       })
       .select()
       .single()
@@ -408,10 +451,7 @@ export class PasswordPolicyManager {
     if (error) throw error
 
     // Deactivate user profile temporarily
-    await this.supabase
-      .from('profiles')
-      .update({ is_active: false })
-      .eq('id', userId)
+    await this.supabase.from('profiles').update({ is_active: false }).eq('id', userId)
 
     return {
       id: lockout.id,
@@ -422,7 +462,7 @@ export class PasswordPolicyManager {
       lockedAt: new Date(lockout.locked_at),
       lockedUntil: new Date(lockout.locked_until),
       lockedBy: lockout.locked_by,
-      unlocked: false
+      unlocked: false,
     }
   }
 
@@ -441,15 +481,12 @@ export class PasswordPolicyManager {
       .update({
         unlocked: true,
         unlocked_at: new Date().toISOString(),
-        unlocked_by: unlockedBy
+        unlocked_by: unlockedBy,
       })
       .eq('id', lockoutId)
 
     // Reactivate user profile
-    await this.supabase
-      .from('profiles')
-      .update({ is_active: true })
-      .eq('id', lockout.user_id)
+    await this.supabase.from('profiles').update({ is_active: true }).eq('id', lockout.user_id)
 
     // Reset failure count
     await this.supabase
@@ -480,7 +517,7 @@ export class PasswordPolicyManager {
       lockedBy: lockout.locked_by,
       unlocked: lockout.unlocked,
       unlockedAt: lockout.unlocked_at ? new Date(lockout.unlocked_at) : undefined,
-      unlockedBy: lockout.unlocked_by
+      unlockedBy: lockout.unlocked_by,
     }
   }
 
@@ -577,7 +614,10 @@ export class PasswordPolicyManager {
     return this.commonPasswords.has(password.toLowerCase())
   }
 
-  private containsUserInfo(password: string, userInfo: { email: string; fullName: string }): boolean {
+  private containsUserInfo(
+    password: string,
+    userInfo: { email: string; fullName: string }
+  ): boolean {
     const lowerPassword = password.toLowerCase()
     const emailParts = userInfo.email.toLowerCase().split('@')[0].split('.')
     const nameParts = userInfo.fullName.toLowerCase().split(' ')
@@ -638,7 +678,9 @@ export class PasswordPolicyManager {
     if (rules.requireNumbers && !/\d/.test(password)) return false
     if (rules.requireSpecialChars) {
       const specialChars = rules.specialCharsSet || '!@#$%^&*()_+-=[]{}|;:,.<>?'
-      const hasSpecialChar = new RegExp(`[${specialChars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}]`).test(password)
+      const hasSpecialChar = new RegExp(
+        `[${specialChars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}]`
+      ).test(password)
       if (!hasSpecialChar) return false
     }
     return true
@@ -676,7 +718,7 @@ export class PasswordPolicyManager {
         maxRepeatingChars: 3,
         preventSequentialChars: true,
         customDictionary: [],
-        entropyMinimum: 50
+        entropyMinimum: 50,
       },
       enforcement: {
         enforceOnLogin: true,
@@ -694,11 +736,11 @@ export class PasswordPolicyManager {
         minPasswordAge: 24,
         requireBreachCheck: true,
         allowTemporaryPasswords: true,
-        temporaryPasswordExpiration: 24
+        temporaryPasswordExpiration: 24,
       },
       createdBy: 'system',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
   }
 
@@ -712,7 +754,7 @@ export class PasswordPolicyManager {
       enforcement: JSON.parse(data.enforcement),
       createdBy: data.created_by,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     }
   }
 }

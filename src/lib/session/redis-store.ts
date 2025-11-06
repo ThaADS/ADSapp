@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis'
 
 /**
  * Redis Session Store for Enterprise Session Management
@@ -26,11 +26,11 @@ import { Redis } from '@upstash/redis';
  * Device information for session tracking
  */
 export interface DeviceInfo {
-  userAgent: string;
-  ip: string;
-  platform?: string;
-  browser?: string;
-  os?: string;
+  userAgent: string
+  ip: string
+  platform?: string
+  browser?: string
+  os?: string
 }
 
 /**
@@ -38,35 +38,35 @@ export interface DeviceInfo {
  * Stored in Redis with automatic TTL expiration
  */
 export interface RedisSession {
-  userId: string;
-  organizationId: string;
-  sessionToken: string;
-  deviceInfo: DeviceInfo;
-  createdAt: string;
-  lastActivity: string;
-  expiresAt: string;
-  isRevoked: boolean;
+  userId: string
+  organizationId: string
+  sessionToken: string
+  deviceInfo: DeviceInfo
+  createdAt: string
+  lastActivity: string
+  expiresAt: string
+  isRevoked: boolean
 }
 
 /**
  * Session statistics for monitoring
  */
 export interface SessionStats {
-  totalSessions: number;
-  activeSessions: number;
-  revokedSessions: number;
-  oldestSession: string | null;
-  newestSession: string | null;
+  totalSessions: number
+  activeSessions: number
+  revokedSessions: number
+  oldestSession: string | null
+  newestSession: string | null
 }
 
 /**
  * Configuration for Redis Session Store
  */
 export interface RedisStoreConfig {
-  url: string;
-  token: string;
-  sessionTimeoutMinutes: number;
-  maxConcurrentSessions: number;
+  url: string
+  token: string
+  sessionTimeoutMinutes: number
+  maxConcurrentSessions: number
 }
 
 /**
@@ -74,8 +74,8 @@ export interface RedisStoreConfig {
  */
 const DEFAULT_CONFIG: Partial<RedisStoreConfig> = {
   sessionTimeoutMinutes: 30,
-  maxConcurrentSessions: 5
-};
+  maxConcurrentSessions: 5,
+}
 
 /**
  * Redis Session Store Class
@@ -103,8 +103,8 @@ const DEFAULT_CONFIG: Partial<RedisStoreConfig> = {
  * ```
  */
 export class RedisSessionStore {
-  private redis: Redis;
-  private config: RedisStoreConfig;
+  private redis: Redis
+  private config: RedisStoreConfig
 
   /**
    * Initialize Redis Session Store
@@ -115,13 +115,13 @@ export class RedisSessionStore {
   constructor(config: RedisStoreConfig) {
     this.config = {
       ...DEFAULT_CONFIG,
-      ...config
-    } as RedisStoreConfig;
+      ...config,
+    } as RedisStoreConfig
 
     this.redis = new Redis({
       url: this.config.url,
-      token: this.config.token
-    });
+      token: this.config.token,
+    })
   }
 
   /**
@@ -133,7 +133,7 @@ export class RedisSessionStore {
    * @returns Redis key string
    */
   private getSessionKey(userId: string, sessionToken: string): string {
-    return `session:${userId}:${sessionToken}`;
+    return `session:${userId}:${sessionToken}`
   }
 
   /**
@@ -144,7 +144,7 @@ export class RedisSessionStore {
    * @returns Redis key string for user sessions set
    */
   private getUserSessionsKey(userId: string): string {
-    return `user_sessions:${userId}`;
+    return `user_sessions:${userId}`
   }
 
   /**
@@ -156,7 +156,7 @@ export class RedisSessionStore {
    * @returns Redis key string for organization sessions
    */
   private getOrgSessionKey(organizationId: string, userId: string): string {
-    return `org_sessions:${organizationId}:${userId}`;
+    return `org_sessions:${organizationId}:${userId}`
   }
 
   /**
@@ -165,7 +165,7 @@ export class RedisSessionStore {
    * @returns TTL in seconds
    */
   private getSessionTTL(): number {
-    return this.config.sessionTimeoutMinutes * 60;
+    return this.config.sessionTimeoutMinutes * 60
   }
 
   /**
@@ -196,30 +196,30 @@ export class RedisSessionStore {
    * ```
    */
   async createSession(sessionData: {
-    userId: string;
-    organizationId: string;
-    sessionToken: string;
-    deviceInfo: DeviceInfo;
+    userId: string
+    organizationId: string
+    sessionToken: string
+    deviceInfo: DeviceInfo
   }): Promise<RedisSession> {
-    const { userId, organizationId, sessionToken, deviceInfo } = sessionData;
+    const { userId, organizationId, sessionToken, deviceInfo } = sessionData
 
     // Check concurrent session limit
-    const existingSessions = await this.getUserSessions(userId);
+    const existingSessions = await this.getUserSessions(userId)
 
     if (existingSessions.length >= this.config.maxConcurrentSessions) {
       // Remove oldest session (FIFO eviction)
       const oldestSession = existingSessions.sort(
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      )[0];
+      )[0]
 
-      await this.deleteSession(userId, oldestSession.sessionToken);
+      await this.deleteSession(userId, oldestSession.sessionToken)
     }
 
     // Create session object
-    const now = new Date().toISOString();
+    const now = new Date().toISOString()
     const expiresAt = new Date(
       Date.now() + this.config.sessionTimeoutMinutes * 60 * 1000
-    ).toISOString();
+    ).toISOString()
 
     const session: RedisSession = {
       userId,
@@ -229,26 +229,26 @@ export class RedisSessionStore {
       createdAt: now,
       lastActivity: now,
       expiresAt,
-      isRevoked: false
-    };
+      isRevoked: false,
+    }
 
     // Store session in Redis with TTL
-    const sessionKey = this.getSessionKey(userId, sessionToken);
-    const ttlSeconds = this.getSessionTTL();
+    const sessionKey = this.getSessionKey(userId, sessionToken)
+    const ttlSeconds = this.getSessionTTL()
 
-    await this.redis.setex(sessionKey, ttlSeconds, JSON.stringify(session));
+    await this.redis.setex(sessionKey, ttlSeconds, JSON.stringify(session))
 
     // Add to user sessions index
-    const userSessionsKey = this.getUserSessionsKey(userId);
-    await this.redis.sadd(userSessionsKey, sessionToken);
-    await this.redis.expire(userSessionsKey, ttlSeconds);
+    const userSessionsKey = this.getUserSessionsKey(userId)
+    await this.redis.sadd(userSessionsKey, sessionToken)
+    await this.redis.expire(userSessionsKey, ttlSeconds)
 
     // Add to organization tracking
-    const orgSessionKey = this.getOrgSessionKey(organizationId, userId);
-    await this.redis.sadd(orgSessionKey, sessionToken);
-    await this.redis.expire(orgSessionKey, ttlSeconds);
+    const orgSessionKey = this.getOrgSessionKey(organizationId, userId)
+    await this.redis.sadd(orgSessionKey, sessionToken)
+    await this.redis.expire(orgSessionKey, ttlSeconds)
 
-    return session;
+    return session
   }
 
   /**
@@ -266,31 +266,28 @@ export class RedisSessionStore {
    * }
    * ```
    */
-  async getSession(
-    userId: string,
-    sessionToken: string
-  ): Promise<RedisSession | null> {
-    const sessionKey = this.getSessionKey(userId, sessionToken);
-    const sessionData = await this.redis.get<string>(sessionKey);
+  async getSession(userId: string, sessionToken: string): Promise<RedisSession | null> {
+    const sessionKey = this.getSessionKey(userId, sessionToken)
+    const sessionData = await this.redis.get<string>(sessionKey)
 
     if (!sessionData) {
-      return null;
+      return null
     }
 
-    const session: RedisSession = JSON.parse(sessionData);
+    const session: RedisSession = JSON.parse(sessionData)
 
     // Check if session is expired
     if (new Date(session.expiresAt) < new Date()) {
-      await this.deleteSession(userId, sessionToken);
-      return null;
+      await this.deleteSession(userId, sessionToken)
+      return null
     }
 
     // Check if session is revoked
     if (session.isRevoked) {
-      return null;
+      return null
     }
 
-    return session;
+    return session
   }
 
   /**
@@ -309,39 +306,32 @@ export class RedisSessionStore {
    * await store.updateSessionActivity('user123', 'token789');
    * ```
    */
-  async updateSessionActivity(
-    userId: string,
-    sessionToken: string
-  ): Promise<RedisSession | null> {
-    const session = await this.getSession(userId, sessionToken);
+  async updateSessionActivity(userId: string, sessionToken: string): Promise<RedisSession | null> {
+    const session = await this.getSession(userId, sessionToken)
 
     if (!session) {
-      return null;
+      return null
     }
 
     // Update last activity and expiration
-    const now = new Date().toISOString();
+    const now = new Date().toISOString()
     const expiresAt = new Date(
       Date.now() + this.config.sessionTimeoutMinutes * 60 * 1000
-    ).toISOString();
+    ).toISOString()
 
     const updatedSession: RedisSession = {
       ...session,
       lastActivity: now,
-      expiresAt
-    };
+      expiresAt,
+    }
 
     // Update in Redis with refreshed TTL
-    const sessionKey = this.getSessionKey(userId, sessionToken);
-    const ttlSeconds = this.getSessionTTL();
+    const sessionKey = this.getSessionKey(userId, sessionToken)
+    const ttlSeconds = this.getSessionTTL()
 
-    await this.redis.setex(
-      sessionKey,
-      ttlSeconds,
-      JSON.stringify(updatedSession)
-    );
+    await this.redis.setex(sessionKey, ttlSeconds, JSON.stringify(updatedSession))
 
-    return updatedSession;
+    return updatedSession
   }
 
   /**
@@ -360,27 +350,24 @@ export class RedisSessionStore {
    * await store.revokeSession('user123', 'token789');
    * ```
    */
-  async revokeSession(
-    userId: string,
-    sessionToken: string
-  ): Promise<boolean> {
-    const session = await this.getSession(userId, sessionToken);
+  async revokeSession(userId: string, sessionToken: string): Promise<boolean> {
+    const session = await this.getSession(userId, sessionToken)
 
     if (!session) {
-      return false;
+      return false
     }
 
     // Mark as revoked
     const revokedSession: RedisSession = {
       ...session,
-      isRevoked: true
-    };
+      isRevoked: true,
+    }
 
     // Update in Redis with short TTL (keep for audit)
-    const sessionKey = this.getSessionKey(userId, sessionToken);
-    await this.redis.setex(sessionKey, 3600, JSON.stringify(revokedSession)); // 1 hour audit trail
+    const sessionKey = this.getSessionKey(userId, sessionToken)
+    await this.redis.setex(sessionKey, 3600, JSON.stringify(revokedSession)) // 1 hour audit trail
 
-    return true;
+    return true
   }
 
   /**
@@ -394,28 +381,25 @@ export class RedisSessionStore {
    * @returns True if deleted successfully
    */
   async deleteSession(userId: string, sessionToken: string): Promise<boolean> {
-    const session = await this.getSession(userId, sessionToken);
+    const session = await this.getSession(userId, sessionToken)
 
     if (!session) {
-      return false;
+      return false
     }
 
     // Delete session
-    const sessionKey = this.getSessionKey(userId, sessionToken);
-    await this.redis.del(sessionKey);
+    const sessionKey = this.getSessionKey(userId, sessionToken)
+    await this.redis.del(sessionKey)
 
     // Remove from user sessions index
-    const userSessionsKey = this.getUserSessionsKey(userId);
-    await this.redis.srem(userSessionsKey, sessionToken);
+    const userSessionsKey = this.getUserSessionsKey(userId)
+    await this.redis.srem(userSessionsKey, sessionToken)
 
     // Remove from organization tracking
-    const orgSessionKey = this.getOrgSessionKey(
-      session.organizationId,
-      userId
-    );
-    await this.redis.srem(orgSessionKey, sessionToken);
+    const orgSessionKey = this.getOrgSessionKey(session.organizationId, userId)
+    await this.redis.srem(orgSessionKey, sessionToken)
 
-    return true;
+    return true
   }
 
   /**
@@ -434,22 +418,20 @@ export class RedisSessionStore {
    * ```
    */
   async getUserSessions(userId: string): Promise<RedisSession[]> {
-    const userSessionsKey = this.getUserSessionsKey(userId);
-    const sessionTokens = await this.redis.smembers<string[]>(userSessionsKey);
+    const userSessionsKey = this.getUserSessionsKey(userId)
+    const sessionTokens = await this.redis.smembers<string[]>(userSessionsKey)
 
     if (!sessionTokens || sessionTokens.length === 0) {
-      return [];
+      return []
     }
 
     // Get all sessions in parallel
-    const sessionPromises = sessionTokens.map(token =>
-      this.getSession(userId, token)
-    );
+    const sessionPromises = sessionTokens.map(token => this.getSession(userId, token))
 
-    const sessions = await Promise.all(sessionPromises);
+    const sessions = await Promise.all(sessionPromises)
 
     // Filter out null values (expired/revoked sessions)
-    return sessions.filter((s): s is RedisSession => s !== null);
+    return sessions.filter((s): s is RedisSession => s !== null)
   }
 
   /**
@@ -469,17 +451,15 @@ export class RedisSessionStore {
    * ```
    */
   async revokeAllUserSessions(userId: string): Promise<number> {
-    const sessions = await this.getUserSessions(userId);
+    const sessions = await this.getUserSessions(userId)
 
     // Revoke all sessions in parallel
-    const revokePromises = sessions.map(session =>
-      this.revokeSession(userId, session.sessionToken)
-    );
+    const revokePromises = sessions.map(session => this.revokeSession(userId, session.sessionToken))
 
-    const results = await Promise.all(revokePromises);
+    const results = await Promise.all(revokePromises)
 
     // Count successful revocations
-    return results.filter(r => r).length;
+    return results.filter(r => r).length
   }
 
   /**
@@ -492,17 +472,15 @@ export class RedisSessionStore {
    * @returns Number of sessions deleted
    */
   async deleteAllUserSessions(userId: string): Promise<number> {
-    const sessions = await this.getUserSessions(userId);
+    const sessions = await this.getUserSessions(userId)
 
     // Delete all sessions in parallel
-    const deletePromises = sessions.map(session =>
-      this.deleteSession(userId, session.sessionToken)
-    );
+    const deletePromises = sessions.map(session => this.deleteSession(userId, session.sessionToken))
 
-    const results = await Promise.all(deletePromises);
+    const results = await Promise.all(deletePromises)
 
     // Count successful deletions
-    return results.filter(r => r).length;
+    return results.filter(r => r).length
   }
 
   /**
@@ -514,18 +492,18 @@ export class RedisSessionStore {
    * @returns Session statistics
    */
   async getUserSessionStats(userId: string): Promise<SessionStats> {
-    const sessions = await this.getUserSessions(userId);
-    const revokedSessions = sessions.filter(s => s.isRevoked);
+    const sessions = await this.getUserSessions(userId)
+    const revokedSessions = sessions.filter(s => s.isRevoked)
 
-    let oldestSession: string | null = null;
-    let newestSession: string | null = null;
+    let oldestSession: string | null = null
+    let newestSession: string | null = null
 
     if (sessions.length > 0) {
       const sorted = sessions.sort(
         (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-      oldestSession = sorted[0].createdAt;
-      newestSession = sorted[sorted.length - 1].createdAt;
+      )
+      oldestSession = sorted[0].createdAt
+      newestSession = sorted[sorted.length - 1].createdAt
     }
 
     return {
@@ -533,8 +511,8 @@ export class RedisSessionStore {
       activeSessions: sessions.length - revokedSessions.length,
       revokedSessions: revokedSessions.length,
       oldestSession,
-      newestSession
-    };
+      newestSession,
+    }
   }
 
   /**
@@ -547,25 +525,25 @@ export class RedisSessionStore {
    * @returns Number of sessions cleaned up
    */
   async cleanupExpiredSessions(userId: string): Promise<number> {
-    const userSessionsKey = this.getUserSessionsKey(userId);
-    const sessionTokens = await this.redis.smembers<string[]>(userSessionsKey);
+    const userSessionsKey = this.getUserSessionsKey(userId)
+    const sessionTokens = await this.redis.smembers<string[]>(userSessionsKey)
 
     if (!sessionTokens || sessionTokens.length === 0) {
-      return 0;
+      return 0
     }
 
-    let cleanedCount = 0;
+    let cleanedCount = 0
 
     for (const token of sessionTokens) {
-      const session = await this.getSession(userId, token);
+      const session = await this.getSession(userId, token)
       if (!session) {
         // Session is expired or invalid - remove from index
-        await this.redis.srem(userSessionsKey, token);
-        cleanedCount++;
+        await this.redis.srem(userSessionsKey, token)
+        cleanedCount++
       }
     }
 
-    return cleanedCount;
+    return cleanedCount
   }
 
   /**
@@ -579,21 +557,21 @@ export class RedisSessionStore {
   async validateConfiguration(): Promise<boolean> {
     try {
       // Test Redis connection
-      await this.redis.ping();
+      await this.redis.ping()
 
       // Validate configuration values
       if (this.config.sessionTimeoutMinutes < 1) {
-        throw new Error('Session timeout must be at least 1 minute');
+        throw new Error('Session timeout must be at least 1 minute')
       }
 
       if (this.config.maxConcurrentSessions < 1) {
-        throw new Error('Max concurrent sessions must be at least 1');
+        throw new Error('Max concurrent sessions must be at least 1')
       }
 
-      return true;
+      return true
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Redis Session Store validation failed: ${message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      throw new Error(`Redis Session Store validation failed: ${message}`)
     }
   }
 
@@ -603,26 +581,26 @@ export class RedisSessionStore {
    * @returns Health status object
    */
   async getHealthStatus(): Promise<{
-    healthy: boolean;
-    latency: number;
-    error?: string;
+    healthy: boolean
+    latency: number
+    error?: string
   }> {
     try {
-      const start = Date.now();
-      await this.redis.ping();
-      const latency = Date.now() - start;
+      const start = Date.now()
+      await this.redis.ping()
+      const latency = Date.now() - start
 
       return {
         healthy: true,
-        latency
-      };
+        latency,
+      }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : 'Unknown error'
       return {
         healthy: false,
         latency: -1,
-        error: message
-      };
+        error: message,
+      }
     }
   }
 }
@@ -646,24 +624,24 @@ export class RedisSessionStore {
 export function createRedisSessionStore(
   config?: Partial<RedisStoreConfig>
 ): RedisSessionStore | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
 
   if (!url || !token) {
-    console.warn('[RedisStore] Redis credentials not configured - sessions will use fallback storage');
-    return null;
+    console.warn(
+      '[RedisStore] Redis credentials not configured - sessions will use fallback storage'
+    )
+    return null
   }
 
   const fullConfig: RedisStoreConfig = {
     url,
     token,
-    sessionTimeoutMinutes: config?.sessionTimeoutMinutes ??
-      Number(process.env.SESSION_TIMEOUT_MINUTES) ??
-      30,
-    maxConcurrentSessions: config?.maxConcurrentSessions ??
-      Number(process.env.MAX_CONCURRENT_SESSIONS) ??
-      5
-  };
+    sessionTimeoutMinutes:
+      config?.sessionTimeoutMinutes ?? Number(process.env.SESSION_TIMEOUT_MINUTES) ?? 30,
+    maxConcurrentSessions:
+      config?.maxConcurrentSessions ?? Number(process.env.MAX_CONCURRENT_SESSIONS) ?? 5,
+  }
 
-  return new RedisSessionStore(fullConfig);
+  return new RedisSessionStore(fullConfig)
 }

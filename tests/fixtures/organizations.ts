@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type { Organization } from '@/types/database'
 
 // =============================================================================
@@ -362,15 +361,9 @@ export const activeOrganizations: Organization[] = [
   otherOrganization,
 ]
 
-export const trialingOrganizations: Organization[] = [
-  trialOrganization,
-  expiredTrialOrganization,
-]
+export const trialingOrganizations: Organization[] = [trialOrganization, expiredTrialOrganization]
 
-export const inactiveOrganizations: Organization[] = [
-  suspendedOrganization,
-  cancelledOrganization,
-]
+export const inactiveOrganizations: Organization[] = [suspendedOrganization, cancelledOrganization]
 
 // =============================================================================
 // Helper Functions
@@ -380,28 +373,31 @@ export const inactiveOrganizations: Organization[] = [
  * Gets organization by ID
  */
 export function getOrganizationById(id: string): Organization | undefined {
-  return allOrganizations.find((org) => org.id === id)
+  return allOrganizations.find(org => org.id === id)
 }
 
 /**
  * Gets organizations by plan
  */
 export function getOrganizationsByPlan(plan: string): Organization[] {
-  return allOrganizations.filter((org) => org.subscription_plan === plan)
+  return allOrganizations.filter(org => org.subscription_plan === plan)
 }
 
 /**
  * Gets organizations by status
  */
 export function getOrganizationsByStatus(status: string): Organization[] {
-  return allOrganizations.filter((org) => org.subscription_status === status)
+  return allOrganizations.filter(org => org.subscription_status === status)
 }
 
 /**
  * Checks if organization has feature
  */
 export function hasFeature(organization: Organization, feature: string): boolean {
-  return organization.settings.features?.[feature as keyof typeof organization.settings.features] === true
+  return (
+    organization.settings.features?.[feature as keyof typeof organization.settings.features] ===
+    true
+  )
 }
 
 /**

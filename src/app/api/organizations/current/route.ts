@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * GET /api/organizations/current
@@ -17,16 +17,16 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Authenticate user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's profile with organization
@@ -34,26 +34,21 @@ export async function GET(request: NextRequest) {
       .from('profiles')
       .select('organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     if (!profile.organization_id) {
-      return NextResponse.json(
-        { error: 'User is not part of any organization' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User is not part of any organization' }, { status: 404 })
     }
 
     // Get organization details
     const { data: organization, error: orgError } = await supabase
       .from('organizations')
-      .select(`
+      .select(
+        `
         id,
         name,
         slug,
@@ -66,15 +61,13 @@ export async function GET(request: NextRequest) {
         locale,
         created_at,
         updated_at
-      `)
+      `
+      )
       .eq('id', profile.organization_id)
-      .single();
+      .single()
 
     if (orgError || !organization) {
-      return NextResponse.json(
-        { error: 'Organization not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // SECURITY: Never expose sensitive credentials in API responses
@@ -86,13 +79,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       organization,
       user_role: profile.role,
-    });
-
+    })
   } catch (error) {
-    console.error('Unexpected error in GET /api/organizations/current:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Unexpected error in GET /api/organizations/current:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

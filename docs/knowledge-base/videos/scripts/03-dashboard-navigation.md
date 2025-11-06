@@ -3,6 +3,7 @@
 **Duration**: 6-8 minutes
 **Target Audience**: New users after first message experience
 **Learning Objectives**:
+
 - Master complete dashboard navigation
 - Understand all main feature areas
 - Know where to find every major tool
@@ -28,21 +29,27 @@
 **CALLOUT**: Label each menu item as discussed:
 
 ### Inbox (Icon: envelope)
+
 **NARRATION**: "Inbox is where you'll spend most of your time - managing all customer conversations."
 
 ### Contacts (Icon: people)
+
 **NARRATION**: "Contacts is your customer database with profiles, tags, and complete conversation history."
 
 ### Templates (Icon: document)
+
 **NARRATION**: "Templates stores your reusable message templates, approved by WhatsApp for broadcast use."
 
 ### Automation (Icon: lightning bolt)
+
 **NARRATION**: "Automation is where you build workflows and rules to handle repetitive tasks automatically."
 
 ### Analytics (Icon: chart)
+
 **NARRATION**: "Analytics shows your performance metrics, team stats, and business intelligence."
 
 ### Settings (Icon: gear)
+
 **NARRATION**: "Settings controls your account preferences, team management, and integrations."
 
 ---
@@ -56,9 +63,11 @@
 **CALLOUT**: Label three main areas: "Conversation List | Message Area | Details Panel"
 
 ### Conversation List
+
 **NARRATION**: "On the left, your conversation list shows all active chats. You can filter by status, assignment, tags, or search for specific customers."
 
 **SCREEN ACTION**: Demonstrate each filter:
+
 - Status dropdown (All, Open, Pending, Resolved)
 - Assigned to filter
 - Tag filter
@@ -67,11 +76,13 @@
 **CALLOUT**: Show filter counts: "15 Open | 8 Pending | 142 Resolved"
 
 ### Message Area
+
 **NARRATION**: "The center is your message area where conversations happen. Notice the toolbar at the top."
 
 **SCREEN ACTION**: Highlight toolbar buttons
 
 **CALLOUT**: Label toolbar:
+
 - Customer info
 - Assign to agent
 - Add tags
@@ -79,9 +90,11 @@
 - More options (...)
 
 ### Details Panel
+
 **NARRATION**: "On the right, the details panel shows customer information, conversation notes, and past interactions. This context helps you provide personalized service."
 
 **SCREEN ACTION**: Click through details tabs:
+
 - Contact Info
 - Notes
 - History
@@ -100,6 +113,7 @@
 **NARRATION CONTINUES**: "You can view contacts as a list or cards, search by any field, filter by tags, and even import/export your entire database."
 
 **SCREEN ACTION**: Demonstrate:
+
 - List view toggle
 - Search functionality
 - Tag filter
@@ -111,6 +125,7 @@
 **SCREEN ACTION**: Open sample contact profile
 
 **CALLOUT**: Highlight profile sections:
+
 - Basic info (name, phone, email)
 - Custom fields
 - Tags
@@ -128,15 +143,18 @@
 **CALLOUT**: Show two tabs: "Quick Replies | WhatsApp Templates"
 
 ### Quick Replies
+
 **NARRATION**: "Quick replies are instant responses you use in conversations. Type a forward slash followed by the shortcut name."
 
 **SCREEN ACTION**: Show quick replies list with shortcuts
 
 **CALLOUT**: Examples:
+
 - /greeting → "Hello! How can I assist you?"
 - /hours → "We're open Mon-Fri 9AM-6PM"
 
 ### WhatsApp Templates
+
 **NARRATION**: "WhatsApp templates are pre-approved messages for starting conversations or sending notifications. These require WhatsApp's approval but allow you to message customers who haven't messaged you first."
 
 **SCREEN ACTION**: Show template list with approval statuses
@@ -158,6 +176,7 @@
 **SCREEN ACTION**: Click on sample automation rule
 
 **CALLOUT**: Show rule structure:
+
 - WHEN (trigger): "New conversation starts"
 - IF (conditions): "Outside business hours"
 - THEN (actions): "Send auto-reply + Assign to queue"
@@ -179,6 +198,7 @@
 **SCREEN ACTION**: Pan across main metric cards
 
 **CALLOUT**: Highlight key metrics:
+
 - 1,247 conversations this month
 - 2min average response time
 - 94% resolution rate
@@ -197,6 +217,7 @@
 **SCREEN ACTION**: Navigate to Settings page
 
 **CALLOUT**: Show settings menu sections:
+
 - Profile
 - Organization
 - Team Members
@@ -205,6 +226,7 @@
 - Notifications
 
 ### Quick Tour
+
 **NARRATION**: "In Profile, manage your personal information and preferences. Organization settings control your company name, branding, and business hours. Team Members is where you invite colleagues and set permissions."
 
 **SCREEN ACTION**: Click through each section briefly
@@ -222,6 +244,7 @@
 **SCREEN ACTION**: Point to top navigation bar
 
 ### Universal Search
+
 **NARRATION**: "This search bar at the top searches everything: conversations, contacts, templates, and more. Use keyboard shortcut Command+K or Control+K."
 
 **SCREEN ACTION**: Click search, show search results across categories
@@ -229,11 +252,13 @@
 **CALLOUT**: "Keyboard Shortcut: ⌘K (Mac) | Ctrl+K (Windows)"
 
 ### Notifications
+
 **NARRATION**: "The bell icon shows your notifications. Click to see new messages, mentions, and system alerts."
 
 **SCREEN ACTION**: Click notifications dropdown
 
 ### User Menu
+
 **NARRATION**: "Your profile menu in the top right gives quick access to settings, help documentation, and logout."
 
 **SCREEN ACTION**: Click profile menu
@@ -253,6 +278,7 @@
 **NARRATION CONTINUES**: "In the upcoming videos, we'll explore each of these areas in detail. Next up, we'll walk through connecting your WhatsApp Business account to ADSapp. See you there!"
 
 **CTA TEXT ON SCREEN**:
+
 - "Next: Connecting WhatsApp Business API"
 - "Tip: Press ? for keyboard shortcuts anytime"
 - "Explore: Try clicking around the dashboard yourself"
@@ -268,6 +294,7 @@
 **Graphics**: Clear labels for all UI elements and shortcuts
 
 **Key Visuals Needed**:
+
 - Full dashboard recording of each main section
 - Navigation menu with highlighted items
 - All filter and search demonstrations
@@ -276,12 +303,14 @@
 - Metric cards and charts for analytics
 
 **Accessibility**:
+
 - Describe all visual navigation verbally
 - Mention keyboard shortcuts for all actions
 - High contrast highlights for UI elements
 - Clear verbal cues when switching sections
 
 **Recording Requirements**:
+
 - Comprehensive test data across all features
 - Multiple sample conversations, contacts, templates
 - Sample automation rules configured

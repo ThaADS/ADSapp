@@ -3,30 +3,30 @@
  * Provides webhook event listing and management for super admin dashboard
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { adminMiddleware } from '@/lib/middleware';
-import { WebhookHandler } from '@/lib/billing/webhook-handler';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { adminMiddleware } from '@/lib/middleware'
+import { WebhookHandler } from '@/lib/billing/webhook-handler'
 
 export async function GET(request: NextRequest) {
-  const middlewareResponse = await adminMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await adminMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // TODO: Re-enable when webhook_events table is created
     // The table doesn't exist yet, so return empty results
-    console.log('Webhook events table not yet created - returning empty results');
+    console.log('Webhook events table not yet created - returning empty results')
 
-    const { searchParams } = new URL(request.url);
-    const eventType = searchParams.get('eventType') || undefined;
-    const status = searchParams.get('status') || undefined;
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const { searchParams } = new URL(request.url)
+    const eventType = searchParams.get('eventType') || undefined
+    const status = searchParams.get('status') || undefined
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = parseInt(searchParams.get('offset') || '0')
 
     // Return empty results for now
-    const events: any[] = [];
-    const count = 0;
-    const statistics: any[] = [];
+    const events: any[] = []
+    const count = 0
+    const statistics: any[] = []
 
     /* ORIGINAL CODE - Uncomment when tables exist:
     const supabase = await createClient();
@@ -93,17 +93,16 @@ export async function GET(request: NextRequest) {
             'customer.updated',
             'customer.deleted',
             'checkout.session.completed',
-            'checkout.session.expired'
+            'checkout.session.expired',
           ],
-          statuses: ['processing', 'completed', 'failed']
+          statuses: ['processing', 'completed', 'failed'],
         },
-        applied: { eventType, status }
-      }
-    });
-
+        applied: { eventType, status },
+      },
+    })
   } catch (error) {
-    const err = error as Error;
-    console.error('Admin webhooks API error:', err);
+    const err = error as Error
+    console.error('Admin webhooks API error:', err)
 
     return NextResponse.json(
       {
@@ -111,6 +110,6 @@ export async function GET(request: NextRequest) {
         message: err.message,
       },
       { status: 500 }
-    );
+    )
   }
 }

@@ -1,7 +1,12 @@
 // @ts-nocheck - Database types need regeneration
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +17,10 @@ export async function GET(request: NextRequest) {
 
     // Verify super admin access
     if (!userProfile.is_super_admin) {
-      return NextResponse.json({ error: 'Unauthorized - Super admin access required' }, { status: 403 })
+      return NextResponse.json(
+        { error: 'Unauthorized - Super admin access required' },
+        { status: 403 }
+      )
     }
 
     const { searchParams } = new URL(request.url)
@@ -55,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     // Count failed logins by IP
     const ipCounts: Record<string, number> = {}
-    failedLogins?.forEach((log) => {
+    failedLogins?.forEach(log => {
       const ip = log.metadata?.ip || 'unknown'
       ipCounts[ip] = (ipCounts[ip] || 0) + 1
     })
@@ -84,7 +92,7 @@ export async function GET(request: NextRequest) {
         'auth.multiple_failed_attempts',
         'auth.suspicious_login',
         'security.rate_limit_exceeded',
-        'security.unauthorized_access_attempt'
+        'security.unauthorized_access_attempt',
       ])
       .gte('created_at', threshold.toISOString())
       .order('created_at', { ascending: false })
@@ -92,37 +100,39 @@ export async function GET(request: NextRequest) {
 
     if (suspiciousError) throw suspiciousError
 
-    const suspiciousActivity = suspiciousLogs?.map(log => ({
-      id: log.id,
-      type: log.action,
-      description: log.description || `Suspicious activity detected: ${log.action}`,
-      severity: determineSeverity(log.action, log.metadata),
-      timestamp: log.created_at,
-      ip: log.metadata?.ip,
-      user: log.user_id
-    })) || []
+    const suspiciousActivity =
+      suspiciousLogs?.map(log => ({
+        id: log.id,
+        type: log.action,
+        description: log.description || `Suspicious activity detected: ${log.action}`,
+        severity: determineSeverity(log.action, log.metadata),
+        timestamp: log.created_at,
+        ip: log.metadata?.ip,
+        user: log.user_id,
+      })) || []
 
     // Get recent security alerts
     const { data: alertLogs, error: alertsError } = await supabase
       .from('audit_logs')
       .select('*')
-      .in('action', [
-        'security.alert',
-        'security.warning',
-        'security.info'
-      ])
+      .in('action', ['security.alert', 'security.warning', 'security.info'])
       .gte('created_at', threshold.toISOString())
       .order('created_at', { ascending: false })
       .limit(20)
 
     if (alertsError) throw alertsError
 
-    const recentAlerts = alertLogs?.map(log => ({
-      id: log.id,
-      message: log.description || log.action,
-      type: log.action.includes('alert') ? 'error' : log.action.includes('warning') ? 'warning' : 'info',
-      timestamp: log.created_at
-    })) || []
+    const recentAlerts =
+      alertLogs?.map(log => ({
+        id: log.id,
+        message: log.description || log.action,
+        type: log.action.includes('alert')
+          ? 'error'
+          : log.action.includes('warning')
+            ? 'warning'
+            : 'info',
+        timestamp: log.created_at,
+      })) || []
 
     // Calculate compliance score
     const complianceScore = await calculateComplianceScore(supabase, allUsers)
@@ -131,20 +141,19 @@ export async function GET(request: NextRequest) {
       failedLogins: {
         total: allFailedLogins?.length || 0,
         last24h: failedLogins?.length || 0,
-        topIPs
+        topIPs,
       },
       mfaAdoption: {
         enabled: mfaEnabled,
         total: totalUsers,
-        percentage: mfaPercentage
+        percentage: mfaPercentage,
       },
       suspiciousActivity,
       recentAlerts,
-      complianceScore
+      complianceScore,
     }
 
     return createSuccessResponse({ metrics })
-
   } catch (error) {
     console.error('Error fetching security metrics:', error)
     return createErrorResponse(error)
@@ -203,10 +212,10 @@ async function calculateComplianceScore(supabase: any, users: any[]) {
 
   // Calculate overall score
   const overall = Math.round(
-    (authenticationScore * 0.3) +
-    (dataProtectionScore * 0.3) +
-    (accessControlScore * 0.2) +
-    (auditLoggingScore * 0.2)
+    authenticationScore * 0.3 +
+      dataProtectionScore * 0.3 +
+      accessControlScore * 0.2 +
+      auditLoggingScore * 0.2
   )
 
   return {
@@ -215,7 +224,7 @@ async function calculateComplianceScore(supabase: any, users: any[]) {
       authentication: authenticationScore,
       dataProtection: dataProtectionScore,
       accessControl: accessControlScore,
-      auditLogging: auditLoggingScore
-    }
+      auditLogging: auditLoggingScore,
+    },
   }
 }

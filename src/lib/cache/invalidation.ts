@@ -10,45 +10,45 @@
  * - Webhook-triggered invalidation
  */
 
-import { getCacheManager } from './cache-manager';
-import { deletePattern } from './redis-client';
+import { getCacheManager } from './cache-manager'
+import { deletePattern } from './redis-client'
 
 export interface InvalidationRule {
-  resource: string;
-  relatedResources?: string[];
-  cascade?: boolean;
-  delay?: number; // Delay invalidation (ms)
+  resource: string
+  relatedResources?: string[]
+  cascade?: boolean
+  delay?: number // Delay invalidation (ms)
 }
 
 export interface InvalidationEvent {
-  tenant: string;
-  resource: string;
-  id?: string;
-  operation: 'create' | 'update' | 'delete';
-  timestamp: number;
-  metadata?: Record<string, any>;
+  tenant: string
+  resource: string
+  id?: string
+  operation: 'create' | 'update' | 'delete'
+  timestamp: number
+  metadata?: Record<string, any>
 }
 
 /**
  * Cache invalidation manager
  */
 export class CacheInvalidation {
-  private rules: Map<string, InvalidationRule>;
-  private eventQueue: InvalidationEvent[];
-  private processing: boolean;
+  private rules: Map<string, InvalidationRule>
+  private eventQueue: InvalidationEvent[]
+  private processing: boolean
 
   constructor() {
-    this.rules = new Map();
-    this.eventQueue = [];
-    this.processing = false;
-    this.initializeDefaultRules();
+    this.rules = new Map()
+    this.eventQueue = []
+    this.processing = false
+    this.initializeDefaultRules()
   }
 
   /**
    * Register invalidation rule
    */
   registerRule(rule: InvalidationRule): void {
-    this.rules.set(rule.resource, rule);
+    this.rules.set(rule.resource, rule)
   }
 
   /**
@@ -61,38 +61,35 @@ export class CacheInvalidation {
     cascade: boolean = true
   ): Promise<number> {
     try {
-      const manager = getCacheManager();
-      let totalInvalidated = 0;
+      const manager = getCacheManager()
+      let totalInvalidated = 0
 
       // Invalidate main resource
-      const mainCount = await manager.invalidate(
-        tenant,
-        id ? `${resource}:${id}` : resource
-      );
-      totalInvalidated += mainCount;
+      const mainCount = await manager.invalidate(tenant, id ? `${resource}:${id}` : resource)
+      totalInvalidated += mainCount
 
       console.log(
         `[CacheInvalidation] Invalidated ${mainCount} keys for ${tenant}:${resource}${id ? ':' + id : ''}`
-      );
+      )
 
       // Cascade invalidation if enabled
       if (cascade) {
-        const rule = this.rules.get(resource);
+        const rule = this.rules.get(resource)
         if (rule?.relatedResources) {
           for (const relatedResource of rule.relatedResources) {
-            const relatedCount = await manager.invalidate(tenant, relatedResource);
-            totalInvalidated += relatedCount;
+            const relatedCount = await manager.invalidate(tenant, relatedResource)
+            totalInvalidated += relatedCount
             console.log(
               `[CacheInvalidation] Cascade: Invalidated ${relatedCount} keys for ${tenant}:${relatedResource}`
-            );
+            )
           }
         }
       }
 
-      return totalInvalidated;
+      return totalInvalidated
     } catch (error) {
-      console.error('[CacheInvalidation] Invalidation error:', error);
-      return 0;
+      console.error('[CacheInvalidation] Invalidation error:', error)
+      return 0
     }
   }
 
@@ -100,11 +97,11 @@ export class CacheInvalidation {
    * Queue invalidation event
    */
   queueInvalidation(event: InvalidationEvent): void {
-    this.eventQueue.push(event);
+    this.eventQueue.push(event)
 
     // Process queue if not already processing
     if (!this.processing) {
-      this.processQueue();
+      this.processQueue()
     }
   }
 
@@ -113,36 +110,31 @@ export class CacheInvalidation {
    */
   private async processQueue(): Promise<void> {
     if (this.processing || this.eventQueue.length === 0) {
-      return;
+      return
     }
 
-    this.processing = true;
+    this.processing = true
 
     while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift();
-      if (!event) continue;
+      const event = this.eventQueue.shift()
+      if (!event) continue
 
       try {
-        const rule = this.rules.get(event.resource);
+        const rule = this.rules.get(event.resource)
 
         // Apply delay if specified
         if (rule?.delay) {
-          await new Promise((resolve) => setTimeout(resolve, rule.delay));
+          await new Promise(resolve => setTimeout(resolve, rule.delay))
         }
 
         // Execute invalidation
-        await this.invalidate(
-          event.tenant,
-          event.resource,
-          event.id,
-          rule?.cascade ?? true
-        );
+        await this.invalidate(event.tenant, event.resource, event.id, rule?.cascade ?? true)
       } catch (error) {
-        console.error('[CacheInvalidation] Queue processing error:', error);
+        console.error('[CacheInvalidation] Queue processing error:', error)
       }
     }
 
-    this.processing = false;
+    this.processing = false
   }
 
   /**
@@ -154,42 +146,42 @@ export class CacheInvalidation {
       resource: 'conversations',
       relatedResources: ['messages', 'contacts', 'dashboard-stats'],
       cascade: true,
-    });
+    })
 
     // Message invalidation rules
     this.registerRule({
       resource: 'messages',
       relatedResources: ['conversations', 'dashboard-stats'],
       cascade: true,
-    });
+    })
 
     // Contact invalidation rules
     this.registerRule({
       resource: 'contacts',
       relatedResources: ['conversations', 'contact-lists'],
       cascade: true,
-    });
+    })
 
     // Template invalidation rules
     this.registerRule({
       resource: 'templates',
       relatedResources: ['template-categories'],
       cascade: false,
-    });
+    })
 
     // Organization invalidation rules
     this.registerRule({
       resource: 'organizations',
       relatedResources: ['users', 'billing', 'settings'],
       cascade: true,
-    });
+    })
 
     // User invalidation rules
     this.registerRule({
       resource: 'users',
       relatedResources: ['organizations', 'permissions'],
       cascade: true,
-    });
+    })
 
     // Analytics invalidation rules
     this.registerRule({
@@ -197,37 +189,34 @@ export class CacheInvalidation {
       relatedResources: ['dashboard-stats', 'reports'],
       cascade: false,
       delay: 5000, // Delay 5 seconds to allow data aggregation
-    });
+    })
   }
 }
 
 // Global invalidation manager
-let globalInvalidation: CacheInvalidation | null = null;
+let globalInvalidation: CacheInvalidation | null = null
 
 /**
  * Get global invalidation manager
  */
 export function getInvalidationManager(): CacheInvalidation {
   if (!globalInvalidation) {
-    globalInvalidation = new CacheInvalidation();
+    globalInvalidation = new CacheInvalidation()
   }
-  return globalInvalidation;
+  return globalInvalidation
 }
 
 /**
  * Helper: Invalidate after create
  */
-export async function invalidateAfterCreate(
-  tenant: string,
-  resource: string
-): Promise<void> {
-  const manager = getInvalidationManager();
+export async function invalidateAfterCreate(tenant: string, resource: string): Promise<void> {
+  const manager = getInvalidationManager()
   manager.queueInvalidation({
     tenant,
     resource,
     operation: 'create',
     timestamp: Date.now(),
-  });
+  })
 }
 
 /**
@@ -238,14 +227,14 @@ export async function invalidateAfterUpdate(
   resource: string,
   id: string
 ): Promise<void> {
-  const manager = getInvalidationManager();
+  const manager = getInvalidationManager()
   manager.queueInvalidation({
     tenant,
     resource,
     id,
     operation: 'update',
     timestamp: Date.now(),
-  });
+  })
 }
 
 /**
@@ -256,32 +245,29 @@ export async function invalidateAfterDelete(
   resource: string,
   id: string
 ): Promise<void> {
-  const manager = getInvalidationManager();
+  const manager = getInvalidationManager()
   manager.queueInvalidation({
     tenant,
     resource,
     id,
     operation: 'delete',
     timestamp: Date.now(),
-  });
+  })
 }
 
 /**
  * Invalidate multiple resources at once
  */
-export async function invalidateMultiple(
-  tenant: string,
-  resources: string[]
-): Promise<number> {
-  const manager = getInvalidationManager();
-  let total = 0;
+export async function invalidateMultiple(tenant: string, resources: string[]): Promise<number> {
+  const manager = getInvalidationManager()
+  let total = 0
 
   for (const resource of resources) {
-    const count = await manager.invalidate(tenant, resource);
-    total += count;
+    const count = await manager.invalidate(tenant, resource)
+    total += count
   }
 
-  return total;
+  return total
 }
 
 /**
@@ -289,12 +275,12 @@ export async function invalidateMultiple(
  */
 export async function invalidateTenant(tenant: string): Promise<number> {
   try {
-    const count = await deletePattern(`${tenant}:*`);
-    console.log(`[CacheInvalidation] Invalidated entire cache for tenant ${tenant}: ${count} keys`);
-    return count;
+    const count = await deletePattern(`${tenant}:*`)
+    console.log(`[CacheInvalidation] Invalidated entire cache for tenant ${tenant}: ${count} keys`)
+    return count
   } catch (error) {
-    console.error('[CacheInvalidation] Tenant invalidation error:', error);
-    return 0;
+    console.error('[CacheInvalidation] Tenant invalidation error:', error)
+    return 0
   }
 }
 
@@ -302,10 +288,10 @@ export async function invalidateTenant(tenant: string): Promise<number> {
  * Tag-based cache invalidation
  */
 export class TagBasedInvalidation {
-  private tagRegistry: Map<string, Set<string>>; // tag -> cache keys
+  private tagRegistry: Map<string, Set<string>> // tag -> cache keys
 
   constructor() {
-    this.tagRegistry = new Map();
+    this.tagRegistry = new Map()
   }
 
   /**
@@ -314,9 +300,9 @@ export class TagBasedInvalidation {
   tag(cacheKey: string, tags: string[]): void {
     for (const tag of tags) {
       if (!this.tagRegistry.has(tag)) {
-        this.tagRegistry.set(tag, new Set());
+        this.tagRegistry.set(tag, new Set())
       }
-      this.tagRegistry.get(tag)!.add(cacheKey);
+      this.tagRegistry.get(tag)!.add(cacheKey)
     }
   }
 
@@ -324,111 +310,107 @@ export class TagBasedInvalidation {
    * Invalidate by tag
    */
   async invalidateByTag(tag: string): Promise<number> {
-    const keys = this.tagRegistry.get(tag);
-    if (!keys || keys.size === 0) return 0;
+    const keys = this.tagRegistry.get(tag)
+    if (!keys || keys.size === 0) return 0
 
-    let count = 0;
+    let count = 0
     for (const key of keys) {
-      const pattern = `*${key}*`;
-      const deleted = await deletePattern(pattern);
-      count += deleted;
+      const pattern = `*${key}*`
+      const deleted = await deletePattern(pattern)
+      count += deleted
     }
 
     // Clear tag registry
-    this.tagRegistry.delete(tag);
+    this.tagRegistry.delete(tag)
 
-    console.log(`[TagBasedInvalidation] Invalidated ${count} keys for tag: ${tag}`);
-    return count;
+    console.log(`[TagBasedInvalidation] Invalidated ${count} keys for tag: ${tag}`)
+    return count
   }
 
   /**
    * Invalidate by multiple tags
    */
   async invalidateByTags(tags: string[]): Promise<number> {
-    let total = 0;
+    let total = 0
     for (const tag of tags) {
-      const count = await this.invalidateByTag(tag);
-      total += count;
+      const count = await this.invalidateByTag(tag)
+      total += count
     }
-    return total;
+    return total
   }
 
   /**
    * Get all keys for tag
    */
   getKeysForTag(tag: string): string[] {
-    const keys = this.tagRegistry.get(tag);
-    return keys ? Array.from(keys) : [];
+    const keys = this.tagRegistry.get(tag)
+    return keys ? Array.from(keys) : []
   }
 
   /**
    * Clear all tags
    */
   clearTags(): void {
-    this.tagRegistry.clear();
+    this.tagRegistry.clear()
   }
 }
 
 // Global tag-based invalidation
-let globalTagInvalidation: TagBasedInvalidation | null = null;
+let globalTagInvalidation: TagBasedInvalidation | null = null
 
 /**
  * Get global tag-based invalidation manager
  */
 export function getTagInvalidation(): TagBasedInvalidation {
   if (!globalTagInvalidation) {
-    globalTagInvalidation = new TagBasedInvalidation();
+    globalTagInvalidation = new TagBasedInvalidation()
   }
-  return globalTagInvalidation;
+  return globalTagInvalidation
 }
 
 /**
  * Scheduled cache warming
  */
 export class CacheWarmer {
-  private warmingSchedule: Map<string, NodeJS.Timeout>;
+  private warmingSchedule: Map<string, NodeJS.Timeout>
 
   constructor() {
-    this.warmingSchedule = new Map();
+    this.warmingSchedule = new Map()
   }
 
   /**
    * Schedule cache warming
    */
-  schedule(
-    key: string,
-    warmFn: () => Promise<void>,
-    intervalMs: number
-  ): void {
+  schedule(key: string, warmFn: () => Promise<void>, intervalMs: number): void {
     // Clear existing schedule
-    this.cancel(key);
+    this.cancel(key)
 
     // Execute immediately
-    warmFn().catch((error) => {
-      console.error(`[CacheWarmer] Initial warming failed for ${key}:`, error);
-    });
+    warmFn().catch(error => {
+      console.error(`[CacheWarmer] Initial warming failed for ${key}:`, error)
+    })
 
     // Schedule recurring warming
     const timer = setInterval(async () => {
       try {
-        await warmFn();
-        console.log(`[CacheWarmer] Successfully warmed cache for ${key}`);
+        await warmFn()
+        console.log(`[CacheWarmer] Successfully warmed cache for ${key}`)
       } catch (error) {
-        console.error(`[CacheWarmer] Warming failed for ${key}:`, error);
+        console.error(`[CacheWarmer] Warming failed for ${key}:`, error)
       }
-    }, intervalMs);
+    }, intervalMs)
 
-    this.warmingSchedule.set(key, timer);
+    this.warmingSchedule.set(key, timer)
   }
 
   /**
    * Cancel scheduled warming
    */
   cancel(key: string): void {
-    const timer = this.warmingSchedule.get(key);
+    const timer = this.warmingSchedule.get(key)
     if (timer) {
-      clearInterval(timer);
-      this.warmingSchedule.delete(key);
+      clearInterval(timer)
+      this.warmingSchedule.delete(key)
     }
   }
 
@@ -437,37 +419,37 @@ export class CacheWarmer {
    */
   cancelAll(): void {
     for (const [key, timer] of this.warmingSchedule.entries()) {
-      clearInterval(timer);
+      clearInterval(timer)
     }
-    this.warmingSchedule.clear();
+    this.warmingSchedule.clear()
   }
 }
 
 // Global cache warmer
-let globalCacheWarmer: CacheWarmer | null = null;
+let globalCacheWarmer: CacheWarmer | null = null
 
 /**
  * Get global cache warmer
  */
 export function getCacheWarmer(): CacheWarmer {
   if (!globalCacheWarmer) {
-    globalCacheWarmer = new CacheWarmer();
+    globalCacheWarmer = new CacheWarmer()
   }
-  return globalCacheWarmer;
+  return globalCacheWarmer
 }
 
 /**
  * Schedule dashboard stats warming
  */
 export function warmDashboardStats(tenant: string, intervalMs: number = 300000): void {
-  const warmer = getCacheWarmer();
+  const warmer = getCacheWarmer()
   warmer.schedule(
     `dashboard-stats:${tenant}`,
     async () => {
       // This would call your dashboard stats API to warm the cache
-      console.log(`[CacheWarmer] Warming dashboard stats for ${tenant}`);
+      console.log(`[CacheWarmer] Warming dashboard stats for ${tenant}`)
       // Implementation depends on your dashboard stats endpoint
     },
     intervalMs
-  );
+  )
 }

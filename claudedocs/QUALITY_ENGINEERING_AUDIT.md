@@ -15,16 +15,16 @@
 
 ### Key Metrics
 
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| **Unit Test Coverage** | 0% | 80% | 🔴 CRITICAL |
-| **Integration Test Coverage** | 0% | 70% | 🔴 CRITICAL |
-| **E2E Test Coverage** | ~30% | 40% | 🟡 MODERATE |
-| **API Endpoint Tests** | 0/67 | 67/67 | 🔴 CRITICAL |
-| **Component Tests** | 0/50+ | 50+ | 🔴 CRITICAL |
-| **Multi-Tenant Tests** | 0 | 20+ | 🔴 CRITICAL |
-| **Security Tests** | 0 | 15+ | 🔴 CRITICAL |
-| **Performance Tests** | 1 (basic) | 10+ | 🟡 MODERATE |
+| Metric                        | Current   | Target | Status      |
+| ----------------------------- | --------- | ------ | ----------- |
+| **Unit Test Coverage**        | 0%        | 80%    | 🔴 CRITICAL |
+| **Integration Test Coverage** | 0%        | 70%    | 🔴 CRITICAL |
+| **E2E Test Coverage**         | ~30%      | 40%    | 🟡 MODERATE |
+| **API Endpoint Tests**        | 0/67      | 67/67  | 🔴 CRITICAL |
+| **Component Tests**           | 0/50+     | 50+    | 🔴 CRITICAL |
+| **Multi-Tenant Tests**        | 0         | 20+    | 🔴 CRITICAL |
+| **Security Tests**            | 0         | 15+    | 🔴 CRITICAL |
+| **Performance Tests**         | 1 (basic) | 10+    | 🟡 MODERATE |
 
 ---
 
@@ -33,6 +33,7 @@
 ### 1.1 Current Test Status
 
 #### ✅ **Existing Tests (15 E2E Tests)**
+
 ```
 tests/e2e/
 ├── 01-landing-page.spec.ts          ✅ Basic page load
@@ -53,6 +54,7 @@ tests/e2e/
 ```
 
 **E2E Coverage:** ~30% of critical user journeys
+
 - ✅ Authentication flows
 - ✅ Route navigation
 - ✅ Role-based access (Owner, Admin, Agent)
@@ -68,6 +70,7 @@ tests/e2e/
 #### ❌ **Missing Tests (Critical)**
 
 **Unit Tests: 0 tests**
+
 ```
 ❌ src/**/*.test.ts        - No unit tests found
 ❌ src/**/*.spec.ts        - No unit tests found
@@ -75,6 +78,7 @@ tests/e2e/
 ```
 
 **Integration Tests: 0 tests**
+
 ```
 ❌ API route testing        - 0/67 endpoints tested
 ❌ Database operations      - No integration tests
@@ -83,33 +87,34 @@ tests/e2e/
 
 ### 1.2 Coverage by Module
 
-| Module | Files | Unit Tests | Integration Tests | E2E Tests | Coverage % |
-|--------|-------|------------|-------------------|-----------|------------|
-| **Authentication** | 8 | 0 | 0 | 3 | 15% |
-| **API Routes** | 67 | 0 | 0 | 1 | 2% |
-| **Components** | 50+ | 0 | 0 | 5 | 10% |
-| **WhatsApp Integration** | 12 | 0 | 0 | 0 | 0% |
-| **Billing/Stripe** | 15 | 0 | 0 | 0 | 0% |
-| **Multi-Tenant Logic** | 8 | 0 | 0 | 3 | 12% |
-| **Database Layer** | 5 | 0 | 0 | 0 | 0% |
-| **Utilities** | 20+ | 0 | 0 | 0 | 0% |
+| Module                   | Files | Unit Tests | Integration Tests | E2E Tests | Coverage % |
+| ------------------------ | ----- | ---------- | ----------------- | --------- | ---------- |
+| **Authentication**       | 8     | 0          | 0                 | 3         | 15%        |
+| **API Routes**           | 67    | 0          | 0                 | 1         | 2%         |
+| **Components**           | 50+   | 0          | 0                 | 5         | 10%        |
+| **WhatsApp Integration** | 12    | 0          | 0                 | 0         | 0%         |
+| **Billing/Stripe**       | 15    | 0          | 0                 | 0         | 0%         |
+| **Multi-Tenant Logic**   | 8     | 0          | 0                 | 3         | 12%        |
+| **Database Layer**       | 5     | 0          | 0                 | 0         | 0%         |
+| **Utilities**            | 20+   | 0          | 0                 | 0         | 0%         |
 
 ### 1.3 Critical Path Coverage Matrix
 
-| Critical Path | E2E | Integration | Unit | Risk |
-|---------------|-----|-------------|------|------|
-| User signup → onboarding → first message | ❌ | ❌ | ❌ | 🔴 HIGH |
-| Payment → subscription activation | ❌ | ❌ | ❌ | 🔴 HIGH |
-| WhatsApp message send/receive | ❌ | ❌ | ❌ | 🔴 CRITICAL |
-| Template creation → approval → usage | ❌ | ❌ | ❌ | 🔴 HIGH |
-| Admin user management | ✅ | ❌ | ❌ | 🟡 MEDIUM |
-| Bulk operations | ❌ | ❌ | ❌ | 🔴 HIGH |
-| Webhook processing (Stripe) | ❌ | ❌ | ❌ | 🔴 CRITICAL |
-| Webhook processing (WhatsApp) | ❌ | ❌ | ❌ | 🔴 CRITICAL |
-| Data export | ❌ | ❌ | ❌ | 🟡 MEDIUM |
-| Contact import/export | ❌ | ❌ | ❌ | 🟡 MEDIUM |
+| Critical Path                            | E2E | Integration | Unit | Risk        |
+| ---------------------------------------- | --- | ----------- | ---- | ----------- |
+| User signup → onboarding → first message | ❌  | ❌          | ❌   | 🔴 HIGH     |
+| Payment → subscription activation        | ❌  | ❌          | ❌   | 🔴 HIGH     |
+| WhatsApp message send/receive            | ❌  | ❌          | ❌   | 🔴 CRITICAL |
+| Template creation → approval → usage     | ❌  | ❌          | ❌   | 🔴 HIGH     |
+| Admin user management                    | ✅  | ❌          | ❌   | 🟡 MEDIUM   |
+| Bulk operations                          | ❌  | ❌          | ❌   | 🔴 HIGH     |
+| Webhook processing (Stripe)              | ❌  | ❌          | ❌   | 🔴 CRITICAL |
+| Webhook processing (WhatsApp)            | ❌  | ❌          | ❌   | 🔴 CRITICAL |
+| Data export                              | ❌  | ❌          | ❌   | 🟡 MEDIUM   |
+| Contact import/export                    | ❌  | ❌          | ❌   | 🟡 MEDIUM   |
 
 **Legend:**
+
 - ✅ Tested
 - ❌ Not Tested
 - 🔴 CRITICAL - Production-breaking if fails
@@ -121,78 +126,78 @@ tests/e2e/
 
 ### 2.1 Authentication Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Empty email/password** | ❌ Untested | 🔴 HIGH | P0 |
-| **Invalid email format** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **SQL injection in auth** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Concurrent login sessions** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Session expiry handling** | ❌ Untested | 🔴 HIGH | P1 |
-| **Password reset token expiry** | ❌ Untested | 🔴 HIGH | P1 |
-| **Brute force protection** | ❌ Untested | 🔴 HIGH | P1 |
-| **Email already exists** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Signup with missing fields** | ❌ Untested | 🟡 MEDIUM | P2 |
+| Scenario                        | Current Test | Risk        | Priority |
+| ------------------------------- | ------------ | ----------- | -------- |
+| **Empty email/password**        | ❌ Untested  | 🔴 HIGH     | P0       |
+| **Invalid email format**        | ❌ Untested  | 🟡 MEDIUM   | P1       |
+| **SQL injection in auth**       | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Concurrent login sessions**   | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Session expiry handling**     | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Password reset token expiry** | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Brute force protection**      | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Email already exists**        | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Signup with missing fields**  | ❌ Untested  | 🟡 MEDIUM   | P2       |
 
 ### 2.2 Multi-Tenant Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Cross-tenant data access** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Tenant isolation in queries** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Concurrent tenant operations** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Tenant resource limits** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Subdomain conflicts** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Org deletion cascade** | ❌ Untested | 🔴 HIGH | P1 |
-| **RLS policy bypass attempts** | ❌ Untested | 🔴 CRITICAL | P0 |
+| Scenario                         | Current Test | Risk        | Priority |
+| -------------------------------- | ------------ | ----------- | -------- |
+| **Cross-tenant data access**     | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Tenant isolation in queries**  | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Concurrent tenant operations** | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Tenant resource limits**       | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Subdomain conflicts**          | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Org deletion cascade**         | ❌ Untested  | 🔴 HIGH     | P1       |
+| **RLS policy bypass attempts**   | ❌ Untested  | 🔴 CRITICAL | P0       |
 
 ### 2.3 Payment Processing Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Invalid plan ID** | ❌ Untested | 🔴 HIGH | P0 |
-| **Stripe webhook signature validation** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Payment failure handling** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Subscription downgrade** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **Prorated billing** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Failed payment retry** | ❌ Untested | 🔴 HIGH | P1 |
-| **Cancelled subscription access** | ❌ Untested | 🔴 HIGH | P1 |
-| **Invoice generation failure** | ❌ Untested | 🟡 MEDIUM | P2 |
+| Scenario                                | Current Test | Risk        | Priority |
+| --------------------------------------- | ------------ | ----------- | -------- |
+| **Invalid plan ID**                     | ❌ Untested  | 🔴 HIGH     | P0       |
+| **Stripe webhook signature validation** | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Payment failure handling**            | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Subscription downgrade**              | ❌ Untested  | 🟡 MEDIUM   | P1       |
+| **Prorated billing**                    | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Failed payment retry**                | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Cancelled subscription access**       | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Invoice generation failure**          | ❌ Untested  | 🟡 MEDIUM   | P2       |
 
 ### 2.4 WhatsApp Messaging Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Empty message body** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **Invalid phone number format** | ❌ Untested | 🔴 HIGH | P0 |
-| **WhatsApp API rate limiting** | ❌ Untested | 🔴 HIGH | P1 |
-| **Template not approved** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **Media upload failure** | ❌ Untested | 🔴 HIGH | P1 |
-| **Webhook signature validation** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Duplicate message handling** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Message delivery status tracking** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Network timeout during send** | ❌ Untested | 🔴 HIGH | P1 |
+| Scenario                             | Current Test | Risk        | Priority |
+| ------------------------------------ | ------------ | ----------- | -------- |
+| **Empty message body**               | ❌ Untested  | 🟡 MEDIUM   | P1       |
+| **Invalid phone number format**      | ❌ Untested  | 🔴 HIGH     | P0       |
+| **WhatsApp API rate limiting**       | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Template not approved**            | ❌ Untested  | 🟡 MEDIUM   | P1       |
+| **Media upload failure**             | ❌ Untested  | 🔴 HIGH     | P1       |
+| **Webhook signature validation**     | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Duplicate message handling**       | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Message delivery status tracking** | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Network timeout during send**      | ❌ Untested  | 🔴 HIGH     | P1       |
 
 ### 2.5 Form Validation Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Null/undefined input** | ❌ Untested | 🔴 HIGH | P0 |
-| **Excessively long strings** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **Special characters in names** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **XSS attempt in input** | ❌ Untested | 🔴 CRITICAL | P0 |
-| **Unicode handling** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Empty required fields** | ❌ Untested | 🟡 MEDIUM | P1 |
+| Scenario                        | Current Test | Risk        | Priority |
+| ------------------------------- | ------------ | ----------- | -------- |
+| **Null/undefined input**        | ❌ Untested  | 🔴 HIGH     | P0       |
+| **Excessively long strings**    | ❌ Untested  | 🟡 MEDIUM   | P1       |
+| **Special characters in names** | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **XSS attempt in input**        | ❌ Untested  | 🔴 CRITICAL | P0       |
+| **Unicode handling**            | ❌ Untested  | 🟡 MEDIUM   | P2       |
+| **Empty required fields**       | ❌ Untested  | 🟡 MEDIUM   | P1       |
 
 ### 2.6 Bulk Operations Edge Cases
 
-| Scenario | Current Test | Risk | Priority |
-|----------|--------------|------|----------|
-| **Empty bulk operation** | ❌ Untested | 🟡 MEDIUM | P1 |
-| **Partial failure handling** | ❌ Untested | 🔴 HIGH | P1 |
-| **Operation timeout** | ❌ Untested | 🔴 HIGH | P1 |
-| **Concurrent bulk operations** | ❌ Untested | 🟡 MEDIUM | P2 |
-| **Memory exhaustion** | ❌ Untested | 🔴 HIGH | P1 |
-| **Transaction rollback** | ❌ Untested | 🔴 HIGH | P1 |
+| Scenario                       | Current Test | Risk      | Priority |
+| ------------------------------ | ------------ | --------- | -------- |
+| **Empty bulk operation**       | ❌ Untested  | 🟡 MEDIUM | P1       |
+| **Partial failure handling**   | ❌ Untested  | 🔴 HIGH   | P1       |
+| **Operation timeout**          | ❌ Untested  | 🔴 HIGH   | P1       |
+| **Concurrent bulk operations** | ❌ Untested  | 🟡 MEDIUM | P2       |
+| **Memory exhaustion**          | ❌ Untested  | 🔴 HIGH   | P1       |
+| **Transaction rollback**       | ❌ Untested  | 🔴 HIGH   | P1       |
 
 ---
 
@@ -201,14 +206,16 @@ tests/e2e/
 ### 3.1 API Route Inventory (67 endpoints)
 
 #### Authentication APIs (4 endpoints)
-| Endpoint | Method | Unit Test | Integration | Edge Cases | Status |
-|----------|--------|-----------|-------------|------------|--------|
-| `/api/auth/signin` | POST | ❌ | ❌ | 0/8 | 🔴 UNTESTED |
-| `/api/auth/signup` | POST | ❌ | ❌ | 0/10 | 🔴 UNTESTED |
-| `/api/auth/forgot-password` | POST | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/auth/reset-password` | POST | ❌ | ❌ | 0/6 | 🔴 UNTESTED |
+
+| Endpoint                    | Method | Unit Test | Integration | Edge Cases | Status      |
+| --------------------------- | ------ | --------- | ----------- | ---------- | ----------- |
+| `/api/auth/signin`          | POST   | ❌        | ❌          | 0/8        | 🔴 UNTESTED |
+| `/api/auth/signup`          | POST   | ❌        | ❌          | 0/10       | 🔴 UNTESTED |
+| `/api/auth/forgot-password` | POST   | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/auth/reset-password`  | POST   | ❌        | ❌          | 0/6        | 🔴 UNTESTED |
 
 **Critical Missing Tests:**
+
 - ❌ Request validation (empty fields, invalid formats)
 - ❌ SQL injection protection
 - ❌ Rate limiting
@@ -217,25 +224,27 @@ tests/e2e/
 - ❌ Response format validation
 
 #### Billing APIs (15 endpoints)
-| Endpoint | Method | Unit Test | Integration | Edge Cases | Status |
-|----------|--------|-----------|-------------|------------|--------|
-| `/api/billing/checkout` | POST | ❌ | ❌ | 0/6 | 🔴 CRITICAL |
-| `/api/billing/portal` | POST | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/subscription` | GET/POST/PUT | ❌ | ❌ | 0/8 | 🔴 CRITICAL |
-| `/api/billing/upgrade` | POST | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/billing/downgrade` | POST | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/billing/cancel` | POST | ❌ | ❌ | 0/4 | 🔴 UNTESTED |
-| `/api/billing/reactivate` | POST | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/invoices` | GET | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/usage` | GET | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/payment-methods` | GET/POST | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/billing/payment-methods/setup` | POST | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/payment-methods/default` | PUT | ❌ | ❌ | 0/2 | 🔴 UNTESTED |
-| `/api/billing/payment-methods/[id]` | DELETE | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/billing/plans` | GET | ❌ | ❌ | 0/2 | 🔴 UNTESTED |
-| `/api/billing/analytics` | GET | ❌ | ❌ | 0/2 | 🔴 UNTESTED |
+
+| Endpoint                               | Method       | Unit Test | Integration | Edge Cases | Status      |
+| -------------------------------------- | ------------ | --------- | ----------- | ---------- | ----------- |
+| `/api/billing/checkout`                | POST         | ❌        | ❌          | 0/6        | 🔴 CRITICAL |
+| `/api/billing/portal`                  | POST         | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/subscription`            | GET/POST/PUT | ❌        | ❌          | 0/8        | 🔴 CRITICAL |
+| `/api/billing/upgrade`                 | POST         | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/billing/downgrade`               | POST         | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/billing/cancel`                  | POST         | ❌        | ❌          | 0/4        | 🔴 UNTESTED |
+| `/api/billing/reactivate`              | POST         | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/invoices`                | GET          | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/usage`                   | GET          | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/payment-methods`         | GET/POST     | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/billing/payment-methods/setup`   | POST         | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/payment-methods/default` | PUT          | ❌        | ❌          | 0/2        | 🔴 UNTESTED |
+| `/api/billing/payment-methods/[id]`    | DELETE       | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/billing/plans`                   | GET          | ❌        | ❌          | 0/2        | 🔴 UNTESTED |
+| `/api/billing/analytics`               | GET          | ❌        | ❌          | 0/2        | 🔴 UNTESTED |
 
 **Critical Missing Tests:**
+
 - ❌ Stripe integration testing
 - ❌ Webhook signature validation
 - ❌ Payment failure scenarios
@@ -243,20 +252,22 @@ tests/e2e/
 - ❌ Authorization checks (owner-only)
 
 #### WhatsApp/Messaging APIs (10 endpoints)
-| Endpoint | Method | Unit Test | Integration | Edge Cases | Status |
-|----------|--------|-----------|-------------|------------|--------|
-| `/api/conversations/[id]/messages` | GET/POST | ❌ | ❌ | 0/8 | 🔴 CRITICAL |
-| `/api/conversations/filter` | GET | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/webhooks/whatsapp` | POST | ❌ | ❌ | 0/10 | 🔴 CRITICAL |
-| `/api/webhooks/stripe` | POST | ❌ | ❌ | 0/8 | 🔴 CRITICAL |
-| `/api/contacts` | GET/POST | ❌ | ❌ | 0/6 | 🔴 UNTESTED |
-| `/api/contacts/[id]` | GET/PUT/DELETE | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/contacts/import` | POST | ❌ | ❌ | 0/7 | 🔴 UNTESTED |
-| `/api/contacts/export` | POST | ❌ | ❌ | 0/4 | 🔴 UNTESTED |
-| `/api/contacts/segments` | GET/POST | ❌ | ❌ | 0/4 | 🔴 UNTESTED |
-| `/api/templates` | GET/POST | ❌ | ❌ | 0/6 | 🔴 UNTESTED |
+
+| Endpoint                           | Method         | Unit Test | Integration | Edge Cases | Status      |
+| ---------------------------------- | -------------- | --------- | ----------- | ---------- | ----------- |
+| `/api/conversations/[id]/messages` | GET/POST       | ❌        | ❌          | 0/8        | 🔴 CRITICAL |
+| `/api/conversations/filter`        | GET            | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/webhooks/whatsapp`           | POST           | ❌        | ❌          | 0/10       | 🔴 CRITICAL |
+| `/api/webhooks/stripe`             | POST           | ❌        | ❌          | 0/8        | 🔴 CRITICAL |
+| `/api/contacts`                    | GET/POST       | ❌        | ❌          | 0/6        | 🔴 UNTESTED |
+| `/api/contacts/[id]`               | GET/PUT/DELETE | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/contacts/import`             | POST           | ❌        | ❌          | 0/7        | 🔴 UNTESTED |
+| `/api/contacts/export`             | POST           | ❌        | ❌          | 0/4        | 🔴 UNTESTED |
+| `/api/contacts/segments`           | GET/POST       | ❌        | ❌          | 0/4        | 🔴 UNTESTED |
+| `/api/templates`                   | GET/POST       | ❌        | ❌          | 0/6        | 🔴 UNTESTED |
 
 **Critical Missing Tests:**
+
 - ❌ WhatsApp API integration
 - ❌ Webhook security validation
 - ❌ Message send/receive flow
@@ -265,25 +276,28 @@ tests/e2e/
 - ❌ Tenant isolation
 
 #### Admin APIs (10 endpoints)
-| Endpoint | Method | Unit Test | Integration | Edge Cases | Status |
-|----------|--------|-----------|-------------|------------|--------|
-| `/api/admin/dashboard` | GET | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/admin/organizations` | GET/POST | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/admin/organizations/[id]` | GET/PUT/DELETE | ❌ | ❌ | 0/6 | 🔴 UNTESTED |
-| `/api/admin/organizations/[id]/suspend` | POST | ❌ | ❌ | 0/4 | 🔴 UNTESTED |
-| `/api/admin/users` | GET | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/admin/user-management` | POST/PUT/DELETE | ❌ | ❌ | 0/5 | 🔴 UNTESTED |
-| `/api/admin/audit-logs` | GET | ❌ | ❌ | 0/4 | 🔴 UNTESTED |
-| `/api/admin/settings` | GET/PUT | ❌ | ❌ | 0/3 | 🔴 UNTESTED |
-| `/api/admin/billing` | GET | ❌ | ❌ | 0/2 | 🔴 UNTESTED |
+
+| Endpoint                                | Method          | Unit Test | Integration | Edge Cases | Status      |
+| --------------------------------------- | --------------- | --------- | ----------- | ---------- | ----------- |
+| `/api/admin/dashboard`                  | GET             | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/admin/organizations`              | GET/POST        | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/admin/organizations/[id]`         | GET/PUT/DELETE  | ❌        | ❌          | 0/6        | 🔴 UNTESTED |
+| `/api/admin/organizations/[id]/suspend` | POST            | ❌        | ❌          | 0/4        | 🔴 UNTESTED |
+| `/api/admin/users`                      | GET             | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/admin/user-management`            | POST/PUT/DELETE | ❌        | ❌          | 0/5        | 🔴 UNTESTED |
+| `/api/admin/audit-logs`                 | GET             | ❌        | ❌          | 0/4        | 🔴 UNTESTED |
+| `/api/admin/settings`                   | GET/PUT         | ❌        | ❌          | 0/3        | 🔴 UNTESTED |
+| `/api/admin/billing`                    | GET             | ❌        | ❌          | 0/2        | 🔴 UNTESTED |
 
 **Critical Missing Tests:**
+
 - ❌ Super admin authorization
 - ❌ Organization management
 - ❌ User suspension/deletion
 - ❌ Audit logging verification
 
 #### Remaining APIs (28 endpoints)
+
 - Media APIs (5) - ❌ All untested
 - Bulk Operations (3) - ❌ All untested
 - Analytics (5) - ❌ All untested
@@ -294,6 +308,7 @@ tests/e2e/
 ### 3.2 API Testing Score: **0/100** 🔴
 
 **Calculation:**
+
 - Endpoints with tests: 0/67 = 0%
 - Edge cases covered: 0/450+ = 0%
 - Integration tests: 0/67 = 0%
@@ -305,32 +320,32 @@ tests/e2e/
 
 ### 4.1 Critical Multi-Tenant Scenarios
 
-| Test Scenario | Priority | Status | Risk |
-|---------------|----------|--------|------|
-| **Tenant Isolation Tests** | | | |
-| User A cannot access User B's data | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| Direct database query bypassing RLS | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| API endpoint tenant validation | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| JWT token tampering | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| Cross-tenant conversation access | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| Cross-tenant contact access | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| Cross-tenant template access | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| **Resource Limits** | | | |
-| Tenant exceeding message quota | P1 | ❌ UNTESTED | 🟡 HIGH |
-| Tenant exceeding contact limit | P1 | ❌ UNTESTED | 🟡 HIGH |
-| Tenant storage limits | P2 | ❌ UNTESTED | 🟡 MEDIUM |
-| **Concurrent Operations** | | | |
-| Multiple users updating same org | P1 | ❌ UNTESTED | 🟡 HIGH |
-| Concurrent message sending | P1 | ❌ UNTESTED | 🟡 HIGH |
-| Race conditions in billing | P0 | ❌ UNTESTED | 🔴 CRITICAL |
-| **Data Migration** | | | |
-| Tenant data export | P2 | ❌ UNTESTED | 🟡 MEDIUM |
-| Tenant data import | P2 | ❌ UNTESTED | 🟡 MEDIUM |
-| Organization merge/split | P3 | ❌ UNTESTED | 🟢 LOW |
-| **Tenant Deletion** | | | |
-| Cascade deletion of all data | P1 | ❌ UNTESTED | 🔴 HIGH |
-| Soft delete vs hard delete | P1 | ❌ UNTESTED | 🟡 HIGH |
-| Cleanup of external resources | P1 | ❌ UNTESTED | 🟡 HIGH |
+| Test Scenario                       | Priority | Status      | Risk        |
+| ----------------------------------- | -------- | ----------- | ----------- |
+| **Tenant Isolation Tests**          |          |             |             |
+| User A cannot access User B's data  | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| Direct database query bypassing RLS | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| API endpoint tenant validation      | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| JWT token tampering                 | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| Cross-tenant conversation access    | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| Cross-tenant contact access         | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| Cross-tenant template access        | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| **Resource Limits**                 |          |             |             |
+| Tenant exceeding message quota      | P1       | ❌ UNTESTED | 🟡 HIGH     |
+| Tenant exceeding contact limit      | P1       | ❌ UNTESTED | 🟡 HIGH     |
+| Tenant storage limits               | P2       | ❌ UNTESTED | 🟡 MEDIUM   |
+| **Concurrent Operations**           |          |             |             |
+| Multiple users updating same org    | P1       | ❌ UNTESTED | 🟡 HIGH     |
+| Concurrent message sending          | P1       | ❌ UNTESTED | 🟡 HIGH     |
+| Race conditions in billing          | P0       | ❌ UNTESTED | 🔴 CRITICAL |
+| **Data Migration**                  |          |             |             |
+| Tenant data export                  | P2       | ❌ UNTESTED | 🟡 MEDIUM   |
+| Tenant data import                  | P2       | ❌ UNTESTED | 🟡 MEDIUM   |
+| Organization merge/split            | P3       | ❌ UNTESTED | 🟢 LOW      |
+| **Tenant Deletion**                 |          |             |             |
+| Cascade deletion of all data        | P1       | ❌ UNTESTED | 🔴 HIGH     |
+| Soft delete vs hard delete          | P1       | ❌ UNTESTED | 🟡 HIGH     |
+| Cleanup of external resources       | P1       | ❌ UNTESTED | 🟡 HIGH     |
 
 ### 4.2 Row Level Security (RLS) Testing
 
@@ -390,6 +405,7 @@ tests/e2e/
 ### 5.1 Current Performance Tests
 
 #### Existing Test (1)
+
 ```typescript
 // tests/e2e/05-performance.spec.ts
 - Basic Lighthouse audit
@@ -399,34 +415,35 @@ tests/e2e/
 
 #### Missing Performance Tests
 
-| Test Category | Tests Needed | Status |
-|---------------|--------------|--------|
-| **Load Testing** | | |
-| API endpoint load (100 req/s) | ❌ | Not implemented |
-| Database query performance | ❌ | Not implemented |
-| Concurrent user simulation | ❌ | Not implemented |
-| **Stress Testing** | | |
-| System breaking point | ❌ | Not implemented |
-| Memory leak detection | ❌ | Not implemented |
-| CPU usage monitoring | ❌ | Not implemented |
-| **Endurance Testing** | | |
-| 24-hour sustained load | ❌ | Not implemented |
-| Memory stability | ❌ | Not implemented |
-| **Spike Testing** | | |
-| Sudden traffic increase | ❌ | Not implemented |
-| Recovery after spike | ❌ | Not implemented |
-| **Database Performance** | | |
-| Query optimization tests | ❌ | Not implemented |
-| Index effectiveness | ❌ | Not implemented |
-| Connection pooling | ❌ | Not implemented |
-| **API Response Times** | | |
-| <200ms target for GET | ❌ | Not monitored |
-| <500ms target for POST | ❌ | Not monitored |
-| Webhook processing time | ❌ | Not monitored |
+| Test Category                 | Tests Needed | Status          |
+| ----------------------------- | ------------ | --------------- |
+| **Load Testing**              |              |                 |
+| API endpoint load (100 req/s) | ❌           | Not implemented |
+| Database query performance    | ❌           | Not implemented |
+| Concurrent user simulation    | ❌           | Not implemented |
+| **Stress Testing**            |              |                 |
+| System breaking point         | ❌           | Not implemented |
+| Memory leak detection         | ❌           | Not implemented |
+| CPU usage monitoring          | ❌           | Not implemented |
+| **Endurance Testing**         |              |                 |
+| 24-hour sustained load        | ❌           | Not implemented |
+| Memory stability              | ❌           | Not implemented |
+| **Spike Testing**             |              |                 |
+| Sudden traffic increase       | ❌           | Not implemented |
+| Recovery after spike          | ❌           | Not implemented |
+| **Database Performance**      |              |                 |
+| Query optimization tests      | ❌           | Not implemented |
+| Index effectiveness           | ❌           | Not implemented |
+| Connection pooling            | ❌           | Not implemented |
+| **API Response Times**        |              |                 |
+| <200ms target for GET         | ❌           | Not monitored   |
+| <500ms target for POST        | ❌           | Not monitored   |
+| Webhook processing time       | ❌           | Not monitored   |
 
 ### 5.2 Performance Testing Recommendations
 
 #### Recommended Tools
+
 1. **k6** - Load testing
 2. **Artillery** - Performance testing
 3. **Lighthouse CI** - ✅ Already configured
@@ -436,27 +453,27 @@ tests/e2e/
 
 ```javascript
 // Example k6 load test (needed)
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from 'k6/http'
+import { check, sleep } from 'k6'
 
 export let options = {
   stages: [
     { duration: '2m', target: 100 }, // ramp up
     { duration: '5m', target: 100 }, // sustained load
-    { duration: '2m', target: 0 },   // ramp down
+    { duration: '2m', target: 0 }, // ramp down
   ],
   thresholds: {
     http_req_duration: ['p(95)<500'], // 95% under 500ms
-    http_req_failed: ['rate<0.01'],   // <1% errors
+    http_req_failed: ['rate<0.01'], // <1% errors
   },
-};
+}
 
 export default function () {
-  const res = http.get('http://localhost:3000/api/health');
+  const res = http.get('http://localhost:3000/api/health')
   check(res, {
-    'status is 200': (r) => r.status === 200,
-  });
-  sleep(1);
+    'status is 200': r => r.status === 200,
+  })
+  sleep(1)
 }
 ```
 
@@ -468,48 +485,48 @@ export default function () {
 
 ### 6.1 Security Test Coverage
 
-| Security Domain | Tests Needed | Current | Status |
-|-----------------|--------------|---------|--------|
-| **Authentication Security** | | | |
-| SQL injection prevention | 10+ | 0 | ❌ CRITICAL |
-| Password strength validation | 5 | 0 | ❌ HIGH |
-| Brute force protection | 3 | 0 | ❌ HIGH |
-| Session hijacking prevention | 4 | 0 | ❌ HIGH |
-| **Authorization Security** | | | |
-| Role-based access control | 15+ | 0 | ❌ CRITICAL |
-| Tenant isolation verification | 20+ | 0 | ❌ CRITICAL |
-| Admin privilege escalation | 5 | 0 | ❌ CRITICAL |
-| **Input Validation** | | | |
-| XSS prevention | 10+ | 0 | ❌ CRITICAL |
-| CSRF protection | 5 | 0 | ❌ HIGH |
-| Command injection | 5 | 0 | ❌ HIGH |
-| **API Security** | | | |
-| Rate limiting verification | 10+ | 0 | ❌ HIGH |
-| API key validation | 5 | 0 | ❌ HIGH |
-| Webhook signature validation | 2 | 0 | ❌ CRITICAL |
-| **Data Protection** | | | |
-| Encryption at rest | 3 | 0 | ❌ HIGH |
-| PII masking | 5 | 0 | ❌ HIGH |
-| Secure data deletion | 3 | 0 | ❌ MEDIUM |
-| **Third-Party Security** | | | |
-| Stripe integration security | 5 | 0 | ❌ CRITICAL |
-| WhatsApp webhook security | 5 | 0 | ❌ CRITICAL |
-| Dependency vulnerabilities | 1 | 1 | ✅ OK |
+| Security Domain               | Tests Needed | Current | Status      |
+| ----------------------------- | ------------ | ------- | ----------- |
+| **Authentication Security**   |              |         |             |
+| SQL injection prevention      | 10+          | 0       | ❌ CRITICAL |
+| Password strength validation  | 5            | 0       | ❌ HIGH     |
+| Brute force protection        | 3            | 0       | ❌ HIGH     |
+| Session hijacking prevention  | 4            | 0       | ❌ HIGH     |
+| **Authorization Security**    |              |         |             |
+| Role-based access control     | 15+          | 0       | ❌ CRITICAL |
+| Tenant isolation verification | 20+          | 0       | ❌ CRITICAL |
+| Admin privilege escalation    | 5            | 0       | ❌ CRITICAL |
+| **Input Validation**          |              |         |             |
+| XSS prevention                | 10+          | 0       | ❌ CRITICAL |
+| CSRF protection               | 5            | 0       | ❌ HIGH     |
+| Command injection             | 5            | 0       | ❌ HIGH     |
+| **API Security**              |              |         |             |
+| Rate limiting verification    | 10+          | 0       | ❌ HIGH     |
+| API key validation            | 5            | 0       | ❌ HIGH     |
+| Webhook signature validation  | 2            | 0       | ❌ CRITICAL |
+| **Data Protection**           |              |         |             |
+| Encryption at rest            | 3            | 0       | ❌ HIGH     |
+| PII masking                   | 5            | 0       | ❌ HIGH     |
+| Secure data deletion          | 3            | 0       | ❌ MEDIUM   |
+| **Third-Party Security**      |              |         |             |
+| Stripe integration security   | 5            | 0       | ❌ CRITICAL |
+| WhatsApp webhook security     | 5            | 0       | ❌ CRITICAL |
+| Dependency vulnerabilities    | 1            | 1       | ✅ OK       |
 
 ### 6.2 OWASP Top 10 Testing
 
-| OWASP Category | Risk | Tests Needed | Current |
-|----------------|------|--------------|---------|
-| A01:2021 - Broken Access Control | 🔴 CRITICAL | 25+ | 0 ❌ |
-| A02:2021 - Cryptographic Failures | 🔴 HIGH | 10 | 0 ❌ |
-| A03:2021 - Injection | 🔴 CRITICAL | 15+ | 0 ❌ |
-| A04:2021 - Insecure Design | 🟡 MEDIUM | 10 | 0 ❌ |
-| A05:2021 - Security Misconfiguration | 🟡 MEDIUM | 8 | 0 ❌ |
-| A06:2021 - Vulnerable Components | 🟡 MEDIUM | 1 | 1 ✅ |
-| A07:2021 - Authentication Failures | 🔴 HIGH | 12 | 0 ❌ |
-| A08:2021 - Data Integrity Failures | 🟡 MEDIUM | 6 | 0 ❌ |
-| A09:2021 - Security Logging Failures | 🟡 LOW | 4 | 0 ❌ |
-| A10:2021 - Server-Side Request Forgery | 🟡 MEDIUM | 3 | 0 ❌ |
+| OWASP Category                         | Risk        | Tests Needed | Current |
+| -------------------------------------- | ----------- | ------------ | ------- |
+| A01:2021 - Broken Access Control       | 🔴 CRITICAL | 25+          | 0 ❌    |
+| A02:2021 - Cryptographic Failures      | 🔴 HIGH     | 10           | 0 ❌    |
+| A03:2021 - Injection                   | 🔴 CRITICAL | 15+          | 0 ❌    |
+| A04:2021 - Insecure Design             | 🟡 MEDIUM   | 10           | 0 ❌    |
+| A05:2021 - Security Misconfiguration   | 🟡 MEDIUM   | 8            | 0 ❌    |
+| A06:2021 - Vulnerable Components       | 🟡 MEDIUM   | 1            | 1 ✅    |
+| A07:2021 - Authentication Failures     | 🔴 HIGH     | 12           | 0 ❌    |
+| A08:2021 - Data Integrity Failures     | 🟡 MEDIUM   | 6            | 0 ❌    |
+| A09:2021 - Security Logging Failures   | 🟡 LOW      | 4            | 0 ❌    |
+| A10:2021 - Server-Side Request Forgery | 🟡 MEDIUM   | 3            | 0 ❌    |
 
 ### 6.3 Security Testing Tools Recommendations
 
@@ -528,6 +545,7 @@ export default function () {
 ### 7.1 Test Pyramid Balance
 
 **Current State:**
+
 ```
     /\
    /  \  E2E Tests (15 tests)
@@ -538,6 +556,7 @@ export default function () {
 ```
 
 **Recommended State:**
+
 ```
     /\
    /  \  E2E Tests (40 tests)
@@ -548,6 +567,7 @@ export default function () {
 ```
 
 **Current Issues:**
+
 - 🔴 **Inverted pyramid** - Only E2E tests exist
 - 🔴 **No foundation** - Zero unit tests means fragile codebase
 - 🔴 **Slow feedback** - E2E tests take 5-10 minutes to run
@@ -556,24 +576,24 @@ export default function () {
 
 ### 7.2 Test Quality Metrics
 
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| **Test Reliability** | | | |
-| Flaky test rate | Unknown | <2% | ⚠️ UNKNOWN |
-| Test determinism | Unknown | 100% | ⚠️ UNKNOWN |
-| **Test Maintenance** | | | |
-| Time to fix failing test | Unknown | <30 min | ⚠️ UNKNOWN |
-| Test code duplication | High | <10% | 🔴 HIGH |
-| Test documentation | Poor | Good | 🔴 POOR |
-| **Test Execution** | | | |
-| Unit test speed | N/A | <5s | ❌ N/A |
-| Integration test speed | N/A | <2min | ❌ N/A |
-| E2E test speed | ~10min | <10min | ✅ OK |
-| CI/CD integration | ✅ Yes | Yes | ✅ OK |
-| **Test Coverage** | | | |
-| Line coverage | 0% | 80% | 🔴 CRITICAL |
-| Branch coverage | 0% | 75% | 🔴 CRITICAL |
-| Function coverage | 0% | 80% | 🔴 CRITICAL |
+| Metric                   | Current | Target  | Status      |
+| ------------------------ | ------- | ------- | ----------- |
+| **Test Reliability**     |         |         |             |
+| Flaky test rate          | Unknown | <2%     | ⚠️ UNKNOWN  |
+| Test determinism         | Unknown | 100%    | ⚠️ UNKNOWN  |
+| **Test Maintenance**     |         |         |             |
+| Time to fix failing test | Unknown | <30 min | ⚠️ UNKNOWN  |
+| Test code duplication    | High    | <10%    | 🔴 HIGH     |
+| Test documentation       | Poor    | Good    | 🔴 POOR     |
+| **Test Execution**       |         |         |             |
+| Unit test speed          | N/A     | <5s     | ❌ N/A      |
+| Integration test speed   | N/A     | <2min   | ❌ N/A      |
+| E2E test speed           | ~10min  | <10min  | ✅ OK       |
+| CI/CD integration        | ✅ Yes  | Yes     | ✅ OK       |
+| **Test Coverage**        |         |         |             |
+| Line coverage            | 0%      | 80%     | 🔴 CRITICAL |
+| Branch coverage          | 0%      | 75%     | 🔴 CRITICAL |
+| Function coverage        | 0%      | 80%     | 🔴 CRITICAL |
 
 ### 7.3 Testing Strategy Maturity: **15/100** 🔴
 
@@ -583,51 +603,54 @@ export default function () {
 
 ### 8.1 Component Test Coverage
 
-| Component Category | Components | Tests | Status |
-|--------------------|------------|-------|--------|
-| **Authentication** | 8 | 0 | ❌ |
-| signup-form.tsx | - | 0 | ❌ |
-| forgot-password-form.tsx | - | 0 | ❌ |
-| reset-password-form.tsx | - | 0 | ❌ |
-| **Dashboard** | 12+ | 0 | ❌ |
-| header.tsx | - | 0 | ❌ |
-| stats.tsx | - | 0 | ❌ |
-| recent-conversations.tsx | - | 0 | ❌ |
-| activity-feed.tsx | - | 0 | ❌ |
-| nav.tsx | - | 0 | ❌ |
-| profile-settings.tsx | - | 0 | ❌ |
-| **Inbox/Messaging** | 10+ | 0 | ❌ |
-| inbox-layout.tsx | - | 0 | ❌ |
-| conversation-list.tsx | - | 0 | ❌ |
-| message-list.tsx | - | 0 | ❌ |
-| message-input.tsx | - | 0 | ❌ |
-| conversation-details.tsx | - | 0 | ❌ |
-| enhanced-message-input.tsx | - | 0 | ❌ |
-| **Billing** | 5 | 0 | ❌ |
-| pricing-plans.tsx | - | 0 | ❌ |
-| usage-metrics.tsx | - | 0 | ❌ |
-| billing-history.tsx | - | 0 | ❌ |
-| billing-dashboard.tsx | - | 0 | ❌ |
-| **Admin** | 8+ | 0 | ❌ |
-| All admin components | - | 0 | ❌ |
-| **Demo System** | 10 | 0 | ❌ |
-| demo-banner.tsx | - | 0 | ❌ |
-| demo-tour.tsx | - | 0 | ❌ |
-| demo-simulator.tsx | - | 0 | ❌ |
+| Component Category         | Components | Tests | Status |
+| -------------------------- | ---------- | ----- | ------ |
+| **Authentication**         | 8          | 0     | ❌     |
+| signup-form.tsx            | -          | 0     | ❌     |
+| forgot-password-form.tsx   | -          | 0     | ❌     |
+| reset-password-form.tsx    | -          | 0     | ❌     |
+| **Dashboard**              | 12+        | 0     | ❌     |
+| header.tsx                 | -          | 0     | ❌     |
+| stats.tsx                  | -          | 0     | ❌     |
+| recent-conversations.tsx   | -          | 0     | ❌     |
+| activity-feed.tsx          | -          | 0     | ❌     |
+| nav.tsx                    | -          | 0     | ❌     |
+| profile-settings.tsx       | -          | 0     | ❌     |
+| **Inbox/Messaging**        | 10+        | 0     | ❌     |
+| inbox-layout.tsx           | -          | 0     | ❌     |
+| conversation-list.tsx      | -          | 0     | ❌     |
+| message-list.tsx           | -          | 0     | ❌     |
+| message-input.tsx          | -          | 0     | ❌     |
+| conversation-details.tsx   | -          | 0     | ❌     |
+| enhanced-message-input.tsx | -          | 0     | ❌     |
+| **Billing**                | 5          | 0     | ❌     |
+| pricing-plans.tsx          | -          | 0     | ❌     |
+| usage-metrics.tsx          | -          | 0     | ❌     |
+| billing-history.tsx        | -          | 0     | ❌     |
+| billing-dashboard.tsx      | -          | 0     | ❌     |
+| **Admin**                  | 8+         | 0     | ❌     |
+| All admin components       | -          | 0     | ❌     |
+| **Demo System**            | 10         | 0     | ❌     |
+| demo-banner.tsx            | -          | 0     | ❌     |
+| demo-tour.tsx              | -          | 0     | ❌     |
+| demo-simulator.tsx         | -          | 0     | ❌     |
 
 ### 8.2 Component Testing Priorities
 
 **P0 - Critical (Need tests immediately):**
+
 1. Authentication forms (security-critical)
 2. Message input (core functionality)
 3. Billing components (payment-critical)
 
 **P1 - High Priority:**
+
 1. Dashboard stats (business metrics)
 2. Conversation list (core UX)
 3. Admin controls (privilege management)
 
 **P2 - Medium Priority:**
+
 1. Demo system components
 2. Analytics displays
 3. Settings forms
@@ -641,6 +664,7 @@ export default function () {
 ### 9.1 Regression Test Suite
 
 **Current State:**
+
 - ❌ No automated regression test suite
 - ❌ No baseline tests for feature changes
 - ❌ No visual regression testing
@@ -648,25 +672,27 @@ export default function () {
 
 **Required Regression Tests:**
 
-| Feature Area | Regression Tests Needed |
-|--------------|------------------------|
-| Authentication | 15+ tests |
-| Multi-tenant isolation | 20+ tests |
-| Billing workflows | 15+ tests |
-| WhatsApp messaging | 20+ tests |
-| Template management | 10+ tests |
-| Contact management | 10+ tests |
-| Admin operations | 15+ tests |
-| API endpoints | 67+ tests |
+| Feature Area           | Regression Tests Needed |
+| ---------------------- | ----------------------- |
+| Authentication         | 15+ tests               |
+| Multi-tenant isolation | 20+ tests               |
+| Billing workflows      | 15+ tests               |
+| WhatsApp messaging     | 20+ tests               |
+| Template management    | 10+ tests               |
+| Contact management     | 10+ tests               |
+| Admin operations       | 15+ tests               |
+| API endpoints          | 67+ tests               |
 
 ### 9.2 Visual Regression Testing
 
 **Tools Needed:**
+
 - Percy.io or Chromatic
 - Storybook for component isolation
 - Visual diff generation
 
 **Components Needing Visual Testing:**
+
 - Dashboard layouts (10+)
 - Form components (15+)
 - Messaging interface (8+)
@@ -682,6 +708,7 @@ export default function () {
 ### 10.1 Current CI/CD Pipeline
 
 #### ✅ Configured Tools
+
 ```json
 "scripts": {
   "test": "jest",
@@ -697,22 +724,23 @@ export default function () {
 
 #### ❌ Missing CI/CD Integrations
 
-| Integration | Status | Impact |
-|-------------|--------|--------|
-| **Pre-commit hooks** | ❌ | No local test execution |
-| **PR checks** | ⚠️ Partial | Limited test coverage |
-| **Unit test automation** | ❌ | No unit tests to run |
-| **Integration test automation** | ❌ | No integration tests |
-| **E2E test automation** | ✅ | Configured but limited coverage |
-| **Security scanning** | ✅ | npm audit configured |
-| **Performance budgets** | ⚠️ | Lighthouse configured but not enforced |
-| **Coverage reporting** | ❌ | No tests to report on |
-| **Test result artifacts** | ✅ | Playwright reports saved |
-| **Deployment blocking** | ❌ | Tests don't block deployment |
+| Integration                     | Status     | Impact                                 |
+| ------------------------------- | ---------- | -------------------------------------- |
+| **Pre-commit hooks**            | ❌         | No local test execution                |
+| **PR checks**                   | ⚠️ Partial | Limited test coverage                  |
+| **Unit test automation**        | ❌         | No unit tests to run                   |
+| **Integration test automation** | ❌         | No integration tests                   |
+| **E2E test automation**         | ✅         | Configured but limited coverage        |
+| **Security scanning**           | ✅         | npm audit configured                   |
+| **Performance budgets**         | ⚠️         | Lighthouse configured but not enforced |
+| **Coverage reporting**          | ❌         | No tests to report on                  |
+| **Test result artifacts**       | ✅         | Playwright reports saved               |
+| **Deployment blocking**         | ❌         | Tests don't block deployment           |
 
 ### 10.2 Quality Gates
 
 **Current Quality Gates:**
+
 - ❌ Code coverage threshold (configured but not met)
 - ❌ Test pass requirement
 - ✅ Linting (ESLint configured)
@@ -720,6 +748,7 @@ export default function () {
 - ⚠️ Security audit (configured but not blocking)
 
 **Recommended Quality Gates:**
+
 ```javascript
 // jest.config.js
 coverageThreshold: {
@@ -743,6 +772,7 @@ coverageThreshold: {
 **Goal:** Establish unit testing foundation and critical security tests
 
 #### Week 1: Authentication & Security
+
 ```
 Priority: P0 - CRITICAL
 Estimated Effort: 40 hours
@@ -776,6 +806,7 @@ Integration Tests:
 ```
 
 #### Week 2: Core Business Logic
+
 ```
 Priority: P0 - CRITICAL
 Estimated Effort: 40 hours
@@ -814,6 +845,7 @@ Integration Tests:
 ```
 
 **Phase 1 Deliverables:**
+
 - 71 unit tests
 - 18 integration tests
 - 89 total tests
@@ -824,6 +856,7 @@ Integration Tests:
 **Goal:** Test all core feature APIs and components
 
 #### Week 3: API Endpoint Testing
+
 ```
 Priority: P1 - HIGH
 Estimated Effort: 40 hours
@@ -855,6 +888,7 @@ API Route Tests:
 ```
 
 #### Week 4: Component Testing
+
 ```
 Priority: P1 - HIGH
 Estimated Effort: 40 hours
@@ -886,6 +920,7 @@ Component Tests:
 ```
 
 **Phase 2 Deliverables:**
+
 - 52 API tests
 - 60 component tests
 - 112 total tests (201 cumulative)
@@ -896,6 +931,7 @@ Component Tests:
 **Goal:** Comprehensive edge case coverage and advanced scenarios
 
 #### Week 5: Edge Cases
+
 ```
 Priority: P2 - MEDIUM
 Estimated Effort: 35 hours
@@ -928,6 +964,7 @@ Edge Case Tests:
 ```
 
 #### Week 6: Admin & Bulk Operations
+
 ```
 Priority: P2 - MEDIUM
 Estimated Effort: 35 hours
@@ -960,6 +997,7 @@ Integration Tests:
 ```
 
 **Phase 3 Deliverables:**
+
 - 107 edge case tests
 - 308 total tests (cumulative)
 - ~75% critical path coverage
@@ -969,6 +1007,7 @@ Integration Tests:
 **Goal:** Performance benchmarks and comprehensive security testing
 
 #### Week 7: Performance Testing
+
 ```
 Priority: P2 - MEDIUM
 Estimated Effort: 30 hours
@@ -996,6 +1035,7 @@ Performance Tests:
 ```
 
 #### Week 8: Security Hardening
+
 ```
 Priority: P1 - HIGH
 Estimated Effort: 30 hours
@@ -1025,6 +1065,7 @@ Security Tests:
 ```
 
 **Phase 4 Deliverables:**
+
 - 20+ performance tests
 - 30+ security tests
 - 358+ total tests (cumulative)
@@ -1051,57 +1092,57 @@ Ongoing Activities:
 
 ### Authentication Edge Cases (Priority: P0)
 
-| Test Case ID | Scenario | Expected Behavior | Priority | Estimated Time |
-|--------------|----------|-------------------|----------|----------------|
-| AUTH-001 | Empty email field | Return 400 with "Email required" | P0 | 30 min |
-| AUTH-002 | Empty password field | Return 400 with "Password required" | P0 | 30 min |
-| AUTH-003 | Invalid email format | Return 400 with "Invalid email" | P0 | 30 min |
-| AUTH-004 | SQL injection in email | Sanitize and reject | P0 | 1 hour |
-| AUTH-005 | SQL injection in password | Sanitize and reject | P0 | 1 hour |
-| AUTH-006 | XSS attempt in email | Sanitize input | P0 | 1 hour |
-| AUTH-007 | Brute force login (10+ attempts) | Rate limit applied | P0 | 1 hour |
-| AUTH-008 | Concurrent login sessions | Allow multiple sessions | P0 | 45 min |
-| AUTH-009 | Expired session token | Redirect to login | P0 | 30 min |
-| AUTH-010 | Tampered JWT token | Reject and return 401 | P0 | 1 hour |
+| Test Case ID | Scenario                         | Expected Behavior                   | Priority | Estimated Time |
+| ------------ | -------------------------------- | ----------------------------------- | -------- | -------------- |
+| AUTH-001     | Empty email field                | Return 400 with "Email required"    | P0       | 30 min         |
+| AUTH-002     | Empty password field             | Return 400 with "Password required" | P0       | 30 min         |
+| AUTH-003     | Invalid email format             | Return 400 with "Invalid email"     | P0       | 30 min         |
+| AUTH-004     | SQL injection in email           | Sanitize and reject                 | P0       | 1 hour         |
+| AUTH-005     | SQL injection in password        | Sanitize and reject                 | P0       | 1 hour         |
+| AUTH-006     | XSS attempt in email             | Sanitize input                      | P0       | 1 hour         |
+| AUTH-007     | Brute force login (10+ attempts) | Rate limit applied                  | P0       | 1 hour         |
+| AUTH-008     | Concurrent login sessions        | Allow multiple sessions             | P0       | 45 min         |
+| AUTH-009     | Expired session token            | Redirect to login                   | P0       | 30 min         |
+| AUTH-010     | Tampered JWT token               | Reject and return 401               | P0       | 1 hour         |
 
 ### Multi-Tenant Edge Cases (Priority: P0)
 
-| Test Case ID | Scenario | Expected Behavior | Priority | Estimated Time |
-|--------------|----------|-------------------|----------|----------------|
-| TENANT-001 | User A accesses User B's conversation | Return 403 Forbidden | P0 | 1 hour |
-| TENANT-002 | Direct SQL query without tenant filter | RLS blocks access | P0 | 1 hour |
-| TENANT-003 | API request with wrong org_id in JWT | Return 403 Forbidden | P0 | 1 hour |
-| TENANT-004 | Cross-tenant contact access | Return 403 Forbidden | P0 | 45 min |
-| TENANT-005 | Cross-tenant template access | Return 403 Forbidden | P0 | 45 min |
-| TENANT-006 | Subdomain conflict during org creation | Return 409 Conflict | P0 | 30 min |
-| TENANT-007 | Organization deletion cascade | All related data deleted | P0 | 1 hour |
-| TENANT-008 | RLS policy bypass attempt | Access denied | P0 | 1 hour |
+| Test Case ID | Scenario                               | Expected Behavior        | Priority | Estimated Time |
+| ------------ | -------------------------------------- | ------------------------ | -------- | -------------- |
+| TENANT-001   | User A accesses User B's conversation  | Return 403 Forbidden     | P0       | 1 hour         |
+| TENANT-002   | Direct SQL query without tenant filter | RLS blocks access        | P0       | 1 hour         |
+| TENANT-003   | API request with wrong org_id in JWT   | Return 403 Forbidden     | P0       | 1 hour         |
+| TENANT-004   | Cross-tenant contact access            | Return 403 Forbidden     | P0       | 45 min         |
+| TENANT-005   | Cross-tenant template access           | Return 403 Forbidden     | P0       | 45 min         |
+| TENANT-006   | Subdomain conflict during org creation | Return 409 Conflict      | P0       | 30 min         |
+| TENANT-007   | Organization deletion cascade          | All related data deleted | P0       | 1 hour         |
+| TENANT-008   | RLS policy bypass attempt              | Access denied            | P0       | 1 hour         |
 
 ### Payment Processing Edge Cases (Priority: P0)
 
-| Test Case ID | Scenario | Expected Behavior | Priority | Estimated Time |
-|--------------|----------|-------------------|----------|----------------|
-| BILLING-001 | Invalid plan ID in checkout | Return 400 Bad Request | P0 | 30 min |
-| BILLING-002 | Stripe webhook without signature | Reject webhook | P0 | 1 hour |
-| BILLING-003 | Payment failure during checkout | Show error, no subscription | P0 | 45 min |
-| BILLING-004 | Subscription downgrade | Prorated refund | P0 | 1 hour |
-| BILLING-005 | Cancelled subscription access | Block premium features | P0 | 45 min |
-| BILLING-006 | Non-owner tries to manage billing | Return 403 Forbidden | P0 | 30 min |
-| BILLING-007 | Failed payment retry logic | Retry 3 times then suspend | P0 | 1 hour |
-| BILLING-008 | Duplicate webhook event | Idempotent processing | P0 | 1 hour |
+| Test Case ID | Scenario                          | Expected Behavior           | Priority | Estimated Time |
+| ------------ | --------------------------------- | --------------------------- | -------- | -------------- |
+| BILLING-001  | Invalid plan ID in checkout       | Return 400 Bad Request      | P0       | 30 min         |
+| BILLING-002  | Stripe webhook without signature  | Reject webhook              | P0       | 1 hour         |
+| BILLING-003  | Payment failure during checkout   | Show error, no subscription | P0       | 45 min         |
+| BILLING-004  | Subscription downgrade            | Prorated refund             | P0       | 1 hour         |
+| BILLING-005  | Cancelled subscription access     | Block premium features      | P0       | 45 min         |
+| BILLING-006  | Non-owner tries to manage billing | Return 403 Forbidden        | P0       | 30 min         |
+| BILLING-007  | Failed payment retry logic        | Retry 3 times then suspend  | P0       | 1 hour         |
+| BILLING-008  | Duplicate webhook event           | Idempotent processing       | P0       | 1 hour         |
 
 ### WhatsApp Messaging Edge Cases (Priority: P0)
 
-| Test Case ID | Scenario | Expected Behavior | Priority | Estimated Time |
-|--------------|----------|-------------------|----------|----------------|
-| WHATSAPP-001 | Empty message body | Return 400 Bad Request | P0 | 30 min |
-| WHATSAPP-002 | Invalid phone number format | Return 400 with validation error | P0 | 30 min |
-| WHATSAPP-003 | WhatsApp API rate limit hit | Queue message for retry | P0 | 1 hour |
-| WHATSAPP-004 | Template not approved | Return 400 with error | P0 | 30 min |
-| WHATSAPP-005 | Media upload failure | Return 500 with retry option | P0 | 45 min |
-| WHATSAPP-006 | Webhook without signature | Reject webhook | P0 | 1 hour |
-| WHATSAPP-007 | Duplicate message ID | Ignore duplicate | P0 | 45 min |
-| WHATSAPP-008 | Network timeout during send | Retry with exponential backoff | P0 | 1 hour |
+| Test Case ID | Scenario                    | Expected Behavior                | Priority | Estimated Time |
+| ------------ | --------------------------- | -------------------------------- | -------- | -------------- |
+| WHATSAPP-001 | Empty message body          | Return 400 Bad Request           | P0       | 30 min         |
+| WHATSAPP-002 | Invalid phone number format | Return 400 with validation error | P0       | 30 min         |
+| WHATSAPP-003 | WhatsApp API rate limit hit | Queue message for retry          | P0       | 1 hour         |
+| WHATSAPP-004 | Template not approved       | Return 400 with error            | P0       | 30 min         |
+| WHATSAPP-005 | Media upload failure        | Return 500 with retry option     | P0       | 45 min         |
+| WHATSAPP-006 | Webhook without signature   | Reject webhook                   | P0       | 1 hour         |
+| WHATSAPP-007 | Duplicate message ID        | Ignore duplicate                 | P0       | 45 min         |
+| WHATSAPP-008 | Network timeout during send | Retry with exponential backoff   | P0       | 1 hour         |
 
 ---
 
@@ -1110,74 +1151,78 @@ Ongoing Activities:
 ### 13.1 Unit Testing Standards
 
 **File Naming Convention:**
+
 ```
 src/lib/whatsapp/client.ts
 src/lib/whatsapp/client.test.ts  ✅ Co-located
 ```
 
 **Test Structure (AAA Pattern):**
+
 ```typescript
 describe('WhatsAppClient', () => {
   describe('sendTextMessage', () => {
     it('should send a text message successfully', async () => {
       // Arrange
-      const client = new WhatsAppClient('token', 'phoneId');
-      const mockResponse = { messages: [{ id: '123' }] };
+      const client = new WhatsAppClient('token', 'phoneId')
+      const mockResponse = { messages: [{ id: '123' }] }
       jest.spyOn(global, 'fetch').mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      } as Response);
+      } as Response)
 
       // Act
-      const result = await client.sendTextMessage('+1234567890', 'Hello');
+      const result = await client.sendTextMessage('+1234567890', 'Hello')
 
       // Assert
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual(mockResponse)
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/messages'),
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
-            'Authorization': 'Bearer token',
+            Authorization: 'Bearer token',
           }),
         })
-      );
-    });
+      )
+    })
 
     it('should throw error when API returns error', async () => {
       // Arrange
-      const client = new WhatsAppClient('token', 'phoneId');
+      const client = new WhatsAppClient('token', 'phoneId')
       jest.spyOn(global, 'fetch').mockResolvedValue({
         ok: false,
         json: async () => ({ error: { message: 'Invalid token' } }),
-      } as Response);
+      } as Response)
 
       // Act & Assert
-      await expect(
-        client.sendTextMessage('+1234567890', 'Hello')
-      ).rejects.toThrow('WhatsApp API Error: Invalid token');
-    });
-  });
-});
+      await expect(client.sendTextMessage('+1234567890', 'Hello')).rejects.toThrow(
+        'WhatsApp API Error: Invalid token'
+      )
+    })
+  })
+})
 ```
 
 ### 13.2 Integration Testing Standards
 
 **Example API Route Integration Test:**
-```typescript
-import { POST } from '@/app/api/auth/signin/route';
-import { createClient } from '@/lib/supabase/server';
 
-jest.mock('@/lib/supabase/server');
+```typescript
+import { POST } from '@/app/api/auth/signin/route'
+import { createClient } from '@/lib/supabase/server'
+
+jest.mock('@/lib/supabase/server')
 
 describe('POST /api/auth/signin', () => {
-  const mockRequest = (body: unknown) => ({
-    json: async () => body,
-  }) as any;
+  const mockRequest = (body: unknown) =>
+    ({
+      json: async () => body,
+    }) as any
 
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   it('should sign in user with valid credentials', async () => {
     // Arrange
@@ -1191,8 +1236,8 @@ describe('POST /api/auth/signin', () => {
           error: null,
         }),
       },
-    };
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    }
+    ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
     // Act
     const response = await POST(
@@ -1200,26 +1245,24 @@ describe('POST /api/auth/signin', () => {
         email: 'test@example.com',
         password: 'password123',
       })
-    );
-    const data = await response.json();
+    )
+    const data = await response.json()
 
     // Assert
-    expect(response.status).toBe(200);
-    expect(data.user).toBeDefined();
-    expect(data.session).toBeDefined();
-  });
+    expect(response.status).toBe(200)
+    expect(data.user).toBeDefined()
+    expect(data.session).toBeDefined()
+  })
 
   it('should return 400 when email is missing', async () => {
     // Act
-    const response = await POST(
-      mockRequest({ password: 'password123' })
-    );
-    const data = await response.json();
+    const response = await POST(mockRequest({ password: 'password123' }))
+    const data = await response.json()
 
     // Assert
-    expect(response.status).toBe(400);
-    expect(data.error).toBe('Email and password are required');
-  });
+    expect(response.status).toBe(400)
+    expect(data.error).toBe('Email and password are required')
+  })
 
   it('should return 401 for invalid credentials', async () => {
     // Arrange
@@ -1230,8 +1273,8 @@ describe('POST /api/auth/signin', () => {
           error: { message: 'Invalid credentials' },
         }),
       },
-    };
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    }
+    ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
 
     // Act
     const response = await POST(
@@ -1239,57 +1282,55 @@ describe('POST /api/auth/signin', () => {
         email: 'test@example.com',
         password: 'wrong',
       })
-    );
+    )
 
     // Assert
-    expect(response.status).toBe(400);
-  });
-});
+    expect(response.status).toBe(400)
+  })
+})
 ```
 
 ### 13.3 E2E Testing Standards
 
 **Example Complete User Journey:**
+
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Complete Messaging Flow', () => {
   test('user can send and receive WhatsApp messages', async ({ page }) => {
     // 1. Login
-    await page.goto('http://localhost:3000/auth/signin');
-    await page.fill('input[type="email"]', 'owner@demo-company.com');
-    await page.fill('input[type="password"]', 'Demo2024!Owner');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/dashboard');
+    await page.goto('http://localhost:3000/auth/signin')
+    await page.fill('input[type="email"]', 'owner@demo-company.com')
+    await page.fill('input[type="password"]', 'Demo2024!Owner')
+    await page.click('button[type="submit"]')
+    await page.waitForURL('**/dashboard')
 
     // 2. Navigate to inbox
-    await page.click('a[href="/dashboard/inbox"]');
-    await page.waitForURL('**/dashboard/inbox');
+    await page.click('a[href="/dashboard/inbox"]')
+    await page.waitForURL('**/dashboard/inbox')
 
     // 3. Select a conversation
-    await page.click('[data-testid="conversation-item"]:first-child');
+    await page.click('[data-testid="conversation-item"]:first-child')
 
     // 4. Send a message
-    const messageInput = page.locator('[data-testid="message-input"]');
-    await messageInput.fill('Test message from E2E test');
-    await page.click('[data-testid="send-button"]');
+    const messageInput = page.locator('[data-testid="message-input"]')
+    await messageInput.fill('Test message from E2E test')
+    await page.click('[data-testid="send-button"]')
 
     // 5. Verify message appears
-    await expect(
-      page.locator('text=Test message from E2E test')
-    ).toBeVisible();
+    await expect(page.locator('text=Test message from E2E test')).toBeVisible()
 
     // 6. Verify message status
-    await expect(
-      page.locator('[data-testid="message-status"]').last()
-    ).toHaveText('sent');
-  });
-});
+    await expect(page.locator('[data-testid="message-status"]').last()).toHaveText('sent')
+  })
+})
 ```
 
 ### 13.4 Test Data Management
 
 **Use Test Fixtures:**
+
 ```typescript
 // tests/fixtures/users.ts
 export const testUsers = {
@@ -1311,7 +1352,7 @@ export const testUsers = {
     organization_id: 'org-123',
     role: 'agent',
   },
-};
+}
 
 // tests/fixtures/organizations.ts
 export const testOrganizations = {
@@ -1321,10 +1362,11 @@ export const testOrganizations = {
     subdomain: 'test-org',
     subscription_plan: 'professional',
   },
-};
+}
 ```
 
 **Use Test Factories:**
+
 ```typescript
 // tests/factories/message-factory.ts
 export class MessageFactory {
@@ -1337,7 +1379,7 @@ export class MessageFactory {
       message_type: 'text',
       timestamp: new Date().toISOString(),
       ...overrides,
-    };
+    }
   }
 
   static createTemplateMessage(overrides?: Partial<Message>): Message {
@@ -1351,7 +1393,7 @@ export class MessageFactory {
       },
       timestamp: new Date().toISOString(),
       ...overrides,
-    };
+    }
   }
 }
 ```
@@ -1359,6 +1401,7 @@ export class MessageFactory {
 ### 13.5 Mock Strategies
 
 **Mock External Services:**
+
 ```typescript
 // tests/mocks/stripe.ts
 export const mockStripeService = {
@@ -1368,7 +1411,7 @@ export const mockStripeService = {
     url: 'https://checkout.stripe.com/123',
   }),
   handleWebhook: jest.fn().mockResolvedValue({ received: true }),
-};
+}
 
 // tests/mocks/whatsapp.ts
 export const mockWhatsAppClient = {
@@ -1378,7 +1421,7 @@ export const mockWhatsAppClient = {
   sendTemplateMessage: jest.fn().mockResolvedValue({
     messages: [{ id: 'wamid.124' }],
   }),
-};
+}
 ```
 
 ---
@@ -1388,30 +1431,35 @@ export const mockWhatsAppClient = {
 ### 14.1 Recommended Metrics to Track
 
 **Test Coverage Metrics:**
+
 - Line coverage (target: 80%)
 - Branch coverage (target: 75%)
 - Function coverage (target: 80%)
 - Coverage trends over time
 
 **Test Execution Metrics:**
+
 - Total test count
 - Test pass/fail rate
 - Test execution time
 - Flaky test count (target: <2%)
 
 **Quality Metrics:**
+
 - Critical bugs in production
 - Bug escape rate
 - Mean time to detect (MTTD)
 - Mean time to resolve (MTTR)
 
 **Security Metrics:**
+
 - Vulnerabilities detected
 - Security test coverage
 - Time to fix security issues
 - Penetration test findings
 
 **Performance Metrics:**
+
 - API response times (P50, P95, P99)
 - Page load times
 - Database query performance
@@ -1431,38 +1479,38 @@ export const mockWhatsAppClient = {
 
 ### 15.1 Testing Frameworks
 
-| Tool | Purpose | Status | Priority |
-|------|---------|--------|----------|
-| **Jest** | Unit testing | ✅ Configured | P0 |
-| **@testing-library/react** | Component testing | ✅ Configured | P0 |
-| **Playwright** | E2E testing | ✅ Configured | P0 |
-| **Supertest** | API testing | ✅ Installed | P1 |
-| **Nock** | HTTP mocking | ✅ Installed | P1 |
+| Tool                       | Purpose           | Status        | Priority |
+| -------------------------- | ----------------- | ------------- | -------- |
+| **Jest**                   | Unit testing      | ✅ Configured | P0       |
+| **@testing-library/react** | Component testing | ✅ Configured | P0       |
+| **Playwright**             | E2E testing       | ✅ Configured | P0       |
+| **Supertest**              | API testing       | ✅ Installed  | P1       |
+| **Nock**                   | HTTP mocking      | ✅ Installed  | P1       |
 
 ### 15.2 Performance Testing
 
-| Tool | Purpose | Status | Priority |
-|------|---------|--------|----------|
-| **k6** | Load testing | ❌ Not installed | P1 |
-| **Artillery** | Performance testing | ❌ Not installed | P1 |
-| **Lighthouse CI** | Web vitals | ✅ Configured | P0 |
-| **Clinic.js** | Node.js profiling | ❌ Not installed | P2 |
+| Tool              | Purpose             | Status           | Priority |
+| ----------------- | ------------------- | ---------------- | -------- |
+| **k6**            | Load testing        | ❌ Not installed | P1       |
+| **Artillery**     | Performance testing | ❌ Not installed | P1       |
+| **Lighthouse CI** | Web vitals          | ✅ Configured    | P0       |
+| **Clinic.js**     | Node.js profiling   | ❌ Not installed | P2       |
 
 ### 15.3 Security Testing
 
-| Tool | Purpose | Status | Priority |
-|------|---------|--------|----------|
-| **OWASP ZAP** | Security scanning | ❌ Not installed | P1 |
-| **Snyk** | Vulnerability scanning | ❌ Not installed | P1 |
-| **npm audit** | Dependency audit | ✅ Configured | P0 |
-| **SonarQube** | Static analysis | ❌ Not installed | P2 |
+| Tool          | Purpose                | Status           | Priority |
+| ------------- | ---------------------- | ---------------- | -------- |
+| **OWASP ZAP** | Security scanning      | ❌ Not installed | P1       |
+| **Snyk**      | Vulnerability scanning | ❌ Not installed | P1       |
+| **npm audit** | Dependency audit       | ✅ Configured    | P0       |
+| **SonarQube** | Static analysis        | ❌ Not installed | P2       |
 
 ### 15.4 Test Data Management
 
-| Tool | Purpose | Status | Priority |
-|------|---------|--------|----------|
-| **Faker.js** | Test data generation | ❌ Not installed | P1 |
-| **Factory Bot** | Test factories | ❌ Not installed | P1 |
+| Tool            | Purpose              | Status           | Priority |
+| --------------- | -------------------- | ---------------- | -------- |
+| **Faker.js**    | Test data generation | ❌ Not installed | P1       |
+| **Factory Bot** | Test factories       | ❌ Not installed | P1       |
 
 ---
 
@@ -1546,6 +1594,7 @@ export const mockWhatsAppClient = {
 The ADSapp WhatsApp Inbox SaaS platform has **critical quality gaps** despite being labeled "production-ready":
 
 🔴 **CRITICAL FINDINGS:**
+
 1. **Zero unit test coverage** - No business logic testing
 2. **Zero integration test coverage** - No API or database testing
 3. **Zero multi-tenant security tests** - High risk of data leakage
@@ -1553,6 +1602,7 @@ The ADSapp WhatsApp Inbox SaaS platform has **critical quality gaps** despite be
 5. **Zero WhatsApp integration tests** - Core feature untested
 
 ✅ **STRENGTHS:**
+
 1. Good E2E test foundation (15 tests)
 2. Testing infrastructure properly configured
 3. CI/CD pipeline partially implemented

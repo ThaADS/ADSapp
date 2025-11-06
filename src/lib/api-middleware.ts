@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createErrorResponse, rateLimit, ApiException } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
@@ -71,7 +70,7 @@ export function withApiMiddleware(
         ...context,
         user,
         profile,
-        startTime
+        startTime,
       }
 
       // Execute handler
@@ -83,7 +82,6 @@ export function withApiMiddleware(
       }
 
       return response
-
     } catch (error) {
       // Error logging
       if (options.logging) {
@@ -176,7 +174,7 @@ async function handleAuthentication(request: NextRequest) {
 
   const {
     data: { user },
-    error: authError
+    error: authError,
   } = await supabase.auth.getUser()
 
   if (authError || !user) {
@@ -215,22 +213,16 @@ async function logApiRequest(
       user_id: userId,
       status_code: response.status,
       duration_ms: duration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
-    await supabase
-      .from('api_logs')
-      .insert(logData)
+    await supabase.from('api_logs').insert(logData)
   } catch (error) {
     console.error('Failed to log API request:', error)
   }
 }
 
-async function logApiError(
-  request: NextRequest,
-  error: any,
-  duration?: number
-) {
+async function logApiError(request: NextRequest, error: any, duration?: number) {
   try {
     const supabase = await createClient()
 
@@ -243,12 +235,10 @@ async function logApiError(
       user_agent: request.headers.get('user-agent'),
       ip_address: getClientIP(request),
       duration_ms: duration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
-    await supabase
-      .from('api_error_logs')
-      .insert(errorData)
+    await supabase.from('api_error_logs').insert(errorData)
   } catch (logError) {
     console.error('Failed to log API error:', logError)
   }
@@ -268,56 +258,61 @@ function getClientIP(request: NextRequest): string {
 
 // Pre-configured middleware combinations for common use cases
 
-export const withAuth = (handler: any) => withApiMiddleware(handler, {
-  requireAuth: true,
-  logging: true,
-  rateLimiting: {
-    windowMs: 60 * 1000, // 1 minute
-    max: 100 // 100 requests per minute
-  }
-})
+export const withAuth = (handler: any) =>
+  withApiMiddleware(handler, {
+    requireAuth: true,
+    logging: true,
+    rateLimiting: {
+      windowMs: 60 * 1000, // 1 minute
+      max: 100, // 100 requests per minute
+    },
+  })
 
-export const withOrganization = (handler: any) => withApiMiddleware(handler, {
-  requireAuth: true,
-  requireOrganization: true,
-  logging: true,
-  rateLimiting: {
-    windowMs: 60 * 1000,
-    max: 100
-  }
-})
+export const withOrganization = (handler: any) =>
+  withApiMiddleware(handler, {
+    requireAuth: true,
+    requireOrganization: true,
+    logging: true,
+    rateLimiting: {
+      windowMs: 60 * 1000,
+      max: 100,
+    },
+  })
 
-export const withStrictRateLimit = (handler: any) => withApiMiddleware(handler, {
-  requireAuth: true,
-  requireOrganization: true,
-  logging: true,
-  rateLimiting: {
-    windowMs: 60 * 1000, // 1 minute
-    max: 10 // 10 requests per minute
-  }
-})
+export const withStrictRateLimit = (handler: any) =>
+  withApiMiddleware(handler, {
+    requireAuth: true,
+    requireOrganization: true,
+    logging: true,
+    rateLimiting: {
+      windowMs: 60 * 1000, // 1 minute
+      max: 10, // 10 requests per minute
+    },
+  })
 
-export const withPublicAccess = (handler: any) => withApiMiddleware(handler, {
-  requireAuth: false,
-  logging: true,
-  rateLimiting: {
-    windowMs: 60 * 1000,
-    max: 50 // 50 requests per minute for public endpoints
-  },
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    headers: ['Content-Type', 'Authorization']
-  }
-})
+export const withPublicAccess = (handler: any) =>
+  withApiMiddleware(handler, {
+    requireAuth: false,
+    logging: true,
+    rateLimiting: {
+      windowMs: 60 * 1000,
+      max: 50, // 50 requests per minute for public endpoints
+    },
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST', 'OPTIONS'],
+      headers: ['Content-Type', 'Authorization'],
+    },
+  })
 
 // Webhook middleware with different rate limiting
-export const withWebhook = (handler: any) => withApiMiddleware(handler, {
-  requireAuth: false,
-  logging: true,
-  rateLimiting: {
-    windowMs: 60 * 1000,
-    max: 1000, // Higher limit for webhooks
-    keyGenerator: (request) => request.headers.get('x-forwarded-for') || 'webhook'
-  }
-})
+export const withWebhook = (handler: any) =>
+  withApiMiddleware(handler, {
+    requireAuth: false,
+    logging: true,
+    rateLimiting: {
+      windowMs: 60 * 1000,
+      max: 1000, // Higher limit for webhooks
+      keyGenerator: request => request.headers.get('x-forwarded-for') || 'webhook',
+    },
+  })

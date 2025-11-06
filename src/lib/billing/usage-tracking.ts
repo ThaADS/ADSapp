@@ -64,7 +64,7 @@ export class UsageTracker {
         overage_charges: 0,
         last_updated: now.toISOString(),
       })
-      .on('conflict', (existing) => existing.do_nothing())
+      .on('conflict', existing => existing.do_nothing())
   }
 
   async recordMessageUsage(organizationId: string, messageCount: number = 1): Promise<void> {
@@ -80,7 +80,7 @@ export class UsageTracker {
         messages_sent: messageCount,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         messages_sent: existing.messages_sent + messageCount,
         last_updated: new Date().toISOString(),
@@ -103,7 +103,7 @@ export class UsageTracker {
         period_start: currentPeriod.start,
         last_active: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         last_active: new Date().toISOString(),
       }))
@@ -125,7 +125,7 @@ export class UsageTracker {
         contacts_managed: contactCount,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         contacts_managed: Math.max(existing.contacts_managed, contactCount),
         last_updated: new Date().toISOString(),
@@ -147,7 +147,7 @@ export class UsageTracker {
         automation_runs: automationRuns,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         automation_runs: existing.automation_runs + automationRuns,
         last_updated: new Date().toISOString(),
@@ -169,7 +169,7 @@ export class UsageTracker {
         api_calls: apiCalls,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         api_calls: existing.api_calls + apiCalls,
         last_updated: new Date().toISOString(),
@@ -191,7 +191,7 @@ export class UsageTracker {
         storage_used: storageMB,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         storage_used: Math.max(existing.storage_used, storageMB),
         last_updated: new Date().toISOString(),
@@ -314,13 +314,10 @@ export class UsageTracker {
 
     try {
       // Create usage record on subscription
-      await stripe.subscriptionItems.createUsageRecord(
-        subscriptionId,
-        {
-          quantity: Math.round(amount * 100), // Convert to cents
-          timestamp: Math.floor(Date.now() / 1000),
-        }
-      )
+      await stripe.subscriptionItems.createUsageRecord(subscriptionId, {
+        quantity: Math.round(amount * 100), // Convert to cents
+        timestamp: Math.floor(Date.now() / 1000),
+      })
     } catch (error) {
       console.error('Failed to add usage-based charges:', error)
     }
@@ -339,31 +336,27 @@ export class UsageTracker {
       .single()
 
     if (currentUsage) {
-      await supabase
-        .from('usage_history')
-        .insert({
-          ...currentUsage,
-          archived_at: new Date().toISOString(),
-        })
+      await supabase.from('usage_history').insert({
+        ...currentUsage,
+        archived_at: new Date().toISOString(),
+      })
     }
 
     // Create new usage record for next month
     const nextPeriod = this.getNextBillingPeriod()
-    await supabase
-      .from('usage_tracking')
-      .upsert({
-        organization_id: organizationId,
-        period_start: nextPeriod.start,
-        period_end: nextPeriod.end,
-        messages_sent: 0,
-        users_active: 0,
-        contacts_managed: 0,
-        automation_runs: 0,
-        api_calls: 0,
-        storage_used: 0,
-        overage_charges: 0,
-        last_updated: new Date().toISOString(),
-      })
+    await supabase.from('usage_tracking').upsert({
+      organization_id: organizationId,
+      period_start: nextPeriod.start,
+      period_end: nextPeriod.end,
+      messages_sent: 0,
+      users_active: 0,
+      contacts_managed: 0,
+      automation_runs: 0,
+      api_calls: 0,
+      storage_used: 0,
+      overage_charges: 0,
+      last_updated: new Date().toISOString(),
+    })
   }
 
   async updatePlanLimits(organizationId: string, newPlanId: string): Promise<void> {
@@ -388,7 +381,10 @@ export class UsageTracker {
         await supabase
           .from('profiles')
           .update({ is_active: false })
-          .in('id', usersToDeactivate.map(u => u.id))
+          .in(
+            'id',
+            usersToDeactivate.map(u => u.id)
+          )
       }
     }
 
@@ -412,7 +408,10 @@ export class UsageTracker {
           await supabase
             .from('contacts')
             .update({ is_archived: true })
-            .in('id', contactsToArchive.map(c => c.id))
+            .in(
+              'id',
+              contactsToArchive.map(c => c.id)
+            )
         }
       }
     }
@@ -439,7 +438,7 @@ export class UsageTracker {
         users_active: activeUsers || 0,
         last_updated: new Date().toISOString(),
       })
-      .on('conflict', (existing) => ({
+      .on('conflict', existing => ({
         ...existing,
         users_active: activeUsers || 0,
         last_updated: new Date().toISOString(),

@@ -24,11 +24,11 @@ export function createMockRedisClient(): jest.Mocked<Partial<Redis>> {
       return 'OK'
     }),
     del: jest.fn(async (...keys: string[]) => {
-      keys.forEach((key) => store.delete(key))
+      keys.forEach(key => store.delete(key))
       return keys.length
     }),
     exists: jest.fn(async (...keys: string[]) => {
-      return keys.filter((key) => store.has(key)).length
+      return keys.filter(key => store.has(key)).length
     }),
     expire: jest.fn(async (key: string, seconds: number) => {
       return store.has(key) ? 1 : 0
@@ -47,7 +47,7 @@ export function createMockRedisClient(): jest.Mocked<Partial<Redis>> {
       return value
     }),
     keys: jest.fn(async (pattern: string) => {
-      return Array.from(store.keys()).filter((key) =>
+      return Array.from(store.keys()).filter(key =>
         new RegExp(pattern.replace('*', '.*')).test(key)
       )
     }),
@@ -67,7 +67,7 @@ export function createMockRedisClient(): jest.Mocked<Partial<Redis>> {
     }),
     hdel: jest.fn(async (key: string, ...fields: string[]) => {
       const hash = JSON.parse(store.get(key) || '{}')
-      fields.forEach((field) => delete hash[field])
+      fields.forEach(field => delete hash[field])
       store.set(key, JSON.stringify(hash))
       return fields.length
     }),

@@ -3,6 +3,7 @@
 Complete guide for understanding and working with the ADSapp CI/CD infrastructure.
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Pipeline Architecture](#pipeline-architecture)
 3. [GitHub Actions Workflows](#github-actions-workflows)
@@ -16,6 +17,7 @@ Complete guide for understanding and working with the ADSapp CI/CD infrastructur
 ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, and reliability through automated testing and deployment processes.
 
 ### Key Features
+
 - ✅ Automated testing (unit, integration, E2E)
 - 🔒 Security scanning and vulnerability detection
 - 📊 Code coverage reporting (80%+ target)
@@ -109,12 +111,14 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ### 1. CI Pipeline (`ci.yml`)
 
 **Triggers:**
+
 - Push to `main`, `develop` branches
 - Pull requests to `main`, `develop`
 
 **Jobs:**
 
 #### Code Quality (3-5 minutes)
+
 ```yaml
 - TypeScript type checking
 - ESLint linting
@@ -123,6 +127,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ```
 
 #### Unit Tests (5-10 minutes)
+
 ```yaml
 - Run 89 unit tests
 - Generate coverage report
@@ -131,6 +136,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ```
 
 #### Integration Tests (10-15 minutes)
+
 ```yaml
 - Start PostgreSQL service
 - Run 53 integration tests
@@ -139,6 +145,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ```
 
 #### E2E Tests (15-20 minutes)
+
 ```yaml
 - Install Playwright
 - Build application
@@ -147,6 +154,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ```
 
 #### Build Verification (5-10 minutes)
+
 ```yaml
 - Production build
 - Bundle analysis
@@ -158,6 +166,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ### 2. Security Pipeline (`security.yml`)
 
 **Triggers:**
+
 - Daily at 2 AM UTC (scheduled)
 - Push to main/develop
 - Changes to package files
@@ -181,6 +190,7 @@ ADSapp uses a comprehensive CI/CD pipeline that ensures code quality, security, 
 ### 3. Deployment Pipeline (`deploy.yml`)
 
 **Triggers:**
+
 - Manual workflow dispatch
 - Push to `main` (production)
 - Push to `develop` (staging)
@@ -237,15 +247,15 @@ docker-compose -f docker-compose.test.yml down -v
 
 ### Test Environment Services
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| PostgreSQL | 54322 | Test database |
-| Redis | 6380 | Cache/sessions |
-| Supabase Auth | 54321 | Authentication |
-| Supabase Storage | 54323 | File storage |
-| PostgREST API | 54324 | REST API |
-| Realtime | 54325 | WebSocket |
-| Inbucket Mail | 54326 | Email testing |
+| Service          | Port  | Purpose        |
+| ---------------- | ----- | -------------- |
+| PostgreSQL       | 54322 | Test database  |
+| Redis            | 6380  | Cache/sessions |
+| Supabase Auth    | 54321 | Authentication |
+| Supabase Storage | 54323 | File storage   |
+| PostgREST API    | 54324 | REST API       |
+| Realtime         | 54325 | WebSocket      |
+| Inbucket Mail    | 54326 | Email testing  |
 
 ### Running Tests Locally
 
@@ -277,6 +287,7 @@ npm run test:ci
 ### Manual Deployment
 
 #### Staging Deployment
+
 ```bash
 # Using deployment script
 ./scripts/deploy-staging.sh
@@ -288,6 +299,7 @@ gh workflow run deploy.yml \
 ```
 
 #### Production Deployment
+
 ```bash
 # Using deployment script
 ./scripts/deploy-production.sh
@@ -301,11 +313,13 @@ gh workflow run deploy.yml \
 ### Automated Deployment
 
 **Staging:**
+
 - Automatically deploys on push to `develop` branch
 - Runs E2E tests on deployed environment
 - No manual approval required
 
 **Production:**
+
 - Automatically deploys on push to `main` branch
 - Requires all CI checks to pass
 - Manual approval can be configured
@@ -328,6 +342,7 @@ Before deploying to production:
 ### Code Quality Gates
 
 **TypeScript:**
+
 ```json
 {
   "strict": true,
@@ -339,12 +354,14 @@ Before deploying to production:
 ```
 
 **ESLint:**
+
 - No errors allowed
 - Warnings reviewed
 - Security rules enforced
 - Best practices validated
 
 **Prettier:**
+
 - Consistent formatting
 - Auto-format on save
 - Pre-commit hook validation
@@ -367,17 +384,20 @@ Component-Specific:
 ### Security Gates
 
 **Critical Issues:**
+
 - Block merge if critical vulnerabilities found
 - Require security review for high-risk changes
 - Mandatory dependency updates for CVEs
 
 **License Compliance:**
+
 - Forbidden: GPL, AGPL licenses
 - Allowed: MIT, Apache 2.0, ISC, BSD
 
 ### Performance Gates
 
 **Lighthouse Scores:**
+
 ```yaml
 Desktop:
   Performance: ≥ 80
@@ -392,6 +412,7 @@ Mobile:
 ```
 
 **Core Web Vitals:**
+
 - LCP (Largest Contentful Paint): < 2.5s
 - FID (First Input Delay): < 100ms
 - CLS (Cumulative Layout Shift): < 0.1
@@ -403,6 +424,7 @@ Mobile:
 #### CI Pipeline Failures
 
 **TypeScript Errors:**
+
 ```bash
 # Run locally
 npm run type-check
@@ -412,6 +434,7 @@ npm run lint:fix
 ```
 
 **Test Failures:**
+
 ```bash
 # Run specific test
 npm test -- path/to/test.test.ts
@@ -424,6 +447,7 @@ npm test -- --clearCache
 ```
 
 **Build Failures:**
+
 ```bash
 # Clean build
 rm -rf .next
@@ -436,6 +460,7 @@ npm run analyze
 #### Deployment Issues
 
 **Health Check Failures:**
+
 ```bash
 # Check application logs
 vercel logs <deployment-url>
@@ -445,6 +470,7 @@ vercel env ls
 ```
 
 **Rollback Procedure:**
+
 ```bash
 # List recent deployments
 vercel ls
@@ -456,6 +482,7 @@ vercel alias set <previous-deployment-url> production
 ### Debug Mode
 
 Enable debug logging in CI:
+
 ```yaml
 env:
   DEBUG: '*'
@@ -473,6 +500,7 @@ env:
 ## Best Practices
 
 ### Commit Messages
+
 ```
 feat: add user authentication
 fix: resolve memory leak in message handler
@@ -482,6 +510,7 @@ chore: upgrade dependencies
 ```
 
 ### Branch Strategy
+
 ```
 main (production)
   ↑
@@ -491,6 +520,7 @@ feature/user-auth
 ```
 
 ### Pull Request Process
+
 1. Create feature branch from `develop`
 2. Implement changes with tests
 3. Push and create PR to `develop`
@@ -500,6 +530,7 @@ feature/user-auth
 7. Delete feature branch
 
 ### Hotfix Process
+
 1. Create hotfix branch from `main`
 2. Implement fix with tests
 3. Create PR to `main`
@@ -510,12 +541,14 @@ feature/user-auth
 ## Monitoring and Alerts
 
 ### Health Monitoring
+
 - Automatic health checks every 5 minutes
 - Alerts on failure
 - Response time tracking
 - Error rate monitoring
 
 ### Notification Channels
+
 - Slack: #deployments channel
 - Email: DevOps team list
 - GitHub: Issue creation on failure
@@ -523,6 +556,7 @@ feature/user-auth
 ## Security
 
 ### Secrets Management
+
 ```bash
 # GitHub Secrets (required)
 VERCEL_TOKEN
@@ -536,6 +570,7 @@ CODECOV_TOKEN
 ```
 
 ### Access Control
+
 - CI/CD: GitHub Actions service account
 - Deployments: Limited team members
 - Production: Senior developers only
@@ -546,16 +581,19 @@ CODECOV_TOKEN
 ### Regular Tasks
 
 **Daily:**
+
 - Review security scan results
 - Monitor build performance
 - Check coverage trends
 
 **Weekly:**
+
 - Update dependencies
 - Review failed builds
 - Optimize CI performance
 
 **Monthly:**
+
 - Audit access permissions
 - Review and update documentation
 - Performance optimization review

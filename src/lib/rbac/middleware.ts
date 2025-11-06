@@ -28,10 +28,7 @@ export function withRbac(
     const { user, profile } = context || {}
 
     if (!user || !profile) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
     try {
@@ -127,7 +124,7 @@ export const withConversationWrite = (handler: any) =>
   withRbac(handler, {
     resource: 'conversations',
     action: 'update',
-    getResourceId: async (request) => {
+    getResourceId: async request => {
       const url = new URL(request.url)
       return url.pathname.split('/').pop()
     },
@@ -144,7 +141,7 @@ export const withContactWrite = (handler: any) =>
   withRbac(handler, {
     resource: 'contacts',
     action: 'update',
-    getResourceId: async (request) => {
+    getResourceId: async request => {
       const url = new URL(request.url)
       return url.pathname.split('/').pop()
     },

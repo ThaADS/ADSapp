@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination, validateSortOrder } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+  validatePagination,
+  validateSortOrder,
+} from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
   try {
     // 🔧 FIX: Query organization directly instead of relying on middleware headers
     // Root cause: Next.js 15 doesn't propagate headers when middleware returns null
-    const user = await requireAuthenticatedUser();
-    const userOrg = await getUserOrganization(user.id);
-    const organizationId = userOrg.organization_id;
+    const user = await requireAuthenticatedUser()
+    const userOrg = await getUserOrganization(user.id)
+    const organizationId = userOrg.organization_id
 
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
@@ -17,25 +24,35 @@ export async function GET(request: NextRequest) {
     const segment = searchParams.get('segment')
     const blocked = searchParams.get('blocked')
     const { page, limit, offset } = validatePagination(request)
-    const { sortBy, ascending } = validateSortOrder(request, ['name', 'phone_number', 'created_at', 'last_message_at'])
+    const { sortBy, ascending } = validateSortOrder(request, [
+      'name',
+      'phone_number',
+      'created_at',
+      'last_message_at',
+    ])
 
     const supabase = await createClient()
 
     let query = supabase
       .from('contacts')
-      .select(`
+      .select(
+        `
         *,
         conversations (
           id,
           status,
           last_message_at
         )
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('organization_id', organizationId)
 
     // Apply filters
     if (search) {
-      query = query.or(`name.ilike.%${search}%,phone_number.ilike.%${search}%,email.ilike.%${search}%`)
+      query = query.or(
+        `name.ilike.%${search}%,phone_number.ilike.%${search}%,email.ilike.%${search}%`
+      )
     }
 
     if (tags && tags.length > 0) {
@@ -51,9 +68,11 @@ export async function GET(request: NextRequest) {
       query = await applySegmentation(query, segment, organizationId)
     }
 
-    const { data: contacts, error, count } = await query
-      .order(sortBy, { ascending })
-      .range(offset, offset + limit - 1)
+    const {
+      data: contacts,
+      error,
+      count,
+    } = await query.order(sortBy, { ascending }).range(offset, offset + limit - 1)
 
     if (error) {
       throw error
@@ -61,9 +80,10 @@ export async function GET(request: NextRequest) {
 
     // Enhance contacts with additional data
     const enhancedContacts = (contacts || []).map(contact => {
-      const activeConversations = contact.conversations?.filter(c => c.status === 'open' || c.status === 'pending') || []
-      const lastConversation = contact.conversations?.sort((a, b) =>
-        new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      const activeConversations =
+        contact.conversations?.filter(c => c.status === 'open' || c.status === 'pending') || []
+      const lastConversation = contact.conversations?.sort(
+        (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
       )[0]
 
       return {
@@ -71,7 +91,7 @@ export async function GET(request: NextRequest) {
         activeConversations: activeConversations.length,
         totalConversations: contact.conversations?.length || 0,
         lastContactDate: lastConversation?.last_message_at || contact.last_message_at,
-        conversationStatus: lastConversation?.status || null
+        conversationStatus: lastConversation?.status || null,
       }
     })
 
@@ -81,7 +101,7 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: count || 0,
-        hasMore: offset + limit < (count || 0)
+        hasMore: offset + limit < (count || 0),
       },
       filters: {
         search,
@@ -89,10 +109,9 @@ export async function GET(request: NextRequest) {
         segment,
         blocked,
         sortBy,
-        sortOrder: ascending ? 'asc' : 'desc'
-      }
+        sortOrder: ascending ? 'asc' : 'desc',
+      },
     })
-
   } catch (error) {
     console.error('Error fetching contacts:', error)
     return createErrorResponse(error)
@@ -102,46 +121,29 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // 🔧 FIX: Query organization directly instead of relying on middleware headers
-    const user = await requireAuthenticatedUser();
-    const userOrg = await getUserOrganization(user.id);
-    const organizationId = userOrg.organization_id;
-    const userId = user.id;
+    const user = await requireAuthenticatedUser()
+    const userOrg = await getUserOrganization(user.id)
+    const organizationId = userOrg.organization_id
+    const userId = user.id
 
-    const body = await request.json();
-    const {
-      phone_number,
-      name,
-      email,
-      tags = [],
-      notes,
-      metadata = {},
-      whatsapp_id
-    } = body
+    const body = await request.json()
+    const { phone_number, name, email, tags = [], notes, metadata = {}, whatsapp_id } = body
 
     if (!phone_number) {
-      return NextResponse.json(
-        { error: 'Phone number is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Phone number is required' }, { status: 400 })
     }
 
     // Validate phone number format
     const phoneRegex = /^\+?[1-9]\d{1,14}$/
     if (!phoneRegex.test(phone_number.replace(/[\s-()]/g, ''))) {
-      return NextResponse.json(
-        { error: 'Invalid phone number format' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
     }
 
     // Validate email if provided
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(email)) {
-        return NextResponse.json(
-          { error: 'Invalid email format' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
       }
     }
 
@@ -176,8 +178,8 @@ export async function POST(request: NextRequest) {
         metadata: {
           ...metadata,
           created_by: userId,
-          source: 'manual'
-        }
+          source: 'manual',
+        },
       })
       .select()
       .single()
@@ -187,7 +189,6 @@ export async function POST(request: NextRequest) {
     }
 
     return createSuccessResponse(contact, 201)
-
   } catch (error) {
     console.error('Error creating contact:', error)
     return createErrorResponse(error)

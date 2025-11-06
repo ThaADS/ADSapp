@@ -96,7 +96,11 @@ export class StripeWebhookProcessor {
       await this.logWebhookEvent(event, 'success')
     } catch (error) {
       console.error(`[Webhook] Error processing ${event.type}:`, error)
-      await this.logWebhookEvent(event, 'error', error instanceof Error ? error.message : 'Unknown error')
+      await this.logWebhookEvent(
+        event,
+        'error',
+        error instanceof Error ? error.message : 'Unknown error'
+      )
       throw error
     }
   }
@@ -115,7 +119,9 @@ export class StripeWebhookProcessor {
         stripe_subscription_id: subscription.id,
         subscription_status: subscription.status as any,
         subscription_tier: planId,
-        trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+        trial_ends_at: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
       })
@@ -151,7 +157,9 @@ export class StripeWebhookProcessor {
       .update({
         subscription_status: subscription.status as any,
         subscription_tier: planId,
-        trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+        trial_ends_at: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
       })
@@ -210,7 +218,9 @@ export class StripeWebhookProcessor {
     await this.invoiceManager.finalizeInvoice(invoice)
 
     if (invoice.subscription) {
-      const organizationId = await this.getOrganizationFromSubscription(invoice.subscription as string)
+      const organizationId = await this.getOrganizationFromSubscription(
+        invoice.subscription as string
+      )
       if (organizationId) {
         await this.notificationService.sendInvoiceFinalized(organizationId, invoice.id)
       }
@@ -221,7 +231,9 @@ export class StripeWebhookProcessor {
     await this.invoiceManager.markInvoicePaid(invoice)
 
     if (invoice.subscription) {
-      const organizationId = await this.getOrganizationFromSubscription(invoice.subscription as string)
+      const organizationId = await this.getOrganizationFromSubscription(
+        invoice.subscription as string
+      )
       if (organizationId) {
         // Reset usage for new billing period if this is a subscription invoice
         if (invoice.billing_reason === 'subscription_cycle') {
@@ -237,7 +249,9 @@ export class StripeWebhookProcessor {
     await this.invoiceManager.markPaymentFailed(invoice)
 
     if (invoice.subscription) {
-      const organizationId = await this.getOrganizationFromSubscription(invoice.subscription as string)
+      const organizationId = await this.getOrganizationFromSubscription(
+        invoice.subscription as string
+      )
       if (organizationId) {
         const supabase = await this.supabase
 
@@ -258,16 +272,23 @@ export class StripeWebhookProcessor {
 
   private async handlePaymentActionRequired(invoice: Stripe.Invoice): Promise<void> {
     if (invoice.subscription) {
-      const organizationId = await this.getOrganizationFromSubscription(invoice.subscription as string)
+      const organizationId = await this.getOrganizationFromSubscription(
+        invoice.subscription as string
+      )
       if (organizationId) {
-        await this.notificationService.sendPaymentActionRequired(organizationId, invoice.hosted_invoice_url!)
+        await this.notificationService.sendPaymentActionRequired(
+          organizationId,
+          invoice.hosted_invoice_url!
+        )
       }
     }
   }
 
   private async handleInvoiceUpcoming(invoice: Stripe.Invoice): Promise<void> {
     if (invoice.subscription) {
-      const organizationId = await this.getOrganizationFromSubscription(invoice.subscription as string)
+      const organizationId = await this.getOrganizationFromSubscription(
+        invoice.subscription as string
+      )
       if (organizationId) {
         // Calculate usage-based charges
         const usageCharges = await this.usageTracker.calculateOverageCharges(organizationId)
@@ -395,20 +416,32 @@ export class StripeWebhookProcessor {
 
   private isPlanUpgrade(currentPlan: string, newPlan: string): boolean {
     const planHierarchy = { starter: 0, professional: 1, enterprise: 2 }
-    return planHierarchy[newPlan as keyof typeof planHierarchy] > planHierarchy[currentPlan as keyof typeof planHierarchy]
+    return (
+      planHierarchy[newPlan as keyof typeof planHierarchy] >
+      planHierarchy[currentPlan as keyof typeof planHierarchy]
+    )
   }
 
   private isPlanDowngrade(currentPlan: string, newPlan: string): boolean {
     const planHierarchy = { starter: 0, professional: 1, enterprise: 2 }
-    return planHierarchy[newPlan as keyof typeof planHierarchy] < planHierarchy[currentPlan as keyof typeof planHierarchy]
+    return (
+      planHierarchy[newPlan as keyof typeof planHierarchy] <
+      planHierarchy[currentPlan as keyof typeof planHierarchy]
+    )
   }
 
   private async schedulePaymentRetry(organizationId: string, invoiceId: string): Promise<void> {
     // Implement payment retry logic - could use a job queue or cron job
-    console.log(`[Webhook] Scheduling payment retry for org ${organizationId}, invoice ${invoiceId}`)
+    console.log(
+      `[Webhook] Scheduling payment retry for org ${organizationId}, invoice ${invoiceId}`
+    )
   }
 
-  private async logWebhookEvent(event: Stripe.Event, status: 'success' | 'error', errorMessage?: string): Promise<void> {
+  private async logWebhookEvent(
+    event: Stripe.Event,
+    status: 'success' | 'error',
+    errorMessage?: string
+  ): Promise<void> {
     const supabase = await this.supabase
 
     await supabase
@@ -424,7 +457,7 @@ export class StripeWebhookProcessor {
       .then(() => {
         console.log(`[Webhook] Logged event ${event.id} with status ${status}`)
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(`[Webhook] Failed to log event ${event.id}:`, error)
       })
   }

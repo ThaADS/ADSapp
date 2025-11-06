@@ -4,11 +4,7 @@
  * Instruments external API calls (WhatsApp, Stripe) with distributed tracing
  */
 
-import {
-  traceWhatsAppCall,
-  traceStripeCall,
-  traceExternalCall,
-} from './middleware'
+import { traceWhatsAppCall, traceStripeCall, traceExternalCall } from './middleware'
 import {
   recordWhatsAppApiCall,
   recordWhatsAppError,
@@ -27,14 +23,10 @@ export async function traceSendWhatsAppMessage<T>(
   const startTime = Date.now()
 
   try {
-    const result = await traceWhatsAppCall(
-      'send_message',
-      fn,
-      {
-        'whatsapp.recipient': to,
-        'organization.id': organizationId,
-      }
-    )
+    const result = await traceWhatsAppCall('send_message', fn, {
+      'whatsapp.recipient': to,
+      'organization.id': organizationId,
+    })
 
     const duration = Date.now() - startTime
     recordWhatsAppApiCall(duration, {
@@ -68,14 +60,10 @@ export async function traceWhatsAppWebhook<T>(
   fn: () => Promise<T>,
   organizationId?: string
 ): Promise<T> {
-  return traceWhatsAppCall(
-    'webhook',
-    fn,
-    {
-      'whatsapp.event_type': eventType,
-      'organization.id': organizationId,
-    }
-  )
+  return traceWhatsAppCall('webhook', fn, {
+    'whatsapp.event_type': eventType,
+    'organization.id': organizationId,
+  })
 }
 
 /**
@@ -89,14 +77,10 @@ export async function traceWhatsAppMediaDownload<T>(
   const startTime = Date.now()
 
   try {
-    const result = await traceWhatsAppCall(
-      'download_media',
-      fn,
-      {
-        'whatsapp.media_id': mediaId,
-        'organization.id': organizationId,
-      }
-    )
+    const result = await traceWhatsAppCall('download_media', fn, {
+      'whatsapp.media_id': mediaId,
+      'organization.id': organizationId,
+    })
 
     const duration = Date.now() - startTime
     recordWhatsAppApiCall(duration, {
@@ -129,14 +113,10 @@ export async function traceStripeCheckout<T>(
   fn: () => Promise<T>,
   organizationId?: string
 ): Promise<T> {
-  return traceStripeCall(
-    'create_checkout',
-    fn,
-    {
-      'stripe.price_id': priceId,
-      'organization.id': organizationId,
-    }
-  )
+  return traceStripeCall('create_checkout', fn, {
+    'stripe.price_id': priceId,
+    'organization.id': organizationId,
+  })
 }
 
 /**
@@ -148,14 +128,10 @@ export async function traceStripeSubscription<T>(
   fn: () => Promise<T>,
   organizationId?: string
 ): Promise<T> {
-  return traceStripeCall(
-    `${operation}_subscription`,
-    fn,
-    {
-      'stripe.subscription_id': subscriptionId,
-      'organization.id': organizationId,
-    }
-  )
+  return traceStripeCall(`${operation}_subscription`, fn, {
+    'stripe.subscription_id': subscriptionId,
+    'organization.id': organizationId,
+  })
 }
 
 /**
@@ -166,14 +142,10 @@ export async function traceStripeWebhook<T>(
   fn: () => Promise<T>,
   organizationId?: string
 ): Promise<T> {
-  return traceStripeCall(
-    'webhook',
-    fn,
-    {
-      'stripe.event_type': eventType,
-      'organization.id': organizationId,
-    }
-  )
+  return traceStripeCall('webhook', fn, {
+    'stripe.event_type': eventType,
+    'organization.id': organizationId,
+  })
 }
 
 /**
@@ -185,14 +157,10 @@ export async function traceStripePayment<T>(
   fn: () => Promise<T>,
   organizationId?: string
 ): Promise<T> {
-  return traceStripeCall(
-    `${operation}_payment`,
-    fn,
-    {
-      'stripe.amount': amount,
-      'organization.id': organizationId,
-    }
-  )
+  return traceStripeCall(`${operation}_payment`, fn, {
+    'stripe.amount': amount,
+    'organization.id': organizationId,
+  })
 }
 
 /**

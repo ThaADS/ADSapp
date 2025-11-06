@@ -21,6 +21,7 @@ ADSapp provides a comprehensive RESTful API for managing WhatsApp Business commu
 All API endpoints require authentication via JWT tokens issued by Supabase Auth.
 
 #### Login
+
 ```http
 POST /api/auth/signin
 Content-Type: application/json
@@ -32,6 +33,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "user": {
@@ -48,31 +50,34 @@ Content-Type: application/json
 ```
 
 #### Using API Tokens
+
 ```http
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Permission Levels
 
-| Role | Description | API Access |
-|------|-------------|------------|
-| **Super Admin** | Platform administrator | All endpoints |
-| **Organization Admin** | Tenant administrator | Organization-specific endpoints |
-| **Manager** | Team manager | Team and inbox management |
-| **Agent** | Support agent | Message handling and contacts |
-| **Viewer** | Read-only access | Analytics and reporting |
+| Role                   | Description            | API Access                      |
+| ---------------------- | ---------------------- | ------------------------------- |
+| **Super Admin**        | Platform administrator | All endpoints                   |
+| **Organization Admin** | Tenant administrator   | Organization-specific endpoints |
+| **Manager**            | Team manager           | Team and inbox management       |
+| **Agent**              | Support agent          | Message handling and contacts   |
+| **Viewer**             | Read-only access       | Analytics and reporting         |
 
 ---
 
 ## 🏢 Organization Management API
 
 ### List Organizations
+
 ```http
 GET /api/admin/organizations
 Authorization: Bearer <super_admin_token>
 ```
 
 **Response**:
+
 ```json
 {
   "organizations": [
@@ -94,6 +99,7 @@ Authorization: Bearer <super_admin_token>
 ```
 
 ### Create Organization
+
 ```http
 POST /api/admin/organizations
 Authorization: Bearer <super_admin_token>
@@ -112,6 +118,7 @@ Content-Type: application/json
 ```
 
 ### Update Organization
+
 ```http
 PUT /api/admin/organizations/{organization_id}
 Authorization: Bearer <super_admin_token>
@@ -125,6 +132,7 @@ Content-Type: application/json
 ```
 
 ### Delete Organization
+
 ```http
 DELETE /api/admin/organizations/{organization_id}
 Authorization: Bearer <super_admin_token>
@@ -135,12 +143,14 @@ Authorization: Bearer <super_admin_token>
 ## 👥 User Management API
 
 ### List Users
+
 ```http
 GET /api/admin/users
 Authorization: Bearer <admin_token>
 ```
 
 **Query Parameters**:
+
 - `organization_id` (optional): Filter by organization
 - `role` (optional): Filter by user role
 - `status` (optional): Filter by status (active, suspended, pending)
@@ -148,6 +158,7 @@ Authorization: Bearer <admin_token>
 - `limit` (optional): Items per page (default: 20)
 
 **Response**:
+
 ```json
 {
   "users": [
@@ -169,6 +180,7 @@ Authorization: Bearer <admin_token>
 ```
 
 ### Create User
+
 ```http
 POST /api/admin/users
 Authorization: Bearer <admin_token>
@@ -184,6 +196,7 @@ Content-Type: application/json
 ```
 
 ### Update User
+
 ```http
 PUT /api/admin/users/{user_id}
 Authorization: Bearer <admin_token>
@@ -197,6 +210,7 @@ Content-Type: application/json
 ```
 
 ### Reset Password
+
 ```http
 POST /api/admin/users/{user_id}/reset-password
 Authorization: Bearer <admin_token>
@@ -207,6 +221,7 @@ Authorization: Bearer <admin_token>
 ## 💬 WhatsApp Messages API
 
 ### Send Message
+
 ```http
 POST /api/whatsapp/messages
 Authorization: Bearer <token>
@@ -225,6 +240,7 @@ Content-Type: application/json
 ```
 
 ### Send Media Message
+
 ```http
 POST /api/whatsapp/messages
 Authorization: Bearer <token>
@@ -241,12 +257,14 @@ Content-Type: application/json
 ```
 
 ### Get Messages
+
 ```http
 GET /api/whatsapp/messages
 Authorization: Bearer <token>
 ```
 
 **Query Parameters**:
+
 - `contact` (optional): Filter by contact phone number
 - `from_date` (optional): Start date (ISO 8601)
 - `to_date` (optional): End date (ISO 8601)
@@ -254,6 +272,7 @@ Authorization: Bearer <token>
 - `limit` (optional): Items per page
 
 **Response**:
+
 ```json
 {
   "messages": [
@@ -279,6 +298,7 @@ Authorization: Bearer <token>
 ```
 
 ### Mark as Read
+
 ```http
 POST /api/whatsapp/messages/{message_id}/read
 Authorization: Bearer <token>
@@ -289,12 +309,14 @@ Authorization: Bearer <token>
 ## 📞 Contacts API
 
 ### List Contacts
+
 ```http
 GET /api/contacts
 Authorization: Bearer <token>
 ```
 
 **Query Parameters**:
+
 - `search` (optional): Search by name or phone
 - `tag` (optional): Filter by tag
 - `status` (optional): Filter by status
@@ -302,6 +324,7 @@ Authorization: Bearer <token>
 - `limit` (optional): Items per page
 
 **Response**:
+
 ```json
 {
   "contacts": [
@@ -324,6 +347,7 @@ Authorization: Bearer <token>
 ```
 
 ### Create Contact
+
 ```http
 POST /api/contacts
 Authorization: Bearer <token>
@@ -338,6 +362,7 @@ Content-Type: application/json
 ```
 
 ### Update Contact
+
 ```http
 PUT /api/contacts/{contact_id}
 Authorization: Bearer <token>
@@ -355,12 +380,14 @@ Content-Type: application/json
 ## 🤖 Automation API
 
 ### List Workflows
+
 ```http
 GET /api/automation/workflows
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "workflows": [
@@ -392,6 +419,7 @@ Authorization: Bearer <token>
 ```
 
 ### Create Workflow
+
 ```http
 POST /api/automation/workflows
 Authorization: Bearer <token>
@@ -421,6 +449,7 @@ Content-Type: application/json
 ```
 
 ### Execute Workflow
+
 ```http
 POST /api/automation/workflows/{workflow_id}/execute
 Authorization: Bearer <token>
@@ -440,16 +469,19 @@ Content-Type: application/json
 ## 📊 Analytics API
 
 ### Dashboard Overview
+
 ```http
 GET /api/analytics/dashboard
 Authorization: Bearer <token>
 ```
 
 **Query Parameters**:
+
 - `period` (optional): Time period (24h, 7d, 30d, 90d)
 - `timezone` (optional): Timezone for date calculations
 
 **Response**:
+
 ```json
 {
   "overview": {
@@ -488,12 +520,14 @@ Authorization: Bearer <token>
 ```
 
 ### Conversation Analytics
+
 ```http
 GET /api/analytics/conversations
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "metrics": {
@@ -519,12 +553,14 @@ Authorization: Bearer <token>
 ```
 
 ### Agent Performance
+
 ```http
 GET /api/analytics/agents
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "agents": [
@@ -554,12 +590,14 @@ Authorization: Bearer <token>
 ## 💳 Billing API
 
 ### Get Subscription
+
 ```http
 GET /api/billing/subscription
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "subscription": {
@@ -577,7 +615,7 @@ Authorization: Bearer <token>
     "users_limit": 50
   },
   "billing": {
-    "amount": 99.00,
+    "amount": 99.0,
     "currency": "usd",
     "next_payment": "2024-02-01T00:00:00Z"
   }
@@ -585,6 +623,7 @@ Authorization: Bearer <token>
 ```
 
 ### Update Subscription
+
 ```http
 PUT /api/billing/subscription
 Authorization: Bearer <token>
@@ -597,12 +636,14 @@ Content-Type: application/json
 ```
 
 ### Get Invoices
+
 ```http
 GET /api/billing/invoices
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 {
   "invoices": [
@@ -610,7 +651,7 @@ Authorization: Bearer <token>
       "id": "inv_uuid",
       "number": "INV-2024-001",
       "status": "paid",
-      "amount": 99.00,
+      "amount": 99.0,
       "currency": "usd",
       "created": "2024-01-01T00:00:00Z",
       "due_date": "2024-01-15T00:00:00Z",
@@ -626,12 +667,14 @@ Authorization: Bearer <token>
 ## 🛠️ System Administration API
 
 ### System Health
+
 ```http
 GET /api/admin/system/health
 Authorization: Bearer <super_admin_token>
 ```
 
 **Response**:
+
 ```json
 {
   "status": "healthy",
@@ -662,12 +705,14 @@ Authorization: Bearer <super_admin_token>
 ```
 
 ### Audit Logs
+
 ```http
 GET /api/admin/audit-logs
 Authorization: Bearer <super_admin_token>
 ```
 
 **Query Parameters**:
+
 - `admin_id` (optional): Filter by admin user
 - `action` (optional): Filter by action type
 - `target_type` (optional): Filter by target type
@@ -675,6 +720,7 @@ Authorization: Bearer <super_admin_token>
 - `to_date` (optional): End date
 
 **Response**:
+
 ```json
 {
   "logs": [
@@ -701,12 +747,14 @@ Authorization: Bearer <super_admin_token>
 ```
 
 ### Platform Settings
+
 ```http
 GET /api/admin/system/settings
 Authorization: Bearer <super_admin_token>
 ```
 
 **Response**:
+
 ```json
 {
   "settings": {
@@ -752,32 +800,32 @@ All API errors follow a consistent format:
 
 ### HTTP Status Codes
 
-| Code | Description | Usage |
-|------|-------------|-------|
-| `200` | Success | Successful GET, PUT requests |
-| `201` | Created | Successful POST requests |
-| `204` | No Content | Successful DELETE requests |
-| `400` | Bad Request | Invalid request data |
-| `401` | Unauthorized | Missing or invalid authentication |
-| `403` | Forbidden | Insufficient permissions |
-| `404` | Not Found | Resource not found |
-| `409` | Conflict | Resource already exists |
-| `422` | Unprocessable Entity | Validation errors |
-| `429` | Too Many Requests | Rate limit exceeded |
-| `500` | Internal Server Error | Server error |
+| Code  | Description           | Usage                             |
+| ----- | --------------------- | --------------------------------- |
+| `200` | Success               | Successful GET, PUT requests      |
+| `201` | Created               | Successful POST requests          |
+| `204` | No Content            | Successful DELETE requests        |
+| `400` | Bad Request           | Invalid request data              |
+| `401` | Unauthorized          | Missing or invalid authentication |
+| `403` | Forbidden             | Insufficient permissions          |
+| `404` | Not Found             | Resource not found                |
+| `409` | Conflict              | Resource already exists           |
+| `422` | Unprocessable Entity  | Validation errors                 |
+| `429` | Too Many Requests     | Rate limit exceeded               |
+| `500` | Internal Server Error | Server error                      |
 
 ### Common Error Codes
 
-| Code | Description |
-|------|-------------|
-| `AUTHENTICATION_REQUIRED` | Valid authentication token required |
-| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions |
-| `VALIDATION_ERROR` | Request data validation failed |
-| `RESOURCE_NOT_FOUND` | Requested resource does not exist |
-| `ORGANIZATION_NOT_FOUND` | Organization not found or access denied |
-| `RATE_LIMIT_EXCEEDED` | API rate limit exceeded |
-| `SUBSCRIPTION_REQUIRED` | Feature requires active subscription |
-| `WHATSAPP_API_ERROR` | WhatsApp API integration error |
+| Code                       | Description                             |
+| -------------------------- | --------------------------------------- |
+| `AUTHENTICATION_REQUIRED`  | Valid authentication token required     |
+| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions         |
+| `VALIDATION_ERROR`         | Request data validation failed          |
+| `RESOURCE_NOT_FOUND`       | Requested resource does not exist       |
+| `ORGANIZATION_NOT_FOUND`   | Organization not found or access denied |
+| `RATE_LIMIT_EXCEEDED`      | API rate limit exceeded                 |
+| `SUBSCRIPTION_REQUIRED`    | Feature requires active subscription    |
+| `WHATSAPP_API_ERROR`       | WhatsApp API integration error          |
 
 ---
 
@@ -785,13 +833,13 @@ All API errors follow a consistent format:
 
 ### Rate Limits
 
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| Authentication | 10 requests | 1 minute |
-| Messages | 100 requests | 1 minute |
-| Contacts | 300 requests | 1 minute |
-| Analytics | 60 requests | 1 minute |
-| Admin APIs | 100 requests | 1 minute |
+| Endpoint       | Limit        | Window   |
+| -------------- | ------------ | -------- |
+| Authentication | 10 requests  | 1 minute |
+| Messages       | 100 requests | 1 minute |
+| Contacts       | 300 requests | 1 minute |
+| Analytics      | 60 requests  | 1 minute |
+| Admin APIs     | 100 requests | 1 minute |
 
 ### Rate Limit Headers
 
@@ -810,6 +858,7 @@ X-RateLimit-Reset: 1640995200
 Configure webhook URL: `https://your-domain.com/api/webhooks/whatsapp`
 
 **Message Received**:
+
 ```json
 {
   "object": "whatsapp_business_account",
@@ -848,6 +897,7 @@ Configure webhook URL: `https://your-domain.com/api/webhooks/whatsapp`
 Configure webhook URL: `https://your-domain.com/api/webhooks/stripe`
 
 **Subscription Updated**:
+
 ```json
 {
   "id": "evt_uuid",
@@ -876,31 +926,33 @@ npm install @adsapp/sdk
 ```
 
 **Usage**:
+
 ```typescript
-import { ADSApp } from '@adsapp/sdk';
+import { ADSApp } from '@adsapp/sdk'
 
 const client = new ADSApp({
   apiKey: 'your-api-key',
-  baseURL: 'https://your-domain.com/api'
-});
+  baseURL: 'https://your-domain.com/api',
+})
 
 // Send a message
 const message = await client.messages.send({
   to: '+1234567890',
   type: 'text',
-  text: { body: 'Hello from SDK!' }
-});
+  text: { body: 'Hello from SDK!' },
+})
 
 // Get contacts
 const contacts = await client.contacts.list({
   page: 1,
-  limit: 20
-});
+  limit: 20,
+})
 ```
 
 ### cURL Examples
 
 **Authentication**:
+
 ```bash
 curl -X POST "https://your-domain.com/api/auth/signin" \
   -H "Content-Type: application/json" \
@@ -908,6 +960,7 @@ curl -X POST "https://your-domain.com/api/auth/signin" \
 ```
 
 **Send Message**:
+
 ```bash
 curl -X POST "https://your-domain.com/api/whatsapp/messages" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -924,6 +977,7 @@ curl -X POST "https://your-domain.com/api/whatsapp/messages" \
 ## 📋 Changelog
 
 ### Version 1.0.0 (Current)
+
 - Complete WhatsApp Business API integration
 - Multi-tenant organization management
 - User management and authentication
@@ -935,6 +989,7 @@ curl -X POST "https://your-domain.com/api/whatsapp/messages" \
 - Comprehensive audit logging
 
 ### Upcoming Features
+
 - Advanced AI-powered automation
 - Multi-language support
 - Advanced analytics and reporting
@@ -953,6 +1008,6 @@ curl -X POST "https://your-domain.com/api/whatsapp/messages" \
 
 ---
 
-*Last updated: Production Release*
-*API Version: 1.0*
-*Platform: ADSapp Enterprise*
+_Last updated: Production Release_
+_API Version: 1.0_
+_Platform: ADSapp Enterprise_

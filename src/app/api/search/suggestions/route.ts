@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -9,9 +8,12 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
     const { searchParams } = new URL(request.url)
-    
+
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -49,7 +51,7 @@ export async function GET(request: NextRequest) {
       if (conv.subject && conv.subject.toLowerCase().includes(query.toLowerCase())) {
         suggestions.add(conv.subject)
       }
-      
+
       // Add matching tags
       conv.tags?.forEach((tag: string) => {
         if (tag.toLowerCase().includes(query.toLowerCase())) {
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
       'refund request',
       'technical issue',
       'billing question',
-      'account setup'
+      'account setup',
     ]
 
     commonSuggestions.forEach(suggestion => {
@@ -77,13 +79,10 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json({
-      suggestions: Array.from(suggestions).slice(0, 5)
+      suggestions: Array.from(suggestions).slice(0, 5),
     })
   } catch (error) {
     console.error('Suggestions error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

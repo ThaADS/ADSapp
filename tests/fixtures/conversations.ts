@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type { Conversation } from '@/types/database'
 
 // =============================================================================
@@ -136,10 +135,7 @@ export const openConversations: Conversation[] = [
   unassignedConversation,
 ]
 
-export const closedConversations: Conversation[] = [
-  closedConversation,
-  resolvedConversation,
-]
+export const closedConversations: Conversation[] = [closedConversation, resolvedConversation]
 
 export const assignedConversations: Conversation[] = [
   openConversation,

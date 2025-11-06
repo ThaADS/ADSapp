@@ -4,7 +4,10 @@ import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    console.log('Onboarding request received:', { ...body, whatsappBusinessAccountId: body.whatsappBusinessAccountId ? '[REDACTED]' : null })
+    console.log('Onboarding request received:', {
+      ...body,
+      whatsappBusinessAccountId: body.whatsappBusinessAccountId ? '[REDACTED]' : null,
+    })
 
     const {
       organizationName,
@@ -21,7 +24,10 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!organizationName || !subdomain || !fullName || !role) {
       return NextResponse.json(
-        { error: 'Missing required fields: organizationName, subdomain, fullName, and role are required' },
+        {
+          error:
+            'Missing required fields: organizationName, subdomain, fullName, and role are required',
+        },
         { status: 400 }
       )
     }
@@ -38,7 +44,10 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
 
     // Get current authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       console.error('Auth error:', authError)
@@ -59,10 +68,7 @@ export async function POST(request: NextRequest) {
 
     if (profileCheckError && profileCheckError.code !== 'PGRST116') {
       console.error('Profile check error:', profileCheckError)
-      return NextResponse.json(
-        { error: 'Failed to check existing profile' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to check existing profile' }, { status: 500 })
     }
 
     if (existingProfile?.organization_id) {
@@ -81,10 +87,7 @@ export async function POST(request: NextRequest) {
 
     if (orgCheckError && orgCheckError.code !== 'PGRST116') {
       console.error('Organization check error:', orgCheckError)
-      return NextResponse.json(
-        { error: 'Failed to validate subdomain' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to validate subdomain' }, { status: 500 })
     }
 
     if (existingOrg) {
@@ -142,10 +145,7 @@ export async function POST(request: NextRequest) {
       console.error('Profile update error:', profileError)
 
       // Rollback: Delete the created organization using service role client
-      await serviceSupabase
-        .from('organizations')
-        .delete()
-        .eq('id', newOrganization.id)
+      await serviceSupabase.from('organizations').delete().eq('id', newOrganization.id)
 
       return NextResponse.json(
         { error: `Failed to update profile: ${profileError.message}` },

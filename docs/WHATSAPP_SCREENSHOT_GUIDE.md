@@ -1,20 +1,24 @@
 # WhatsApp Setup Screenshot Guide
 
 ## Purpose
+
 Create annotated screenshots showing users exactly where to find WhatsApp Business API credentials in Meta Business Suite.
 
 ## Required Screenshots
 
 ### 1. Phone Number ID Location
+
 **File:** `public/images/whatsapp-phone-number-id.png`
 
 **What to capture:**
+
 1. Navigate to: https://business.facebook.com/settings/whatsapp-business-accounts
 2. Select your WhatsApp Business Account
 3. Click on "Phone Numbers" in left sidebar
 4. Show the Phone Number ID field
 
 **Annotations needed:**
+
 - Red arrow pointing to Phone Number ID
 - Red box around the 15-digit number
 - Text label: "Copy this Phone Number ID"
@@ -23,14 +27,17 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 ---
 
 ### 2. Business Account ID Location
+
 **File:** `public/images/whatsapp-business-account-id.png`
 
 **What to capture:**
+
 1. In Meta Business Suite settings
 2. WhatsApp Business Account overview page
 3. Show the Account ID in the URL or account settings
 
 **Annotations needed:**
+
 - Red arrow pointing to Business Account ID
 - Red box around the ID
 - Text label: "Your Business Account ID"
@@ -39,9 +46,11 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 ---
 
 ### 3. Access Token Generation
+
 **File:** `public/images/whatsapp-access-token.png`
 
 **What to capture:**
+
 1. Navigate to: https://developers.facebook.com/apps
 2. Select your app
 3. Click "WhatsApp" → "Getting Started"
@@ -49,6 +58,7 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 5. Show the "Generate" button
 
 **Annotations needed:**
+
 - Step 1: Arrow to "WhatsApp" in left sidebar
 - Step 2: Arrow to "Getting Started"
 - Step 3: Red box around "Temporary Access Token"
@@ -59,14 +69,17 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 ---
 
 ### 4. Webhook Setup (Optional but helpful)
+
 **File:** `public/images/whatsapp-webhook-setup.png`
 
 **What to capture:**
+
 1. WhatsApp → Configuration → Webhook
 2. Show callback URL field
 3. Show verify token field
 
 **Annotations needed:**
+
 - Arrow to "Configuration" tab
 - Red box around "Callback URL" field
 - Red box around "Verify Token" field
@@ -78,12 +91,14 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 ## Screenshot Specifications
 
 ### Technical Requirements
+
 - **Format:** PNG (for transparency and quality)
 - **Resolution:** 1920x1080 minimum (retina displays)
 - **File size:** < 500KB each (use compression if needed)
 - **Quality:** High quality, clear text, no blur
 
 ### Visual Style
+
 - **Annotation color:** #EF4444 (red) for primary highlights
 - **Background:** Semi-transparent overlay for text labels
 - **Font:** Inter or system font, 16-18px for labels
@@ -91,6 +106,7 @@ Create annotated screenshots showing users exactly where to find WhatsApp Busine
 - **Boxes:** 3px solid border with rounded corners
 
 ### Annotation Tools (Recommended)
+
 1. **Snagit** (Windows/Mac) - Best for annotations
 2. **Greenshot** (Windows, free) - Good for quick annotations
 3. **Skitch** (Mac, free) - Simple and effective
@@ -179,12 +195,14 @@ After adding screenshots:
 **Frequency:** Review screenshots every 3 months
 
 **Reasons for updates:**
+
 - Meta Business Suite UI changes
 - New WhatsApp API features
 - User feedback on clarity
 - Updated best practices
 
 **Update process:**
+
 1. Create new screenshots with current UI
 2. Update annotations if needed
 3. Replace old files (keep same filenames)
@@ -196,6 +214,7 @@ After adding screenshots:
 ## User Feedback
 
 **Common questions to address with screenshots:**
+
 1. "Where do I find my Phone Number ID?" → Screenshot 1
 2. "What's the difference between Phone Number ID and Business Account ID?" → Both screenshots with comparison
 3. "How do I generate an access token?" → Screenshot 3 with step-by-step
@@ -206,6 +225,7 @@ After adding screenshots:
 ## Accessibility
 
 **Alt text examples:**
+
 ```html
 <img
   src="/images/whatsapp-phone-number-id.png"

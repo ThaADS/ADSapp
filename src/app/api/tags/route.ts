@@ -1,10 +1,14 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export const dynamic = 'force-dynamic'
@@ -13,9 +17,9 @@ export async function GET(request: NextRequest) {
   try {
     // 🔧 FIX: Query organization directly instead of relying on middleware headers
     // Root cause: Next.js 15 doesn't propagate headers when middleware returns null
-    const user = await requireAuthenticatedUser();
-    const userOrg = await getUserOrganization(user.id);
-    const organizationId = userOrg.organization_id;
+    const user = await requireAuthenticatedUser()
+    const userOrg = await getUserOrganization(user.id)
+    const organizationId = userOrg.organization_id
 
     const supabase = await createClient()
 
@@ -25,7 +29,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('tags')
-      .select(`
+      .select(
+        `
         id,
         name,
         description,
@@ -42,7 +47,8 @@ export async function GET(request: NextRequest) {
           name,
           description
         )
-      `)
+      `
+      )
       .eq('organization_id', organizationId)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true })
@@ -65,9 +71,8 @@ export async function GET(request: NextRequest) {
 
     return createSuccessResponse({
       tags: tags || [],
-      total: tags?.length || 0
+      total: tags?.length || 0,
     })
-
   } catch (error) {
     console.error('Error fetching tags:', error)
     return createErrorResponse(error)
@@ -77,10 +82,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // 🔧 FIX: Query organization directly instead of relying on middleware headers
-    const user = await requireAuthenticatedUser();
-    const userOrg = await getUserOrganization(user.id);
-    const organizationId = userOrg.organization_id;
-    const userId = user.id;
+    const user = await requireAuthenticatedUser()
+    const userOrg = await getUserOrganization(user.id)
+    const organizationId = userOrg.organization_id
+    const userId = user.id
 
     const supabase = await createClient()
 
@@ -98,16 +103,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body = await request.json();
-    const {
-      name,
-      description,
-      color_hex,
-      color_class,
-      icon,
-      category_id,
-      sort_order
-    } = body
+    const body = await request.json()
+    const { name, description, color_hex, color_class, icon, category_id, sort_order } = body
 
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
@@ -133,10 +130,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (existingTag) {
-      return NextResponse.json(
-        { error: 'A tag with this name already exists' },
-        { status: 409 }
-      )
+      return NextResponse.json({ error: 'A tag with this name already exists' }, { status: 409 })
     }
 
     // Create new tag with new schema
@@ -152,27 +146,31 @@ export async function POST(request: NextRequest) {
         category_id: category_id || null,
         sort_order: sort_order || 0,
         created_by: userId,
-        is_active: true
+        is_active: true,
       })
-      .select(`
+      .select(
+        `
         *,
         category:tag_categories(
           id,
           name,
           description
         )
-      `)
+      `
+      )
       .single()
 
     if (error) {
       throw error
     }
 
-    return createSuccessResponse({
-      ...tag,
-      usage_count: 0
-    }, 201)
-
+    return createSuccessResponse(
+      {
+        ...tag,
+        usage_count: 0,
+      },
+      201
+    )
   } catch (error) {
     console.error('Error creating tag:', error)
     return createErrorResponse(error)

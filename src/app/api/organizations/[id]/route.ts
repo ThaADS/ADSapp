@@ -12,16 +12,15 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server';
-import { ApiException, createErrorResponse } from '@/lib/api-utils';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { ApiException, createErrorResponse } from '@/lib/api-utils'
 import {
   validateOrganizationUpdate,
   validateOrganizationId,
   type OrganizationSettingsResponse,
-} from '@/lib/validations/organization-settings';
-import { RESOURCES, ACTIONS } from '@/lib/rbac/permissions';
+} from '@/lib/validations/organization-settings'
+import { RESOURCES, ACTIONS } from '@/lib/rbac/permissions'
 
 /**
  * GET /api/organizations/[id]
@@ -42,28 +41,28 @@ import { RESOURCES, ACTIONS } from '@/lib/rbac/permissions';
  * const { organization } = await response.json();
  * ```
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient();
-    const { id: organizationId } = await params;
+    const supabase = await createClient()
+    const { id: organizationId } = await params
 
     // Validate organization ID format
-    const idValidation = validateOrganizationId(organizationId);
+    const idValidation = validateOrganizationId(organizationId)
     if (!idValidation.success) {
       throw new ApiException(
         idValidation.error.errors[0]?.message || 'Invalid organization ID',
         400,
         'INVALID_ORGANIZATION_ID'
-      );
+      )
     }
 
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      throw new ApiException('Authentication required', 401, 'UNAUTHORIZED');
+      throw new ApiException('Authentication required', 401, 'UNAUTHORIZED')
     }
 
     // Get user profile with organization access
@@ -71,21 +70,21 @@ export async function GET(
       .from('profiles')
       .select('id, organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError) {
-      console.error('Error fetching user profile:', profileError);
-      throw new ApiException('Failed to fetch user profile', 500, 'PROFILE_ERROR');
+      console.error('Error fetching user profile:', profileError)
+      throw new ApiException('Failed to fetch user profile', 500, 'PROFILE_ERROR')
     }
 
     // RBAC enforcement - owner and admin can view organization settings
-    const canView = profile.role === 'owner' || profile.role === 'admin';
+    const canView = profile.role === 'owner' || profile.role === 'admin'
     if (!canView) {
       throw new ApiException(
         'Insufficient permissions to view organization settings',
         403,
         'FORBIDDEN'
-      );
+      )
     }
 
     // Multi-tenant isolation - ensure user belongs to requested organization
@@ -94,7 +93,7 @@ export async function GET(
         'Access denied: Organization does not belong to your account',
         403,
         'FORBIDDEN'
-      );
+      )
     }
 
     // Fetch organization details
@@ -102,14 +101,14 @@ export async function GET(
       .from('organizations')
       .select('*')
       .eq('id', organizationId)
-      .single();
+      .single()
 
     if (orgError) {
       if (orgError.code === 'PGRST116') {
-        throw new ApiException('Organization not found', 404, 'NOT_FOUND');
+        throw new ApiException('Organization not found', 404, 'NOT_FOUND')
       }
-      console.error('Error fetching organization:', orgError);
-      throw new ApiException('Failed to fetch organization', 500, 'DATABASE_ERROR');
+      console.error('Error fetching organization:', orgError)
+      throw new ApiException('Failed to fetch organization', 500, 'DATABASE_ERROR')
     }
 
     // Format response
@@ -126,16 +125,15 @@ export async function GET(
       subscription_tier: organization.subscription_tier,
       created_at: organization.created_at,
       updated_at: organization.updated_at,
-    };
+    }
 
     return NextResponse.json({
       success: true,
       organization: response,
-    });
-
+    })
   } catch (error) {
-    console.error('GET /api/organizations/[id] error:', error);
-    return createErrorResponse(error);
+    console.error('GET /api/organizations/[id] error:', error)
+    return createErrorResponse(error)
   }
 }
 
@@ -163,49 +161,45 @@ export async function GET(
  * });
  * ```
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient();
-    const serviceSupabase = createServiceRoleClient();
-    const { id: organizationId } = await params;
+    const supabase = await createClient()
+    const serviceSupabase = createServiceRoleClient()
+    const { id: organizationId } = await params
 
     // Validate organization ID format
-    const idValidation = validateOrganizationId(organizationId);
+    const idValidation = validateOrganizationId(organizationId)
     if (!idValidation.success) {
       throw new ApiException(
         idValidation.error.errors[0]?.message || 'Invalid organization ID',
         400,
         'INVALID_ORGANIZATION_ID'
-      );
+      )
     }
 
     // Parse and validate request body
-    let body: any;
+    let body: any
     try {
-      body = await request.json();
+      body = await request.json()
     } catch {
-      throw new ApiException('Invalid JSON in request body', 400, 'INVALID_JSON');
+      throw new ApiException('Invalid JSON in request body', 400, 'INVALID_JSON')
     }
 
-    const validation = validateOrganizationUpdate(body);
+    const validation = validateOrganizationUpdate(body)
     if (!validation.success) {
-      const firstError = validation.error.errors[0];
-      throw new ApiException(
-        firstError?.message || 'Validation failed',
-        400,
-        'VALIDATION_ERROR'
-      );
+      const firstError = validation.error.errors[0]
+      throw new ApiException(firstError?.message || 'Validation failed', 400, 'VALIDATION_ERROR')
     }
 
-    const validatedData = validation.data;
+    const validatedData = validation.data
 
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      throw new ApiException('Authentication required', 401, 'UNAUTHORIZED');
+      throw new ApiException('Authentication required', 401, 'UNAUTHORIZED')
     }
 
     // Get user profile with organization access
@@ -213,24 +207,24 @@ export async function PUT(
       .from('profiles')
       .select('id, organization_id, role, email')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError) {
-      console.error('Error fetching user profile:', profileError);
-      throw new ApiException('Failed to fetch user profile', 500, 'PROFILE_ERROR');
+      console.error('Error fetching user profile:', profileError)
+      throw new ApiException('Failed to fetch user profile', 500, 'PROFILE_ERROR')
     }
 
     // RBAC enforcement - only owner can update organization settings
     // Admin can update some fields but not critical ones like subdomain
-    const isOwner = profile.role === 'owner';
-    const isAdmin = profile.role === 'admin';
+    const isOwner = profile.role === 'owner'
+    const isAdmin = profile.role === 'admin'
 
     if (!isOwner && !isAdmin) {
       throw new ApiException(
         'Insufficient permissions to update organization settings',
         403,
         'FORBIDDEN'
-      );
+      )
     }
 
     // Multi-tenant isolation
@@ -239,16 +233,12 @@ export async function PUT(
         'Access denied: Organization does not belong to your account',
         403,
         'FORBIDDEN'
-      );
+      )
     }
 
     // Additional permission checks for restricted fields
     if (!isOwner && validatedData.subdomain) {
-      throw new ApiException(
-        'Only organization owners can change the subdomain',
-        403,
-        'FORBIDDEN'
-      );
+      throw new ApiException('Only organization owners can change the subdomain', 403, 'FORBIDDEN')
     }
 
     // Fetch current organization for comparison
@@ -256,14 +246,14 @@ export async function PUT(
       .from('organizations')
       .select('*')
       .eq('id', organizationId)
-      .single();
+      .single()
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
-        throw new ApiException('Organization not found', 404, 'NOT_FOUND');
+        throw new ApiException('Organization not found', 404, 'NOT_FOUND')
       }
-      console.error('Error fetching current organization:', fetchError);
-      throw new ApiException('Failed to fetch organization', 500, 'DATABASE_ERROR');
+      console.error('Error fetching current organization:', fetchError)
+      throw new ApiException('Failed to fetch organization', 500, 'DATABASE_ERROR')
     }
 
     // Check subdomain uniqueness if being changed
@@ -273,59 +263,59 @@ export async function PUT(
         .select('id')
         .eq('slug', validatedData.subdomain)
         .neq('id', organizationId)
-        .single();
+        .single()
 
       if (existingOrg) {
         throw new ApiException(
           'Subdomain is already taken. Please choose a different subdomain.',
           409,
           'SUBDOMAIN_CONFLICT'
-        );
+        )
       }
     }
 
     // Build update object
     const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
-    };
+    }
 
-    const changedFields: Record<string, { old: any; new: any }> = {};
+    const changedFields: Record<string, { old: any; new: any }> = {}
 
     // Map validated fields to database columns
     if (validatedData.name && validatedData.name !== currentOrg.name) {
-      updateData.name = validatedData.name;
-      changedFields.name = { old: currentOrg.name, new: validatedData.name };
+      updateData.name = validatedData.name
+      changedFields.name = { old: currentOrg.name, new: validatedData.name }
     }
 
     if (validatedData.subdomain && validatedData.subdomain !== currentOrg.slug) {
-      updateData.slug = validatedData.subdomain;
-      changedFields.slug = { old: currentOrg.slug, new: validatedData.subdomain };
+      updateData.slug = validatedData.subdomain
+      changedFields.slug = { old: currentOrg.slug, new: validatedData.subdomain }
     }
 
     if (validatedData.timezone !== undefined && validatedData.timezone !== currentOrg.timezone) {
-      updateData.timezone = validatedData.timezone;
-      changedFields.timezone = { old: currentOrg.timezone, new: validatedData.timezone };
+      updateData.timezone = validatedData.timezone
+      changedFields.timezone = { old: currentOrg.timezone, new: validatedData.timezone }
     }
 
     if (validatedData.locale !== undefined && validatedData.locale !== currentOrg.locale) {
-      updateData.locale = validatedData.locale;
-      changedFields.locale = { old: currentOrg.locale, new: validatedData.locale };
+      updateData.locale = validatedData.locale
+      changedFields.locale = { old: currentOrg.locale, new: validatedData.locale }
     }
 
     if (validatedData.whatsapp_business_account_id !== undefined) {
-      updateData.whatsapp_business_account_id = validatedData.whatsapp_business_account_id;
+      updateData.whatsapp_business_account_id = validatedData.whatsapp_business_account_id
       changedFields.whatsapp_business_account_id = {
         old: currentOrg.whatsapp_business_account_id,
         new: validatedData.whatsapp_business_account_id,
-      };
+      }
     }
 
     if (validatedData.whatsapp_phone_number_id !== undefined) {
-      updateData.whatsapp_phone_number_id = validatedData.whatsapp_phone_number_id;
+      updateData.whatsapp_phone_number_id = validatedData.whatsapp_phone_number_id
       changedFields.whatsapp_phone_number_id = {
         old: currentOrg.whatsapp_phone_number_id,
         new: validatedData.whatsapp_phone_number_id,
-      };
+      }
     }
 
     // Check if there are actual changes
@@ -334,7 +324,7 @@ export async function PUT(
         success: true,
         message: 'No changes detected',
         organization: currentOrg,
-      });
+      })
     }
 
     // Perform update
@@ -343,11 +333,11 @@ export async function PUT(
       .update(updateData)
       .eq('id', organizationId)
       .select()
-      .single();
+      .single()
 
     if (updateError) {
-      console.error('Error updating organization:', updateError);
-      throw new ApiException('Failed to update organization', 500, 'UPDATE_ERROR');
+      console.error('Error updating organization:', updateError)
+      throw new ApiException('Failed to update organization', 500, 'UPDATE_ERROR')
     }
 
     // Audit logging
@@ -365,10 +355,10 @@ export async function PUT(
         ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
         user_agent: request.headers.get('user-agent'),
         created_at: new Date().toISOString(),
-      });
+      })
     } catch (auditError) {
       // Log but don't fail the request
-      console.error('Failed to create audit log:', auditError);
+      console.error('Failed to create audit log:', auditError)
     }
 
     // Format response
@@ -385,17 +375,16 @@ export async function PUT(
       subscription_tier: updatedOrg.subscription_tier,
       created_at: updatedOrg.created_at,
       updated_at: updatedOrg.updated_at,
-    };
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Organization updated successfully',
       organization: response,
       changed_fields: Object.keys(changedFields),
-    });
-
+    })
   } catch (error) {
-    console.error('PUT /api/organizations/[id] error:', error);
-    return createErrorResponse(error);
+    console.error('PUT /api/organizations/[id] error:', error)
+    return createErrorResponse(error)
   }
 }

@@ -6,69 +6,49 @@ export const emailSchema = z
   .email('Invalid email format')
   .min(5, 'Email must be at least 5 characters')
   .max(254, 'Email must not exceed 254 characters')
+  .refine(email => !email.includes('..'), 'Email cannot contain consecutive dots')
   .refine(
-    (email) => !email.includes('..'),
-    'Email cannot contain consecutive dots'
-  )
-  .refine(
-    (email) => !email.startsWith('.') && !email.endsWith('.'),
+    email => !email.startsWith('.') && !email.endsWith('.'),
     'Email cannot start or end with a dot'
   )
-  .refine(
-    (email) => {
-      // Check for suspicious patterns
-      const suspiciousPatterns = [
-        /script/i,
-        /javascript/i,
-        /vbscript/i,
-        /onload/i,
-        /onclick/i,
-        /<.*>/,
-      ]
-      return !suspiciousPatterns.some(pattern => pattern.test(email))
-    },
-    'Email contains invalid characters'
-  )
+  .refine(email => {
+    // Check for suspicious patterns
+    const suspiciousPatterns = [
+      /script/i,
+      /javascript/i,
+      /vbscript/i,
+      /onload/i,
+      /onclick/i,
+      /<.*>/,
+    ]
+    return !suspiciousPatterns.some(pattern => pattern.test(email))
+  }, 'Email contains invalid characters')
 
 // Password validation with security requirements
 export const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters')
   .max(128, 'Password must not exceed 128 characters')
+  .refine(password => /[a-z]/.test(password), 'Password must contain at least one lowercase letter')
+  .refine(password => /[A-Z]/.test(password), 'Password must contain at least one uppercase letter')
+  .refine(password => /[0-9]/.test(password), 'Password must contain at least one number')
   .refine(
-    (password) => /[a-z]/.test(password),
-    'Password must contain at least one lowercase letter'
-  )
-  .refine(
-    (password) => /[A-Z]/.test(password),
-    'Password must contain at least one uppercase letter'
-  )
-  .refine(
-    (password) => /[0-9]/.test(password),
-    'Password must contain at least one number'
-  )
-  .refine(
-    (password) => /[^a-zA-Z0-9]/.test(password),
+    password => /[^a-zA-Z0-9]/.test(password),
     'Password must contain at least one special character'
   )
-  .refine(
-    (password) => {
-      // Check against common weak passwords
-      const weakPasswords = [
-        'password',
-        '123456789',
-        'qwertyuiop',
-        'asdfghjkl',
-        'zxcvbnm',
-        'admin123',
-        'password123',
-      ]
-      return !weakPasswords.some(weak =>
-        password.toLowerCase().includes(weak.toLowerCase())
-      )
-    },
-    'Password is too common or weak'
-  )
+  .refine(password => {
+    // Check against common weak passwords
+    const weakPasswords = [
+      'password',
+      '123456789',
+      'qwertyuiop',
+      'asdfghjkl',
+      'zxcvbnm',
+      'admin123',
+      'password123',
+    ]
+    return !weakPasswords.some(weak => password.toLowerCase().includes(weak.toLowerCase()))
+  }, 'Password is too common or weak')
 
 // Name validation to prevent XSS and injection
 export const nameSchema = z
@@ -76,32 +56,19 @@ export const nameSchema = z
   .min(1, 'Name is required')
   .max(100, 'Name must not exceed 100 characters')
   .refine(
-    (name) => /^[a-zA-Z\s\-\.\']+$/.test(name),
+    name => /^[a-zA-Z\s\-\.\']+$/.test(name),
     'Name can only contain letters, spaces, hyphens, dots, and apostrophes'
   )
-  .refine(
-    (name) => {
-      // Prevent XSS patterns
-      const xssPatterns = [
-        /<script/i,
-        /javascript:/i,
-        /on\w+=/i,
-        /<iframe/i,
-        /<object/i,
-        /<embed/i,
-      ]
-      return !xssPatterns.some(pattern => pattern.test(name))
-    },
-    'Name contains invalid characters'
-  )
+  .refine(name => {
+    // Prevent XSS patterns
+    const xssPatterns = [/<script/i, /javascript:/i, /on\w+=/i, /<iframe/i, /<object/i, /<embed/i]
+    return !xssPatterns.some(pattern => pattern.test(name))
+  }, 'Name contains invalid characters')
 
 // Phone number validation
 export const phoneSchema = z
   .string()
-  .regex(
-    /^\+?[1-9]\d{1,14}$/,
-    'Invalid phone number format (use international format)'
-  )
+  .regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format (use international format)')
   .min(10, 'Phone number must be at least 10 digits')
   .max(17, 'Phone number must not exceed 17 characters')
 
@@ -111,84 +78,75 @@ export const organizationNameSchema = z
   .min(2, 'Organization name must be at least 2 characters')
   .max(100, 'Organization name must not exceed 100 characters')
   .refine(
-    (name) => /^[a-zA-Z0-9\s\-\.\'&]+$/.test(name),
+    name => /^[a-zA-Z0-9\s\-\.\'&]+$/.test(name),
     'Organization name contains invalid characters'
   )
-  .refine(
-    (name) => {
-      // Prevent XSS and injection patterns
-      const maliciousPatterns = [
-        /<script/i,
-        /javascript:/i,
-        /on\w+=/i,
-        /sql/i,
-        /union/i,
-        /select/i,
-        /drop/i,
-        /delete/i,
-        /insert/i,
-        /update/i,
-      ]
-      return !maliciousPatterns.some(pattern => pattern.test(name))
-    },
-    'Organization name contains prohibited content'
-  )
+  .refine(name => {
+    // Prevent XSS and injection patterns
+    const maliciousPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /on\w+=/i,
+      /sql/i,
+      /union/i,
+      /select/i,
+      /drop/i,
+      /delete/i,
+      /insert/i,
+      /update/i,
+    ]
+    return !maliciousPatterns.some(pattern => pattern.test(name))
+  }, 'Organization name contains prohibited content')
 
 // URL validation for custom domains
 export const urlSchema = z
   .string()
   .url('Invalid URL format')
-  .refine(
-    (url) => {
-      try {
-        const parsedUrl = new URL(url)
-        // Only allow HTTPS in production
-        if (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:') {
-          return false
-        }
-        // Prevent localhost and private IPs in production
-        if (process.env.NODE_ENV === 'production') {
-          const hostname = parsedUrl.hostname
-          if (
-            hostname === 'localhost' ||
-            hostname.startsWith('127.') ||
-            hostname.startsWith('192.168.') ||
-            hostname.startsWith('10.') ||
-            hostname.match(/^172\.(1[6-9]|2\d|3[01])\./)
-          ) {
-            return false
-          }
-        }
-        return true
-      } catch {
+  .refine(url => {
+    try {
+      const parsedUrl = new URL(url)
+      // Only allow HTTPS in production
+      if (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:') {
         return false
       }
-    },
-    'URL is not allowed or uses invalid protocol'
-  )
+      // Prevent localhost and private IPs in production
+      if (process.env.NODE_ENV === 'production') {
+        const hostname = parsedUrl.hostname
+        if (
+          hostname === 'localhost' ||
+          hostname.startsWith('127.') ||
+          hostname.startsWith('192.168.') ||
+          hostname.startsWith('10.') ||
+          hostname.match(/^172\.(1[6-9]|2\d|3[01])\./)
+        ) {
+          return false
+        }
+      }
+      return true
+    } catch {
+      return false
+    }
+  }, 'URL is not allowed or uses invalid protocol')
 
 // Generic text input validation to prevent XSS
 export const sanitizedTextSchema = z
   .string()
   .max(1000, 'Text must not exceed 1000 characters')
-  .refine(
-    (text) => {
-      // Prevent XSS patterns
-      const xssPatterns = [
-        /<script.*?>.*?<\/script>/gi,
-        /<.*?on\w+.*?=.*?>/gi,
-        /javascript:/gi,
-        /vbscript:/gi,
-        /<iframe.*?>/gi,
-        /<object.*?>/gi,
-        /<embed.*?>/gi,
-        /<form.*?>/gi,
-      ]
-      return !xssPatterns.some(pattern => pattern.test(text))
-    },
-    'Text contains potentially harmful content'
-  )
-  .transform((text) => {
+  .refine(text => {
+    // Prevent XSS patterns
+    const xssPatterns = [
+      /<script.*?>.*?<\/script>/gi,
+      /<.*?on\w+.*?=.*?>/gi,
+      /javascript:/gi,
+      /vbscript:/gi,
+      /<iframe.*?>/gi,
+      /<object.*?>/gi,
+      /<embed.*?>/gi,
+      /<form.*?>/gi,
+    ]
+    return !xssPatterns.some(pattern => pattern.test(text))
+  }, 'Text contains potentially harmful content')
+  .transform(text => {
     // Basic HTML entity encoding for safety
     return text
       .replace(/&/g, '&amp;')
@@ -220,49 +178,44 @@ export const fileUploadSchema = z.object({
     .string()
     .min(1, 'Filename is required')
     .max(255, 'Filename too long')
-    .refine(
-      (filename) => {
-        // Check for path traversal attempts
-        return !filename.includes('..') && !filename.includes('/')
-      },
-      'Invalid filename'
-    )
-    .refine(
-      (filename) => {
-        // Allow only safe file extensions
-        const allowedExtensions = [
-          '.jpg', '.jpeg', '.png', '.gif', '.webp',
-          '.pdf', '.doc', '.docx', '.txt', '.csv'
-        ]
-        return allowedExtensions.some(ext =>
-          filename.toLowerCase().endsWith(ext)
-        )
-      },
-      'File type not allowed'
-    ),
+    .refine(filename => {
+      // Check for path traversal attempts
+      return !filename.includes('..') && !filename.includes('/')
+    }, 'Invalid filename')
+    .refine(filename => {
+      // Allow only safe file extensions
+      const allowedExtensions = [
+        '.jpg',
+        '.jpeg',
+        '.png',
+        '.gif',
+        '.webp',
+        '.pdf',
+        '.doc',
+        '.docx',
+        '.txt',
+        '.csv',
+      ]
+      return allowedExtensions.some(ext => filename.toLowerCase().endsWith(ext))
+    }, 'File type not allowed'),
   size: z
     .number()
     .min(1, 'File cannot be empty')
     .max(10 * 1024 * 1024, 'File size cannot exceed 10MB'),
-  mimeType: z
-    .string()
-    .refine(
-      (mimeType) => {
-        const allowedMimeTypes = [
-          'image/jpeg',
-          'image/png',
-          'image/gif',
-          'image/webp',
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'text/plain',
-          'text/csv',
-        ]
-        return allowedMimeTypes.includes(mimeType)
-      },
-      'File type not allowed'
-    ),
+  mimeType: z.string().refine(mimeType => {
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+      'text/csv',
+    ]
+    return allowedMimeTypes.includes(mimeType)
+  }, 'File type not allowed'),
 })
 
 // Auth schemas
@@ -300,7 +253,10 @@ export const updateOrganizationSchema = z.object({
 })
 
 // Validation helper functions
-export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {
+export function validateRequest<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+): {
   success: boolean
   data?: T
   error?: string
@@ -313,12 +269,12 @@ export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {
       const firstError = error.errors[0]
       return {
         success: false,
-        error: firstError.message
+        error: firstError.message,
       }
     }
     return {
       success: false,
-      error: 'Validation failed'
+      error: 'Validation failed',
     }
   }
 }

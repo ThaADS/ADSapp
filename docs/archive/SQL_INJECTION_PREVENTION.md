@@ -26,6 +26,7 @@ This document provides comprehensive guidance on SQL injection prevention for th
 ### What is SQL Injection?
 
 SQL injection is a code injection technique that exploits security vulnerabilities in an application's database layer. Attackers can:
+
 - Read sensitive data from the database
 - Modify or delete database data
 - Execute administrative operations
@@ -48,67 +49,74 @@ Located at: `src/lib/security/input-validation.ts`
 ### Available Validators
 
 #### validateUUID
+
 Validates UUID v4 format with strict regex.
 
 ```typescript
-import { InputValidator } from '@/lib/security/input-validation';
+import { InputValidator } from '@/lib/security/input-validation'
 
-const result = InputValidator.validateUUID(userInput);
+const result = InputValidator.validateUUID(userInput)
 if (!result.isValid) {
-  throw new Error(result.error);
+  throw new Error(result.error)
 }
-const safeUUID = result.sanitizedValue;
+const safeUUID = result.sanitizedValue
 ```
 
 **Blocks**:
+
 - Invalid UUID formats
 - SQL injection attempts
 - Special characters
 
 #### validateText
+
 Validates and sanitizes text input.
 
 ```typescript
 const result = InputValidator.validateText(userInput, {
   maxLength: 500,
-  minLength: 1
-});
+  minLength: 1,
+})
 
 if (!result.isValid) {
-  throw new Error(result.error);
+  throw new Error(result.error)
 }
-const safeText = result.sanitizedValue;
+const safeText = result.sanitizedValue
 ```
 
 **Blocks**:
+
 - SQL injection patterns
 - XSS attempts
 - Control characters
 - Excessive length
 
 #### validateEmail
+
 Validates email addresses (RFC 5322).
 
 ```typescript
-const result = InputValidator.validateEmail(email);
+const result = InputValidator.validateEmail(email)
 if (!result.isValid) {
-  throw new Error(result.error);
+  throw new Error(result.error)
 }
 ```
 
 #### validateInteger
+
 Validates integer values with optional range checking.
 
 ```typescript
-const result = InputValidator.validateInteger(count, { min: 0, max: 1000 });
+const result = InputValidator.validateInteger(count, { min: 0, max: 1000 })
 ```
 
 #### validateJSON
+
 Recursively validates and sanitizes JSON data.
 
 ```typescript
-const result = InputValidator.validateJSON(jsonData);
-const safeJSON = result.sanitizedValue;
+const result = InputValidator.validateJSON(jsonData)
+const safeJSON = result.sanitizedValue
 ```
 
 ### SQL Injection Detection
@@ -117,11 +125,11 @@ The library automatically detects common injection patterns:
 
 ```typescript
 const patterns = [
-  /(--|\/\*|\*\/|;|'|")/,  // Comment and quote characters
-  /(\bOR\b|\bAND\b)\s+['"]?\d+['"]?\s*=\s*['"]?\d+['"]?/i,  // Boolean injection
-  /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b/i,  // SQL keywords
-  /\b(WAITFOR|DELAY|SLEEP|BENCHMARK)\b/i,  // Time-based injection
-];
+  /(--|\/\*|\*\/|;|'|")/, // Comment and quote characters
+  /(\bOR\b|\bAND\b)\s+['"]?\d+['"]?\s*=\s*['"]?\d+['"]?/i, // Boolean injection
+  /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b/i, // SQL keywords
+  /\b(WAITFOR|DELAY|SLEEP|BENCHMARK)\b/i, // Time-based injection
+]
 ```
 
 ## Secure RPC Wrapper
@@ -131,19 +139,19 @@ Located at: `src/lib/security/secure-rpc.ts`
 ### Usage
 
 ```typescript
-import { secureRpc } from '@/lib/security/secure-rpc';
+import { secureRpc } from '@/lib/security/secure-rpc'
 
 const result = await secureRpc(supabase, 'function_name', {
   param1: value1,
-  param2: value2
-});
+  param2: value2,
+})
 
 if (result.error) {
-  console.error('RPC failed:', result.error);
-  return;
+  console.error('RPC failed:', result.error)
+  return
 }
 
-const data = result.data;
+const data = result.data
 ```
 
 ### Features
@@ -177,7 +185,7 @@ export const WHITELISTED_RPC_FUNCTIONS = {
     requiresAuth: true,
     rateLimitPerMinute: 60,
   },
-};
+}
 ```
 
 ## Safe RPC Function Patterns
@@ -185,6 +193,7 @@ export const WHITELISTED_RPC_FUNCTIONS = {
 ### Pattern 1: UUID Parameter
 
 **❌ VULNERABLE**:
+
 ```sql
 CREATE FUNCTION get_user(user_id TEXT)
 RETURNS TABLE(...) AS $$
@@ -195,6 +204,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **✅ SECURE**:
+
 ```sql
 CREATE FUNCTION get_user(user_id UUID)
 RETURNS TABLE(...) AS $$
@@ -213,6 +223,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ### Pattern 2: Text Parameter
 
 **❌ VULNERABLE**:
+
 ```sql
 CREATE FUNCTION search_users(query TEXT)
 RETURNS TABLE(...) AS $$
@@ -223,6 +234,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **✅ SECURE**:
+
 ```sql
 CREATE FUNCTION search_users(query TEXT)
 RETURNS TABLE(...) AS $$
@@ -241,6 +253,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ### Pattern 3: JSONB Parameter
 
 **✅ SAFE** (JSONB type prevents injection):
+
 ```sql
 CREATE FUNCTION log_event(metadata JSONB)
 RETURNS UUID AS $$
@@ -253,6 +266,7 @@ $$ LANGUAGE plpgsql;
 ### Pattern 4: Enum Parameter
 
 **✅ SECURE**:
+
 ```sql
 CREATE FUNCTION set_status(status TEXT)
 RETURNS BOOLEAN AS $$
@@ -271,11 +285,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ### 1. String Concatenation
 
 **❌ NEVER DO THIS**:
+
 ```sql
 EXECUTE 'SELECT * FROM users WHERE id = ''' || user_input || '''';
 ```
 
 **✅ DO THIS INSTEAD**:
+
 ```sql
 SELECT * FROM users WHERE id = validated_user_id;
 ```
@@ -283,12 +299,14 @@ SELECT * FROM users WHERE id = validated_user_id;
 ### 2. Dynamic Table Names
 
 **❌ NEVER DO THIS**:
+
 ```sql
 EXECUTE 'SELECT * FROM ' || table_name;
 ```
 
 **✅ DO THIS INSTEAD**:
 Use CASE statement with whitelisted tables:
+
 ```sql
 CASE table_name
   WHEN 'users' THEN SELECT * FROM users
@@ -300,11 +318,13 @@ END CASE;
 ### 3. Unvalidated LIKE Patterns
 
 **❌ RISKY**:
+
 ```sql
 WHERE name LIKE '%' || user_input || '%'
 ```
 
 **✅ SAFER**:
+
 ```sql
 WHERE name ILIKE '%' || validate_text(user_input, 100) || '%'
 ```
@@ -312,11 +332,13 @@ WHERE name ILIKE '%' || validate_text(user_input, 100) || '%'
 ### 4. Integer Parameters from Text
 
 **❌ VULNERABLE**:
+
 ```sql
 EXECUTE 'SELECT * FROM users LIMIT ' || limit_param;
 ```
 
 **✅ SECURE**:
+
 ```sql
 SELECT * FROM users LIMIT validate_integer(limit_param, 1, 1000);
 ```
@@ -333,15 +355,15 @@ const testPayloads = [
   "'; DROP TABLE users--",
   "' UNION SELECT NULL--",
   "1' AND SLEEP(5)--",
-];
+]
 
 for (const payload of testPayloads) {
   const result = await secureRpc(supabase, 'function_name', {
-    param: payload
-  });
+    param: payload,
+  })
 
   // Should be rejected
-  expect(result.error).toBeDefined();
+  expect(result.error).toBeDefined()
 }
 ```
 
@@ -374,17 +396,19 @@ npx supabase migration apply 20251019_rpc_hardening.sql
 Replace direct RPC calls with secure wrapper:
 
 **Before**:
+
 ```typescript
 const { data, error } = await supabase.rpc('function_name', {
-  param: userInput
-});
+  param: userInput,
+})
 ```
 
 **After**:
+
 ```typescript
 const result = await secureRpc(supabase, 'function_name', {
-  param: userInput
-});
+  param: userInput,
+})
 ```
 
 ### Step 3: Validate Results
@@ -413,13 +437,13 @@ All RPC calls are logged:
 
 ```typescript
 interface AuditLogEntry {
-  function_name: string;
-  called_by: string;
-  parameters: Record<string, any>;
-  success: boolean;
-  error?: string;
-  execution_time_ms: number;
-  called_at: timestamp;
+  function_name: string
+  called_by: string
+  parameters: Record<string, any>
+  success: boolean
+  error?: string
+  execution_time_ms: number
+  called_at: timestamp
 }
 ```
 
@@ -470,6 +494,7 @@ If SQL injection is detected:
 For security concerns, contact: security@adsapp.com
 
 For questions about implementation, see:
+
 - `src/lib/security/input-validation.ts`
 - `src/lib/security/secure-rpc.ts`
 - `supabase/migrations/20251019_rpc_hardening.sql`

@@ -3,6 +3,7 @@
 **Duration**: 6-8 minutes
 **Target Audience**: Agents and team members handling daily conversations
 **Learning Objectives**:
+
 - Master inbox workflow for efficient conversation handling
 - Learn conversation assignment and status management
 - Use tags, filters, and search effectively

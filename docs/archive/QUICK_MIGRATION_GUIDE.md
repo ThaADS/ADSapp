@@ -9,16 +9,20 @@
 ## Quick Start (Recommended Method)
 
 ### Step 1: Copy SQL Script
+
 Open: `database-scripts/APPLY_MISSING_TABLES.sql`
 
 ### Step 2: Apply in Supabase
+
 1. Go to Supabase Dashboard → SQL Editor
 2. Paste entire script
 3. Click "Run"
 4. Look for: `✓✓✓ MISSING TABLES MIGRATION COMPLETED SUCCESSFULLY ✓✓✓`
 
 ### Step 3: Verify
+
 Should see output:
+
 ```
 ✓ Tables created: 7 (expected: 7)
 ✓ Indexes created: ~43 (expected: ~43)
@@ -27,6 +31,7 @@ Should see output:
 ```
 
 ### Step 4: Remove TODOs
+
 1. `src/app/api/analytics/performance/route.ts` (lines 36-45, 154-204)
 2. `src/app/api/analytics/reports/route.ts` (lines 95-137, 408-422)
 3. `src/app/api/auth/mfa/enroll/route.ts` (lines 53-59)

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionManager } from '@/lib/session/manager';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { getSessionManager } from '@/lib/session/manager'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * List Active Sessions API Route
@@ -47,25 +47,28 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: NextRequest) {
   try {
     // Get user ID from Supabase auth
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return NextResponse.json(
         {
           error: 'User not authenticated',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         },
         { status: 401 }
-      );
+      )
     }
 
     // Get current session token
-    const currentSessionToken = request.cookies.get('adsapp_session')?.value;
+    const currentSessionToken = request.cookies.get('adsapp_session')?.value
 
     // Get all user sessions
-    const sessionManager = getSessionManager();
-    const sessions = await sessionManager.getUserSessions(user.id);
+    const sessionManager = getSessionManager()
+    const sessions = await sessionManager.getUserSessions(user.id)
 
     // Format sessions for response
     const formattedSessions = sessions.map(session => ({
@@ -75,55 +78,55 @@ export async function GET(request: NextRequest) {
         userAgent: maskUserAgent(session.deviceInfo.userAgent),
         // Mask IP address (show only first two octets)
         ip: maskIpAddress(session.deviceInfo.ip),
-        platform: session.deviceInfo.platform || 'unknown'
+        platform: session.deviceInfo.platform || 'unknown',
       },
       createdAt: session.createdAt,
       lastActivity: session.lastActivity,
       expiresAt: session.expiresAt,
-      isCurrent: session.sessionToken === currentSessionToken
-    }));
+      isCurrent: session.sessionToken === currentSessionToken,
+    }))
 
     // Sort sessions by last activity (most recent first)
-    formattedSessions.sort((a, b) =>
-      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
-    );
+    formattedSessions.sort(
+      (a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
+    )
 
     // Get max concurrent sessions from config
-    const maxSessions = Number(process.env.MAX_CONCURRENT_SESSIONS) || 5;
+    const maxSessions = Number(process.env.MAX_CONCURRENT_SESSIONS) || 5
 
     return NextResponse.json(
       {
         success: true,
         sessions: formattedSessions,
         totalSessions: sessions.length,
-        maxSessions
+        maxSessions,
       },
       { status: 200 }
-    );
+    )
   } catch (error) {
-    console.error('[SessionList] Error:', error);
+    console.error('[SessionList] Error:', error)
 
     // Log error to monitoring
     if (process.env.NODE_ENV === 'production') {
       try {
-        const Sentry = await import('@sentry/nextjs');
+        const Sentry = await import('@sentry/nextjs')
         Sentry.captureException(error, {
           tags: {
-            endpoint: 'session-list'
-          }
-        });
+            endpoint: 'session-list',
+          },
+        })
       } catch (sentryError) {
-        console.error('[SessionList] Failed to log error:', sentryError);
+        console.error('[SessionList] Failed to log error:', sentryError)
       }
     }
 
     return NextResponse.json(
       {
         error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -134,18 +137,18 @@ export async function POST() {
   return NextResponse.json(
     {
       error: 'Method not allowed',
-      code: 'METHOD_NOT_ALLOWED'
+      code: 'METHOD_NOT_ALLOWED',
     },
     { status: 405 }
-  );
+  )
 }
 
 export async function PUT() {
-  return POST();
+  return POST()
 }
 
 export async function DELETE() {
-  return POST();
+  return POST()
 }
 
 /**
@@ -156,13 +159,13 @@ export async function DELETE() {
  */
 function maskUserAgent(userAgent: string): string {
   // Extract browser and OS info
-  const browserMatch = userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)\/[\d.]+/);
-  const osMatch = userAgent.match(/(Windows|Mac OS|Linux|Android|iOS)[\s\w.]*/);
+  const browserMatch = userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)\/[\d.]+/)
+  const osMatch = userAgent.match(/(Windows|Mac OS|Linux|Android|iOS)[\s\w.]*/)
 
-  const browser = browserMatch ? browserMatch[0] : 'Unknown Browser';
-  const os = osMatch ? osMatch[0] : 'Unknown OS';
+  const browser = browserMatch ? browserMatch[0] : 'Unknown Browser'
+  const os = osMatch ? osMatch[0] : 'Unknown OS'
 
-  return `${browser} on ${os}`;
+  return `${browser} on ${os}`
 }
 
 /**
@@ -173,20 +176,20 @@ function maskUserAgent(userAgent: string): string {
  */
 function maskIpAddress(ip: string): string {
   if (ip === 'unknown') {
-    return 'unknown';
+    return 'unknown'
   }
 
   // For IPv4, show only first two octets
   if (ip.includes('.')) {
-    const parts = ip.split('.');
-    return `${parts[0]}.${parts[1]}.*.*`;
+    const parts = ip.split('.')
+    return `${parts[0]}.${parts[1]}.*.*`
   }
 
   // For IPv6, show only first segment
   if (ip.includes(':')) {
-    const parts = ip.split(':');
-    return `${parts[0]}:****`;
+    const parts = ip.split(':')
+    return `${parts[0]}:****`
   }
 
-  return 'unknown';
+  return 'unknown'
 }

@@ -50,9 +50,7 @@ const ROLE_LABELS = {
 
 function TeamManagementComponent({ profile }: TeamManagementProps) {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
-  const [pendingInvitations, setPendingInvitations] = useState<
-    PendingInvitation[]
-  >([])
+  const [pendingInvitations, setPendingInvitations] = useState<PendingInvitation[]>([])
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -181,7 +179,7 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
     }
 
     // Prevent removing last owner
-    const ownerCount = teamMembers.filter((m) => m.role === 'owner').length
+    const ownerCount = teamMembers.filter(m => m.role === 'owner').length
     if (selectedMember.role === 'owner' && ownerCount <= 1) {
       setError('Cannot remove the last owner')
       return
@@ -213,7 +211,7 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
   const handleCancelInvitation = async (invitationId: string) => {
     // In production, this would cancel the invitation
-    setPendingInvitations(pendingInvitations.filter((i) => i.id !== invitationId))
+    setPendingInvitations(pendingInvitations.filter(i => i.id !== invitationId))
     setMessage('Invitation cancelled')
   }
 
@@ -232,108 +230,104 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading team data...</div>
+      <div className='flex h-64 items-center justify-center'>
+        <div className='text-gray-500'>Loading team data...</div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header Actions */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-600">
+      <div className='flex items-center justify-between'>
+        <div className='text-sm text-gray-600'>
           {teamMembers.length} team member{teamMembers.length !== 1 ? 's' : ''}
         </div>
         <button
           onClick={() => setShowInviteModal(true)}
-          className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
+          className='inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
         >
-          <UserPlusIcon className="h-5 w-5 mr-2" />
+          <UserPlusIcon className='mr-2 h-5 w-5' />
           Invite Member
         </button>
       </div>
 
       {/* Messages */}
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-          <div className="text-sm text-red-700">{error}</div>
+        <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
+          <div className='text-sm text-red-700'>{error}</div>
         </div>
       )}
 
       {message && (
-        <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
-          <div className="text-sm text-emerald-700">{message}</div>
+        <div className='rounded-lg border border-emerald-200 bg-emerald-50 p-4'>
+          <div className='text-sm text-emerald-700'>{message}</div>
         </div>
       )}
 
       {/* Team Members Table */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm'>
+        <table className='min-w-full divide-y divide-gray-200'>
+          <thead className='bg-gray-50'>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Member
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Role
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Last Seen
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className='px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase'>
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {teamMembers.map((member) => (
-              <tr key={member.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
+          <tbody className='divide-y divide-gray-200 bg-white'>
+            {teamMembers.map(member => (
+              <tr key={member.id} className='hover:bg-gray-50'>
+                <td className='px-6 py-4 whitespace-nowrap'>
+                  <div className='flex items-center'>
+                    <div className='h-10 w-10 flex-shrink-0'>
                       {member.avatar_url ? (
-                        <img
-                          className="h-10 w-10 rounded-full"
-                          src={member.avatar_url}
-                          alt=""
-                        />
+                        <img className='h-10 w-10 rounded-full' src={member.avatar_url} alt='' />
                       ) : (
-                        <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-600">
+                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300'>
+                          <span className='text-sm font-medium text-gray-600'>
                             {member.full_name?.[0] || member.email[0].toUpperCase()}
                           </span>
                         </div>
                       )}
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                    <div className='ml-4'>
+                      <div className='text-sm font-medium text-gray-900'>
                         {member.full_name || 'No name set'}
                         {member.id === profile.id && (
-                          <span className="ml-2 text-xs text-gray-500">(You)</span>
+                          <span className='ml-2 text-xs text-gray-500'>(You)</span>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500">{member.email}</div>
+                      <div className='text-sm text-gray-500'>{member.email}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className='px-6 py-4 whitespace-nowrap'>
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${
                       ROLE_COLORS[member.role]
                     }`}
                   >
                     {ROLE_LABELS[member.role]}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <ClockIcon className="h-4 w-4 mr-1 text-gray-400" />
+                <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-500'>
+                  <div className='flex items-center'>
+                    <ClockIcon className='mr-1 h-4 w-4 text-gray-400' />
                     {formatLastSeen(member.last_seen_at)}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
+                <td className='px-6 py-4 text-right text-sm font-medium whitespace-nowrap'>
+                  <div className='flex justify-end space-x-2'>
                     <button
                       onClick={() => {
                         setSelectedMember(member)
@@ -341,9 +335,9 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
                         setShowEditModal(true)
                       }}
                       disabled={member.id === profile.id}
-                      className="text-emerald-600 hover:text-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='text-emerald-600 hover:text-emerald-900 disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                      <PencilIcon className="h-5 w-5" />
+                      <PencilIcon className='h-5 w-5' />
                     </button>
                     <button
                       onClick={() => {
@@ -353,12 +347,11 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
                       disabled={
                         member.id === profile.id ||
                         (member.role === 'owner' &&
-                          teamMembers.filter((m) => m.role === 'owner').length <=
-                            1)
+                          teamMembers.filter(m => m.role === 'owner').length <= 1)
                       }
-                      className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                      <TrashIcon className="h-5 w-5" />
+                      <TrashIcon className='h-5 w-5' />
                     </button>
                   </div>
                 </td>
@@ -370,22 +363,18 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
       {/* Pending Invitations */}
       {pendingInvitations.length > 0 && (
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Pending Invitations
-            </h3>
-            <div className="space-y-3">
-              {pendingInvitations.map((invitation) => (
+        <div className='rounded-lg border border-gray-200 bg-white shadow-sm'>
+          <div className='p-6'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>Pending Invitations</h3>
+            <div className='space-y-3'>
+              {pendingInvitations.map(invitation => (
                 <div
                   key={invitation.id}
-                  className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+                  className='flex items-center justify-between border-b border-gray-200 py-3 last:border-b-0'
                 >
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">
-                      {invitation.email}
-                    </div>
-                    <div className="text-xs text-gray-500">
+                  <div className='flex-1'>
+                    <div className='text-sm font-medium text-gray-900'>{invitation.email}</div>
+                    <div className='text-xs text-gray-500'>
                       Role: {ROLE_LABELS[invitation.role as keyof typeof ROLE_LABELS]} • Expires in{' '}
                       {Math.ceil(
                         (new Date(invitation.expires_at).getTime() - Date.now()) /
@@ -396,7 +385,7 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
                   </div>
                   <button
                     onClick={() => handleCancelInvitation(invitation.id)}
-                    className="text-red-600 hover:text-red-900"
+                    className='text-red-600 hover:text-red-900'
                   >
                     Cancel
                   </button>
@@ -409,109 +398,93 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
       {/* Invite Member Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Invite Team Member
-                </h3>
+        <div className='bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-gray-500'>
+          <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
+            <div className='border-b border-gray-200 px-6 py-4'>
+              <div className='flex items-center justify-between'>
+                <h3 className='text-lg font-medium text-gray-900'>Invite Team Member</h3>
                 <button
                   onClick={() => setShowInviteModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className='text-gray-400 hover:text-gray-500'
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className='h-6 w-6' />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleInviteMember} className="px-6 py-4 space-y-4">
+            <form onSubmit={handleInviteMember} className='space-y-4 px-6 py-4'>
               <div>
-                <label
-                  htmlFor="invite-email"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor='invite-email' className='block text-sm font-medium text-gray-700'>
                   Email Address
                 </label>
                 <input
-                  type="email"
-                  id="invite-email"
+                  type='email'
+                  id='invite-email'
                   required
                   value={inviteForm.email}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, email: e.target.value })
-                  }
-                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
-                  placeholder="colleague@example.com"
+                  onChange={e => setInviteForm({ ...inviteForm, email: e.target.value })}
+                  className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
+                  placeholder='colleague@example.com'
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="invite-role"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor='invite-role' className='block text-sm font-medium text-gray-700'>
                   Role
                 </label>
                 <select
-                  id="invite-role"
+                  id='invite-role'
                   value={inviteForm.role}
-                  onChange={(e) =>
-                    setInviteForm({ ...inviteForm, role: e.target.value })
-                  }
-                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
+                  onChange={e => setInviteForm({ ...inviteForm, role: e.target.value })}
+                  className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
                 >
-                  {profile.role === 'owner' && <option value="owner">Owner</option>}
-                  <option value="admin">Admin</option>
-                  <option value="agent">Agent</option>
+                  {profile.role === 'owner' && <option value='owner'>Owner</option>}
+                  <option value='admin'>Admin</option>
+                  <option value='agent'>Agent</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className='mb-2 block text-sm font-medium text-gray-700'>
                   Custom Permissions
                 </label>
-                <div className="space-y-2">
-                  {Object.entries(inviteForm.customPermissions).map(
-                    ([key, value]) => (
-                      <label key={key} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={value}
-                          onChange={(e) =>
-                            setInviteForm({
-                              ...inviteForm,
-                              customPermissions: {
-                                ...inviteForm.customPermissions,
-                                [key]: e.target.checked,
-                              },
-                            })
-                          }
-                          className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          {key
-                            .replace(/([A-Z])/g, ' $1')
-                            .replace(/^./, (str) => str.toUpperCase())}
-                        </span>
-                      </label>
-                    )
-                  )}
+                <div className='space-y-2'>
+                  {Object.entries(inviteForm.customPermissions).map(([key, value]) => (
+                    <label key={key} className='flex items-center'>
+                      <input
+                        type='checkbox'
+                        checked={value}
+                        onChange={e =>
+                          setInviteForm({
+                            ...inviteForm,
+                            customPermissions: {
+                              ...inviteForm.customPermissions,
+                              [key]: e.target.checked,
+                            },
+                          })
+                        }
+                        className='h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500'
+                      />
+                      <span className='ml-2 text-sm text-gray-700'>
+                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className='flex justify-end space-x-3 pt-4'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowInviteModal(false)}
-                  className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
+                  className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type='submit'
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                 >
                   {actionLoading ? 'Sending...' : 'Send Invitation'}
                 </button>
@@ -523,61 +496,56 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
       {/* Edit Role Modal */}
       {showEditModal && selectedMember && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Edit Role</h3>
+        <div className='bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-gray-500'>
+          <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
+            <div className='border-b border-gray-200 px-6 py-4'>
+              <div className='flex items-center justify-between'>
+                <h3 className='text-lg font-medium text-gray-900'>Edit Role</h3>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className='text-gray-400 hover:text-gray-500'
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className='h-6 w-6' />
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleUpdateRole} className="px-6 py-4 space-y-4">
+            <form onSubmit={handleUpdateRole} className='space-y-4 px-6 py-4'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Member
-                </label>
-                <div className="text-sm text-gray-900">
+                <label className='mb-2 block text-sm font-medium text-gray-700'>Member</label>
+                <div className='text-sm text-gray-900'>
                   {selectedMember.full_name || selectedMember.email}
                 </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="edit-role"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor='edit-role' className='block text-sm font-medium text-gray-700'>
                   New Role
                 </label>
                 <select
-                  id="edit-role"
+                  id='edit-role'
                   value={editForm.role}
-                  onChange={(e) => setEditForm({ role: e.target.value })}
-                  className="mt-1 block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm px-3 py-2"
+                  onChange={e => setEditForm({ role: e.target.value })}
+                  className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
                 >
-                  {profile.role === 'owner' && <option value="owner">Owner</option>}
-                  <option value="admin">Admin</option>
-                  <option value="agent">Agent</option>
+                  {profile.role === 'owner' && <option value='owner'>Owner</option>}
+                  <option value='admin'>Admin</option>
+                  <option value='agent'>Agent</option>
                 </select>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className='flex justify-end space-x-3 pt-4'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
+                  className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type='submit'
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                 >
                   {actionLoading ? 'Updating...' : 'Update Role'}
                 </button>
@@ -589,43 +557,41 @@ function TeamManagementComponent({ profile }: TeamManagementProps) {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedMember && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Remove Team Member
-                </h3>
+        <div className='bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-gray-500'>
+          <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
+            <div className='border-b border-gray-200 px-6 py-4'>
+              <div className='flex items-center justify-between'>
+                <h3 className='text-lg font-medium text-gray-900'>Remove Team Member</h3>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className='text-gray-400 hover:text-gray-500'
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className='h-6 w-6' />
                 </button>
               </div>
             </div>
 
-            <div className="px-6 py-4">
-              <p className="text-sm text-gray-500">
+            <div className='px-6 py-4'>
+              <p className='text-sm text-gray-500'>
                 Are you sure you want to remove{' '}
-                <span className="font-medium text-gray-900">
+                <span className='font-medium text-gray-900'>
                   {selectedMember.full_name || selectedMember.email}
                 </span>{' '}
                 from your team? This action cannot be undone.
               </p>
 
-              <div className="flex justify-end space-x-3 pt-6">
+              <div className='flex justify-end space-x-3 pt-6'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowDeleteModal(false)}
-                  className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm font-medium"
+                  className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRemoveMember}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className='rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                 >
                   {actionLoading ? 'Removing...' : 'Remove Member'}
                 </button>

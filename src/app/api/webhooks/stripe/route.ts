@@ -10,18 +10,18 @@
  * Compliance: PCI DSS webhook security requirements
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { validateStripeWebhook } from '@/lib/middleware/webhook-validator';
-import { WebhookHandler } from '@/lib/billing/webhook-handler';
-import { WEBHOOK_SECURITY_HEADERS } from '@/lib/middleware/webhook-validator';
+import { NextRequest, NextResponse } from 'next/server'
+import { validateStripeWebhook } from '@/lib/middleware/webhook-validator'
+import { WebhookHandler } from '@/lib/billing/webhook-handler'
+import { WEBHOOK_SECURITY_HEADERS } from '@/lib/middleware/webhook-validator'
 
 export async function POST(request: NextRequest) {
   try {
     // 1. Validate webhook signature and extract event
-    const validation = await validateStripeWebhook(request);
+    const validation = await validateStripeWebhook(request)
 
     if (!validation.valid || !validation.event) {
-      console.error('Webhook validation failed:', validation.error);
+      console.error('Webhook validation failed:', validation.error)
 
       return NextResponse.json(
         {
@@ -32,61 +32,70 @@ export async function POST(request: NextRequest) {
           status: 400,
           headers: WEBHOOK_SECURITY_HEADERS,
         }
-      );
+      )
     }
 
-    const event = validation.event;
+    const event = validation.event
 
-    console.log(`[Stripe Webhook] Processing event: ${event.type} - ${event.id}`);
+    console.log(`[Stripe Webhook] Processing event: ${event.type} - ${event.id}`)
 
     // 2. Process webhook with idempotency
-    const webhookHandler = new WebhookHandler();
+    const webhookHandler = new WebhookHandler()
     const result = await webhookHandler.processWebhookWithIdempotency(
       event,
       request.headers.get('stripe-signature') || ''
-    );
+    )
 
     // 3. Return result
     if (result.success) {
       if (result.alreadyProcessed) {
-        console.log(`[Stripe Webhook] Event already processed: ${event.id}`);
-        return NextResponse.json({
+        console.log(`[Stripe Webhook] Event already processed: ${event.id}`)
+        return NextResponse.json(
+          {
+            received: true,
+            eventId: event.id,
+            eventType: event.type,
+            alreadyProcessed: true,
+          },
+          {
+            status: 200,
+            headers: WEBHOOK_SECURITY_HEADERS,
+          }
+        )
+      }
+
+      return NextResponse.json(
+        {
           received: true,
           eventId: event.id,
           eventType: event.type,
-          alreadyProcessed: true,
-        }, {
+          processed: result.processed,
+        },
+        {
           status: 200,
           headers: WEBHOOK_SECURITY_HEADERS,
-        });
-      }
-
-      return NextResponse.json({
-        received: true,
-        eventId: event.id,
-        eventType: event.type,
-        processed: result.processed,
-      }, {
-        status: 200,
-        headers: WEBHOOK_SECURITY_HEADERS,
-      });
+        }
+      )
     } else {
-      console.error(`[Stripe Webhook] Processing failed: ${result.error}`);
+      console.error(`[Stripe Webhook] Processing failed: ${result.error}`)
 
-      return NextResponse.json({
-        received: true,
-        eventId: event.id,
-        eventType: event.type,
-        error: result.error,
-        retryable: result.retryable,
-      }, {
-        status: result.retryable ? 500 : 400,
-        headers: WEBHOOK_SECURITY_HEADERS,
-      });
+      return NextResponse.json(
+        {
+          received: true,
+          eventId: event.id,
+          eventType: event.type,
+          error: result.error,
+          retryable: result.retryable,
+        },
+        {
+          status: result.retryable ? 500 : 400,
+          headers: WEBHOOK_SECURITY_HEADERS,
+        }
+      )
     }
   } catch (error) {
-    const err = error as Error;
-    console.error('Stripe webhook error:', err);
+    const err = error as Error
+    console.error('Stripe webhook error:', err)
 
     return NextResponse.json(
       {
@@ -97,6 +106,6 @@ export async function POST(request: NextRequest) {
         status: 500,
         headers: WEBHOOK_SECURITY_HEADERS,
       }
-    );
+    )
   }
 }

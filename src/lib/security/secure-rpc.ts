@@ -25,40 +25,40 @@
  * @module secure-rpc
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js'
 import {
   InputValidator,
   ValidationResult,
   ValidationErrorCodes,
   type ValidationSchema,
-} from './input-validation';
+} from './input-validation'
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
 export interface SecureRpcOptions {
-  skipValidation?: boolean;  // Bypass validation (use with extreme caution)
-  skipAuditLog?: boolean;  // Skip audit logging
-  timeout?: number;  // Timeout in milliseconds
-  retries?: number;  // Number of retry attempts
-  customValidators?: Record<string, (value: any) => ValidationResult>;
+  skipValidation?: boolean // Bypass validation (use with extreme caution)
+  skipAuditLog?: boolean // Skip audit logging
+  timeout?: number // Timeout in milliseconds
+  retries?: number // Number of retry attempts
+  customValidators?: Record<string, (value: any) => ValidationResult>
 }
 
 export interface SecureRpcResult<T = any> {
-  data: T | null;
-  error: Error | null;
-  validationErrors?: Record<string, string>;
-  executionTime?: number;
+  data: T | null
+  error: Error | null
+  validationErrors?: Record<string, string>
+  executionTime?: number
 }
 
 export interface RpcFunctionConfig {
-  name: string;
-  description: string;
-  parameterSchema: ValidationSchema;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
-  requiresAuth: boolean;
-  rateLimitPerMinute?: number;
+  name: string
+  description: string
+  parameterSchema: ValidationSchema
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
+  requiresAuth: boolean
+  rateLimitPerMinute?: number
 }
 
 // ============================================================================
@@ -86,7 +86,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       granularity: {
-        validator: (value) => InputValidator.validateEnum(value, ['day', 'week', 'month']),
+        validator: value => InputValidator.validateEnum(value, ['day', 'week', 'month']),
         required: false,
       },
     },
@@ -131,7 +131,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       interval_type: {
-        validator: (value) => InputValidator.validateEnum(value, ['minute', 'hour', 'day']),
+        validator: value => InputValidator.validateEnum(value, ['minute', 'hour', 'day']),
         required: false,
       },
     },
@@ -180,11 +180,11 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       action_name: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 100 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 100 }),
         required: true,
       },
       target_type: {
-        validator: (value) =>
+        validator: value =>
           InputValidator.validateEnum(value, ['organization', 'profile', 'system', 'billing']),
         required: true,
       },
@@ -198,11 +198,11 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: false,
       },
       ip_addr: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 45, allowNull: true }),
+        validator: value => InputValidator.validateText(value, { maxLength: 45, allowNull: true }),
         required: false,
       },
       user_agent: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 500, allowNull: true }),
+        validator: value => InputValidator.validateText(value, { maxLength: 500, allowNull: true }),
         required: false,
       },
     },
@@ -238,7 +238,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       reason: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 500 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 500 }),
         required: true,
       },
       suspended_by_id: {
@@ -281,11 +281,11 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       event_type_param: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 50 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 50 }),
         required: true,
       },
       event_category_param: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 30 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 30 }),
         required: true,
       },
       resource_amount_param: {
@@ -315,7 +315,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       limit_type_param: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 50 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 50 }),
         required: true,
       },
     },
@@ -329,7 +329,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
     description: 'Get tenant organization by domain name',
     parameterSchema: {
       domain_name: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 255 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 255 }),
         required: true,
       },
     },
@@ -367,7 +367,7 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
         required: true,
       },
       quota_type: {
-        validator: (value) => InputValidator.validateText(value, { maxLength: 50 }),
+        validator: value => InputValidator.validateText(value, { maxLength: 50 }),
         required: true,
       },
       usage_delta: {
@@ -397,44 +397,44 @@ export const WHITELISTED_RPC_FUNCTIONS: Record<string, RpcFunctionConfig> = {
     requiresAuth: true,
     rateLimitPerMinute: 120,
   },
-};
+}
 
 // ============================================================================
 // RATE LIMITING
 // ============================================================================
 
 interface RateLimitEntry {
-  count: number;
-  resetTime: number;
+  count: number
+  resetTime: number
 }
 
-const rateLimitStore: Map<string, RateLimitEntry> = new Map();
+const rateLimitStore: Map<string, RateLimitEntry> = new Map()
 
 function checkRateLimit(functionName: string, userId: string | null): boolean {
-  const config = WHITELISTED_RPC_FUNCTIONS[functionName];
+  const config = WHITELISTED_RPC_FUNCTIONS[functionName]
   if (!config || !config.rateLimitPerMinute) {
-    return true; // No rate limit configured
+    return true // No rate limit configured
   }
 
-  const key = `${functionName}:${userId || 'anonymous'}`;
-  const now = Date.now();
-  const entry = rateLimitStore.get(key);
+  const key = `${functionName}:${userId || 'anonymous'}`
+  const now = Date.now()
+  const entry = rateLimitStore.get(key)
 
   if (!entry || entry.resetTime < now) {
     // Reset or create new entry
     rateLimitStore.set(key, {
       count: 1,
       resetTime: now + 60000, // 1 minute from now
-    });
-    return true;
+    })
+    return true
   }
 
   if (entry.count >= config.rateLimitPerMinute) {
-    return false; // Rate limit exceeded
+    return false // Rate limit exceeded
   }
 
-  entry.count++;
-  return true;
+  entry.count++
+  return true
 }
 
 // ============================================================================
@@ -442,17 +442,17 @@ function checkRateLimit(functionName: string, userId: string | null): boolean {
 // ============================================================================
 
 interface AuditLogEntry {
-  timestamp: string;
-  functionName: string;
-  userId: string | null;
-  parameters: Record<string, any>;
-  success: boolean;
-  error?: string;
-  executionTime?: number;
-  riskLevel: string;
+  timestamp: string
+  functionName: string
+  userId: string | null
+  parameters: Record<string, any>
+  success: boolean
+  error?: string
+  executionTime?: number
+  riskLevel: string
 }
 
-const auditLog: AuditLogEntry[] = [];
+const auditLog: AuditLogEntry[] = []
 
 async function logRpcCall(
   functionName: string,
@@ -462,7 +462,7 @@ async function logRpcCall(
   error?: string,
   executionTime?: number
 ): Promise<void> {
-  const config = WHITELISTED_RPC_FUNCTIONS[functionName];
+  const config = WHITELISTED_RPC_FUNCTIONS[functionName]
 
   const entry: AuditLogEntry = {
     timestamp: new Date().toISOString(),
@@ -473,24 +473,24 @@ async function logRpcCall(
     error,
     executionTime,
     riskLevel: config?.riskLevel || 'unknown',
-  };
+  }
 
-  auditLog.push(entry);
+  auditLog.push(entry)
 
   // Keep only last 1000 entries in memory
   if (auditLog.length > 1000) {
-    auditLog.shift();
+    auditLog.shift()
   }
 
   // For critical operations, log to database or external service
   if (config?.riskLevel === 'critical' || !success) {
     // TODO: Implement database logging for critical operations
-    console.warn('[SECURE RPC AUDIT]', entry);
+    console.warn('[SECURE RPC AUDIT]', entry)
   }
 }
 
 function sanitizeParametersForLogging(params: Record<string, any>): Record<string, any> {
-  const sanitized: Record<string, any> = {};
+  const sanitized: Record<string, any> = {}
 
   for (const [key, value] of Object.entries(params)) {
     // Redact sensitive fields
@@ -499,15 +499,15 @@ function sanitizeParametersForLogging(params: Record<string, any>): Record<strin
       key.toLowerCase().includes('secret') ||
       key.toLowerCase().includes('token')
     ) {
-      sanitized[key] = '[REDACTED]';
+      sanitized[key] = '[REDACTED]'
     } else if (typeof value === 'string' && value.length > 100) {
-      sanitized[key] = value.substring(0, 100) + '...[TRUNCATED]';
+      sanitized[key] = value.substring(0, 100) + '...[TRUNCATED]'
     } else {
-      sanitized[key] = value;
+      sanitized[key] = value
     }
   }
 
-  return sanitized;
+  return sanitized
 }
 
 // ============================================================================
@@ -529,106 +529,99 @@ export async function secureRpc<T = any>(
   params: Record<string, any> = {},
   options: SecureRpcOptions = {}
 ): Promise<SecureRpcResult<T>> {
-  const startTime = Date.now();
-  let userId: string | null = null;
+  const startTime = Date.now()
+  let userId: string | null = null
 
   try {
     // Get current user for audit logging and rate limiting
     const {
       data: { user },
-    } = await supabase.auth.getUser();
-    userId = user?.id || null;
+    } = await supabase.auth.getUser()
+    userId = user?.id || null
 
     // Step 1: Validate function name is whitelisted
-    const functionConfig = WHITELISTED_RPC_FUNCTIONS[functionName];
+    const functionConfig = WHITELISTED_RPC_FUNCTIONS[functionName]
     if (!functionConfig) {
-      const error = new Error(`RPC function '${functionName}' is not whitelisted`);
-      await logRpcCall(functionName, userId, params, false, error.message);
+      const error = new Error(`RPC function '${functionName}' is not whitelisted`)
+      await logRpcCall(functionName, userId, params, false, error.message)
       return {
         data: null,
         error,
         executionTime: Date.now() - startTime,
-      };
+      }
     }
 
     // Step 2: Check authentication requirement
     if (functionConfig.requiresAuth && !userId) {
-      const error = new Error(`Authentication required for '${functionName}'`);
-      await logRpcCall(functionName, userId, params, false, error.message);
+      const error = new Error(`Authentication required for '${functionName}'`)
+      await logRpcCall(functionName, userId, params, false, error.message)
       return {
         data: null,
         error,
         executionTime: Date.now() - startTime,
-      };
+      }
     }
 
     // Step 3: Check rate limit
     if (!checkRateLimit(functionName, userId)) {
-      const error = new Error(`Rate limit exceeded for '${functionName}'`);
-      await logRpcCall(functionName, userId, params, false, error.message);
+      const error = new Error(`Rate limit exceeded for '${functionName}'`)
+      await logRpcCall(functionName, userId, params, false, error.message)
       return {
         data: null,
         error,
         executionTime: Date.now() - startTime,
-      };
+      }
     }
 
     // Step 4: Validate and sanitize parameters
-    let sanitizedParams = params;
-    const validationErrors: Record<string, string> = {};
+    let sanitizedParams = params
+    const validationErrors: Record<string, string> = {}
 
     if (!options.skipValidation) {
-      const validationResult = InputValidator.validateSchema(params, functionConfig.parameterSchema);
+      const validationResult = InputValidator.validateSchema(params, functionConfig.parameterSchema)
 
       if (!validationResult.isValid) {
-        const error = new Error('Parameter validation failed');
-        await logRpcCall(functionName, userId, params, false, error.message);
+        const error = new Error('Parameter validation failed')
+        await logRpcCall(functionName, userId, params, false, error.message)
         return {
           data: null,
           error,
           validationErrors: validationResult.errors,
           executionTime: Date.now() - startTime,
-        };
+        }
       }
 
-      sanitizedParams = validationResult.sanitizedData;
+      sanitizedParams = validationResult.sanitizedData
     }
 
     // Step 5: Apply custom validators if provided
     if (options.customValidators) {
       for (const [key, validator] of Object.entries(options.customValidators)) {
         if (key in sanitizedParams) {
-          const result = validator(sanitizedParams[key]);
+          const result = validator(sanitizedParams[key])
           if (!result.isValid) {
-            const error = new Error(`Custom validation failed for parameter '${key}'`);
-            await logRpcCall(functionName, userId, params, false, error.message);
+            const error = new Error(`Custom validation failed for parameter '${key}'`)
+            await logRpcCall(functionName, userId, params, false, error.message)
             return {
               data: null,
               error,
               validationErrors: { [key]: result.error || 'Validation failed' },
               executionTime: Date.now() - startTime,
-            };
+            }
           }
-          sanitizedParams[key] = result.sanitizedValue;
+          sanitizedParams[key] = result.sanitizedValue
         }
       }
     }
 
     // Step 6: Execute the RPC function
-    const { data, error } = await supabase.rpc(functionName, sanitizedParams);
+    const { data, error } = await supabase.rpc(functionName, sanitizedParams)
 
-    const executionTime = Date.now() - startTime;
+    const executionTime = Date.now() - startTime
 
     // Step 7: Log the call
     if (!options.skipAuditLog) {
-      await logRpcCall(
-        functionName,
-        userId,
-        sanitizedParams,
-        !error,
-        error?.message,
-        executionTime
-      );
+      await logRpcCall(functionName, userId, sanitizedParams, !error, error?.message, executionTime)
     }
 
     // Step 8: Return result
@@ -637,25 +630,25 @@ export async function secureRpc<T = any>(
         data: null,
         error: new Error(error.message),
         executionTime,
-      };
+      }
     }
 
     return {
       data: data as T,
       error: null,
       executionTime,
-    };
+    }
   } catch (error) {
-    const executionTime = Date.now() - startTime;
-    const err = error instanceof Error ? error : new Error('Unknown error');
+    const executionTime = Date.now() - startTime
+    const err = error instanceof Error ? error : new Error('Unknown error')
 
-    await logRpcCall(functionName, userId, params, false, err.message, executionTime);
+    await logRpcCall(functionName, userId, params, false, err.message, executionTime)
 
     return {
       data: null,
       error: err,
       executionTime,
-    };
+    }
   }
 }
 
@@ -667,42 +660,42 @@ export async function secureRpc<T = any>(
  * Get audit log for analysis
  */
 export function getAuditLog(): AuditLogEntry[] {
-  return [...auditLog]; // Return copy
+  return [...auditLog] // Return copy
 }
 
 /**
  * Clear audit log (use with caution)
  */
 export function clearAuditLog(): void {
-  auditLog.length = 0;
+  auditLog.length = 0
 }
 
 /**
  * Get rate limit statistics
  */
 export function getRateLimitStats(): Map<string, RateLimitEntry> {
-  return new Map(rateLimitStore); // Return copy
+  return new Map(rateLimitStore) // Return copy
 }
 
 /**
  * Clear rate limit cache
  */
 export function clearRateLimitCache(): void {
-  rateLimitStore.clear();
+  rateLimitStore.clear()
 }
 
 /**
  * Check if a function is whitelisted
  */
 export function isWhitelisted(functionName: string): boolean {
-  return functionName in WHITELISTED_RPC_FUNCTIONS;
+  return functionName in WHITELISTED_RPC_FUNCTIONS
 }
 
 /**
  * Get function configuration
  */
 export function getFunctionConfig(functionName: string): RpcFunctionConfig | null {
-  return WHITELISTED_RPC_FUNCTIONS[functionName] || null;
+  return WHITELISTED_RPC_FUNCTIONS[functionName] || null
 }
 
 /**
@@ -710,13 +703,13 @@ export function getFunctionConfig(functionName: string): RpcFunctionConfig | nul
  */
 export function addToWhitelist(config: RpcFunctionConfig): void {
   if (WHITELISTED_RPC_FUNCTIONS[config.name]) {
-    throw new Error(`Function '${config.name}' is already whitelisted`);
+    throw new Error(`Function '${config.name}' is already whitelisted`)
   }
-  WHITELISTED_RPC_FUNCTIONS[config.name] = config;
+  WHITELISTED_RPC_FUNCTIONS[config.name] = config
 }
 
 // ============================================================================
 // EXPORTS
 // ============================================================================
 
-export default secureRpc;
+export default secureRpc

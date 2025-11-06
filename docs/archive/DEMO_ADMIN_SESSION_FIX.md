@@ -6,9 +6,11 @@
 ## Problem
 
 **User Report:**
+
 > "het probleem met de demo admin login is nog niet opgelost. Ook wanneer ik via de magic link in supabase inlog krijg ik alsnog direct het demo admin account. Ergens gaat het onderwater niet goed, het demo admin account lijkt leidend."
 
 **Symptoms:**
+
 - User creates new account via signup
 - After email confirmation, logs in as Demo Admin instead of their own account
 - Magic link from Supabase also logs in as Demo Admin
@@ -19,6 +21,7 @@
 The issue is **stale browser session data** (cookies + localStorage) from previous Demo Admin logins. Supabase stores session tokens in browser cookies that persist across signups, causing the old Demo Admin session to override new user sessions.
 
 **Technical Details:**
+
 - Supabase stores auth tokens in cookies (e.g., `sb-egaiyydjgeqlhthxmvbn-auth-token`)
 - These cookies are not automatically cleared on signup
 - Browser reuses old session tokens, ignoring new user credentials
@@ -33,6 +36,7 @@ Created comprehensive debug and cleanup tools:
 **File:** `src/app/api/debug/session/route.ts`
 
 **Features:**
+
 - Shows current Supabase session
 - Displays user info (ID, email, created_at)
 - Shows profile data (including organization_id, role, is_super_admin)
@@ -40,11 +44,13 @@ Created comprehensive debug and cleanup tools:
 - Highlights errors
 
 **Usage:**
+
 ```bash
 GET http://localhost:3000/api/debug/session
 ```
 
 **Response:**
+
 ```json
 {
   "session": {
@@ -77,11 +83,13 @@ GET http://localhost:3000/api/debug/session
 **File:** `src/app/api/auth/clear-session/route.ts`
 
 **Features:**
+
 - Calls `supabase.auth.signOut()` to invalidate all sessions
 - Explicitly deletes all Supabase cookies
 - Returns success confirmation
 
 **Cookies Cleared:**
+
 - `sb-access-token`
 - `sb-refresh-token`
 - `supabase-auth-token`
@@ -89,6 +97,7 @@ GET http://localhost:3000/api/debug/session
 - `sb-egaiyydjgeqlhthxmvbn-auth-token-code-verifier`
 
 **Usage:**
+
 ```bash
 POST http://localhost:3000/api/auth/clear-session
 ```
@@ -98,6 +107,7 @@ POST http://localhost:3000/api/auth/clear-session
 **File:** `src/app/debug-session/page.tsx`
 
 **Features:**
+
 - Visual display of current session data
 - **WARNING** banner if logged in as Demo Admin
 - One-click session clearing
@@ -105,6 +115,7 @@ POST http://localhost:3000/api/auth/clear-session
 - Auto-refresh functionality
 
 **UI Components:**
+
 - Current Session display (green box if active)
 - User Info display
 - Profile Info display (RED WARNING if Demo Admin)
@@ -115,6 +126,7 @@ POST http://localhost:3000/api/auth/clear-session
   - "Refresh Info" - Reload session data
 
 **Access:**
+
 ```
 http://localhost:3000/debug-session
 ```
@@ -220,8 +232,8 @@ supabase.auth.signUp({
   email,
   password,
   options: {
-    emailRedirectTo: '/api/auth/callback' // Proper redirect
-  }
+    emailRedirectTo: '/api/auth/callback', // Proper redirect
+  },
 })
 
 // On email confirmation
@@ -235,11 +247,13 @@ response.cookies.delete('sb-*') // Explicitly clear cookies
 ## Files Created
 
 ### API Routes (3 files)
+
 1. `src/app/api/debug/session/route.ts` - Session debug endpoint
 2. `src/app/api/auth/clear-session/route.ts` - Session cleanup endpoint
 3. `src/app/api/auth/callback/route.ts` - Email confirmation handler (from previous fix)
 
 ### Pages (1 file)
+
 1. `src/app/debug-session/page.tsx` - Visual debug utility
 
 ## Testing Instructions
@@ -286,6 +300,7 @@ response.cookies.delete('sb-*') // Explicitly clear cookies
 Format: `sb-<project-ref>-auth-token`
 
 Example cookies for project `egaiyydjgeqlhthxmvbn`:
+
 - `sb-egaiyydjgeqlhthxmvbn-auth-token` - Main auth token (JWT)
 - `sb-egaiyydjgeqlhthxmvbn-auth-token-code-verifier` - PKCE code verifier
 
@@ -302,6 +317,7 @@ Example cookies for project `egaiyydjgeqlhthxmvbn`:
 When deploying to production:
 
 1. **Update environment variables:**
+
    ```env
    NEXT_PUBLIC_APP_URL=https://your-domain.com
    ```
@@ -311,6 +327,7 @@ When deploying to production:
    - Set up custom email templates with correct URLs
 
 3. **Optional - Remove debug pages:**
+
    ```bash
    # For security, you may want to remove debug endpoint in production
    rm src/app/api/debug/session/route.ts
@@ -335,6 +352,7 @@ If the demo admin issue persists after trying all methods:
    - Manually delete ALL cookies and storage
 
 3. **Check Database:**
+
    ```sql
    SELECT id, email, organization_id, role
    FROM profiles

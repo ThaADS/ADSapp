@@ -45,6 +45,7 @@ The Team Management API provides comprehensive functionality for managing team m
 ### Default Permissions by Role
 
 #### Owner Permissions
+
 ```typescript
 {
   'team.manage': true,
@@ -59,6 +60,7 @@ The Team Management API provides comprehensive functionality for managing team m
 ```
 
 #### Admin Permissions
+
 ```typescript
 {
   'team.manage': true,
@@ -73,6 +75,7 @@ The Team Management API provides comprehensive functionality for managing team m
 ```
 
 #### Agent Permissions
+
 ```typescript
 {
   'conversations.view': true,
@@ -87,6 +90,7 @@ The Team Management API provides comprehensive functionality for managing team m
 ```
 
 #### Viewer Permissions
+
 ```typescript
 {
   'conversations.view': true,
@@ -108,6 +112,7 @@ The Team Management API provides comprehensive functionality for managing team m
 **Authentication:** Required
 
 **Query Parameters:**
+
 - `organization_id` (optional, UUID): Organization ID (defaults to user's organization)
 - `role` (optional, enum): Filter by role (`owner`, `admin`, `agent`, `viewer`)
 - `search` (optional, string): Search by email or name
@@ -115,6 +120,7 @@ The Team Management API provides comprehensive functionality for managing team m
 - `offset` (optional, number): Pagination offset (default: 0)
 
 **Response:**
+
 ```typescript
 {
   members: TeamMember[];
@@ -125,11 +131,13 @@ The Team Management API provides comprehensive functionality for managing team m
 ```
 
 **Example:**
+
 ```bash
 GET /api/team/members?role=agent&limit=20&offset=0
 ```
 
 **Status Codes:**
+
 - `200`: Success
 - `401`: Unauthorized
 - `403`: Forbidden
@@ -148,6 +156,7 @@ GET /api/team/members?role=agent&limit=20&offset=0
 **Required Permissions:** `team.manage` or role `owner`/`admin`
 
 **Request Body:**
+
 ```typescript
 {
   email: string;          // Valid email address
@@ -157,14 +166,16 @@ GET /api/team/members?role=agent&limit=20&offset=0
 ```
 
 **Response:**
+
 ```typescript
 {
-  invitation: TeamInvitation;
-  message: string;
+  invitation: TeamInvitation
+  message: string
 }
 ```
 
 **Example:**
+
 ```bash
 POST /api/team/invitations
 Content-Type: application/json
@@ -179,6 +190,7 @@ Content-Type: application/json
 ```
 
 **Status Codes:**
+
 - `201`: Invitation created
 - `400`: Invalid request data
 - `401`: Unauthorized
@@ -186,6 +198,7 @@ Content-Type: application/json
 - `409`: User already member or invitation pending
 
 **Business Rules:**
+
 - Cannot invite existing team members
 - Cannot have multiple pending invitations for same email
 - Inviter can only assign roles at their level or below
@@ -205,12 +218,14 @@ Content-Type: application/json
 **Required Permissions:** `team.manage` or role `owner`/`admin`
 
 **Query Parameters:**
+
 - `organization_id` (optional, UUID): Organization ID
 - `status` (optional, enum): Filter by status (`pending`, `expired`, `accepted`, `cancelled`)
 - `limit` (optional, number): Results per page (default: 50, max: 100)
 - `offset` (optional, number): Pagination offset (default: 0)
 
 **Response:**
+
 ```typescript
 {
   invitations: TeamInvitation[];
@@ -221,11 +236,13 @@ Content-Type: application/json
 ```
 
 **Example:**
+
 ```bash
 GET /api/team/invitations?status=pending
 ```
 
 **Status Codes:**
+
 - `200`: Success
 - `401`: Unauthorized
 - `403`: Insufficient permissions
@@ -243,21 +260,25 @@ GET /api/team/invitations?status=pending
 **Required Permissions:** `team.manage` or be the inviter
 
 **URL Parameters:**
+
 - `id` (required, UUID): Invitation ID
 
 **Response:**
+
 ```typescript
 {
-  message: string;
+  message: string
 }
 ```
 
 **Example:**
+
 ```bash
 DELETE /api/team/invitations/550e8400-e29b-41d4-a716-446655440000
 ```
 
 **Status Codes:**
+
 - `200`: Invitation cancelled
 - `400`: Invalid invitation ID format
 - `401`: Unauthorized
@@ -266,6 +287,7 @@ DELETE /api/team/invitations/550e8400-e29b-41d4-a716-446655440000
 - `422`: Cannot cancel (already accepted/cancelled)
 
 **Business Rules:**
+
 - Can only cancel pending invitations
 - Cannot cancel accepted invitations
 - Must be in same organization
@@ -284,9 +306,11 @@ DELETE /api/team/invitations/550e8400-e29b-41d4-a716-446655440000
 **Required Permissions:** `team.manage` or role `owner`/`admin`
 
 **URL Parameters:**
+
 - `id` (required, UUID): Member ID
 
 **Request Body:**
+
 ```typescript
 {
   role?: UserRole;           // Optional new role
@@ -295,14 +319,16 @@ DELETE /api/team/invitations/550e8400-e29b-41d4-a716-446655440000
 ```
 
 **Response:**
+
 ```typescript
 {
-  member: TeamMember;
-  message: string;
+  member: TeamMember
+  message: string
 }
 ```
 
 **Example:**
+
 ```bash
 PUT /api/team/members/550e8400-e29b-41d4-a716-446655440000
 Content-Type: application/json
@@ -316,6 +342,7 @@ Content-Type: application/json
 ```
 
 **Status Codes:**
+
 - `200`: Member updated
 - `400`: Invalid request data or permissions
 - `401`: Unauthorized
@@ -323,6 +350,7 @@ Content-Type: application/json
 - `404`: Member not found
 
 **Business Rules:**
+
 - Cannot modify your own role
 - Can only modify members below your role level
 - Can only assign roles at your level or below
@@ -342,21 +370,25 @@ Content-Type: application/json
 **Required Permissions:** `team.manage` or role `owner`/`admin`
 
 **URL Parameters:**
+
 - `id` (required, UUID): Member ID
 
 **Response:**
+
 ```typescript
 {
-  message: string;
+  message: string
 }
 ```
 
 **Example:**
+
 ```bash
 DELETE /api/team/members/550e8400-e29b-41d4-a716-446655440000
 ```
 
 **Status Codes:**
+
 - `200`: Member removed
 - `400`: Invalid member ID format
 - `401`: Unauthorized
@@ -365,6 +397,7 @@ DELETE /api/team/members/550e8400-e29b-41d4-a716-446655440000
 - `422`: Cannot remove (self or last owner)
 
 **Business Rules:**
+
 - Cannot remove yourself
 - Cannot remove last owner
 - Can only remove members below your role level
@@ -393,12 +426,14 @@ CREATE TABLE team_invitations (
 ```
 
 **Indexes:**
+
 - `idx_team_invitations_org_id` on `organization_id`
 - `idx_team_invitations_token` on `token`
 - `idx_team_invitations_email` on `email`
 - `idx_pending_invitation` (unique) on `organization_id, email` where pending
 
 **Row Level Security:**
+
 - Users can only access invitations for their organization
 - Insert/update/delete require `team.manage` permission or owner/admin role
 
@@ -455,16 +490,16 @@ const response = await fetch('/api/team/invitations', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
     email: 'agent@example.com',
-    role: 'agent'
-  })
-});
+    role: 'agent',
+  }),
+})
 
-const { invitation } = await response.json();
-console.log(`Invitation sent to ${invitation.email}`);
+const { invitation } = await response.json()
+console.log(`Invitation sent to ${invitation.email}`)
 ```
 
 ### List Team Members
@@ -472,46 +507,46 @@ console.log(`Invitation sent to ${invitation.email}`);
 ```typescript
 const response = await fetch('/api/team/members?limit=50&offset=0', {
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
+    Authorization: `Bearer ${token}`,
+  },
+})
 
-const { members, total } = await response.json();
-console.log(`Found ${total} team members`);
+const { members, total } = await response.json()
+console.log(`Found ${total} team members`)
 ```
 
 ### Promote Member to Admin
 
 ```typescript
-const memberId = '550e8400-e29b-41d4-a716-446655440000';
+const memberId = '550e8400-e29b-41d4-a716-446655440000'
 const response = await fetch(`/api/team/members/${memberId}`, {
   method: 'PUT',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    role: 'admin'
-  })
-});
+    role: 'admin',
+  }),
+})
 
-const { member } = await response.json();
-console.log(`${member.email} is now an admin`);
+const { member } = await response.json()
+console.log(`${member.email} is now an admin`)
 ```
 
 ### Remove Team Member
 
 ```typescript
-const memberId = '550e8400-e29b-41d4-a716-446655440000';
+const memberId = '550e8400-e29b-41d4-a716-446655440000'
 const response = await fetch(`/api/team/members/${memberId}`, {
   method: 'DELETE',
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
+    Authorization: `Bearer ${token}`,
+  },
+})
 
 if (response.ok) {
-  console.log('Member removed successfully');
+  console.log('Member removed successfully')
 }
 ```
 
@@ -522,6 +557,7 @@ if (response.ok) {
 **Subject:** `You've been invited to join {Organization Name} on ADSapp`
 
 **Content:**
+
 - Personalized greeting
 - Organization details
 - Role assignment
@@ -538,25 +574,25 @@ if (response.ok) {
 
 ### Logged Events
 
-| Event | Action | Metadata |
-|-------|--------|----------|
-| Member invited | `team.member.invited` | email, role, permissions |
-| Invitation cancelled | `team.member.invitation_cancelled` | email, role |
-| Role updated | `team.member.role_updated` | old_role, new_role |
-| Permissions updated | `team.member.permissions_updated` | permissions_updated |
-| Member removed | `team.member.removed` | email, role |
+| Event                | Action                             | Metadata                 |
+| -------------------- | ---------------------------------- | ------------------------ |
+| Member invited       | `team.member.invited`              | email, role, permissions |
+| Invitation cancelled | `team.member.invitation_cancelled` | email, role              |
+| Role updated         | `team.member.role_updated`         | old_role, new_role       |
+| Permissions updated  | `team.member.permissions_updated`  | permissions_updated      |
+| Member removed       | `team.member.removed`              | email, role              |
 
 ### Audit Log Schema
 
 ```typescript
 {
-  organization_id: string;
-  user_id: string;          // Actor performing action
-  action: string;
-  resource_type: string;
-  resource_id: string;
-  metadata: object;
-  created_at: timestamp;
+  organization_id: string
+  user_id: string // Actor performing action
+  action: string
+  resource_type: string
+  resource_id: string
+  metadata: object
+  created_at: timestamp
 }
 ```
 
@@ -583,6 +619,7 @@ if (response.ok) {
 ### Unit Tests
 
 Test files located in `/tests/unit/team/`:
+
 - `roles.test.ts` - Role hierarchy and permission logic
 - `invitations.test.ts` - Invitation generation and validation
 - `email.test.ts` - Email template generation
@@ -590,6 +627,7 @@ Test files located in `/tests/unit/team/`:
 ### Integration Tests
 
 Test files located in `/tests/integration/team/`:
+
 - `members.test.ts` - Member management endpoints
 - `invitations.test.ts` - Invitation management endpoints
 - `permissions.test.ts` - Permission validation
@@ -597,6 +635,7 @@ Test files located in `/tests/integration/team/`:
 ### E2E Tests
 
 Test files located in `/tests/e2e/team/`:
+
 - `team-workflow.spec.ts` - Complete team management workflows
 - `invitation-flow.spec.ts` - Invitation acceptance flow
 
@@ -630,23 +669,29 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 ### Common Issues
 
 **Issue:** Invitation email not received
+
 - **Solution:** Check Resend API key configuration, verify email deliverability
 
 **Issue:** Cannot remove last owner
+
 - **Solution:** Assign owner role to another member first
 
 **Issue:** Permission denied when inviting
+
 - **Solution:** Verify user has `team.manage` permission or owner/admin role
 
 **Issue:** Invitation link expired
+
 - **Solution:** Cancel old invitation and create new one
 
 **Issue:** Cannot assign owner role
+
 - **Solution:** Only owners can assign owner role
 
 ## Support
 
 For additional support or questions:
+
 - Email: support@adsapp.com
 - Documentation: https://docs.adsapp.com/team-management
 - API Reference: https://api.adsapp.com/docs
@@ -654,6 +699,7 @@ For additional support or questions:
 ## Changelog
 
 ### Version 1.0.0 (Current)
+
 - Initial release with complete team management functionality
 - Role-based access control with 4-tier hierarchy
 - Email-based invitation system

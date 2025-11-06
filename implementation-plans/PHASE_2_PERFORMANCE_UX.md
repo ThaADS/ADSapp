@@ -1,4 +1,5 @@
 # PHASE 2: PERFORMANCE & UX OPTIMIZATION
+
 ## Database, Frontend Performance & Onboarding Enhancement
 
 **Duration**: 4 weeks (Weeks 5-8)
@@ -11,6 +12,7 @@
 ## OVERVIEW
 
 Phase 2 focuses on optimizing performance and enhancing user experience:
+
 1. Database query optimization (fix N+1 queries)
 2. Frontend Core Web Vitals optimization (LCP, FID, CLS)
 3. Redis caching implementation
@@ -18,6 +20,7 @@ Phase 2 focuses on optimizing performance and enhancing user experience:
 5. Accessibility improvements (70 → 85 WCAG AA)
 
 **Success Criteria**:
+
 - ✅ LCP < 2.5s (from 4.2s)
 - ✅ FID < 100ms (from 180ms)
 - ✅ CLS < 0.1 (from 0.15)
@@ -36,12 +39,11 @@ Phase 2 focuses on optimizing performance and enhancing user experience:
 #### Problem: N+1 Queries in Conversation Lists
 
 **Current Implementation** (N+1 problem):
+
 ```typescript
 // src/app/api/conversations/route.ts
 export async function GET() {
-  const conversations = await supabase
-    .from('conversations')
-    .select('*');
+  const conversations = await supabase.from('conversations').select('*')
 
   // ❌ N+1: Fetches contacts one-by-one for each conversation
   for (const conv of conversations) {
@@ -49,40 +51,43 @@ export async function GET() {
       .from('contacts')
       .select('*')
       .eq('id', conv.contact_id)
-      .single();
+      .single()
 
-    conv.contact = contact;
+    conv.contact = contact
   }
 
-  return conversations;
+  return conversations
 }
 ```
 
 **Optimized Implementation** (Single Query):
+
 ```typescript
 // src/app/api/conversations/route.ts
 export async function GET(request: NextRequest) {
-  const { organizationId } = getTenantContext(request);
+  const { organizationId } = getTenantContext(request)
 
   // ✅ Single query with JOIN
   const { data, error } = await supabase
     .from('conversations')
-    .select(`
+    .select(
+      `
       *,
       contact:contacts(id, name, phone_number, profile_picture),
       assigned_agent:profiles!assigned_agent_id(id, full_name, email),
       last_message:messages(content, timestamp, message_type)
-    `)
+    `
+    )
     .eq('organization_id', organizationId)
     .order('last_message_at', { ascending: false })
-    .limit(50);
+    .limit(50)
 
   if (error) {
-    console.error('[API] Error fetching conversations:', error);
-    return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 });
+    console.error('[API] Error fetching conversations:', error)
+    return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })
   }
 
-  return NextResponse.json({ data, count: data.length });
+  return NextResponse.json({ data, count: data.length })
 }
 ```
 
@@ -184,35 +189,35 @@ ORDER BY idx_scan DESC;
 **File**: `src/lib/cache/query-cache.ts`
 
 ```typescript
-import { createClient as createRedisClient } from 'redis';
+import { createClient as createRedisClient } from 'redis'
 
 /**
  * Redis Query Cache
  * Implements caching for expensive database queries
  */
 export class QueryCache {
-  private client: ReturnType<typeof createRedisClient>;
-  private connected: boolean = false;
+  private client: ReturnType<typeof createRedisClient>
+  private connected: boolean = false
 
   constructor() {
     this.client = createRedisClient({
       url: process.env.REDIS_URL || 'redis://localhost:6379',
-    });
+    })
 
-    this.client.on('error', (err) => {
-      console.error('[Redis] Connection error:', err);
-      this.connected = false;
-    });
+    this.client.on('error', err => {
+      console.error('[Redis] Connection error:', err)
+      this.connected = false
+    })
 
     this.client.on('connect', () => {
-      console.log('[Redis] Connected successfully');
-      this.connected = true;
-    });
+      console.log('[Redis] Connected successfully')
+      this.connected = true
+    })
   }
 
   async connect() {
     if (!this.connected) {
-      await this.client.connect();
+      await this.client.connect()
     }
   }
 
@@ -221,17 +226,17 @@ export class QueryCache {
    */
   async get<T>(key: string): Promise<T | null> {
     try {
-      await this.connect();
-      const cached = await this.client.get(key);
+      await this.connect()
+      const cached = await this.client.get(key)
 
       if (!cached) {
-        return null;
+        return null
       }
 
-      return JSON.parse(cached) as T;
+      return JSON.parse(cached) as T
     } catch (error) {
-      console.error('[Cache] Get error:', error);
-      return null; // Fail gracefully
+      console.error('[Cache] Get error:', error)
+      return null // Fail gracefully
     }
   }
 
@@ -240,14 +245,10 @@ export class QueryCache {
    */
   async set(key: string, value: any, ttlSeconds: number = 300): Promise<void> {
     try {
-      await this.connect();
-      await this.client.setEx(
-        key,
-        ttlSeconds,
-        JSON.stringify(value)
-      );
+      await this.connect()
+      await this.client.setEx(key, ttlSeconds, JSON.stringify(value))
     } catch (error) {
-      console.error('[Cache] Set error:', error);
+      console.error('[Cache] Set error:', error)
       // Fail gracefully - don't block request
     }
   }
@@ -257,15 +258,15 @@ export class QueryCache {
    */
   async invalidate(pattern: string): Promise<void> {
     try {
-      await this.connect();
-      const keys = await this.client.keys(pattern);
+      await this.connect()
+      const keys = await this.client.keys(pattern)
 
       if (keys.length > 0) {
-        await this.client.del(keys);
-        console.log(`[Cache] Invalidated ${keys.length} keys matching: ${pattern}`);
+        await this.client.del(keys)
+        console.log(`[Cache] Invalidated ${keys.length} keys matching: ${pattern}`)
       }
     } catch (error) {
-      console.error('[Cache] Invalidate error:', error);
+      console.error('[Cache] Invalidate error:', error)
     }
   }
 
@@ -278,60 +279,62 @@ export class QueryCache {
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([k, v]) => `${k}:${v}`)
           .join('|')
-      : '';
+      : ''
 
-    return `org:${orgId}:${resource}${paramString ? ':' + paramString : ''}`;
+    return `org:${orgId}:${resource}${paramString ? ':' + paramString : ''}`
   }
 }
 
 // Singleton instance
-export const queryCache = new QueryCache();
+export const queryCache = new QueryCache()
 ```
 
 **Usage in API Routes**:
 
 ```typescript
 // src/app/api/conversations/route.ts
-import { queryCache } from '@/lib/cache/query-cache';
+import { queryCache } from '@/lib/cache/query-cache'
 
 export async function GET(request: NextRequest) {
-  const { organizationId } = getTenantContext(request);
+  const { organizationId } = getTenantContext(request)
 
   // Generate cache key
   const cacheKey = queryCache.generateKey(organizationId, 'conversations', {
     status: 'open',
-    limit: 50
-  });
+    limit: 50,
+  })
 
   // Try cache first
-  const cached = await queryCache.get(cacheKey);
+  const cached = await queryCache.get(cacheKey)
   if (cached) {
     return NextResponse.json({
       data: cached,
-      cached: true
-    });
+      cached: true,
+    })
   }
 
   // Fetch from database
   const { data, error } = await supabase
     .from('conversations')
-    .select(`
+    .select(
+      `
       *,
       contact:contacts(*),
       assigned_agent:profiles!assigned_agent_id(*)
-    `)
+    `
+    )
     .eq('organization_id', organizationId)
     .eq('status', 'open')
-    .limit(50);
+    .limit(50)
 
   if (error) {
-    return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })
   }
 
   // Cache for 5 minutes
-  await queryCache.set(cacheKey, data, 300);
+  await queryCache.set(cacheKey, data, 300)
 
-  return NextResponse.json({ data, cached: false });
+  return NextResponse.json({ data, cached: false })
 }
 ```
 
@@ -340,7 +343,7 @@ export async function GET(request: NextRequest) {
 ```typescript
 // src/app/api/conversations/[id]/route.ts
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const { organizationId } = getTenantContext(request);
+  const { organizationId } = getTenantContext(request)
 
   // Update conversation
   const { data, error } = await supabase
@@ -349,14 +352,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     .eq('id', params.id)
     .eq('organization_id', organizationId)
     .select()
-    .single();
+    .single()
 
   if (!error) {
     // Invalidate all conversation caches for this org
-    await queryCache.invalidate(`org:${organizationId}:conversations*`);
+    await queryCache.invalidate(`org:${organizationId}:conversations*`)
   }
 
-  return NextResponse.json({ data, error });
+  return NextResponse.json({ data, error })
 }
 ```
 
@@ -367,11 +370,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 #### Core Web Vitals Optimization
 
 **Current Performance** (from audit):
+
 - LCP (Largest Contentful Paint): 4.2s 🔴
 - FID (First Input Delay): 180ms 🟡
 - CLS (Cumulative Layout Shift): 0.15 🟡
 
 **Target**:
+
 - LCP < 2.5s ✅
 - FID < 100ms ✅
 - CLS < 0.1 ✅
@@ -383,6 +388,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 **File**: `src/app/dashboard/inbox/page.tsx`
 
 **Before**:
+
 ```typescript
 'use client';
 
@@ -407,6 +413,7 @@ export default function InboxPage() {
 ```
 
 **After** (Server Components + Streaming):
+
 ```typescript
 import { Suspense } from 'react';
 import { ConversationList } from '@/components/inbox/conversation-list';
@@ -548,9 +555,9 @@ const nextConfig = {
             },
           },
         },
-      };
+      }
     }
-    return config;
+    return config
   },
 
   // ✅ Enable experimental features
@@ -558,17 +565,17 @@ const nextConfig = {
     optimizeCss: true, // Optimize CSS loading
     optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
   },
-};
+}
 ```
 
 **Tree Shaking Improvements**:
 
 ```typescript
 // Before: Import everything
-import * as Icons from 'lucide-react';
+import * as Icons from 'lucide-react'
 
 // After: Import only what you need
-import { MessageSquare, Settings, Users } from 'lucide-react';
+import { MessageSquare, Settings, Users } from 'lucide-react'
 ```
 
 **Expected FID**: 180ms → **85ms** (53% improvement)
@@ -639,68 +646,65 @@ export function MessageList({ messages }) {
 **File**: `tests/load/conversations-load.js`
 
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Rate } from 'k6/metrics';
+import http from 'k6/http'
+import { check, sleep } from 'k6'
+import { Rate } from 'k6/metrics'
 
 // Custom metrics
-const errorRate = new Rate('errors');
+const errorRate = new Rate('errors')
 
 export const options = {
   stages: [
-    { duration: '2m', target: 100 },   // Ramp up to 100 users
-    { duration: '5m', target: 100 },   // Stay at 100 users
-    { duration: '2m', target: 500 },   // Ramp up to 500 users
-    { duration: '5m', target: 500 },   // Stay at 500 users
-    { duration: '2m', target: 1000 },  // Ramp up to 1000 users
-    { duration: '5m', target: 1000 },  // Stay at 1000 users
-    { duration: '3m', target: 0 },     // Ramp down
+    { duration: '2m', target: 100 }, // Ramp up to 100 users
+    { duration: '5m', target: 100 }, // Stay at 100 users
+    { duration: '2m', target: 500 }, // Ramp up to 500 users
+    { duration: '5m', target: 500 }, // Stay at 500 users
+    { duration: '2m', target: 1000 }, // Ramp up to 1000 users
+    { duration: '5m', target: 1000 }, // Stay at 1000 users
+    { duration: '3m', target: 0 }, // Ramp down
   ],
   thresholds: {
     http_req_duration: ['p(95)<500'], // 95% requests under 500ms
-    http_req_failed: ['rate<0.01'],   // <1% errors
-    errors: ['rate<0.05'],            // <5% business logic errors
+    http_req_failed: ['rate<0.01'], // <1% errors
+    errors: ['rate<0.05'], // <5% business logic errors
   },
-};
+}
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
-const AUTH_TOKEN = __ENV.AUTH_TOKEN;
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000'
+const AUTH_TOKEN = __ENV.AUTH_TOKEN
 
 export default function () {
   // Test 1: List conversations
   const conversationsRes = http.get(`${BASE_URL}/api/conversations`, {
     headers: {
-      'Authorization': `Bearer ${AUTH_TOKEN}`,
+      Authorization: `Bearer ${AUTH_TOKEN}`,
     },
-  });
+  })
 
   check(conversationsRes, {
-    'conversations status 200': (r) => r.status === 200,
-    'conversations response time < 500ms': (r) => r.timings.duration < 500,
-  }) || errorRate.add(1);
+    'conversations status 200': r => r.status === 200,
+    'conversations response time < 500ms': r => r.timings.duration < 500,
+  }) || errorRate.add(1)
 
-  sleep(1);
+  sleep(1)
 
   // Test 2: Get single conversation with messages
   if (conversationsRes.json().data?.length > 0) {
-    const convId = conversationsRes.json().data[0].id;
+    const convId = conversationsRes.json().data[0].id
 
-    const messagesRes = http.get(
-      `${BASE_URL}/api/conversations/${convId}/messages`,
-      {
-        headers: {
-          'Authorization': `Bearer ${AUTH_TOKEN}`,
-        },
-      }
-    );
+    const messagesRes = http.get(`${BASE_URL}/api/conversations/${convId}/messages`, {
+      headers: {
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+      },
+    })
 
     check(messagesRes, {
-      'messages status 200': (r) => r.status === 200,
-      'messages response time < 300ms': (r) => r.timings.duration < 300,
-    }) || errorRate.add(1);
+      'messages status 200': r => r.status === 200,
+      'messages response time < 300ms': r => r.timings.duration < 300,
+    }) || errorRate.add(1)
   }
 
-  sleep(2);
+  sleep(2)
 }
 ```
 
@@ -722,6 +726,7 @@ k6 run \
 ```
 
 **Expected Results**:
+
 - ✅ 1,000 concurrent users supported
 - ✅ p95 response time < 500ms
 - ✅ Error rate < 1%
@@ -805,6 +810,7 @@ export default function OnboardingPage() {
 **Components** (continue with detailed implementations in actual file...)
 
 **Week 7-8 Deliverables**:
+
 - ✅ Welcome screen with value proposition
 - ✅ Organization setup wizard (branding, subdomain)
 - ✅ Team invitation flow
@@ -818,6 +824,7 @@ export default function OnboardingPage() {
 ## SUCCESS METRICS
 
 ### Performance Metrics (Week 6)
+
 - ✅ LCP: 4.2s → 1.8s (57% improvement)
 - ✅ FID: 180ms → 85ms (53% improvement)
 - ✅ CLS: 0.15 → 0.05 (67% improvement)
@@ -826,6 +833,7 @@ export default function OnboardingPage() {
 - ✅ 1,000 concurrent users supported
 
 ### UX Metrics (Week 8)
+
 - ✅ Onboarding completion: 85% (from 60%)
 - ✅ Time to first message: -50% (20min → 10min)
 - ✅ User activation (24h): 70% (from 45%)
@@ -837,14 +845,17 @@ export default function OnboardingPage() {
 ## BUDGET & TIMELINE
 
 **Total Investment**: €34,000
+
 - Week 5-6 (Performance): €18,000 (3 engineers × 2 weeks)
 - Week 7-8 (UX): €16,000 (2 engineers × 2 weeks)
 
 **Team Allocation**:
+
 - 2× Full-Stack Engineers (performance + backend)
 - 1× Frontend Engineer (Core Web Vitals + UX)
 
 **Tools & Services**: €500
+
 - k6 Pro license: €200
 - Redis cloud (Upstash): €100/month
 - Lighthouse CI: Free
@@ -855,6 +866,7 @@ export default function OnboardingPage() {
 ## COMPLETION CHECKLIST
 
 ### Week 5-6: Performance ✅
+
 - [ ] N+1 queries fixed in all endpoints
 - [ ] 12 database indexes created
 - [ ] Redis caching implemented
@@ -865,6 +877,7 @@ export default function OnboardingPage() {
 - [ ] Core Web Vitals targets met
 
 ### Week 7-8: UX ✅
+
 - [ ] Welcome screen implemented
 - [ ] Organization setup wizard
 - [ ] Team invitation flow

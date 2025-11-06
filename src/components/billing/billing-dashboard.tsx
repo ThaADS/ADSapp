@@ -41,7 +41,7 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
       addToast({
         type: 'error',
         title: 'Upgrade Failed',
-        message: 'Unable to process upgrade. Please try again.'
+        message: 'Unable to process upgrade. Please try again.',
       })
     } finally {
       setIsLoading(false)
@@ -67,7 +67,7 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
       addToast({
         type: 'error',
         title: 'Portal Access Failed',
-        message: 'Unable to access billing portal. Please try again.'
+        message: 'Unable to access billing portal. Please try again.',
       })
     } finally {
       setIsLoading(false)
@@ -80,32 +80,32 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
   const isCancelled = organization.subscription_status === 'cancelled'
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Current Subscription Status */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Current Subscription</h2>
+      <div className='rounded-lg bg-white shadow'>
+        <div className='border-b border-gray-200 px-6 py-4'>
+          <h2 className='text-lg font-medium text-gray-900'>Current Subscription</h2>
         </div>
-        <div className="p-6">
-          <div className="flex items-center justify-between">
+        <div className='p-6'>
+          <div className='flex items-center justify-between'>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">{currentPlan.name}</h3>
-              <p className="text-gray-600">{currentPlan.description}</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">
+              <h3 className='text-xl font-semibold text-gray-900'>{currentPlan.name}</h3>
+              <p className='text-gray-600'>{currentPlan.description}</p>
+              <p className='mt-2 text-2xl font-bold text-gray-900'>
                 ${currentPlan.price}
-                <span className="text-sm text-gray-500 font-normal">/{currentPlan.interval}</span>
+                <span className='text-sm font-normal text-gray-500'>/{currentPlan.interval}</span>
               </p>
             </div>
-            <div className="text-right">
+            <div className='text-right'>
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
                   isActive
                     ? 'bg-green-100 text-green-800'
                     : isPastDue
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : isCancelled
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : isCancelled
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
                 }`}
               >
                 {organization.subscription_status || 'trial'}
@@ -114,7 +114,7 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
                 <button
                   onClick={handleManageBilling}
                   disabled={isLoading}
-                  className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+                  className='mt-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none disabled:opacity-50'
                 >
                   {isLoading ? 'Loading...' : 'Manage Billing'}
                 </button>
@@ -123,17 +123,22 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
           </div>
 
           {isPastDue && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <div className='mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-4'>
+              <div className='flex'>
+                <div className='flex-shrink-0'>
+                  <svg className='h-5 w-5 text-yellow-400' viewBox='0 0 20 20' fill='currentColor'>
+                    <path
+                      fillRule='evenodd'
+                      d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
+                      clipRule='evenodd'
+                    />
                   </svg>
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-yellow-800">Payment Issue</h3>
-                  <p className="mt-1 text-sm text-yellow-700">
-                    Your payment method failed. Please update your billing information to continue using the service.
+                <div className='ml-3'>
+                  <h3 className='text-sm font-medium text-yellow-800'>Payment Issue</h3>
+                  <p className='mt-1 text-sm text-yellow-700'>
+                    Your payment method failed. Please update your billing information to continue
+                    using the service.
                   </p>
                 </div>
               </div>

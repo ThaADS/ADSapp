@@ -30,6 +30,7 @@ ADSapp production monitoring is designed to provide comprehensive visibility int
 ### Monitoring Goals
 
 **Primary Objectives**:
+
 - Detect issues before users report them
 - Maintain 99.9% uptime SLA
 - Keep error rate below 1%
@@ -37,6 +38,7 @@ ADSapp production monitoring is designed to provide comprehensive visibility int
 - Track business metrics in real-time
 
 **Key Performance Indicators (KPIs)**:
+
 ```yaml
 Availability:
   Target: 99.9% uptime
@@ -98,26 +100,31 @@ Business Metrics:
 ### Monitoring Layers
 
 #### Layer 1: Infrastructure Monitoring (Vercel)
+
 - **Scope**: Application availability, deployment status, function execution
 - **Tools**: Vercel Dashboard, Vercel Analytics
 - **Metrics**: Uptime, deployment success rate, function errors
 
 #### Layer 2: Application Performance Monitoring (Vercel + Sentry)
+
 - **Scope**: Response times, throughput, error rates
 - **Tools**: Vercel Speed Insights, Sentry Performance
 - **Metrics**: API response times, page load times, Core Web Vitals
 
 #### Layer 3: Error Tracking (Sentry)
+
 - **Scope**: Application errors, exceptions, crashes
 - **Tools**: Sentry Error Tracking
 - **Metrics**: Error count, error rate, affected users
 
 #### Layer 4: Database Monitoring (Supabase)
+
 - **Scope**: Database performance, query analysis, connection health
 - **Tools**: Supabase Dashboard, pg_stat_statements
 - **Metrics**: Query times, connection count, database size
 
 #### Layer 5: Business Metrics (Custom)
+
 - **Scope**: User activity, message delivery, payment success
 - **Tools**: Custom logging, analytics database
 - **Metrics**: Message count, payment volume, user growth
@@ -155,6 +162,7 @@ Vercel provides built-in analytics for web performance and user behavior monitor
 #### Web Analytics
 
 1. **Navigate to Project Settings**:
+
    ```
    Vercel Dashboard → Your Project → Analytics
    ```
@@ -165,11 +173,13 @@ Vercel provides built-in analytics for web performance and user behavior monitor
    - Enable "Audiences" for user segmentation
 
 3. **Add Analytics Package** (Optional for Enhanced Tracking):
+
    ```bash
    npm install @vercel/analytics
    ```
 
 4. **Integrate in Application**:
+
    ```typescript
    // src/app/layout.tsx
    import { Analytics } from '@vercel/analytics/react'
@@ -193,11 +203,13 @@ Vercel provides built-in analytics for web performance and user behavior monitor
 #### Speed Insights
 
 1. **Enable Speed Insights**:
+
    ```
    Vercel Dashboard → Your Project → Speed Insights
    ```
 
 2. **Configure Performance Budgets**:
+
    ```yaml
    First Contentful Paint (FCP):
      Target: < 1.8s
@@ -221,11 +233,13 @@ Vercel provides built-in analytics for web performance and user behavior monitor
    ```
 
 3. **Install Speed Insights Package**:
+
    ```bash
    npm install @vercel/speed-insights
    ```
 
 4. **Integrate in Application**:
+
    ```typescript
    // src/app/layout.tsx
    import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -262,11 +276,7 @@ export function trackMessageSent(messageId: string, organizationId: string) {
   })
 }
 
-export function trackSubscriptionUpgrade(
-  userId: string,
-  fromPlan: string,
-  toPlan: string
-) {
+export function trackSubscriptionUpgrade(userId: string, fromPlan: string, toPlan: string) {
   track('subscription_upgrade', {
     userId,
     fromPlan,
@@ -284,6 +294,7 @@ export function trackConversationResolved(conversationId: string) {
 ```
 
 **Usage in Components**:
+
 ```typescript
 // src/components/messaging/chat-window.tsx
 import { trackMessageSent } from '@/lib/analytics'
@@ -319,6 +330,7 @@ const handleSendMessage = async (content: string) => {
    - Cold start frequency
 
 **Dashboard Access**:
+
 ```
 URL: https://vercel.com/your-team/adsapp/analytics
 Update Frequency: Real-time
@@ -341,6 +353,7 @@ Sentry provides comprehensive error tracking, performance monitoring, and releas
    - Platform: Next.js
 
 2. **Obtain Credentials**:
+
    ```bash
    SENTRY_DSN=https://xxxxx@oxxxxx.ingest.sentry.io/xxxxx
    SENTRY_AUTH_TOKEN=your-auth-token
@@ -358,6 +371,7 @@ Sentry provides comprehensive error tracking, performance monitoring, and releas
 #### Sentry Configuration Files
 
 **sentry.client.config.ts**:
+
 ```typescript
 import * as Sentry from '@sentry/nextjs'
 
@@ -389,10 +403,7 @@ Sentry.init({
   // Performance Monitoring
   integrations: [
     new Sentry.BrowserTracing({
-      tracePropagationTargets: [
-        'localhost',
-        /^https:\/\/app\.yourdomain\.com/,
-      ],
+      tracePropagationTargets: ['localhost', /^https:\/\/app\.yourdomain\.com/],
     }),
     new Sentry.Replay({
       maskAllText: true,
@@ -403,6 +414,7 @@ Sentry.init({
 ```
 
 **sentry.server.config.ts**:
+
 ```typescript
 import * as Sentry from '@sentry/nextjs'
 
@@ -431,6 +443,7 @@ Sentry.init({
 ```
 
 **sentry.edge.config.ts**:
+
 ```typescript
 import * as Sentry from '@sentry/nextjs'
 
@@ -445,6 +458,7 @@ Sentry.init({
 #### Environment Variables
 
 Add to Vercel environment variables:
+
 ```bash
 SENTRY_DSN=https://xxxxx@oxxxxx.ingest.sentry.io/xxxxx
 NEXT_PUBLIC_SENTRY_DSN=https://xxxxx@oxxxxx.ingest.sentry.io/xxxxx
@@ -456,35 +470,26 @@ SENTRY_AUTH_TOKEN=your-auth-token
 ### Step 3: Custom Error Tracking
 
 **Create Error Utility**:
+
 ```typescript
 // src/lib/error-tracking.ts
 import * as Sentry from '@sentry/nextjs'
 
-export function captureError(
-  error: Error,
-  context?: Record<string, any>
-) {
+export function captureError(error: Error, context?: Record<string, any>) {
   Sentry.captureException(error, {
     extra: context,
     level: 'error',
   })
 }
 
-export function captureWarning(
-  message: string,
-  context?: Record<string, any>
-) {
+export function captureWarning(message: string, context?: Record<string, any>) {
   Sentry.captureMessage(message, {
     level: 'warning',
     extra: context,
   })
 }
 
-export function setUserContext(
-  userId: string,
-  email: string,
-  organizationId: string
-) {
+export function setUserContext(userId: string, email: string, organizationId: string) {
   Sentry.setUser({
     id: userId,
     email,
@@ -492,11 +497,7 @@ export function setUserContext(
   })
 }
 
-export function addBreadcrumb(
-  message: string,
-  category: string,
-  data?: Record<string, any>
-) {
+export function addBreadcrumb(message: string, category: string, data?: Record<string, any>) {
   Sentry.addBreadcrumb({
     message,
     category,
@@ -507,6 +508,7 @@ export function addBreadcrumb(
 ```
 
 **Usage Example**:
+
 ```typescript
 // src/app/api/messages/route.ts
 import { captureError, addBreadcrumb } from '@/lib/error-tracking'
@@ -526,10 +528,7 @@ export async function POST(request: Request) {
       data,
     })
 
-    return NextResponse.json(
-      { error: 'Failed to send message' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }
 ```
@@ -537,6 +536,7 @@ export async function POST(request: Request) {
 ### Step 4: Performance Monitoring
 
 **Track Custom Transactions**:
+
 ```typescript
 // src/lib/performance-monitoring.ts
 import * as Sentry from '@sentry/nextjs'
@@ -571,15 +571,12 @@ export async function trackDatabaseQuery<T>(
 ```
 
 **Usage**:
+
 ```typescript
 import { trackDatabaseQuery } from '@/lib/performance-monitoring'
 
-const conversations = await trackDatabaseQuery(
-  'fetch_conversations',
-  () => supabase
-    .from('conversations')
-    .select('*')
-    .eq('organization_id', orgId)
+const conversations = await trackDatabaseQuery('fetch_conversations', () =>
+  supabase.from('conversations').select('*').eq('organization_id', orgId)
 )
 ```
 
@@ -588,6 +585,7 @@ const conversations = await trackDatabaseQuery(
 **Configure Sentry Alerts**:
 
 1. **Error Alerts**:
+
    ```yaml
    Name: High Error Rate
    Condition: Error count > 50 per hour
@@ -598,6 +596,7 @@ const conversations = await trackDatabaseQuery(
    ```
 
 2. **Performance Alerts**:
+
    ```yaml
    Name: Slow API Response
    Condition: P95 response time > 1000ms
@@ -617,6 +616,7 @@ const conversations = await trackDatabaseQuery(
    ```
 
 **Sentry Dashboard Configuration**:
+
 ```
 Issues: Group by error type, stack trace
 Performance: Monitor transactions by endpoint
@@ -633,12 +633,14 @@ Supabase provides comprehensive database monitoring through the dashboard and Po
 ### Step 1: Enable Database Monitoring
 
 1. **Access Supabase Dashboard**:
+
    ```
    URL: https://app.supabase.com/project/your-project
    Navigate to: Database → Query Performance
    ```
 
 2. **Enable pg_stat_statements**:
+
    ```sql
    -- Already enabled by default in Supabase
    -- Verify installation
@@ -647,6 +649,7 @@ Supabase provides comprehensive database monitoring through the dashboard and Po
    ```
 
 3. **Configure Query Logging**:
+
    ```sql
    -- Enable slow query logging
    ALTER DATABASE postgres SET log_min_duration_statement = 100;
@@ -734,6 +737,7 @@ WHERE schemaname = 'public';
 ### Step 3: Monitoring Queries
 
 **Daily Health Check Script**:
+
 ```sql
 -- Save as: sql/monitoring/daily-health-check.sql
 
@@ -768,6 +772,7 @@ LIMIT 10;
 ### Step 4: Automated Monitoring
 
 **Create Monitoring Function**:
+
 ```sql
 -- Function to collect and store monitoring data
 CREATE OR REPLACE FUNCTION collect_monitoring_data()
@@ -819,6 +824,7 @@ CREATE INDEX idx_monitoring_snapshots_collected_at
 **Configure Supabase Alerts**:
 
 1. **High Connection Count**:
+
    ```sql
    -- Alert when connections > 80% of max
    SELECT
@@ -832,6 +838,7 @@ CREATE INDEX idx_monitoring_snapshots_collected_at
    ```
 
 2. **Slow Query Alert**:
+
    ```sql
    -- Alert when queries slower than 1 second
    SELECT COUNT(*) as critical_slow_queries
@@ -861,6 +868,7 @@ Implement custom application-level metrics and structured logging.
 ### Step 1: Metrics Collection
 
 **Create Metrics Service**:
+
 ```typescript
 // src/lib/metrics/collector.ts
 interface Metric {
@@ -946,6 +954,7 @@ if (typeof window !== 'undefined') {
 ### Step 2: Structured Logging
 
 **Create Logger Service**:
+
 ```typescript
 // src/lib/logging/logger.ts
 enum LogLevel {
@@ -1024,6 +1033,7 @@ export const logger = new Logger()
 ```
 
 **Usage**:
+
 ```typescript
 import { logger } from '@/lib/logging/logger'
 import { metrics } from '@/lib/metrics/collector'
@@ -1065,6 +1075,7 @@ export async function POST(request: Request) {
 ### Step 3: Metrics API Endpoint
 
 **Create Metrics Collection Endpoint**:
+
 ```typescript
 // src/app/api/metrics/route.ts
 import { NextRequest, NextResponse } from 'next/server'
@@ -1077,31 +1088,27 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
 
     // Store metrics in database
-    const { error } = await supabase
-      .from('metrics')
-      .insert(
-        metrics.map((m: any) => ({
-          name: m.name,
-          value: m.value,
-          tags: m.tags,
-          timestamp: m.timestamp,
-        }))
-      )
+    const { error } = await supabase.from('metrics').insert(
+      metrics.map((m: any) => ({
+        name: m.name,
+        value: m.value,
+        tags: m.tags,
+        timestamp: m.timestamp,
+      }))
+    )
 
     if (error) throw error
 
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to store metrics:', error)
-    return NextResponse.json(
-      { error: 'Failed to store metrics' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to store metrics' }, { status: 500 })
   }
 }
 ```
 
 **Create Metrics Table**:
+
 ```sql
 -- Metrics storage table
 CREATE TABLE IF NOT EXISTS metrics (
@@ -1142,6 +1149,7 @@ Comprehensive health check system for monitoring service availability.
 The existing health check at `/api/health/route.ts` is already comprehensive. Let's add additional endpoints for specific checks:
 
 **Database Health Check**:
+
 ```typescript
 // src/app/api/health/db/route.ts
 import { NextResponse } from 'next/server'
@@ -1154,11 +1162,7 @@ export async function GET() {
     const supabase = await createClient()
 
     // Test database connectivity
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('count')
-      .limit(1)
-      .single()
+    const { data, error } = await supabase.from('profiles').select('count').limit(1).single()
 
     const responseTime = Date.now() - startTime
 
@@ -1194,6 +1198,7 @@ export async function GET() {
 ```
 
 **Stripe Health Check**:
+
 ```typescript
 // src/app/api/health/stripe/route.ts
 import { NextResponse } from 'next/server'
@@ -1230,6 +1235,7 @@ export async function GET() {
 ```
 
 **WhatsApp Health Check**:
+
 ```typescript
 // src/app/api/health/whatsapp/route.ts
 import { NextResponse } from 'next/server'
@@ -1280,6 +1286,7 @@ export async function GET() {
 ### Step 2: External Health Monitoring
 
 **UptimeRobot Setup**:
+
 ```yaml
 Service: UptimeRobot
 URL: https://uptimerobot.com
@@ -1311,6 +1318,7 @@ Monitors:
 ```
 
 **Pingdom Setup** (Alternative):
+
 ```yaml
 Service: Pingdom
 URL: https://www.pingdom.com
@@ -1337,12 +1345,10 @@ Configure comprehensive alerting across all monitoring systems.
 #### Slack Integration
 
 **Setup Slack Webhook**:
+
 ```typescript
 // src/lib/alerts/slack.ts
-export async function sendSlackAlert(
-  message: string,
-  severity: 'info' | 'warning' | 'critical'
-) {
+export async function sendSlackAlert(message: string, severity: 'info' | 'warning' | 'critical') {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL
 
   if (!webhookUrl) return
@@ -1374,17 +1380,14 @@ export async function sendSlackAlert(
 #### Email Alerts
 
 **Setup Email Alerting**:
+
 ```typescript
 // src/lib/alerts/email.ts
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function sendEmailAlert(
-  subject: string,
-  message: string,
-  recipients: string[]
-) {
+export async function sendEmailAlert(subject: string, message: string, recipients: string[]) {
   await resend.emails.send({
     from: 'alerts@yourdomain.com',
     to: recipients,
@@ -1402,6 +1405,7 @@ export async function sendEmailAlert(
 ### Alert Rules
 
 **Configure Alert Thresholds**:
+
 ```typescript
 // src/lib/alerts/rules.ts
 export const alertRules = {
@@ -1423,7 +1427,7 @@ export const alertRules = {
   },
   messageDeliveryRate: {
     warning: 0.95, // 95%
-    critical: 0.90, // 90%
+    critical: 0.9, // 90%
   },
 }
 ```
@@ -1476,6 +1480,7 @@ P4 - Low:
 ### Incident Response Process
 
 **Step 1: Detection**
+
 ```
 1. Alert triggered (automated monitoring)
 2. User report (support ticket)
@@ -1483,6 +1488,7 @@ P4 - Low:
 ```
 
 **Step 2: Triage**
+
 ```
 1. Assess severity (P1-P4)
 2. Identify affected services
@@ -1491,6 +1497,7 @@ P4 - Low:
 ```
 
 **Step 3: Response**
+
 ```
 1. Create incident channel (#incident-YYYY-MM-DD)
 2. Notify stakeholders
@@ -1501,6 +1508,7 @@ P4 - Low:
 ```
 
 **Step 4: Recovery**
+
 ```
 1. Restore full service
 2. Verify all systems healthy
@@ -1510,6 +1518,7 @@ P4 - Low:
 ```
 
 **Step 5: Post-Mortem**
+
 ```
 1. Document incident timeline
 2. Identify root cause
@@ -1532,12 +1541,14 @@ P4 - Low:
 **Duration**: 45 minutes
 
 ## Impact
+
 - **Users Affected**: 1,250 users
 - **Services Affected**: WhatsApp message sending
 - **Geographic Region**: US East
 - **Business Impact**: $X,XXX estimated revenue loss
 
 ## Timeline
+
 - **14:30 UTC**: Alert triggered - high error rate detected
 - **14:32 UTC**: Incident declared, team notified
 - **14:35 UTC**: Root cause identified - WhatsApp API rate limit
@@ -1546,17 +1557,21 @@ P4 - Low:
 - **15:15 UTC**: Incident closed
 
 ## Root Cause
+
 WhatsApp API rate limit exceeded due to sudden spike in message volume.
 
 ## Resolution
+
 Implemented message queue with rate limiting and retry logic.
 
 ## Action Items
+
 1. [ ] Implement better rate limiting (Owner: DevOps, Due: 2025-10-22)
 2. [ ] Add queue monitoring (Owner: Backend, Due: 2025-10-23)
 3. [ ] Update runbooks (Owner: SRE, Due: 2025-10-24)
 
 ## Lessons Learned
+
 - Need better visibility into third-party API rate limits
 - Queue system should have been in place proactively
 - Alert thresholds need tuning to catch this earlier
@@ -1569,6 +1584,7 @@ Implemented message queue with rate limiting and retry logic.
 ### Recommended Dashboard Tools
 
 **Grafana** (Recommended):
+
 ```yaml
 Advantages:
   - Open source and free
@@ -1583,6 +1599,7 @@ Setup:
 ```
 
 **Datadog** (Premium Alternative):
+
 ```yaml
 Advantages:
   - All-in-one monitoring
@@ -1598,6 +1615,7 @@ Disadvantages:
 ### Key Dashboard Panels
 
 **1. System Overview**:
+
 ```yaml
 Panels:
   - Uptime (last 24h, 7d, 30d)
@@ -1609,6 +1627,7 @@ Panels:
 ```
 
 **2. Application Performance**:
+
 ```yaml
 Panels:
   - API endpoint response times (p50, p95, p99)
@@ -1619,6 +1638,7 @@ Panels:
 ```
 
 **3. Database Metrics**:
+
 ```yaml
 Panels:
   - Query performance (slow queries)
@@ -1630,6 +1650,7 @@ Panels:
 ```
 
 **4. Business Metrics**:
+
 ```yaml
 Panels:
   - Messages sent/received (per hour)
@@ -1641,6 +1662,7 @@ Panels:
 ```
 
 **5. External Services**:
+
 ```yaml
 Panels:
   - WhatsApp API status
@@ -1658,6 +1680,7 @@ Based on monitoring data, implement continuous performance optimization.
 ### Optimization Checklist
 
 **Database Optimization**:
+
 - [ ] Identify and optimize slow queries (> 100ms)
 - [ ] Add missing indexes
 - [ ] Remove unused indexes
@@ -1666,6 +1689,7 @@ Based on monitoring data, implement continuous performance optimization.
 - [ ] Schedule regular VACUUM ANALYZE
 
 **API Optimization**:
+
 - [ ] Implement response caching
 - [ ] Add request rate limiting
 - [ ] Optimize payload sizes
@@ -1674,6 +1698,7 @@ Based on monitoring data, implement continuous performance optimization.
 - [ ] Implement pagination for large datasets
 
 **Frontend Optimization**:
+
 - [ ] Code splitting
 - [ ] Lazy loading components
 - [ ] Image optimization
@@ -1682,6 +1707,7 @@ Based on monitoring data, implement continuous performance optimization.
 - [ ] Implement service worker caching
 
 **Infrastructure Optimization**:
+
 - [ ] Use edge functions where applicable
 - [ ] Implement proper caching headers
 - [ ] Configure CDN properly
@@ -1695,6 +1721,7 @@ Based on monitoring data, implement continuous performance optimization.
 ### Monitoring Checklist
 
 **Production Monitoring Setup**:
+
 - [ ] Vercel Analytics enabled
 - [ ] Vercel Speed Insights configured
 - [ ] Sentry error tracking configured

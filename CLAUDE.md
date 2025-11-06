@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ADSapp is a production-ready **Multi-Tenant WhatsApp Business Inbox SaaS platform** built with Next.js 15, TypeScript 5, Supabase, and Stripe. The platform enables businesses to manage WhatsApp communication professionally with enterprise-level features including real-time messaging, intelligent automation, analytics, and subscription billing.
 
 **Key Tech Stack:**
+
 - **Frontend**: Next.js 15 App Router + React 19 + TypeScript 5 + Tailwind CSS 4
 - **Backend**: Next.js API Routes + Supabase PostgreSQL + Row Level Security (RLS)
 - **Integrations**: WhatsApp Business Cloud API + Stripe Payments + Resend Email
@@ -15,6 +16,7 @@ ADSapp is a production-ready **Multi-Tenant WhatsApp Business Inbox SaaS platfor
 ## Essential Commands
 
 ### Development Workflow
+
 ```bash
 # Start development server with Turbopack (fast compilation)
 npm run dev
@@ -38,6 +40,7 @@ npm run format:check
 ```
 
 ### Testing Commands
+
 ```bash
 # Unit tests with Jest
 npm run test              # Run all unit tests
@@ -55,6 +58,7 @@ npm run test:performance  # Lighthouse CI
 ```
 
 ### Database Operations
+
 ```bash
 # Supabase migrations
 npm run migration:generate  # Create new migration from schema changes
@@ -67,6 +71,7 @@ npx supabase db pull       # Pull remote schema changes
 ```
 
 ### Deployment
+
 ```bash
 # Production build analysis
 npm run analyze  # Analyze bundle size
@@ -83,20 +88,23 @@ npx vercel --prod
 ## Architecture Overview
 
 ### Multi-Tenant Data Isolation
+
 **Critical**: All database operations MUST respect tenant boundaries via Row Level Security (RLS).
 
 **Pattern for data access:**
+
 ```typescript
 // ✅ CORRECT: Uses RLS-enabled client (filters by organization_id automatically)
-const supabase = await createClient();
-const { data } = await supabase.from('contacts').select();
+const supabase = await createClient()
+const { data } = await supabase.from('contacts').select()
 
 // ❌ WRONG: Service role bypasses RLS (only use for admin operations)
-const serviceSupabase = createServiceRoleClient();
-const { data } = await serviceSupabase.from('contacts').select();
+const serviceSupabase = createServiceRoleClient()
+const { data } = await serviceSupabase.from('contacts').select()
 ```
 
 **When to use Service Role Client:**
+
 - Super admin operations in `/api/admin/*`
 - Cross-tenant analytics
 - Organization creation/deletion
@@ -108,16 +116,19 @@ All API routes follow RESTful conventions with consistent error handling:
 
 ```typescript
 // Pattern for API routes
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's organization (multi-tenant context)
@@ -125,22 +136,17 @@ export async function GET(request: Request) {
       .from('profiles')
       .select('organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     // Your business logic here (RLS automatically filters by organization)
-    const { data, error } = await supabase
-      .from('contacts')
-      .select();
+    const { data, error } = await supabase.from('contacts').select()
 
-    if (error) throw error;
+    if (error) throw error
 
-    return Response.json({ data });
+    return Response.json({ data })
   } catch (error) {
-    console.error('API Error:', error);
-    return Response.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('API Error:', error)
+    return Response.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 ```
@@ -148,6 +154,7 @@ export async function GET(request: Request) {
 ### Component Patterns
 
 **Server Components (Default):**
+
 ```typescript
 // app/dashboard/page.tsx
 import { createClient } from '@/lib/supabase/server';
@@ -161,6 +168,7 @@ export default async function DashboardPage() {
 ```
 
 **Client Components (Interactive UI):**
+
 ```typescript
 'use client';
 
@@ -198,6 +206,7 @@ export function ConversationList() {
 ### Database Schema Conventions
 
 **Key Tables and Relationships:**
+
 ```
 organizations (tenant root)
 ├── profiles (users within organization)
@@ -210,6 +219,7 @@ organizations (tenant root)
 
 **RLS Policy Pattern:**
 Every table with `organization_id` has RLS policies enforcing tenant isolation:
+
 ```sql
 CREATE POLICY tenant_isolation ON table_name
 FOR ALL USING (
@@ -222,34 +232,33 @@ FOR ALL USING (
 ### Security Best Practices
 
 **Input Validation (REQUIRED for all user inputs):**
+
 ```typescript
-import { QueryValidators } from '@/lib/supabase/server';
+import { QueryValidators } from '@/lib/supabase/server'
 
 // Validate UUID parameters
-const orgValidation = QueryValidators.uuid(organizationId);
+const orgValidation = QueryValidators.uuid(organizationId)
 if (!orgValidation.isValid) {
-  return Response.json({ error: 'Invalid organization ID' }, { status: 400 });
+  return Response.json({ error: 'Invalid organization ID' }, { status: 400 })
 }
 
 // Validate text inputs
-const nameValidation = QueryValidators.text(name, 255);
+const nameValidation = QueryValidators.text(name, 255)
 
 // Validate enums
-const statusValidation = QueryValidators.enum(status, ['active', 'suspended']);
+const statusValidation = QueryValidators.enum(status, ['active', 'suspended'])
 ```
 
 **SQL Injection Prevention:**
+
 ```typescript
-import { detectSQLInjection, validateSearchQuery } from '@/lib/supabase/server';
+import { detectSQLInjection, validateSearchQuery } from '@/lib/supabase/server'
 
 // ✅ CORRECT: Use query builders (Supabase client)
-const { data } = await supabase
-  .from('contacts')
-  .select()
-  .eq('organization_id', orgId);
+const { data } = await supabase.from('contacts').select().eq('organization_id', orgId)
 
 // ✅ CORRECT: Sanitize search queries
-const sanitizedQuery = validateSearchQuery(userInput);
+const sanitizedQuery = validateSearchQuery(userInput)
 
 // ❌ WRONG: Never use raw SQL with user input
 // await supabase.rpc('raw_sql', { query: userInput })
@@ -283,34 +292,41 @@ const sanitizedQuery = validateSearchQuery(userInput);
 // Subscribe to table changes
 const channel = supabase
   .channel('custom-channel-name')
-  .on('postgres_changes', {
-    event: 'INSERT',          // or 'UPDATE', 'DELETE', '*'
-    schema: 'public',
-    table: 'table_name',
-    filter: 'column=eq.value' // Optional filter
-  }, (payload) => {
-    console.log('Change received!', payload);
-  })
-  .subscribe();
+  .on(
+    'postgres_changes',
+    {
+      event: 'INSERT', // or 'UPDATE', 'DELETE', '*'
+      schema: 'public',
+      table: 'table_name',
+      filter: 'column=eq.value', // Optional filter
+    },
+    payload => {
+      console.log('Change received!', payload)
+    }
+  )
+  .subscribe()
 
 // Cleanup
-return () => { channel.unsubscribe(); };
+return () => {
+  channel.unsubscribe()
+}
 ```
 
 ### Implementing WhatsApp Features
 
 WhatsApp integration is centralized in `src/lib/whatsapp/`:
-```typescript
-import { WhatsAppClient } from '@/lib/whatsapp/client';
 
-const client = new WhatsAppClient();
+```typescript
+import { WhatsAppClient } from '@/lib/whatsapp/client'
+
+const client = new WhatsAppClient()
 
 // Send message
 await client.sendMessage({
   to: phoneNumber,
   message: text,
-  organizationId: orgId
-});
+  organizationId: orgId,
+})
 
 // Process incoming webhook
 // Handled in /api/webhooks/whatsapp/route.ts
@@ -319,35 +335,38 @@ await client.sendMessage({
 ## Testing Guidelines
 
 ### Unit Tests (Jest)
+
 ```typescript
 // tests/unit/lib/your-module.test.ts
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals'
 
 describe('YourModule', () => {
   it('should handle valid input', () => {
-    const result = yourFunction(validInput);
-    expect(result).toBe(expectedOutput);
-  });
+    const result = yourFunction(validInput)
+    expect(result).toBe(expectedOutput)
+  })
 
   it('should reject invalid input', () => {
-    expect(() => yourFunction(invalidInput)).toThrow();
-  });
-});
+    expect(() => yourFunction(invalidInput)).toThrow()
+  })
+})
 ```
 
 ### E2E Tests (Playwright)
+
 ```typescript
 // tests/e2e/feature.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test('user can complete workflow', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.click('[data-testid="action-button"]');
-  await expect(page.locator('.success-message')).toBeVisible();
-});
+  await page.goto('/dashboard')
+  await page.click('[data-testid="action-button"]')
+  await expect(page.locator('.success-message')).toBeVisible()
+})
 ```
 
 **Running specific tests:**
+
 ```bash
 # Run single test file
 npm run test -- path/to/test.test.ts
@@ -412,6 +431,7 @@ tests/
 ## Environment Variables
 
 **Required for Development:**
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -436,27 +456,32 @@ NEXTAUTH_SECRET=your-random-secret-256-bit
 ## Known Patterns & Conventions
 
 ### Import Aliases
+
 Use TypeScript path aliases for clean imports:
+
 ```typescript
-import { Component } from '@/components/ui/component';
-import { helper } from '@/lib/helpers';
-import type { User } from '@/types/database';
+import { Component } from '@/components/ui/component'
+import { helper } from '@/lib/helpers'
+import type { User } from '@/types/database'
 ```
 
 ### Error Handling
+
 Consistent error response format:
+
 ```typescript
 return Response.json(
   {
     error: 'User-friendly message',
     code: 'ERROR_CODE',
-    details: process.env.NODE_ENV === 'development' ? error : undefined
+    details: process.env.NODE_ENV === 'development' ? error : undefined,
   },
   { status: 400 }
-);
+)
 ```
 
 ### Authentication Flow
+
 1. User signs in via `/api/auth/signin`
 2. Supabase sets auth cookies
 3. Middleware validates session on protected routes
@@ -464,21 +489,23 @@ return Response.json(
 5. RLS policies enforce data access based on user's organization
 
 ### File Upload Pattern
+
 ```typescript
 // Client-side upload to Supabase Storage
 const { data, error } = await supabase.storage
   .from('media')
-  .upload(`${organizationId}/${fileName}`, file);
+  .upload(`${organizationId}/${fileName}`, file)
 
 // Get public URL
-const { data: { publicUrl } } = supabase.storage
-  .from('media')
-  .getPublicUrl(path);
+const {
+  data: { publicUrl },
+} = supabase.storage.from('media').getPublicUrl(path)
 ```
 
 ## Troubleshooting Common Issues
 
 ### TypeScript Errors During Build
+
 ```bash
 # Check specific errors
 npm run type-check
@@ -488,6 +515,7 @@ npx supabase gen types typescript --linked > src/types/database.ts
 ```
 
 ### Database Connection Issues
+
 ```bash
 # Verify Supabase credentials
 echo $NEXT_PUBLIC_SUPABASE_URL
@@ -498,20 +526,22 @@ npx supabase status --linked
 ```
 
 ### RLS Policy Debugging
+
 ```typescript
 // Temporarily disable RLS to test (DEV ONLY)
-const { data } = await serviceSupabase.from('table').select();
+const { data } = await serviceSupabase.from('table').select()
 
 // Check user's organization context
 const { data: profile } = await supabase
   .from('profiles')
   .select('organization_id')
   .eq('id', user.id)
-  .single();
-console.log('User org:', profile?.organization_id);
+  .single()
+console.log('User org:', profile?.organization_id)
 ```
 
 ### Webhook Testing
+
 ```bash
 # Test WhatsApp webhook locally with ngrok
 ngrok http 3000
@@ -529,8 +559,8 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
    const [users, conversations, analytics] = await Promise.all([
      supabase.from('users').select(),
      supabase.from('conversations').select(),
-     supabase.from('analytics').select()
-   ]);
+     supabase.from('analytics').select(),
+   ])
    ```
 3. **Cache Supabase queries** where appropriate using Next.js cache helpers
 4. **Optimize images** - Next.js Image component handles this automatically
@@ -539,6 +569,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ## Git Workflow
 
 This project uses conventional commits and has quality gates:
+
 ```bash
 # Commit format
 git commit -m "feat: add contact export feature"
@@ -554,6 +585,7 @@ git commit -m "docs: update API documentation"
 ## Production Deployment Checklist
 
 Before deploying to production:
+
 - [ ] All tests pass: `npm run test:ci`
 - [ ] Build succeeds: `npm run build`
 - [ ] Type checking passes: `npm run type-check`

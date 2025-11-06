@@ -82,7 +82,8 @@ export class NotificationService {
       organizationId,
       type: 'subscription_cancelled',
       title: 'Subscription Cancelled',
-      message: 'Your subscription has been cancelled. You can reactivate it anytime from your billing settings.',
+      message:
+        'Your subscription has been cancelled. You can reactivate it anytime from your billing settings.',
       urgency: 'high',
       channels: ['email', 'in_app'],
     })
@@ -142,7 +143,8 @@ export class NotificationService {
       organizationId,
       type: 'payment_action_required',
       title: 'Action Required for Payment',
-      message: 'Your payment requires additional authentication. Please complete the verification process.',
+      message:
+        'Your payment requires additional authentication. Please complete the verification process.',
       data: { invoiceUrl },
       urgency: 'high',
       channels: ['email', 'in_app'],
@@ -155,7 +157,8 @@ export class NotificationService {
       organizationId,
       type: 'invoice_finalized',
       title: 'New Invoice Available',
-      message: 'Your new invoice is ready. Payment will be automatically charged to your default payment method.',
+      message:
+        'Your new invoice is ready. Payment will be automatically charged to your default payment method.',
       data: { invoiceId },
       urgency: 'medium',
       channels: ['email', 'in_app'],
@@ -275,25 +278,19 @@ export class NotificationService {
     const sendPromises = []
 
     if (notification.channels.includes('email') && preferences.email && preferences.emailAddress) {
-      sendPromises.push(this.sendEmailNotification(
-        preferences.emailAddress,
-        notification,
-        org
-      ))
+      sendPromises.push(this.sendEmailNotification(preferences.emailAddress, notification, org))
     }
 
     if (notification.channels.includes('sms') && preferences.sms && preferences.smsNumber) {
-      sendPromises.push(this.sendSMSNotification(
-        preferences.smsNumber,
-        notification
-      ))
+      sendPromises.push(this.sendSMSNotification(preferences.smsNumber, notification))
     }
 
-    if (notification.channels.includes('webhook') && preferences.webhooks && preferences.webhookUrl) {
-      sendPromises.push(this.sendWebhookNotification(
-        preferences.webhookUrl,
-        notification
-      ))
+    if (
+      notification.channels.includes('webhook') &&
+      preferences.webhooks &&
+      preferences.webhookUrl
+    ) {
+      sendPromises.push(this.sendWebhookNotification(preferences.webhookUrl, notification))
     }
 
     // In-app notifications are handled by storing in database
@@ -342,19 +339,17 @@ export class NotificationService {
   ): Promise<void> {
     const supabase = await this.supabase
 
-    await supabase
-      .from('notification_preferences')
-      .upsert({
-        organization_id: organizationId,
-        email_enabled: preferences.email,
-        sms_enabled: preferences.sms,
-        in_app_enabled: preferences.inApp,
-        webhook_enabled: preferences.webhooks,
-        email_address: preferences.emailAddress,
-        sms_number: preferences.smsNumber,
-        webhook_url: preferences.webhookUrl,
-        updated_at: new Date().toISOString(),
-      })
+    await supabase.from('notification_preferences').upsert({
+      organization_id: organizationId,
+      email_enabled: preferences.email,
+      sms_enabled: preferences.sms,
+      in_app_enabled: preferences.inApp,
+      webhook_enabled: preferences.webhooks,
+      email_address: preferences.emailAddress,
+      sms_number: preferences.smsNumber,
+      webhook_url: preferences.webhookUrl,
+      updated_at: new Date().toISOString(),
+    })
   }
 
   async getNotifications(
@@ -483,18 +478,12 @@ export class NotificationService {
     }
   }
 
-  private async triggerRealTimeUpdate(
-    organizationId: string,
-    notification: any
-  ): Promise<void> {
+  private async triggerRealTimeUpdate(organizationId: string, notification: any): Promise<void> {
     // Implement real-time notification using Supabase realtime or websockets
     console.log(`Real-time notification for org ${organizationId}:`, notification)
   }
 
-  private getEmailTemplate(
-    notification: NotificationData,
-    organization: any
-  ): EmailTemplate {
+  private getEmailTemplate(notification: NotificationData, organization: any): EmailTemplate {
     const baseTemplate = {
       variables: {
         organizationName: organization.name,

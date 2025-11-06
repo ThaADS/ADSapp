@@ -21,10 +21,7 @@ beforeAll(() => {
   }
 
   console.warn = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: An update to')
-    ) {
+    if (typeof args[0] === 'string' && args[0].includes('Warning: An update to')) {
       return
     }
     originalWarn.call(console, ...args)

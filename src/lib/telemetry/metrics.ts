@@ -154,10 +154,13 @@ export const conversationsClosed = meter.createCounter('business.conversations.c
   unit: '1',
 })
 
-export const conversationResponseTime = meter.createHistogram('business.conversation.response_time', {
-  description: 'Time to first response in conversations (seconds)',
-  unit: 's',
-})
+export const conversationResponseTime = meter.createHistogram(
+  'business.conversation.response_time',
+  {
+    description: 'Time to first response in conversations (seconds)',
+    unit: 's',
+  }
+)
 
 export const activeConversations = meter.createObservableGauge('business.conversations.active', {
   description: 'Current number of active conversations',
@@ -311,7 +314,12 @@ export function recordCacheOperation(
 }
 
 export function recordBusinessEvent(
-  event: 'conversation_created' | 'conversation_closed' | 'contact_created' | 'template_used' | 'automation_triggered',
+  event:
+    | 'conversation_created'
+    | 'conversation_closed'
+    | 'contact_created'
+    | 'template_used'
+    | 'automation_triggered',
   attributes: MetricAttributes
 ) {
   switch (event) {

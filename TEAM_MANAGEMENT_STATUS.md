@@ -6,6 +6,7 @@
 ## 🎯 Overzicht
 
 Het team management en license systeem is nu volledig operationeel met:
+
 - ✅ Multi-tenant isolatie (100% RLS protected)
 - ✅ Team invitation systeem
 - ✅ License seat management
@@ -18,6 +19,7 @@ Het team management en license systeem is nu volledig operationeel met:
 ## 📊 Database Schema
 
 ### 1. Team Invitations Table
+
 ```sql
 CREATE TABLE team_invitations (
   id UUID PRIMARY KEY,
@@ -36,12 +38,14 @@ CREATE TABLE team_invitations (
 ```
 
 **Features**:
+
 - Secure invitation tokens (32-byte hex)
 - Auto-expiry after 7 days
 - Prevents duplicate pending invitations
 - Full RLS protection per organization
 
 ### 2. License Management (Organizations Table)
+
 ```sql
 ALTER TABLE organizations
   ADD COLUMN max_team_members INTEGER DEFAULT 1 NOT NULL,
@@ -49,6 +53,7 @@ ALTER TABLE organizations
 ```
 
 **Features**:
+
 - Automatic seat counting via trigger
 - License limit enforcement
 - Cannot exceed max_team_members
@@ -58,7 +63,9 @@ ALTER TABLE organizations
 ## 🔧 Database Functions
 
 ### check_available_licenses(org_id UUID)
+
 Returns license availability info:
+
 ```typescript
 {
   available_seats: number,  // Remaining seats
@@ -69,7 +76,9 @@ Returns license availability info:
 ```
 
 ### accept_team_invitation(token TEXT, user_id UUID)
+
 Processes invitation acceptance with validation:
+
 - Checks invitation validity
 - Verifies license availability
 - Updates user profile
@@ -77,7 +86,9 @@ Processes invitation acceptance with validation:
 - Returns success/error with details
 
 ### update_team_member_count()
+
 Trigger function that automatically:
+
 - Increments used_team_members on profile INSERT
 - Decrements used_team_members on profile DELETE
 - Throws error if limit exceeded
@@ -89,9 +100,11 @@ Trigger function that automatically:
 ### Team Invitations API
 
 #### GET /api/team/invitations
+
 **Purpose**: List all invitations for organization
 **Auth**: Admin/Owner only
 **Response**:
+
 ```json
 {
   "success": true,
@@ -101,16 +114,20 @@ Trigger function that automatically:
 ```
 
 #### POST /api/team/invitations
+
 **Purpose**: Send new team invitation
 **Auth**: Admin/Owner only
 **Body**:
+
 ```json
 {
   "email": "user@example.com",
   "role": "member" | "admin"
 }
 ```
+
 **Response**:
+
 ```json
 {
   "success": true,
@@ -120,6 +137,7 @@ Trigger function that automatically:
 ```
 
 **Validations**:
+
 - ✅ Email format validation
 - ✅ Duplicate member check
 - ✅ Existing invitation check
@@ -129,9 +147,11 @@ Trigger function that automatically:
 ### License Management API
 
 #### GET /api/team/licenses
+
 **Purpose**: Get license info and current usage
 **Auth**: Any authenticated user
 **Response**:
+
 ```json
 {
   "success": true,
@@ -148,15 +168,19 @@ Trigger function that automatically:
 ```
 
 #### POST /api/team/licenses/upgrade
+
 **Purpose**: Request license upgrade (add more seats)
 **Auth**: Admin/Owner only
 **Body**:
+
 ```json
 {
   "additional_seats": 5
 }
 ```
+
 **Response**:
+
 ```json
 {
   "success": true,
@@ -177,7 +201,9 @@ Trigger function that automatically:
 ## 🔒 Security Features
 
 ### Multi-Tenant Isolation
+
 ✅ **Row Level Security (RLS)**:
+
 ```sql
 -- Users can only view invitations for their organization
 CREATE POLICY "Users can view invitations for their organization"
@@ -192,14 +218,18 @@ CREATE POLICY "Users can view invitations for their organization"
 All team_invitations queries are automatically filtered by organization_id.
 
 ### License Enforcement
+
 ✅ **Automatic Validation**:
+
 - Cannot invite if at license limit
 - Profile INSERT automatically checks limits
 - Trigger throws error if exceeded
 - Real-time seat counting
 
 ### Permission Checks
+
 ✅ **API Level**:
+
 - Only admin/owner can send invitations
 - Only admin/owner can view team members
 - Only admin/owner can upgrade licenses
@@ -210,32 +240,35 @@ All team_invitations queries are automatically filtered by organization_id.
 ## 📝 TypeScript Types
 
 ### Team Types (src/types/team.ts)
+
 ```typescript
 export interface TeamInvitation {
-  id: string;
-  organization_id: string;
-  email: string;
-  role: 'admin' | 'member';
-  invited_by: string;
-  status: 'pending' | 'accepted' | 'expired' | 'revoked';
-  token: string;
-  expires_at: string;
-  accepted_at: string | null;
-  accepted_by: string | null;
-  created_at: string;
-  updated_at: string;
+  id: string
+  organization_id: string
+  email: string
+  role: 'admin' | 'member'
+  invited_by: string
+  status: 'pending' | 'accepted' | 'expired' | 'revoked'
+  token: string
+  expires_at: string
+  accepted_at: string | null
+  accepted_by: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface LicenseInfo {
-  available_seats: number;
-  max_seats: number;
-  used_seats: number;
-  can_invite: boolean;
+  available_seats: number
+  max_seats: number
+  used_seats: number
+  can_invite: boolean
 }
 ```
 
 ### Database Types (src/types/database.ts)
+
 ✅ Complete type definitions added for:
+
 - `team_invitations` table (Row/Insert/Update/Relationships)
 - `message_templates` table (Row/Insert/Update/Relationships)
 - All relationships properly typed
@@ -247,7 +280,9 @@ export interface LicenseInfo {
 ### Team Management UI Components
 
 #### /dashboard/settings/team
+
 **Features to build**:
+
 - [ ] Team members list with roles
 - [ ] Send invitation form
 - [ ] Pending invitations list
@@ -255,6 +290,7 @@ export interface LicenseInfo {
 - [ ] Upgrade button (if at limit)
 
 **Component Structure**:
+
 ```
 src/components/dashboard/
 ├── team-management.tsx          # Main team management component
@@ -265,9 +301,11 @@ src/components/dashboard/
 ```
 
 #### Invitation Acceptance Page
+
 **Route**: `/accept-invitation?token=xxx`
 
 **Flow**:
+
 1. User clicks invitation link
 2. Checks if logged in
    - If no: Redirect to signup with token
@@ -282,6 +320,7 @@ src/components/dashboard/
 ### Manual Testing
 
 #### Team Invitation Flow
+
 - [ ] Send invitation as admin
 - [ ] Verify invitation email received
 - [ ] Click invitation link
@@ -290,6 +329,7 @@ src/components/dashboard/
 - [ ] Verify license seat count updated
 
 #### License Limits
+
 - [ ] Create org with 1 seat
 - [ ] Try to invite when at limit
 - [ ] Verify error message
@@ -299,11 +339,13 @@ src/components/dashboard/
 - [ ] Verify at limit again
 
 #### Permission Checks
+
 - [ ] Try invitation as regular member (should fail)
 - [ ] Try license upgrade as member (should fail)
 - [ ] Verify only admin/owner can access
 
 ### API Testing
+
 ```bash
 # Get license info
 curl http://localhost:3000/api/team/licenses \
@@ -327,6 +369,7 @@ curl -X POST http://localhost:3000/api/team/licenses/upgrade \
 ## 🚀 Deployment Checklist
 
 ### Database Migration
+
 ```bash
 # Apply migration to production
 psql $DATABASE_URL < supabase/migrations/20251105_team_invitations_licenses.sql
@@ -339,10 +382,13 @@ psql $DATABASE_URL -c "\df check_available_licenses"
 ```
 
 ### Environment Variables
+
 No new variables needed - uses existing Supabase config.
 
 ### Stripe Integration (for upgrades)
+
 TODO: Configure Stripe products for additional seats:
+
 ```typescript
 // Stripe product setup
 {
@@ -358,6 +404,7 @@ TODO: Configure Stripe products for additional seats:
 ## 📈 Future Enhancements
 
 ### Phase 2 Features
+
 - [ ] Bulk invitation via CSV upload
 - [ ] Custom invitation email templates
 - [ ] Team member activity tracking
@@ -366,6 +413,7 @@ TODO: Configure Stripe products for additional seats:
 - [ ] Seat utilization reports
 
 ### Stripe Integration
+
 - [ ] Automatic seat provisioning on payment
 - [ ] Proration for mid-cycle upgrades
 - [ ] Automatic downgrade on cancellation
@@ -375,25 +423,26 @@ TODO: Configure Stripe products for additional seats:
 
 ## ✅ Implementation Status
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Database Schema | ✅ Complete | Migration ready |
-| Database Functions | ✅ Complete | All 3 functions working |
-| Database Triggers | ✅ Complete | Auto seat counting |
-| TypeScript Types | ✅ Complete | Full type safety |
-| Invitations API | ✅ Complete | Full CRUD operations |
-| License API | ✅ Complete | Get info + upgrade |
-| RLS Policies | ✅ Complete | Multi-tenant secured |
-| Production Build | ✅ Working | Zero blocking errors |
-| Frontend UI | ⏳ TODO | Components ready to build |
-| Email Templates | ⏳ TODO | Resend integration |
-| Stripe Integration | ⏳ TODO | Upgrade checkout |
+| Component          | Status      | Notes                     |
+| ------------------ | ----------- | ------------------------- |
+| Database Schema    | ✅ Complete | Migration ready           |
+| Database Functions | ✅ Complete | All 3 functions working   |
+| Database Triggers  | ✅ Complete | Auto seat counting        |
+| TypeScript Types   | ✅ Complete | Full type safety          |
+| Invitations API    | ✅ Complete | Full CRUD operations      |
+| License API        | ✅ Complete | Get info + upgrade        |
+| RLS Policies       | ✅ Complete | Multi-tenant secured      |
+| Production Build   | ✅ Working  | Zero blocking errors      |
+| Frontend UI        | ⏳ TODO     | Components ready to build |
+| Email Templates    | ⏳ TODO     | Resend integration        |
+| Stripe Integration | ⏳ TODO     | Upgrade checkout          |
 
 ---
 
 ## 🎯 Next Steps
 
 1. **Apply Migration to Database**:
+
    ```bash
    # Via Supabase Dashboard
    1. Open Supabase project dashboard

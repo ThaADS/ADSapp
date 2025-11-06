@@ -114,18 +114,15 @@ const conversation = await traceConversationOperation(
 ```typescript
 import { traceDbQuery } from '@/lib/telemetry'
 
-const users = await traceDbQuery(
-  'select',
-  'profiles',
-  async () => {
-    return await supabase.from('profiles').select('*')
-  }
-)
+const users = await traceDbQuery('select', 'profiles', async () => {
+  return await supabase.from('profiles').select('*')
+})
 ```
 
 #### External API Calls
 
 **WhatsApp:**
+
 ```typescript
 import { traceSendWhatsAppMessage } from '@/lib/telemetry'
 
@@ -142,6 +139,7 @@ const result = await traceSendWhatsAppMessage(
 ```
 
 **Stripe:**
+
 ```typescript
 import { traceStripeCheckout } from '@/lib/telemetry'
 
@@ -207,28 +205,33 @@ const result = await withSpan(
 ### Available Metrics
 
 **HTTP Metrics:**
+
 - `http.request.duration` - Request latency histogram
 - `http.request.count` - Total requests counter
 - `http.request.errors` - Error count
 
 **Database Metrics:**
+
 - `db.query.duration` - Query latency histogram
 - `db.query.count` - Total queries counter
 - `db.query.errors` - Query error count
 
 **WhatsApp Metrics:**
+
 - `whatsapp.messages.sent` - Messages sent counter
 - `whatsapp.messages.received` - Messages received counter
 - `whatsapp.api.call.duration` - API call latency
 - `whatsapp.api.errors` - API error count
 
 **Queue Metrics:**
+
 - `queue.jobs.enqueued` - Jobs enqueued counter
 - `queue.jobs.processed` - Jobs processed counter
 - `queue.jobs.failed` - Failed jobs counter
 - `queue.job.duration` - Job processing latency
 
 **Business Metrics:**
+
 - `business.conversations.created` - Conversations created
 - `business.conversations.closed` - Conversations closed
 - `business.contacts.created` - Contacts created
@@ -251,6 +254,7 @@ recordBusinessEvent('conversation_created', {
 ## Trace Context Propagation
 
 Trace context is automatically propagated through:
+
 - HTTP headers (`traceparent`, `tracestate`)
 - Database connections (tags)
 - Queue jobs (metadata)
@@ -295,6 +299,7 @@ export const GET = withTelemetry(handler, {
 ## Performance Impact
 
 OpenTelemetry instrumentation overhead:
+
 - **Average:** <5ms per request
 - **Memory:** ~10-20MB
 - **CPU:** <2% additional load
@@ -427,6 +432,7 @@ Response:
 ## Support
 
 For issues or questions:
+
 - Check Jaeger UI for trace details
 - Review application logs for errors
 - Contact DevOps team for collector issues

@@ -15,7 +15,13 @@ interface ChatWindowProps {
   onConversationUpdate?: () => void
 }
 
-export function ChatWindow({ conversation, profile, onShowDetails, showDetails, onConversationUpdate }: ChatWindowProps) {
+export function ChatWindow({
+  conversation,
+  profile,
+  onShowDetails,
+  showDetails,
+  onConversationUpdate,
+}: ChatWindowProps) {
   const [messages, setMessages] = useState<MessageWithSender[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const { addToast } = useToast()
@@ -108,25 +114,25 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails, 
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className='flex h-full flex-col'>
       {/* Chat Header */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <div className='border-b border-gray-200 bg-white px-6 py-4'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center space-x-3'>
             {/* Contact Avatar */}
-            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-              <span className="text-sm font-medium text-white">
+            <div className='flex h-10 w-10 items-center justify-center rounded-full bg-green-500'>
+              <span className='text-sm font-medium text-white'>
                 {conversation.contact.name?.charAt(0).toUpperCase() ||
-                 conversation.contact.phone_number.slice(-2).toUpperCase()}
+                  conversation.contact.phone_number.slice(-2).toUpperCase()}
               </span>
             </div>
 
             {/* Contact Info */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className='text-lg font-semibold text-gray-900'>
                 {conversation.contact.name || 'Unknown Contact'}
               </h2>
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className='flex items-center space-x-2 text-sm text-gray-500'>
                 <span>{conversation.contact.phone_number}</span>
                 {conversation.priority !== 'medium' && (
                   <>
@@ -141,28 +147,27 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails, 
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-2">
+          <div className='flex items-center space-x-2'>
             {/* Status Dropdown */}
             <select
               value={conversation.status}
-              className="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-              onChange={(e) => {
+              className='rounded-md border border-gray-300 bg-white px-3 py-1 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none'
+              onChange={e => {
                 // TODO: Update conversation status
                 console.log('Status changed to:', e.target.value)
               }}
             >
-              <option value="open">Open</option>
-              <option value="pending">Pending</option>
-              <option value="resolved">Resolved</option>
-              <option value="closed">Closed</option>
+              <option value='open'>Open</option>
+              <option value='pending'>Pending</option>
+              <option value='resolved'>Resolved</option>
+              <option value='closed'>Closed</option>
             </select>
 
             {/* Assign Button */}
-            <button className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 border border-gray-300 rounded-md">
+            <button className='rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:text-gray-900'>
               {conversation.assigned_agent
                 ? `Assigned to ${conversation.assigned_agent.full_name}`
-                : 'Assign'
-              }
+                : 'Assign'}
             </button>
 
             {/* Quick Actions */}
@@ -174,12 +179,17 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails, 
             {/* Details Toggle */}
             <button
               onClick={onShowDetails}
-              className={`p-2 rounded-md hover:bg-gray-100 ${
+              className={`rounded-md p-2 hover:bg-gray-100 ${
                 showDetails ? 'bg-green-100 text-green-600' : 'text-gray-600'
               }`}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
               </svg>
             </button>
           </div>
@@ -187,10 +197,10 @@ export function ChatWindow({ conversation, profile, onShowDetails, showDetails, 
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-hidden">
+      <div className='flex-1 overflow-hidden'>
         {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+          <div className='flex h-full items-center justify-center'>
+            <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-green-600'></div>
           </div>
         ) : (
           <MessageList messages={messages} currentUserId={profile.id} />

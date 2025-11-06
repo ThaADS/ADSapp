@@ -53,6 +53,7 @@ tests/
 ## Running Tests
 
 ### All Tests
+
 ```bash
 npm run test                    # Run all tests
 npm run test:watch             # Watch mode for development
@@ -61,6 +62,7 @@ npm run test:ci                # CI/CD mode (no watch, with coverage)
 ```
 
 ### Specific Test Types
+
 ```bash
 npm run test:e2e               # End-to-end tests with Playwright
 npm run test:e2e:ui            # E2E tests with Playwright UI
@@ -70,6 +72,7 @@ npm run test:performance       # Performance testing
 ```
 
 ### Running Specific Tests
+
 ```bash
 npm run test -- path/to/test.test.ts                    # Single file
 npm run test -- --testNamePattern="test name"           # By test name
@@ -165,6 +168,7 @@ expect(mockRedis.set).toHaveBeenCalledWith('key', 'value', { ex: 60 })
 ```
 
 **Supported Operations:**
+
 - String: `get`, `set`, `del`, `exists`, `expire`, `ttl`, `incr`, `decr`
 - Hash: `hget`, `hset`, `hdel`, `hgetall`
 - Set: `sadd`, `smembers`, `srem`
@@ -192,7 +196,7 @@ const job = await queue.add('send-email', {
 })
 
 // Create worker with processor
-const worker = createMockWorker('email-queue', async (job) => {
+const worker = createMockWorker('email-queue', async job => {
   console.log('Processing:', job.data)
   await job.updateProgress(50)
   return { sent: true }
@@ -203,7 +207,7 @@ await simulateJobProcessing(queue, worker, job.id)
 
 // Queue events
 const queueEvents = createMockQueueEvents('email-queue')
-queueEvents.on('completed', (job) => {
+queueEvents.on('completed', job => {
   console.log('Job completed:', job.id)
 })
 
@@ -426,6 +430,7 @@ it('should handle async operation', () => {
 ### 5. Coverage Requirements
 
 Minimum coverage thresholds:
+
 - **Global**: 60% statements, branches, functions, lines
 - **Cache library**: 70% all metrics
 - **Crypto library**: 70% all metrics
@@ -448,6 +453,7 @@ Minimum coverage thresholds:
 **Problem**: Cannot find module '@/...'
 
 **Solution**: Check `jest.config.js` module name mapper:
+
 ```javascript
 moduleNameMapper: {
   '^@/(.*)$': '<rootDir>/src/$1',
@@ -465,13 +471,17 @@ moduleNameMapper: {
 **Problem**: Tests timeout waiting for async operations
 
 **Solution**: Increase timeout or use proper async utilities:
+
 ```typescript
 jest.setTimeout(10000) // Increase timeout to 10 seconds
 
 it('should complete async operation', async () => {
-  await waitFor(() => {
-    expect(condition).toBe(true)
-  }, { timeout: 5000 })
+  await waitFor(
+    () => {
+      expect(condition).toBe(true)
+    },
+    { timeout: 5000 }
+  )
 })
 ```
 
@@ -480,6 +490,7 @@ it('should complete async operation', async () => {
 **Problem**: React Testing Library warnings with React 19
 
 **Solution**: Use React 19 compatible versions:
+
 - `@testing-library/react@15.0.0+`
 - `react@19.1.0`
 - `react-dom@19.1.0`
@@ -489,6 +500,7 @@ it('should complete async operation', async () => {
 **Problem**: Mocks not intercepting calls
 
 **Solution**:
+
 - Verify mock is created before code execution
 - Use `jest.mock()` at top of test file
 - Clear mocks between tests with `jest.clearAllMocks()`
@@ -522,6 +534,7 @@ screen.debug() // Print current DOM
 ## Support
 
 For issues or questions about the testing infrastructure:
+
 1. Check this README for common solutions
 2. Review existing tests for examples
 3. Consult the project's main documentation

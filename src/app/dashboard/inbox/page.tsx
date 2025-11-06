@@ -8,7 +8,7 @@ export default async function InboxPage() {
   const profile = await requireOrganization()
 
   return (
-    <div className="h-[calc(100vh-4rem)]">
+    <div className='h-[calc(100vh-4rem)]'>
       <WhatsAppInbox
         organizationId={profile.organization_id}
         currentUserId={profile.id}

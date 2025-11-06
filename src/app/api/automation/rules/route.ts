@@ -1,20 +1,25 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse, validatePagination } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+  validatePagination,
+} from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
+    const { organizationId } = getTenantContext(request)
 
     const { searchParams } = new URL(request.url)
     const isActive = searchParams.get('is_active')
@@ -25,7 +30,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('automation_rules')
-      .select(`
+      .select(
+        `
         id,
         name,
         description,
@@ -41,7 +47,9 @@ export async function GET(request: NextRequest) {
           full_name,
           email
         )
-      `, { count: 'exact' })
+      `,
+        { count: 'exact' }
+      )
       .eq('organization_id', organizationId)
 
     // Apply filters
@@ -53,9 +61,11 @@ export async function GET(request: NextRequest) {
       query = query.eq('trigger_type', triggerType)
     }
 
-    const { data: rules, error, count } = await query
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
+    const {
+      data: rules,
+      error,
+      count,
+    } = await query.order('created_at', { ascending: false }).range(offset, offset + limit - 1)
 
     if (error) {
       throw error
@@ -65,7 +75,7 @@ export async function GET(request: NextRequest) {
     const rulesWithStats = (rules || []).map(rule => ({
       ...rule,
       execution_count: 0, // TODO: Implement execution logging
-      last_executed_at: null
+      last_executed_at: null,
     }))
 
     return createSuccessResponse({
@@ -74,10 +84,9 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: count || 0,
-        hasMore: offset + limit < (count || 0)
-      }
+        hasMore: offset + limit < (count || 0),
+      },
     })
-
   } catch (error) {
     console.error('Error fetching automation rules:', error)
     return createErrorResponse(error)
@@ -86,22 +95,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
+    const { organizationId, userId } = getTenantContext(request)
 
-    const body = await request.json();
-    const {
-      name,
-      description,
-      trigger_type,
-      trigger_conditions,
-      actions,
-      is_active = true
-    } = body
+    const body = await request.json()
+    const { name, description, trigger_type, trigger_conditions, actions, is_active = true } = body
 
     // Validation
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -111,9 +113,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!trigger_type || !['keyword', 'business_hours', 'unassigned', 'first_message'].includes(trigger_type)) {
+    if (
+      !trigger_type ||
+      !['keyword', 'business_hours', 'unassigned', 'first_message'].includes(trigger_type)
+    ) {
       return NextResponse.json(
-        { error: 'Invalid trigger_type. Must be one of: keyword, business_hours, unassigned, first_message' },
+        {
+          error:
+            'Invalid trigger_type. Must be one of: keyword, business_hours, unassigned, first_message',
+        },
         { status: 400 }
       )
     }
@@ -134,9 +142,15 @@ export async function POST(request: NextRequest) {
 
     // Validate actions structure
     for (const action of actions) {
-      if (!action.type || !['send_message', 'add_tag', 'assign_agent', 'create_ticket'].includes(action.type)) {
+      if (
+        !action.type ||
+        !['send_message', 'add_tag', 'assign_agent', 'create_ticket'].includes(action.type)
+      ) {
         return NextResponse.json(
-          { error: 'Invalid action type. Must be one of: send_message, add_tag, assign_agent, create_ticket' },
+          {
+            error:
+              'Invalid action type. Must be one of: send_message, add_tag, assign_agent, create_ticket',
+          },
           { status: 400 }
         )
       }
@@ -160,10 +174,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (existingRule) {
-      return NextResponse.json(
-        { error: 'A rule with this name already exists' },
-        { status: 409 }
-      )
+      return NextResponse.json({ error: 'A rule with this name already exists' }, { status: 409 })
     }
 
     // Create automation rule
@@ -177,28 +188,32 @@ export async function POST(request: NextRequest) {
         trigger_conditions,
         actions,
         is_active,
-        created_by: userId
+        created_by: userId,
       })
-      .select(`
+      .select(
+        `
         *,
         profiles:created_by (
           id,
           full_name,
           email
         )
-      `)
+      `
+      )
       .single()
 
     if (error) {
       throw error
     }
 
-    return createSuccessResponse({
-      ...rule,
-      execution_count: 0,
-      last_executed_at: null
-    }, 201)
-
+    return createSuccessResponse(
+      {
+        ...rule,
+        execution_count: 0,
+        last_executed_at: null,
+      },
+      201
+    )
   } catch (error) {
     console.error('Error creating automation rule:', error)
     return createErrorResponse(error)

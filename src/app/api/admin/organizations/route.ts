@@ -6,95 +6,84 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { adminMiddleware } from '@/lib/middleware';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { adminMiddleware } from '@/lib/middleware'
 
 export async function GET(request: NextRequest) {
   // Apply admin middleware (validates super admin access)
-  const middlewareResponse = await adminMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await adminMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
-    const supabase = await createClient();
-    const { searchParams } = new URL(request.url);
+    const supabase = await createClient()
+    const { searchParams } = new URL(request.url)
 
     // Parse query parameters
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Max 100 per page
-    const search = searchParams.get('search');
-    const status = searchParams.get('status');
-    const subscriptionStatus = searchParams.get('subscriptionStatus');
-    const subscriptionTier = searchParams.get('subscriptionTier');
-    const sortBy = searchParams.get('sortBy') || 'created_at';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100) // Max 100 per page
+    const search = searchParams.get('search')
+    const status = searchParams.get('status')
+    const subscriptionStatus = searchParams.get('subscriptionStatus')
+    const subscriptionTier = searchParams.get('subscriptionTier')
+    const sortBy = searchParams.get('sortBy') || 'created_at'
+    const sortOrder = searchParams.get('sortOrder') || 'desc'
 
     // Build the query - simplified without heavy joins
-    let query = supabase
-      .from('organizations')
-      .select('*', { count: 'exact' });
+    let query = supabase.from('organizations').select('*', { count: 'exact' })
 
     // Apply filters
     if (search) {
-      query = query.or(`name.ilike.%${search}%,slug.ilike.%${search}%`);
+      query = query.or(`name.ilike.%${search}%,slug.ilike.%${search}%`)
     }
 
     if (status) {
-      query = query.eq('status', status as any);
+      query = query.eq('status', status as any)
     }
 
     if (subscriptionStatus) {
-      query = query.eq('subscription_status', subscriptionStatus as any);
+      query = query.eq('subscription_status', subscriptionStatus as any)
     }
 
     if (subscriptionTier) {
-      query = query.eq('subscription_tier', subscriptionTier as any);
+      query = query.eq('subscription_tier', subscriptionTier as any)
     }
 
     // Apply sorting
-    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' })
 
     // Apply pagination
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
-    query = query.range(from, to);
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+    query = query.range(from, to)
 
-    const { data, error, count } = await query;
+    const { data, error, count } = await query
 
     if (error) {
-      console.error('Error fetching organizations:', error);
-      return NextResponse.json({ error: 'Failed to fetch organizations' }, { status: 500 });
+      console.error('Error fetching organizations:', error)
+      return NextResponse.json({ error: 'Failed to fetch organizations' }, { status: 500 })
     }
 
     // Get user counts for each organization
-    const orgIds = (data || []).map(org => org.id);
+    const orgIds = (data || []).map(org => org.id)
 
     // Fetch counts in parallel for better performance
     const [userCounts, messageCounts, conversationCounts] = await Promise.all([
       // User counts per organization
-      supabase
-        .from('profiles')
-        .select('organization_id, is_active')
-        .in('organization_id', orgIds),
+      supabase.from('profiles').select('organization_id, is_active').in('organization_id', orgIds),
       // Message counts per organization
-      supabase
-        .from('messages')
-        .select('organization_id')
-        .in('organization_id', orgIds),
+      supabase.from('messages').select('organization_id').in('organization_id', orgIds),
       // Conversation counts per organization
-      supabase
-        .from('conversations')
-        .select('organization_id')
-        .in('organization_id', orgIds)
-    ]);
+      supabase.from('conversations').select('organization_id').in('organization_id', orgIds),
+    ])
 
     // Transform the data
     const organizations = (data || []).map(org => {
-      const orgUsers = userCounts.data?.filter(p => p.organization_id === org.id) || [];
-      const activeUsers = orgUsers.filter(p => p.is_active).length;
-      const messageCount = messageCounts.data?.filter(m => m.organization_id === org.id).length || 0;
-      const conversationCount = conversationCounts.data?.filter(c => c.organization_id === org.id).length || 0;
+      const orgUsers = userCounts.data?.filter(p => p.organization_id === org.id) || []
+      const activeUsers = orgUsers.filter(p => p.is_active).length
+      const messageCount = messageCounts.data?.filter(m => m.organization_id === org.id).length || 0
+      const conversationCount =
+        conversationCounts.data?.filter(c => c.organization_id === org.id).length || 0
 
       return {
         id: org.id,
@@ -117,8 +106,8 @@ export async function GET(request: NextRequest) {
         billingEmail: org.billing_email,
         timezone: org.timezone,
         locale: org.locale,
-      };
-    });
+      }
+    })
 
     // Note: Audit logging removed - system_audit_logs table doesn't exist yet
     // TODO: Re-enable when audit logging table is created
@@ -139,26 +128,22 @@ export async function GET(request: NextRequest) {
         },
         applied: { search, status, subscriptionStatus, subscriptionTier },
       },
-    });
-
+    })
   } catch (error) {
-    console.error('Admin organizations API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Admin organizations API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 // Create new organization (super admin only)
 export async function POST(request: NextRequest) {
   // Apply admin middleware (validates super admin access)
-  const middlewareResponse = await adminMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await adminMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
-    const supabase = await createClient();
-    const body = await request.json();
+    const supabase = await createClient()
+    const body = await request.json()
 
     const {
       name,
@@ -168,15 +153,12 @@ export async function POST(request: NextRequest) {
       billingEmail,
       timezone = 'UTC',
       locale = 'en',
-      metadata = {}
-    } = body;
+      metadata = {},
+    } = body
 
     // Validate required fields
     if (!name || !slug) {
-      return NextResponse.json(
-        { error: 'Name and slug are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Name and slug are required' }, { status: 400 })
     }
 
     // Check if slug is unique
@@ -184,18 +166,15 @@ export async function POST(request: NextRequest) {
       .from('organizations')
       .select('id')
       .eq('slug', slug)
-      .single();
+      .single()
 
     if (existingOrg) {
-      return NextResponse.json(
-        { error: 'Organization slug already exists' },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: 'Organization slug already exists' }, { status: 409 })
     }
 
     // Calculate trial end date
-    const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
+    const trialEndsAt = new Date()
+    trialEndsAt.setDate(trialEndsAt.getDate() + trialDays)
 
     // Create the organization
     const { data: newOrg, error: createError } = await supabase
@@ -213,23 +192,19 @@ export async function POST(request: NextRequest) {
         status: 'active',
       })
       .select()
-      .single();
+      .single()
 
     if (createError) {
-      console.error('Error creating organization:', createError);
-      return NextResponse.json({ error: 'Failed to create organization' }, { status: 500 });
+      console.error('Error creating organization:', createError)
+      return NextResponse.json({ error: 'Failed to create organization' }, { status: 500 })
     }
 
     // Note: Audit logging removed - system_audit_logs table doesn't exist yet
     // TODO: Re-enable when audit logging table is created
 
-    return NextResponse.json({ organization: newOrg }, { status: 201 });
-
+    return NextResponse.json({ organization: newOrg }, { status: 201 })
   } catch (error) {
-    console.error('Admin create organization API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Admin create organization API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

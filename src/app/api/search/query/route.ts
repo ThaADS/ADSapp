@@ -4,9 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    
+
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -23,7 +26,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { organizationId, text, type = 'all', filters = {}, sortBy = 'relevance', highlight = false, limit = 20, offset = 0 } = body
+    const {
+      organizationId,
+      text,
+      type = 'all',
+      filters = {},
+      sortBy = 'relevance',
+      highlight = false,
+      limit = 20,
+      offset = 0,
+    } = body
 
     if (organizationId !== profile.organization_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -36,7 +48,8 @@ export async function POST(request: NextRequest) {
     if (type === 'conversations' || type === 'all') {
       let query = supabase
         .from('conversations')
-        .select(`
+        .select(
+          `
           *,
           contact:contacts!conversations_contact_id_fkey (
             id,
@@ -54,7 +67,8 @@ export async function POST(request: NextRequest) {
             message_type,
             sender_type
           )
-        `)
+        `
+        )
         .eq('organization_id', organizationId)
         .order('created_at', { foreignTable: 'messages', ascending: false })
         .limit(1, { foreignTable: 'messages' })
@@ -84,12 +98,16 @@ export async function POST(request: NextRequest) {
           score: 0.9,
           data: {
             ...conv,
-            last_message: conv.last_message?.[0] || null
+            last_message: conv.last_message?.[0] || null,
           },
-          highlights: highlight ? [{
-            field: 'subject',
-            fragments: [conv.subject || '']
-          }] : undefined
+          highlights: highlight
+            ? [
+                {
+                  field: 'subject',
+                  fragments: [conv.subject || ''],
+                },
+              ]
+            : undefined,
         })
       })
     }
@@ -98,7 +116,8 @@ export async function POST(request: NextRequest) {
     if (type === 'messages' || type === 'all') {
       let query = supabase
         .from('messages')
-        .select(`
+        .select(
+          `
           *,
           conversation:conversations!messages_conversation_id_fkey (
             id,
@@ -109,7 +128,8 @@ export async function POST(request: NextRequest) {
             name,
             phone_number
           )
-        `)
+        `
+        )
         .eq('organization_id', organizationId)
 
       if (text) {
@@ -137,20 +157,21 @@ export async function POST(request: NextRequest) {
           type: 'message',
           score: 0.85,
           data: msg,
-          highlights: highlight ? [{
-            field: 'content',
-            fragments: [msg.content || '']
-          }] : undefined
+          highlights: highlight
+            ? [
+                {
+                  field: 'content',
+                  fragments: [msg.content || ''],
+                },
+              ]
+            : undefined,
         })
       })
     }
 
     // Search contacts
     if (type === 'contacts' || type === 'all') {
-      let query = supabase
-        .from('contacts')
-        .select('*')
-        .eq('organization_id', organizationId)
+      let query = supabase.from('contacts').select('*').eq('organization_id', organizationId)
 
       if (text) {
         query = query.or(`name.ilike.%${text}%,phone_number.ilike.%${text}%`)
@@ -164,10 +185,14 @@ export async function POST(request: NextRequest) {
           type: 'contact',
           score: 0.8,
           data: contact,
-          highlights: highlight ? [{
-            field: 'name',
-            fragments: [contact.name || '']
-          }] : undefined
+          highlights: highlight
+            ? [
+                {
+                  field: 'name',
+                  fragments: [contact.name || ''],
+                },
+              ]
+            : undefined,
         })
       })
     }
@@ -192,16 +217,13 @@ export async function POST(request: NextRequest) {
       facets: {
         status: { open: 0, pending: 0, resolved: 0, closed: 0 },
         priority: { low: 0, medium: 0, high: 0, urgent: 0 },
-        messageType: { text: 0, image: 0, document: 0, audio: 0, video: 0 }
+        messageType: { text: 0, image: 0, document: 0, audio: 0, video: 0 },
       },
       query: { text, type, filters, sortBy, highlight, limit, offset },
-      executionTime
+      executionTime,
     })
   } catch (error) {
     console.error('Search error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

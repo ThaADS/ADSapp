@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const allCookies = cookieStore.getAll();
+    const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
 
     return NextResponse.json({
       cookieCount: allCookies.length,
@@ -13,12 +13,15 @@ export async function GET(request: NextRequest) {
       requestHeaders: {
         cookie: request.headers.get('cookie'),
         authorization: request.headers.get('authorization'),
-      }
-    });
+      },
+    })
   } catch (error) {
-    return NextResponse.json({
-      error: String(error),
-      message: 'Failed to read cookies'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: String(error),
+        message: 'Failed to read cookies',
+      },
+      { status: 500 }
+    )
   }
 }

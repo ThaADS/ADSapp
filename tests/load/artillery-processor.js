@@ -5,35 +5,35 @@
 
 module.exports = {
   // Initialize custom metrics
-  beforeScenario: function(context, events, done) {
+  beforeScenario: function (context, events, done) {
     // Add custom variables
-    context.vars.timestamp = Date.now();
-    context.vars.requestId = generateRequestId();
+    context.vars.timestamp = Date.now()
+    context.vars.requestId = generateRequestId()
 
-    return done();
+    return done()
   },
 
   // Track custom metrics after each request
-  afterResponse: function(requestParams, response, context, events, done) {
+  afterResponse: function (requestParams, response, context, events, done) {
     // Track response time by endpoint
-    const endpoint = extractEndpoint(requestParams.url);
+    const endpoint = extractEndpoint(requestParams.url)
     events.emit('customStat', {
       stat: `response_time_${endpoint}`,
       value: response.timings.phases.total,
-    });
+    })
 
     // Track status codes
     events.emit('customStat', {
       stat: `status_${response.statusCode}`,
       value: 1,
-    });
+    })
 
     // Track cache hits
     if (response.headers['x-cache-status']) {
       events.emit('customStat', {
         stat: response.headers['x-cache-status'] === 'HIT' ? 'cache_hit' : 'cache_miss',
         value: 1,
-      });
+      })
     }
 
     // Track slow requests
@@ -41,50 +41,50 @@ module.exports = {
       events.emit('customStat', {
         stat: 'slow_requests',
         value: 1,
-      });
+      })
     }
 
-    return done();
+    return done()
   },
 
   // Log errors
-  onError: function(error, context, events, done) {
+  onError: function (error, context, events, done) {
     events.emit('customStat', {
       stat: 'errors',
       value: 1,
-    });
+    })
 
     console.error('Request error:', {
       error: error.message,
       scenario: context.scenario.name,
       timestamp: new Date().toISOString(),
-    });
+    })
 
-    return done();
+    return done()
   },
 
   // Cleanup after scenario
-  afterScenario: function(context, events, done) {
+  afterScenario: function (context, events, done) {
     // Log scenario completion
-    console.log(`Scenario completed: ${context.scenario.name}`);
-    return done();
+    console.log(`Scenario completed: ${context.scenario.name}`)
+    return done()
   },
-};
+}
 
 // Helper functions
 function generateRequestId() {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
 function extractEndpoint(url) {
   try {
-    const urlObj = new URL(url);
-    const path = urlObj.pathname;
-    const segments = path.split('/').filter(Boolean);
+    const urlObj = new URL(url)
+    const path = urlObj.pathname
+    const segments = path.split('/').filter(Boolean)
 
     // Return first meaningful segment (e.g., 'conversations', 'contacts')
-    return segments[1] || 'root';
+    return segments[1] || 'root'
   } catch {
-    return 'unknown';
+    return 'unknown'
   }
 }

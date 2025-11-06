@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe/server'
 
@@ -93,9 +92,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(plans)
   } catch (error) {
     console.error('Plans API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

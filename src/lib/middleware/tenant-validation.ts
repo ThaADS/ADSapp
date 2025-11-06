@@ -1,30 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { getUserOrganization } from '@/lib/api-utils';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getUserOrganization } from '@/lib/api-utils'
 
 /**
  * Tenant Context Type for API routes
  * Contains authenticated user and organization information
  */
 export interface TenantContext {
-  userId: string;
-  organizationId: string;
-  userRole: string;
-  userEmail: string;
+  userId: string
+  organizationId: string
+  userRole: string
+  userEmail: string
 }
 
 /**
  * Security Event Log for cross-tenant access attempts
  */
 interface SecurityEvent {
-  userId: string;
-  userOrg: string;
-  requestedOrg: string | null;
-  path: string;
-  method: string;
-  timestamp: string;
-  ip: string;
-  userAgent: string;
+  userId: string
+  userOrg: string
+  requestedOrg: string | null
+  path: string
+  method: string
+  timestamp: string
+  ip: string
+  userAgent: string
 }
 
 /**
@@ -53,23 +53,26 @@ interface SecurityEvent {
  */
 export async function validateTenantAccess(request: NextRequest): Promise<NextResponse | null> {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // 1. Verify user authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
       return NextResponse.json(
         {
           error: 'Authentication required',
-          code: 'UNAUTHORIZED'
+          code: 'UNAUTHORIZED',
         },
         { status: 401 }
-      );
+      )
     }
 
     // 2. Get user's organization and profile
-    const userOrg = await getUserOrganization(user.id);
+    const userOrg = await getUserOrganization(user.id)
 
     if (!userOrg || !userOrg.organization_id) {
       // Check if user is super admin - they don't need organization
@@ -77,27 +80,28 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
         .from('profiles')
         .select('is_super_admin, role')
         .eq('id', user.id)
-        .single();
+        .single()
 
       if (profile?.is_super_admin) {
         // Super admins bypass organization requirements
         // Note: Headers can't be set in API routes, return null to allow access
-        return null;
+        return null
       }
 
       return NextResponse.json(
         {
           error: 'User not associated with any organization',
-          code: 'NO_ORGANIZATION'
+          code: 'NO_ORGANIZATION',
         },
         { status: 403 }
-      );
+      )
     }
 
     // 3. Validate tenant context from request
     // Check for organization ID in headers or query parameters
-    const requestedOrgId = request.headers.get('x-organization-id') ||
-                          request.nextUrl.searchParams.get('organization_id');
+    const requestedOrgId =
+      request.headers.get('x-organization-id') ||
+      request.nextUrl.searchParams.get('organization_id')
 
     // 4. Cross-tenant access prevention
     if (requestedOrgId && requestedOrgId !== userOrg.organization_id) {
@@ -110,16 +114,16 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
         method: request.method,
         timestamp: new Date().toISOString(),
         ip: getClientIp(request),
-        userAgent: request.headers.get('user-agent') || 'unknown'
-      };
+        userAgent: request.headers.get('user-agent') || 'unknown',
+      }
 
       // Log to console (in production, send to security monitoring service)
-      console.warn('[SECURITY] Cross-tenant access attempt:', securityEvent);
+      console.warn('[SECURITY] Cross-tenant access attempt:', securityEvent)
 
       // Send to Sentry for alerting
       if (process.env.NODE_ENV === 'production') {
         try {
-          const Sentry = await import('@sentry/nextjs');
+          const Sentry = await import('@sentry/nextjs')
           Sentry.captureMessage('Cross-tenant access attempt', {
             level: 'warning',
             extra: {
@@ -130,57 +134,57 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
               method: securityEvent.method,
               timestamp: securityEvent.timestamp,
               ip: securityEvent.ip,
-              userAgent: securityEvent.userAgent
-            }
-          });
+              userAgent: securityEvent.userAgent,
+            },
+          })
         } catch (error) {
-          console.error('Failed to log security event to Sentry:', error);
+          console.error('Failed to log security event to Sentry:', error)
         }
       }
 
       return NextResponse.json(
         {
           error: 'Forbidden: Access to this organization denied',
-          code: 'FORBIDDEN'
+          code: 'FORBIDDEN',
         },
         { status: 403 }
-      );
+      )
     }
 
     // 5. Attach tenant context to request headers for downstream use
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', user.id);
-    requestHeaders.set('x-organization-id', userOrg.organization_id);
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('x-user-id', user.id)
+    requestHeaders.set('x-organization-id', userOrg.organization_id)
 
     // Type guard for organization role
-    const orgRole = userOrg.organization &&
-                    typeof userOrg.organization === 'object' &&
-                    'role' in userOrg.organization
-      ? String(userOrg.organization.role)
-      : 'agent';
+    const orgRole =
+      userOrg.organization &&
+      typeof userOrg.organization === 'object' &&
+      'role' in userOrg.organization
+        ? String(userOrg.organization.role)
+        : 'agent'
 
-    requestHeaders.set('x-user-role', orgRole);
-    requestHeaders.set('x-user-email', user.email || '');
-    requestHeaders.set('x-is-super-admin', 'false');
+    requestHeaders.set('x-user-role', orgRole)
+    requestHeaders.set('x-user-email', user.email || '')
+    requestHeaders.set('x-is-super-admin', 'false')
 
     // Return null for API routes (headers are passed via context)
     // Note: NextResponse.next() is only for middleware, not API route handlers
-    return null;
-
+    return null
   } catch (error) {
-    console.error('[TENANT_VALIDATION] Error:', error);
+    console.error('[TENANT_VALIDATION] Error:', error)
 
     // Log error to monitoring service
     if (process.env.NODE_ENV === 'production') {
       try {
-        const Sentry = await import('@sentry/nextjs');
+        const Sentry = await import('@sentry/nextjs')
         Sentry.captureException(error, {
           tags: {
-            middleware: 'tenant-validation'
-          }
-        });
+            middleware: 'tenant-validation',
+          },
+        })
       } catch (sentryError) {
-        console.error('Failed to log error to Sentry:', sentryError);
+        console.error('Failed to log error to Sentry:', sentryError)
       }
     }
 
@@ -188,10 +192,10 @@ export async function validateTenantAccess(request: NextRequest): Promise<NextRe
     return NextResponse.json(
       {
         error: 'Internal server error during tenant validation',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -218,8 +222,8 @@ export function getTenantContext(request: NextRequest): TenantContext {
     userId: request.headers.get('x-user-id') || '',
     organizationId: request.headers.get('x-organization-id') || '',
     userRole: request.headers.get('x-user-role') || 'agent',
-    userEmail: request.headers.get('x-user-email') || ''
-  };
+    userEmail: request.headers.get('x-user-email') || '',
+  }
 }
 
 /**
@@ -230,7 +234,7 @@ export function getTenantContext(request: NextRequest): TenantContext {
  * @returns boolean indicating if user is super admin
  */
 export function isSuperAdmin(request: NextRequest): boolean {
-  return request.headers.get('x-is-super-admin') === 'true';
+  return request.headers.get('x-is-super-admin') === 'true'
 }
 
 /**
@@ -257,11 +261,11 @@ export function validateResourceAccess(
 ): boolean {
   // Super admins can access all resources
   if (!tenantContext.organizationId && tenantContext.userRole === 'super_admin') {
-    return true;
+    return true
   }
 
   // Regular users can only access resources in their organization
-  return resourceOrgId === tenantContext.organizationId;
+  return resourceOrgId === tenantContext.organizationId
 }
 
 /**
@@ -272,18 +276,12 @@ export function validateResourceAccess(
  * @returns Client IP address or 'unknown'
  */
 function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  const realIp = request.headers.get('x-real-ip');
-  const cfConnectingIp = request.headers.get('cf-connecting-ip');
-  const vercelIp = request.headers.get('x-vercel-forwarded-for');
+  const forwarded = request.headers.get('x-forwarded-for')
+  const realIp = request.headers.get('x-real-ip')
+  const cfConnectingIp = request.headers.get('cf-connecting-ip')
+  const vercelIp = request.headers.get('x-vercel-forwarded-for')
 
-  return (
-    cfConnectingIp ||
-    vercelIp ||
-    forwarded?.split(',')[0].trim() ||
-    realIp ||
-    'unknown'
-  );
+  return cfConnectingIp || vercelIp || forwarded?.split(',')[0].trim() || realIp || 'unknown'
 }
 
 /**
@@ -291,7 +289,7 @@ function getClientIp(request: NextRequest): string {
  * Minimal interface for tenant scoping
  */
 interface SupabaseQueryBuilder {
-  eq(column: string, value: string): SupabaseQueryBuilder;
+  eq(column: string, value: string): SupabaseQueryBuilder
 }
 
 /**
@@ -313,5 +311,5 @@ interface SupabaseQueryBuilder {
  * ```
  */
 export function createTenantScope(organizationId: string) {
-  return (query: SupabaseQueryBuilder) => query.eq('organization_id', organizationId);
+  return (query: SupabaseQueryBuilder) => query.eq('organization_id', organizationId)
 }

@@ -138,7 +138,9 @@ export class PerformanceMonitor {
   private monitorCustomMarks(): void {
     // Monitor navigation timing
     window.addEventListener('load', () => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming
 
       if (navigation) {
         const metrics = {
@@ -161,7 +163,7 @@ export class PerformanceMonitor {
     })
 
     // Monitor resource timing
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       for (const entry of list.getEntries()) {
         if (entry.entryType === 'resource') {
           const resource = entry as PerformanceResourceTiming
@@ -247,10 +249,7 @@ export class PerformanceMonitor {
 export const performanceMonitor = PerformanceMonitor.getInstance()
 
 // Utility functions
-export function withPerformanceTracking<T extends (...args: any[]) => any>(
-  fn: T,
-  name: string
-): T {
+export function withPerformanceTracking<T extends (...args: any[]) => any>(fn: T, name: string): T {
   return ((...args: any[]) => {
     performanceMonitor.startTiming(name)
     const result = fn(...args)
@@ -286,7 +285,7 @@ export function usePerformanceTracking(componentName: string) {
 
 // Global error handler
 if (typeof window !== 'undefined') {
-  window.addEventListener('error', (event) => {
+  window.addEventListener('error', event => {
     performanceMonitor.trackError(event.error, {
       filename: event.filename,
       lineno: event.lineno,
@@ -294,7 +293,7 @@ if (typeof window !== 'undefined') {
     })
   })
 
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener('unhandledrejection', event => {
     performanceMonitor.trackError(new Error(event.reason), {
       type: 'unhandled-promise-rejection',
     })

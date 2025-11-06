@@ -58,7 +58,12 @@ export interface LocationInfo {
 }
 
 export interface SessionFlag {
-  type: 'unusual_location' | 'new_device' | 'suspicious_activity' | 'concurrent_sessions' | 'security_violation'
+  type:
+    | 'unusual_location'
+    | 'new_device'
+    | 'suspicious_activity'
+    | 'concurrent_sessions'
+    | 'security_violation'
   severity: 'low' | 'medium' | 'high' | 'critical'
   description: string
   detectedAt: Date
@@ -91,7 +96,14 @@ export interface SecurityEvent {
   userId: string
   organizationId: string
   sessionId?: string
-  eventType: 'login' | 'logout' | 'session_created' | 'session_terminated' | 'suspicious_activity' | 'device_registered' | 'location_change'
+  eventType:
+    | 'login'
+    | 'logout'
+    | 'session_created'
+    | 'session_terminated'
+    | 'suspicious_activity'
+    | 'device_registered'
+    | 'location_change'
   severity: 'info' | 'warning' | 'error' | 'critical'
   description: string
   metadata: Record<string, any>
@@ -148,7 +160,7 @@ export class SessionManager {
         user_agent: userAgent,
         expires_at: expiresAt.toISOString(),
         risk_score: riskScore,
-        status: riskScore > 70 ? 'suspicious' : 'active'
+        status: riskScore > 70 ? 'suspicious' : 'active',
       })
       .select()
       .single()
@@ -175,7 +187,7 @@ export class SessionManager {
       metadata: { deviceInfo, location, riskScore },
       ipAddress,
       userAgent,
-      location
+      location,
     })
 
     // Send notifications if needed
@@ -213,7 +225,7 @@ export class SessionManager {
     await this.supabase
       .from('user_sessions')
       .update({
-        last_activity: new Date().toISOString()
+        last_activity: new Date().toISOString(),
       })
       .eq('id', sessionId)
   }
@@ -230,7 +242,7 @@ export class SessionManager {
       .update({
         status: 'terminated',
         terminated_at: new Date().toISOString(),
-        termination_reason: reason
+        termination_reason: reason,
       })
       .eq('id', sessionId)
 
@@ -245,7 +257,7 @@ export class SessionManager {
         metadata: { reason },
         ipAddress: '',
         userAgent: '',
-        location: {} as LocationInfo
+        location: {} as LocationInfo,
       })
     }
   }
@@ -256,7 +268,7 @@ export class SessionManager {
       .update({
         status: 'terminated',
         terminated_at: new Date().toISOString(),
-        termination_reason: 'admin_action'
+        termination_reason: 'admin_action',
       })
       .eq('user_id', userId)
       .eq('status', 'active')
@@ -298,7 +310,7 @@ export class SessionManager {
           timezone: deviceInfo.timezone,
           language: deviceInfo.language,
           is_trusted: trustDevice,
-          last_seen: new Date().toISOString()
+          last_seen: new Date().toISOString(),
         })
         .eq('id', existingDevice.id)
 
@@ -306,22 +318,20 @@ export class SessionManager {
     }
 
     // Create new device
-    await this.supabase
-      .from('user_devices')
-      .insert({
-        user_id: userId,
-        device_id: deviceInfo.deviceId,
-        device_name: deviceInfo.deviceName,
-        device_type: deviceInfo.deviceType,
-        browser: deviceInfo.browser,
-        browser_version: deviceInfo.browserVersion,
-        os: deviceInfo.os,
-        os_version: deviceInfo.osVersion,
-        screen_resolution: deviceInfo.screenResolution,
-        timezone: deviceInfo.timezone,
-        language: deviceInfo.language,
-        is_trusted: trustDevice
-      })
+    await this.supabase.from('user_devices').insert({
+      user_id: userId,
+      device_id: deviceInfo.deviceId,
+      device_name: deviceInfo.deviceName,
+      device_type: deviceInfo.deviceType,
+      browser: deviceInfo.browser,
+      browser_version: deviceInfo.browserVersion,
+      os: deviceInfo.os,
+      os_version: deviceInfo.osVersion,
+      screen_resolution: deviceInfo.screenResolution,
+      timezone: deviceInfo.timezone,
+      language: deviceInfo.language,
+      is_trusted: trustDevice,
+    })
 
     return { ...deviceInfo, isTrusted: trustDevice }
   }
@@ -347,7 +357,7 @@ export class SessionManager {
       timezone: device.timezone,
       language: device.language,
       isTrusted: device.is_trusted,
-      lastSeen: new Date(device.last_seen)
+      lastSeen: new Date(device.last_seen),
     }))
   }
 
@@ -374,7 +384,7 @@ export class SessionManager {
       .update({
         status: 'terminated',
         terminated_at: new Date().toISOString(),
-        termination_reason: 'device_removed'
+        termination_reason: 'device_removed',
       })
       .eq('user_id', userId)
       .eq('status', 'active')
@@ -390,10 +400,7 @@ export class SessionManager {
 
   // Session Queries
   async getUserSessions(userId: string, includeExpired: boolean = false): Promise<UserSession[]> {
-    let query = this.supabase
-      .from('user_sessions')
-      .select('*')
-      .eq('user_id', userId)
+    let query = this.supabase.from('user_sessions').select('*').eq('user_id', userId)
 
     if (!includeExpired) {
       query = query.in('status', ['active', 'suspicious'])
@@ -405,13 +412,18 @@ export class SessionManager {
     return sessions.map(this.parseSession)
   }
 
-  async getOrganizationSessions(organizationId: string, limit: number = 100): Promise<UserSession[]> {
+  async getOrganizationSessions(
+    organizationId: string,
+    limit: number = 100
+  ): Promise<UserSession[]> {
     const { data: sessions, error } = await this.supabase
       .from('user_sessions')
-      .select(`
+      .select(
+        `
         *,
         profiles!inner(full_name, email)
-      `)
+      `
+      )
       .eq('organization_id', organizationId)
       .in('status', ['active', 'suspicious'])
       .order('last_activity', { ascending: false })
@@ -441,13 +453,16 @@ export class SessionManager {
     const flags: SessionFlag[] = []
 
     // Check for unusual location
-    if (config.enableLocationTracking && await this.isUnusualLocation(session.userId, session.location)) {
+    if (
+      config.enableLocationTracking &&
+      (await this.isUnusualLocation(session.userId, session.location))
+    ) {
       flags.push({
         type: 'unusual_location',
         severity: 'medium',
         description: `Login from unusual location: ${session.location.city}, ${session.location.country}`,
         detectedAt: new Date(),
-        resolved: false
+        resolved: false,
       })
     }
 
@@ -458,7 +473,7 @@ export class SessionManager {
         severity: 'low',
         description: `Login from new device: ${session.deviceInfo.deviceName}`,
         detectedAt: new Date(),
-        resolved: false
+        resolved: false,
       })
     }
 
@@ -470,7 +485,7 @@ export class SessionManager {
         severity: 'medium',
         description: `Exceeded maximum concurrent sessions: ${activeSessions.length}/${config.maxConcurrentSessions}`,
         detectedAt: new Date(),
-        resolved: false
+        resolved: false,
       })
     }
 
@@ -481,7 +496,7 @@ export class SessionManager {
         severity: session.location.isTor ? 'high' : 'medium',
         description: `Login through ${session.location.isTor ? 'Tor' : 'VPN'} network`,
         detectedAt: new Date(),
-        resolved: false
+        resolved: false,
       })
     }
 
@@ -492,7 +507,7 @@ export class SessionManager {
         severity: 'critical',
         description: `Login from blocked country: ${session.location.country}`,
         detectedAt: new Date(),
-        resolved: false
+        resolved: false,
       })
     }
 
@@ -543,9 +558,7 @@ export class SessionManager {
 
     if (!recentSessions || recentSessions.length === 0) return false
 
-    const usualCountries = new Set(
-      recentSessions.map(s => JSON.parse(s.location).country)
-    )
+    const usualCountries = new Set(recentSessions.map(s => JSON.parse(s.location).country))
 
     return !usualCountries.has(location.country)
   }
@@ -589,7 +602,7 @@ export class SessionManager {
       blockedCountries: config.blocked_countries || [],
       allowedCountries: config.allowed_countries || [],
       maxFailedLocationAttempts: config.max_failed_location_attempts,
-      deviceTrustExpirationDays: config.device_trust_expiration_days
+      deviceTrustExpirationDays: config.device_trust_expiration_days,
     }
   }
 
@@ -597,7 +610,9 @@ export class SessionManager {
   private async getLocationInfo(ipAddress: string): Promise<LocationInfo> {
     try {
       // Use IP geolocation service
-      const response = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,message,country,regionName,city,lat,lon,timezone,isp,org,proxy,query`)
+      const response = await fetch(
+        `http://ip-api.com/json/${ipAddress}?fields=status,message,country,regionName,city,lat,lon,timezone,isp,org,proxy,query`
+      )
       const data = await response.json()
 
       if (data.status === 'success') {
@@ -613,7 +628,7 @@ export class SessionManager {
           isVpn: false, // Would need additional service for VPN detection
           isTor: false, // Would need Tor exit node list
           isProxy: data.proxy || false,
-          threatLevel: 'low'
+          threatLevel: 'low',
         }
       }
     } catch (error) {
@@ -631,7 +646,7 @@ export class SessionManager {
       isVpn: false,
       isTor: false,
       isProxy: false,
-      threatLevel: 'low'
+      threatLevel: 'low',
     }
   }
 
@@ -670,7 +685,9 @@ export class SessionManager {
   ): Promise<void> {
     // Implementation would send email/SMS notification
     // For now, just log the event
-    console.log(`New device notification for user ${userId}: ${deviceInfo.deviceName} from ${location.city}`)
+    console.log(
+      `New device notification for user ${userId}: ${deviceInfo.deviceName} from ${location.city}`
+    )
   }
 
   private async sendUnusualLocationNotification(
@@ -679,25 +696,25 @@ export class SessionManager {
   ): Promise<void> {
     // Implementation would send email/SMS notification
     // For now, just log the event
-    console.log(`Unusual location notification for user ${userId}: ${location.city}, ${location.country}`)
+    console.log(
+      `Unusual location notification for user ${userId}: ${location.city}, ${location.country}`
+    )
   }
 
   // Security Event Logging
   private async logSecurityEvent(event: Omit<SecurityEvent, 'id' | 'createdAt'>): Promise<void> {
-    await this.supabase
-      .from('security_events')
-      .insert({
-        user_id: event.userId,
-        organization_id: event.organizationId,
-        session_id: event.sessionId,
-        event_type: event.eventType,
-        severity: event.severity,
-        description: event.description,
-        metadata: JSON.stringify(event.metadata),
-        ip_address: event.ipAddress,
-        user_agent: event.userAgent,
-        location: JSON.stringify(event.location)
-      })
+    await this.supabase.from('security_events').insert({
+      user_id: event.userId,
+      organization_id: event.organizationId,
+      session_id: event.sessionId,
+      event_type: event.eventType,
+      severity: event.severity,
+      description: event.description,
+      metadata: JSON.stringify(event.metadata),
+      ip_address: event.ipAddress,
+      user_agent: event.userAgent,
+      location: JSON.stringify(event.location),
+    })
   }
 
   // Helper methods
@@ -718,15 +735,13 @@ export class SessionManager {
 
   private async addSessionFlags(sessionId: string, flags: SessionFlag[]): Promise<void> {
     for (const flag of flags) {
-      await this.supabase
-        .from('session_flags')
-        .insert({
-          session_id: sessionId,
-          flag_type: flag.type,
-          severity: flag.severity,
-          description: flag.description,
-          detected_at: flag.detectedAt.toISOString()
-        })
+      await this.supabase.from('session_flags').insert({
+        session_id: sessionId,
+        flag_type: flag.type,
+        severity: flag.severity,
+        description: flag.description,
+        detected_at: flag.detectedAt.toISOString(),
+      })
     }
   }
 
@@ -747,7 +762,7 @@ export class SessionManager {
       blockedCountries: [],
       allowedCountries: [],
       maxFailedLocationAttempts: 3,
-      deviceTrustExpirationDays: 30
+      deviceTrustExpirationDays: 30,
     }
   }
 
@@ -767,7 +782,7 @@ export class SessionManager {
       userAgent: data.user_agent,
       isCurrentSession: false, // This would be set by the calling code
       riskScore: data.risk_score || 0,
-      flags: [] // This would be loaded separately if needed
+      flags: [], // This would be loaded separately if needed
     }
   }
 }

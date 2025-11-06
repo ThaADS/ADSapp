@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type { Message } from '@/types/database'
 
 // =============================================================================
@@ -39,7 +38,7 @@ export const outgoingTextMessage: Message = {
   conversation_id: 'conv-open-001',
   sender_id: 'user-agent-001',
   sender_type: 'agent',
-  content: 'Hello! I\'d be happy to help you with your account.',
+  content: "Hello! I'd be happy to help you with your account.",
   message_type: 'text',
   whatsapp_message_id: 'wamid_outgoing_001',
   metadata: {
@@ -148,8 +147,4 @@ export const mediaMessages: Message[] = [imageMessage, documentMessage]
 
 export const incomingMessages: Message[] = [incomingTextMessage, imageMessage]
 
-export const outgoingMessages: Message[] = [
-  outgoingTextMessage,
-  documentMessage,
-  templateMessage,
-]
+export const outgoingMessages: Message[] = [outgoingTextMessage, documentMessage, templateMessage]

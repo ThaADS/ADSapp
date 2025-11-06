@@ -123,13 +123,13 @@ class MockJobStorage {
   getJobsByState(state: string): MockJob[] {
     const jobIds = this.jobsByState.get(state) || new Set()
     return Array.from(jobIds)
-      .map((id) => this.jobs.get(id))
+      .map(id => this.jobs.get(id))
       .filter((job): job is MockJob => job !== undefined)
   }
 
   moveJob(jobId: string, toState: string): void {
     // Remove from all states
-    this.jobsByState.forEach((jobs) => jobs.delete(jobId))
+    this.jobsByState.forEach(jobs => jobs.delete(jobId))
     // Add to new state
     this.jobsByState.get(toState)?.add(jobId)
 
@@ -145,7 +145,7 @@ class MockJobStorage {
 
   removeJob(jobId: string): void {
     this.jobs.delete(jobId)
-    this.jobsByState.forEach((jobs) => jobs.delete(jobId))
+    this.jobsByState.forEach(jobs => jobs.delete(jobId))
   }
 
   getJobState(jobId: string): string {
@@ -167,7 +167,7 @@ class MockJobStorage {
 
   clear(): void {
     this.jobs.clear()
-    this.jobsByState.forEach((jobs) => jobs.clear())
+    this.jobsByState.forEach(jobs => jobs.clear())
   }
 }
 
@@ -177,10 +177,7 @@ class MockJobStorage {
  * @param storage - Optional shared storage for coordinated tests
  * @returns Mock Queue with jest mock functions
  */
-export function createMockQueue<T = any>(
-  name: string,
-  storage?: MockJobStorage
-): MockQueue<T> {
+export function createMockQueue<T = any>(name: string, storage?: MockJobStorage): MockQueue<T> {
   const jobStorage = storage || new MockJobStorage()
   let paused = false
 
@@ -191,14 +188,14 @@ export function createMockQueue<T = any>(
       return Promise.resolve(job)
     }),
     addBulk: jest.fn((jobs: Array<{ name: string; data: T; opts?: any }>) => {
-      const createdJobs = jobs.map((job) => jobStorage.createJob(job.name, job.data, job.opts))
+      const createdJobs = jobs.map(job => jobStorage.createJob(job.name, job.data, job.opts))
       return Promise.resolve(createdJobs)
     }),
     getJob: jest.fn((jobId: string) => {
       return Promise.resolve(jobStorage.getJob(jobId))
     }),
     getJobs: jest.fn((states: string[]) => {
-      const jobs = states.flatMap((state) => jobStorage.getJobsByState(state))
+      const jobs = states.flatMap(state => jobStorage.getJobsByState(state))
       return Promise.resolve(jobs)
     }),
     getJobCounts: jest.fn(() => {

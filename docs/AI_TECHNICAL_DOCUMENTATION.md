@@ -59,12 +59,14 @@
 ### Component Responsibilities
 
 **Frontend Components**:
+
 - `AISettingsPanel`: Configure AI features per organization
 - `DraftSuggestions`: Display and interact with draft suggestions
 - `SentimentIndicator`: Visualize conversation sentiment
 - `AIAnalytics`: Usage statistics and cost tracking dashboard
 
 **API Routes** (`/api/ai/*`):
+
 - Authentication and authorization
 - Request validation
 - Business logic delegation
@@ -72,6 +74,7 @@
 - Error handling
 
 **Business Logic** (`/lib/ai/*`):
+
 - `openrouter.ts`: Core AI client with fallback support
 - `drafts.ts`: Draft suggestion generation and improvement
 - `auto-response.ts`: Automated response generation
@@ -80,6 +83,7 @@
 - `templates.ts`: WhatsApp-compliant template generation
 
 **Data Layer**:
+
 - Supabase PostgreSQL with Row Level Security
 - AI responses, settings, and metadata storage
 - Real-time subscriptions for live updates
@@ -276,10 +280,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 All AI endpoints require authentication via Supabase session:
 
 ```typescript
-const supabase = await createClient();
-const { data: { user }, error } = await supabase.auth.getUser();
+const supabase = await createClient()
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser()
 if (error || !user) {
-  return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  return Response.json({ error: 'Unauthorized' }, { status: 401 })
 }
 ```
 
@@ -290,6 +297,7 @@ if (error || !user) {
 Generate draft response suggestions.
 
 **Request Body**:
+
 ```json
 {
   "conversationId": "uuid",
@@ -301,6 +309,7 @@ Generate draft response suggestions.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -318,6 +327,7 @@ Generate draft response suggestions.
 ```
 
 **Error Codes**:
+
 - `400`: Invalid conversationId or missing required fields
 - `401`: Unauthorized
 - `403`: Access denied to conversation
@@ -329,6 +339,7 @@ Generate draft response suggestions.
 Analyze conversation sentiment.
 
 **Request Body**:
+
 ```json
 {
   "conversationId": "uuid",
@@ -338,6 +349,7 @@ Analyze conversation sentiment.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -359,6 +371,7 @@ Analyze conversation sentiment.
 Generate conversation summary.
 
 **Request Body**:
+
 ```json
 {
   "conversationId": "uuid",
@@ -368,6 +381,7 @@ Generate conversation summary.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -390,6 +404,7 @@ Generate conversation summary.
 Generate WhatsApp Business template.
 
 **Request Body**:
+
 ```json
 {
   "purpose": "Order confirmation message",
@@ -402,6 +417,7 @@ Generate WhatsApp Business template.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -422,6 +438,7 @@ Generate WhatsApp Business template.
 Get AI configuration for organization.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -435,7 +452,7 @@ Get AI configuration for organization.
     "fallback_model": "anthropic/claude-3-haiku",
     "max_tokens": 1000,
     "temperature": 0.7,
-    "monthly_budget_usd": 50.00,
+    "monthly_budget_usd": 50.0,
     "current_month_spend_usd": 12.34,
     "budget_alert_threshold": 0.8
   },
@@ -448,21 +465,25 @@ Get AI configuration for organization.
 Update AI configuration (admin only).
 
 **Request Body**:
+
 ```json
 {
   "enabled": true,
   "draft_suggestions_enabled": true,
   "max_tokens": 1500,
   "temperature": 0.8,
-  "monthly_budget_usd": 100.00
+  "monthly_budget_usd": 100.0
 }
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
-  "settings": { /* updated settings */ },
+  "settings": {
+    /* updated settings */
+  },
   "message": "AI settings updated successfully"
 }
 ```
@@ -472,10 +493,12 @@ Update AI configuration (admin only).
 Get usage analytics.
 
 **Query Parameters**:
+
 - `period`: Number of days (default: 30)
 - `feature`: Filter by feature (optional)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -492,7 +515,7 @@ Get usage analytics.
     "acceptanceRate": 87.5
   },
   "byFeature": {
-    "draft": { "count": 100, "cost": 8.50, "tokens": 30000 },
+    "draft": { "count": 100, "cost": 8.5, "tokens": 30000 },
     "sentiment": { "count": 50, "cost": 2.84, "tokens": 12000 }
   },
   "byDate": {
@@ -504,7 +527,7 @@ Get usage analytics.
     "anthropic/claude-3-haiku": 36
   },
   "budgetStatus": {
-    "budget": 50.00,
+    "budget": 50.0,
     "currentSpend": 12.34,
     "percentUsed": 24.68,
     "remaining": 37.66,
@@ -525,28 +548,28 @@ Get usage analytics.
 
 ```typescript
 export class OpenRouterClient {
-  private apiKey: string;
-  private defaultModel: string;
-  private fallbackModel: string;
-  private baseURL = 'https://openrouter.ai/api/v1';
+  private apiKey: string
+  private defaultModel: string
+  private fallbackModel: string
+  private baseURL = 'https://openrouter.ai/api/v1'
 
   constructor() {
-    this.apiKey = process.env.OPENROUTER_API_KEY!;
-    this.defaultModel = process.env.OPENROUTER_DEFAULT_MODEL!;
-    this.fallbackModel = process.env.OPENROUTER_FALLBACK_MODEL!;
+    this.apiKey = process.env.OPENROUTER_API_KEY!
+    this.defaultModel = process.env.OPENROUTER_DEFAULT_MODEL!
+    this.fallbackModel = process.env.OPENROUTER_FALLBACK_MODEL!
   }
 
   async chat(
     messages: OpenRouterMessage[],
     options: Partial<OpenRouterRequest> = {}
   ): Promise<OpenRouterResponse> {
-    const model = options.model || this.defaultModel;
+    const model = options.model || this.defaultModel
 
     try {
-      return await this.makeRequest(model, messages, options);
+      return await this.makeRequest(model, messages, options)
     } catch (error) {
-      console.warn(`Primary model failed, falling back to ${this.fallbackModel}`);
-      return await this.makeRequest(this.fallbackModel, messages, options);
+      console.warn(`Primary model failed, falling back to ${this.fallbackModel}`)
+      return await this.makeRequest(this.fallbackModel, messages, options)
     }
   }
 
@@ -558,7 +581,7 @@ export class OpenRouterClient {
     const response = await fetch(`${this.baseURL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://adsapp.nl',
         'X-Title': 'ADSapp WhatsApp AI',
@@ -570,31 +593,31 @@ export class OpenRouterClient {
         temperature: options.temperature || 0.7,
         ...options,
       }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.statusText}`);
+      throw new Error(`OpenRouter API error: ${response.statusText}`)
     }
 
-    return await response.json();
+    return await response.json()
   }
 
   // Cost calculation per model
   private calculateCost(model: string, totalTokens: number): number {
     const costs: Record<string, number> = {
-      'anthropic/claude-3.5-sonnet': 3.00,  // $3 per million tokens
-      'anthropic/claude-3-haiku': 0.25,     // $0.25 per million tokens
-      'anthropic/claude-3-opus': 15.00,     // $15 per million tokens
-      'openai/gpt-4-turbo': 10.00,
-      'openai/gpt-3.5-turbo': 0.50,
-    };
+      'anthropic/claude-3.5-sonnet': 3.0, // $3 per million tokens
+      'anthropic/claude-3-haiku': 0.25, // $0.25 per million tokens
+      'anthropic/claude-3-opus': 15.0, // $15 per million tokens
+      'openai/gpt-4-turbo': 10.0,
+      'openai/gpt-3.5-turbo': 0.5,
+    }
 
-    const costPerMillion = costs[model] || 1.00;
-    return (totalTokens / 1_000_000) * costPerMillion;
+    const costPerMillion = costs[model] || 1.0
+    return (totalTokens / 1_000_000) * costPerMillion
   }
 
   async logUsage(params: AIFeatureUsage): Promise<void> {
-    const supabase = createServiceRoleClient();
+    const supabase = createServiceRoleClient()
 
     await supabase.from('ai_responses').insert({
       organization_id: params.organizationId,
@@ -608,26 +631,27 @@ export class OpenRouterClient {
       cost_usd: this.calculateCost(params.model, params.tokensUsed),
       latency_ms: params.latencyMs,
       metadata: params.metadata,
-    });
+    })
   }
 }
 
-export const openRouter = new OpenRouterClient();
+export const openRouter = new OpenRouterClient()
 ```
 
 ### Model Selection Strategy
 
 **Use Cases by Model**:
 
-| Model | Use For | Cost | Speed |
-|-------|---------|------|-------|
-| **Claude 3.5 Sonnet** | Draft suggestions, complex templates | $3/M | Medium |
-| **Claude 3 Haiku** | Sentiment analysis, auto-responses | $0.25/M | Fast |
-| **Claude 3 Opus** | Executive summaries, critical analysis | $15/M | Slow |
-| **GPT-4 Turbo** | Alternative for Sonnet | $10/M | Medium |
-| **GPT-3.5 Turbo** | Simple classification tasks | $0.50/M | Fast |
+| Model                 | Use For                                | Cost    | Speed  |
+| --------------------- | -------------------------------------- | ------- | ------ |
+| **Claude 3.5 Sonnet** | Draft suggestions, complex templates   | $3/M    | Medium |
+| **Claude 3 Haiku**    | Sentiment analysis, auto-responses     | $0.25/M | Fast   |
+| **Claude 3 Opus**     | Executive summaries, critical analysis | $15/M   | Slow   |
+| **GPT-4 Turbo**       | Alternative for Sonnet                 | $10/M   | Medium |
+| **GPT-3.5 Turbo**     | Simple classification tasks            | $0.50/M | Fast   |
 
 **Fallback Logic**:
+
 1. Try primary model (e.g., Claude 3.5 Sonnet)
 2. On failure → Automatic fallback to Haiku
 3. If both fail → Return error to user
@@ -681,13 +705,13 @@ export function DraftSuggestionsButton({ conversationId }: { conversationId: str
 ### Example 2: Real-time Sentiment Monitoring
 
 ```typescript
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export function useSentimentMonitoring(conversationId: string) {
-  const [sentiment, setSentiment] = useState<SentimentAnalysis | null>(null);
+  const [sentiment, setSentiment] = useState<SentimentAnalysis | null>(null)
 
   useEffect(() => {
     const analyzeSentiment = async () => {
@@ -695,35 +719,41 @@ export function useSentimentMonitoring(conversationId: string) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversationId }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
       if (data.success) {
-        setSentiment(data.analysis);
+        setSentiment(data.analysis)
       }
-    };
+    }
 
-    analyzeSentiment();
+    analyzeSentiment()
 
     // Re-analyze every 5 messages
-    const supabase = createClient();
+    const supabase = createClient()
     const channel = supabase
       .channel(`messages:${conversationId}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `conversation_id=eq.${conversationId}`,
-      }, (payload) => {
-        // Re-analyze after new message
-        analyzeSentiment();
-      })
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        payload => {
+          // Re-analyze after new message
+          analyzeSentiment()
+        }
+      )
+      .subscribe()
 
-    return () => { channel.unsubscribe(); };
-  }, [conversationId]);
+    return () => {
+      channel.unsubscribe()
+    }
+  }, [conversationId])
 
-  return sentiment;
+  return sentiment
 }
 ```
 
@@ -731,31 +761,30 @@ export function useSentimentMonitoring(conversationId: string) {
 
 ```typescript
 // app/api/templates/ai-generate/route.ts
-import { NextRequest } from 'next/server';
-import { generateTemplate } from '@/lib/ai/templates';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server'
+import { generateTemplate } from '@/lib/ai/templates'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Auth check
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   // Get organization
   const { data: profile } = await supabase
     .from('profiles')
     .select('organization_id')
     .eq('id', user.id)
-    .single();
+    .single()
 
   // Generate template
-  const { purpose, tone, language } = await request.json();
+  const { purpose, tone, language } = await request.json()
 
-  const template = await generateTemplate(
-    { purpose, tone, language },
-    profile.organization_id
-  );
+  const template = await generateTemplate({ purpose, tone, language }, profile.organization_id)
 
   // Save to database
   await supabase.from('message_templates').insert({
@@ -766,9 +795,9 @@ export async function POST(request: NextRequest) {
     ai_generated: true,
     ai_prompt: purpose,
     created_by: user.id,
-  });
+  })
 
-  return Response.json({ success: true, template });
+  return Response.json({ success: true, template })
 }
 ```
 
@@ -813,23 +842,23 @@ CREATE POLICY tenant_isolation_conversation_ai_metadata ON conversation_ai_metad
 Always validate user inputs:
 
 ```typescript
-import { QueryValidators } from '@/lib/supabase/server';
+import { QueryValidators } from '@/lib/supabase/server'
 
 // Validate UUID
-const validation = QueryValidators.uuid(conversationId);
+const validation = QueryValidators.uuid(conversationId)
 if (!validation.isValid) {
-  return Response.json({ error: 'Invalid conversation ID' }, { status: 400 });
+  return Response.json({ error: 'Invalid conversation ID' }, { status: 400 })
 }
 
 // Validate enum
-const toneValidation = QueryValidators.enum(tone, ['professional', 'friendly', 'casual']);
+const toneValidation = QueryValidators.enum(tone, ['professional', 'friendly', 'casual'])
 if (!toneValidation.isValid) {
-  return Response.json({ error: 'Invalid tone value' }, { status: 400 });
+  return Response.json({ error: 'Invalid tone value' }, { status: 400 })
 }
 
 // Validate number range
 if (maxTokens < 100 || maxTokens > 4000) {
-  return Response.json({ error: 'max_tokens must be between 100 and 4000' }, { status: 400 });
+  return Response.json({ error: 'max_tokens must be between 100 and 4000' }, { status: 400 })
 }
 ```
 
@@ -843,6 +872,7 @@ OPENROUTER_API_KEY=sk-or-v1-...your-key
 ```
 
 **Best Practices**:
+
 - ✅ Use environment variables
 - ✅ Rotate keys every 90 days
 - ✅ Monitor usage for anomalies
@@ -859,44 +889,43 @@ OPENROUTER_API_KEY=sk-or-v1-...your-key
 **Test File**: `tests/unit/ai/openrouter.test.ts`
 
 ```typescript
-import { describe, it, expect, jest } from '@jest/globals';
-import { OpenRouterClient } from '@/lib/ai/openrouter';
+import { describe, it, expect, jest } from '@jest/globals'
+import { OpenRouterClient } from '@/lib/ai/openrouter'
 
 describe('OpenRouterClient', () => {
   it('should generate chat completion', async () => {
-    const client = new OpenRouterClient();
+    const client = new OpenRouterClient()
 
     const response = await client.chat([
       { role: 'system', content: 'You are a helpful assistant' },
-      { role: 'user', content: 'Say hello' }
-    ]);
+      { role: 'user', content: 'Say hello' },
+    ])
 
-    expect(response.choices).toBeDefined();
-    expect(response.choices[0].message.content).toBeTruthy();
-  });
+    expect(response.choices).toBeDefined()
+    expect(response.choices[0].message.content).toBeTruthy()
+  })
 
   it('should fallback to secondary model on failure', async () => {
-    const client = new OpenRouterClient();
+    const client = new OpenRouterClient()
 
     // Mock primary model failure
-    jest.spyOn(client as any, 'makeRequest')
+    jest
+      .spyOn(client as any, 'makeRequest')
       .mockRejectedValueOnce(new Error('Primary failed'))
-      .mockResolvedValueOnce({ choices: [{ message: { content: 'Fallback response' } }] });
+      .mockResolvedValueOnce({ choices: [{ message: { content: 'Fallback response' } }] })
 
-    const response = await client.chat([
-      { role: 'user', content: 'Test' }
-    ]);
+    const response = await client.chat([{ role: 'user', content: 'Test' }])
 
-    expect(response.choices[0].message.content).toBe('Fallback response');
-  });
+    expect(response.choices[0].message.content).toBe('Fallback response')
+  })
 
   it('should calculate costs correctly', async () => {
-    const client = new OpenRouterClient();
+    const client = new OpenRouterClient()
 
-    const cost = (client as any).calculateCost('anthropic/claude-3.5-sonnet', 1000);
-    expect(cost).toBe(0.003); // $3 per million = $0.003 per thousand
-  });
-});
+    const cost = (client as any).calculateCost('anthropic/claude-3.5-sonnet', 1000)
+    expect(cost).toBe(0.003) // $3 per million = $0.003 per thousand
+  })
+})
 ```
 
 ### Integration Tests
@@ -904,8 +933,8 @@ describe('OpenRouterClient', () => {
 **Test File**: `tests/integration/ai/drafts.test.ts`
 
 ```typescript
-import { describe, it, expect } from '@jest/globals';
-import { generateDraftSuggestions } from '@/lib/ai/drafts';
+import { describe, it, expect } from '@jest/globals'
+import { generateDraftSuggestions } from '@/lib/ai/drafts'
 
 describe('Draft Suggestions Integration', () => {
   it('should generate 3 suggestions for conversation', async () => {
@@ -913,22 +942,30 @@ describe('Draft Suggestions Integration', () => {
       conversationId: 'test-uuid',
       organizationId: 'org-uuid',
       messages: [
-        { sender: 'customer', content: 'I need help with my order', timestamp: '2025-11-05T10:00:00Z' },
-        { sender: 'agent', content: 'Sure, what is your order number?', timestamp: '2025-11-05T10:01:00Z' },
-        { sender: 'customer', content: 'Order #12345', timestamp: '2025-11-05T10:02:00Z' }
+        {
+          sender: 'customer',
+          content: 'I need help with my order',
+          timestamp: '2025-11-05T10:00:00Z',
+        },
+        {
+          sender: 'agent',
+          content: 'Sure, what is your order number?',
+          timestamp: '2025-11-05T10:01:00Z',
+        },
+        { sender: 'customer', content: 'Order #12345', timestamp: '2025-11-05T10:02:00Z' },
       ],
       customerName: 'John Doe',
       customerPhone: '+31612345678',
-    };
+    }
 
-    const suggestions = await generateDraftSuggestions(context, 3);
+    const suggestions = await generateDraftSuggestions(context, 3)
 
-    expect(suggestions).toHaveLength(3);
-    expect(suggestions[0]).toHaveProperty('content');
-    expect(suggestions[0]).toHaveProperty('confidence');
-    expect(suggestions[0].confidence).toBeGreaterThan(0.5);
-  });
-});
+    expect(suggestions).toHaveLength(3)
+    expect(suggestions[0]).toHaveProperty('content')
+    expect(suggestions[0]).toHaveProperty('confidence')
+    expect(suggestions[0].confidence).toBeGreaterThan(0.5)
+  })
+})
 ```
 
 ### E2E Tests
@@ -936,41 +973,41 @@ describe('Draft Suggestions Integration', () => {
 **Test File**: `tests/e2e/ai-features.spec.ts`
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('AI Features E2E', () => {
   test('should generate draft suggestions in inbox', async ({ page }) => {
     // Login
-    await page.goto('/auth/signin');
-    await page.fill('input[name="email"]', 'test@example.com');
-    await page.fill('input[name="password"]', 'password');
-    await page.click('button[type="submit"]');
+    await page.goto('/auth/signin')
+    await page.fill('input[name="email"]', 'test@example.com')
+    await page.fill('input[name="password"]', 'password')
+    await page.click('button[type="submit"]')
 
     // Navigate to inbox
-    await page.goto('/dashboard/inbox');
-    await page.waitForSelector('.conversation-list');
+    await page.goto('/dashboard/inbox')
+    await page.waitForSelector('.conversation-list')
 
     // Select conversation
-    await page.click('.conversation-item:first-child');
+    await page.click('.conversation-item:first-child')
 
     // Click AI suggestions button
-    await page.click('button:has-text("AI Suggesties")');
+    await page.click('button:has-text("AI Suggesties")')
 
     // Wait for suggestions to load
-    await page.waitForSelector('.draft-suggestion', { timeout: 10000 });
+    await page.waitForSelector('.draft-suggestion', { timeout: 10000 })
 
     // Verify 3 suggestions are displayed
-    const suggestions = await page.locator('.draft-suggestion').count();
-    expect(suggestions).toBe(3);
+    const suggestions = await page.locator('.draft-suggestion').count()
+    expect(suggestions).toBe(3)
 
     // Click "Use" button on first suggestion
-    await page.click('.draft-suggestion:first-child button:has-text("Gebruiken")');
+    await page.click('.draft-suggestion:first-child button:has-text("Gebruiken")')
 
     // Verify text is placed in message input
-    const messageInput = await page.locator('textarea[name="message"]').inputValue();
-    expect(messageInput).toBeTruthy();
-  });
-});
+    const messageInput = await page.locator('textarea[name="message"]').inputValue()
+    expect(messageInput).toBeTruthy()
+  })
+})
 ```
 
 ---
@@ -982,35 +1019,35 @@ test.describe('AI Features E2E', () => {
 Implement Redis caching for repeated operations:
 
 ```typescript
-import Redis from 'ioredis';
+import Redis from 'ioredis'
 
-const redis = new Redis(process.env.REDIS_URL);
+const redis = new Redis(process.env.REDIS_URL)
 
 // Cache AI settings per organization
 export async function getAISettings(organizationId: string) {
-  const cacheKey = `ai:settings:${organizationId}`;
+  const cacheKey = `ai:settings:${organizationId}`
 
   // Try cache first
-  const cached = await redis.get(cacheKey);
+  const cached = await redis.get(cacheKey)
   if (cached) {
-    return JSON.parse(cached);
+    return JSON.parse(cached)
   }
 
   // Fetch from database
-  const settings = await fetchSettingsFromDB(organizationId);
+  const settings = await fetchSettingsFromDB(organizationId)
 
   // Cache for 1 hour
-  await redis.setex(cacheKey, 3600, JSON.stringify(settings));
+  await redis.setex(cacheKey, 3600, JSON.stringify(settings))
 
-  return settings;
+  return settings
 }
 
 // Invalidate cache on settings update
 export async function updateAISettings(organizationId: string, updates: Partial<AISettings>) {
-  await updateSettingsInDB(organizationId, updates);
+  await updateSettingsInDB(organizationId, updates)
 
   // Invalidate cache
-  await redis.del(`ai:settings:${organizationId}`);
+  await redis.del(`ai:settings:${organizationId}`)
 }
 ```
 
@@ -1022,21 +1059,21 @@ Process multiple operations in parallel:
 // Generate drafts for multiple conversations
 export async function batchGenerateDrafts(conversationIds: string[]) {
   const promises = conversationIds.map(id =>
-    generateDraftSuggestions({ conversationId: id, /* ... */ })
-  );
+    generateDraftSuggestions({ conversationId: id /* ... */ })
+  )
 
-  return await Promise.allSettled(promises);
+  return await Promise.allSettled(promises)
 }
 
 // Analyze sentiment for all open conversations
 export async function batchAnalyzeSentiment(organizationId: string) {
-  const conversations = await getOpenConversations(organizationId);
+  const conversations = await getOpenConversations(organizationId)
 
   const analyses = await Promise.all(
-    conversations.map(conv => analyzeSentiment({ conversationId: conv.id, /* ... */ }))
-  );
+    conversations.map(conv => analyzeSentiment({ conversationId: conv.id /* ... */ }))
+  )
 
-  return analyses;
+  return analyses
 }
 ```
 
@@ -1048,11 +1085,11 @@ Reduce costs by optimizing prompts:
 // Before: Verbose prompt (500 tokens)
 const verbosePrompt = `You are a professional customer service assistant.
 Please analyze the following conversation and provide 3 different response
-suggestions. Each suggestion should be professional, friendly, and helpful...`;
+suggestions. Each suggestion should be professional, friendly, and helpful...`
 
 // After: Concise prompt (150 tokens)
 const optimizedPrompt = `Generate 3 WhatsApp response suggestions
-(professional, friendly, empathetic) for:`;
+(professional, friendly, empathetic) for:`
 
 // Savings: 70% fewer tokens = 70% cost reduction
 ```
@@ -1101,27 +1138,26 @@ export function MessageRow({ message }: { message: Message }) {
 **Symptom**: `OpenRouter API error: Too Many Requests`
 
 **Solutions**:
+
 ```typescript
 // Implement exponential backoff
 async function retryWithBackoff(fn: () => Promise<any>, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     try {
-      return await fn();
+      return await fn()
     } catch (error) {
       if (error.status === 429 && i < maxRetries - 1) {
-        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
+        const delay = Math.pow(2, i) * 1000 // 1s, 2s, 4s
+        await new Promise(resolve => setTimeout(resolve, delay))
+        continue
       }
-      throw error;
+      throw error
     }
   }
 }
 
 // Use in OpenRouter client
-const response = await retryWithBackoff(() =>
-  this.makeRequest(model, messages, options)
-);
+const response = await retryWithBackoff(() => this.makeRequest(model, messages, options))
 ```
 
 #### 2. Budget Exceeded
@@ -1129,18 +1165,16 @@ const response = await retryWithBackoff(() =>
 **Symptom**: AI features stop working mid-month
 
 **Solutions**:
+
 ```typescript
 // Pre-check budget before expensive operations
 export async function generateDraftSuggestions(context: ConversationContext) {
-  const estimatedCost = 0.01; // Estimate based on operation
+  const estimatedCost = 0.01 // Estimate based on operation
 
-  const canAfford = await checkAIBudgetLimit(
-    context.organizationId,
-    estimatedCost
-  );
+  const canAfford = await checkAIBudgetLimit(context.organizationId, estimatedCost)
 
   if (!canAfford) {
-    throw new Error('Monthly AI budget exceeded. AI features paused until next month.');
+    throw new Error('Monthly AI budget exceeded. AI features paused until next month.')
   }
 
   // Proceed with generation...
@@ -1152,18 +1186,19 @@ export async function generateDraftSuggestions(context: ConversationContext) {
 **Symptom**: AI operations take >10 seconds
 
 **Solutions**:
+
 ```typescript
 // 1. Switch to faster model
-const settings = await getAISettings(organizationId);
-const fastModel = 'anthropic/claude-3-haiku'; // 3x faster than Sonnet
+const settings = await getAISettings(organizationId)
+const fastModel = 'anthropic/claude-3-haiku' // 3x faster than Sonnet
 
 // 2. Reduce max_tokens
 const response = await openRouter.chat(messages, {
   max_tokens: 500, // Instead of 1000
-});
+})
 
 // 3. Use streaming for long responses
-const stream = await openRouter.chatStream(messages);
+const stream = await openRouter.chatStream(messages)
 for await (const chunk of stream) {
   // Process chunks as they arrive
 }
@@ -1174,33 +1209,34 @@ for await (const chunk of stream) {
 **Symptom**: `Failed to parse template JSON`
 
 **Solutions**:
-```typescript
+
+````typescript
 // Robust JSON parsing with fallbacks
 function parseAIResponse(content: string): any {
   // Try direct parse
   try {
-    return JSON.parse(content);
+    return JSON.parse(content)
   } catch {}
 
   // Try extracting from markdown code block
-  const codeBlockMatch = content.match(/```json\n([\s\S]*?)\n```/);
+  const codeBlockMatch = content.match(/```json\n([\s\S]*?)\n```/)
   if (codeBlockMatch) {
     try {
-      return JSON.parse(codeBlockMatch[1]);
+      return JSON.parse(codeBlockMatch[1])
     } catch {}
   }
 
   // Try finding JSON object
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (jsonMatch) {
     try {
-      return JSON.parse(jsonMatch[0]);
+      return JSON.parse(jsonMatch[0])
     } catch {}
   }
 
-  throw new Error('Could not parse AI response as JSON');
+  throw new Error('Could not parse AI response as JSON')
 }
-```
+````
 
 ---
 

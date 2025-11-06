@@ -66,9 +66,12 @@ function createMockQueryBuilder() {
   }
 
   // Make chain methods return the query builder instance
-  Object.keys(queryBuilder).forEach((key) => {
+  Object.keys(queryBuilder).forEach(key => {
     const method = queryBuilder[key as keyof typeof queryBuilder]
-    if (jest.isMockFunction(method) && method.getMockImplementation()?.toString().includes('mockReturnThis')) {
+    if (
+      jest.isMockFunction(method) &&
+      method.getMockImplementation()?.toString().includes('mockReturnThis')
+    ) {
       method.mockReturnValue(queryBuilder)
     }
   })
@@ -155,7 +158,7 @@ function createMockAuth() {
       data: { session: null, user: null },
       error: null,
     }),
-    onAuthStateChange: jest.fn((callback) => {
+    onAuthStateChange: jest.fn(callback => {
       return {
         data: {
           subscription: {

@@ -59,10 +59,7 @@ export class SecurityMiddleware {
       return null // Continue to next middleware
     } catch (error) {
       console.error('Security middleware error:', error)
-      return NextResponse.json(
-        { error: 'Security check failed' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Security check failed' }, { status: 500 })
     }
   }
 
@@ -71,10 +68,7 @@ export class SecurityMiddleware {
     if (contentLength) {
       const size = parseInt(contentLength, 10)
       if (size > (this.options.maxRequestSize || defaultOptions.maxRequestSize!)) {
-        return NextResponse.json(
-          { error: 'Request too large' },
-          { status: 413 }
-        )
+        return NextResponse.json({ error: 'Request too large' }, { status: 413 })
       }
     }
     return null
@@ -85,19 +79,13 @@ export class SecurityMiddleware {
 
     // Check blocked IPs
     if (this.options.blockedIps?.includes(ip)) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
     // Check whitelist if enabled
     if (this.options.enableIpWhitelisting && this.options.allowedIps?.length) {
       if (!this.options.allowedIps.includes(ip)) {
-        return NextResponse.json(
-          { error: 'Access denied' },
-          { status: 403 }
-        )
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
       }
     }
 
@@ -109,20 +97,14 @@ export class SecurityMiddleware {
       // Check URL for malicious patterns
       if (this.hasMaliciousUrl(request.url)) {
         this.logSecurityEvent('malicious_url', request, { url: request.url })
-        return NextResponse.json(
-          { error: 'Invalid request' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
       }
 
       // Check headers for malicious content
       const maliciousHeader = this.checkMaliciousHeaders(request)
       if (maliciousHeader) {
         this.logSecurityEvent('malicious_header', request, { header: maliciousHeader })
-        return NextResponse.json(
-          { error: 'Invalid request headers' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid request headers' }, { status: 400 })
       }
 
       // Check request body for malicious content
@@ -169,11 +151,7 @@ export class SecurityMiddleware {
   }
 
   private checkMaliciousHeaders(request: NextRequest): string | null {
-    const dangerousHeaders = [
-      'x-forwarded-host',
-      'x-original-url',
-      'x-rewrite-url',
-    ]
+    const dangerousHeaders = ['x-forwarded-host', 'x-original-url', 'x-rewrite-url']
 
     for (const header of dangerousHeaders) {
       const value = request.headers.get(header)
@@ -199,12 +177,9 @@ export class SecurityMiddleware {
           if (hasSqlInjection(text) || hasXss(text)) {
             this.logSecurityEvent('malicious_json_body', request, {
               contentLength: text.length,
-              sample: text.substring(0, 100)
+              sample: text.substring(0, 100),
             })
-            return NextResponse.json(
-              { error: 'Invalid request content' },
-              { status: 400 }
-            )
+            return NextResponse.json({ error: 'Invalid request content' }, { status: 400 })
           }
 
           // Check for suspicious patterns in JSON
@@ -218,10 +193,7 @@ export class SecurityMiddleware {
 
           if (suspiciousPatterns.some(pattern => pattern.test(text))) {
             this.logSecurityEvent('suspicious_json_content', request)
-            return NextResponse.json(
-              { error: 'Invalid request content' },
-              { status: 400 }
-            )
+            return NextResponse.json({ error: 'Invalid request content' }, { status: 400 })
           }
         }
       }
@@ -262,11 +234,7 @@ export class SecurityMiddleware {
     }
   }
 
-  private logSecurityEvent(
-    eventType: string,
-    request: NextRequest,
-    additionalData?: any
-  ): void {
+  private logSecurityEvent(eventType: string, request: NextRequest, additionalData?: any): void {
     const securityEvent = {
       timestamp: new Date().toISOString(),
       type: eventType,
@@ -293,7 +261,7 @@ export class SecurityMiddleware {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.LOGGING_API_KEY}`,
+            Authorization: `Bearer ${process.env.LOGGING_API_KEY}`,
           },
           body: JSON.stringify({ type, data }),
         })
@@ -311,7 +279,7 @@ export class SecurityMiddleware {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SECURITY_API_KEY}`,
+            Authorization: `Bearer ${process.env.SECURITY_API_KEY}`,
           },
           body: JSON.stringify(event),
         })

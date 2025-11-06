@@ -1,4 +1,5 @@
 # PHASE 4: ENTERPRISE FEATURES & SCALABILITY - IMPLEMENTATION PLAN
+
 ## Key Management, SSO, Event Sourcing, & Horizontal Scaling
 
 **Duration**: 8 weeks (Weeks 23-30)
@@ -11,15 +12,17 @@
 ## OVERVIEW
 
 Phase 4 transforms ADSapp from a production-ready SaaS into an **enterprise-grade platform** with:
+
 1. **Enterprise Security** (Weeks 23-26): KMS integration, SSO, GDPR automation, advanced RBAC
 2. **Scalability Architecture** (Weeks 27-30): API versioning, event sourcing, distributed tracing, horizontal scaling
 
 **Success Criteria**:
+
 - ✅ C-006: AWS KMS/Azure Key Vault integration operational
 - ✅ C-007: GDPR-compliant data retention and automated deletion
 - ✅ SSO integration with SAML 2.0 and OAuth providers
 - ✅ Advanced RBAC with custom roles and granular permissions
-- ✅ API versioning with backward compatibility (/api/v1/*)
+- ✅ API versioning with backward compatibility (/api/v1/\*)
 - ✅ Event sourcing architecture with complete audit trail
 - ✅ OpenTelemetry distributed tracing across all services
 - ✅ Horizontal scaling readiness (stateless, Redis sessions)
@@ -235,6 +238,7 @@ variable "environment" {
 ```
 
 **Deployment Commands**:
+
 ```bash
 cd infrastructure/aws
 terraform init
@@ -247,7 +251,12 @@ terraform apply -var="aws_account_id=YOUR_ACCOUNT_ID"
 **File**: `src/lib/security/kms.ts`
 
 ```typescript
-import { KMSClient, EncryptCommand, DecryptCommand, GenerateDataKeyCommand } from '@aws-sdk/client-kms';
+import {
+  KMSClient,
+  EncryptCommand,
+  DecryptCommand,
+  GenerateDataKeyCommand,
+} from '@aws-sdk/client-kms'
 
 /**
  * AWS KMS Service for Enterprise-Grade Encryption
@@ -259,12 +268,12 @@ import { KMSClient, EncryptCommand, DecryptCommand, GenerateDataKeyCommand } fro
  * - Multiple keys for data separation
  */
 export class KMSService {
-  private client: KMSClient;
+  private client: KMSClient
 
   // Key IDs from environment variables (Terraform outputs)
-  private readonly MASTER_KEY_ID = process.env.AWS_KMS_MASTER_KEY_ID!;
-  private readonly MFA_SECRETS_KEY_ID = process.env.AWS_KMS_MFA_SECRETS_KEY_ID!;
-  private readonly API_KEYS_KEY_ID = process.env.AWS_KMS_API_KEYS_KEY_ID!;
+  private readonly MASTER_KEY_ID = process.env.AWS_KMS_MASTER_KEY_ID!
+  private readonly MFA_SECRETS_KEY_ID = process.env.AWS_KMS_MFA_SECRETS_KEY_ID!
+  private readonly API_KEYS_KEY_ID = process.env.AWS_KMS_API_KEYS_KEY_ID!
 
   constructor() {
     this.client = new KMSClient({
@@ -273,7 +282,7 @@ export class KMSService {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
       },
-    });
+    })
   }
 
   /**
@@ -287,16 +296,16 @@ export class KMSService {
         Purpose: 'MFA-Secret',
         Application: 'ADSapp',
       },
-    });
+    })
 
-    const response = await this.client.send(command);
+    const response = await this.client.send(command)
 
     if (!response.CiphertextBlob) {
-      throw new Error('KMS encryption failed: No ciphertext returned');
+      throw new Error('KMS encryption failed: No ciphertext returned')
     }
 
     // Return base64-encoded ciphertext for database storage
-    return Buffer.from(response.CiphertextBlob).toString('base64');
+    return Buffer.from(response.CiphertextBlob).toString('base64')
   }
 
   /**
@@ -309,15 +318,15 @@ export class KMSService {
         Purpose: 'MFA-Secret',
         Application: 'ADSapp',
       },
-    });
+    })
 
-    const response = await this.client.send(command);
+    const response = await this.client.send(command)
 
     if (!response.Plaintext) {
-      throw new Error('KMS decryption failed: No plaintext returned');
+      throw new Error('KMS decryption failed: No plaintext returned')
     }
 
-    return Buffer.from(response.Plaintext).toString('utf-8');
+    return Buffer.from(response.Plaintext).toString('utf-8')
   }
 
   /**
@@ -332,15 +341,15 @@ export class KMSService {
         Application: 'ADSapp',
         OrganizationId: organizationId,
       },
-    });
+    })
 
-    const response = await this.client.send(command);
+    const response = await this.client.send(command)
 
     if (!response.CiphertextBlob) {
-      throw new Error('KMS encryption failed: No ciphertext returned');
+      throw new Error('KMS encryption failed: No ciphertext returned')
     }
 
-    return Buffer.from(response.CiphertextBlob).toString('base64');
+    return Buffer.from(response.CiphertextBlob).toString('base64')
   }
 
   /**
@@ -354,15 +363,15 @@ export class KMSService {
         Application: 'ADSapp',
         OrganizationId: organizationId,
       },
-    });
+    })
 
-    const response = await this.client.send(command);
+    const response = await this.client.send(command)
 
     if (!response.Plaintext) {
-      throw new Error('KMS decryption failed: No plaintext returned');
+      throw new Error('KMS decryption failed: No plaintext returned')
     }
 
-    return Buffer.from(response.Plaintext).toString('utf-8');
+    return Buffer.from(response.Plaintext).toString('utf-8')
   }
 
   /**
@@ -373,32 +382,35 @@ export class KMSService {
    * 2. Encrypt data with DEK (symmetric encryption)
    * 3. Store encrypted DEK with encrypted data
    */
-  async encryptLargeData(data: string, context: Record<string, string>): Promise<{
-    encryptedData: string;
-    encryptedDataKey: string;
+  async encryptLargeData(
+    data: string,
+    context: Record<string, string>
+  ): Promise<{
+    encryptedData: string
+    encryptedDataKey: string
   }> {
     // 1. Generate data encryption key
     const dataKeyCommand = new GenerateDataKeyCommand({
       KeyId: this.MASTER_KEY_ID,
       KeySpec: 'AES_256',
       EncryptionContext: context,
-    });
+    })
 
-    const dataKeyResponse = await this.client.send(dataKeyCommand);
+    const dataKeyResponse = await this.client.send(dataKeyCommand)
 
     if (!dataKeyResponse.Plaintext || !dataKeyResponse.CiphertextBlob) {
-      throw new Error('KMS data key generation failed');
+      throw new Error('KMS data key generation failed')
     }
 
     // 2. Encrypt data with DEK using Web Crypto API
-    const dataKey = dataKeyResponse.Plaintext;
-    const encryptedData = await this.encryptWithAES256(data, dataKey);
+    const dataKey = dataKeyResponse.Plaintext
+    const encryptedData = await this.encryptWithAES256(data, dataKey)
 
     // 3. Return encrypted data and encrypted DEK
     return {
       encryptedData,
       encryptedDataKey: Buffer.from(dataKeyResponse.CiphertextBlob).toString('base64'),
-    };
+    }
   }
 
   /**
@@ -413,16 +425,16 @@ export class KMSService {
     const dekCommand = new DecryptCommand({
       CiphertextBlob: Buffer.from(encryptedDataKey, 'base64'),
       EncryptionContext: context,
-    });
+    })
 
-    const dekResponse = await this.client.send(dekCommand);
+    const dekResponse = await this.client.send(dekCommand)
 
     if (!dekResponse.Plaintext) {
-      throw new Error('KMS DEK decryption failed');
+      throw new Error('KMS DEK decryption failed')
     }
 
     // 2. Decrypt data with DEK
-    return this.decryptWithAES256(encryptedData, dekResponse.Plaintext);
+    return this.decryptWithAES256(encryptedData, dekResponse.Plaintext)
   }
 
   /**
@@ -430,16 +442,12 @@ export class KMSService {
    */
   private async encryptWithAES256(data: string, key: Uint8Array): Promise<string> {
     // Import key
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      key,
-      { name: 'AES-GCM' },
-      false,
-      ['encrypt']
-    );
+    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, [
+      'encrypt',
+    ])
 
     // Generate random IV
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iv = crypto.getRandomValues(new Uint8Array(12))
 
     // Encrypt
     const encryptedBuffer = await crypto.subtle.encrypt(
@@ -449,14 +457,14 @@ export class KMSService {
       },
       cryptoKey,
       new TextEncoder().encode(data)
-    );
+    )
 
     // Combine IV + encrypted data
-    const combined = new Uint8Array(iv.length + encryptedBuffer.byteLength);
-    combined.set(iv);
-    combined.set(new Uint8Array(encryptedBuffer), iv.length);
+    const combined = new Uint8Array(iv.length + encryptedBuffer.byteLength)
+    combined.set(iv)
+    combined.set(new Uint8Array(encryptedBuffer), iv.length)
 
-    return Buffer.from(combined).toString('base64');
+    return Buffer.from(combined).toString('base64')
   }
 
   /**
@@ -464,18 +472,14 @@ export class KMSService {
    */
   private async decryptWithAES256(encryptedData: string, key: Uint8Array): Promise<string> {
     // Import key
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      key,
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-    );
+    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, [
+      'decrypt',
+    ])
 
     // Split IV and encrypted data
-    const combined = Buffer.from(encryptedData, 'base64');
-    const iv = combined.slice(0, 12);
-    const data = combined.slice(12);
+    const combined = Buffer.from(encryptedData, 'base64')
+    const iv = combined.slice(0, 12)
+    const data = combined.slice(12)
 
     // Decrypt
     const decryptedBuffer = await crypto.subtle.decrypt(
@@ -485,9 +489,9 @@ export class KMSService {
       },
       cryptoKey,
       data
-    );
+    )
 
-    return new TextDecoder().decode(decryptedBuffer);
+    return new TextDecoder().decode(decryptedBuffer)
   }
 
   /**
@@ -496,60 +500,60 @@ export class KMSService {
    */
   async reEncryptData(oldEncryptedData: string, keyType: 'mfa' | 'api'): Promise<string> {
     // 1. Decrypt with old key (KMS handles key rotation automatically)
-    let decrypted: string;
+    let decrypted: string
 
     if (keyType === 'mfa') {
-      decrypted = await this.decryptMFASecret(oldEncryptedData);
+      decrypted = await this.decryptMFASecret(oldEncryptedData)
     } else {
-      throw new Error('API key re-encryption requires organizationId');
+      throw new Error('API key re-encryption requires organizationId')
     }
 
     // 2. Re-encrypt with current key version
     if (keyType === 'mfa') {
-      return this.encryptMFASecret(decrypted);
+      return this.encryptMFASecret(decrypted)
     }
 
-    throw new Error('Invalid key type');
+    throw new Error('Invalid key type')
   }
 
   /**
    * Health check for KMS connectivity
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; latency: number }> {
-    const start = Date.now();
+    const start = Date.now()
 
     try {
       // Try to encrypt a test string
-      const testData = 'health-check';
-      const encrypted = await this.encryptMFASecret(testData);
-      const decrypted = await this.decryptMFASecret(encrypted);
+      const testData = 'health-check'
+      const encrypted = await this.encryptMFASecret(testData)
+      const decrypted = await this.decryptMFASecret(encrypted)
 
       if (decrypted !== testData) {
-        throw new Error('Encryption round-trip failed');
+        throw new Error('Encryption round-trip failed')
       }
 
       return {
         status: 'healthy',
         latency: Date.now() - start,
-      };
+      }
     } catch (error) {
-      console.error('[KMS] Health check failed:', error);
+      console.error('[KMS] Health check failed:', error)
       return {
         status: 'unhealthy',
         latency: Date.now() - start,
-      };
+      }
     }
   }
 }
 
 // Singleton instance
-let kmsInstance: KMSService | null = null;
+let kmsInstance: KMSService | null = null
 
 export function getKMSService(): KMSService {
   if (!kmsInstance) {
-    kmsInstance = new KMSService();
+    kmsInstance = new KMSService()
   }
-  return kmsInstance;
+  return kmsInstance
 }
 ```
 
@@ -558,8 +562,8 @@ export function getKMSService(): KMSService {
 **File**: `src/lib/security/kms-migration.ts`
 
 ```typescript
-import { createClient } from '@/lib/supabase/server';
-import { getKMSService } from './kms';
+import { createClient } from '@/lib/supabase/server'
+import { getKMSService } from './kms'
 
 /**
  * Migration Service to Move Existing Encrypted Data to KMS
@@ -570,28 +574,28 @@ import { getKMSService } from './kms';
  * - Webhook secrets to KMS
  */
 export class KMSMigrationService {
-  private kms = getKMSService();
+  private kms = getKMSService()
 
   /**
    * Migrate all MFA secrets to KMS encryption
    */
   async migrateMFASecrets(): Promise<{
-    total: number;
-    migrated: number;
-    failed: number;
-    errors: string[];
+    total: number
+    migrated: number
+    failed: number
+    errors: string[]
   }> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get all profiles with MFA enabled
     const { data: profiles, error } = await supabase
       .from('profiles')
       .select('id, mfa_secret, mfa_enabled')
       .eq('mfa_enabled', true)
-      .not('mfa_secret', 'is', null);
+      .not('mfa_secret', 'is', null)
 
     if (error) {
-      throw new Error(`Failed to fetch profiles: ${error.message}`);
+      throw new Error(`Failed to fetch profiles: ${error.message}`)
     }
 
     const results = {
@@ -599,18 +603,18 @@ export class KMSMigrationService {
       migrated: 0,
       failed: 0,
       errors: [] as string[],
-    };
-
-    if (!profiles) {
-      return results;
     }
 
-    console.log(`[KMS Migration] Starting MFA secrets migration for ${profiles.length} profiles`);
+    if (!profiles) {
+      return results
+    }
+
+    console.log(`[KMS Migration] Starting MFA secrets migration for ${profiles.length} profiles`)
 
     for (const profile of profiles) {
       try {
         // Encrypt with KMS
-        const encryptedSecret = await this.kms.encryptMFASecret(profile.mfa_secret);
+        const encryptedSecret = await this.kms.encryptMFASecret(profile.mfa_secret)
 
         // Update database with KMS-encrypted secret
         const { error: updateError } = await supabase
@@ -620,44 +624,44 @@ export class KMSMigrationService {
             mfa_encryption_version: 'kms-v1',
             updated_at: new Date().toISOString(),
           })
-          .eq('id', profile.id);
+          .eq('id', profile.id)
 
         if (updateError) {
-          throw updateError;
+          throw updateError
         }
 
-        results.migrated++;
-        console.log(`[KMS Migration] Migrated MFA secret for profile ${profile.id}`);
+        results.migrated++
+        console.log(`[KMS Migration] Migrated MFA secret for profile ${profile.id}`)
       } catch (error: any) {
-        results.failed++;
-        results.errors.push(`Profile ${profile.id}: ${error.message}`);
-        console.error(`[KMS Migration] Failed to migrate profile ${profile.id}:`, error);
+        results.failed++
+        results.errors.push(`Profile ${profile.id}: ${error.message}`)
+        console.error(`[KMS Migration] Failed to migrate profile ${profile.id}:`, error)
       }
     }
 
-    console.log(`[KMS Migration] Completed: ${results.migrated} migrated, ${results.failed} failed`);
-    return results;
+    console.log(`[KMS Migration] Completed: ${results.migrated} migrated, ${results.failed} failed`)
+    return results
   }
 
   /**
    * Migrate organization API keys to KMS
    */
   async migrateAPIKeys(): Promise<{
-    total: number;
-    migrated: number;
-    failed: number;
-    errors: string[];
+    total: number
+    migrated: number
+    failed: number
+    errors: string[]
   }> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get all organizations with WhatsApp credentials
     const { data: organizations, error } = await supabase
       .from('organizations')
       .select('id, whatsapp_access_token, settings')
-      .not('whatsapp_access_token', 'is', null);
+      .not('whatsapp_access_token', 'is', null)
 
     if (error) {
-      throw new Error(`Failed to fetch organizations: ${error.message}`);
+      throw new Error(`Failed to fetch organizations: ${error.message}`)
     }
 
     const results = {
@@ -665,31 +669,27 @@ export class KMSMigrationService {
       migrated: 0,
       failed: 0,
       errors: [] as string[],
-    };
-
-    if (!organizations) {
-      return results;
     }
 
-    console.log(`[KMS Migration] Starting API keys migration for ${organizations.length} organizations`);
+    if (!organizations) {
+      return results
+    }
+
+    console.log(
+      `[KMS Migration] Starting API keys migration for ${organizations.length} organizations`
+    )
 
     for (const org of organizations) {
       try {
         // Encrypt WhatsApp access token with KMS
-        const encryptedToken = await this.kms.encryptAPIKey(
-          org.whatsapp_access_token,
-          org.id
-        );
+        const encryptedToken = await this.kms.encryptAPIKey(org.whatsapp_access_token, org.id)
 
         // Encrypt webhook secret if present
-        const webhookSecret = org.settings?.whatsapp?.webhook_secret;
-        let encryptedWebhookSecret: string | null = null;
+        const webhookSecret = org.settings?.whatsapp?.webhook_secret
+        let encryptedWebhookSecret: string | null = null
 
         if (webhookSecret) {
-          encryptedWebhookSecret = await this.kms.encryptAPIKey(
-            webhookSecret,
-            org.id
-          );
+          encryptedWebhookSecret = await this.kms.encryptAPIKey(webhookSecret, org.id)
         }
 
         // Update database
@@ -704,7 +704,7 @@ export class KMSMigrationService {
             key_id: process.env.AWS_KMS_API_KEYS_KEY_ID,
             migrated_at: new Date().toISOString(),
           },
-        };
+        }
 
         const { error: updateError } = await supabase
           .from('organizations')
@@ -713,23 +713,23 @@ export class KMSMigrationService {
             settings: updatedSettings,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', org.id);
+          .eq('id', org.id)
 
         if (updateError) {
-          throw updateError;
+          throw updateError
         }
 
-        results.migrated++;
-        console.log(`[KMS Migration] Migrated API keys for organization ${org.id}`);
+        results.migrated++
+        console.log(`[KMS Migration] Migrated API keys for organization ${org.id}`)
       } catch (error: any) {
-        results.failed++;
-        results.errors.push(`Organization ${org.id}: ${error.message}`);
-        console.error(`[KMS Migration] Failed to migrate organization ${org.id}:`, error);
+        results.failed++
+        results.errors.push(`Organization ${org.id}: ${error.message}`)
+        console.error(`[KMS Migration] Failed to migrate organization ${org.id}:`, error)
       }
     }
 
-    console.log(`[KMS Migration] Completed: ${results.migrated} migrated, ${results.failed} failed`);
-    return results;
+    console.log(`[KMS Migration] Completed: ${results.migrated} migrated, ${results.failed} failed`)
+    return results
   }
 
   /**
@@ -737,35 +737,35 @@ export class KMSMigrationService {
    * Ensures all encrypted data can be decrypted
    */
   async verifyMigration(): Promise<{
-    mfa_secrets_valid: number;
-    mfa_secrets_invalid: number;
-    api_keys_valid: number;
-    api_keys_invalid: number;
+    mfa_secrets_valid: number
+    mfa_secrets_invalid: number
+    api_keys_valid: number
+    api_keys_invalid: number
   }> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const results = {
       mfa_secrets_valid: 0,
       mfa_secrets_invalid: 0,
       api_keys_valid: 0,
       api_keys_invalid: 0,
-    };
+    }
 
     // Verify MFA secrets
     const { data: profiles } = await supabase
       .from('profiles')
       .select('id, mfa_secret, mfa_encryption_version')
       .eq('mfa_enabled', true)
-      .eq('mfa_encryption_version', 'kms-v1');
+      .eq('mfa_encryption_version', 'kms-v1')
 
     if (profiles) {
       for (const profile of profiles) {
         try {
-          await this.kms.decryptMFASecret(profile.mfa_secret);
-          results.mfa_secrets_valid++;
+          await this.kms.decryptMFASecret(profile.mfa_secret)
+          results.mfa_secrets_valid++
         } catch (error) {
-          results.mfa_secrets_invalid++;
-          console.error(`[KMS Verify] Invalid MFA secret for profile ${profile.id}`);
+          results.mfa_secrets_invalid++
+          console.error(`[KMS Verify] Invalid MFA secret for profile ${profile.id}`)
         }
       }
     }
@@ -774,23 +774,23 @@ export class KMSMigrationService {
     const { data: organizations } = await supabase
       .from('organizations')
       .select('id, whatsapp_access_token, settings')
-      .not('whatsapp_access_token', 'is', null);
+      .not('whatsapp_access_token', 'is', null)
 
     if (organizations) {
       for (const org of organizations) {
         if (org.settings?.encryption?.version === 'kms-v1') {
           try {
-            await this.kms.decryptAPIKey(org.whatsapp_access_token, org.id);
-            results.api_keys_valid++;
+            await this.kms.decryptAPIKey(org.whatsapp_access_token, org.id)
+            results.api_keys_valid++
           } catch (error) {
-            results.api_keys_invalid++;
-            console.error(`[KMS Verify] Invalid API key for organization ${org.id}`);
+            results.api_keys_invalid++
+            console.error(`[KMS Verify] Invalid API key for organization ${org.id}`)
           }
         }
       }
     }
 
-    return results;
+    return results
   }
 }
 ```
@@ -798,9 +798,9 @@ export class KMSMigrationService {
 **File**: `src/app/api/admin/kms/migrate/route.ts`
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { KMSMigrationService } from '@/lib/security/kms-migration';
-import { validateSuperAdminAccess } from '@/lib/middleware/super-admin';
+import { NextRequest, NextResponse } from 'next/server'
+import { KMSMigrationService } from '@/lib/security/kms-migration'
+import { validateSuperAdminAccess } from '@/lib/middleware/super-admin'
 
 /**
  * Super Admin Endpoint: Migrate Existing Data to KMS
@@ -809,22 +809,22 @@ import { validateSuperAdminAccess } from '@/lib/middleware/super-admin';
  */
 export async function POST(request: NextRequest) {
   // Only super admins can trigger migration
-  const authCheck = await validateSuperAdminAccess(request);
+  const authCheck = await validateSuperAdminAccess(request)
   if (authCheck.status !== 200) {
-    return authCheck;
+    return authCheck
   }
 
   try {
-    const migrationService = new KMSMigrationService();
+    const migrationService = new KMSMigrationService()
 
     // Migrate MFA secrets
-    const mfaResults = await migrationService.migrateMFASecrets();
+    const mfaResults = await migrationService.migrateMFASecrets()
 
     // Migrate API keys
-    const apiKeyResults = await migrationService.migrateAPIKeys();
+    const apiKeyResults = await migrationService.migrateAPIKeys()
 
     // Verify migration
-    const verification = await migrationService.verifyMigration();
+    const verification = await migrationService.verifyMigration()
 
     return NextResponse.json({
       success: true,
@@ -833,13 +833,10 @@ export async function POST(request: NextRequest) {
         api_keys: apiKeyResults,
         verification,
       },
-    });
+    })
   } catch (error: any) {
-    console.error('[KMS Migration] Error:', error);
-    return NextResponse.json(
-      { error: 'Migration failed', details: error.message },
-      { status: 500 }
-    );
+    console.error('[KMS Migration] Error:', error)
+    return NextResponse.json({ error: 'Migration failed', details: error.message }, { status: 500 })
   }
 }
 ```
@@ -1046,6 +1043,7 @@ output appIdentityPrincipalId string = appIdentity.properties.principalId
 ```
 
 **Deployment Commands**:
+
 ```bash
 cd infrastructure/azure
 
@@ -1064,8 +1062,8 @@ az deployment group create \
 **File**: `src/lib/security/azure-keyvault.ts`
 
 ```typescript
-import { DefaultAzureCredential } from '@azure/identity';
-import { CryptographyClient, KeyClient } from '@azure/keyvault-keys';
+import { DefaultAzureCredential } from '@azure/identity'
+import { CryptographyClient, KeyClient } from '@azure/keyvault-keys'
 
 /**
  * Azure Key Vault Service for Enterprise-Grade Encryption
@@ -1073,102 +1071,102 @@ import { CryptographyClient, KeyClient } from '@azure/keyvault-keys';
  * Alternative to AWS KMS for Azure-based deployments
  */
 export class AzureKeyVaultService {
-  private keyClient: KeyClient;
-  private credential: DefaultAzureCredential;
+  private keyClient: KeyClient
+  private credential: DefaultAzureCredential
 
-  private readonly KEY_VAULT_URL = process.env.AZURE_KEY_VAULT_URL!;
-  private readonly MASTER_KEY_NAME = 'adsapp-master-key';
-  private readonly MFA_SECRETS_KEY_NAME = 'adsapp-mfa-secrets-key';
-  private readonly API_KEYS_KEY_NAME = 'adsapp-api-keys-key';
+  private readonly KEY_VAULT_URL = process.env.AZURE_KEY_VAULT_URL!
+  private readonly MASTER_KEY_NAME = 'adsapp-master-key'
+  private readonly MFA_SECRETS_KEY_NAME = 'adsapp-mfa-secrets-key'
+  private readonly API_KEYS_KEY_NAME = 'adsapp-api-keys-key'
 
   constructor() {
-    this.credential = new DefaultAzureCredential();
-    this.keyClient = new KeyClient(this.KEY_VAULT_URL, this.credential);
+    this.credential = new DefaultAzureCredential()
+    this.keyClient = new KeyClient(this.KEY_VAULT_URL, this.credential)
   }
 
   /**
    * Encrypt MFA secret with Azure Key Vault
    */
   async encryptMFASecret(secret: string): Promise<string> {
-    const key = await this.keyClient.getKey(this.MFA_SECRETS_KEY_NAME);
-    const cryptoClient = new CryptographyClient(key, this.credential);
+    const key = await this.keyClient.getKey(this.MFA_SECRETS_KEY_NAME)
+    const cryptoClient = new CryptographyClient(key, this.credential)
 
     const encryptResult = await cryptoClient.encrypt({
       algorithm: 'RSA-OAEP-256',
       plaintext: Buffer.from(secret, 'utf-8'),
-    });
+    })
 
-    return Buffer.from(encryptResult.result).toString('base64');
+    return Buffer.from(encryptResult.result).toString('base64')
   }
 
   /**
    * Decrypt MFA secret
    */
   async decryptMFASecret(encryptedSecret: string): Promise<string> {
-    const key = await this.keyClient.getKey(this.MFA_SECRETS_KEY_NAME);
-    const cryptoClient = new CryptographyClient(key, this.credential);
+    const key = await this.keyClient.getKey(this.MFA_SECRETS_KEY_NAME)
+    const cryptoClient = new CryptographyClient(key, this.credential)
 
     const decryptResult = await cryptoClient.decrypt({
       algorithm: 'RSA-OAEP-256',
       ciphertext: Buffer.from(encryptedSecret, 'base64'),
-    });
+    })
 
-    return Buffer.from(decryptResult.result).toString('utf-8');
+    return Buffer.from(decryptResult.result).toString('utf-8')
   }
 
   /**
    * Encrypt API key
    */
   async encryptAPIKey(apiKey: string, organizationId: string): Promise<string> {
-    const key = await this.keyClient.getKey(this.API_KEYS_KEY_NAME);
-    const cryptoClient = new CryptographyClient(key, this.credential);
+    const key = await this.keyClient.getKey(this.API_KEYS_KEY_NAME)
+    const cryptoClient = new CryptographyClient(key, this.credential)
 
     const encryptResult = await cryptoClient.encrypt({
       algorithm: 'RSA-OAEP-256',
       plaintext: Buffer.from(apiKey, 'utf-8'),
       // Additional authenticated data for context
       additionalAuthenticatedData: Buffer.from(organizationId, 'utf-8'),
-    });
+    })
 
-    return Buffer.from(encryptResult.result).toString('base64');
+    return Buffer.from(encryptResult.result).toString('base64')
   }
 
   /**
    * Decrypt API key
    */
   async decryptAPIKey(encryptedKey: string, organizationId: string): Promise<string> {
-    const key = await this.keyClient.getKey(this.API_KEYS_KEY_NAME);
-    const cryptoClient = new CryptographyClient(key, this.credential);
+    const key = await this.keyClient.getKey(this.API_KEYS_KEY_NAME)
+    const cryptoClient = new CryptographyClient(key, this.credential)
 
     const decryptResult = await cryptoClient.decrypt({
       algorithm: 'RSA-OAEP-256',
       ciphertext: Buffer.from(encryptedKey, 'base64'),
       additionalAuthenticatedData: Buffer.from(organizationId, 'utf-8'),
-    });
+    })
 
-    return Buffer.from(decryptResult.result).toString('utf-8');
+    return Buffer.from(decryptResult.result).toString('utf-8')
   }
 
   /**
    * Health check
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; latency: number }> {
-    const start = Date.now();
+    const start = Date.now()
 
     try {
       // Verify we can access the Key Vault
-      await this.keyClient.getKey(this.MASTER_KEY_NAME);
+      await this.keyClient.getKey(this.MASTER_KEY_NAME)
 
       return {
         status: 'healthy',
         latency: Date.now() - start,
-      };
+      }
     } catch (error) {
-      console.error('[Azure Key Vault] Health check failed:', error);
+      console.error('[Azure Key Vault] Health check failed:', error)
       return {
         status: 'unhealthy',
         latency: Date.now() - start,
-      };
+      }
     }
   }
 }
@@ -1307,6 +1305,7 @@ CREATE INDEX IF NOT EXISTS idx_organizations_api_key_encryption_version ON organ
 ```
 
 **Deliverables - Week 23**:
+
 - ✅ AWS KMS infrastructure deployed with Terraform
 - ✅ Azure Key Vault alternative configuration
 - ✅ KMS service implementation with envelope encryption
@@ -1372,10 +1371,10 @@ export enum RetentionPeriod {
 export const DATA_RETENTION_POLICIES: Record<
   DataCategory,
   {
-    lawfulBasis: LawfulBasis;
-    retentionPeriod: RetentionPeriod;
-    automaticDeletion: boolean;
-    description: string;
+    lawfulBasis: LawfulBasis
+    retentionPeriod: RetentionPeriod
+    automaticDeletion: boolean
+    description: string
   }
 > = {
   [DataCategory.PERSONAL_IDENTITY]: {
@@ -1420,25 +1419,22 @@ export const DATA_RETENTION_POLICIES: Record<
     automaticDeletion: true,
     description: 'Security logs, access logs - compliance',
   },
-};
+}
 
 /**
  * Calculate deletion date based on retention policy
  */
-export function calculateDeletionDate(
-  category: DataCategory,
-  createdAt: Date
-): Date | null {
-  const policy = DATA_RETENTION_POLICIES[category];
+export function calculateDeletionDate(category: DataCategory, createdAt: Date): Date | null {
+  const policy = DATA_RETENTION_POLICIES[category]
 
   if (policy.retentionPeriod === RetentionPeriod.INDEFINITE) {
-    return null; // No automatic deletion
+    return null // No automatic deletion
   }
 
-  const deletionDate = new Date(createdAt);
-  deletionDate.setDate(deletionDate.getDate() + policy.retentionPeriod);
+  const deletionDate = new Date(createdAt)
+  deletionDate.setDate(deletionDate.getDate() + policy.retentionPeriod)
 
-  return deletionDate;
+  return deletionDate
 }
 
 /**
@@ -1449,13 +1445,13 @@ export function shouldDelete(
   createdAt: Date,
   now: Date = new Date()
 ): boolean {
-  const deletionDate = calculateDeletionDate(category, createdAt);
+  const deletionDate = calculateDeletionDate(category, createdAt)
 
   if (!deletionDate) {
-    return false; // Indefinite retention
+    return false // Indefinite retention
   }
 
-  return now >= deletionDate;
+  return now >= deletionDate
 }
 ```
 

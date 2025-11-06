@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
@@ -10,7 +9,10 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = createClient()
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
     if (userError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -39,7 +41,7 @@ export async function GET(req: NextRequest) {
     const invoices = await stripe.invoices.list({
       customer: organization.stripe_customer_id,
       limit: 100,
-      status: 'paid'
+      status: 'paid',
     })
 
     const formattedInvoices = invoices.data.map(invoice => ({
@@ -51,15 +53,12 @@ export async function GET(req: NextRequest) {
       hosted_invoice_url: invoice.hosted_invoice_url,
       invoice_pdf: invoice.invoice_pdf,
       number: invoice.number,
-      description: invoice.lines.data[0]?.description || 'Subscription'
+      description: invoice.lines.data[0]?.description || 'Subscription',
     }))
 
     return NextResponse.json({ invoices: formattedInvoices })
   } catch (error) {
     console.error('Error fetching invoices:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

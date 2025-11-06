@@ -4,19 +4,16 @@ import { requireAuth } from '@/lib/auth'
 import { WhatsAppService } from '@/lib/whatsapp/service'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const supabase = await createClient();
-    const { id: conversationId } = await params;
+    const { organizationId } = getTenantContext(request)
+    const supabase = await createClient()
+    const { id: conversationId } = await params
 
     // Verify conversation belongs to user's organization
     const { data: conversation } = await supabase
@@ -24,7 +21,7 @@ export async function GET(
       .select('*')
       .eq('id', conversationId)
       .eq('organization_id', organizationId)
-      .single();
+      .single()
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
@@ -49,19 +46,16 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + strict rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
-    const supabase = await createClient();
-    const { id: conversationId } = await params;
+    const { organizationId, userId } = getTenantContext(request)
+    const supabase = await createClient()
+    const { id: conversationId } = await params
 
     const body = await request.json()
     const { content, type = 'text' } = body
@@ -76,7 +70,7 @@ export async function POST(
       .select('*')
       .eq('id', conversationId)
       .eq('organization_id', organizationId)
-      .single();
+      .single()
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
@@ -84,12 +78,7 @@ export async function POST(
 
     // Send message via WhatsApp
     const whatsappService = await WhatsAppService.createFromOrganization(organizationId)
-    const message = await whatsappService.sendMessage(
-      conversationId,
-      content,
-      userId,
-      type
-    )
+    const message = await whatsappService.sendMessage(conversationId, content, userId, type)
 
     // Return the created message
     const { data: messageWithSender } = await supabase
@@ -110,19 +99,16 @@ export async function POST(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const supabase = await createClient();
-    const { id: conversationId } = await params;
+    const { organizationId } = getTenantContext(request)
+    const supabase = await createClient()
+    const { id: conversationId } = await params
 
     const body = await request.json()
     const { action, messageId } = body
@@ -137,7 +123,7 @@ export async function PATCH(
       .select('*')
       .eq('id', conversationId)
       .eq('organization_id', organizationId)
-      .single();
+      .single()
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })

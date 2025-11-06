@@ -119,8 +119,18 @@
     }
   ],
   "usage": {
-    "full-stack-feature": ["Lead Developer", "Backend API Developer", "Frontend Developer", "Database Architect"],
-    "api-development": ["Backend API Developer", "Database Architect", "Testing & QA", "Documentation"],
+    "full-stack-feature": [
+      "Lead Developer",
+      "Backend API Developer",
+      "Frontend Developer",
+      "Database Architect"
+    ],
+    "api-development": [
+      "Backend API Developer",
+      "Database Architect",
+      "Testing & QA",
+      "Documentation"
+    ],
     "production-deployment": ["DevOps & Infrastructure", "Security", "Testing & QA"],
     "code-quality": ["Code Review", "Testing & QA", "Security"]
   },

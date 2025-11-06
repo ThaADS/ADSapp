@@ -70,18 +70,21 @@ export interface SendTemplateRequest {
 export class WhatsAppTemplateManager {
   private baseUrl = '/api/templates'
 
-  async getTemplates(organizationId: string, options?: {
-    status?: string
-    category?: string
-    language?: string
-    limit?: number
-    offset?: number
-  }): Promise<WhatsAppTemplate[]> {
+  async getTemplates(
+    organizationId: string,
+    options?: {
+      status?: string
+      category?: string
+      language?: string
+      limit?: number
+      offset?: number
+    }
+  ): Promise<WhatsAppTemplate[]> {
     try {
       const params = new URLSearchParams({
         organization_id: organizationId,
         limit: (options?.limit || 50).toString(),
-        offset: (options?.offset || 0).toString()
+        offset: (options?.offset || 0).toString(),
       })
 
       if (options?.status) params.append('status', options.status)
@@ -97,7 +100,7 @@ export class WhatsAppTemplateManager {
       return data.templates || []
     } catch (error) {
       console.error('Error fetching templates:', error)
-      
+
       // Return mock templates for development
       return this.getMockTemplates(organizationId)
     }
@@ -119,7 +122,10 @@ export class WhatsAppTemplateManager {
     }
   }
 
-  async createTemplate(organizationId: string, template: CreateTemplateRequest): Promise<WhatsAppTemplate> {
+  async createTemplate(
+    organizationId: string,
+    template: CreateTemplateRequest
+  ): Promise<WhatsAppTemplate> {
     try {
       const response = await fetch(this.baseUrl, {
         method: 'POST',
@@ -128,8 +134,8 @@ export class WhatsAppTemplateManager {
         },
         body: JSON.stringify({
           organization_id: organizationId,
-          ...template
-        })
+          ...template,
+        }),
       })
 
       if (!response.ok) {
@@ -144,14 +150,17 @@ export class WhatsAppTemplateManager {
     }
   }
 
-  async updateTemplate(templateId: string, updates: Partial<CreateTemplateRequest>): Promise<WhatsAppTemplate> {
+  async updateTemplate(
+    templateId: string,
+    updates: Partial<CreateTemplateRequest>
+  ): Promise<WhatsAppTemplate> {
     try {
       const response = await fetch(`${this.baseUrl}/${templateId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(updates),
       })
 
       if (!response.ok) {
@@ -169,7 +178,7 @@ export class WhatsAppTemplateManager {
   async deleteTemplate(templateId: string): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/${templateId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
 
       return response.ok
@@ -190,27 +199,27 @@ export class WhatsAppTemplateManager {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(request)
+        body: JSON.stringify(request),
       })
 
       const data = await response.json()
-      
+
       if (!response.ok) {
         return {
           success: false,
-          error: data.error || 'Failed to send template'
+          error: data.error || 'Failed to send template',
         }
       }
 
       return {
         success: true,
-        messageId: data.messageId
+        messageId: data.messageId,
       }
     } catch (error) {
       console.error('Error sending template:', error)
       return {
         success: false,
-        error: 'Network error occurred'
+        error: 'Network error occurred',
       }
     }
   }
@@ -225,7 +234,7 @@ export class WhatsAppTemplateManager {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ organization_id: organizationId })
+        body: JSON.stringify({ organization_id: organizationId }),
       })
 
       if (!response.ok) {
@@ -235,18 +244,21 @@ export class WhatsAppTemplateManager {
       const data = await response.json()
       return {
         synced: data.synced || 0,
-        errors: data.errors || []
+        errors: data.errors || [],
       }
     } catch (error) {
       console.error('Error syncing templates:', error)
       return {
         synced: 0,
-        errors: ['Failed to sync templates from WhatsApp']
+        errors: ['Failed to sync templates from WhatsApp'],
       }
     }
   }
 
-  async getTemplateUsageStats(organizationId: string, templateId?: string): Promise<TemplateUsageStats[]> {
+  async getTemplateUsageStats(
+    organizationId: string,
+    templateId?: string
+  ): Promise<TemplateUsageStats[]> {
     try {
       const params = new URLSearchParams({ organization_id: organizationId })
       if (templateId) params.append('template_id', templateId)
@@ -277,7 +289,10 @@ export class WhatsAppTemplateManager {
     return content
   }
 
-  validateTemplateVariables(template: WhatsAppTemplate, variables: Record<string, string>): {
+  validateTemplateVariables(
+    template: WhatsAppTemplate,
+    variables: Record<string, string>
+  ): {
     isValid: boolean
     errors: string[]
   } {
@@ -307,7 +322,7 @@ export class WhatsAppTemplateManager {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -323,14 +338,14 @@ export class WhatsAppTemplateManager {
         content: {
           header: {
             type: 'text',
-            text: 'Welcome to {{company_name}}!'
+            text: 'Welcome to {{company_name}}!',
           },
           body: {
-            text: 'Hi {{customer_name}}, thank you for contacting us. We\'re here to help you with any questions you may have.'
+            text: "Hi {{customer_name}}, thank you for contacting us. We're here to help you with any questions you may have.",
           },
           footer: {
-            text: 'Reply STOP to opt out'
-          }
+            text: 'Reply STOP to opt out',
+          },
         },
         variables: [
           {
@@ -338,19 +353,19 @@ export class WhatsAppTemplateManager {
             type: 'text',
             required: true,
             example: 'Your Company',
-            description: 'Name of your company'
+            description: 'Name of your company',
           },
           {
             name: 'customer_name',
             type: 'text',
             required: true,
             example: 'John',
-            description: 'Customer\'s first name'
-          }
+            description: "Customer's first name",
+          },
         ],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        organization_id: organizationId
+        organization_id: organizationId,
       },
       {
         id: 'template-2',
@@ -362,21 +377,21 @@ export class WhatsAppTemplateManager {
         content: {
           header: {
             type: 'text',
-            text: 'Order Confirmed'
+            text: 'Order Confirmed',
           },
           body: {
-            text: 'Your order #{{order_number}} has been confirmed for {{order_total}}. Expected delivery: {{delivery_date}}.'
+            text: 'Your order #{{order_number}} has been confirmed for {{order_total}}. Expected delivery: {{delivery_date}}.',
           },
           footer: {
-            text: 'Track your order at example.com/track'
+            text: 'Track your order at example.com/track',
           },
           buttons: [
             {
               type: 'url',
               text: 'Track Order',
-              url: 'https://example.com/track/{{order_number}}'
-            }
-          ]
+              url: 'https://example.com/track/{{order_number}}',
+            },
+          ],
         },
         variables: [
           {
@@ -384,26 +399,26 @@ export class WhatsAppTemplateManager {
             type: 'text',
             required: true,
             example: 'ORD-12345',
-            description: 'Order number'
+            description: 'Order number',
           },
           {
             name: 'order_total',
             type: 'currency',
             required: true,
             example: '99.99',
-            description: 'Total order amount'
+            description: 'Total order amount',
           },
           {
             name: 'delivery_date',
             type: 'date_time',
             required: true,
             example: '2024-01-15',
-            description: 'Expected delivery date'
-          }
+            description: 'Expected delivery date',
+          },
         ],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        organization_id: organizationId
+        organization_id: organizationId,
       },
       {
         id: 'template-3',
@@ -414,18 +429,18 @@ export class WhatsAppTemplateManager {
         status: 'approved',
         content: {
           body: {
-            text: 'Hi {{customer_name}}, this is a reminder about your appointment on {{appointment_date}} at {{appointment_time}}. Please reply to confirm.'
+            text: 'Hi {{customer_name}}, this is a reminder about your appointment on {{appointment_date}} at {{appointment_time}}. Please reply to confirm.',
           },
           buttons: [
             {
               type: 'quick_reply',
-              text: 'Confirm'
+              text: 'Confirm',
             },
             {
               type: 'quick_reply',
-              text: 'Reschedule'
-            }
-          ]
+              text: 'Reschedule',
+            },
+          ],
         },
         variables: [
           {
@@ -433,27 +448,27 @@ export class WhatsAppTemplateManager {
             type: 'text',
             required: true,
             example: 'John',
-            description: 'Customer\'s first name'
+            description: "Customer's first name",
           },
           {
             name: 'appointment_date',
             type: 'date_time',
             required: true,
             example: '2024-01-15',
-            description: 'Appointment date'
+            description: 'Appointment date',
           },
           {
             name: 'appointment_time',
             type: 'text',
             required: true,
             example: '2:00 PM',
-            description: 'Appointment time'
-          }
+            description: 'Appointment time',
+          },
         ],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        organization_id: organizationId
-      }
+        organization_id: organizationId,
+      },
     ]
   }
 
@@ -468,10 +483,11 @@ export class WhatsAppTemplateManager {
 
   searchTemplates(templates: WhatsAppTemplate[], query: string): WhatsAppTemplate[] {
     const lowercaseQuery = query.toLowerCase()
-    return templates.filter(template => 
-      template.displayName.toLowerCase().includes(lowercaseQuery) ||
-      template.name.toLowerCase().includes(lowercaseQuery) ||
-      template.content.body.text.toLowerCase().includes(lowercaseQuery)
+    return templates.filter(
+      template =>
+        template.displayName.toLowerCase().includes(lowercaseQuery) ||
+        template.name.toLowerCase().includes(lowercaseQuery) ||
+        template.content.body.text.toLowerCase().includes(lowercaseQuery)
     )
   }
 }

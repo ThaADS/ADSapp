@@ -8,6 +8,7 @@
 ### 1. ❌ Logout Error - `cookies` Called Outside Request Scope
 
 **Problem:**
+
 ```
 Error: `cookies` was called outside a request scope
 ```
@@ -15,11 +16,13 @@ Error: `cookies` was called outside a request scope
 User could not log out because the `signOut()` function in `src/lib/auth.ts` was trying to access server-side cookies from a client component (`DashboardHeader`).
 
 **Solution:**
+
 - ✅ Created `/api/auth/signout` route for server-side logout
 - ✅ Updated `DashboardHeader` to call API route instead of direct server function
 - ✅ Proper redirect to signin page after logout
 
 **Files Changed:**
+
 - `src/app/api/auth/signout/route.ts` - NEW
 - `src/components/dashboard/header.tsx` - MODIFIED
 
@@ -29,17 +32,20 @@ User could not log out because the `signOut()` function in `src/lib/auth.ts` was
 After signup and email confirmation, users were automatically logged in as the demo admin account instead of their own newly created account.
 
 **Root Cause:**
+
 - No proper auth callback handler for email confirmation
 - Signup flow redirected to dashboard instead of onboarding
 - Missing redirect URL configuration in signup process
 
 **Solution:**
+
 - ✅ Created `/api/auth/callback` route for email confirmation handling
 - ✅ Added `emailRedirectTo` parameter in signup options
 - ✅ Updated signup flow to redirect to `/onboarding` instead of `/dashboard`
 - ✅ Proper user session management after email confirmation
 
 **Files Changed:**
+
 - `src/app/api/auth/callback/route.ts` - NEW
 - `src/app/api/auth/signup/route.ts` - MODIFIED
 - `src/components/auth/signup-form.tsx` - MODIFIED
@@ -64,6 +70,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **Usage in Client Component:**
+
 ```typescript
 const handleSignOut = async () => {
   const response = await fetch('/api/auth/signout', { method: 'POST' })
@@ -86,7 +93,9 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     await supabase.auth.exchangeCodeForSession(code)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // Check user status and redirect appropriately
     const { data: profile } = await supabase
@@ -109,6 +118,7 @@ export async function GET(request: NextRequest) {
 ### 3. Signup Flow Fix
 
 **Signup API Changes:**
+
 ```typescript
 const signUpOptions = {
   email,
@@ -116,14 +126,15 @@ const signUpOptions = {
   options: {
     data: {
       full_name: fullName || '',
-      organization_name: organizationName || ''
+      organization_name: organizationName || '',
     },
-    emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`
-  }
+    emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+  },
 }
 ```
 
 **Signup Form Changes:**
+
 ```typescript
 // Redirect to onboarding, not dashboard
 router.push(result.redirectTo || '/onboarding')
@@ -270,16 +281,19 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Security Considerations
 
 ✅ **Proper Session Management:**
+
 - Server-side cookie handling via API routes
 - Client-side redirect after authentication actions
 - No server functions called from client components
 
 ✅ **User Isolation:**
+
 - Each new user gets their own profile
 - No cross-contamination with demo accounts
 - Organization assignment happens during onboarding
 
 ✅ **RLS Policies:**
+
 - Users can only access their own organization data
 - Profile creation allowed for authenticated users
 - Organization creation restricted to onboarding flow
@@ -297,10 +311,12 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Related Files
 
 ### New Files Created (2)
+
 1. `src/app/api/auth/signout/route.ts`
 2. `src/app/api/auth/callback/route.ts`
 
 ### Files Modified (3)
+
 1. `src/app/api/auth/signup/route.ts`
 2. `src/components/auth/signup-form.tsx`
 3. `src/components/dashboard/header.tsx`
@@ -308,6 +324,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Next Steps
 
 The user can now:
+
 1. ✅ Create their own account via signup
 2. ✅ Complete onboarding with their own organization
 3. ✅ Log in and out without errors

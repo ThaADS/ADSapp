@@ -1,32 +1,27 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { Resend } from 'resend';
-import { TeamInvitation, UserRole } from '@/types/team';
+import { Resend } from 'resend'
+import { TeamInvitation, UserRole } from '@/types/team'
 
 // Initialize Resend (gracefully handles missing API key)
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 interface SendInvitationEmailParams {
-  invitation: TeamInvitation;
-  organizationName: string;
-  inviterName: string;
-  inviterEmail: string;
+  invitation: TeamInvitation
+  organizationName: string
+  inviterName: string
+  inviterEmail: string
 }
 
 /**
  * Generate invitation email HTML
  */
 function generateInvitationEmailHtml(params: SendInvitationEmailParams): string {
-  const { invitation, organizationName, inviterName } = params;
-  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`;
-  const expiresAt = new Date(invitation.expires_at);
-  const daysUntilExpiry = Math.ceil(
-    (expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
+  const { invitation, organizationName, inviterName } = params
+  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`
+  const expiresAt = new Date(invitation.expires_at)
+  const daysUntilExpiry = Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
 
   return `
 <!DOCTYPE html>
@@ -146,7 +141,7 @@ function generateInvitationEmailHtml(params: SendInvitationEmailParams): string 
         weekday: 'long',
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       })}.
     </div>
 
@@ -166,19 +161,17 @@ function generateInvitationEmailHtml(params: SendInvitationEmailParams): string 
   </div>
 </body>
 </html>
-  `.trim();
+  `.trim()
 }
 
 /**
  * Generate plain text version of invitation email
  */
 function generateInvitationEmailText(params: SendInvitationEmailParams): string {
-  const { invitation, organizationName, inviterName, inviterEmail } = params;
-  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`;
-  const expiresAt = new Date(invitation.expires_at);
-  const daysUntilExpiry = Math.ceil(
-    (expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
+  const { invitation, organizationName, inviterName, inviterEmail } = params
+  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`
+  const expiresAt = new Date(invitation.expires_at)
+  const daysUntilExpiry = Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
 
   return `
 You've been invited to join ${organizationName} on ADSapp
@@ -203,7 +196,7 @@ This invitation link is unique to you and should not be shared. If you didn't ex
 If you have any questions, please contact us at support@adsapp.com
 
 © ${new Date().getFullYear()} ADSapp. All rights reserved.
-  `.trim();
+  `.trim()
 }
 
 /**
@@ -215,22 +208,20 @@ function getRoleDisplayName(role: UserRole): string {
     admin: 'Administrator',
     agent: 'Agent',
     viewer: 'Viewer',
-  };
-  return roleNames[role];
+  }
+  return roleNames[role]
 }
 
 /**
  * Send team invitation email
  */
-export async function sendTeamInvitationEmail(
-  params: SendInvitationEmailParams
-): Promise<void> {
-  const { invitation, organizationName } = params;
+export async function sendTeamInvitationEmail(params: SendInvitationEmailParams): Promise<void> {
+  const { invitation, organizationName } = params
 
   // Skip email sending if Resend is not configured
   if (!resend) {
-    console.warn('RESEND_API_KEY not configured. Skipping invitation email to:', invitation.email);
-    return;
+    console.warn('RESEND_API_KEY not configured. Skipping invitation email to:', invitation.email)
+    return
   }
 
   try {
@@ -244,14 +235,14 @@ export async function sendTeamInvitationEmail(
         { name: 'category', value: 'team-invitation' },
         { name: 'organization_id', value: invitation.organization_id },
       ],
-    });
+    })
 
     if (error) {
-      throw new Error(`Failed to send invitation email: ${error.message}`);
+      throw new Error(`Failed to send invitation email: ${error.message}`)
     }
   } catch (error) {
-    console.error('Error sending invitation email:', error);
-    throw error;
+    console.error('Error sending invitation email:', error)
+    throw error
   }
 }
 
@@ -261,13 +252,13 @@ export async function sendTeamInvitationEmail(
 export async function sendInvitationReminderEmail(
   params: SendInvitationEmailParams
 ): Promise<void> {
-  const { invitation, organizationName, inviterName } = params;
-  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`;
+  const { invitation, organizationName, inviterName } = params
+  const acceptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`
 
   // Skip email sending if Resend is not configured
   if (!resend) {
-    console.warn('RESEND_API_KEY not configured. Skipping reminder email to:', invitation.email);
-    return;
+    console.warn('RESEND_API_KEY not configured. Skipping reminder email to:', invitation.email)
+    return
   }
 
   try {
@@ -286,13 +277,13 @@ export async function sendInvitationReminderEmail(
         { name: 'category', value: 'team-invitation-reminder' },
         { name: 'organization_id', value: invitation.organization_id },
       ],
-    });
+    })
 
     if (error) {
-      throw new Error(`Failed to send reminder email: ${error.message}`);
+      throw new Error(`Failed to send reminder email: ${error.message}`)
     }
   } catch (error) {
-    console.error('Error sending reminder email:', error);
-    throw error;
+    console.error('Error sending reminder email:', error)
+    throw error
   }
 }

@@ -3,6 +3,7 @@
 **Duration**: 5-6 minutes
 **Target Audience**: New users completing initial setup
 **Learning Objectives**:
+
 - Successfully send first WhatsApp message through ADSapp
 - Understand basic inbox navigation
 - Learn fundamental message operations
@@ -24,6 +25,7 @@
 **NARRATION**: "First, log into your ADSapp dashboard. You'll see your inbox front and center. This is where all your WhatsApp conversations will appear. Think of it as your mission control for customer communication."
 
 **SCREEN ACTION**:
+
 - Show login page
 - Transition to dashboard
 - Highlight inbox area with subtle animation
@@ -41,6 +43,7 @@
 **SCREEN ACTION**: Mouse cursor hovers over conversation items, highlighting each element
 
 **CALLOUT**: Label key elements:
+
 - Customer avatar/initials
 - Name and phone number
 - Last message preview
@@ -61,6 +64,7 @@
 **NARRATION**: "Now let's send your first message. Click the 'New Conversation' button in the top right. You'll need to enter the customer's WhatsApp number. Make sure to include the country code."
 
 **SCREEN ACTION**:
+
 - Click "New Conversation" button
 - Show phone number input field with example format
 - Type in example number: +1 555 0123
@@ -79,10 +83,11 @@
 **NARRATION**: "Composing messages in ADSapp is intuitive. Type your message in the text field at the bottom. You can use formatting like bold, italic, or strikethrough using standard WhatsApp syntax."
 
 **SCREEN ACTION**: Type example message with formatting:
-"Hello! *Welcome to ADSapp.* We're here to help with _any questions_ you have."
+"Hello! _Welcome to ADSapp._ We're here to help with _any questions_ you have."
 
 **CALLOUT**: Show formatting shortcuts:
-- *bold* = Bold
+
+- _bold_ = Bold
 - _italic_ = Italic
 - ~strikethrough~ = Strikethrough
 
@@ -124,6 +129,7 @@
 **SCREEN ACTION**: Type "/" in message field, dropdown appears with quick replies
 
 **CALLOUT**: Show quick reply menu with examples:
+
 - /greeting - "Hello! How can I help you today?"
 - /hours - "We're available Monday-Friday 9AM-6PM"
 - /thanks - "Thank you for contacting us!"
@@ -153,6 +159,7 @@
 **NARRATION**: "Congratulations! You've just sent your first WhatsApp message through ADSapp. You now know how to navigate the inbox, start conversations, send messages, respond to customers, and keep your workspace organized."
 
 **SCREEN ACTION**: Quick recap montage:
+
 - Inbox overview
 - New conversation
 - Send message
@@ -165,6 +172,7 @@
 **NARRATION CONTINUES**: "In the next video, we'll give you a complete tour of the dashboard and all its powerful features. See you there!"
 
 **CTA TEXT ON SCREEN**:
+
 - "Next: Dashboard Navigation and Key Features"
 - "Practice: Send 3 messages to build confidence"
 - "Help: Visit docs.adsapp.com/getting-started"
@@ -180,6 +188,7 @@
 **Graphics**: Clear labels and arrows pointing to UI elements
 
 **Key Visuals Needed**:
+
 - Clean dashboard recording with no real customer data
 - Example messages with professional content
 - UI element highlights (buttons, fields, menus)
@@ -188,18 +197,21 @@
 - Checkmark states for message delivery
 
 **Accessibility**:
+
 - Caption all narration and on-screen text
 - Describe all visual actions verbally
 - Use high contrast for pointer/highlights
 - Provide keyboard shortcut equivalents
 
 **Recording Requirements**:
+
 - Use test account with prepared data
 - Show realistic but generic customer names
 - Clear mouse movements, not too fast
 - Multiple takes of each UI interaction for editing flexibility
 
 **Demo Data Setup**:
+
 - Pre-configure 3-5 sample conversations
 - Create 3-4 quick reply templates
 - Set up test WhatsApp number for receiving messages

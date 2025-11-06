@@ -1,11 +1,16 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { WhatsAppWebhookPayload } from '@/types'
-import { EnhancedWhatsAppClient, WhatsAppWebhookValue, WhatsAppMessage, WhatsAppStatus, getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
+import {
+  EnhancedWhatsAppClient,
+  WhatsAppWebhookValue,
+  WhatsAppMessage,
+  WhatsAppStatus,
+  getWhatsAppClient,
+} from '@/lib/whatsapp/enhanced-client'
 import { MediaStorageService } from '@/lib/media/storage'
 import { rateLimit, createErrorResponse } from '@/lib/api-utils'
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -13,50 +18,50 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 // Define interfaces for better type safety
 interface WhatsAppContact {
   profile?: {
-    name?: string;
-  };
-  wa_id: string;
+    name?: string
+  }
+  wa_id: string
 }
 
 interface WhatsAppMedia {
-  id?: string;
-  caption?: string;
-  filename?: string;
-  mimeType: string;
-  sha256?: string;
+  id?: string
+  caption?: string
+  filename?: string
+  mimeType: string
+  sha256?: string
 }
 
 interface ContactData {
-  organizationId: string;
-  whatsappId: string;
-  phoneNumber: string;
-  name: string | null;
-  lastMessageAt: string;
+  organizationId: string
+  whatsappId: string
+  phoneNumber: string
+  name: string | null
+  lastMessageAt: string
 }
 
 interface ConversationData {
-  organizationId: string;
-  contactId: string;
-  lastMessageAt: string;
+  organizationId: string
+  contactId: string
+  lastMessageAt: string
 }
 
 interface MessageStatusUpdate {
-  id: string;
-  status: string;
-  timestamp: string;
-  recipient_id: string;
+  id: string
+  status: string
+  timestamp: string
+  recipient_id: string
 }
 
 interface ProcessingError extends Error {
-  message: string;
-  stack?: string;
+  message: string
+  stack?: string
 }
 
 // Rate limit webhook processing
 const webhookRateLimit = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // 100 requests per minute
-  keyGenerator: (request) => request.headers.get('x-forwarded-for') || 'anonymous'
+  keyGenerator: request => request.headers.get('x-forwarded-for') || 'anonymous',
 })
 
 export async function GET(request: NextRequest) {
@@ -91,9 +96,9 @@ export async function POST(request: NextRequest) {
     await logWebhook(body, 'whatsapp_message')
 
     // Process each entry in the webhook payload
-    const processingPromises = body.entry.map(async (entry) => {
+    const processingPromises = body.entry.map(async entry => {
       return Promise.all(
-        entry.changes.map(async (change) => {
+        entry.changes.map(async change => {
           if (change.field === 'messages') {
             await processMessages(change.value)
           } else if (change.field === 'message_template_status_update') {
@@ -144,7 +149,11 @@ async function processMessages(value: WhatsAppWebhookValue) {
   }
 }
 
-async function processIncomingMessage(message: WhatsAppMessage, organizationId: string, contact?: WhatsAppContact) {
+async function processIncomingMessage(
+  message: WhatsAppMessage,
+  organizationId: string,
+  contact?: WhatsAppContact
+) {
   const supabase = await createClient()
   const mediaStorage = new MediaStorageService()
 
@@ -155,7 +164,7 @@ async function processIncomingMessage(message: WhatsAppMessage, organizationId: 
       whatsappId: message.from,
       phoneNumber: message.from,
       name: contact?.profile?.name || null,
-      lastMessageAt: message.timestamp
+      lastMessageAt: message.timestamp,
     })
 
     if (!contactData) {
@@ -167,7 +176,7 @@ async function processIncomingMessage(message: WhatsAppMessage, organizationId: 
     const conversation = await findOrCreateConversation(supabase, {
       organizationId,
       contactId: contactData.id,
-      lastMessageAt: message.timestamp
+      lastMessageAt: message.timestamp,
     })
 
     if (!conversation) {
@@ -191,21 +200,19 @@ async function processIncomingMessage(message: WhatsAppMessage, organizationId: 
     }
 
     // Insert message with enhanced data
-    const { error } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id: conversation.id,
-        whatsapp_message_id: message.id,
-        sender_type: 'contact',
-        content: messageData.content,
-        message_type: message.type,
-        media_url: messageData.mediaUrl,
-        media_mime_type: messageData.mediaMimeType,
-        media_file_id: messageData.mediaFileId,
-        context_message_id: contextMessageId,
-        metadata: messageData.metadata,
-        created_at: new Date(parseInt(message.timestamp) * 1000).toISOString(),
-      })
+    const { error } = await supabase.from('messages').insert({
+      conversation_id: conversation.id,
+      whatsapp_message_id: message.id,
+      sender_type: 'contact',
+      content: messageData.content,
+      message_type: message.type,
+      media_url: messageData.mediaUrl,
+      media_mime_type: messageData.mediaMimeType,
+      media_file_id: messageData.mediaFileId,
+      context_message_id: contextMessageId,
+      metadata: messageData.metadata,
+      created_at: new Date(parseInt(message.timestamp) * 1000).toISOString(),
+    })
 
     if (error) {
       console.error('Failed to insert message:', error)
@@ -216,14 +223,13 @@ async function processIncomingMessage(message: WhatsAppMessage, organizationId: 
     await Promise.all([
       updateConversationTimestamp(supabase, conversation.id, message.timestamp),
       updateContactTimestamp(supabase, contactData.id, message.timestamp),
-      incrementMessageCount(supabase, organizationId, 'inbound')
+      incrementMessageCount(supabase, organizationId, 'inbound'),
     ])
 
     // Process any errors in the message
     if (message.errors && message.errors.length > 0) {
       await logMessageErrors(supabase, message.id, message.errors, organizationId)
     }
-
   } catch (error) {
     console.error('Error processing incoming message:', error)
     await logProcessingError(supabase, message.id, error, organizationId)
@@ -247,10 +253,7 @@ async function processMessageStatus(status: MessageStatusUpdate, organizationId:
   }
 
   if (Object.keys(updates).length > 0) {
-    await supabase
-      .from('messages')
-      .update(updates)
-      .eq('whatsapp_message_id', status.id)
+    await supabase.from('messages').update(updates).eq('whatsapp_message_id', status.id)
   }
 }
 
@@ -259,15 +262,18 @@ async function processMessageStatus(status: MessageStatusUpdate, organizationId:
 async function upsertContact(supabase: SupabaseClient, data: ContactData) {
   const { data: contactData } = await supabase
     .from('contacts')
-    .upsert({
-      organization_id: data.organizationId,
-      whatsapp_id: data.whatsappId,
-      phone_number: data.phoneNumber,
-      name: data.name,
-      last_message_at: new Date(parseInt(data.lastMessageAt) * 1000).toISOString(),
-    }, {
-      onConflict: 'organization_id,whatsapp_id',
-    })
+    .upsert(
+      {
+        organization_id: data.organizationId,
+        whatsapp_id: data.whatsappId,
+        phone_number: data.phoneNumber,
+        name: data.name,
+        last_message_at: new Date(parseInt(data.lastMessageAt) * 1000).toISOString(),
+      },
+      {
+        onConflict: 'organization_id,whatsapp_id',
+      }
+    )
     .select()
     .single()
 
@@ -301,7 +307,11 @@ async function findOrCreateConversation(supabase: SupabaseClient, data: Conversa
   return conversation
 }
 
-async function processMessageContent(message: WhatsAppMessage, organizationId: string, mediaStorage: MediaStorageService) {
+async function processMessageContent(
+  message: WhatsAppMessage,
+  organizationId: string,
+  mediaStorage: MediaStorageService
+) {
   let content = ''
   let mediaUrl: string | null = null
   let mediaMimeType: string | null = null
@@ -317,7 +327,12 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
       case 'image':
         content = message.image?.caption || '[Image]'
         if (message.image?.id) {
-          const mediaFile = await downloadAndStoreMedia(message.image.id, organizationId, mediaStorage, message.image)
+          const mediaFile = await downloadAndStoreMedia(
+            message.image.id,
+            organizationId,
+            mediaStorage,
+            message.image
+          )
           if (mediaFile) {
             mediaUrl = mediaFile.url
             mediaMimeType = mediaFile.mimeType
@@ -330,7 +345,12 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
       case 'document':
         content = message.document?.caption || message.document?.filename || '[Document]'
         if (message.document?.id) {
-          const mediaFile = await downloadAndStoreMedia(message.document.id, organizationId, mediaStorage, message.document)
+          const mediaFile = await downloadAndStoreMedia(
+            message.document.id,
+            organizationId,
+            mediaStorage,
+            message.document
+          )
           if (mediaFile) {
             mediaUrl = mediaFile.url
             mediaMimeType = mediaFile.mimeType
@@ -338,7 +358,7 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
             metadata = {
               ...mediaFile.metadata,
               whatsappMediaId: message.document.id,
-              filename: message.document.filename
+              filename: message.document.filename,
             }
           }
         }
@@ -347,7 +367,12 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
       case 'audio':
         content = '[Audio Message]'
         if (message.audio?.id) {
-          const mediaFile = await downloadAndStoreMedia(message.audio.id, organizationId, mediaStorage, message.audio)
+          const mediaFile = await downloadAndStoreMedia(
+            message.audio.id,
+            organizationId,
+            mediaStorage,
+            message.audio
+          )
           if (mediaFile) {
             mediaUrl = mediaFile.url
             mediaMimeType = mediaFile.mimeType
@@ -360,7 +385,12 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
       case 'video':
         content = message.video?.caption || '[Video]'
         if (message.video?.id) {
-          const mediaFile = await downloadAndStoreMedia(message.video.id, organizationId, mediaStorage, message.video)
+          const mediaFile = await downloadAndStoreMedia(
+            message.video.id,
+            organizationId,
+            mediaStorage,
+            message.video
+          )
           if (mediaFile) {
             mediaUrl = mediaFile.url
             mediaMimeType = mediaFile.mimeType
@@ -379,7 +409,7 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
           latitude: message.location?.latitude,
           longitude: message.location?.longitude,
           name: message.location?.name,
-          address: message.location?.address
+          address: message.location?.address,
         }
         break
 
@@ -398,14 +428,14 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
           content = message.interactive.button_reply?.title || '[Button Reply]'
           metadata = {
             interactiveType: 'button_reply',
-            buttonId: message.interactive.button_reply?.id
+            buttonId: message.interactive.button_reply?.id,
           }
         } else if (message.interactive?.type === 'list_reply') {
           content = message.interactive.list_reply?.title || '[List Reply]'
           metadata = {
             interactiveType: 'list_reply',
             listId: message.interactive.list_reply?.id,
-            description: message.interactive.list_reply?.description
+            description: message.interactive.list_reply?.description,
           }
         }
         break
@@ -425,11 +455,16 @@ async function processMessageContent(message: WhatsAppMessage, organizationId: s
     mediaUrl,
     mediaMimeType,
     mediaFileId,
-    metadata
+    metadata,
   }
 }
 
-async function downloadAndStoreMedia(mediaId: string, organizationId: string, mediaStorage: MediaStorageService, media: WhatsAppMedia) {
+async function downloadAndStoreMedia(
+  mediaId: string,
+  organizationId: string,
+  mediaStorage: MediaStorageService,
+  media: WhatsAppMedia
+) {
   try {
     // Get WhatsApp client for the organization
     const client = await getWhatsAppClient(organizationId)
@@ -446,7 +481,7 @@ async function downloadAndStoreMedia(mediaId: string, organizationId: string, me
         organizationId,
         uploadedBy: 'system',
         generateThumbnail: media.mimeType.startsWith('image/'),
-        maxSize: 16 * 1024 * 1024 // 16MB limit
+        maxSize: 16 * 1024 * 1024, // 16MB limit
       }
     )
 
@@ -457,7 +492,11 @@ async function downloadAndStoreMedia(mediaId: string, organizationId: string, me
   }
 }
 
-async function updateConversationTimestamp(supabase: SupabaseClient, conversationId: string, timestamp: string) {
+async function updateConversationTimestamp(
+  supabase: SupabaseClient,
+  conversationId: string,
+  timestamp: string
+) {
   await supabase
     .from('conversations')
     .update({
@@ -466,7 +505,11 @@ async function updateConversationTimestamp(supabase: SupabaseClient, conversatio
     .eq('id', conversationId)
 }
 
-async function updateContactTimestamp(supabase: SupabaseClient, contactId: string, timestamp: string) {
+async function updateContactTimestamp(
+  supabase: SupabaseClient,
+  contactId: string,
+  timestamp: string
+) {
   await supabase
     .from('contacts')
     .update({
@@ -475,80 +518,101 @@ async function updateContactTimestamp(supabase: SupabaseClient, contactId: strin
     .eq('id', contactId)
 }
 
-async function incrementMessageCount(supabase: SupabaseClient, organizationId: string, direction: 'inbound' | 'outbound') {
+async function incrementMessageCount(
+  supabase: SupabaseClient,
+  organizationId: string,
+  direction: 'inbound' | 'outbound'
+) {
   const today = new Date().toISOString().split('T')[0]
 
-  await supabase
-    .from('daily_analytics')
-    .upsert({
+  await supabase.from('daily_analytics').upsert(
+    {
       organization_id: organizationId,
       date: today,
       messages_received: direction === 'inbound' ? 1 : 0,
       messages_sent: direction === 'outbound' ? 1 : 0,
-    }, {
+    },
+    {
       onConflict: 'organization_id,date',
-      ignoreDuplicates: false
-    })
+      ignoreDuplicates: false,
+    }
+  )
 }
 
-async function logMessageErrors(supabase: SupabaseClient, messageId: string, errors: Array<{ code: string; title: string; message: string; error_data?: Record<string, unknown> }>, organizationId: string) {
+async function logMessageErrors(
+  supabase: SupabaseClient,
+  messageId: string,
+  errors: Array<{
+    code: string
+    title: string
+    message: string
+    error_data?: Record<string, unknown>
+  }>,
+  organizationId: string
+) {
   for (const error of errors) {
-    await supabase
-      .from('message_errors')
-      .insert({
-        whatsapp_message_id: messageId,
-        organization_id: organizationId,
-        error_code: error.code,
-        error_title: error.title,
-        error_message: error.message,
-        error_data: error.error_data || {},
-        created_at: new Date().toISOString()
-      })
+    await supabase.from('message_errors').insert({
+      whatsapp_message_id: messageId,
+      organization_id: organizationId,
+      error_code: error.code,
+      error_title: error.title,
+      error_message: error.message,
+      error_data: error.error_data || {},
+      created_at: new Date().toISOString(),
+    })
   }
 }
 
-async function logProcessingError(supabase: SupabaseClient, messageId: string, error: ProcessingError, organizationId: string) {
-  await supabase
-    .from('processing_errors')
-    .insert({
-      whatsapp_message_id: messageId,
-      organization_id: organizationId,
-      error_message: error.message,
-      error_stack: error.stack,
-      created_at: new Date().toISOString()
-    })
+async function logProcessingError(
+  supabase: SupabaseClient,
+  messageId: string,
+  error: ProcessingError,
+  organizationId: string
+) {
+  await supabase.from('processing_errors').insert({
+    whatsapp_message_id: messageId,
+    organization_id: organizationId,
+    error_message: error.message,
+    error_stack: error.stack,
+    created_at: new Date().toISOString(),
+  })
 }
 
-async function processTemplateStatusUpdate(value: { template_id: string; status: string; reason?: string }) {
+async function processTemplateStatusUpdate(value: {
+  template_id: string
+  status: string
+  reason?: string
+}) {
   const supabase = await createClient()
 
   try {
-    await supabase
-      .from('message_template_status_updates')
-      .insert({
-        template_id: value.template_id,
-        status: value.status,
-        reason: value.reason,
-        updated_at: new Date().toISOString()
-      })
+    await supabase.from('message_template_status_updates').insert({
+      template_id: value.template_id,
+      status: value.status,
+      reason: value.reason,
+      updated_at: new Date().toISOString(),
+    })
   } catch (error) {
     console.error('Error processing template status update:', error)
   }
 }
 
-async function processAccountAlerts(value: { alert_type: string; message: string; severity?: string; [key: string]: unknown }) {
+async function processAccountAlerts(value: {
+  alert_type: string
+  message: string
+  severity?: string
+  [key: string]: unknown
+}) {
   const supabase = await createClient()
 
   try {
-    await supabase
-      .from('account_alerts')
-      .insert({
-        alert_type: value.alert_type,
-        message: value.message,
-        severity: value.severity || 'info',
-        metadata: value,
-        created_at: new Date().toISOString()
-      })
+    await supabase.from('account_alerts').insert({
+      alert_type: value.alert_type,
+      message: value.message,
+      severity: value.severity || 'info',
+      metadata: value,
+      created_at: new Date().toISOString(),
+    })
   } catch (error) {
     console.error('Error processing account alert:', error)
   }
@@ -557,11 +621,9 @@ async function processAccountAlerts(value: { alert_type: string; message: string
 async function logWebhook(payload: Record<string, unknown>, type: string) {
   const supabase = await createClient()
 
-  await supabase
-    .from('webhook_logs')
-    .insert({
-      webhook_type: type,
-      payload,
-      processed_at: new Date().toISOString(),
-    })
+  await supabase.from('webhook_logs').insert({
+    webhook_type: type,
+    payload,
+    processed_at: new Date().toISOString(),
+  })
 }

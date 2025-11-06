@@ -25,7 +25,12 @@ export interface PerformanceMetric {
 }
 
 export interface SystemAlert {
-  type: 'rate_limit_exceeded' | 'high_error_rate' | 'slow_response' | 'quota_exceeded' | 'service_degradation'
+  type:
+    | 'rate_limit_exceeded'
+    | 'high_error_rate'
+    | 'slow_response'
+    | 'quota_exceeded'
+    | 'service_degradation'
   severity: 'warning' | 'error' | 'critical'
   message: string
   organizationId?: string
@@ -46,20 +51,18 @@ class MonitoringService {
     try {
       const supabase = await this.supabase
 
-      await supabase
-        .from('error_logs')
-        .insert({
-          type: error.type,
-          message: error.message,
-          stack: error.stack,
-          code: error.code,
-          user_id: error.userId,
-          organization_id: error.organizationId,
-          endpoint: error.endpoint,
-          metadata: error.metadata,
-          severity: error.severity,
-          timestamp: error.timestamp
-        })
+      await supabase.from('error_logs').insert({
+        type: error.type,
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+        user_id: error.userId,
+        organization_id: error.organizationId,
+        endpoint: error.endpoint,
+        metadata: error.metadata,
+        severity: error.severity,
+        timestamp: error.timestamp,
+      })
 
       // Create alert for high severity errors
       if (error.severity === 'high' || error.severity === 'critical') {
@@ -71,12 +74,11 @@ class MonitoringService {
           metadata: {
             errorCode: error.code,
             endpoint: error.endpoint,
-            originalError: error.message
+            originalError: error.message,
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })
       }
-
     } catch (logError) {
       console.error('Failed to log error to monitoring service:', logError)
     }
@@ -86,20 +88,19 @@ class MonitoringService {
     try {
       const supabase = await this.supabase
 
-      await supabase
-        .from('performance_metrics')
-        .insert({
-          endpoint: metric.endpoint,
-          method: metric.method,
-          duration_ms: metric.duration,
-          status_code: metric.statusCode,
-          user_id: metric.userId,
-          organization_id: metric.organizationId,
-          timestamp: metric.timestamp
-        })
+      await supabase.from('performance_metrics').insert({
+        endpoint: metric.endpoint,
+        method: metric.method,
+        duration_ms: metric.duration,
+        status_code: metric.statusCode,
+        user_id: metric.userId,
+        organization_id: metric.organizationId,
+        timestamp: metric.timestamp,
+      })
 
       // Alert on slow responses
-      if (metric.duration > 5000) { // 5 seconds
+      if (metric.duration > 5000) {
+        // 5 seconds
         await this.createAlert({
           type: 'slow_response',
           severity: metric.duration > 10000 ? 'error' : 'warning',
@@ -109,14 +110,13 @@ class MonitoringService {
             endpoint: metric.endpoint,
             method: metric.method,
             duration: metric.duration,
-            statusCode: metric.statusCode
+            statusCode: metric.statusCode,
           },
           threshold: 5000,
           currentValue: metric.duration,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })
       }
-
     } catch (logError) {
       console.error('Failed to log performance metric:', logError)
     }
@@ -144,7 +144,7 @@ class MonitoringService {
           .update({
             current_value: alert.currentValue,
             updated_at: new Date().toISOString(),
-            occurrence_count: supabase.sql`occurrence_count + 1`
+            occurrence_count: supabase.sql`occurrence_count + 1`,
           })
           .eq('id', recentAlert.id)
 
@@ -152,26 +152,23 @@ class MonitoringService {
       }
 
       // Create new alert
-      await supabase
-        .from('system_alerts')
-        .insert({
-          type: alert.type,
-          severity: alert.severity,
-          message: alert.message,
-          organization_id: alert.organizationId,
-          metadata: alert.metadata,
-          threshold: alert.threshold,
-          current_value: alert.currentValue,
-          occurrence_count: 1,
-          is_resolved: false,
-          created_at: alert.timestamp
-        })
+      await supabase.from('system_alerts').insert({
+        type: alert.type,
+        severity: alert.severity,
+        message: alert.message,
+        organization_id: alert.organizationId,
+        metadata: alert.metadata,
+        threshold: alert.threshold,
+        current_value: alert.currentValue,
+        occurrence_count: 1,
+        is_resolved: false,
+        created_at: alert.timestamp,
+      })
 
       // For critical alerts, also log to external monitoring if configured
       if (alert.severity === 'critical') {
         await this.notifyExternalMonitoring(alert)
       }
-
     } catch (logError) {
       console.error('Failed to create system alert:', logError)
     }
@@ -212,16 +209,18 @@ class MonitoringService {
       const [errorResult, performanceResult, alertResult] = await Promise.all([
         errorQuery,
         performanceQuery,
-        alertQuery
+        alertQuery,
       ])
 
       const errorCount = errorResult.count || 0
       const performanceData = performanceResult.data || []
       const alertCount = alertResult.count || 0
 
-      const averageResponseTime = performanceData.length > 0
-        ? performanceData.reduce((sum, metric) => sum + metric.duration_ms, 0) / performanceData.length
-        : 0
+      const averageResponseTime =
+        performanceData.length > 0
+          ? performanceData.reduce((sum, metric) => sum + metric.duration_ms, 0) /
+            performanceData.length
+          : 0
 
       // Calculate error rate as percentage
       const totalRequests = performanceData.length
@@ -234,16 +233,15 @@ class MonitoringService {
         errorRate: Math.round(errorRate * 100) / 100,
         averageResponseTime: Math.round(averageResponseTime),
         activeAlerts: alertCount,
-        uptime: Math.round(uptime * 100) / 100
+        uptime: Math.round(uptime * 100) / 100,
       }
-
     } catch (error) {
       console.error('Failed to get health metrics:', error)
       return {
         errorRate: 0,
         averageResponseTime: 0,
         activeAlerts: 0,
-        uptime: 100
+        uptime: 100,
       }
     }
   }
@@ -256,21 +254,25 @@ class MonitoringService {
         .from('system_alerts')
         .update({
           is_resolved: true,
-          resolved_at: new Date().toISOString()
+          resolved_at: new Date().toISOString(),
         })
         .eq('id', alertId)
-
     } catch (error) {
       console.error('Failed to resolve alert:', error)
     }
   }
 
-  async getErrorTrends(organizationId?: string, days: number = 7): Promise<Array<{
-    date: string
-    errorCount: number
-    avgResponseTime: number
-    totalRequests: number
-  }>> {
+  async getErrorTrends(
+    organizationId?: string,
+    days: number = 7
+  ): Promise<
+    Array<{
+      date: string
+      errorCount: number
+      avgResponseTime: number
+      totalRequests: number
+    }>
+  > {
     try {
       const supabase = await this.supabase
       const trends = []
@@ -298,27 +300,25 @@ class MonitoringService {
           performanceQuery = performanceQuery.eq('organization_id', organizationId)
         }
 
-        const [errorResult, performanceResult] = await Promise.all([
-          errorQuery,
-          performanceQuery
-        ])
+        const [errorResult, performanceResult] = await Promise.all([errorQuery, performanceQuery])
 
         const errorCount = errorResult.count || 0
         const performanceData = performanceResult.data || []
-        const avgResponseTime = performanceData.length > 0
-          ? performanceData.reduce((sum, metric) => sum + metric.duration_ms, 0) / performanceData.length
-          : 0
+        const avgResponseTime =
+          performanceData.length > 0
+            ? performanceData.reduce((sum, metric) => sum + metric.duration_ms, 0) /
+              performanceData.length
+            : 0
 
         trends.push({
           date: dateStr,
           errorCount,
           avgResponseTime: Math.round(avgResponseTime),
-          totalRequests: performanceData.length
+          totalRequests: performanceData.length,
         })
       }
 
       return trends
-
     } catch (error) {
       console.error('Failed to get error trends:', error)
       return []
@@ -342,19 +342,20 @@ class MonitoringService {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: `🚨 CRITICAL ALERT: ${alert.message}`,
-            attachments: [{
-              color: 'danger',
-              fields: [
-                { title: 'Type', value: alert.type, short: true },
-                { title: 'Severity', value: alert.severity, short: true },
-                { title: 'Organization', value: alert.organizationId || 'System', short: true },
-                { title: 'Timestamp', value: alert.timestamp, short: true }
-              ]
-            }]
-          })
+            attachments: [
+              {
+                color: 'danger',
+                fields: [
+                  { title: 'Type', value: alert.type, short: true },
+                  { title: 'Severity', value: alert.severity, short: true },
+                  { title: 'Organization', value: alert.organizationId || 'System', short: true },
+                  { title: 'Timestamp', value: alert.timestamp, short: true },
+                ],
+              },
+            ],
+          }),
         })
       }
-
     } catch (error) {
       console.error('Failed to notify external monitoring:', error)
     }
@@ -370,7 +371,7 @@ export async function logError(error: Partial<ErrorEvent>): Promise<void> {
     type: 'system_error',
     severity: 'medium',
     timestamp: new Date().toISOString(),
-    ...error
+    ...error,
   } as ErrorEvent)
 }
 
@@ -389,7 +390,7 @@ export async function logApiError(
     organizationId,
     metadata,
     severity: 'medium',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 }
 
@@ -408,7 +409,7 @@ export async function logPerformance(
     statusCode,
     userId,
     organizationId,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 }
 
@@ -416,6 +417,6 @@ export async function createAlert(alert: Partial<SystemAlert>): Promise<void> {
   await monitoring.createAlert({
     severity: 'warning',
     timestamp: new Date().toISOString(),
-    ...alert
+    ...alert,
   } as SystemAlert)
 }

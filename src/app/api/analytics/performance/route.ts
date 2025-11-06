@@ -11,24 +11,22 @@ export async function POST(request: NextRequest) {
 
     // Validate the data
     if (!data || typeof data !== 'object') {
-      return NextResponse.json(
-        { error: 'Invalid data format' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid data format' }, { status: 400 })
     }
 
     // Get user context if available
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // Prepare the analytics data
     const analyticsData = {
       ...data,
       user_id: user?.id || null,
       session_id: request.headers.get('x-session-id'),
-      ip_address: request.headers.get('x-forwarded-for') ||
-                   request.headers.get('x-real-ip') ||
-                   'unknown',
+      ip_address:
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
       user_agent: request.headers.get('user-agent'),
       timestamp: new Date().toISOString(),
     }
@@ -51,7 +49,6 @@ export async function POST(request: NextRequest) {
     ])
 
     return NextResponse.json({ success: true })
-
   } catch (error) {
     console.error('Performance analytics error:', error)
 
@@ -61,12 +58,12 @@ export async function POST(request: NextRequest) {
 }
 
 interface AnalyticsData {
-  user_id?: string | null;
-  session_id?: string | null;
-  ip_address?: string;
-  user_agent?: string | null;
-  timestamp: string;
-  [key: string]: unknown;
+  user_id?: string | null
+  session_id?: string | null
+  ip_address?: string
+  user_agent?: string | null
+  timestamp: string
+  [key: string]: unknown
 }
 
 async function sendToGoogleAnalytics(data: AnalyticsData) {
@@ -104,7 +101,7 @@ async function sendToCustomAnalytics(data: AnalyticsData) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CUSTOM_ANALYTICS_API_KEY}`,
+          Authorization: `Bearer ${process.env.CUSTOM_ANALYTICS_API_KEY}`,
         },
         body: JSON.stringify(data),
       })
@@ -121,13 +118,12 @@ export async function GET(request: NextRequest) {
     const metric = searchParams.get('metric')
 
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Calculate time range
@@ -171,7 +167,7 @@ export async function GET(request: NextRequest) {
       timeframe,
       metric,
       total_records: 0,
-      note: 'Performance analytics table not yet created - returning placeholder data'
+      note: 'Performance analytics table not yet created - returning placeholder data',
     })
 
     // Build query - COMMENTED OUT until performance_analytics table is created
@@ -202,30 +198,26 @@ export async function GET(request: NextRequest) {
     //   metric,
     //   total_records: analytics?.length || 0,
     // })
-
   } catch (error) {
     console.error('Analytics fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics data' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch analytics data' }, { status: 500 })
   }
 }
 
 interface AggregatedData {
   web_vitals: {
-    cls: number[];
-    fcp: number[];
-    fid: number[];
-    lcp: number[];
-    ttfb: number[];
-  };
-  api_calls: unknown[];
-  custom_timings: unknown[];
-  errors: unknown[];
-  user_interactions: unknown[];
-  navigation_timing: unknown[];
-  [key: string]: unknown;
+    cls: number[]
+    fcp: number[]
+    fid: number[]
+    lcp: number[]
+    ttfb: number[]
+  }
+  api_calls: unknown[]
+  custom_timings: unknown[]
+  errors: unknown[]
+  user_interactions: unknown[]
+  navigation_timing: unknown[]
+  [key: string]: unknown
 }
 
 function aggregateAnalytics(data: AnalyticsData[], _timeframe: string): AggregatedData {
@@ -262,19 +254,19 @@ function aggregateAnalytics(data: AnalyticsData[], _timeframe: string): Aggregat
         aggregated.web_vitals.ttfb.push(record.value as number)
         break
       case 'api-call':
-        (aggregated.api_calls as AnalyticsData[]).push(record)
+        ;(aggregated.api_calls as AnalyticsData[]).push(record)
         break
       case 'custom-timing':
-        (aggregated.custom_timings as AnalyticsData[]).push(record)
+        ;(aggregated.custom_timings as AnalyticsData[]).push(record)
         break
       case 'error':
-        (aggregated.errors as AnalyticsData[]).push(record)
+        ;(aggregated.errors as AnalyticsData[]).push(record)
         break
       case 'user-interaction':
-        (aggregated.user_interactions as AnalyticsData[]).push(record)
+        ;(aggregated.user_interactions as AnalyticsData[]).push(record)
         break
       case 'navigation-timing':
-        (aggregated.navigation_timing as AnalyticsData[]).push(record)
+        ;(aggregated.navigation_timing as AnalyticsData[]).push(record)
         break
     }
   })
@@ -283,7 +275,7 @@ function aggregateAnalytics(data: AnalyticsData[], _timeframe: string): Aggregat
   Object.keys(aggregated.web_vitals).forEach(key => {
     const values = aggregated.web_vitals[key as keyof typeof aggregated.web_vitals] as number[]
     if (values.length > 0) {
-      (aggregated.web_vitals as Record<string, unknown>)[key] = {
+      ;(aggregated.web_vitals as Record<string, unknown>)[key] = {
         avg: values.reduce((a: number, b: number) => a + b, 0) / values.length,
         p50: percentile(values, 0.5),
         p75: percentile(values, 0.75),

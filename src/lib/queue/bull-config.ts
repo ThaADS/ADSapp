@@ -1,9 +1,8 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { Queue, Worker, QueueEvents, ConnectionOptions } from 'bullmq';
-import IORedis from 'ioredis';
+import { Queue, Worker, QueueEvents, ConnectionOptions } from 'bullmq'
+import IORedis from 'ioredis'
 
 /**
  * BullMQ Job Queue Configuration
@@ -29,7 +28,7 @@ export enum JobPriority {
   CRITICAL = 1, // User-initiated actions (immediate send)
   HIGH = 2, // Scheduled campaigns
   NORMAL = 3, // Background imports
-  LOW = 4 // Analytics processing
+  LOW = 4, // Analytics processing
 }
 
 /**
@@ -41,7 +40,7 @@ export enum JobStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   DELAYED = 'delayed',
-  PAUSED = 'paused'
+  PAUSED = 'paused',
 }
 
 /**
@@ -51,63 +50,63 @@ export enum QueueName {
   BULK_MESSAGE = 'bulk-messages',
   CONTACT_IMPORT = 'contact-import',
   TEMPLATE_PROCESSING = 'template-processing',
-  EMAIL_NOTIFICATION = 'email-notification'
+  EMAIL_NOTIFICATION = 'email-notification',
 }
 
 /**
  * Redis connection configuration
  */
 export interface RedisConfig {
-  host: string;
-  port: number;
-  password?: string;
-  db?: number;
-  maxRetriesPerRequest?: number;
-  enableReadyCheck?: boolean;
-  enableOfflineQueue?: boolean;
+  host: string
+  port: number
+  password?: string
+  db?: number
+  maxRetriesPerRequest?: number
+  enableReadyCheck?: boolean
+  enableOfflineQueue?: boolean
 }
 
 /**
  * Job options configuration
  */
 export interface JobConfig {
-  attempts: number;
+  attempts: number
   backoff: {
-    type: 'exponential' | 'fixed';
-    delay: number;
-  };
-  removeOnComplete: number | boolean;
-  removeOnFail: number | boolean;
-  timeout?: number;
+    type: 'exponential' | 'fixed'
+    delay: number
+  }
+  removeOnComplete: number | boolean
+  removeOnFail: number | boolean
+  timeout?: number
 }
 
 /**
  * Queue statistics
  */
 export interface QueueStats {
-  waiting: number;
-  active: number;
-  completed: number;
-  failed: number;
-  delayed: number;
-  paused: number;
+  waiting: number
+  active: number
+  completed: number
+  failed: number
+  delayed: number
+  paused: number
 }
 
 /**
  * Get Redis connection configuration from environment
  */
 export function getRedisConfig(): RedisConfig {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const url = process.env.UPSTASH_REDIS_REST_URL
 
   if (!url) {
-    throw new Error('UPSTASH_REDIS_REST_URL environment variable is not set');
+    throw new Error('UPSTASH_REDIS_REST_URL environment variable is not set')
   }
 
   // Parse Upstash Redis URL
   // Format: https://host:port or redis://host:port
-  const urlObj = new URL(url);
-  const host = urlObj.hostname;
-  const port = parseInt(urlObj.port || '6379', 10);
+  const urlObj = new URL(url)
+  const host = urlObj.hostname
+  const port = parseInt(urlObj.port || '6379', 10)
 
   return {
     host,
@@ -116,15 +115,15 @@ export function getRedisConfig(): RedisConfig {
     db: 0,
     maxRetriesPerRequest: 3,
     enableReadyCheck: false,
-    enableOfflineQueue: true
-  };
+    enableOfflineQueue: true,
+  }
 }
 
 /**
  * Get Redis IORedis connection for BullMQ
  */
 export function getRedisConnection(): IORedis {
-  const config = getRedisConfig();
+  const config = getRedisConfig()
 
   return new IORedis({
     host: config.host,
@@ -135,18 +134,18 @@ export function getRedisConnection(): IORedis {
     enableReadyCheck: config.enableReadyCheck ?? false,
     enableOfflineQueue: config.enableOfflineQueue ?? true,
     retryStrategy(times: number) {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
+      const delay = Math.min(times * 50, 2000)
+      return delay
     },
     reconnectOnError(err: Error) {
-      const targetError = 'READONLY';
+      const targetError = 'READONLY'
       if (err.message.includes(targetError)) {
         // Only reconnect when the error contains "READONLY"
-        return true;
+        return true
       }
-      return false;
-    }
-  });
+      return false
+    },
+  })
 }
 
 /**
@@ -156,12 +155,12 @@ export const DEFAULT_JOB_CONFIG: JobConfig = {
   attempts: 3,
   backoff: {
     type: 'exponential',
-    delay: 1000
+    delay: 1000,
   },
   removeOnComplete: 100, // Keep last 100 completed jobs
   removeOnFail: 1000, // Keep last 1000 failed jobs for debugging
-  timeout: 300000 // 5 minutes default timeout
-};
+  timeout: 300000, // 5 minutes default timeout
+}
 
 /**
  * Job configuration by queue type
@@ -171,35 +170,35 @@ export const QUEUE_CONFIGS: Record<QueueName, Partial<JobConfig>> = {
     attempts: 3,
     backoff: {
       type: 'exponential',
-      delay: 2000
+      delay: 2000,
     },
-    timeout: 600000 // 10 minutes for bulk messages
+    timeout: 600000, // 10 minutes for bulk messages
   },
   [QueueName.CONTACT_IMPORT]: {
     attempts: 2,
     backoff: {
       type: 'exponential',
-      delay: 5000
+      delay: 5000,
     },
-    timeout: 1800000 // 30 minutes for large imports
+    timeout: 1800000, // 30 minutes for large imports
   },
   [QueueName.TEMPLATE_PROCESSING]: {
     attempts: 3,
     backoff: {
       type: 'exponential',
-      delay: 1000
+      delay: 1000,
     },
-    timeout: 180000 // 3 minutes
+    timeout: 180000, // 3 minutes
   },
   [QueueName.EMAIL_NOTIFICATION]: {
     attempts: 5,
     backoff: {
       type: 'exponential',
-      delay: 2000
+      delay: 2000,
     },
-    timeout: 60000 // 1 minute
-  }
-};
+    timeout: 60000, // 1 minute
+  },
+}
 
 /**
  * Worker concurrency configuration
@@ -208,18 +207,18 @@ export const WORKER_CONCURRENCY: Record<QueueName, number> = {
   [QueueName.BULK_MESSAGE]: 5, // 5 concurrent workers for messages
   [QueueName.CONTACT_IMPORT]: 2, // 2 concurrent workers for imports
   [QueueName.TEMPLATE_PROCESSING]: 10, // 10 concurrent workers for templates
-  [QueueName.EMAIL_NOTIFICATION]: 10 // 10 concurrent workers for emails
-};
+  [QueueName.EMAIL_NOTIFICATION]: 10, // 10 concurrent workers for emails
+}
 
 /**
  * Create a BullMQ queue
  */
 export function createQueue(queueName: QueueName): Queue {
-  const connection = getRedisConnection();
+  const connection = getRedisConnection()
   const config = {
     ...DEFAULT_JOB_CONFIG,
-    ...QUEUE_CONFIGS[queueName]
-  };
+    ...QUEUE_CONFIGS[queueName],
+  }
 
   const queue = new Queue(queueName, {
     connection,
@@ -228,76 +227,69 @@ export function createQueue(queueName: QueueName): Queue {
       backoff: config.backoff,
       removeOnComplete: config.removeOnComplete,
       removeOnFail: config.removeOnFail,
-      timeout: config.timeout
-    }
-  });
+      timeout: config.timeout,
+    },
+  })
 
-  return queue;
+  return queue
 }
 
 /**
  * Create a BullMQ worker
  */
-export function createWorker(
-  queueName: QueueName,
-  processor: (job: any) => Promise<any>
-): Worker {
-  const connection = getRedisConnection();
-  const concurrency = WORKER_CONCURRENCY[queueName];
+export function createWorker(queueName: QueueName, processor: (job: any) => Promise<any>): Worker {
+  const connection = getRedisConnection()
+  const concurrency = WORKER_CONCURRENCY[queueName]
 
   const worker = new Worker(queueName, processor, {
     connection,
     concurrency,
     autorun: true,
     removeOnComplete: { count: 100 },
-    removeOnFail: { count: 1000 }
-  });
+    removeOnFail: { count: 1000 },
+  })
 
   // Worker event handlers
-  worker.on('completed', (job) => {
-    console.log(`[${queueName}] Job ${job.id} completed successfully`);
-  });
+  worker.on('completed', job => {
+    console.log(`[${queueName}] Job ${job.id} completed successfully`)
+  })
 
   worker.on('failed', (job, err) => {
-    console.error(
-      `[${queueName}] Job ${job?.id} failed with error:`,
-      err.message
-    );
-  });
+    console.error(`[${queueName}] Job ${job?.id} failed with error:`, err.message)
+  })
 
-  worker.on('error', (err) => {
-    console.error(`[${queueName}] Worker error:`, err);
-  });
+  worker.on('error', err => {
+    console.error(`[${queueName}] Worker error:`, err)
+  })
 
-  return worker;
+  return worker
 }
 
 /**
  * Create queue events listener
  */
 export function createQueueEvents(queueName: QueueName): QueueEvents {
-  const connection = getRedisConnection();
+  const connection = getRedisConnection()
 
   const queueEvents = new QueueEvents(queueName, {
-    connection
-  });
+    connection,
+  })
 
-  return queueEvents;
+  return queueEvents
 }
 
 /**
  * Get queue statistics
  */
 export async function getQueueStats(queue: Queue): Promise<QueueStats> {
-  const [waiting, active, completed, failed, delayed, paused] =
-    await Promise.all([
-      queue.getWaitingCount(),
-      queue.getActiveCount(),
-      queue.getCompletedCount(),
-      queue.getFailedCount(),
-      queue.getDelayedCount(),
-      queue.getPausedCount()
-    ]);
+  const [waiting, active, completed, failed, delayed, paused] = await Promise.all([
+    queue.getWaitingCount(),
+    queue.getActiveCount(),
+    queue.getCompletedCount(),
+    queue.getFailedCount(),
+    queue.getDelayedCount(),
+    queue.getPausedCount(),
+  ])
 
   return {
     waiting,
@@ -305,33 +297,33 @@ export async function getQueueStats(queue: Queue): Promise<QueueStats> {
     completed,
     failed,
     delayed,
-    paused
-  };
+    paused,
+  }
 }
 
 /**
  * Health check for queue system
  */
 export async function checkQueueHealth(queue: Queue): Promise<{
-  healthy: boolean;
-  queueName: string;
-  stats: QueueStats;
-  latency: number;
-  error?: string;
+  healthy: boolean
+  queueName: string
+  stats: QueueStats
+  latency: number
+  error?: string
 }> {
   try {
-    const start = Date.now();
-    const stats = await getQueueStats(queue);
-    const latency = Date.now() - start;
+    const start = Date.now()
+    const stats = await getQueueStats(queue)
+    const latency = Date.now() - start
 
     return {
       healthy: true,
       queueName: queue.name,
       stats,
-      latency
-    };
+      latency,
+    }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : 'Unknown error'
     return {
       healthy: false,
       queueName: queue.name,
@@ -341,11 +333,11 @@ export async function checkQueueHealth(queue: Queue): Promise<{
         completed: 0,
         failed: 0,
         delayed: 0,
-        paused: 0
+        paused: 0,
       },
       latency: -1,
-      error: message
-    };
+      error: message,
+    }
   }
 }
 
@@ -357,22 +349,22 @@ export async function gracefulShutdown(
   worker: Worker,
   queueEvents: QueueEvents
 ): Promise<void> {
-  console.log(`Gracefully shutting down ${queue.name}...`);
+  console.log(`Gracefully shutting down ${queue.name}...`)
 
   try {
     // Close queue events first
-    await queueEvents.close();
+    await queueEvents.close()
 
     // Close worker (wait for active jobs to complete)
-    await worker.close();
+    await worker.close()
 
     // Close queue
-    await queue.close();
+    await queue.close()
 
-    console.log(`${queue.name} shutdown complete`);
+    console.log(`${queue.name} shutdown complete`)
   } catch (error) {
-    console.error(`Error during shutdown of ${queue.name}:`, error);
-    throw error;
+    console.error(`Error during shutdown of ${queue.name}:`, error)
+    throw error
   }
 }
 
@@ -380,24 +372,24 @@ export async function gracefulShutdown(
  * Pause a queue
  */
 export async function pauseQueue(queue: Queue): Promise<void> {
-  await queue.pause();
-  console.log(`Queue ${queue.name} paused`);
+  await queue.pause()
+  console.log(`Queue ${queue.name} paused`)
 }
 
 /**
  * Resume a queue
  */
 export async function resumeQueue(queue: Queue): Promise<void> {
-  await queue.resume();
-  console.log(`Queue ${queue.name} resumed`);
+  await queue.resume()
+  console.log(`Queue ${queue.name} resumed`)
 }
 
 /**
  * Clear all jobs from a queue
  */
 export async function clearQueue(queue: Queue): Promise<void> {
-  await queue.drain();
-  await queue.clean(0, 0, 'completed');
-  await queue.clean(0, 0, 'failed');
-  console.log(`Queue ${queue.name} cleared`);
+  await queue.drain()
+  await queue.clean(0, 0, 'completed')
+  await queue.clean(0, 0, 'failed')
+  console.log(`Queue ${queue.name} cleared`)
 }

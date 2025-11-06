@@ -1,9 +1,8 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { Job } from 'bullmq';
-import { createClient } from '@/lib/supabase/server';
+import { Job } from 'bullmq'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Template Processor
@@ -25,82 +24,82 @@ import { createClient } from '@/lib/supabase/server';
  * Template variable definition
  */
 export interface TemplateVariable {
-  name: string;
-  type: 'text' | 'number' | 'date' | 'url';
-  required: boolean;
-  defaultValue?: string;
+  name: string
+  type: 'text' | 'number' | 'date' | 'url'
+  required: boolean
+  defaultValue?: string
 }
 
 /**
  * Template processing job data
  */
 export interface TemplateProcessingJobData {
-  organizationId: string;
-  userId: string;
-  templateId: string;
+  organizationId: string
+  userId: string
+  templateId: string
   recipients: Array<{
-    contactId: string;
-    phone: string;
-    variables: Record<string, string>;
-  }>;
-  scheduleAt?: string; // ISO 8601 timestamp
-  metadata?: Record<string, any>;
+    contactId: string
+    phone: string
+    variables: Record<string, string>
+  }>
+  scheduleAt?: string // ISO 8601 timestamp
+  metadata?: Record<string, any>
 }
 
 /**
  * Template processing job result
  */
 export interface TemplateProcessingJobResult {
-  jobId: string;
-  organizationId: string;
-  templateId: string;
-  totalRecipients: number;
-  processedCount: number;
-  queuedCount: number;
-  failedCount: number;
+  jobId: string
+  organizationId: string
+  templateId: string
+  totalRecipients: number
+  processedCount: number
+  queuedCount: number
+  failedCount: number
   errors: Array<{
-    contactId: string;
-    error: string;
-  }>;
-  bulkMessageJobId?: string; // ID of created bulk message job
-  startedAt: string;
-  completedAt: string;
-  duration: number;
+    contactId: string
+    error: string
+  }>
+  bulkMessageJobId?: string // ID of created bulk message job
+  startedAt: string
+  completedAt: string
+  duration: number
 }
 
 /**
  * Get template from database
  */
 async function getTemplate(templateId: string, organizationId: string) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('message_templates')
     .select('*')
     .eq('id', templateId)
     .eq('organization_id', organizationId)
-    .single();
+    .single()
 
   if (error) {
-    throw new Error(`Failed to get template: ${error.message}`);
+    throw new Error(`Failed to get template: ${error.message}`)
   }
 
-  return data;
+  return data
 }
 
 /**
  * Extract variables from template content
  */
 function extractTemplateVariables(content: string): string[] {
-  const regex = /{{([^}]+)}}/g;
-  const variables: string[] = [];
-  let match;
+  const regex = /{{([^}]+)}}/g
+  const variables: string[] = []
+  let match
 
   while ((match = regex.exec(content)) !== null) {
-    variables.push(match[1].trim());
+    variables.push(match[1].trim())
   }
 
-  return [...new Set(variables)]; // Remove duplicates
+  return [...new Set(variables)] // Remove duplicates
 }
 
 /**
@@ -111,59 +110,53 @@ function validateVariables(
   providedVariables: Record<string, string>
 ): { valid: boolean; missing: string[] } {
   const missing = templateVariables.filter(
-    (varName) => !(varName in providedVariables) || !providedVariables[varName]
-  );
+    varName => !(varName in providedVariables) || !providedVariables[varName]
+  )
 
   return {
     valid: missing.length === 0,
-    missing
-  };
+    missing,
+  }
 }
 
 /**
  * Substitute variables in template
  */
-function substituteTemplateVariables(
-  template: string,
-  variables: Record<string, string>
-): string {
-  let result = template;
+function substituteTemplateVariables(template: string, variables: Record<string, string>): string {
+  let result = template
 
   for (const [key, value] of Object.entries(variables)) {
-    const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-    result = result.replace(regex, value);
+    const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g')
+    result = result.replace(regex, value)
   }
 
-  return result;
+  return result
 }
 
 /**
  * Sanitize variable value
  */
-function sanitizeVariableValue(
-  value: string,
-  type: string = 'text'
-): string {
+function sanitizeVariableValue(value: string, type: string = 'text'): string {
   switch (type) {
     case 'url':
       // Basic URL validation
       try {
-        new URL(value);
-        return value;
+        new URL(value)
+        return value
       } catch {
-        return '';
+        return ''
       }
     case 'number':
       // Remove non-numeric characters
-      return value.replace(/[^0-9.-]/g, '');
+      return value.replace(/[^0-9.-]/g, '')
     case 'date':
       // Validate date format
-      const date = new Date(value);
-      return isNaN(date.getTime()) ? '' : value;
+      const date = new Date(value)
+      return isNaN(date.getTime()) ? '' : value
     case 'text':
     default:
       // Remove special characters that might break WhatsApp formatting
-      return value.replace(/[^\w\s.,!?@#$%&()-]/g, '');
+      return value.replace(/[^\w\s.,!?@#$%&()-]/g, '')
   }
 }
 
@@ -174,20 +167,20 @@ async function createBulkMessageJob(
   organizationId: string,
   userId: string,
   messages: Array<{
-    contactId: string;
-    phone: string;
-    content: string;
+    contactId: string
+    phone: string
+    content: string
   }>,
   scheduleAt?: string
 ): Promise<string> {
   // This would integrate with the bulk message queue
   // For now, we'll simulate job creation
-  const jobId = `bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const jobId = `bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
   // TODO: Queue bulk message job
-  console.log(`Created bulk message job: ${jobId} for ${messages.length} messages`);
+  console.log(`Created bulk message job: ${jobId} for ${messages.length} messages`)
 
-  return jobId;
+  return jobId
 }
 
 /**
@@ -196,130 +189,116 @@ async function createBulkMessageJob(
 export async function processTemplate(
   job: Job<TemplateProcessingJobData>
 ): Promise<TemplateProcessingJobResult> {
-  const startTime = Date.now();
-  const {
-    organizationId,
-    userId,
-    templateId,
-    recipients,
-    scheduleAt,
-    metadata
-  } = job.data;
+  const startTime = Date.now()
+  const { organizationId, userId, templateId, recipients, scheduleAt, metadata } = job.data
 
   console.log(
     `[TemplateProcessing] Starting job ${job.id} for template ${templateId} with ${recipients.length} recipients`
-  );
+  )
 
   const results = {
     processedCount: 0,
     queuedCount: 0,
     failedCount: 0,
     errors: [] as Array<{
-      contactId: string;
-      error: string;
-    }>
-  };
+      contactId: string
+      error: string
+    }>,
+  }
 
   try {
     // Step 1: Get template
-    console.log(`[TemplateProcessing] Fetching template ${templateId}`);
-    const template = await getTemplate(templateId, organizationId);
+    console.log(`[TemplateProcessing] Fetching template ${templateId}`)
+    const template = await getTemplate(templateId, organizationId)
 
     if (!template) {
-      throw new Error('Template not found');
+      throw new Error('Template not found')
     }
 
     // Step 2: Extract required variables
-    const templateVariables = extractTemplateVariables(template.content);
-    console.log(
-      `[TemplateProcessing] Template requires variables: ${templateVariables.join(', ')}`
-    );
+    const templateVariables = extractTemplateVariables(template.content)
+    console.log(`[TemplateProcessing] Template requires variables: ${templateVariables.join(', ')}`)
 
     // Step 3: Process each recipient
     const processedMessages: Array<{
-      contactId: string;
-      phone: string;
-      content: string;
-    }> = [];
+      contactId: string
+      phone: string
+      content: string
+    }> = []
 
     for (let i = 0; i < recipients.length; i++) {
-      const recipient = recipients[i];
+      const recipient = recipients[i]
 
       try {
         // Validate required variables
-        const validation = validateVariables(
-          templateVariables,
-          recipient.variables
-        );
+        const validation = validateVariables(templateVariables, recipient.variables)
 
         if (!validation.valid) {
-          throw new Error(
-            `Missing required variables: ${validation.missing.join(', ')}`
-          );
+          throw new Error(`Missing required variables: ${validation.missing.join(', ')}`)
         }
 
         // Sanitize variable values
-        const sanitizedVariables: Record<string, string> = {};
+        const sanitizedVariables: Record<string, string> = {}
         for (const [key, value] of Object.entries(recipient.variables)) {
-          sanitizedVariables[key] = sanitizeVariableValue(value, 'text');
+          sanitizedVariables[key] = sanitizeVariableValue(value, 'text')
         }
 
         // Substitute variables
         const personalizedContent = substituteTemplateVariables(
           template.content,
           sanitizedVariables
-        );
+        )
 
         // Add to processed messages
         processedMessages.push({
           contactId: recipient.contactId,
           phone: recipient.phone,
-          content: personalizedContent
-        });
+          content: personalizedContent,
+        })
 
-        results.processedCount++;
+        results.processedCount++
 
         // Update progress
         if (i % 10 === 0 || i === recipients.length - 1) {
-          const progress = Math.round(((i + 1) / recipients.length) * 100);
-          await job.updateProgress(progress);
+          const progress = Math.round(((i + 1) / recipients.length) * 100)
+          await job.updateProgress(progress)
         }
       } catch (error) {
-        results.failedCount++;
+        results.failedCount++
         results.errors.push({
           contactId: recipient.contactId,
-          error: error instanceof Error ? error.message : 'Processing error'
-        });
+          error: error instanceof Error ? error.message : 'Processing error',
+        })
 
         console.error(
           `[TemplateProcessing] Error processing recipient ${recipient.contactId}:`,
           error
-        );
+        )
       }
     }
 
     // Step 4: Create bulk message job with processed messages
-    let bulkMessageJobId: string | undefined;
+    let bulkMessageJobId: string | undefined
     if (processedMessages.length > 0) {
       console.log(
         `[TemplateProcessing] Creating bulk message job for ${processedMessages.length} messages`
-      );
+      )
 
       bulkMessageJobId = await createBulkMessageJob(
         organizationId,
         userId,
         processedMessages,
         scheduleAt
-      );
+      )
 
-      results.queuedCount = processedMessages.length;
+      results.queuedCount = processedMessages.length
     }
 
-    const endTime = Date.now();
-    const duration = endTime - startTime;
+    const endTime = Date.now()
+    const duration = endTime - startTime
 
     // Log job completion to database
-    const supabase = await createClient();
+    const supabase = await createClient()
     await supabase.from('job_logs').insert({
       job_id: job.id?.toString(),
       job_type: 'template_processing',
@@ -333,17 +312,16 @@ export async function processTemplate(
         queued: results.queuedCount,
         failed: results.failedCount,
         bulk_job_id: bulkMessageJobId,
-        duration: duration
+        duration: duration,
       },
-      error_details:
-        results.errors.length > 0 ? { errors: results.errors } : null,
+      error_details: results.errors.length > 0 ? { errors: results.errors } : null,
       started_at: new Date(startTime).toISOString(),
-      completed_at: new Date(endTime).toISOString()
-    });
+      completed_at: new Date(endTime).toISOString(),
+    })
 
     console.log(
       `[TemplateProcessing] Job ${job.id} completed: ${results.processedCount} processed, ${results.queuedCount} queued, ${results.failedCount} failed, ${duration}ms`
-    );
+    )
 
     return {
       jobId: job.id?.toString() || '',
@@ -357,14 +335,14 @@ export async function processTemplate(
       bulkMessageJobId,
       startedAt: new Date(startTime).toISOString(),
       completedAt: new Date(endTime).toISOString(),
-      duration
-    };
+      duration,
+    }
   } catch (error) {
-    const endTime = Date.now();
-    const duration = endTime - startTime;
+    const endTime = Date.now()
+    const duration = endTime - startTime
 
     // Log failure
-    const supabase = await createClient();
+    const supabase = await createClient()
     await supabase.from('job_logs').insert({
       job_id: job.id?.toString(),
       job_type: 'template_processing',
@@ -376,15 +354,15 @@ export async function processTemplate(
         total: recipients.length,
         processed: 0,
         failed: recipients.length,
-        duration: duration
+        duration: duration,
       },
       error_details: {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       },
       started_at: new Date(startTime).toISOString(),
-      completed_at: new Date(endTime).toISOString()
-    });
+      completed_at: new Date(endTime).toISOString(),
+    })
 
-    throw error;
+    throw error
   }
 }

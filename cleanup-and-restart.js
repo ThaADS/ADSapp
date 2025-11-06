@@ -6,8 +6,8 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
-  }
+    persistSession: false,
+  },
 })
 
 async function cleanup() {
@@ -28,10 +28,7 @@ async function cleanup() {
   if (org) {
     console.log(`Found organization: ${org.name} (${org.id})`)
 
-    const { error: deleteError } = await supabase
-      .from('organizations')
-      .delete()
-      .eq('id', org.id)
+    const { error: deleteError } = await supabase.from('organizations').delete().eq('id', org.id)
 
     if (deleteError) {
       console.error('Error deleting organization:', deleteError)
@@ -47,7 +44,7 @@ async function cleanup() {
 
 cleanup()
   .then(() => process.exit(0))
-  .catch((err) => {
+  .catch(err => {
     console.error('Cleanup failed:', err)
     process.exit(1)
   })

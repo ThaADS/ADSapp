@@ -1,22 +1,27 @@
 # Quick Fix Guide - Dashboard Styling Issue
 
 ## The Problem
+
 Dashboard was showing unwanted dark theme with gray sidebar, invisible buttons, and poor text contrast.
 
 ## The Fix
+
 We've fixed the automatic dark mode issue. The dashboard now defaults to a clean, professional light theme.
 
 ## How to Apply the Fix
 
 ### Step 1: Refresh Your Browser
+
 The development server should automatically reload. If not:
 
 **Windows/Linux:**
+
 ```
 Ctrl + Shift + R
 ```
 
 **Mac:**
+
 ```
 Cmd + Shift + R
 ```
@@ -34,6 +39,7 @@ If you still see the dark theme after refreshing:
 ### Step 3: Verify the Fix
 
 You should now see:
+
 - ✅ **White/light gray background** throughout the dashboard
 - ✅ **White sidebar** with green accent for active items
 - ✅ **Visible green buttons** with clear hover effects
@@ -43,11 +49,13 @@ You should now see:
 ## What Changed
 
 ### Files Modified
+
 1. **globals.css** - Removed automatic dark mode detection
 2. **accessibility.css** - Enhanced light theme defaults
 3. **accessibility-provider.tsx** - Changed default theme to 'light'
 
 ### Brand Colors Now Active
+
 - **Primary**: Green (#10b981)
 - **Background**: White (#ffffff)
 - **Text**: Dark gray (#111827)
@@ -64,10 +72,13 @@ Dark mode is still available! To enable it:
 ## Troubleshooting
 
 ### Issue: Still seeing gray/dark theme
+
 **Solution**: Clear localStorage (see Step 2 above) and hard refresh
 
 ### Issue: Dev server not reloading
+
 **Solution**:
+
 ```bash
 # Stop the server (Ctrl+C)
 # Restart it
@@ -75,7 +86,9 @@ npm run dev
 ```
 
 ### Issue: Changes not applying
+
 **Solution**:
+
 ```bash
 # Clear Next.js cache and rebuild
 rm -rf .next
@@ -85,6 +98,7 @@ npm run dev
 ## Technical Details
 
 The issue was caused by:
+
 - CSS media query `@media (prefers-color-scheme: dark)` automatically applying dark mode when system preferences were set to dark
 - Accessibility provider defaulting to 'auto' theme, which detected system preferences
 - No explicit light theme enforcement
@@ -94,6 +108,7 @@ All fixed! The dashboard now maintains a professional light theme by default.
 ## Contact
 
 If you continue to experience issues, please:
+
 1. Check browser console for errors (F12 → Console tab)
 2. Verify you're on the latest code (git pull)
 3. Clear browser cache completely

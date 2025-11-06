@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionManager, SessionManager } from '@/lib/session/manager';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { getSessionManager, SessionManager } from '@/lib/session/manager'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Session Middleware for Enterprise Session Management
@@ -27,13 +27,13 @@ import { createClient } from '@/lib/supabase/server';
  * Session context attached to request
  */
 export interface SessionContext {
-  userId: string;
-  organizationId: string;
-  sessionToken: string;
-  userRole: string;
-  lastActivity: string;
-  expiresAt: string;
-  deviceFingerprint: string;
+  userId: string
+  organizationId: string
+  sessionToken: string
+  userRole: string
+  lastActivity: string
+  expiresAt: string
+  deviceFingerprint: string
 }
 
 /**
@@ -43,28 +43,30 @@ export interface SessionMiddlewareConfig {
   /**
    * Cookie name for session token
    */
-  cookieName?: string;
+  cookieName?: string
 
   /**
    * Paths to exclude from session validation
    */
-  excludePaths?: string[];
+  excludePaths?: string[]
 
   /**
    * Enable privilege change detection
    */
-  detectPrivilegeChanges?: boolean;
+  detectPrivilegeChanges?: boolean
 
   /**
    * Session manager instance (for testing)
    */
-  sessionManager?: SessionManager;
+  sessionManager?: SessionManager
 }
 
 /**
  * Get default configuration (lazy initialization to avoid circular dependencies)
  */
-function getDefaultConfig(): Required<Omit<SessionMiddlewareConfig, 'sessionManager'>> & { sessionManager: undefined } {
+function getDefaultConfig(): Required<Omit<SessionMiddlewareConfig, 'sessionManager'>> & {
+  sessionManager: undefined
+} {
   return {
     cookieName: 'adsapp_session',
     excludePaths: [
@@ -73,11 +75,11 @@ function getDefaultConfig(): Required<Omit<SessionMiddlewareConfig, 'sessionMana
       '/api/auth/forgot-password',
       '/api/auth/reset-password',
       '/api/health',
-      '/api/webhooks'
+      '/api/webhooks',
     ],
     detectPrivilegeChanges: true,
-    sessionManager: undefined  // Lazy initialize to avoid circular dependency
-  };
+    sessionManager: undefined, // Lazy initialize to avoid circular dependency
+  }
 }
 
 /**
@@ -111,69 +113,61 @@ export async function validateSession(
   request: NextRequest,
   config: SessionMiddlewareConfig = {}
 ): Promise<NextResponse | null> {
-  const fullConfig = { ...getDefaultConfig(), ...config };
-  const pathname = request.nextUrl.pathname;
+  const fullConfig = { ...getDefaultConfig(), ...config }
+  const pathname = request.nextUrl.pathname
 
   // Check if path is excluded from session validation
   if (isPathExcluded(pathname, fullConfig.excludePaths)) {
-    return null;
+    return null
   }
 
   try {
     // Lazy initialize session manager to avoid circular dependencies
-    const sessionManager = fullConfig.sessionManager || getSessionManager();
+    const sessionManager = fullConfig.sessionManager || getSessionManager()
 
     // Extract session token from cookies
-    const sessionToken = extractSessionToken(request, fullConfig.cookieName);
+    const sessionToken = extractSessionToken(request, fullConfig.cookieName)
 
     if (!sessionToken) {
-      return createUnauthorizedResponse('No session token provided');
+      return createUnauthorizedResponse('No session token provided')
     }
 
     // Extract user ID from Supabase auth
-    const userId = await extractUserId(request);
+    const userId = await extractUserId(request)
 
     if (!userId) {
-      return createUnauthorizedResponse('User not authenticated');
+      return createUnauthorizedResponse('User not authenticated')
     }
 
     // Validate session
-    const validation = await sessionManager.validateSession(userId, sessionToken);
+    const validation = await sessionManager.validateSession(userId, sessionToken)
 
     if (!validation.valid) {
       // Session invalid - clear cookie and return error
-      const response = createUnauthorizedResponse(
-        validation.reason || 'Invalid session'
-      );
-      response.cookies.delete(fullConfig.cookieName);
-      return response;
+      const response = createUnauthorizedResponse(validation.reason || 'Invalid session')
+      response.cookies.delete(fullConfig.cookieName)
+      return response
     }
 
-    const session = validation.session!;
+    const session = validation.session!
 
     // Check for privilege changes
     if (fullConfig.detectPrivilegeChanges) {
-      const privilegeCheck = await sessionManager.checkPrivilegeChange(
-        userId,
-        sessionToken
-      );
+      const privilegeCheck = await sessionManager.checkPrivilegeChange(userId, sessionToken)
 
       if (privilegeCheck.requiresRegeneration) {
         // Privilege changed - regenerate session
-        const { token: newToken } = await sessionManager.regenerateSession(
-          userId,
-          sessionToken
-        );
+        const { token: newToken } = await sessionManager.regenerateSession(userId, sessionToken)
 
         // Return response with new session token
         const response = NextResponse.json(
           {
             error: 'Session regenerated due to privilege change',
             code: 'SESSION_REGENERATED',
-            newToken
+            newToken,
           },
           { status: 401 }
-        );
+        )
 
         // Set new session cookie
         response.cookies.set(fullConfig.cookieName, newToken, {
@@ -181,61 +175,56 @@ export async function validateSession(
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           path: '/',
-          maxAge: 30 * 60 // 30 minutes
-        });
+          maxAge: 30 * 60, // 30 minutes
+        })
 
-        return response;
+        return response
       }
     }
 
     // Refresh session activity
-    const refreshResult = await sessionManager.refreshSession(
-      userId,
-      sessionToken
-    );
+    const refreshResult = await sessionManager.refreshSession(userId, sessionToken)
 
     if (!refreshResult.success) {
-      return createUnauthorizedResponse(
-        refreshResult.error || 'Failed to refresh session'
-      );
+      return createUnauthorizedResponse(refreshResult.error || 'Failed to refresh session')
     }
 
     // Attach session context to request headers
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-session-user-id', session.userId);
-    requestHeaders.set('x-session-org-id', session.organizationId);
-    requestHeaders.set('x-session-token', sessionToken);
-    requestHeaders.set('x-session-last-activity', session.lastActivity);
-    requestHeaders.set('x-session-expires-at', session.expiresAt);
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('x-session-user-id', session.userId)
+    requestHeaders.set('x-session-org-id', session.organizationId)
+    requestHeaders.set('x-session-token', sessionToken)
+    requestHeaders.set('x-session-last-activity', session.lastActivity)
+    requestHeaders.set('x-session-expires-at', session.expiresAt)
 
     // Continue request with session context
     return NextResponse.next({
-      request: { headers: requestHeaders }
-    });
+      request: { headers: requestHeaders },
+    })
   } catch (error) {
-    console.error('[SessionMiddleware] Validation error:', error);
+    console.error('[SessionMiddleware] Validation error:', error)
 
     // Log error to monitoring service
     if (process.env.NODE_ENV === 'production') {
       try {
-        const Sentry = await import('@sentry/nextjs');
+        const Sentry = await import('@sentry/nextjs')
         Sentry.captureException(error, {
           tags: {
-            middleware: 'session-validation'
-          }
-        });
+            middleware: 'session-validation',
+          },
+        })
       } catch (sentryError) {
-        console.error('[SessionMiddleware] Failed to log error:', sentryError);
+        console.error('[SessionMiddleware] Failed to log error:', sentryError)
       }
     }
 
     return NextResponse.json(
       {
         error: 'Internal server error during session validation',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -261,8 +250,8 @@ export function getSessionContext(request: NextRequest): SessionContext {
     userRole: request.headers.get('x-user-role') || 'agent',
     lastActivity: request.headers.get('x-session-last-activity') || '',
     expiresAt: request.headers.get('x-session-expires-at') || '',
-    deviceFingerprint: generateDeviceFingerprint(request)
-  };
+    deviceFingerprint: generateDeviceFingerprint(request),
+  }
 }
 
 /**
@@ -281,21 +270,18 @@ export function getSessionContext(request: NextRequest): SessionContext {
  * }
  * ```
  */
-export function isSessionExpiringSoon(
-  request: NextRequest,
-  warningMinutes: number = 5
-): boolean {
-  const expiresAt = request.headers.get('x-session-expires-at');
+export function isSessionExpiringSoon(request: NextRequest, warningMinutes: number = 5): boolean {
+  const expiresAt = request.headers.get('x-session-expires-at')
 
   if (!expiresAt) {
-    return false;
+    return false
   }
 
-  const expirationTime = new Date(expiresAt).getTime();
-  const currentTime = Date.now();
-  const warningTime = warningMinutes * 60 * 1000;
+  const expirationTime = new Date(expiresAt).getTime()
+  const currentTime = Date.now()
+  const warningTime = warningMinutes * 60 * 1000
 
-  return expirationTime - currentTime <= warningTime;
+  return expirationTime - currentTime <= warningTime
 }
 
 /**
@@ -325,8 +311,8 @@ export function setSessionCookie(
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge
-  });
+    maxAge,
+  })
 }
 
 /**
@@ -347,7 +333,7 @@ export function clearSessionCookie(
   response: NextResponse,
   cookieName: string = 'adsapp_session'
 ): void {
-  response.cookies.delete(cookieName);
+  response.cookies.delete(cookieName)
 }
 
 /**
@@ -357,11 +343,8 @@ export function clearSessionCookie(
  * @param cookieName - Cookie name
  * @returns Session token or null
  */
-function extractSessionToken(
-  request: NextRequest,
-  cookieName: string
-): string | null {
-  return request.cookies.get(cookieName)?.value || null;
+function extractSessionToken(request: NextRequest, cookieName: string): string | null {
+  return request.cookies.get(cookieName)?.value || null
 }
 
 /**
@@ -372,17 +355,20 @@ function extractSessionToken(
  */
 async function extractUserId(request: NextRequest): Promise<string | null> {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser()
 
     if (error || !user) {
-      return null;
+      return null
     }
 
-    return user.id;
+    return user.id
   } catch (error) {
-    console.error('[SessionMiddleware] Failed to extract user ID:', error);
-    return null;
+    console.error('[SessionMiddleware] Failed to extract user ID:', error)
+    return null
   }
 }
 
@@ -397,11 +383,11 @@ function isPathExcluded(pathname: string, excludePaths: string[]): boolean {
   return excludePaths.some(path => {
     if (path.endsWith('*')) {
       // Wildcard matching
-      const prefix = path.slice(0, -1);
-      return pathname.startsWith(prefix);
+      const prefix = path.slice(0, -1)
+      return pathname.startsWith(prefix)
     }
-    return pathname === path;
-  });
+    return pathname === path
+  })
 }
 
 /**
@@ -413,16 +399,16 @@ function isPathExcluded(pathname: string, excludePaths: string[]): boolean {
  * @returns Device fingerprint
  */
 function generateDeviceFingerprint(request: NextRequest): string {
-  const userAgent = request.headers.get('user-agent') || 'unknown';
-  const acceptLanguage = request.headers.get('accept-language') || 'unknown';
-  const acceptEncoding = request.headers.get('accept-encoding') || 'unknown';
+  const userAgent = request.headers.get('user-agent') || 'unknown'
+  const acceptLanguage = request.headers.get('accept-language') || 'unknown'
+  const acceptEncoding = request.headers.get('accept-encoding') || 'unknown'
 
   // Create hash-like fingerprint (in production, use actual hashing)
-  const fingerprint = Buffer.from(
-    `${userAgent}:${acceptLanguage}:${acceptEncoding}`
-  ).toString('base64');
+  const fingerprint = Buffer.from(`${userAgent}:${acceptLanguage}:${acceptEncoding}`).toString(
+    'base64'
+  )
 
-  return fingerprint.slice(0, 32);
+  return fingerprint.slice(0, 32)
 }
 
 /**
@@ -435,10 +421,10 @@ function createUnauthorizedResponse(message: string): NextResponse {
   return NextResponse.json(
     {
       error: message,
-      code: 'UNAUTHORIZED'
+      code: 'UNAUTHORIZED',
     },
     { status: 401 }
-  );
+  )
 }
 
 /**
@@ -462,14 +448,11 @@ export function addSessionTimeoutWarning(
   warningMinutes: number = 5
 ): void {
   if (isSessionExpiringSoon(request, warningMinutes)) {
-    const expiresAt = request.headers.get('x-session-expires-at') || '';
-    const expiresIn = Math.max(
-      0,
-      Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
-    );
+    const expiresAt = request.headers.get('x-session-expires-at') || ''
+    const expiresIn = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000))
 
-    response.headers.set('X-Session-Expires-Soon', 'true');
-    response.headers.set('X-Session-Expires-In', expiresIn.toString());
+    response.headers.set('X-Session-Expires-Soon', 'true')
+    response.headers.set('X-Session-Expires-In', expiresIn.toString())
   }
 }
 
@@ -491,19 +474,17 @@ export function addSessionTimeoutWarning(
  * }
  * ```
  */
-export async function validateSessionAndTenant(
-  request: NextRequest
-): Promise<NextResponse | null> {
+export async function validateSessionAndTenant(request: NextRequest): Promise<NextResponse | null> {
   // First validate session
-  const sessionValidation = await validateSession(request);
-  if (sessionValidation) return sessionValidation;
+  const sessionValidation = await validateSession(request)
+  if (sessionValidation) return sessionValidation
 
   // Then validate tenant (if implemented)
-  const { validateTenantAccess } = await import('./tenant-validation');
-  const tenantValidation = await validateTenantAccess(request);
-  if (tenantValidation) return tenantValidation;
+  const { validateTenantAccess } = await import('./tenant-validation')
+  const tenantValidation = await validateTenantAccess(request)
+  if (tenantValidation) return tenantValidation
 
-  return null;
+  return null
 }
 
 /**
@@ -522,29 +503,29 @@ export async function validateSessionAndTenant(
  * ```
  */
 export async function checkSessionHealth(): Promise<{
-  healthy: boolean;
-  latency: number;
-  error?: string;
+  healthy: boolean
+  latency: number
+  error?: string
 }> {
   try {
-    const manager = getSessionManager();
-    const store = manager.getStore();
+    const manager = getSessionManager()
+    const store = manager.getStore()
 
     if (!store) {
       return {
         healthy: false,
         latency: -1,
-        error: 'Redis store not initialized'
-      };
+        error: 'Redis store not initialized',
+      }
     }
 
-    return await store.getHealthStatus();
+    return await store.getHealthStatus()
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : 'Unknown error'
     return {
       healthy: false,
       latency: -1,
-      error: message
-    };
+      error: message,
+    }
   }
 }

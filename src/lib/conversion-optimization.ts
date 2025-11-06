@@ -1,7 +1,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 import { BusinessScenario } from '@/types/demo'
@@ -69,7 +68,7 @@ export class ConversionOptimizationService {
     steps: Omit<ConversionStep, 'id'>[]
   ): Promise<ConversionFunnel> {
     const funnelId = uuidv4()
-    
+
     const funnel: ConversionFunnel = {
       id: funnelId,
       name,
@@ -77,28 +76,26 @@ export class ConversionOptimizationService {
       steps: steps.map((step, index) => ({
         ...step,
         id: uuidv4(),
-        step_order: index + 1
+        step_order: index + 1,
       })),
       overall_conversion_rate: 0,
       total_sessions: 0,
       bottlenecks: [],
       optimization_opportunities: [],
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     // Store in database
-    await this.supabase
-      .from('conversion_funnels')
-      .insert({
-        name: funnel.name,
-        business_scenario: funnel.business_scenario,
-        steps: funnel.steps as unknown as Json,
-        overall_conversion_rate: funnel.overall_conversion_rate,
-        total_sessions: funnel.total_sessions,
-        bottlenecks: funnel.bottlenecks as unknown as Json,
-        optimization_opportunities: funnel.optimization_opportunities as unknown as Json
-      })
+    await this.supabase.from('conversion_funnels').insert({
+      name: funnel.name,
+      business_scenario: funnel.business_scenario,
+      steps: funnel.steps as unknown as Json,
+      overall_conversion_rate: funnel.overall_conversion_rate,
+      total_sessions: funnel.total_sessions,
+      bottlenecks: funnel.bottlenecks as unknown as Json,
+      optimization_opportunities: funnel.optimization_opportunities as unknown as Json,
+    })
 
     return funnel
   }
@@ -121,9 +118,10 @@ export class ConversionOptimizationService {
       overall_conversion_rate: data.overall_conversion_rate,
       total_sessions: data.total_sessions,
       bottlenecks: data.bottlenecks as unknown as Bottleneck[],
-      optimization_opportunities: data.optimization_opportunities as unknown as OptimizationOpportunity[],
+      optimization_opportunities:
+        data.optimization_opportunities as unknown as OptimizationOpportunity[],
       created_at: data.created_at,
-      updated_at: data.updated_at
+      updated_at: data.updated_at,
     }
   }
 
@@ -141,7 +139,8 @@ export class ConversionOptimizationService {
     const opportunities: OptimizationOpportunity[] = []
 
     funnel.steps.forEach((step, index) => {
-      if (step.conversion_rate < 0.5) { // Less than 50% conversion
+      if (step.conversion_rate < 0.5) {
+        // Less than 50% conversion
         bottlenecks.push({
           step_id: step.id,
           step_name: step.name,
@@ -150,8 +149,8 @@ export class ConversionOptimizationService {
           suggested_actions: [
             'Simplify the user interface',
             'Add clearer call-to-action buttons',
-            'Reduce form fields'
-          ]
+            'Reduce form fields',
+          ],
         })
 
         opportunities.push({
@@ -164,8 +163,8 @@ export class ConversionOptimizationService {
           suggested_changes: [
             'Redesign the step interface',
             'Add progress indicators',
-            'Implement A/B testing'
-          ]
+            'Implement A/B testing',
+          ],
         })
       }
     })
@@ -175,7 +174,7 @@ export class ConversionOptimizationService {
     return {
       bottlenecks,
       opportunities,
-      overallRate
+      overallRate,
     }
   }
 
@@ -192,7 +191,7 @@ export class ConversionOptimizationService {
           exit_count: 300,
           conversion_rate: 0.7,
           avg_time_spent: 30,
-          bounce_rate: 0.3
+          bounce_rate: 0.3,
         },
         {
           name: 'Product Browse',
@@ -203,7 +202,7 @@ export class ConversionOptimizationService {
           exit_count: 200,
           conversion_rate: 0.71,
           avg_time_spent: 120,
-          bounce_rate: 0.29
+          bounce_rate: 0.29,
         },
         {
           name: 'Add to Cart',
@@ -214,8 +213,8 @@ export class ConversionOptimizationService {
           exit_count: 150,
           conversion_rate: 0.7,
           avg_time_spent: 60,
-          bounce_rate: 0.3
-        }
+          bounce_rate: 0.3,
+        },
       ],
       restaurant: [
         {
@@ -227,7 +226,7 @@ export class ConversionOptimizationService {
           exit_count: 200,
           conversion_rate: 0.75,
           avg_time_spent: 90,
-          bounce_rate: 0.25
+          bounce_rate: 0.25,
         },
         {
           name: 'Make Reservation',
@@ -238,8 +237,8 @@ export class ConversionOptimizationService {
           exit_count: 100,
           conversion_rate: 0.83,
           avg_time_spent: 180,
-          bounce_rate: 0.17
-        }
+          bounce_rate: 0.17,
+        },
       ],
       real_estate: [
         {
@@ -251,8 +250,8 @@ export class ConversionOptimizationService {
           exit_count: 100,
           conversion_rate: 0.8,
           avg_time_spent: 240,
-          bounce_rate: 0.2
-        }
+          bounce_rate: 0.2,
+        },
       ],
       healthcare: [
         {
@@ -264,8 +263,8 @@ export class ConversionOptimizationService {
           exit_count: 50,
           conversion_rate: 0.83,
           avg_time_spent: 180,
-          bounce_rate: 0.17
-        }
+          bounce_rate: 0.17,
+        },
       ],
       education: [
         {
@@ -277,8 +276,8 @@ export class ConversionOptimizationService {
           exit_count: 80,
           conversion_rate: 0.8,
           avg_time_spent: 300,
-          bounce_rate: 0.2
-        }
+          bounce_rate: 0.2,
+        },
       ],
       ecommerce: [
         {
@@ -290,8 +289,8 @@ export class ConversionOptimizationService {
           exit_count: 400,
           conversion_rate: 0.67,
           avg_time_spent: 150,
-          bounce_rate: 0.33
-        }
+          bounce_rate: 0.33,
+        },
       ],
       saas: [
         {
@@ -303,8 +302,8 @@ export class ConversionOptimizationService {
           exit_count: 150,
           conversion_rate: 0.75,
           avg_time_spent: 120,
-          bounce_rate: 0.25
-        }
+          bounce_rate: 0.25,
+        },
       ],
       generic: [
         {
@@ -316,9 +315,9 @@ export class ConversionOptimizationService {
           exit_count: 300,
           conversion_rate: 0.7,
           avg_time_spent: 60,
-          bounce_rate: 0.3
-        }
-      ]
+          bounce_rate: 0.3,
+        },
+      ],
     }
 
     return defaultSteps[scenario] || defaultSteps.generic

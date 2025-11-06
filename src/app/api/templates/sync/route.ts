@@ -1,6 +1,11 @@
 // @ts-nocheck - Type definitions need review
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { createClient } from '@/lib/supabase/server'
 
@@ -45,7 +50,7 @@ export async function POST(request: NextRequest) {
       synced: [],
       created: [],
       updated: [],
-      errors: []
+      errors: [],
     }
 
     // Process each WhatsApp template
@@ -62,7 +67,7 @@ export async function POST(request: NextRequest) {
           whatsapp_template_name: whatsappTemplate.name,
           whatsapp_status: whatsappTemplate.status,
           whatsapp_template_data: whatsappTemplate,
-          is_active: whatsappTemplate.status === 'APPROVED'
+          is_active: whatsappTemplate.status === 'APPROVED',
         }
 
         if (existingTemplate) {
@@ -71,7 +76,7 @@ export async function POST(request: NextRequest) {
             .from('message_templates')
             .update({
               ...templateData,
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             })
             .eq('id', existingTemplate.id)
             .select()
@@ -89,7 +94,7 @@ export async function POST(request: NextRequest) {
             .insert({
               organization_id: profile.organization_id,
               created_by: user.id,
-              ...templateData
+              ...templateData,
             })
             .select()
             .single()
@@ -104,15 +109,14 @@ export async function POST(request: NextRequest) {
         results.synced.push({
           id: whatsappTemplate.id,
           name: whatsappTemplate.name,
-          status: whatsappTemplate.status
+          status: whatsappTemplate.status,
         })
-
       } catch (error) {
         console.error(`Error syncing template ${whatsappTemplate.id}:`, error)
         results.errors.push({
           templateId: whatsappTemplate.id,
           templateName: whatsappTemplate.name,
-          error: error.message
+          error: error.message,
         })
       }
     }
@@ -130,7 +134,7 @@ export async function POST(request: NextRequest) {
         .update({
           is_active: false,
           whatsapp_status: 'deleted',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', deletedTemplate.id)
     }
@@ -142,16 +146,15 @@ export async function POST(request: NextRequest) {
         created: results.created.length,
         updated: results.updated.length,
         deleted: deletedTemplates.length,
-        errors: results.errors.length
+        errors: results.errors.length,
       },
       details: results,
       deletedTemplates: deletedTemplates.map(t => ({
         id: t.id,
         name: t.name,
-        whatsappTemplateId: t.whatsapp_template_id
-      }))
+        whatsappTemplateId: t.whatsapp_template_id,
+      })),
     })
-
   } catch (error) {
     console.error('Template sync error:', error)
     return createErrorResponse(error)
@@ -199,13 +202,11 @@ export async function GET(request: NextRequest) {
         newInWhatsApp: [],
         updatedInWhatsApp: [],
         deletedFromWhatsApp: [],
-        outOfSync: []
-      }
+        outOfSync: [],
+      },
     }
 
-    const dbTemplateMap = new Map(
-      (dbTemplates || []).map(t => [t.whatsapp_template_id, t])
-    )
+    const dbTemplateMap = new Map((dbTemplates || []).map(t => [t.whatsapp_template_id, t]))
 
     // Check for new templates in WhatsApp
     for (const whatsappTemplate of whatsappTemplates) {
@@ -215,7 +216,7 @@ export async function GET(request: NextRequest) {
         syncStatus.syncDetails.newInWhatsApp.push({
           id: whatsappTemplate.id,
           name: whatsappTemplate.name,
-          status: whatsappTemplate.status
+          status: whatsappTemplate.status,
         })
         syncStatus.needsSync = true
       } else if (dbTemplate.whatsapp_status !== whatsappTemplate.status) {
@@ -223,7 +224,7 @@ export async function GET(request: NextRequest) {
           id: whatsappTemplate.id,
           name: whatsappTemplate.name,
           oldStatus: dbTemplate.whatsapp_status,
-          newStatus: whatsappTemplate.status
+          newStatus: whatsappTemplate.status,
         })
         syncStatus.needsSync = true
       }
@@ -232,11 +233,14 @@ export async function GET(request: NextRequest) {
     // Check for deleted templates
     const whatsappTemplateIds = new Set(whatsappTemplates.map(t => t.id))
     for (const dbTemplate of dbTemplates || []) {
-      if (dbTemplate.whatsapp_template_id && !whatsappTemplateIds.has(dbTemplate.whatsapp_template_id)) {
+      if (
+        dbTemplate.whatsapp_template_id &&
+        !whatsappTemplateIds.has(dbTemplate.whatsapp_template_id)
+      ) {
         syncStatus.syncDetails.deletedFromWhatsApp.push({
           id: dbTemplate.id,
           name: dbTemplate.name,
-          whatsappTemplateId: dbTemplate.whatsapp_template_id
+          whatsappTemplateId: dbTemplate.whatsapp_template_id,
         })
         syncStatus.needsSync = true
       }
@@ -244,9 +248,8 @@ export async function GET(request: NextRequest) {
 
     return createSuccessResponse({
       lastSyncAt: await getLastSyncTime(supabase, profile.organization_id),
-      syncStatus
+      syncStatus,
     })
-
   } catch (error) {
     console.error('Template sync status error:', error)
     return createErrorResponse(error)
@@ -270,7 +273,9 @@ function extractTemplateContent(whatsappTemplate: any): string {
   }
 }
 
-function extractTemplateVariables(whatsappTemplate: any): Array<{ name: string; type: string; example?: string }> {
+function extractTemplateVariables(
+  whatsappTemplate: any
+): Array<{ name: string; type: string; example?: string }> {
   try {
     const variables = []
     const components = whatsappTemplate.components || []
@@ -285,7 +290,7 @@ function extractTemplateVariables(whatsappTemplate: any): Array<{ name: string; 
           variables.push({
             name: `var${index + 1}`,
             type: 'text',
-            example: component.example.body_text[0]?.[index] || ''
+            example: component.example.body_text[0]?.[index] || '',
           })
         })
       }

@@ -9,23 +9,23 @@
  * @module security/key-rotation
  */
 
-import { createClient } from '@/lib/supabase/server';
-import { getKeyManager, KeyManager, KeyRotationResult } from './key-manager';
-import { encrypt, decrypt } from '@/lib/crypto/encryption';
-import { KeyManagementError } from '@/lib/crypto/types';
+import { createClient } from '@/lib/supabase/server'
+import { getKeyManager, KeyManager, KeyRotationResult } from './key-manager'
+import { encrypt, decrypt } from '@/lib/crypto/encryption'
+import { KeyManagementError } from '@/lib/crypto/types'
 
 /**
  * Re-encryption batch configuration
  */
 export interface ReEncryptionConfig {
   /** Batch size for re-encryption */
-  batchSize: number;
+  batchSize: number
   /** Maximum concurrent batches */
-  maxConcurrent: number;
+  maxConcurrent: number
   /** Delay between batches (ms) */
-  batchDelay: number;
+  batchDelay: number
   /** Enable dry run mode (no actual updates) */
-  dryRun: boolean;
+  dryRun: boolean
 }
 
 /**
@@ -33,23 +33,23 @@ export interface ReEncryptionConfig {
  */
 export interface ReEncryptionProgress {
   /** Table being processed */
-  table: string;
+  table: string
   /** Total records to process */
-  total: number;
+  total: number
   /** Records processed */
-  processed: number;
+  processed: number
   /** Records successfully re-encrypted */
-  successful: number;
+  successful: number
   /** Records that failed */
-  failed: number;
+  failed: number
   /** Start timestamp */
-  startedAt: Date;
+  startedAt: Date
   /** Estimated completion time */
-  estimatedCompletion?: Date;
+  estimatedCompletion?: Date
   /** Current status */
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status: 'pending' | 'in_progress' | 'completed' | 'failed'
   /** Error messages */
-  errors: Array<{ recordId: string; error: string }>;
+  errors: Array<{ recordId: string; error: string }>
 }
 
 /**
@@ -57,26 +57,26 @@ export interface ReEncryptionProgress {
  */
 export interface RotationSchedule {
   /** Rotation interval in days */
-  intervalDays: number;
+  intervalDays: number
   /** Grace period before forced rotation (days) */
-  gracePeriodDays: number;
+  gracePeriodDays: number
   /** Whether to automatically rotate */
-  autoRotate: boolean;
+  autoRotate: boolean
   /** Time of day to perform rotation (HH:MM UTC) */
-  rotationTime?: string;
+  rotationTime?: string
 }
 
 /**
  * Key Rotation Service for automated key lifecycle management
  */
 export class KeyRotationService {
-  private keyManager: KeyManager;
-  private readonly DEFAULT_BATCH_SIZE = 100;
-  private readonly DEFAULT_MAX_CONCURRENT = 5;
-  private readonly DEFAULT_BATCH_DELAY = 100; // ms
+  private keyManager: KeyManager
+  private readonly DEFAULT_BATCH_SIZE = 100
+  private readonly DEFAULT_MAX_CONCURRENT = 5
+  private readonly DEFAULT_BATCH_DELAY = 100 // ms
 
   constructor(keyManager?: KeyManager) {
-    this.keyManager = keyManager || getKeyManager();
+    this.keyManager = keyManager || getKeyManager()
   }
 
   /**
@@ -90,22 +90,22 @@ export class KeyRotationService {
     tenantId: string,
     config?: Partial<ReEncryptionConfig>
   ): Promise<{
-    keyRotation: KeyRotationResult;
-    reEncryption: Record<string, ReEncryptionProgress>;
+    keyRotation: KeyRotationResult
+    reEncryption: Record<string, ReEncryptionProgress>
   }> {
     const fullConfig: ReEncryptionConfig = {
       batchSize: config?.batchSize || this.DEFAULT_BATCH_SIZE,
       maxConcurrent: config?.maxConcurrent || this.DEFAULT_MAX_CONCURRENT,
       batchDelay: config?.batchDelay || this.DEFAULT_BATCH_DELAY,
       dryRun: config?.dryRun || false,
-    };
+    }
 
     try {
       // Step 1: Rotate the key
-      console.info(`Starting key rotation for tenant ${tenantId}`);
-      const startTime = Date.now();
+      console.info(`Starting key rotation for tenant ${tenantId}`)
+      const startTime = Date.now()
 
-      await this.keyManager.rotateKey(tenantId);
+      await this.keyManager.rotateKey(tenantId)
 
       const keyRotation: KeyRotationResult = {
         rotated: 1,
@@ -113,16 +113,16 @@ export class KeyRotationService {
         tenantIds: [tenantId],
         errors: [],
         duration: Date.now() - startTime,
-      };
+      }
 
       // Step 2: Re-encrypt existing data with new key
-      console.info(`Starting data re-encryption for tenant ${tenantId}`);
-      const reEncryption = await this.reEncryptTenantData(tenantId, fullConfig);
+      console.info(`Starting data re-encryption for tenant ${tenantId}`)
+      const reEncryption = await this.reEncryptTenantData(tenantId, fullConfig)
 
       return {
         keyRotation,
         reEncryption,
-      };
+      }
     } catch (error) {
       throw new KeyManagementError(
         `Key rotation with re-encryption failed for tenant ${tenantId}`,
@@ -131,7 +131,7 @@ export class KeyRotationService {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -146,14 +146,14 @@ export class KeyRotationService {
     tenantId: string,
     config: ReEncryptionConfig
   ): Promise<Record<string, ReEncryptionProgress>> {
-    const tables = ['contacts', 'profiles']; // Tables with encrypted fields
-    const progress: Record<string, ReEncryptionProgress> = {};
+    const tables = ['contacts', 'profiles'] // Tables with encrypted fields
+    const progress: Record<string, ReEncryptionProgress> = {}
 
     for (const table of tables) {
       try {
-        progress[table] = await this.reEncryptTable(tenantId, table, config);
+        progress[table] = await this.reEncryptTable(tenantId, table, config)
       } catch (error) {
-        console.error(`Failed to re-encrypt table ${table}:`, error);
+        console.error(`Failed to re-encrypt table ${table}:`, error)
         progress[table] = {
           table,
           total: 0,
@@ -168,11 +168,11 @@ export class KeyRotationService {
               error: error instanceof Error ? error.message : String(error),
             },
           ],
-        };
+        }
       }
     }
 
-    return progress;
+    return progress
   }
 
   /**
@@ -188,8 +188,8 @@ export class KeyRotationService {
     table: string,
     config: ReEncryptionConfig
   ): Promise<ReEncryptionProgress> {
-    const supabase = await createClient();
-    const startedAt = new Date();
+    const supabase = await createClient()
+    const startedAt = new Date()
 
     const progress: ReEncryptionProgress = {
       table,
@@ -200,85 +200,76 @@ export class KeyRotationService {
       startedAt,
       status: 'in_progress',
       errors: [],
-    };
+    }
 
     try {
       // Get encrypted fields for this table
-      const encryptedFields = this.getEncryptedFields(table);
+      const encryptedFields = this.getEncryptedFields(table)
 
       if (encryptedFields.length === 0) {
-        progress.status = 'completed';
-        return progress;
+        progress.status = 'completed'
+        return progress
       }
 
       // Get total count for tenant
       const { count, error: countError } = await supabase
         .from(table)
         .select('*', { count: 'exact', head: true })
-        .eq('organization_id', tenantId);
+        .eq('organization_id', tenantId)
 
       if (countError) {
-        throw new Error(`Failed to count records: ${countError.message}`);
+        throw new Error(`Failed to count records: ${countError.message}`)
       }
 
-      progress.total = count || 0;
+      progress.total = count || 0
 
       if (progress.total === 0) {
-        progress.status = 'completed';
-        return progress;
+        progress.status = 'completed'
+        return progress
       }
 
       // Calculate estimated completion
-      const recordsPerSecond = config.batchSize / (config.batchDelay / 1000);
-      const estimatedSeconds = progress.total / recordsPerSecond;
-      progress.estimatedCompletion = new Date(
-        startedAt.getTime() + estimatedSeconds * 1000
-      );
+      const recordsPerSecond = config.batchSize / (config.batchDelay / 1000)
+      const estimatedSeconds = progress.total / recordsPerSecond
+      progress.estimatedCompletion = new Date(startedAt.getTime() + estimatedSeconds * 1000)
 
       // Process in batches
-      let offset = 0;
+      let offset = 0
       while (offset < progress.total) {
         const { data: records, error: fetchError } = await supabase
           .from(table)
           .select('*')
           .eq('organization_id', tenantId)
-          .range(offset, offset + config.batchSize - 1);
+          .range(offset, offset + config.batchSize - 1)
 
         if (fetchError) {
-          throw new Error(`Failed to fetch records: ${fetchError.message}`);
+          throw new Error(`Failed to fetch records: ${fetchError.message}`)
         }
 
         if (!records || records.length === 0) {
-          break;
+          break
         }
 
         // Process batch
-        await this.processBatch(
-          table,
-          records,
-          encryptedFields,
-          tenantId,
-          config,
-          progress
-        );
+        await this.processBatch(table, records, encryptedFields, tenantId, config, progress)
 
-        offset += config.batchSize;
+        offset += config.batchSize
 
         // Delay between batches to avoid overwhelming the system
         if (config.batchDelay > 0 && offset < progress.total) {
-          await this.delay(config.batchDelay);
+          await this.delay(config.batchDelay)
         }
       }
 
-      progress.status = 'completed';
-      return progress;
+      progress.status = 'completed'
+      return progress
     } catch (error) {
-      progress.status = 'failed';
+      progress.status = 'failed'
       progress.errors.push({
         recordId: 'batch',
         error: error instanceof Error ? error.message : String(error),
-      });
-      throw error;
+      })
+      throw error
     }
   }
 
@@ -293,44 +284,42 @@ export class KeyRotationService {
     config: ReEncryptionConfig,
     progress: ReEncryptionProgress
   ): Promise<void> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get old and new keys
-    const oldKey = await this.keyManager.getEncryptionKey(tenantId, { version: -1 });
-    const newKey = await this.keyManager.getEncryptionKey(tenantId);
+    const oldKey = await this.keyManager.getEncryptionKey(tenantId, { version: -1 })
+    const newKey = await this.keyManager.getEncryptionKey(tenantId)
 
     for (const record of records) {
       try {
-        const updates: Record<string, any> = {};
-        let needsUpdate = false;
+        const updates: Record<string, any> = {}
+        let needsUpdate = false
 
         // Re-encrypt each field
         for (const field of encryptedFields) {
-          const encryptedField = record[field];
+          const encryptedField = record[field]
 
           if (!encryptedField) {
-            continue;
+            continue
           }
 
           // Parse encrypted field structure
           const { encrypted, version } =
-            typeof encryptedField === 'string'
-              ? JSON.parse(encryptedField)
-              : encryptedField;
+            typeof encryptedField === 'string' ? JSON.parse(encryptedField) : encryptedField
 
           // Decrypt with old key
-          const decrypted = decrypt(encrypted, version, { key: oldKey });
+          const decrypted = decrypt(encrypted, version, { key: oldKey })
 
           // Re-encrypt with new key
-          const reEncrypted = encrypt(decrypted.plaintext, { key: newKey });
+          const reEncrypted = encrypt(decrypted.plaintext, { key: newKey })
 
           updates[field] = JSON.stringify({
             encrypted: reEncrypted.encrypted,
             version: reEncrypted.version,
             algorithm: reEncrypted.algorithm,
-          });
+          })
 
-          needsUpdate = true;
+          needsUpdate = true
         }
 
         // Update record if needed
@@ -338,24 +327,24 @@ export class KeyRotationService {
           const { error: updateError } = await supabase
             .from(table)
             .update(updates)
-            .eq('id', record.id);
+            .eq('id', record.id)
 
           if (updateError) {
-            throw new Error(`Update failed: ${updateError.message}`);
+            throw new Error(`Update failed: ${updateError.message}`)
           }
         }
 
-        progress.successful++;
+        progress.successful++
       } catch (error) {
-        progress.failed++;
+        progress.failed++
         progress.errors.push({
           recordId: record.id,
           error: error instanceof Error ? error.message : String(error),
-        });
-        console.error(`Failed to re-encrypt record ${record.id}:`, error);
+        })
+        console.error(`Failed to re-encrypt record ${record.id}:`, error)
       }
 
-      progress.processed++;
+      progress.processed++
     }
   }
 
@@ -374,60 +363,52 @@ export class KeyRotationService {
       gracePeriodDays: schedule?.gracePeriodDays || 7,
       autoRotate: schedule?.autoRotate !== false,
       rotationTime: schedule?.rotationTime || '02:00',
-    };
+    }
 
     if (!config.autoRotate) {
-      console.info('Automatic key rotation is disabled');
+      console.info('Automatic key rotation is disabled')
       return {
         rotated: 0,
         failed: 0,
         tenantIds: [],
         errors: [],
         duration: 0,
-      };
+      }
     }
 
-    console.info('Starting scheduled key rotation check');
+    console.info('Starting scheduled key rotation check')
 
     try {
       // Get tenants that need rotation
       const tenantsNeedingRotation = await this.getTenantsNeedingRotation(
         config.intervalDays - config.gracePeriodDays
-      );
+      )
 
       if (tenantsNeedingRotation.length === 0) {
-        console.info('No tenants need rotation at this time');
+        console.info('No tenants need rotation at this time')
         return {
           rotated: 0,
           failed: 0,
           tenantIds: [],
           errors: [],
           duration: 0,
-        };
+        }
       }
 
-      console.info(
-        `Found ${tenantsNeedingRotation.length} tenants needing rotation`
-      );
+      console.info(`Found ${tenantsNeedingRotation.length} tenants needing rotation`)
 
       // Perform rotation
-      const result = await this.keyManager.rotateKeys();
+      const result = await this.keyManager.rotateKeys()
 
-      console.info(
-        `Rotation completed: ${result.rotated} succeeded, ${result.failed} failed`
-      );
+      console.info(`Rotation completed: ${result.rotated} succeeded, ${result.failed} failed`)
 
-      return result;
+      return result
     } catch (error) {
-      console.error('Scheduled rotation failed:', error);
-      throw new KeyManagementError(
-        'Scheduled key rotation failed',
-        'SCHEDULED_ROTATION_FAILED',
-        {
-          schedule: config,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      console.error('Scheduled rotation failed:', error)
+      throw new KeyManagementError('Scheduled key rotation failed', 'SCHEDULED_ROTATION_FAILED', {
+        schedule: config,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -437,59 +418,56 @@ export class KeyRotationService {
    * @returns Health check results
    */
   async getRotationHealth(): Promise<{
-    healthy: boolean;
-    issues: string[];
+    healthy: boolean
+    issues: string[]
     stats: {
-      totalTenants: number;
-      tenantsWithKeys: number;
-      expiredKeys: number;
-      keysNearExpiration: number;
-    };
+      totalTenants: number
+      tenantsWithKeys: number
+      expiredKeys: number
+      keysNearExpiration: number
+    }
   }> {
-    const issues: string[] = [];
+    const issues: string[] = []
 
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       // Get total tenants
       const { count: totalTenants } = await supabase
         .from('organizations')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
 
       // Get tenants with keys
       const { data: keysData } = await supabase
         .from('encryption_keys')
         .select('tenant_id, expires_at, is_active')
-        .eq('is_active', true);
+        .eq('is_active', true)
 
-      const tenantsWithKeys = new Set(keysData?.map((k) => k.tenant_id)).size;
+      const tenantsWithKeys = new Set(keysData?.map(k => k.tenant_id)).size
 
       // Check for expired keys
-      const now = new Date();
-      const expiredKeys =
-        keysData?.filter((k) => new Date(k.expires_at) < now).length || 0;
+      const now = new Date()
+      const expiredKeys = keysData?.filter(k => new Date(k.expires_at) < now).length || 0
 
       // Check for keys near expiration (within 7 days)
-      const warningDate = new Date();
-      warningDate.setDate(warningDate.getDate() + 7);
+      const warningDate = new Date()
+      warningDate.setDate(warningDate.getDate() + 7)
       const keysNearExpiration =
         keysData?.filter(
-          (k) => new Date(k.expires_at) <= warningDate && new Date(k.expires_at) >= now
-        ).length || 0;
+          k => new Date(k.expires_at) <= warningDate && new Date(k.expires_at) >= now
+        ).length || 0
 
       // Validate health
       if (expiredKeys > 0) {
-        issues.push(`${expiredKeys} expired keys found`);
+        issues.push(`${expiredKeys} expired keys found`)
       }
 
       if (keysNearExpiration > 5) {
-        issues.push(`${keysNearExpiration} keys approaching expiration`);
+        issues.push(`${keysNearExpiration} keys approaching expiration`)
       }
 
       if (totalTenants && tenantsWithKeys < totalTenants) {
-        issues.push(
-          `${totalTenants - tenantsWithKeys} tenants missing encryption keys`
-        );
+        issues.push(`${totalTenants - tenantsWithKeys} tenants missing encryption keys`)
       }
 
       return {
@@ -501,9 +479,9 @@ export class KeyRotationService {
           expiredKeys,
           keysNearExpiration,
         },
-      };
+      }
     } catch (error) {
-      issues.push(`Health check failed: ${error instanceof Error ? error.message : String(error)}`);
+      issues.push(`Health check failed: ${error instanceof Error ? error.message : String(error)}`)
       return {
         healthy: false,
         issues,
@@ -513,7 +491,7 @@ export class KeyRotationService {
           expiredKeys: 0,
           keysNearExpiration: 0,
         },
-      };
+      }
     }
   }
 
@@ -521,21 +499,21 @@ export class KeyRotationService {
    * Get tenants that need key rotation
    */
   private async getTenantsNeedingRotation(daysThreshold: number): Promise<string[]> {
-    const supabase = await createClient();
-    const thresholdDate = new Date();
-    thresholdDate.setDate(thresholdDate.getDate() + daysThreshold);
+    const supabase = await createClient()
+    const thresholdDate = new Date()
+    thresholdDate.setDate(thresholdDate.getDate() + daysThreshold)
 
     const { data, error } = await supabase
       .from('encryption_keys')
       .select('tenant_id')
       .eq('is_active', true)
-      .lte('expires_at', thresholdDate.toISOString());
+      .lte('expires_at', thresholdDate.toISOString())
 
     if (error || !data) {
-      return [];
+      return []
     }
 
-    return [...new Set(data.map((row) => row.tenant_id))];
+    return [...new Set(data.map(row => row.tenant_id))]
   }
 
   /**
@@ -547,23 +525,23 @@ export class KeyRotationService {
       profiles: ['email'],
       api_keys: ['key_value', 'secret'],
       whatsapp_credentials: ['access_token', 'phone_number_id'],
-    };
+    }
 
-    return fieldMap[table] || [];
+    return fieldMap[table] || []
   }
 
   /**
    * Delay helper
    */
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 
 /**
  * Singleton key rotation service instance
  */
-let keyRotationServiceInstance: KeyRotationService | null = null;
+let keyRotationServiceInstance: KeyRotationService | null = null
 
 /**
  * Get or create key rotation service singleton
@@ -572,16 +550,16 @@ let keyRotationServiceInstance: KeyRotationService | null = null;
  */
 export function getKeyRotationService(): KeyRotationService {
   if (!keyRotationServiceInstance) {
-    keyRotationServiceInstance = new KeyRotationService();
+    keyRotationServiceInstance = new KeyRotationService()
   }
-  return keyRotationServiceInstance;
+  return keyRotationServiceInstance
 }
 
 /**
  * Reset key rotation service singleton (useful for testing)
  */
 export function resetKeyRotationService(): void {
-  keyRotationServiceInstance = null;
+  keyRotationServiceInstance = null
 }
 
 /**
@@ -590,4 +568,4 @@ export function resetKeyRotationService(): void {
 export const __testing__ = {
   KeyRotationService,
   resetKeyRotationService,
-};
+}

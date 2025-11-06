@@ -90,9 +90,7 @@ export class PaymentMethodManager {
       options.setAsDefault || false
     )
 
-    await supabase
-      .from('payment_methods')
-      .upsert(paymentMethodData)
+    await supabase.from('payment_methods').upsert(paymentMethodData)
 
     return paymentMethodData
   }
@@ -139,11 +137,9 @@ export class PaymentMethodManager {
       return
     }
 
-    await this.attachPaymentMethod(
-      organizationId,
-      setupIntent.payment_method as string,
-      { setAsDefault }
-    )
+    await this.attachPaymentMethod(organizationId, setupIntent.payment_method as string, {
+      setAsDefault,
+    })
   }
 
   async handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
@@ -155,9 +151,7 @@ export class PaymentMethodManager {
 
     const paymentMethodData = this.formatPaymentMethodData(paymentMethod, organizationId, false)
 
-    await supabase
-      .from('payment_methods')
-      .upsert(paymentMethodData)
+    await supabase.from('payment_methods').upsert(paymentMethodData)
   }
 
   async handlePaymentMethodDetached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
@@ -324,7 +318,10 @@ export class PaymentMethodManager {
     await supabase
       .from('payment_methods')
       .update({
-        failure_count: supabase.from('payment_methods').select('failure_count').then(data => (data || 0) + 1),
+        failure_count: supabase
+          .from('payment_methods')
+          .select('failure_count')
+          .then(data => (data || 0) + 1),
         last_failure: {
           code: failure.code,
           message: failure.message,
@@ -341,17 +338,15 @@ export class PaymentMethodManager {
   ): Promise<void> {
     const supabase = await this.supabase
 
-    await supabase
-      .from('payment_retry_strategies')
-      .upsert({
-        organization_id: organizationId,
-        enabled: strategy.enabled,
-        max_retries: strategy.maxRetries,
-        retry_intervals: strategy.retryIntervals,
-        fallback_methods: strategy.fallbackMethods,
-        notify_customer: strategy.notifyCustomer,
-        updated_at: new Date().toISOString(),
-      })
+    await supabase.from('payment_retry_strategies').upsert({
+      organization_id: organizationId,
+      enabled: strategy.enabled,
+      max_retries: strategy.maxRetries,
+      retry_intervals: strategy.retryIntervals,
+      fallback_methods: strategy.fallbackMethods,
+      notify_customer: strategy.notifyCustomer,
+      updated_at: new Date().toISOString(),
+    })
   }
 
   async getPaymentRetryStrategy(organizationId: string): Promise<PaymentRetryStrategy | null> {
@@ -431,8 +426,11 @@ export class PaymentMethodManager {
         const currentYear = now.getFullYear()
         const currentMonth = now.getMonth() + 1
 
-        if (paymentMethod.card.exp_year < currentYear ||
-            (paymentMethod.card.exp_year === currentYear && paymentMethod.card.exp_month < currentMonth)) {
+        if (
+          paymentMethod.card.exp_year < currentYear ||
+          (paymentMethod.card.exp_year === currentYear &&
+            paymentMethod.card.exp_month < currentMonth)
+        ) {
           issues.push('Card has expired')
         }
 
@@ -489,17 +487,20 @@ export class PaymentMethodManager {
     const totalFailures = methods.reduce((sum, m) => sum + m.failure_count, 0)
     const failureRate = totalFailures / methods.length
 
-    const methodTypes = methods.reduce((acc, method) => {
-      acc[method.type] = (acc[method.type] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
+    const methodTypes = methods.reduce(
+      (acc, method) => {
+        acc[method.type] = (acc[method.type] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
     // Count recent failures (last 30 days)
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-    const recentFailures = methods.filter(m =>
-      m.last_failure && new Date(m.last_failure.timestamp) >= thirtyDaysAgo
+    const recentFailures = methods.filter(
+      m => m.last_failure && new Date(m.last_failure.timestamp) >= thirtyDaysAgo
     ).length
 
     return {
@@ -563,7 +564,10 @@ export class PaymentMethodManager {
     return data?.id || null
   }
 
-  private async attemptInvoicePayment(invoiceId: string, paymentMethodId: string): Promise<boolean> {
+  private async attemptInvoicePayment(
+    invoiceId: string,
+    paymentMethodId: string
+  ): Promise<boolean> {
     try {
       const invoice = await stripe.invoices.pay(invoiceId, {
         payment_method: paymentMethodId,

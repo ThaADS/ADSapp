@@ -16,7 +16,7 @@
  */
 
 // @ts-nocheck - Type definitions need review
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server'
 import type {
   DataType,
   DataRetentionPolicy,
@@ -25,8 +25,8 @@ import type {
   RetentionEnforcementResult,
   RetentionPolicyStats,
   CreateRetentionPolicyInput,
-  UpdateRetentionPolicyInput
-} from './types';
+  UpdateRetentionPolicyInput,
+} from './types'
 
 /**
  * Retention Policy Engine
@@ -37,11 +37,8 @@ export class RetentionPolicyEngine {
   /**
    * Get retention policy for organization and data type
    */
-  static async getRetentionPolicy(
-    organizationId: string,
-    dataType: DataType
-  ): Promise<number> {
-    const supabase = await createClient();
+  static async getRetentionPolicy(organizationId: string, dataType: DataType): Promise<number> {
+    const supabase = await createClient()
 
     // Check for organization-specific policy
     const { data: orgPolicy } = await supabase
@@ -51,10 +48,10 @@ export class RetentionPolicyEngine {
       .eq('data_type', dataType)
       .eq('is_active', true)
       .eq('enforcement_enabled', true)
-      .single();
+      .single()
 
     if (orgPolicy) {
-      return orgPolicy.retention_days;
+      return orgPolicy.retention_days
     }
 
     // Fallback to default policy
@@ -62,50 +59,48 @@ export class RetentionPolicyEngine {
       .from('default_retention_policies')
       .select('retention_days')
       .eq('data_type', dataType)
-      .single();
+      .single()
 
-    return defaultPolicy?.retention_days || 365; // Default 1 year
+    return defaultPolicy?.retention_days || 365 // Default 1 year
   }
 
   /**
    * Get all retention policies for an organization
    */
-  static async getOrganizationPolicies(
-    organizationId: string
-  ): Promise<DataRetentionPolicy[]> {
-    const supabase = await createClient();
+  static async getOrganizationPolicies(organizationId: string): Promise<DataRetentionPolicy[]> {
+    const supabase = await createClient()
 
     const { data, error } = await supabase
       .from('data_retention_policies')
       .select('*')
       .eq('organization_id', organizationId)
-      .order('data_type');
+      .order('data_type')
 
     if (error) {
-      console.error('[RetentionPolicy] Error fetching policies:', error);
-      throw new Error(`Failed to fetch retention policies: ${error.message}`);
+      console.error('[RetentionPolicy] Error fetching policies:', error)
+      throw new Error(`Failed to fetch retention policies: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   /**
    * Get all default retention policies
    */
   static async getDefaultPolicies(): Promise<DefaultRetentionPolicy[]> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const { data, error } = await supabase
       .from('default_retention_policies')
       .select('*')
-      .order('data_type');
+      .order('data_type')
 
     if (error) {
-      console.error('[RetentionPolicy] Error fetching default policies:', error);
-      throw new Error(`Failed to fetch default policies: ${error.message}`);
+      console.error('[RetentionPolicy] Error fetching default policies:', error)
+      throw new Error(`Failed to fetch default policies: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   /**
@@ -115,7 +110,7 @@ export class RetentionPolicyEngine {
     input: CreateRetentionPolicyInput,
     userId: string
   ): Promise<DataRetentionPolicy> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Check if policy already exists
     const { data: existing } = await supabase
@@ -123,7 +118,7 @@ export class RetentionPolicyEngine {
       .select('id')
       .eq('organization_id', input.organization_id)
       .eq('data_type', input.data_type)
-      .single();
+      .single()
 
     if (existing) {
       // Update existing policy
@@ -133,14 +128,14 @@ export class RetentionPolicyEngine {
           retention_days: input.retention_days,
           enforcement_enabled: input.enforcement_enabled ?? true,
           auto_delete_enabled: input.auto_delete_enabled ?? false,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
         .select()
-        .single();
+        .single()
 
-      if (error) throw new Error(`Failed to update policy: ${error.message}`);
-      return data;
+      if (error) throw new Error(`Failed to update policy: ${error.message}`)
+      return data
     }
 
     // Create new policy
@@ -152,21 +147,21 @@ export class RetentionPolicyEngine {
         retention_days: input.retention_days,
         enforcement_enabled: input.enforcement_enabled ?? true,
         auto_delete_enabled: input.auto_delete_enabled ?? false,
-        created_by: userId
+        created_by: userId,
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      console.error('[RetentionPolicy] Error creating policy:', error);
-      throw new Error(`Failed to create retention policy: ${error.message}`);
+      console.error('[RetentionPolicy] Error creating policy:', error)
+      throw new Error(`Failed to create retention policy: ${error.message}`)
     }
 
     console.log(
       `[RetentionPolicy] Created policy for ${input.organization_id}:${input.data_type} - ${input.retention_days} days`
-    );
+    )
 
-    return data;
+    return data
   }
 
   /**
@@ -176,43 +171,40 @@ export class RetentionPolicyEngine {
     policyId: string,
     updates: UpdateRetentionPolicyInput
   ): Promise<DataRetentionPolicy> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     const { data, error } = await supabase
       .from('data_retention_policies')
       .update({
         ...updates,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', policyId)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      console.error('[RetentionPolicy] Error updating policy:', error);
-      throw new Error(`Failed to update retention policy: ${error.message}`);
+      console.error('[RetentionPolicy] Error updating policy:', error)
+      throw new Error(`Failed to update retention policy: ${error.message}`)
     }
 
-    return data;
+    return data
   }
 
   /**
    * Delete retention policy (revert to default)
    */
   static async deleteRetentionPolicy(policyId: string): Promise<void> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
-    const { error } = await supabase
-      .from('data_retention_policies')
-      .delete()
-      .eq('id', policyId);
+    const { error } = await supabase.from('data_retention_policies').delete().eq('id', policyId)
 
     if (error) {
-      console.error('[RetentionPolicy] Error deleting policy:', error);
-      throw new Error(`Failed to delete retention policy: ${error.message}`);
+      console.error('[RetentionPolicy] Error deleting policy:', error)
+      throw new Error(`Failed to delete retention policy: ${error.message}`)
     }
 
-    console.log(`[RetentionPolicy] Deleted policy ${policyId}`);
+    console.log(`[RetentionPolicy] Deleted policy ${policyId}`)
   }
 
   /**
@@ -223,21 +215,21 @@ export class RetentionPolicyEngine {
     dataType: DataType,
     limit: number = 1000
   ): Promise<ExpiredRecord[]> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Use database function for efficient query
     const { data, error } = await supabase.rpc('find_expired_records', {
       p_organization_id: organizationId,
       p_data_type: dataType,
-      p_limit: limit
-    });
+      p_limit: limit,
+    })
 
     if (error) {
-      console.error('[RetentionPolicy] Error finding expired records:', error);
-      throw new Error(`Failed to find expired records: ${error.message}`);
+      console.error('[RetentionPolicy] Error finding expired records:', error)
+      throw new Error(`Failed to find expired records: ${error.message}`)
     }
 
-    return data || [];
+    return data || []
   }
 
   /**
@@ -248,31 +240,28 @@ export class RetentionPolicyEngine {
     dataType: DataType,
     dryRun: boolean = false
   ): Promise<RetentionEnforcementResult> {
-    const startTime = Date.now();
-    const errors: string[] = [];
+    const startTime = Date.now()
+    const errors: string[] = []
 
     try {
-      const supabase = await createClient();
+      const supabase = await createClient()
 
       // Get retention policy
-      const retentionDays = await this.getRetentionPolicy(
-        organizationId,
-        dataType
-      );
+      const retentionDays = await this.getRetentionPolicy(organizationId, dataType)
 
       console.log(
         `[RetentionPolicy] Enforcing ${dataType} policy for org ${organizationId}: ${retentionDays} days`
-      );
+      )
 
       // Find expired records
       const expiredRecords = await this.findExpiredRecords(
         organizationId,
         dataType,
         1000 // Process in batches
-      );
+      )
 
       if (expiredRecords.length === 0) {
-        console.log(`[RetentionPolicy] No expired ${dataType} found`);
+        console.log(`[RetentionPolicy] No expired ${dataType} found`)
 
         // Update enforcement timestamp
         if (!dryRun) {
@@ -280,7 +269,7 @@ export class RetentionPolicyEngine {
             .from('data_retention_policies')
             .update({ last_enforced_at: new Date().toISOString() })
             .eq('organization_id', organizationId)
-            .eq('data_type', dataType);
+            .eq('data_type', dataType)
         }
 
         return {
@@ -290,15 +279,15 @@ export class RetentionPolicyEngine {
           records_deleted: 0,
           oldest_record_age_days: null,
           enforcement_time_ms: Date.now() - startTime,
-          errors
-        };
+          errors,
+        }
       }
 
-      const oldestAge = Math.max(...expiredRecords.map((r) => r.age_days));
+      const oldestAge = Math.max(...expiredRecords.map(r => r.age_days))
 
       console.log(
         `[RetentionPolicy] Found ${expiredRecords.length} expired ${dataType} (oldest: ${oldestAge} days)`
-      );
+      )
 
       if (dryRun) {
         return {
@@ -308,29 +297,27 @@ export class RetentionPolicyEngine {
           records_deleted: 0,
           oldest_record_age_days: oldestAge,
           enforcement_time_ms: Date.now() - startTime,
-          errors
-        };
+          errors,
+        }
       }
 
       // Perform soft delete on expired records
-      let deletedCount = 0;
+      let deletedCount = 0
 
       for (const record of expiredRecords) {
         try {
-          const tableName = this.getTableNameForDataType(dataType);
+          const tableName = this.getTableNameForDataType(dataType)
 
           // Soft delete the record
           const { error: deleteError } = await supabase
             .from(tableName as any)
             .update({ deleted_at: new Date().toISOString() })
             .eq('id', record.id)
-            .is('deleted_at', null);
+            .is('deleted_at', null)
 
           if (deleteError) {
-            errors.push(
-              `Failed to delete ${tableName}:${record.id}: ${deleteError.message}`
-            );
-            continue;
+            errors.push(`Failed to delete ${tableName}:${record.id}: ${deleteError.message}`)
+            continue
           }
 
           // Log deletion to audit trail
@@ -341,12 +328,12 @@ export class RetentionPolicyEngine {
             record_id: record.id,
             deletion_reason: `Retention policy: ${retentionDays} days exceeded (age: ${record.age_days} days)`,
             is_reversible: true,
-            legal_basis: 'legal_obligation'
-          });
+            legal_basis: 'legal_obligation',
+          })
 
-          deletedCount++;
+          deletedCount++
         } catch (err) {
-          errors.push(`Error processing record ${record.id}: ${err}`);
+          errors.push(`Error processing record ${record.id}: ${err}`)
         }
       }
 
@@ -355,11 +342,11 @@ export class RetentionPolicyEngine {
         .from('data_retention_policies')
         .update({ last_enforced_at: new Date().toISOString() })
         .eq('organization_id', organizationId)
-        .eq('data_type', dataType);
+        .eq('data_type', dataType)
 
       console.log(
         `[RetentionPolicy] Deleted ${deletedCount}/${expiredRecords.length} expired ${dataType}`
-      );
+      )
 
       return {
         organization_id: organizationId,
@@ -368,13 +355,11 @@ export class RetentionPolicyEngine {
         records_deleted: deletedCount,
         oldest_record_age_days: oldestAge,
         enforcement_time_ms: Date.now() - startTime,
-        errors
-      };
+        errors,
+      }
     } catch (error) {
-      console.error('[RetentionPolicy] Enforcement error:', error);
-      errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      console.error('[RetentionPolicy] Enforcement error:', error)
+      errors.push(error instanceof Error ? error.message : 'Unknown error')
 
       return {
         organization_id: organizationId,
@@ -383,8 +368,8 @@ export class RetentionPolicyEngine {
         records_deleted: 0,
         oldest_record_age_days: null,
         enforcement_time_ms: Date.now() - startTime,
-        errors
-      };
+        errors,
+      }
     }
   }
 
@@ -395,28 +380,16 @@ export class RetentionPolicyEngine {
     organizationId: string,
     dryRun: boolean = false
   ): Promise<RetentionEnforcementResult[]> {
-    const dataTypes: DataType[] = [
-      'messages',
-      'contacts',
-      'conversations',
-      'sessions'
-    ];
+    const dataTypes: DataType[] = ['messages', 'contacts', 'conversations', 'sessions']
 
-    const results: RetentionEnforcementResult[] = [];
+    const results: RetentionEnforcementResult[] = []
 
     for (const dataType of dataTypes) {
       try {
-        const result = await this.enforceRetentionPolicy(
-          organizationId,
-          dataType,
-          dryRun
-        );
-        results.push(result);
+        const result = await this.enforceRetentionPolicy(organizationId, dataType, dryRun)
+        results.push(result)
       } catch (error) {
-        console.error(
-          `[RetentionPolicy] Error enforcing ${dataType}:`,
-          error
-        );
+        console.error(`[RetentionPolicy] Error enforcing ${dataType}:`, error)
         results.push({
           organization_id: organizationId,
           data_type: dataType,
@@ -424,12 +397,12 @@ export class RetentionPolicyEngine {
           records_deleted: 0,
           oldest_record_age_days: null,
           enforcement_time_ms: 0,
-          errors: [error instanceof Error ? error.message : 'Unknown error']
-        });
+          errors: [error instanceof Error ? error.message : 'Unknown error'],
+        })
       }
     }
 
-    return results;
+    return results
   }
 
   /**
@@ -439,13 +412,10 @@ export class RetentionPolicyEngine {
     organizationId: string,
     dataType: DataType
   ): Promise<RetentionPolicyStats> {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get retention policy
-    const retentionDays = await this.getRetentionPolicy(
-      organizationId,
-      dataType
-    );
+    const retentionDays = await this.getRetentionPolicy(organizationId, dataType)
 
     // Get policy enforcement info
     const { data: policyData } = await supabase
@@ -453,29 +423,23 @@ export class RetentionPolicyEngine {
       .select('last_enforced_at')
       .eq('organization_id', organizationId)
       .eq('data_type', dataType)
-      .single();
+      .single()
 
     // Get expired records
-    const expiredRecords = await this.findExpiredRecords(
-      organizationId,
-      dataType,
-      10000
-    );
+    const expiredRecords = await this.findExpiredRecords(organizationId, dataType, 10000)
 
     // Get total record count
-    const tableName = this.getTableNameForDataType(dataType);
+    const tableName = this.getTableNameForDataType(dataType)
     const { count: totalRecords } = await supabase
       .from(tableName as any)
       .select('*', { count: 'exact', head: true })
-      .is('deleted_at', null);
+      .is('deleted_at', null)
 
     const oldestAge =
-      expiredRecords.length > 0
-        ? Math.max(...expiredRecords.map((r) => r.age_days))
-        : null;
+      expiredRecords.length > 0 ? Math.max(...expiredRecords.map(r => r.age_days)) : null
 
     // Estimate cleanup time (rough: 10ms per record)
-    const estimatedCleanupTime = expiredRecords.length * 10;
+    const estimatedCleanupTime = expiredRecords.length * 10
 
     return {
       organization_id: organizationId,
@@ -485,8 +449,8 @@ export class RetentionPolicyEngine {
       oldest_record_age_days: oldestAge,
       retention_days: retentionDays,
       last_enforced_at: policyData?.last_enforced_at || null,
-      estimated_cleanup_time_ms: estimatedCleanupTime
-    };
+      estimated_cleanup_time_ms: estimatedCleanupTime,
+    }
   }
 
   /**
@@ -501,10 +465,10 @@ export class RetentionPolicyEngine {
       audit_logs: 'deletion_audit_log',
       analytics: 'demo_session_activities',
       media_files: 'messages', // Media is referenced in messages
-      demo_data: 'demo_sessions'
-    };
+      demo_data: 'demo_sessions',
+    }
 
-    return tableMap[dataType] || 'messages';
+    return tableMap[dataType] || 'messages'
   }
 
   /**
@@ -519,27 +483,27 @@ export class RetentionPolicyEngine {
       audit_logs: 2555, // 7 years - legal requirement
       messages: 1, // At least 1 day
       contacts: 1,
-      conversations: 1
-    };
+      conversations: 1,
+    }
 
-    const minimum = minimums[dataType] || 1;
+    const minimum = minimums[dataType] || 1
 
     if (retentionDays < minimum) {
       return {
         valid: false,
-        error: `${dataType} must be retained for at least ${minimum} days`
-      };
+        error: `${dataType} must be retained for at least ${minimum} days`,
+      }
     }
 
     // Maximum retention periods (10 years)
     if (retentionDays > 3650) {
       return {
         valid: false,
-        error: 'Retention period cannot exceed 10 years (3650 days)'
-      };
+        error: 'Retention period cannot exceed 10 years (3650 days)',
+      }
     }
 
-    return { valid: true };
+    return { valid: true }
   }
 }
 
@@ -557,5 +521,5 @@ export const {
   enforceRetentionPolicy,
   enforceAllPolicies,
   getPolicyStats,
-  validateRetentionDays
-} = RetentionPolicyEngine;
+  validateRetentionDays,
+} = RetentionPolicyEngine

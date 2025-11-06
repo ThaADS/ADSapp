@@ -7,7 +7,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import type { MessageTemplate } from '@/types/database'
 
 // =============================================================================
@@ -52,7 +51,8 @@ export const welcomeTemplate: MessageTemplate = {
   id: 'template-welcome-001',
   organization_id: 'org-test-001',
   name: 'customer_welcome',
-  content: 'Welcome to {{company_name}}, {{customer_name}}! We\'re excited to have you with us. How can we help you today?',
+  content:
+    "Welcome to {{company_name}}, {{customer_name}}! We're excited to have you with us. How can we help you today?",
   category: 'utility',
   language: 'en',
   status: 'approved',
@@ -60,7 +60,7 @@ export const welcomeTemplate: MessageTemplate = {
   components: [
     {
       type: 'BODY',
-      text: 'Welcome to {{1}}, {{2}}! We\'re excited to have you with us. How can we help you today?',
+      text: "Welcome to {{1}}, {{2}}! We're excited to have you with us. How can we help you today?",
     },
   ],
   whatsapp_template_id: 'wa_template_welcome_001',
@@ -73,7 +73,8 @@ export const ticketCreatedTemplate: MessageTemplate = {
   id: 'template-ticket-001',
   organization_id: 'org-test-001',
   name: 'ticket_created',
-  content: 'Thank you for contacting us! Your ticket #{{ticket_id}} has been created. We\'ll respond within {{response_time}} hours.',
+  content:
+    "Thank you for contacting us! Your ticket #{{ticket_id}} has been created. We'll respond within {{response_time}} hours.",
   category: 'utility',
   language: 'en',
   status: 'approved',
@@ -81,7 +82,7 @@ export const ticketCreatedTemplate: MessageTemplate = {
   components: [
     {
       type: 'BODY',
-      text: 'Thank you for contacting us! Your ticket #{{1}} has been created. We\'ll respond within {{2}} hours.',
+      text: "Thank you for contacting us! Your ticket #{{1}} has been created. We'll respond within {{2}} hours.",
     },
   ],
   whatsapp_template_id: 'wa_template_ticket_001',
@@ -98,7 +99,8 @@ export const orderConfirmationTemplate: MessageTemplate = {
   id: 'template-order-001',
   organization_id: 'org-test-001',
   name: 'order_confirmation',
-  content: 'Order confirmed! 🎉 Order #{{order_id}} - {{item_count}} items - Total: ${{total}}. Estimated delivery: {{delivery_date}}',
+  content:
+    'Order confirmed! 🎉 Order #{{order_id}} - {{item_count}} items - Total: ${{total}}. Estimated delivery: {{delivery_date}}',
   category: 'utility',
   language: 'en',
   status: 'approved',
@@ -138,7 +140,8 @@ export const otpTemplate: MessageTemplate = {
   id: 'template-otp-001',
   organization_id: 'org-test-001',
   name: 'verification_code',
-  content: 'Your verification code is: {{code}}. Valid for {{expiry}} minutes. Do not share this code.',
+  content:
+    'Your verification code is: {{code}}. Valid for {{expiry}} minutes. Do not share this code.',
   category: 'authentication',
   language: 'en',
   status: 'approved',

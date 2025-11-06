@@ -13,6 +13,7 @@ The ADSapp dashboard was displaying an unwanted dark theme with poor contrast an
 ## Root Causes
 
 ### 1. globals.css (Lines 15-20)
+
 ```css
 @media (prefers-color-scheme: dark) {
   :root {
@@ -21,14 +22,17 @@ The ADSapp dashboard was displaying an unwanted dark theme with poor contrast an
   }
 }
 ```
+
 This media query automatically applied dark colors when the user's operating system was set to dark mode.
 
 ### 2. accessibility-provider.tsx (Line 58)
+
 ```typescript
 theme: 'auto', // Was automatically detecting system theme
 ```
 
 ### 3. accessibility.css (Lines 445-474)
+
 The dark theme CSS was too aggressive and didn't have proper light theme defaults.
 
 ## Solutions Implemented
@@ -36,12 +40,14 @@ The dark theme CSS was too aggressive and didn't have proper light theme default
 ### 1. Updated globals.css
 
 **Changes Made**:
+
 - Removed the automatic dark mode media query
 - Added CSS custom properties for brand colors
 - Added explicit light theme enforcement for dashboard elements
 - Added comments explaining the change
 
 **New Code**:
+
 ```css
 :root {
   --background: #ffffff;
@@ -57,9 +63,9 @@ The dark theme CSS was too aggressive and didn't have proper light theme default
 
 /* Ensure light background for all dashboard elements by default */
 .dashboard-container,
-[class*="dashboard"],
-[class*="sidebar"],
-nav[class*="nav"] {
+[class*='dashboard'],
+[class*='sidebar'],
+nav[class*='nav'] {
   background-color: #ffffff;
   color: #171717;
 }
@@ -68,22 +74,24 @@ nav[class*="nav"] {
 ### 2. Updated accessibility.css
 
 **Changes Made**:
+
 - Added clear comments indicating dark theme only applies when explicitly enabled
 - Added comprehensive light theme defaults
 - Ensured light theme is applied to body and main containers
 
 **New Code**:
+
 ```css
 /* Dark Theme - Only applied when explicitly enabled via accessibility settings */
 /* NOT applied automatically based on system preferences */
-[data-theme="dark"] body {
+[data-theme='dark'] body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 
 /* Light Theme - Default professional appearance */
-[data-theme="light"],
-:root:not([data-theme="dark"]) {
+[data-theme='light'],
+:root:not([data-theme='dark']) {
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
   --text-primary: #111827;
@@ -94,8 +102,8 @@ nav[class*="nav"] {
 }
 
 /* Ensure light theme is default for body and main containers */
-body:not([data-theme="dark"]),
-[data-theme="light"] body {
+body:not([data-theme='dark']),
+[data-theme='light'] body {
   background-color: #ffffff;
   color: #111827;
 }
@@ -104,17 +112,19 @@ body:not([data-theme="dark"]),
 ### 3. Updated accessibility-provider.tsx
 
 **Changes Made**:
+
 - Changed default theme from `'auto'` to `'light'`
 - Added comment explaining the change
 
 **New Code**:
+
 ```typescript
 // Initial state - Default to light theme for professional SaaS appearance
 const initialState: AccessibilityState = {
   // ... other properties
   theme: 'light', // Changed from 'auto' to 'light' for consistent professional appearance
   // ... other properties
-};
+}
 ```
 
 ## Expected Results
@@ -122,6 +132,7 @@ const initialState: AccessibilityState = {
 After these changes, users will experience:
 
 ### Visual Improvements
+
 1. **Clean White Background**: Professional light theme with white/light gray backgrounds
 2. **Proper Contrast**: Dark text (gray-900/#111827) on white backgrounds
 3. **Visible Buttons**: Green primary color (#10b981) with clear hover states
@@ -129,6 +140,7 @@ After these changes, users will experience:
 5. **Readable Text**: High contrast text throughout the interface
 
 ### Brand Colors Applied
+
 - **Primary Green**: #10b981 (green-500)
 - **Hover Green**: #059669 (green-600)
 - **Background**: White (#ffffff)
@@ -136,7 +148,9 @@ After these changes, users will experience:
 - **Borders**: Light gray (#e5e7eb)
 
 ### WCAG 2.1 AA Compliance
+
 All changes maintain accessibility standards:
+
 - Text contrast ratios exceed 4.5:1 for normal text
 - Interactive elements have clear focus states
 - Color is not the only means of conveying information
@@ -144,6 +158,7 @@ All changes maintain accessibility standards:
 ## User Actions Required
 
 ### Clear Browser Cache & LocalStorage
+
 Users experiencing the issue should:
 
 1. **Clear LocalStorage** (if dark mode was previously saved):
@@ -160,6 +175,7 @@ Users experiencing the issue should:
 ## Testing Performed
 
 ### Components Verified
+
 - ✅ Dashboard layout (clean light background)
 - ✅ Sidebar navigation (white with green accents)
 - ✅ Dashboard stats cards (proper shadows and contrast)
@@ -168,6 +184,7 @@ Users experiencing the issue should:
 - ✅ Text readability (dark text on light backgrounds)
 
 ### Accessibility Compliance
+
 - ✅ WCAG 2.1 AA contrast ratios maintained
 - ✅ Keyboard navigation preserved
 - ✅ Screen reader compatibility maintained
@@ -177,6 +194,7 @@ Users experiencing the issue should:
 ## Dark Mode Availability
 
 Dark mode is still available for users who want it:
+
 - Navigate to: **Settings → Accessibility**
 - Toggle: **Theme → Dark**
 - The dark theme will be applied and saved to user preferences
@@ -205,6 +223,7 @@ git checkout HEAD~1 -- src/app/globals.css src/styles/accessibility.css src/comp
 ## Summary
 
 The dashboard styling issue has been completely resolved. The application now:
+
 - Defaults to a clean, professional light theme
 - Maintains WCAG 2.1 AA accessibility standards
 - Provides clear contrast and readability

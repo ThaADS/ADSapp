@@ -3,6 +3,7 @@
 ## Quick Apply (< 1 minute)
 
 1. **Open Supabase SQL Editor**
+
    ```
    https://supabase.com/dashboard/project/egaiyydjgeqlhthxmvbn/sql/new
    ```
@@ -24,12 +25,14 @@
 ## What This Migration Does
 
 ### Creates
+
 - ✅ Supabase Storage bucket: `organization-logos`
 - ✅ Storage policies for secure access
 - ✅ `logo_url` column in `organizations` table
 - ✅ Audit logging trigger for logo changes
 
 ### Storage Bucket Settings
+
 ```
 Bucket: organization-logos
 Public: Yes (for easy CDN access)
@@ -39,6 +42,7 @@ Path Structure: {organization_id}/logo.{ext}
 ```
 
 ### Security Policies
+
 - ✅ Anyone (authenticated) can view logos
 - ✅ Only owner/admin can upload logos
 - ✅ Only owner/admin can update logos
@@ -48,6 +52,7 @@ Path Structure: {organization_id}/logo.{ext}
 ## After Migration
 
 ### Test Logo Upload
+
 1. Navigate to: `http://localhost:3000/dashboard/settings/organization`
 2. Scroll to "Organization Logo" section
 3. Click "Upload Logo"
@@ -56,6 +61,7 @@ Path Structure: {organization_id}/logo.{ext}
 6. Click "Remove" to delete logo
 
 ### Verify in Storage
+
 1. Go to Supabase Dashboard
 2. Click "Storage" in sidebar
 3. Open "organization-logos" bucket
@@ -63,6 +69,7 @@ Path Structure: {organization_id}/logo.{ext}
 5. Logo file inside folder
 
 ### Verify in Database
+
 ```sql
 -- Check if bucket was created
 SELECT id, name, public, file_size_limit, allowed_mime_types

@@ -1,12 +1,11 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import Stripe from 'stripe'
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import Stripe from 'stripe';
-
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/integrations/status
@@ -14,15 +13,15 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's profile and organization
@@ -30,13 +29,10 @@ export async function GET(request: NextRequest) {
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Get organization details
@@ -44,13 +40,10 @@ export async function GET(request: NextRequest) {
       .from('organizations')
       .select('whatsapp_business_account_id, stripe_customer_id')
       .eq('id', profile.organization_id)
-      .single();
+      .single()
 
     if (orgError) {
-      return NextResponse.json(
-        { error: 'Organization not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // Check all integration statuses in parallel
@@ -59,7 +52,7 @@ export async function GET(request: NextRequest) {
       checkStripeStatus(organization.stripe_customer_id),
       checkEmailStatus(),
       checkDatabaseStatus(supabase),
-    ]);
+    ])
 
     return NextResponse.json({
       integrations: {
@@ -75,14 +68,10 @@ export async function GET(request: NextRequest) {
         databaseStatus,
       ]),
       last_checked: new Date().toISOString(),
-    });
-
+    })
   } catch (error) {
-    console.error('Error checking integration status:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Error checking integration status:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
@@ -95,17 +84,17 @@ async function checkWhatsAppStatus(businessAccountId: string | null) {
       status: 'not_configured',
       message: 'WhatsApp Business Account not configured',
       healthy: false,
-    };
+    }
   }
 
   try {
-    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN
     if (!accessToken) {
       return {
         status: 'error',
         message: 'WhatsApp access token not configured',
         healthy: false,
-      };
+      }
     }
 
     // Check if we can access the business account
@@ -113,13 +102,13 @@ async function checkWhatsAppStatus(businessAccountId: string | null) {
       `https://graph.facebook.com/v18.0/${businessAccountId}?fields=id,name`,
       {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
-    );
+    )
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json()
       return {
         status: 'connected',
         message: `Connected to ${data.name || 'WhatsApp Business'}`,
@@ -128,21 +117,21 @@ async function checkWhatsAppStatus(businessAccountId: string | null) {
           account_id: data.id,
           account_name: data.name,
         },
-      };
+      }
     } else {
-      const error = await response.json();
+      const error = await response.json()
       return {
         status: 'error',
         message: error.error?.message || 'Failed to connect to WhatsApp',
         healthy: false,
-      };
+      }
     }
   } catch (error) {
     return {
       status: 'error',
       message: error instanceof Error ? error.message : 'WhatsApp API unreachable',
       healthy: false,
-    };
+    }
   }
 }
 
@@ -155,32 +144,32 @@ async function checkStripeStatus(customerId: string | null) {
       status: 'not_configured',
       message: 'Stripe customer not configured',
       healthy: true, // Not required for basic functionality
-    };
+    }
   }
 
   try {
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY
     if (!stripeSecretKey) {
       return {
         status: 'error',
         message: 'Stripe secret key not configured',
         healthy: false,
-      };
+      }
     }
 
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2024-11-20.acacia',
-    });
+    })
 
     // Try to retrieve the customer
-    const customer = await stripe.customers.retrieve(customerId);
+    const customer = await stripe.customers.retrieve(customerId)
 
     if (customer.deleted) {
       return {
         status: 'error',
         message: 'Stripe customer has been deleted',
         healthy: false,
-      };
+      }
     }
 
     return {
@@ -191,20 +180,20 @@ async function checkStripeStatus(customerId: string | null) {
         customer_id: customer.id,
         email: customer.email,
       },
-    };
+    }
   } catch (error) {
     if (error instanceof Stripe.errors.StripeError) {
       return {
         status: 'error',
         message: error.message,
         healthy: false,
-      };
+      }
     }
     return {
       status: 'error',
       message: error instanceof Error ? error.message : 'Stripe API unreachable',
       healthy: false,
-    };
+    }
   }
 }
 
@@ -212,44 +201,44 @@ async function checkStripeStatus(customerId: string | null) {
  * Check Email service (Resend) status
  */
 async function checkEmailStatus() {
-  const resendApiKey = process.env.RESEND_API_KEY;
+  const resendApiKey = process.env.RESEND_API_KEY
 
   if (!resendApiKey) {
     return {
       status: 'not_configured',
       message: 'Email service (Resend) not configured',
       healthy: true, // Optional for basic functionality
-    };
+    }
   }
 
   try {
     // Try to list domains (lightweight API call)
     const response = await fetch('https://api.resend.com/domains', {
       headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
+        Authorization: `Bearer ${resendApiKey}`,
       },
-    });
+    })
 
     if (response.ok) {
       return {
         status: 'connected',
         message: 'Email service ready',
         healthy: true,
-      };
+      }
     } else {
-      const error = await response.json();
+      const error = await response.json()
       return {
         status: 'error',
         message: error.message || 'Failed to connect to email service',
         healthy: false,
-      };
+      }
     }
   } catch (error) {
     return {
       status: 'error',
       message: error instanceof Error ? error.message : 'Email service unreachable',
       healthy: false,
-    };
+    }
   }
 }
 
@@ -259,30 +248,27 @@ async function checkEmailStatus() {
 async function checkDatabaseStatus(supabase: any) {
   try {
     // Simple query to check connection
-    const { error } = await supabase
-      .from('organizations')
-      .select('id')
-      .limit(1);
+    const { error } = await supabase.from('organizations').select('id').limit(1)
 
     if (error) {
       return {
         status: 'error',
         message: error.message,
         healthy: false,
-      };
+      }
     }
 
     return {
       status: 'connected',
       message: 'Database connected',
       healthy: true,
-    };
+    }
   } catch (error) {
     return {
       status: 'error',
       message: error instanceof Error ? error.message : 'Database unreachable',
       healthy: false,
-    };
+    }
   }
 }
 
@@ -290,14 +276,14 @@ async function checkDatabaseStatus(supabase: any) {
  * Calculate overall status from individual integrations
  */
 function calculateOverallStatus(statuses: any[]) {
-  const allHealthy = statuses.every(s => s.healthy);
-  const someUnhealthy = statuses.some(s => !s.healthy && s.status !== 'not_configured');
+  const allHealthy = statuses.every(s => s.healthy)
+  const someUnhealthy = statuses.some(s => !s.healthy && s.status !== 'not_configured')
 
   if (allHealthy) {
-    return 'healthy';
+    return 'healthy'
   } else if (someUnhealthy) {
-    return 'degraded';
+    return 'degraded'
   } else {
-    return 'partial';
+    return 'partial'
   }
 }

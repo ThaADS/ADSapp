@@ -34,16 +34,19 @@ artillery -V
 ### Running Load Tests
 
 1. **Generate Test Data** (first time only):
+
 ```bash
 npm run load:generate-data
 ```
 
 2. **Run Complete Load Test Suite**:
+
 ```bash
 npm run load:test
 ```
 
 3. **Run Individual Tests**:
+
 ```bash
 # k6 HTTP/API testing
 npm run load:k6
@@ -83,6 +86,7 @@ tests/load/
 The load tests simulate four distinct user profiles based on real usage patterns:
 
 #### Profile A: Active Agent (40% of users)
+
 - **Behavior**: High engagement, real-time operations
 - **Activity**:
   - Check inbox: 10 req/min
@@ -92,6 +96,7 @@ The load tests simulate four distinct user profiles based on real usage patterns
 - **WebSocket**: Maintains persistent connection
 
 #### Profile B: Moderate User (35% of users)
+
 - **Behavior**: Periodic engagement
 - **Activity**:
   - Check inbox: 5 req/min
@@ -100,6 +105,7 @@ The load tests simulate four distinct user profiles based on real usage patterns
 - **WebSocket**: Intermittent connection
 
 #### Profile C: Light User (20% of users)
+
 - **Behavior**: Infrequent access
 - **Activity**:
   - Check inbox: 2 req/min
@@ -107,6 +113,7 @@ The load tests simulate four distinct user profiles based on real usage patterns
 - **WebSocket**: Occasional connection
 
 #### Profile D: Admin (5% of users)
+
 - **Behavior**: Dashboard-heavy operations
 - **Activity**:
   - View dashboards: 3 req/min
@@ -116,15 +123,15 @@ The load tests simulate four distinct user profiles based on real usage patterns
 
 ### Load Test Stages
 
-| Stage | Duration | Target Users | Purpose |
-|-------|----------|--------------|---------|
-| 1. Baseline | 10 min | 100 | Establish performance baseline |
-| 2. Ramp Up | 15 min | 100→500 | Detect early degradation |
-| 3. Sustained | 30 min | 500 | Stability and leak detection |
-| 4. Spike | 5 min | 500→1500 | Auto-scaling validation |
-| 5. Peak | 20 min | 2000 | Maximum capacity validation |
-| 6. Stress | 10 min | 2000→3000 | Find breaking point |
-| 7. Soak | 2 hours | 1000 | Long-duration stability |
+| Stage        | Duration | Target Users | Purpose                        |
+| ------------ | -------- | ------------ | ------------------------------ |
+| 1. Baseline  | 10 min   | 100          | Establish performance baseline |
+| 2. Ramp Up   | 15 min   | 100→500      | Detect early degradation       |
+| 3. Sustained | 30 min   | 500          | Stability and leak detection   |
+| 4. Spike     | 5 min    | 500→1500     | Auto-scaling validation        |
+| 5. Peak      | 20 min   | 2000         | Maximum capacity validation    |
+| 6. Stress    | 10 min   | 2000→3000    | Find breaking point            |
+| 7. Soak      | 2 hours  | 1000         | Long-duration stability        |
 
 **Total Duration**: ~4 hours (without soak) or 6+ hours (with soak)
 
@@ -132,22 +139,22 @@ The load tests simulate four distinct user profiles based on real usage patterns
 
 ### Response Time Targets
 
-| Endpoint | p95 Target | p99 Target | Max Acceptable |
-|----------|------------|------------|----------------|
-| Health Check | <100ms | <150ms | 200ms |
-| Conversations | <500ms | <800ms | 1500ms |
-| Messages | <800ms | <1200ms | 2000ms |
-| Contacts | <400ms | <600ms | 1000ms |
-| Analytics | <1500ms | <2500ms | 5000ms |
+| Endpoint      | p95 Target | p99 Target | Max Acceptable |
+| ------------- | ---------- | ---------- | -------------- |
+| Health Check  | <100ms     | <150ms     | 200ms          |
+| Conversations | <500ms     | <800ms     | 1500ms         |
+| Messages      | <800ms     | <1200ms    | 2000ms         |
+| Contacts      | <400ms     | <600ms     | 1000ms         |
+| Analytics     | <1500ms    | <2500ms    | 5000ms         |
 
 ### System Metrics
 
-| Metric | Normal | Warning | Critical |
-|--------|--------|---------|----------|
-| Error Rate | <0.1% | <1% | >5% |
-| CPU Usage | <50% | 50-70% | >70% |
-| Memory Usage | <60% | 60-80% | >80% |
-| DB Connections | <50 | 50-80 | >80 |
+| Metric         | Normal | Warning | Critical |
+| -------------- | ------ | ------- | -------- |
+| Error Rate     | <0.1%  | <1%     | >5%      |
+| CPU Usage      | <50%   | 50-70%  | >70%     |
+| Memory Usage   | <60%   | 60-80%  | >80%     |
+| DB Connections | <50    | 50-80   | >80      |
 
 ## Test Configuration
 
@@ -185,20 +192,20 @@ Edit `k6-scenarios.js` to customize:
 ```javascript
 export const options = {
   stages: [
-    { duration: '10m', target: 100 },  // Baseline
-    { duration: '15m', target: 500 },  // Ramp up
-    { duration: '30m', target: 500 },  // Sustained
-    { duration: '5m', target: 1500 },  // Spike
+    { duration: '10m', target: 100 }, // Baseline
+    { duration: '15m', target: 500 }, // Ramp up
+    { duration: '30m', target: 500 }, // Sustained
+    { duration: '5m', target: 1500 }, // Spike
     { duration: '20m', target: 2000 }, // Peak
     { duration: '10m', target: 3000 }, // Stress
   ],
 
   thresholds: {
-    'http_req_duration': ['p(95)<1000', 'p(99)<2000'],
-    'http_req_failed': ['rate<0.01'],
-    'errors': ['rate<0.05'],
+    http_req_duration: ['p(95)<1000', 'p(99)<2000'],
+    http_req_failed: ['rate<0.01'],
+    errors: ['rate<0.05'],
   },
-};
+}
 ```
 
 ## Monitoring & Metrics
@@ -216,24 +223,28 @@ While tests run, monitor:
 ### Collected Metrics
 
 **Application Metrics:**
+
 - Request rate (req/sec)
 - Response times (p50, p95, p99)
 - Error rates
 - Active connections
 
 **System Metrics:**
+
 - CPU utilization
 - Memory usage
 - Network I/O
 - Disk I/O
 
 **Database Metrics:**
+
 - Connection pool usage
 - Query response times
 - Cache hit rates
 - Active queries
 
 **Business Metrics:**
+
 - Messages sent/received
 - Conversation operations
 - Search queries
@@ -259,16 +270,19 @@ tests/load/reports/{TEST_RUN_ID}/
 ### Analyzing Results
 
 1. **Open HTML Reports**:
+
 ```bash
 open tests/load/reports/{TEST_RUN_ID}/artillery-websocket-test-report.html
 ```
 
 2. **Check Summary**:
+
 ```bash
 cat tests/load/reports/{TEST_RUN_ID}/LOAD_TEST_REPORT.md
 ```
 
 3. **Review Metrics**:
+
 ```bash
 cat tests/load/reports/{TEST_RUN_ID}/current-metrics.json | jq .
 ```
@@ -276,26 +290,31 @@ cat tests/load/reports/{TEST_RUN_ID}/current-metrics.json | jq .
 ### Key Questions to Answer
 
 ✅ **Did the system pass all thresholds?**
+
 - Check: Error rate <1%
 - Check: p95 response time <1000ms
 - Check: No critical errors
 
 ✅ **What was the breaking point?**
+
 - Identify: Maximum concurrent users supported
 - Identify: First bottleneck encountered
 - Identify: Resource that saturated first
 
 ✅ **Are there memory leaks?**
+
 - Check: Memory usage over time (soak test)
 - Check: Resource cleanup after load reduction
 - Check: Connection pool stability
 
 ✅ **How effective is caching?**
+
 - Check: Cache hit rate >70%
 - Check: Response time improvement with cache
 - Check: Cache eviction patterns
 
 ✅ **Is auto-scaling working?**
+
 - Check: Scale-up trigger times
 - Check: Performance during scaling
 - Check: Scale-down behavior
@@ -305,6 +324,7 @@ cat tests/load/reports/{TEST_RUN_ID}/current-metrics.json | jq .
 ### Common Issues
 
 **Issue**: k6 reports connection errors
+
 ```bash
 # Solution: Check if application is running
 curl http://localhost:3000/api/health
@@ -314,6 +334,7 @@ npm run dev
 ```
 
 **Issue**: Test data generation fails
+
 ```bash
 # Solution: Ensure output directory exists
 mkdir -p tests/load/data
@@ -323,6 +344,7 @@ npm run load:generate-data
 ```
 
 **Issue**: High error rates during test
+
 ```bash
 # Solutions:
 # 1. Check database connection pool size
@@ -332,6 +354,7 @@ npm run load:generate-data
 ```
 
 **Issue**: Metrics collector stops
+
 ```bash
 # Solution: Check for errors in console
 # Restart manually:
@@ -384,26 +407,25 @@ Create custom k6 scenarios:
 
 ```javascript
 // tests/load/custom-scenario.js
-import http from 'k6/http';
-import { check } from 'k6';
+import http from 'k6/http'
+import { check } from 'k6'
 
 export const options = {
-  stages: [
-    { duration: '5m', target: 100 },
-  ],
-};
+  stages: [{ duration: '5m', target: 100 }],
+}
 
-export default function() {
-  const response = http.get('http://localhost:3000/api/custom-endpoint');
+export default function () {
+  const response = http.get('http://localhost:3000/api/custom-endpoint')
 
   check(response, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 500ms': (r) => r.timings.duration < 500,
-  });
+    'status is 200': r => r.status === 200,
+    'response time < 500ms': r => r.timings.duration < 500,
+  })
 }
 ```
 
 Run custom scenario:
+
 ```bash
 k6 run tests/load/custom-scenario.js
 ```

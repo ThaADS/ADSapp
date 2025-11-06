@@ -17,30 +17,29 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { DefaultAzureCredential } from '@azure/identity';
-import { CryptographyClient, KeyClient } from '@azure/keyvault-keys';
-import { KeyManagementError } from '@/lib/crypto/types';
-import * as crypto from 'crypto';
+import { DefaultAzureCredential } from '@azure/identity'
+import { CryptographyClient, KeyClient } from '@azure/keyvault-keys'
+import { KeyManagementError } from '@/lib/crypto/types'
+import * as crypto from 'crypto'
 
 /**
  * Azure Key Vault Configuration
  */
 export interface AzureKVConfig {
   /** Key Vault URL (e.g., https://your-vault.vault.azure.net/) */
-  vaultUrl: string;
+  vaultUrl: string
   /** Key name in the vault */
-  keyName: string;
+  keyName: string
   /** Azure Tenant ID (optional if using DefaultAzureCredential) */
-  tenantId?: string;
+  tenantId?: string
   /** Azure Client ID (optional) */
-  clientId?: string;
+  clientId?: string
   /** Azure Client Secret (optional) */
-  clientSecret?: string;
+  clientSecret?: string
   /** Maximum retry attempts */
-  maxRetries?: number;
+  maxRetries?: number
   /** Request timeout in milliseconds */
-  timeout?: number;
+  timeout?: number
 }
 
 /**
@@ -48,11 +47,11 @@ export interface AzureKVConfig {
  */
 export interface DataKeyResult {
   /** Encrypted data key (for storage) */
-  ciphertext: string;
+  ciphertext: string
   /** Plaintext data key (for immediate use) */
-  plaintext: Buffer;
+  plaintext: Buffer
   /** Key ID used for generation */
-  keyId: string;
+  keyId: string
 }
 
 /**
@@ -60,9 +59,9 @@ export interface DataKeyResult {
  */
 export interface DecryptionResult {
   /** Decrypted plaintext key */
-  plaintext: Buffer;
+  plaintext: Buffer
   /** Key ID used for decryption */
-  keyId: string;
+  keyId: string
 }
 
 /**
@@ -70,17 +69,17 @@ export interface DecryptionResult {
  */
 export interface KeyMetadata {
   /** Key ID */
-  keyId: string;
+  keyId: string
   /** Key Vault URL */
-  vaultUrl: string;
+  vaultUrl: string
   /** Key name */
-  keyName: string;
+  keyName: string
   /** Whether key is enabled */
-  enabled: boolean;
+  enabled: boolean
   /** Creation date */
-  createdAt: Date;
+  createdAt: Date
   /** Update date */
-  updatedAt?: Date;
+  updatedAt?: Date
 }
 
 /**
@@ -88,29 +87,29 @@ export interface KeyMetadata {
  */
 export interface AzureKVStats {
   /** Total operations performed */
-  totalOperations: number;
+  totalOperations: number
   /** Successful operations */
-  successful: number;
+  successful: number
   /** Failed operations */
-  failed: number;
+  failed: number
   /** Cache hits */
-  cacheHits: number;
+  cacheHits: number
   /** Cache misses */
-  cacheMisses: number;
+  cacheMisses: number
   /** Average response time in ms */
-  averageResponseTime: number;
+  averageResponseTime: number
 }
 
 /**
  * Azure Key Vault Client for encryption key management
  */
 export class AzureKVClient {
-  private keyClient: KeyClient;
-  private cryptoClient: CryptographyClient;
-  private config: Required<AzureKVConfig>;
-  private keyCache: Map<string, { key: Buffer; timestamp: number }>;
-  private readonly CACHE_TTL = 3600000; // 1 hour
-  private stats: AzureKVStats;
+  private keyClient: KeyClient
+  private cryptoClient: CryptographyClient
+  private config: Required<AzureKVConfig>
+  private keyCache: Map<string, { key: Buffer; timestamp: number }>
+  private readonly CACHE_TTL = 3600000 // 1 hour
+  private stats: AzureKVStats
 
   /**
    * Create a new Azure Key Vault client
@@ -119,19 +118,16 @@ export class AzureKVClient {
    * @throws {KeyManagementError} If configuration is invalid
    */
   constructor(config?: Partial<AzureKVConfig>) {
-    this.config = this.loadConfig(config);
-    this.validateConfig();
+    this.config = this.loadConfig(config)
+    this.validateConfig()
 
     // Initialize Azure clients with authentication
-    const credential = this.getCredential();
+    const credential = this.getCredential()
 
-    this.keyClient = new KeyClient(this.config.vaultUrl, credential);
-    this.cryptoClient = new CryptographyClient(
-      this.config.keyName,
-      credential
-    );
+    this.keyClient = new KeyClient(this.config.vaultUrl, credential)
+    this.cryptoClient = new CryptographyClient(this.config.keyName, credential)
 
-    this.keyCache = new Map();
+    this.keyCache = new Map()
     this.stats = {
       totalOperations: 0,
       successful: 0,
@@ -139,7 +135,7 @@ export class AzureKVClient {
       cacheHits: 0,
       cacheMisses: 0,
       averageResponseTime: 0,
-    };
+    }
   }
 
   /**
@@ -154,7 +150,7 @@ export class AzureKVClient {
       clientSecret: config?.clientSecret || process.env.AZURE_CLIENT_SECRET,
       maxRetries: config?.maxRetries || 3,
       timeout: config?.timeout || 30000,
-    };
+    }
   }
 
   /**
@@ -165,7 +161,7 @@ export class AzureKVClient {
     // - Environment variables (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID)
     // - Managed Identity (when running in Azure)
     // - Azure CLI credentials
-    return new DefaultAzureCredential();
+    return new DefaultAzureCredential()
   }
 
   /**
@@ -175,40 +171,28 @@ export class AzureKVClient {
    */
   private validateConfig(): void {
     if (!this.config.vaultUrl) {
-      throw new KeyManagementError(
-        'AZURE_KEY_VAULT_URL is required',
-        'MISSING_VAULT_URL',
-        {
-          hint: 'Set AZURE_KEY_VAULT_URL environment variable',
-        }
-      );
+      throw new KeyManagementError('AZURE_KEY_VAULT_URL is required', 'MISSING_VAULT_URL', {
+        hint: 'Set AZURE_KEY_VAULT_URL environment variable',
+      })
     }
 
     if (!this.config.keyName) {
-      throw new KeyManagementError(
-        'AZURE_KEY_NAME is required',
-        'MISSING_KEY_NAME',
-        {
-          hint: 'Set AZURE_KEY_NAME environment variable',
-        }
-      );
+      throw new KeyManagementError('AZURE_KEY_NAME is required', 'MISSING_KEY_NAME', {
+        hint: 'Set AZURE_KEY_NAME environment variable',
+      })
     }
 
     // Validate vault URL format
     try {
-      const url = new URL(this.config.vaultUrl);
+      const url = new URL(this.config.vaultUrl)
       if (!url.hostname.endsWith('.vault.azure.net')) {
-        throw new Error('Invalid vault domain');
+        throw new Error('Invalid vault domain')
       }
     } catch (error) {
-      throw new KeyManagementError(
-        'Invalid Azure Key Vault URL format',
-        'INVALID_VAULT_URL',
-        {
-          vaultUrl: this.config.vaultUrl,
-          hint: 'URL should be in format: https://your-vault.vault.azure.net/',
-        }
-      );
+      throw new KeyManagementError('Invalid Azure Key Vault URL format', 'INVALID_VAULT_URL', {
+        vaultUrl: this.config.vaultUrl,
+        hint: 'URL should be in format: https://your-vault.vault.azure.net/',
+      })
     }
   }
 
@@ -220,12 +204,12 @@ export class AzureKVClient {
    * @throws {KeyManagementError} If key generation fails
    */
   async generateDataKey(tenantId: string): Promise<DataKeyResult> {
-    const startTime = Date.now();
-    this.stats.totalOperations++;
+    const startTime = Date.now()
+    this.stats.totalOperations++
 
     try {
       // Generate random 32-byte data key
-      const plaintextKey = crypto.randomBytes(32);
+      const plaintextKey = crypto.randomBytes(32)
 
       // Encrypt the data key with Azure Key Vault
       const encryptResult = await this.cryptoClient.encrypt(
@@ -242,34 +226,34 @@ export class AzureKVClient {
             })
           ),
         }
-      );
+      )
 
       if (!encryptResult.result) {
         throw new KeyManagementError(
           'Azure Key Vault returned no encrypted data',
           'INCOMPLETE_DATA_KEY'
-        );
+        )
       }
 
       const result: DataKeyResult = {
         ciphertext: Buffer.from(encryptResult.result).toString('base64'),
         plaintext: plaintextKey,
         keyId: this.config.keyName,
-      };
+      }
 
       // Cache the plaintext key
-      this.cacheKey(tenantId, result.plaintext);
+      this.cacheKey(tenantId, result.plaintext)
 
-      this.stats.successful++;
-      this.updateAverageResponseTime(Date.now() - startTime);
+      this.stats.successful++
+      this.updateAverageResponseTime(Date.now() - startTime)
 
       // Audit log
-      this.logOperation('generateDataKey', tenantId, true);
+      this.logOperation('generateDataKey', tenantId, true)
 
-      return result;
+      return result
     } catch (error) {
-      this.stats.failed++;
-      this.logOperation('generateDataKey', tenantId, false, error);
+      this.stats.failed++
+      this.logOperation('generateDataKey', tenantId, false, error)
 
       throw new KeyManagementError(
         'Failed to generate data key with Azure Key Vault',
@@ -278,7 +262,7 @@ export class AzureKVClient {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -290,25 +274,22 @@ export class AzureKVClient {
    * @returns Decrypted plaintext key
    * @throws {KeyManagementError} If decryption fails
    */
-  async decryptDataKey(
-    ciphertext: string,
-    tenantId: string
-  ): Promise<DecryptionResult> {
-    const startTime = Date.now();
-    this.stats.totalOperations++;
+  async decryptDataKey(ciphertext: string, tenantId: string): Promise<DecryptionResult> {
+    const startTime = Date.now()
+    this.stats.totalOperations++
 
     try {
       // Check cache first
-      const cached = this.getCachedKey(tenantId);
+      const cached = this.getCachedKey(tenantId)
       if (cached) {
-        this.stats.cacheHits++;
+        this.stats.cacheHits++
         return {
           plaintext: cached,
           keyId: this.config.keyName,
-        };
+        }
       }
 
-      this.stats.cacheMisses++;
+      this.stats.cacheMisses++
 
       // Decrypt with Azure Key Vault
       const decryptResult = await this.cryptoClient.decrypt(
@@ -324,33 +305,30 @@ export class AzureKVClient {
             })
           ),
         }
-      );
+      )
 
       if (!decryptResult.result) {
-        throw new KeyManagementError(
-          'Azure Key Vault returned no plaintext',
-          'NO_PLAINTEXT'
-        );
+        throw new KeyManagementError('Azure Key Vault returned no plaintext', 'NO_PLAINTEXT')
       }
 
-      const plaintext = Buffer.from(decryptResult.result);
+      const plaintext = Buffer.from(decryptResult.result)
 
       // Cache the decrypted key
-      this.cacheKey(tenantId, plaintext);
+      this.cacheKey(tenantId, plaintext)
 
-      this.stats.successful++;
-      this.updateAverageResponseTime(Date.now() - startTime);
+      this.stats.successful++
+      this.updateAverageResponseTime(Date.now() - startTime)
 
       // Audit log
-      this.logOperation('decryptDataKey', tenantId, true);
+      this.logOperation('decryptDataKey', tenantId, true)
 
       return {
         plaintext,
         keyId: this.config.keyName,
-      };
+      }
     } catch (error) {
-      this.stats.failed++;
-      this.logOperation('decryptDataKey', tenantId, false, error);
+      this.stats.failed++
+      this.logOperation('decryptDataKey', tenantId, false, error)
 
       throw new KeyManagementError(
         'Failed to decrypt data key with Azure Key Vault',
@@ -359,7 +337,7 @@ export class AzureKVClient {
           tenantId,
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -371,7 +349,7 @@ export class AzureKVClient {
    */
   async getKeyMetadata(): Promise<KeyMetadata> {
     try {
-      const key = await this.keyClient.getKey(this.config.keyName);
+      const key = await this.keyClient.getKey(this.config.keyName)
 
       return {
         keyId: key.id || this.config.keyName,
@@ -380,7 +358,7 @@ export class AzureKVClient {
         enabled: key.properties.enabled || false,
         createdAt: key.properties.createdOn || new Date(),
         updatedAt: key.properties.updatedOn,
-      };
+      }
     } catch (error) {
       throw new KeyManagementError(
         'Failed to get key metadata from Azure Key Vault',
@@ -388,7 +366,7 @@ export class AzureKVClient {
         {
           originalError: error instanceof Error ? error.message : String(error),
         }
-      );
+      )
     }
   }
 
@@ -399,9 +377,9 @@ export class AzureKVClient {
    */
   clearCache(tenantId?: string): void {
     if (tenantId) {
-      this.keyCache.delete(tenantId);
+      this.keyCache.delete(tenantId)
     } else {
-      this.keyCache.clear();
+      this.keyCache.clear()
     }
   }
 
@@ -411,7 +389,7 @@ export class AzureKVClient {
    * @returns Current statistics
    */
   getStats(): AzureKVStats {
-    return { ...this.stats };
+    return { ...this.stats }
   }
 
   /**
@@ -425,7 +403,7 @@ export class AzureKVClient {
       cacheHits: 0,
       cacheMisses: 0,
       averageResponseTime: 0,
-    };
+    }
   }
 
   /**
@@ -435,11 +413,11 @@ export class AzureKVClient {
    */
   async testConnection(): Promise<boolean> {
     try {
-      await this.getKeyMetadata();
-      return true;
+      await this.getKeyMetadata()
+      return true
     } catch (error) {
-      console.error('Azure Key Vault connection test failed:', error);
-      return false;
+      console.error('Azure Key Vault connection test failed:', error)
+      return false
     }
   }
 
@@ -450,34 +428,34 @@ export class AzureKVClient {
     this.keyCache.set(tenantId, {
       key: Buffer.from(key),
       timestamp: Date.now(),
-    });
+    })
   }
 
   /**
    * Get cached key if valid
    */
   private getCachedKey(tenantId: string): Buffer | null {
-    const cached = this.keyCache.get(tenantId);
+    const cached = this.keyCache.get(tenantId)
 
     if (!cached) {
-      return null;
+      return null
     }
 
     // Check if cache entry is still valid
     if (Date.now() - cached.timestamp > this.CACHE_TTL) {
-      this.keyCache.delete(tenantId);
-      return null;
+      this.keyCache.delete(tenantId)
+      return null
     }
 
-    return Buffer.from(cached.key);
+    return Buffer.from(cached.key)
   }
 
   /**
    * Update average response time
    */
   private updateAverageResponseTime(responseTime: number): void {
-    const total = this.stats.averageResponseTime * (this.stats.successful - 1) + responseTime;
-    this.stats.averageResponseTime = total / this.stats.successful;
+    const total = this.stats.averageResponseTime * (this.stats.successful - 1) + responseTime
+    this.stats.averageResponseTime = total / this.stats.successful
   }
 
   /**
@@ -496,11 +474,11 @@ export class AzureKVClient {
       success,
       provider: 'azure-keyvault',
       error: error instanceof Error ? error.message : undefined,
-    };
+    }
 
     // In production, send to proper logging service
     if (process.env.NODE_ENV === 'development') {
-      console.log('[Azure KV Audit]', JSON.stringify(logEntry));
+      console.log('[Azure KV Audit]', JSON.stringify(logEntry))
     }
   }
 }
@@ -508,7 +486,7 @@ export class AzureKVClient {
 /**
  * Singleton Azure Key Vault client instance
  */
-let azureKVClientInstance: AzureKVClient | null = null;
+let azureKVClientInstance: AzureKVClient | null = null
 
 /**
  * Get or create Azure Key Vault client singleton
@@ -518,9 +496,9 @@ let azureKVClientInstance: AzureKVClient | null = null;
  */
 export function getAzureKVClient(config?: Partial<AzureKVConfig>): AzureKVClient {
   if (!azureKVClientInstance) {
-    azureKVClientInstance = new AzureKVClient(config);
+    azureKVClientInstance = new AzureKVClient(config)
   }
-  return azureKVClientInstance;
+  return azureKVClientInstance
 }
 
 /**
@@ -528,8 +506,8 @@ export function getAzureKVClient(config?: Partial<AzureKVConfig>): AzureKVClient
  */
 export function resetAzureKVClient(): void {
   if (azureKVClientInstance) {
-    azureKVClientInstance.clearCache();
-    azureKVClientInstance = null;
+    azureKVClientInstance.clearCache()
+    azureKVClientInstance = null
   }
 }
 
@@ -539,4 +517,4 @@ export function resetAzureKVClient(): void {
 export const __testing__ = {
   AzureKVClient,
   resetAzureKVClient,
-};
+}

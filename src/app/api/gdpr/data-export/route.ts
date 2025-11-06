@@ -10,10 +10,10 @@
  * @module api/gdpr/data-export
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { DataExportService } from '@/lib/gdpr/data-export';
-import type { ExportFormat } from '@/lib/gdpr/types';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { DataExportService } from '@/lib/gdpr/data-export'
+import type { ExportFormat } from '@/lib/gdpr/types'
 
 /**
  * POST /api/gdpr/data-export
@@ -35,19 +35,16 @@ import type { ExportFormat } from '@/lib/gdpr/types';
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get authenticated user
     const {
       data: { user },
-      error: authError
-    } = await supabase.auth.getUser();
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user profile
@@ -55,43 +52,37 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('*, organization:organizations(*)')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    const organizationId = profile.organization_id;
+    const organizationId = profile.organization_id
 
     if (!organizationId) {
-      return NextResponse.json(
-        { error: 'Organization not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // Parse request body
-    const body = await request.json();
+    const body = await request.json()
     const {
       format = 'json',
-      contact_id
+      contact_id,
     }: {
-      format?: ExportFormat;
-      contact_id?: string;
-    } = body;
+      format?: ExportFormat
+      contact_id?: string
+    } = body
 
     // Validate format
     if (!['json', 'csv', 'pdf'].includes(format)) {
       return NextResponse.json(
         { error: 'Invalid format. Must be json, csv, or pdf' },
         { status: 400 }
-      );
+      )
     }
 
-    let exportResult;
+    let exportResult
 
     // Export contact data if contact_id provided
     if (contact_id) {
@@ -101,57 +92,46 @@ export async function POST(request: NextRequest) {
         .select('id')
         .eq('id', contact_id)
         .eq('organization_id', organizationId)
-        .single();
+        .single()
 
       if (!contact) {
-        return NextResponse.json(
-          { error: 'Contact not found or access denied' },
-          { status: 403 }
-        );
+        return NextResponse.json({ error: 'Contact not found or access denied' }, { status: 403 })
       }
 
-      exportResult = await DataExportService.exportContactData(
-        contact_id,
-        organizationId,
-        format
-      );
+      exportResult = await DataExportService.exportContactData(contact_id, organizationId, format)
     } else {
       // Export user's own data
-      exportResult = await DataExportService.exportUserData(
-        user.id,
-        organizationId,
-        format
-      );
+      exportResult = await DataExportService.exportUserData(user.id, organizationId, format)
     }
 
     console.log(
       `[API][GDPR] User ${user.id} exported data (format: ${format}, size: ${exportResult.size_bytes} bytes)`
-    );
+    )
 
     return NextResponse.json(
       {
         success: true,
-        data: exportResult
+        data: exportResult,
       },
       {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
           'X-Export-Size': exportResult.size_bytes.toString(),
-          'X-Export-Format': format
-        }
+          'X-Export-Format': format,
+        },
       }
-    );
+    )
   } catch (error) {
-    console.error('[API][GDPR] Data export error:', error);
+    console.error('[API][GDPR] Data export error:', error)
 
     return NextResponse.json(
       {
         error: 'Failed to export data',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
-    );
+    )
   }
 }
 
@@ -165,14 +145,8 @@ export async function GET() {
     supported_formats: ['json', 'csv', 'pdf'],
     max_file_size_bytes: 50 * 1024 * 1024, // 50 MB
     expiry_days: 7,
-    export_includes: [
-      'user_profile',
-      'contacts',
-      'conversations',
-      'messages',
-      'settings'
-    ],
+    export_includes: ['user_profile', 'contacts', 'conversations', 'messages', 'settings'],
     legal_basis: 'GDPR Article 15 - Right to Access',
-    response_time: '24 hours maximum'
-  });
+    response_time: '24 hours maximum',
+  })
 }

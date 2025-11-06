@@ -121,8 +121,8 @@ export class WhatsAppSearchEngine {
         },
         body: JSON.stringify({
           organizationId,
-          ...query
-        })
+          ...query,
+        }),
       })
 
       if (!response.ok) {
@@ -133,7 +133,7 @@ export class WhatsAppSearchEngine {
       return data
     } catch (error) {
       console.error('Search error:', error)
-      
+
       // Return mock search results for development
       return this.getMockSearchResults(query)
     }
@@ -141,8 +141,10 @@ export class WhatsAppSearchEngine {
 
   async getSearchSuggestions(organizationId: string, query: string): Promise<string[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/suggestions?q=${encodeURIComponent(query)}&org=${organizationId}`)
-      
+      const response = await fetch(
+        `${this.baseUrl}/suggestions?q=${encodeURIComponent(query)}&org=${organizationId}`
+      )
+
       if (!response.ok) {
         throw new Error(`Failed to get suggestions: ${response.statusText}`)
       }
@@ -151,17 +153,21 @@ export class WhatsAppSearchEngine {
       return data.suggestions || []
     } catch (error) {
       console.error('Suggestions error:', error)
-      
+
       // Return mock suggestions for development
       return this.getMockSuggestions(query)
     }
   }
 
-  async searchConversations(organizationId: string, text: string, options?: {
-    limit?: number
-    offset?: number
-    filters?: SearchQuery['filters']
-  }): Promise<SearchResult[]> {
+  async searchConversations(
+    organizationId: string,
+    text: string,
+    options?: {
+      limit?: number
+      offset?: number
+      filters?: SearchQuery['filters']
+    }
+  ): Promise<SearchResult[]> {
     const query = new SearchQueryBuilder()
       .text(text)
       .type('conversations')
@@ -184,12 +190,16 @@ export class WhatsAppSearchEngine {
     return response.results.filter(r => r.type === 'conversation')
   }
 
-  async searchMessages(organizationId: string, text: string, options?: {
-    limit?: number
-    offset?: number
-    conversationId?: string
-    filters?: SearchQuery['filters']
-  }): Promise<SearchResult[]> {
+  async searchMessages(
+    organizationId: string,
+    text: string,
+    options?: {
+      limit?: number
+      offset?: number
+      conversationId?: string
+      filters?: SearchQuery['filters']
+    }
+  ): Promise<SearchResult[]> {
     const query = new SearchQueryBuilder()
       .text(text)
       .type('messages')
@@ -213,10 +223,14 @@ export class WhatsAppSearchEngine {
     return response.results.filter(r => r.type === 'message')
   }
 
-  async searchContacts(organizationId: string, text: string, options?: {
-    limit?: number
-    offset?: number
-  }): Promise<SearchResult[]> {
+  async searchContacts(
+    organizationId: string,
+    text: string,
+    options?: {
+      limit?: number
+      offset?: number
+    }
+  ): Promise<SearchResult[]> {
     const query = new SearchQueryBuilder()
       .text(text)
       .type('contacts')
@@ -243,7 +257,7 @@ export class WhatsAppSearchEngine {
             id: 'contact-1',
             name: 'John Doe',
             phone_number: '+1234567890',
-            profile_picture_url: null
+            profile_picture_url: null,
           },
           status: 'open',
           priority: 'medium',
@@ -254,16 +268,26 @@ export class WhatsAppSearchEngine {
           unread_count: 2,
           last_message_at: new Date().toISOString(),
           last_message: {
-            content: query.text ? `Message containing "${query.text}"` : 'Hi, I have a question about your product',
+            content: query.text
+              ? `Message containing "${query.text}"`
+              : 'Hi, I have a question about your product',
             message_type: 'text',
-            sender_type: 'contact' as const
+            sender_type: 'contact' as const,
           },
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         },
-        highlights: query.highlight ? [{
-          field: 'last_message.content',
-          fragments: [query.text ? `Message containing "<mark>${query.text}</mark>"` : 'Hi, I have a question about your product']
-        }] : undefined
+        highlights: query.highlight
+          ? [
+              {
+                field: 'last_message.content',
+                fragments: [
+                  query.text
+                    ? `Message containing "<mark>${query.text}</mark>"`
+                    : 'Hi, I have a question about your product',
+                ],
+              },
+            ]
+          : undefined,
       })
     }
 
@@ -275,20 +299,30 @@ export class WhatsAppSearchEngine {
         data: {
           id: 'msg-1',
           conversation_id: 'conv-1',
-          content: query.text ? `This is a message containing "${query.text}"` : 'This is a sample message',
+          content: query.text
+            ? `This is a message containing "${query.text}"`
+            : 'This is a sample message',
           message_type: 'text',
           sender_type: 'contact',
           created_at: new Date().toISOString(),
           contact: {
             id: 'contact-1',
             name: 'John Doe',
-            phone_number: '+1234567890'
-          }
+            phone_number: '+1234567890',
+          },
         },
-        highlights: query.highlight ? [{
-          field: 'content',
-          fragments: [query.text ? `This is a message containing "<mark>${query.text}</mark>"` : 'This is a sample message']
-        }] : undefined
+        highlights: query.highlight
+          ? [
+              {
+                field: 'content',
+                fragments: [
+                  query.text
+                    ? `This is a message containing "<mark>${query.text}</mark>"`
+                    : 'This is a sample message',
+                ],
+              },
+            ]
+          : undefined,
       })
     }
 
@@ -304,12 +338,16 @@ export class WhatsAppSearchEngine {
           profile_picture_url: null,
           created_at: new Date().toISOString(),
           conversation_count: 3,
-          last_interaction: new Date().toISOString()
+          last_interaction: new Date().toISOString(),
         },
-        highlights: query.highlight ? [{
-          field: 'name',
-          fragments: [query.text ? `<mark>${query.text}</mark> Contact` : 'John Doe']
-        }] : undefined
+        highlights: query.highlight
+          ? [
+              {
+                field: 'name',
+                fragments: [query.text ? `<mark>${query.text}</mark> Contact` : 'John Doe'],
+              },
+            ]
+          : undefined,
       })
     }
 
@@ -320,10 +358,10 @@ export class WhatsAppSearchEngine {
       facets: {
         status: { open: 5, pending: 3, resolved: 8, closed: 12 },
         priority: { low: 10, medium: 8, high: 6, urgent: 4 },
-        messageType: { text: 20, image: 5, document: 3, audio: 2, video: 1 }
+        messageType: { text: 20, image: 5, document: 3, audio: 2, video: 1 },
       },
       query,
-      executionTime: Math.random() * 100 + 50 // Mock execution time in ms
+      executionTime: Math.random() * 100 + 50, // Mock execution time in ms
     }
   }
 
@@ -338,19 +376,23 @@ export class WhatsAppSearchEngine {
       'billing question',
       'account setup',
       'feature request',
-      'bug report'
+      'bug report',
     ]
 
     return baseSuggestions
-      .filter(suggestion => 
-        suggestion.toLowerCase().includes(query.toLowerCase()) ||
-        query.toLowerCase().includes(suggestion.toLowerCase())
+      .filter(
+        suggestion =>
+          suggestion.toLowerCase().includes(query.toLowerCase()) ||
+          query.toLowerCase().includes(suggestion.toLowerCase())
       )
       .slice(0, 5)
   }
 
   // Utility methods for search analytics
-  async getSearchAnalytics(organizationId: string, dateRange?: { start: Date; end: Date }): Promise<{
+  async getSearchAnalytics(
+    organizationId: string,
+    dateRange?: { start: Date; end: Date }
+  ): Promise<{
     totalSearches: number
     topQueries: Array<{ query: string; count: number }>
     searchTypes: Record<string, number>
@@ -371,7 +413,7 @@ export class WhatsAppSearchEngine {
       return await response.json()
     } catch (error) {
       console.error('Analytics error:', error)
-      
+
       // Return mock analytics
       return {
         totalSearches: 1250,
@@ -380,24 +422,27 @@ export class WhatsAppSearchEngine {
           { query: 'support', count: 38 },
           { query: 'order', count: 32 },
           { query: 'refund', count: 28 },
-          { query: 'billing', count: 22 }
+          { query: 'billing', count: 22 },
         ],
         searchTypes: {
           conversations: 680,
           messages: 420,
-          contacts: 150
+          contacts: 150,
         },
-        avgResponseTime: 85.5
+        avgResponseTime: 85.5,
       }
     }
   }
 
   // Method to index new content for search
-  async indexContent(organizationId: string, content: {
-    type: 'conversation' | 'message' | 'contact'
-    id: string
-    data: any
-  }): Promise<boolean> {
+  async indexContent(
+    organizationId: string,
+    content: {
+      type: 'conversation' | 'message' | 'contact'
+      id: string
+      data: any
+    }
+  ): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/index`, {
         method: 'POST',
@@ -406,8 +451,8 @@ export class WhatsAppSearchEngine {
         },
         body: JSON.stringify({
           organizationId,
-          ...content
-        })
+          ...content,
+        }),
       })
 
       return response.ok
@@ -425,7 +470,7 @@ export class WhatsAppSearchEngine {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ organizationId })
+        body: JSON.stringify({ organizationId }),
       })
 
       return response.ok

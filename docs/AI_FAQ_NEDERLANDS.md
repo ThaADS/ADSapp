@@ -29,6 +29,7 @@ Ja, alle AI features werken op desktop, tablet en mobiel via je browser.
 ### Hoeveel kosten AI features?
 
 Je betaalt alleen voor wat je gebruikt:
+
 - **Kleine webshop** (100 chats/maand): €5-10/maand
 - **Groeiend bedrijf** (1.000 chats/maand): €30-50/maand
 - **Grote organisatie** (10.000 chats/maand): €200-300/maand
@@ -51,6 +52,7 @@ Bij budget overschrijding worden AI features automatisch gepauzeerd tot volgende
 Dashboard → **Analytics** → **AI Analytics**
 
 Hier zie je:
+
 - Totale kosten deze maand
 - Kosten per feature
 - Budget voortgang
@@ -63,6 +65,7 @@ Hier zie je:
 ### Waarom zijn er maar 2 suggesties in plaats van 3?
 
 Dit kan gebeuren als:
+
 - De conversatie zeer kort is (minder dan 3 berichten)
 - AI onvoldoende context heeft voor 3 verschillende suggesties
 - Twee suggesties bijna identiek zouden zijn
@@ -72,6 +75,7 @@ Dit kan gebeuren als:
 ### Kan ik de toon aanpassen?
 
 Ja! Gebruik de **"Verbeteren"** knop (potlood icoon) en geef feedback:
+
 - "Maak het formeler"
 - "Gebruik meer emoji's"
 - "Wees empathischer"
@@ -82,6 +86,7 @@ AI past de suggestie direct aan.
 ### Hoe accuraat zijn de suggesties?
 
 Gemiddeld **85-95% relevant**, afhankelijk van:
+
 - Duidelijkheid van klant vraag
 - Lengte conversatie geschiedenis
 - Complexiteit van het onderwerp
@@ -101,6 +106,7 @@ Nee, concept suggesties worden gegenereerd op basis van conversatie. Voor templa
 **Standaard: NEE**. Auto-antwoorden worden gegenereerd maar niet verzonden zonder jouw goedkeuring.
 
 **Automatisch versturen inschakelen**:
+
 1. Ga naar **AI Instellingen** → **Auto-Antwoorden**
 2. Schakel **"Automatisch versturen"** in
 3. Stel voorwaarden in (wanneer auto-antwoorden)
@@ -110,6 +116,7 @@ Nee, concept suggesties worden gegenereerd op basis van conversatie. Voor templa
 ### Wanneer worden auto-antwoorden getriggerd?
 
 Je kunt kiezen:
+
 - ☑️ **Buiten kantooruren**: Na sluitingstijd
 - ☑️ **Geen agent beschikbaar**: Alle agents bezet
 - ☑️ **Lange wachttijd**: Na X minuten geen reactie
@@ -118,6 +125,7 @@ Je kunt kiezen:
 ### Kan ik verschillende antwoorden per situatie?
 
 Ja! Je kunt meerdere auto-antwoord regels maken:
+
 - Regel 1: Buiten kantooruren → Formeel antwoord
 - Regel 2: Lange wachttijd → Excuses + alternatief
 - Regel 3: Keyword "urgent" → Direct escalatie bericht
@@ -125,11 +133,13 @@ Ja! Je kunt meerdere auto-antwoord regels maken:
 ### Wat als auto-antwoord verkeerde info bevat?
 
 **Preventie**:
+
 - Schakel eerst **"Review vereist"** in
 - Test in testomgeving voordat live
 - Monitor eerste 10-20 auto-antwoorden
 
 **Correctie**:
+
 - Stuur handmatig correctie bericht
 - Pas auto-antwoord template aan
 - Verfijn voorwaarden om situatie te voorkomen
@@ -141,11 +151,13 @@ Ja! Je kunt meerdere auto-antwoord regels maken:
 ### Hoe nauwkeurig is sentiment analyse?
 
 **Gemiddeld 85-95% accuraat**. Nauwkeurigheid hangt af van:
+
 - Duidelijkheid van taal (duidelijk = accurater)
 - Gebruik van emoji's en context
 - Lengte van conversatie
 
 **Confidence score** geeft aan hoe zeker AI is:
+
 - 90-100%: Zeer betrouwbaar
 - 70-90%: Betrouwbaar
 - <70%: Interpreteren met voorzichtigheid
@@ -153,6 +165,7 @@ Ja! Je kunt meerdere auto-antwoord regels maken:
 ### Begrijpt AI ook emoji's en informele taal?
 
 **Ja!** AI is getraind op WhatsApp-specifieke communicatie:
+
 - Emoji's: 😊 😠 👍 ❤️
 - Spreektaal: "ff", "btw", "sws"
 - Typfouten: "vragn" → "vragen"
@@ -163,6 +176,7 @@ Ja! Je kunt meerdere auto-antwoord regels maken:
 Absoluut! Gebruik **"Sentiment Trend"** om te zien hoe klant emotie evolueert:
 
 Voorbeeld:
+
 ```
 Bericht 1-3: 😠 Negatief (-0.7) → Klant gefrustreerd
 Bericht 4-6: 😐 Neutraal (0.2) → Probleem wordt begrepen
@@ -186,22 +200,26 @@ Score: 0.1 (licht positief, maar gemengd)
 ### Wanneer worden samenvattingen gegenereerd?
 
 **Automatisch**:
+
 - Bij sluiten van conversatie
 - Einde werkdag (alle open gesprekken)
 - Bij agent handoff
 
 **Handmatig**:
+
 - Klik **(...) menu** → **"Samenvatten met AI"**
 
 ### Hoelang duurt het genereren?
 
 **2-10 seconden**, afhankelijk van:
+
 - Lengte conversatie (5 berichten = 2 sec, 50 berichten = 10 sec)
 - Gekozen model (Haiku = sneller, Sonnet = langzamer maar beter)
 
 ### Kan ik samenvatting bewerken?
 
 Ja! Samenvattingen zijn volledig bewerkbaar:
+
 1. Open conversatie details
 2. Scroll naar **"AI Samenvatting"**
 3. Klik **"Bewerken"**
@@ -212,6 +230,7 @@ Ja! Samenvattingen zijn volledig bewerkbaar:
 **Nee**, samenvattingen zijn alleen voor intern gebruik. Klanten zien deze niet.
 
 **Wel delen? Gebruik deze opties**:
+
 - Kopieer relevante delen naar notities
 - Export conversatie incl. samenvatting
 - Genereer klant-vriendelijke versie apart
@@ -225,12 +244,14 @@ Ja! Samenvattingen zijn volledig bewerkbaar:
 **WhatsApp review: 24-48 uur** (meestal)
 
 **Process**:
+
 1. Genereer template met AI → instant
 2. Submit naar WhatsApp → 5 minuten
 3. WhatsApp review → 24-48 uur
 4. Goedgekeurd → direct te gebruiken
 
 **Tips voor snellere goedkeuring**:
+
 - Voldoe aan alle WhatsApp richtlijnen
 - Duidelijke opt-out optie
 - Geen misleidende content
@@ -239,6 +260,7 @@ Ja! Samenvattingen zijn volledig bewerkbaar:
 ### Waarom werd mijn template afgekeurd?
 
 **Veelvoorkomende redenen**:
+
 - ❌ Misleidende content of clickbait
 - ❌ Geen duidelijke opt-out optie
 - ❌ Verkeerde categorie gekozen
@@ -250,6 +272,7 @@ Ja! Samenvattingen zijn volledig bewerkbaar:
 ### Kan ik bestaande templates verbeteren?
 
 Ja! **"Template Verbeteren"** feature:
+
 1. Selecteer template
 2. Klik **"Verbeteren met AI"**
 3. Deel performance data:
@@ -274,6 +297,7 @@ Ja! **"Template Verbeteren"** feature:
 **Nee**. AI verwerkt gesprekken tijdelijk om suggesties/analyses te genereren, maar slaat originele berichten niet op.
 
 **Wat wordt wel opgeslagen**:
+
 - Samenvattingen (in jouw database)
 - Sentiment scores (in jouw database)
 - AI response metadata (voor analytics)
@@ -284,6 +308,7 @@ Ja! **"Template Verbeteren"** feature:
 ### Is AI GDPR-compliant?
 
 **Ja!** Volledig GDPR-compliant:
+
 - Data processing agreement beschikbaar
 - Data blijft binnen EU (Supabase EU regio)
 - Right to be forgotten geïmplementeerd
@@ -293,6 +318,7 @@ Ja! **"Template Verbeteren"** feature:
 ### Kan AI gevoelige informatie lekken?
 
 **Nee**, meerdere beveiligingslagen:
+
 1. **Tenant isolation**: Organisaties zijn volledig gescheiden
 2. **Row Level Security**: Database access strikt geregeld
 3. **No training**: Jouw data wordt NIET gebruikt voor AI training
@@ -309,6 +335,7 @@ Ja! **"Template Verbeteren"** feature:
 **Standaard**: Claude 3.5 Sonnet (Anthropic)
 
 **Beschikbare modellen**:
+
 - Claude 3.5 Sonnet ($3/M tokens) → Beste balans
 - Claude 3 Opus ($15/M tokens) → Hoogste kwaliteit
 - Claude 3 Haiku ($0.25/M tokens) → Snelste/goedkoopste
@@ -322,6 +349,7 @@ Ja! **"Template Verbeteren"** feature:
 **Token ≈ 0.75 woorden**
 
 Voorbeeld:
+
 - "Hallo wereld" = 3 tokens
 - "Bedankt voor je bestelling!" = 5 tokens
 - Gemiddeld WhatsApp bericht = 20-50 tokens
@@ -333,12 +361,14 @@ Voorbeeld:
 ### Waarom is mijn response traag?
 
 **Mogelijke oorzaken**:
+
 1. **Grote conversatie** (>50 berichten): Meer processing tijd
 2. **Model keuze**: Opus is langzamer dan Haiku
 3. **Server load**: Piekuren kunnen impact hebben
 4. **Internet verbinding**: Check je snelheid
 
 **Oplossingen**:
+
 - Gebruik Haiku voor snellere responses
 - Beperk max_tokens in instellingen
 - Update naar laatste browser versie
@@ -346,6 +376,7 @@ Voorbeeld:
 ### Wat bij API downtime?
 
 **Fallback systeem**:
+
 1. Primair model faalt → Switch naar fallback model (Haiku)
 2. Beide modellen offline → Error bericht + manual mode
 3. Service restore → Automatisch terug naar primair model
@@ -359,18 +390,21 @@ Voorbeeld:
 ### Hoe krijg ik beste resultaten?
 
 **Voor Concept Suggesties**:
+
 - ✅ Zorg voor conversatie historie (min 3-5 berichten)
 - ✅ Wees specifiek in feedback bij verbeteren
 - ✅ Test verschillende tonen voor je use case
 - ❌ Niet blind kopiëren - altijd checken!
 
 **Voor Sentiment Analyse**:
+
 - ✅ Check confidence score (>80% = betrouwbaar)
 - ✅ Gebruik urgentie levels voor prioritering
 - ✅ Monitor sentiment trends over weken
 - ❌ Niet 100% vertrouwen - menselijk oordeel blijft belangrijk
 
 **Voor Templates**:
+
 - ✅ Test meerdere variaties (A/B testing)
 - ✅ Houd templates kort (<160 karakters ideaal)
 - ✅ Personaliseer met variabelen {{1}}, {{2}}
@@ -379,6 +413,7 @@ Voorbeeld:
 ### Hoe optimaliseer ik kosten?
 
 **Top 5 Tips**:
+
 1. **Gebruik Haiku waar mogelijk** (sentiment, korte antwoorden)
 2. **Beperk max_tokens** (500-1000 is vaak genoeg)
 3. **Batch operaties** (bijv. samenvattingen einde dag)
@@ -390,12 +425,14 @@ Voorbeeld:
 ### Hoe train ik mijn team?
 
 **Onboarding Plan**:
+
 1. **Week 1**: Alleen concept suggesties (laagdrempelig)
 2. **Week 2**: Sentiment analyse toevoegen
 3. **Week 3**: Auto-antwoorden testen (met review)
 4. **Week 4**: Full rollout + analytics review
 
 **Training Resources**:
+
 - Video tutorials: dashboard.adsapp.nl/training
 - Gebruikershandleiding: `/docs/AI_FEATURES_GEBRUIKERSHANDLEIDING.md`
 - Live demo sessie: Boek via support@adsapp.nl
@@ -407,6 +444,7 @@ Voorbeeld:
 ### Ik zie geen AI suggesties
 
 **Check**:
+
 1. Is AI ingeschakeld? (AI Instellingen → hoofdschakelaar)
 2. Is Concept Suggesties feature aan?
 3. Heeft conversatie minimaal 3 berichten?
@@ -417,6 +455,7 @@ Voorbeeld:
 ### Sentiment analyse werkt niet
 
 **Check**:
+
 1. Is feature ingeschakeld?
 2. Zijn er berichten in conversatie?
 3. Probeer handmatig analyseren (via ... menu)
@@ -426,6 +465,7 @@ Voorbeeld:
 ### Auto-antwoorden worden niet verstuurd
 
 **Check**:
+
 1. Is "Automatisch versturen" ingeschakeld?
 2. Voldoet situatie aan ingestelde voorwaarden?
 3. Controleer business hours configuratie
@@ -434,6 +474,7 @@ Voorbeeld:
 ### Budget waarschuwing ondanks laag gebruik
 
 **Mogelijke oorzaken**:
+
 - Budget ingesteld in USD maar denkt in EUR
 - Usage van vorige maand nog niet gereset
 - Meerdere team members gebruiken AI tegelijk
@@ -447,12 +488,14 @@ Voorbeeld:
 **Kan je vraag niet vinden?**
 
 **Support Opties**:
+
 - **Live Chat**: Dashboard → rechtsboven (chat icoon)
 - **Email**: support@adsapp.nl (24 uur response tijd)
 - **Telefoon**: +31 20 123 4567 (ma-vr 9-17 uur)
 - **Documentation**: `/docs/` folder (technische details)
 
 **Community**:
+
 - **Forum**: community.adsapp.nl
 - **Discord**: discord.gg/adsapp
 - **Knowledge Base**: help.adsapp.nl

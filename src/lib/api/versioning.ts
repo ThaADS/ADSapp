@@ -7,21 +7,24 @@ import { NextRequest } from 'next/server'
 
 export type ApiVersion = 'v1' | 'v2'
 
-export const API_VERSIONS: Record<ApiVersion, {
-  version: string
-  status: 'active' | 'deprecated' | 'sunset'
-  sunsetDate?: Date
-  deprecationWarning?: string
-}> = {
+export const API_VERSIONS: Record<
+  ApiVersion,
+  {
+    version: string
+    status: 'active' | 'deprecated' | 'sunset'
+    sunsetDate?: Date
+    deprecationWarning?: string
+  }
+> = {
   v1: {
     version: 'v1',
     status: 'active',
-    deprecationWarning: undefined
+    deprecationWarning: undefined,
   },
   v2: {
     version: 'v2',
-    status: 'active'
-  }
+    status: 'active',
+  },
 }
 
 export const DEFAULT_VERSION: ApiVersion = 'v2'
@@ -150,10 +153,10 @@ export function isFeatureAvailable(feature: string, version: ApiVersion): boolea
     'standardized-responses': ['v2'],
     'hateoas-links': ['v2'],
     'improved-pagination': ['v2'],
-    'graphql': ['v2'],
+    graphql: ['v2'],
     'webhook-v2': ['v2'],
     'event-sourcing': ['v2'],
-    'cqrs': ['v2']
+    cqrs: ['v2'],
   }
 
   const supportedVersions = featureMatrix[feature]

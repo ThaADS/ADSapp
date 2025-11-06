@@ -1,10 +1,9 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
 
 // Validation schema for business hours
 const businessHoursSchema = z.object({
@@ -43,9 +42,9 @@ const businessHoursSchema = z.object({
     start: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
     end: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
   }),
-});
+})
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/organizations/business-hours
@@ -53,15 +52,15 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's profile to get organization_id
@@ -69,13 +68,10 @@ export async function GET(request: NextRequest) {
       .from('profiles')
       .select('organization_id')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Get organization's business hours
@@ -83,25 +79,18 @@ export async function GET(request: NextRequest) {
       .from('organizations')
       .select('business_hours')
       .eq('id', profile.organization_id)
-      .single();
+      .single()
 
     if (orgError) {
-      return NextResponse.json(
-        { error: 'Organization not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     return NextResponse.json({
       business_hours: organization.business_hours || null,
-    });
-
+    })
   } catch (error) {
-    console.error('Error fetching business hours:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Error fetching business hours:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
@@ -111,15 +100,15 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's profile
@@ -127,13 +116,10 @@ export async function PUT(request: NextRequest) {
       .from('profiles')
       .select('organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
     // Only owner/admin can update business hours
@@ -141,20 +127,20 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         { error: 'Forbidden: Only owner/admin can update business hours' },
         { status: 403 }
-      );
+      )
     }
 
     // Parse and validate request body
-    const body = await request.json();
+    const body = await request.json()
 
-    let validatedHours;
+    let validatedHours
     try {
-      validatedHours = businessHoursSchema.parse(body.business_hours);
+      validatedHours = businessHoursSchema.parse(body.business_hours)
     } catch (validationError) {
       return NextResponse.json(
         { error: 'Invalid business hours format', details: validationError },
         { status: 400 }
-      );
+      )
     }
 
     // Update organization's business hours
@@ -163,14 +149,11 @@ export async function PUT(request: NextRequest) {
       .update({ business_hours: validatedHours })
       .eq('id', profile.organization_id)
       .select('business_hours')
-      .single();
+      .single()
 
     if (updateError) {
-      console.error('Error updating business hours:', updateError);
-      return NextResponse.json(
-        { error: 'Failed to update business hours' },
-        { status: 500 }
-      );
+      console.error('Error updating business hours:', updateError)
+      return NextResponse.json({ error: 'Failed to update business hours' }, { status: 500 })
     }
 
     // Log to audit trail
@@ -183,18 +166,14 @@ export async function PUT(request: NextRequest) {
       details: {
         business_hours: validatedHours,
       },
-    });
+    })
 
     return NextResponse.json({
       success: true,
       business_hours: updatedOrg.business_hours,
-    });
-
+    })
   } catch (error) {
-    console.error('Error updating business hours:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Error updating business hours:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

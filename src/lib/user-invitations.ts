@@ -154,7 +154,7 @@ export class UserInvitationManager {
         template_id: options.templateId,
         custom_message: options.customMessage,
         metadata: options.metadata,
-        status: settings.requireApproval ? 'pending_approval' : 'pending'
+        status: settings.requireApproval ? 'pending_approval' : 'pending',
       })
       .select()
       .single()
@@ -174,10 +174,17 @@ export class UserInvitationManager {
     return invitationObj
   }
 
-  async acceptInvitation(token: string, userData: {
-    fullName: string
-    password: string
-  }): Promise<{ user: Record<string, unknown>; profile: Record<string, unknown>; invitation: UserInvitation }> {
+  async acceptInvitation(
+    token: string,
+    userData: {
+      fullName: string
+      password: string
+    }
+  ): Promise<{
+    user: Record<string, unknown>
+    profile: Record<string, unknown>
+    invitation: UserInvitation
+  }> {
     // Validate token and get invitation
     const invitation = await this.validateInvitationToken(token)
 
@@ -193,8 +200,8 @@ export class UserInvitationManager {
       user_metadata: {
         full_name: userData.fullName,
         invited_by: invitation.invitedBy,
-        organization_id: invitation.organizationId
-      }
+        organization_id: invitation.organizationId,
+      },
     })
 
     if (authError) throw authError
@@ -208,7 +215,7 @@ export class UserInvitationManager {
         email: invitation.email,
         full_name: userData.fullName,
         role: invitation.role,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single()
@@ -221,7 +228,7 @@ export class UserInvitationManager {
       .update({
         status: 'accepted',
         accepted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', invitation.id)
 
@@ -234,7 +241,7 @@ export class UserInvitationManager {
     return {
       user: authData.user,
       profile,
-      invitation: { ...invitation, status: 'accepted', acceptedAt: new Date() }
+      invitation: { ...invitation, status: 'accepted', acceptedAt: new Date() },
     }
   }
 
@@ -243,7 +250,7 @@ export class UserInvitationManager {
       .from('user_invitations')
       .update({
         status: 'cancelled',
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', invitationId)
       .eq('status', 'pending')
@@ -287,7 +294,7 @@ export class UserInvitationManager {
       .update({
         reminders_sent: invitationObj.remindersSent + 1,
         last_reminder_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', invitationId)
 
@@ -300,15 +307,13 @@ export class UserInvitationManager {
     const results: BulkInvitationResult['results'] = []
 
     // Create bulk operation record
-    await this.supabase
-      .from('bulk_invitation_operations')
-      .insert({
-        id: bulkId,
-        organization_id: request.organizationId,
-        total_invitations: request.invitations.length,
-        status: 'processing',
-        created_by: request.organizationId // This should come from the requesting user
-      })
+    await this.supabase.from('bulk_invitation_operations').insert({
+      id: bulkId,
+      organization_id: request.organizationId,
+      total_invitations: request.invitations.length,
+      status: 'processing',
+      created_by: request.organizationId, // This should come from the requesting user
+    })
 
     let successCount = 0
     let failCount = 0
@@ -325,21 +330,21 @@ export class UserInvitationManager {
             templateId: request.templateId,
             customMessage: invitationData.customMessage,
             metadata: invitationData.metadata,
-            sendImmediately: request.sendImmediately
+            sendImmediately: request.sendImmediately,
           }
         )
 
         results.push({
           email: invitationData.email,
           success: true,
-          invitationId: invitation.id
+          invitationId: invitation.id,
         })
         successCount++
       } catch (error) {
         results.push({
           email: invitationData.email,
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
         failCount++
       }
@@ -356,7 +361,7 @@ export class UserInvitationManager {
       results,
       createdBy: request.organizationId,
       createdAt: new Date(),
-      completedAt: new Date()
+      completedAt: new Date(),
     }
 
     await this.supabase
@@ -366,7 +371,7 @@ export class UserInvitationManager {
         failed_invitations: failCount,
         status: bulkResult.status,
         results: JSON.stringify(results),
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
       .eq('id', bulkId)
 
@@ -392,12 +397,14 @@ export class UserInvitationManager {
       results: data.results ? JSON.parse(data.results) : [],
       createdBy: data.created_by,
       createdAt: new Date(data.created_at),
-      completedAt: data.completed_at ? new Date(data.completed_at) : undefined
+      completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
     }
   }
 
   // Template management
-  async createInvitationTemplate(template: Omit<InvitationTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<InvitationTemplate> {
+  async createInvitationTemplate(
+    template: Omit<InvitationTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<InvitationTemplate> {
     const { data, error } = await this.supabase
       .from('invitation_templates')
       .insert({
@@ -411,7 +418,7 @@ export class UserInvitationManager {
         variables: template.variables,
         is_default: template.isDefault,
         is_active: template.isActive,
-        created_by: template.createdBy
+        created_by: template.createdBy,
       })
       .select()
       .single()
@@ -420,7 +427,10 @@ export class UserInvitationManager {
     return this.parseTemplate(data)
   }
 
-  async getInvitationTemplates(organizationId: string, role?: string): Promise<InvitationTemplate[]> {
+  async getInvitationTemplates(
+    organizationId: string,
+    role?: string
+  ): Promise<InvitationTemplate[]> {
     let query = this.supabase
       .from('invitation_templates')
       .select('*')
@@ -437,7 +447,10 @@ export class UserInvitationManager {
     return data.map(this.parseTemplate)
   }
 
-  async updateInvitationTemplate(templateId: string, updates: Partial<InvitationTemplate>): Promise<InvitationTemplate> {
+  async updateInvitationTemplate(
+    templateId: string,
+    updates: Partial<InvitationTemplate>
+  ): Promise<InvitationTemplate> {
     const { data, error } = await this.supabase
       .from('invitation_templates')
       .update({
@@ -446,7 +459,7 @@ export class UserInvitationManager {
         text_content: updates.textContent,
         is_default: updates.isDefault,
         is_active: updates.isActive,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', templateId)
       .select()
@@ -475,7 +488,7 @@ export class UserInvitationManager {
         autoReminders: true,
         allowCustomMessages: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }
     }
 
@@ -490,11 +503,14 @@ export class UserInvitationManager {
       restrictedDomains: data.restricted_domains,
       allowedDomains: data.allowed_domains,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     }
   }
 
-  async updateInvitationSettings(organizationId: string, settings: Partial<InvitationSettings>): Promise<InvitationSettings> {
+  async updateInvitationSettings(
+    organizationId: string,
+    settings: Partial<InvitationSettings>
+  ): Promise<InvitationSettings> {
     const { data, error } = await this.supabase
       .from('invitation_settings')
       .upsert({
@@ -507,7 +523,7 @@ export class UserInvitationManager {
         allow_custom_messages: settings.allowCustomMessages,
         restricted_domains: settings.restrictedDomains,
         allowed_domains: settings.allowedDomains,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single()
@@ -525,18 +541,21 @@ export class UserInvitationManager {
       restrictedDomains: data.restricted_domains,
       allowedDomains: data.allowed_domains,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     }
   }
 
   // Query methods
-  async getInvitations(organizationId: string, filters: {
-    status?: string
-    role?: string
-    email?: string
-    limit?: number
-    offset?: number
-  } = {}): Promise<{ invitations: UserInvitation[]; total: number }> {
+  async getInvitations(
+    organizationId: string,
+    filters: {
+      status?: string
+      role?: string
+      email?: string
+      limit?: number
+      offset?: number
+    } = {}
+  ): Promise<{ invitations: UserInvitation[]; total: number }> {
     let query = this.supabase
       .from('user_invitations')
       .select('*', { count: 'exact' })
@@ -562,7 +581,7 @@ export class UserInvitationManager {
 
     return {
       invitations: (data || []).map(this.parseInvitation),
-      total: count || 0
+      total: count || 0,
     }
   }
 
@@ -593,10 +612,12 @@ export class UserInvitationManager {
   async sendScheduledReminders(): Promise<number> {
     const { data: invitations, error } = await this.supabase
       .from('user_invitations')
-      .select(`
+      .select(
+        `
         *,
         invitation_settings!inner(auto_reminders, reminder_interval_days, max_reminders)
-      `)
+      `
+      )
       .eq('status', 'pending')
       .eq('invitation_settings.auto_reminders', true)
       .lt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // At least 1 day old
@@ -608,9 +629,9 @@ export class UserInvitationManager {
     for (const invitationData of invitations) {
       const invitation = this.parseInvitation(invitationData)
       const settings = invitationData.invitation_settings as {
-        auto_reminders: boolean;
-        reminder_interval_days: number;
-        max_reminders: number;
+        auto_reminders: boolean
+        reminder_interval_days: number
+        max_reminders: number
       }
 
       // Check if reminder is due
@@ -630,7 +651,7 @@ export class UserInvitationManager {
             .from('user_invitations')
             .update({
               reminders_sent: invitation.remindersSent + 1,
-              last_reminder_at: new Date().toISOString()
+              last_reminder_at: new Date().toISOString(),
             })
             .eq('id', invitation.id)
 
@@ -670,7 +691,10 @@ export class UserInvitationManager {
     return !!data
   }
 
-  private async getPendingInvitation(email: string, organizationId: string): Promise<UserInvitation | null> {
+  private async getPendingInvitation(
+    email: string,
+    organizationId: string
+  ): Promise<UserInvitation | null> {
     const { data } = await this.supabase
       .from('user_invitations')
       .select('*')
@@ -695,7 +719,10 @@ export class UserInvitationManager {
     return this.parseInvitation(data)
   }
 
-  private async sendInvitationEmail(invitation: UserInvitation, isReminder: boolean = false): Promise<void> {
+  private async sendInvitationEmail(
+    invitation: UserInvitation,
+    isReminder: boolean = false
+  ): Promise<void> {
     let template: InvitationTemplate | null = null
 
     if (invitation.templateId) {
@@ -704,13 +731,16 @@ export class UserInvitationManager {
 
     if (!template) {
       // Use default template
-      const templates = await this.getInvitationTemplates(invitation.organizationId, invitation.role)
+      const templates = await this.getInvitationTemplates(
+        invitation.organizationId,
+        invitation.role
+      )
       template = templates.find(t => t.isDefault) || templates[0]
     }
 
     const subject = isReminder
-      ? `Reminder: ${template?.subject || 'You\'ve been invited to join our team'}`
-      : template?.subject || 'You\'ve been invited to join our team'
+      ? `Reminder: ${template?.subject || "You've been invited to join our team"}`
+      : template?.subject || "You've been invited to join our team"
 
     const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/accept-invitation?token=${invitation.token}`
 
@@ -719,12 +749,16 @@ export class UserInvitationManager {
       to: [invitation.email],
       subject,
       html: this.renderEmailTemplate(template, invitation, inviteUrl, isReminder),
-      text: this.renderTextTemplate(template, invitation, inviteUrl, isReminder)
+      text: this.renderTextTemplate(template, invitation, inviteUrl, isReminder),
     })
   }
 
-  private async sendWelcomeEmail(user: Record<string, unknown>, profile: Record<string, unknown>): Promise<void> {
-    const organizationName = (profile.organization as { name?: string } | null)?.name || 'our platform'
+  private async sendWelcomeEmail(
+    user: Record<string, unknown>,
+    profile: Record<string, unknown>
+  ): Promise<void> {
+    const organizationName =
+      (profile.organization as { name?: string } | null)?.name || 'our platform'
     const subject = `Welcome to ${organizationName}!`
     const userEmail = user.email as string
     const profileName = profile.full_name as string
@@ -738,7 +772,7 @@ export class UserInvitationManager {
         <p>Your account has been successfully created. You can now access the platform.</p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard">Go to Dashboard</a>
       `,
-      text: `Welcome ${profileName}! Your account has been successfully created. Visit ${process.env.NEXT_PUBLIC_APP_URL}/dashboard to get started.`
+      text: `Welcome ${profileName}! Your account has been successfully created. Visit ${process.env.NEXT_PUBLIC_APP_URL}/dashboard to get started.`,
     })
   }
 
@@ -811,14 +845,12 @@ export class UserInvitationManager {
     activity: string,
     performedBy: string
   ): Promise<void> {
-    await this.supabase
-      .from('invitation_activity_logs')
-      .insert({
-        invitation_id: invitationId,
-        activity,
-        performed_by: performedBy,
-        performed_at: new Date().toISOString()
-      })
+    await this.supabase.from('invitation_activity_logs').insert({
+      invitation_id: invitationId,
+      activity,
+      performed_by: performedBy,
+      performed_at: new Date().toISOString(),
+    })
   }
 
   private parseInvitation(data: Record<string, unknown>): UserInvitation {
@@ -838,7 +870,7 @@ export class UserInvitationManager {
       updatedAt: new Date(data.updated_at as string),
       acceptedAt: data.accepted_at ? new Date(data.accepted_at as string) : undefined,
       remindersSent: (data.reminders_sent as number) || 0,
-      lastReminderAt: data.last_reminder_at ? new Date(data.last_reminder_at as string) : undefined
+      lastReminderAt: data.last_reminder_at ? new Date(data.last_reminder_at as string) : undefined,
     }
   }
 
@@ -857,7 +889,7 @@ export class UserInvitationManager {
       isActive: data.is_active as boolean,
       createdBy: data.created_by as string,
       createdAt: new Date(data.created_at as string),
-      updatedAt: new Date(data.updated_at as string)
+      updatedAt: new Date(data.updated_at as string),
     }
   }
 }

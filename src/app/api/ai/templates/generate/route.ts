@@ -4,24 +4,27 @@
  */
 
 // @ts-nocheck - Type definitions need review
-import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import {
   generateTemplate,
   improveTemplate,
   generateTemplateVariations,
   analyzeTemplateEffectiveness,
-} from '@/lib/ai/templates';
-import type { TemplateGenerationRequest } from '@/lib/ai/types';
+} from '@/lib/ai/templates'
+import type { TemplateGenerationRequest } from '@/lib/ai/types'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient()
 
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Get user's organization
@@ -29,24 +32,27 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('organization_id, role')
       .eq('id', user.id)
-      .single();
+      .single()
 
     if (!profile?.organization_id) {
-      return Response.json({ error: 'Organization not found' }, { status: 404 });
+      return Response.json({ error: 'Organization not found' }, { status: 404 })
     }
 
     // Parse request body
-    const body = await request.json();
-    const { action = 'generate' } = body;
+    const body = await request.json()
+    const { action = 'generate' } = body
 
     // Handle template improvement
     if (action === 'improve') {
-      const { templateId, performanceData } = body;
+      const { templateId, performanceData } = body
 
       if (!templateId || !performanceData) {
-        return Response.json({
-          error: 'templateId and performanceData are required for improvement',
-        }, { status: 400 });
+        return Response.json(
+          {
+            error: 'templateId and performanceData are required for improvement',
+          },
+          { status: 400 }
+        )
       }
 
       // Get existing template
@@ -54,14 +60,14 @@ export async function POST(request: NextRequest) {
         .from('message_templates')
         .select('content, organization_id')
         .eq('id', templateId)
-        .single();
+        .single()
 
       if (templateError || !template) {
-        return Response.json({ error: 'Template not found' }, { status: 404 });
+        return Response.json({ error: 'Template not found' }, { status: 404 })
       }
 
       if (template.organization_id !== profile.organization_id) {
-        return Response.json({ error: 'Access denied' }, { status: 403 });
+        return Response.json({ error: 'Access denied' }, { status: 403 })
       }
 
       // Improve template
@@ -69,24 +75,27 @@ export async function POST(request: NextRequest) {
         template.content,
         performanceData,
         profile.organization_id
-      );
+      )
 
       return Response.json({
         success: true,
         improvedTemplate,
         originalTemplate: template.content,
         action: 'improve',
-      });
+      })
     }
 
     // Handle template variations (A/B testing)
     if (action === 'variations') {
-      const { templateId, count = 3 } = body;
+      const { templateId, count = 3 } = body
 
       if (!templateId) {
-        return Response.json({
-          error: 'templateId is required for variations',
-        }, { status: 400 });
+        return Response.json(
+          {
+            error: 'templateId is required for variations',
+          },
+          { status: 400 }
+        )
       }
 
       // Get existing template
@@ -94,14 +103,14 @@ export async function POST(request: NextRequest) {
         .from('message_templates')
         .select('content, organization_id')
         .eq('id', templateId)
-        .single();
+        .single()
 
       if (templateError || !template) {
-        return Response.json({ error: 'Template not found' }, { status: 404 });
+        return Response.json({ error: 'Template not found' }, { status: 404 })
       }
 
       if (template.organization_id !== profile.organization_id) {
-        return Response.json({ error: 'Access denied' }, { status: 403 });
+        return Response.json({ error: 'Access denied' }, { status: 403 })
       }
 
       // Generate variations
@@ -109,7 +118,7 @@ export async function POST(request: NextRequest) {
         template.content,
         count,
         profile.organization_id
-      );
+      )
 
       return Response.json({
         success: true,
@@ -117,17 +126,20 @@ export async function POST(request: NextRequest) {
         baseTemplate: template.content,
         count: variations.length,
         action: 'variations',
-      });
+      })
     }
 
     // Handle template effectiveness analysis
     if (action === 'analyze') {
-      const { templateId, usageData } = body;
+      const { templateId, usageData } = body
 
       if (!templateId || !usageData) {
-        return Response.json({
-          error: 'templateId and usageData are required for analysis',
-        }, { status: 400 });
+        return Response.json(
+          {
+            error: 'templateId and usageData are required for analysis',
+          },
+          { status: 400 }
+        )
       }
 
       // Get existing template
@@ -135,21 +147,18 @@ export async function POST(request: NextRequest) {
         .from('message_templates')
         .select('content, organization_id')
         .eq('id', templateId)
-        .single();
+        .single()
 
       if (templateError || !template) {
-        return Response.json({ error: 'Template not found' }, { status: 404 });
+        return Response.json({ error: 'Template not found' }, { status: 404 })
       }
 
       if (template.organization_id !== profile.organization_id) {
-        return Response.json({ error: 'Access denied' }, { status: 403 });
+        return Response.json({ error: 'Access denied' }, { status: 403 })
       }
 
       // Analyze effectiveness
-      const analysis = await analyzeTemplateEffectiveness(
-        template.content,
-        usageData
-      );
+      const analysis = await analyzeTemplateEffectiveness(template.content, usageData)
 
       // Update effectiveness score in database
       await supabase
@@ -158,23 +167,26 @@ export async function POST(request: NextRequest) {
           effectiveness_score: analysis.score / 100,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', templateId);
+        .eq('id', templateId)
 
       return Response.json({
         success: true,
         analysis,
         templateId,
         action: 'analyze',
-      });
+      })
     }
 
     // Handle template generation (default action)
-    const { purpose, tone, language, maxLength } = body;
+    const { purpose, tone, language, maxLength } = body
 
     if (!purpose) {
-      return Response.json({
-        error: 'purpose is required for template generation',
-      }, { status: 400 });
+      return Response.json(
+        {
+          error: 'purpose is required for template generation',
+        },
+        { status: 400 }
+      )
     }
 
     const request: TemplateGenerationRequest = {
@@ -182,13 +194,10 @@ export async function POST(request: NextRequest) {
       tone: tone || 'professional',
       language: language || 'nl',
       maxLength: maxLength || 160,
-    };
+    }
 
     // Generate template
-    const generatedTemplate = await generateTemplate(
-      request,
-      profile.organization_id
-    );
+    const generatedTemplate = await generateTemplate(request, profile.organization_id)
 
     // Optionally save to database
     if (body.saveToDatabase !== false) {
@@ -209,12 +218,12 @@ export async function POST(request: NextRequest) {
           created_by: user.id,
         })
         .select()
-        .single();
+        .single()
 
       if (saveError) {
-        console.error('Failed to save template:', saveError);
+        console.error('Failed to save template:', saveError)
       } else {
-        generatedTemplate.id = savedTemplate.id;
+        generatedTemplate.id = savedTemplate.id
       }
     }
 
@@ -223,16 +232,15 @@ export async function POST(request: NextRequest) {
       template: generatedTemplate,
       saved: body.saveToDatabase !== false,
       action: 'generate',
-    });
-
+    })
   } catch (error) {
-    console.error('Template generation error:', error);
+    console.error('Template generation error:', error)
     return Response.json(
       {
         error: 'Failed to process template request',
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined,
       },
       { status: 500 }
-    );
+    )
   }
 }

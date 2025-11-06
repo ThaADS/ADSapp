@@ -23,9 +23,9 @@ export default function AdminSetup() {
         password,
         options: {
           data: {
-            full_name: 'Admin User'
-          }
-        }
+            full_name: 'Admin User',
+          },
+        },
       })
 
       if (authError) {
@@ -44,7 +44,7 @@ export default function AdminSetup() {
               .update({
                 organization_id: 'a0000000-0000-0000-0000-000000000001',
                 role: 'owner',
-                full_name: 'Admin User'
+                full_name: 'Admin User',
               })
               .eq('id', authData.user?.id)
 
@@ -79,72 +79,68 @@ export default function AdminSetup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Admin Setup</h1>
-        
-        <div className="mb-6">
+    <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+      <div className='w-full max-w-md rounded-lg bg-white p-8 shadow-md'>
+        <h1 className='mb-6 text-center text-2xl font-bold'>Admin Setup</h1>
+
+        <div className='mb-6'>
           <button
-            type="button"
+            type='button'
             onClick={testConnection}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mb-4"
+            className='mb-4 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
           >
             Test Database Verbinding
           </button>
         </div>
 
-        <form onSubmit={handleSignUp} className="space-y-4">
+        <form onSubmit={handleSignUp} className='space-y-4'>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Admin Email
-            </label>
+            <label className='mb-1 block text-sm font-medium text-gray-700'>Admin Email</label>
             <input
-              type="email"
+              type='email'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="admin@example.com"
+              onChange={e => setEmail(e.target.value)}
+              className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none'
+              placeholder='admin@example.com'
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Wachtwoord
-            </label>
+            <label className='mb-1 block text-sm font-medium text-gray-700'>Wachtwoord</label>
             <input
-              type="password"
+              type='password'
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Minimaal 6 karakters"
+              onChange={e => setPassword(e.target.value)}
+              className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none'
+              placeholder='Minimaal 6 karakters'
               required
               minLength={6}
             />
           </div>
 
           <button
-            type="submit"
+            type='submit'
             disabled={loading}
-            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 disabled:opacity-50"
+            className='w-full rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:opacity-50'
           >
             {loading ? 'Bezig...' : 'Maak Admin Account Aan'}
           </button>
         </form>
 
         {message && (
-          <div className={`mt-4 p-3 rounded ${
-            message.includes('✅') 
-              ? 'bg-green-100 text-green-700' 
-              : 'bg-red-100 text-red-700'
-          }`}>
+          <div
+            className={`mt-4 rounded p-3 ${
+              message.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
             {message}
           </div>
         )}
 
-        <div className="mt-6 text-sm text-gray-600">
-          <h3 className="font-semibold mb-2">Stappen:</h3>
-          <ol className="list-decimal list-inside space-y-1">
+        <div className='mt-6 text-sm text-gray-600'>
+          <h3 className='mb-2 font-semibold'>Stappen:</h3>
+          <ol className='list-inside list-decimal space-y-1'>
             <li>Pas eerst de database schema toe in Supabase</li>
             <li>Test de database verbinding</li>
             <li>Maak een admin account aan</li>
@@ -152,8 +148,8 @@ export default function AdminSetup() {
           </ol>
         </div>
 
-        <div className="mt-4 text-center">
-          <a href="/dashboard" className="text-green-600 hover:underline">
+        <div className='mt-4 text-center'>
+          <a href='/dashboard' className='text-green-600 hover:underline'>
             → Ga naar Dashboard
           </a>
         </div>

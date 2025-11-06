@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { BulkOperationQueue } from '@/lib/bulk-operations/queue'
 import { createClient } from '@/lib/supabase/server'
 
@@ -13,7 +18,7 @@ export async function POST(request: NextRequest) {
       format = 'csv',
       filters = {},
       fields = ['name', 'phone_number', 'email', 'tags', 'created_at', 'last_message_at'],
-      includeStats = false
+      includeStats = false,
     } = body
 
     // Validate format
@@ -26,8 +31,17 @@ export async function POST(request: NextRequest) {
 
     // Validate fields
     const allowedFields = [
-      'id', 'name', 'phone_number', 'whatsapp_id', 'email', 'tags', 'notes',
-      'is_blocked', 'created_at', 'updated_at', 'last_message_at'
+      'id',
+      'name',
+      'phone_number',
+      'whatsapp_id',
+      'email',
+      'tags',
+      'notes',
+      'is_blocked',
+      'created_at',
+      'updated_at',
+      'last_message_at',
     ]
 
     const invalidFields = fields.filter(field => !allowedFields.includes(field))
@@ -63,7 +77,7 @@ export async function POST(request: NextRequest) {
       format,
       filters,
       fields,
-      includeStats
+      includeStats,
     }
 
     // Create bulk operation
@@ -74,17 +88,19 @@ export async function POST(request: NextRequest) {
       type: 'bulk_contact_export',
       status: 'queued',
       totalItems: count || 0,
-      configuration: exportConfig
+      configuration: exportConfig,
     })
 
-    return createSuccessResponse({
-      operation,
-      estimatedContacts: count,
-      format,
-      fields,
-      filters
-    }, 201)
-
+    return createSuccessResponse(
+      {
+        operation,
+        estimatedContacts: count,
+        format,
+        fields,
+        filters,
+      },
+      201
+    )
   } catch (error) {
     console.error('Contact export error:', error)
     return createErrorResponse(error)
@@ -135,8 +151,8 @@ export async function GET(request: NextRequest) {
         return new NextResponse(formattedData, {
           headers: {
             'Content-Type': 'text/csv',
-            'Content-Disposition': 'attachment; filename="contacts.csv"'
-          }
+            'Content-Disposition': 'attachment; filename="contacts.csv"',
+          },
         })
       }
 
@@ -144,7 +160,7 @@ export async function GET(request: NextRequest) {
         contacts: formattedData,
         count: contacts?.length || 0,
         format,
-        fields
+        fields,
       })
     }
 
@@ -153,7 +169,6 @@ export async function GET(request: NextRequest) {
       { error: 'Use POST method for exports larger than 100 contacts' },
       { status: 400 }
     )
-
   } catch (error) {
     console.error('Direct contact export error:', error)
     return createErrorResponse(error)
@@ -162,7 +177,9 @@ export async function GET(request: NextRequest) {
 
 function applyFilters(query: any, filters: any) {
   if (filters.search) {
-    query = query.or(`name.ilike.%${filters.search}%,phone_number.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
+    query = query.or(
+      `name.ilike.%${filters.search}%,phone_number.ilike.%${filters.search}%,email.ilike.%${filters.search}%`
+    )
   }
 
   if (filters.tags && Array.isArray(filters.tags) && filters.tags.length > 0) {
@@ -242,9 +259,7 @@ function formatExportData(contacts: any[], fields: string[], format: string): an
         case 'created_at':
         case 'updated_at':
         case 'last_message_at':
-          processedContact[field] = contact[field]
-            ? new Date(contact[field]).toISOString()
-            : ''
+          processedContact[field] = contact[field] ? new Date(contact[field]).toISOString() : ''
           break
 
         default:
@@ -269,15 +284,17 @@ function convertToCSV(data: any[]): string {
   const csvContent = [
     headers.join(','),
     ...data.map(row =>
-      headers.map(header => {
-        const value = row[header]
-        // Escape quotes and wrap in quotes if contains comma or quotes
-        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-          return `"${value.replace(/"/g, '""')}"`
-        }
-        return value
-      }).join(',')
-    )
+      headers
+        .map(header => {
+          const value = row[header]
+          // Escape quotes and wrap in quotes if contains comma or quotes
+          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+            return `"${value.replace(/"/g, '""')}"`
+          }
+          return value
+        })
+        .join(',')
+    ),
   ].join('\n')
 
   return csvContent

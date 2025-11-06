@@ -163,29 +163,32 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
   }
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className='w-full max-w-3xl'>
       {/* Progress Steps */}
-      <nav aria-label="Progress" className="mb-8">
-        <ol className="flex items-center justify-between">
+      <nav aria-label='Progress' className='mb-8'>
+        <ol className='flex items-center justify-between'>
           {STEPS.map((step, stepIdx) => (
-            <li key={step.id} className={`relative ${stepIdx !== STEPS.length - 1 ? 'flex-1' : ''}`}>
-              <div className="flex items-center">
-                <div className="flex items-center relative">
+            <li
+              key={step.id}
+              className={`relative ${stepIdx !== STEPS.length - 1 ? 'flex-1' : ''}`}
+            >
+              <div className='flex items-center'>
+                <div className='relative flex items-center'>
                   <span
-                    className={`h-10 w-10 rounded-full flex items-center justify-center border-2 ${
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
                       step.id < currentStep
-                        ? 'bg-blue-600 border-blue-600'
+                        ? 'border-blue-600 bg-blue-600'
                         : step.id === currentStep
-                        ? 'border-blue-600 bg-white'
-                        : 'border-gray-300 bg-white'
+                          ? 'border-blue-600 bg-white'
+                          : 'border-gray-300 bg-white'
                     }`}
                   >
                     {step.id < currentStep ? (
-                      <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className='h-5 w-5 text-white' fill='currentColor' viewBox='0 0 20 20'>
                         <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
+                          fillRule='evenodd'
+                          d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                          clipRule='evenodd'
                         />
                       </svg>
                     ) : (
@@ -198,7 +201,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                       </span>
                     )}
                   </span>
-                  <span className="ml-3 text-sm font-medium hidden sm:block">
+                  <span className='ml-3 hidden text-sm font-medium sm:block'>
                     <span className={step.id === currentStep ? 'text-blue-600' : 'text-gray-500'}>
                       {step.name}
                     </span>
@@ -206,7 +209,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 </div>
                 {stepIdx !== STEPS.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mx-4 ${
+                    className={`mx-4 h-0.5 flex-1 ${
                       step.id < currentStep ? 'bg-blue-600' : 'bg-gray-300'
                     }`}
                   />
@@ -218,57 +221,63 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
       </nav>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-8">
+      <form onSubmit={handleSubmit} className='rounded-lg bg-white p-8 shadow-lg'>
         {/* Step 1: Organization */}
         {currentStep === 1 && (
-          <div className="space-y-6">
+          <div className='space-y-6'>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Your Organization</h2>
-              <p className="text-gray-600">Let&apos;s start by setting up your organization details.</p>
+              <h2 className='mb-2 text-2xl font-bold text-gray-900'>Create Your Organization</h2>
+              <p className='text-gray-600'>
+                Let&apos;s start by setting up your organization details.
+              </p>
             </div>
 
             <div>
-              <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor='organizationName'
+                className='mb-1 block text-sm font-medium text-gray-700'
+              >
                 Organization Name *
               </label>
               <input
-                type="text"
-                id="organizationName"
-                name="organizationName"
+                type='text'
+                id='organizationName'
+                name='organizationName'
                 value={formData.organizationName}
                 onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border ${
+                className={`block w-full appearance-none border px-3 py-2 ${
                   validationErrors.organizationName ? 'border-red-300' : 'border-gray-300'
-                } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                placeholder="Acme Corporation"
+                } rounded-md placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
+                placeholder='Acme Corporation'
               />
               {validationErrors.organizationName && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.organizationName}</p>
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.organizationName}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="subdomain" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor='subdomain' className='mb-1 block text-sm font-medium text-gray-700'>
                 Subdomain *
               </label>
-              <div className="mt-1 flex rounded-md shadow-sm">
+              <div className='mt-1 flex rounded-md shadow-sm'>
                 <input
-                  type="text"
-                  id="subdomain"
-                  name="subdomain"
+                  type='text'
+                  id='subdomain'
+                  name='subdomain'
                   value={formData.subdomain}
                   onChange={handleInputChange}
-                  className={`flex-1 min-w-0 block w-full px-3 py-2 rounded-md border ${
+                  className={`block w-full min-w-0 flex-1 rounded-md border px-3 py-2 ${
                     validationErrors.subdomain ? 'border-red-300' : 'border-gray-300'
-                  } focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                  placeholder="acme-corp"
+                  } focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
+                  placeholder='acme-corp'
                 />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
-                This will be used to identify your organization (lowercase, numbers, and hyphens only)
+              <p className='mt-1 text-sm text-gray-500'>
+                This will be used to identify your organization (lowercase, numbers, and hyphens
+                only)
               </p>
               {validationErrors.subdomain && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.subdomain}</p>
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.subdomain}</p>
               )}
             </div>
           </div>
@@ -277,7 +286,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
         {/* Step 2: WhatsApp Business Setup */}
         {currentStep === 2 && (
           <WhatsAppSetupWizard
-            onComplete={(credentials) => {
+            onComplete={credentials => {
               setFormData(prev => ({
                 ...prev,
                 whatsappPhoneNumberId: credentials.phoneNumberId,
@@ -285,76 +294,76 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 whatsappAccessToken: credentials.accessToken,
                 whatsappWebhookVerifyToken: credentials.webhookVerifyToken,
                 whatsappSkipped: false,
-              }));
-              setCurrentStep(3);
+              }))
+              setCurrentStep(3)
             }}
             onSkip={() => {
               setFormData(prev => ({
                 ...prev,
                 whatsappSkipped: true,
-              }));
-              setCurrentStep(3);
+              }))
+              setCurrentStep(3)
             }}
           />
         )}
 
         {/* Step 3: Profile Completion */}
         {currentStep === 3 && (
-          <div className="space-y-6">
+          <div className='space-y-6'>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Complete Your Profile</h2>
-              <p className="text-gray-600">Tell us a bit about yourself.</p>
+              <h2 className='mb-2 text-2xl font-bold text-gray-900'>Complete Your Profile</h2>
+              <p className='text-gray-600'>Tell us a bit about yourself.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className='mb-1 block text-sm font-medium text-gray-700'>Email</label>
               <input
-                type="email"
+                type='email'
                 value={userEmail}
                 disabled
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed sm:text-sm"
+                className='block w-full cursor-not-allowed appearance-none rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 shadow-sm sm:text-sm'
               />
             </div>
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor='fullName' className='mb-1 block text-sm font-medium text-gray-700'>
                 Full Name *
               </label>
               <input
-                type="text"
-                id="fullName"
-                name="fullName"
+                type='text'
+                id='fullName'
+                name='fullName'
                 value={formData.fullName}
                 onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border ${
+                className={`block w-full appearance-none border px-3 py-2 ${
                   validationErrors.fullName ? 'border-red-300' : 'border-gray-300'
-                } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                placeholder="John Doe"
+                } rounded-md placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
+                placeholder='John Doe'
               />
               {validationErrors.fullName && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.fullName}</p>
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.fullName}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor='role' className='mb-1 block text-sm font-medium text-gray-700'>
                 Your Role *
               </label>
               <select
-                id="role"
-                name="role"
+                id='role'
+                name='role'
                 value={formData.role}
                 onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border ${
+                className={`block w-full appearance-none border px-3 py-2 ${
                   validationErrors.role ? 'border-red-300' : 'border-gray-300'
-                } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
               >
-                <option value="owner">Owner - Full access and billing control</option>
-                <option value="admin">Admin - Manage team and settings</option>
-                <option value="agent">Agent - Handle conversations</option>
+                <option value='owner'>Owner - Full access and billing control</option>
+                <option value='admin'>Admin - Manage team and settings</option>
+                <option value='agent'>Agent - Handle conversations</option>
               </select>
               {validationErrors.role && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.role}</p>
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.role}</p>
               )}
             </div>
           </div>
@@ -362,36 +371,41 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 rounded-md bg-red-50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+          <div className='mt-6 rounded-md bg-red-50 p-4'>
+            <div className='flex'>
+              <div className='flex-shrink-0'>
+                <svg className='h-5 w-5 text-red-400' viewBox='0 0 20 20' fill='currentColor'>
                   <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
+                    fillRule='evenodd'
+                    d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                    clipRule='evenodd'
                   />
                 </svg>
               </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error</h3>
-                <div className="mt-2 text-sm text-red-700">{error}</div>
+              <div className='ml-3'>
+                <h3 className='text-sm font-medium text-red-800'>Error</h3>
+                <div className='mt-2 text-sm text-red-700'>{error}</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Navigation Buttons */}
-        <div className="mt-8 flex justify-between">
+        <div className='mt-8 flex justify-between'>
           {currentStep > 1 ? (
             <button
-              type="button"
+              type='button'
               onClick={handleBack}
               disabled={isLoading}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className='inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
             >
-              <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg className='mr-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M15 19l-7-7 7-7'
+                />
               </svg>
               Back
             </button>
@@ -401,42 +415,47 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
           {currentStep < STEPS.length ? (
             <button
-              type="button"
+              type='button'
               onClick={handleNext}
               disabled={isLoading}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
             >
               Next
-              <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg className='ml-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 5l7 7-7 7'
+                />
               </svg>
             </button>
           ) : (
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading}
-              className="inline-flex items-center px-6 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
             >
               {isLoading ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
+                    className='mr-3 -ml-1 h-4 w-4 animate-spin text-white'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
                   >
                     <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
+                      className='opacity-25'
+                      cx='12'
+                      cy='12'
+                      r='10'
+                      stroke='currentColor'
+                      strokeWidth='4'
                     ></circle>
                     <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      className='opacity-75'
+                      fill='currentColor'
+                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                     ></path>
                   </svg>
                   Setting up...

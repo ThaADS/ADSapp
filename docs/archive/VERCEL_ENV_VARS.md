@@ -3,6 +3,7 @@
 ## Required Environment Variables for Production Deployment
 
 ### Application Configuration
+
 ```bash
 # Core Application Settings
 NEXT_PUBLIC_APP_NAME=ADSapp
@@ -13,6 +14,7 @@ NODE_ENV=production
 ```
 
 ### Supabase Database Configuration
+
 ```bash
 # Supabase - Get from https://app.supabase.com/project/your-project/settings/api
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
@@ -22,6 +24,7 @@ SUPABASE_JWT_SECRET=your-supabase-jwt-secret
 ```
 
 ### Stripe Payment Configuration
+
 ```bash
 # Stripe - Get from https://dashboard.stripe.com/apikeys
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_your_stripe_publishable_key
@@ -35,6 +38,7 @@ STRIPE_ENTERPRISE_PRICE_ID=price_enterprise_monthly_199
 ```
 
 ### WhatsApp Business API Configuration
+
 ```bash
 # WhatsApp Business - Get from Meta Developer Console
 WHATSAPP_ACCESS_TOKEN=your_whatsapp_business_access_token
@@ -44,6 +48,7 @@ WHATSAPP_BUSINESS_ACCOUNT_ID=your_whatsapp_business_account_id
 ```
 
 ### Email Service Configuration
+
 ```bash
 # Resend Email Service - Get from https://resend.com/api-keys
 RESEND_API_KEY=re_your_resend_api_key
@@ -51,6 +56,7 @@ NEXT_PUBLIC_EMAIL_FROM=noreply@your-domain.com
 ```
 
 ### Security & Authentication
+
 ```bash
 # JWT and Encryption Keys - Generate secure random keys
 JWT_SECRET=your_super_secure_jwt_secret_256_bits_minimum
@@ -58,6 +64,7 @@ ENCRYPTION_KEY=your_32_character_encryption_key_here
 ```
 
 ### Monitoring & Error Tracking (Optional but Recommended)
+
 ```bash
 # Sentry for Error Tracking - Get from https://sentry.io
 SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
@@ -68,6 +75,7 @@ SENTRY_AUTH_TOKEN=your_sentry_auth_token
 ```
 
 ### Admin Configuration
+
 ```bash
 # Super Admin Access
 SUPER_ADMIN_EMAIL=admin@your-domain.com
@@ -75,6 +83,7 @@ ADMIN_SECRET_KEY=your_admin_secret_key_for_admin_operations
 ```
 
 ### Feature Flags (Optional)
+
 ```bash
 # Feature toggles
 FEATURE_ANALYTICS_ENABLED=true
@@ -86,6 +95,7 @@ DATA_RETENTION_DAYS=365
 ```
 
 ### Performance & File Upload
+
 ```bash
 # File upload limits
 NEXT_PUBLIC_MAX_FILE_SIZE=10485760
@@ -94,6 +104,7 @@ UPLOAD_REGION=us-east-1
 ```
 
 ### Build-Time Safety
+
 ```bash
 # Helps with Vercel build process
 NEXT_BUILD_TIME=false
@@ -102,12 +113,14 @@ NEXT_BUILD_TIME=false
 ## How to Set Environment Variables in Vercel
 
 ### Method 1: Vercel Dashboard
+
 1. Go to your project in Vercel Dashboard
 2. Navigate to Settings → Environment Variables
 3. Add each variable with its value
 4. Set the environment to "Production", "Preview", or "Development" as needed
 
 ### Method 2: Vercel CLI
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -126,6 +139,7 @@ vercel env add SUPABASE_SERVICE_ROLE_KEY production
 ```
 
 ### Method 3: Bulk Import via .env file
+
 ```bash
 # Create a production.env file with all variables
 # Then use Vercel CLI to import
@@ -147,16 +161,19 @@ These variables are **absolutely required** for the build to succeed:
 ## Environment Variable Priorities
 
 ### High Priority (Build will fail without these)
+
 - All Stripe configuration
 - All Supabase configuration
 - NEXT_PUBLIC_APP_URL
 
 ### Medium Priority (Features won't work without these)
+
 - WhatsApp Business API configuration
 - Resend email configuration
 - JWT secrets
 
 ### Low Priority (Optional features)
+
 - Sentry monitoring
 - Analytics
 - Feature flags
@@ -187,16 +204,19 @@ curl https://your-domain.com/api/health
 ## Common Issues and Solutions
 
 ### Build Fails with "Neither apiKey nor config.authenticator provided"
+
 - Ensure all Stripe environment variables are set
 - Check that STRIPE_SECRET_KEY is properly configured
-- Verify STRIPE_*_PRICE_ID variables are all set
+- Verify STRIPE\_\*\_PRICE_ID variables are all set
 
 ### Supabase Connection Issues
+
 - Verify NEXT_PUBLIC_SUPABASE_URL format
 - Check SUPABASE_SERVICE_ROLE_KEY has correct permissions
 - Ensure NEXT_PUBLIC_SUPABASE_ANON_KEY is valid
 
 ### WhatsApp Integration Not Working
+
 - Verify WHATSAPP_ACCESS_TOKEN is valid and not expired
 - Check WHATSAPP_PHONE_NUMBER_ID matches your Business Account
 - Ensure WHATSAPP_WEBHOOK_VERIFY_TOKEN matches Meta configuration

@@ -1,7 +1,12 @@
 // @ts-nocheck - Database types need regeneration
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +30,8 @@ export async function GET(request: NextRequest) {
     // Build query with organization filter
     let messagesQuery = supabase
       .from('messages')
-      .select(`
+      .select(
+        `
         *,
         conversation:conversations!inner(
           id,
@@ -33,14 +39,17 @@ export async function GET(request: NextRequest) {
           contact:contacts(id, name, phone_number)
         ),
         sender:profiles(id, full_name)
-      `)
+      `
+      )
       .eq('conversation.organization_id', organizationId)
       .order('created_at', { ascending: false })
       .limit(100)
 
     // Apply text search if provided
     if (query) {
-      messagesQuery = messagesQuery.or(`content.ilike.%${query}%,metadata->>'caption'.ilike.%${query}%`)
+      messagesQuery = messagesQuery.or(
+        `content.ilike.%${query}%,metadata->>'caption'.ilike.%${query}%`
+      )
     }
 
     // Apply date filters
@@ -76,10 +85,9 @@ export async function GET(request: NextRequest) {
         dateTo,
         sender,
         tags,
-        messageType
-      }
+        messageType,
+      },
     })
-
   } catch (error) {
     console.error('Error searching messages:', error)
     return createErrorResponse(error)

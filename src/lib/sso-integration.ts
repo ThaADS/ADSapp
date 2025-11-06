@@ -6,7 +6,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -104,12 +103,14 @@ export class SSOProviderManager {
     this.supabase = createClient()
   }
 
-  async createProvider(provider: Omit<SSOProvider, 'id' | 'createdAt' | 'updatedAt'>): Promise<SSOProvider> {
+  async createProvider(
+    provider: Omit<SSOProvider, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<SSOProvider> {
     const { data, error } = await this.supabase
       .from('sso_providers')
       .insert({
         ...provider,
-        config: JSON.stringify(provider.config)
+        config: JSON.stringify(provider.config),
       })
       .select()
       .single()
@@ -147,7 +148,7 @@ export class SSOProviderManager {
       .update({
         ...updates,
         config: updates.config ? JSON.stringify(updates.config) : undefined,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -171,7 +172,7 @@ export class SSOProviderManager {
       ...data,
       config: JSON.parse(data.config),
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     }
   }
 }
@@ -209,12 +210,12 @@ export class SAMLHandler {
     const encodedRequest = Buffer.from(samlRequest).toString('base64')
     const params = new URLSearchParams({
       SAMLRequest: encodedRequest,
-      ...(relayState && { RelayState: relayState })
+      ...(relayState && { RelayState: relayState }),
     })
 
     return {
       url: `${this.config.ssoUrl}?${params.toString()}`,
-      id
+      id,
     }
   }
 
@@ -268,7 +269,7 @@ export class SAMLHandler {
       firstName: 'John',
       lastName: 'Doe',
       displayName: 'John Doe',
-      groups: ['users']
+      groups: ['users'],
     }
   }
 }
@@ -289,7 +290,7 @@ export class OAuthHandler {
       response_type: 'code',
       scope: this.config.scopes.join(' '),
       redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/sso/oauth/callback`,
-      state
+      state,
     })
 
     return `${this.config.authorizationUrl}?${params.toString()}`
@@ -305,15 +306,15 @@ export class OAuthHandler {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json'
+        Accept: 'application/json',
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: this.config.clientId,
         client_secret: this.config.clientSecret,
         code,
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/sso/oauth/callback`
-      })
+        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/sso/oauth/callback`,
+      }),
     })
 
     if (!response.ok) {
@@ -326,9 +327,9 @@ export class OAuthHandler {
   async getUserInfo(accessToken: string): Promise<any> {
     const response = await fetch(this.config.userInfoUrl, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Accept': 'application/json'
-      }
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
     })
 
     if (!response.ok) {
@@ -346,7 +347,7 @@ export class OAuthHandler {
       firstName: mapping.firstName ? userInfo[mapping.firstName] : undefined,
       lastName: mapping.lastName ? userInfo[mapping.lastName] : undefined,
       displayName: mapping.displayName ? userInfo[mapping.displayName] : undefined,
-      groups: mapping.groups ? userInfo[mapping.groups] : undefined
+      groups: mapping.groups ? userInfo[mapping.groups] : undefined,
     }
   }
 }
@@ -389,8 +390,8 @@ export class JITProvisioning {
         full_name: userInfo.displayName,
         first_name: userInfo.firstName,
         last_name: userInfo.lastName,
-        provider: 'sso'
-      }
+        provider: 'sso',
+      },
     })
 
     if (authError) throw authError
@@ -404,7 +405,7 @@ export class JITProvisioning {
         email: userInfo.email,
         full_name: userInfo.displayName,
         role: role,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single()
@@ -444,7 +445,7 @@ export class SCIMHandler {
       firstName: scimUser.name?.givenName,
       lastName: scimUser.name?.familyName,
       displayName: scimUser.displayName,
-      active: scimUser.active
+      active: scimUser.active,
     }
 
     // Create user in Supabase
@@ -455,8 +456,8 @@ export class SCIMHandler {
         full_name: userInfo.displayName,
         first_name: userInfo.firstName,
         last_name: userInfo.lastName,
-        provider: 'scim'
-      }
+        provider: 'scim',
+      },
     })
 
     if (error) throw error
@@ -467,15 +468,15 @@ export class SCIMHandler {
       emails: [{ value: userInfo.email, primary: true }],
       name: {
         givenName: userInfo.firstName,
-        familyName: userInfo.lastName
+        familyName: userInfo.lastName,
       },
       displayName: userInfo.displayName,
       active: userInfo.active,
       meta: {
         resourceType: 'User',
         created: new Date().toISOString(),
-        lastModified: new Date().toISOString()
-      }
+        lastModified: new Date().toISOString(),
+      },
     }
   }
 
@@ -506,8 +507,8 @@ export class SCIMHandler {
       meta: {
         resourceType: 'Group',
         created: new Date().toISOString(),
-        lastModified: new Date().toISOString()
-      }
+        lastModified: new Date().toISOString(),
+      },
     }
   }
 }
@@ -520,22 +521,16 @@ export class SSOSessionManager {
     this.supabase = createClient()
   }
 
-  async createSSOSession(
-    userId: string,
-    providerId: string,
-    sessionData: any
-  ): Promise<string> {
+  async createSSOSession(userId: string, providerId: string, sessionData: any): Promise<string> {
     const sessionId = crypto.randomUUID()
 
-    const { error } = await this.supabase
-      .from('sso_sessions')
-      .insert({
-        id: sessionId,
-        user_id: userId,
-        provider_id: providerId,
-        session_data: sessionData,
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-      })
+    const { error } = await this.supabase.from('sso_sessions').insert({
+      id: sessionId,
+      user_id: userId,
+      provider_id: providerId,
+      session_data: sessionData,
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+    })
 
     if (error) throw error
     return sessionId
@@ -553,10 +548,7 @@ export class SSOSessionManager {
   }
 
   async invalidateSSOSession(sessionId: string): Promise<void> {
-    const { error } = await this.supabase
-      .from('sso_sessions')
-      .delete()
-      .eq('id', sessionId)
+    const { error } = await this.supabase.from('sso_sessions').delete().eq('id', sessionId)
 
     if (error) throw error
   }
@@ -645,11 +637,10 @@ export class SSOService {
     )
 
     // Create SSO session
-    const sessionId = await this.sessionManager.createSSOSession(
-      user.id,
-      provider.id,
-      { userInfo, tokens: callbackData }
-    )
+    const sessionId = await this.sessionManager.createSSOSession(user.id, provider.id, {
+      userInfo,
+      tokens: callbackData,
+    })
 
     return { user, profile, sessionId }
   }

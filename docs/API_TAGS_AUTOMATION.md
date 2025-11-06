@@ -14,11 +14,13 @@ Complete API documentation for Tag Management and Automation Rules endpoints.
 ## Tag Management API
 
 ### Base URL
+
 ```
 /api/tags
 ```
 
 ### Authentication
+
 All endpoints require authentication via Supabase Auth session cookie.
 
 ### Data Model
@@ -28,10 +30,10 @@ interface Tag {
   id: string
   organization_id: string
   name: string
-  color: string | null  // Hex color (e.g., "#FF0000")
+  color: string | null // Hex color (e.g., "#FF0000")
   created_at: string
   updated_at: string
-  usage_count?: number  // Number of contacts with this tag
+  usage_count?: number // Number of contacts with this tag
 }
 ```
 
@@ -46,6 +48,7 @@ Get all tags for the authenticated user's organization with usage counts.
 **Query Parameters:** None
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -66,6 +69,7 @@ Get all tags for the authenticated user's organization with usage counts.
 ```
 
 **Status Codes:**
+
 - `200` - Success
 - `401` - Unauthorized
 - `500` - Server error
@@ -79,19 +83,22 @@ Get all tags for the authenticated user's organization with usage counts.
 Create a new tag for the organization.
 
 **Request Body:**
+
 ```json
 {
   "name": "Important",
-  "color": "#EF4444"  // Optional, defaults to #6B7280
+  "color": "#EF4444" // Optional, defaults to #6B7280
 }
 ```
 
 **Validation:**
+
 - `name` - Required, non-empty string
 - `color` - Optional, must be valid hex color format (#RRGGBB)
 - Tag names must be unique per organization
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -108,6 +115,7 @@ Create a new tag for the organization.
 ```
 
 **Status Codes:**
+
 - `201` - Created successfully
 - `400` - Validation error
 - `409` - Tag with this name already exists
@@ -123,9 +131,11 @@ Create a new tag for the organization.
 Get details for a specific tag including contacts that have this tag.
 
 **URL Parameters:**
+
 - `id` - Tag UUID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -152,10 +162,12 @@ Get details for a specific tag including contacts that have this tag.
 ```
 
 **Notes:**
+
 - Returns up to 100 contacts with this tag
 - Contacts are sorted by most recent first
 
 **Status Codes:**
+
 - `200` - Success
 - `404` - Tag not found
 - `401` - Unauthorized
@@ -170,21 +182,25 @@ Get details for a specific tag including contacts that have this tag.
 Update tag name and/or color. When renaming, all contacts with this tag are automatically updated.
 
 **URL Parameters:**
+
 - `id` - Tag UUID
 
 **Request Body:**
+
 ```json
 {
-  "name": "Super VIP",  // Optional
-  "color": "#DC2626"    // Optional
+  "name": "Super VIP", // Optional
+  "color": "#DC2626" // Optional
 }
 ```
 
 **Validation:**
+
 - `name` - If provided, must be non-empty string and unique
 - `color` - If provided, must be valid hex color format
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -201,10 +217,12 @@ Update tag name and/or color. When renaming, all contacts with this tag are auto
 ```
 
 **Important:**
+
 - If tag name changes, all contacts with the old tag name are updated to use the new name
 - This operation may take time for large numbers of contacts
 
 **Status Codes:**
+
 - `200` - Updated successfully
 - `400` - Validation error
 - `404` - Tag not found
@@ -221,9 +239,11 @@ Update tag name and/or color. When renaming, all contacts with this tag are auto
 Delete a tag and remove it from all contacts.
 
 **URL Parameters:**
+
 - `id` - Tag UUID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -235,11 +255,13 @@ Delete a tag and remove it from all contacts.
 ```
 
 **Important:**
+
 - Tag is removed from ALL contacts before deletion
 - This operation is irreversible
 - May take time for large numbers of contacts
 
 **Status Codes:**
+
 - `200` - Deleted successfully
 - `404` - Tag not found
 - `401` - Unauthorized
@@ -250,11 +272,13 @@ Delete a tag and remove it from all contacts.
 ## Automation Rules API
 
 ### Base URL
+
 ```
 /api/automation/rules
 ```
 
 ### Authentication
+
 All endpoints require authentication via Supabase Auth session cookie.
 
 ### Data Model
@@ -269,7 +293,7 @@ interface AutomationRule {
   trigger_conditions: {
     keywords?: string[]
     tags?: string[]
-    schedule?: string  // Cron format
+    schedule?: string // Cron format
     events?: string[]
   }
   actions: Array<{
@@ -294,12 +318,14 @@ interface AutomationRule {
 Get all automation rules for the organization.
 
 **Query Parameters:**
+
 - `is_active` - Filter by active status (true/false)
 - `trigger_type` - Filter by trigger type
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 20, max: 100)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -346,6 +372,7 @@ Get all automation rules for the organization.
 ```
 
 **Status Codes:**
+
 - `200` - Success
 - `401` - Unauthorized
 - `500` - Server error
@@ -359,6 +386,7 @@ Get all automation rules for the organization.
 Create a new automation rule.
 
 **Request Body:**
+
 ```json
 {
   "name": "Auto-tag VIP keywords",
@@ -386,6 +414,7 @@ Create a new automation rule.
 ```
 
 **Validation:**
+
 - `name` - Required, non-empty string, unique per organization
 - `trigger_type` - Required, one of: keyword, business_hours, unassigned, first_message
 - `trigger_conditions` - Required, object with type-specific fields
@@ -393,12 +422,14 @@ Create a new automation rule.
 - Each action must have valid `type` and `params` object
 
 **Action Types:**
+
 - `send_message` - Send automated message
 - `add_tag` - Add tag to contact
 - `assign_agent` - Assign conversation to agent
 - `create_ticket` - Create support ticket
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -435,6 +466,7 @@ Create a new automation rule.
 ```
 
 **Status Codes:**
+
 - `201` - Created successfully
 - `400` - Validation error
 - `409` - Rule with this name already exists
@@ -450,9 +482,11 @@ Create a new automation rule.
 Get details for a specific automation rule.
 
 **URL Parameters:**
+
 - `id` - Rule UUID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -489,6 +523,7 @@ Get details for a specific automation rule.
 ```
 
 **Status Codes:**
+
 - `200` - Success
 - `404` - Rule not found
 - `401` - Unauthorized
@@ -503,9 +538,11 @@ Get details for a specific automation rule.
 Update an automation rule. All fields are optional.
 
 **URL Parameters:**
+
 - `id` - Rule UUID
 
 **Request Body:**
+
 ```json
 {
   "name": "Updated rule name",
@@ -526,10 +563,12 @@ Update an automation rule. All fields are optional.
 ```
 
 **Validation:**
+
 - Same validation rules as create endpoint
 - Only provided fields are updated
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -566,6 +605,7 @@ Update an automation rule. All fields are optional.
 ```
 
 **Status Codes:**
+
 - `200` - Updated successfully
 - `400` - Validation error
 - `404` - Rule not found
@@ -582,11 +622,13 @@ Update an automation rule. All fields are optional.
 Enable or disable an automation rule (toggle is_active status).
 
 **URL Parameters:**
+
 - `id` - Rule UUID
 
 **Request Body:** None
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -602,6 +644,7 @@ Enable or disable an automation rule (toggle is_active status).
 ```
 
 **Status Codes:**
+
 - `200` - Toggled successfully
 - `404` - Rule not found
 - `401` - Unauthorized
@@ -616,9 +659,11 @@ Enable or disable an automation rule (toggle is_active status).
 Delete an automation rule permanently.
 
 **URL Parameters:**
+
 - `id` - Rule UUID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -629,10 +674,12 @@ Delete an automation rule permanently.
 ```
 
 **Important:**
+
 - This operation is irreversible
 - Rule execution history is preserved in logs (if implemented)
 
 **Status Codes:**
+
 - `200` - Deleted successfully
 - `404` - Rule not found
 - `401` - Unauthorized
@@ -681,7 +728,7 @@ export function useTags() {
       const response = await fetch('/api/tags', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, color })
+        body: JSON.stringify({ name, color }),
       })
       const data = await response.json()
       if (data.success) {
@@ -700,7 +747,7 @@ export function useTags() {
   const deleteTag = async (id: string) => {
     try {
       const response = await fetch(`/api/tags/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
       const data = await response.json()
       if (data.success) {
@@ -729,37 +776,37 @@ export function useTags() {
 ```typescript
 async function createVIPAutomation() {
   const rule = {
-    name: "VIP Customer Auto-Response",
-    description: "Automatically tag and respond to VIP keywords",
-    trigger_type: "keyword",
+    name: 'VIP Customer Auto-Response',
+    description: 'Automatically tag and respond to VIP keywords',
+    trigger_type: 'keyword',
     trigger_conditions: {
-      keywords: ["vip", "premium", "enterprise"]
+      keywords: ['vip', 'premium', 'enterprise'],
     },
     actions: [
       {
-        type: "add_tag",
-        params: { tag: "VIP" }
+        type: 'add_tag',
+        params: { tag: 'VIP' },
       },
       {
-        type: "send_message",
+        type: 'send_message',
         params: {
-          message: "Thank you for your interest! A VIP representative will contact you shortly."
-        }
+          message: 'Thank you for your interest! A VIP representative will contact you shortly.',
+        },
       },
       {
-        type: "assign_agent",
+        type: 'assign_agent',
         params: {
-          role: "vip_support"
-        }
-      }
+          role: 'vip_support',
+        },
+      },
     ],
-    is_active: true
+    is_active: true,
   }
 
   const response = await fetch('/api/automation/rules', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(rule)
+    body: JSON.stringify(rule),
   })
 
   return response.json()
@@ -776,31 +823,33 @@ All API endpoints return standardized error responses:
 {
   "success": false,
   "error": "Error message description",
-  "code": "ERROR_CODE"  // Optional
+  "code": "ERROR_CODE" // Optional
 }
 ```
 
 ### Common Error Codes
 
-| Status | Code | Description |
-|--------|------|-------------|
-| 400 | VALIDATION_ERROR | Request validation failed |
-| 401 | UNAUTHORIZED | Missing or invalid authentication |
-| 403 | FORBIDDEN | Insufficient permissions |
-| 404 | NOT_FOUND | Resource not found |
-| 409 | CONFLICT | Resource already exists |
-| 429 | RATE_LIMIT_EXCEEDED | Too many requests |
-| 500 | SERVER_ERROR | Internal server error |
+| Status | Code                | Description                       |
+| ------ | ------------------- | --------------------------------- |
+| 400    | VALIDATION_ERROR    | Request validation failed         |
+| 401    | UNAUTHORIZED        | Missing or invalid authentication |
+| 403    | FORBIDDEN           | Insufficient permissions          |
+| 404    | NOT_FOUND           | Resource not found                |
+| 409    | CONFLICT            | Resource already exists           |
+| 429    | RATE_LIMIT_EXCEEDED | Too many requests                 |
+| 500    | SERVER_ERROR        | Internal server error             |
 
 ---
 
 ## Rate Limiting
 
 All endpoints are subject to rate limiting:
+
 - Standard endpoints: 100 requests per minute per organization
 - Bulk operations: 20 requests per minute per organization
 
 Rate limit headers are included in all responses:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -819,6 +868,7 @@ psql -h your-supabase-host -d postgres -f supabase/migrations/20251015_tags_tabl
 ```
 
 The migration creates:
+
 - `tags` table with RLS policies
 - Indexes for performance optimization
 - Default tags for existing organizations
@@ -829,6 +879,7 @@ The migration creates:
 ## Testing
 
 ### Test Tag Creation
+
 ```bash
 curl -X POST http://localhost:3001/api/tags \
   -H "Content-Type: application/json" \
@@ -837,6 +888,7 @@ curl -X POST http://localhost:3001/api/tags \
 ```
 
 ### Test Automation Rule Creation
+
 ```bash
 curl -X POST http://localhost:3001/api/automation/rules \
   -H "Content-Type: application/json" \
@@ -854,6 +906,7 @@ curl -X POST http://localhost:3001/api/automation/rules \
 ## Support
 
 For issues or questions about the Tag Management and Automation APIs:
+
 - Check the error response for specific details
 - Review the validation requirements above
 - Ensure database migrations are applied

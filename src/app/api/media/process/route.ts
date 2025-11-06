@@ -1,9 +1,13 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { MediaStorageService } from '@/lib/media/storage'
 import sharp from 'sharp'
 
@@ -17,28 +21,19 @@ export async function POST(request: NextRequest) {
     const { fileId, operations } = body
 
     if (!fileId || !operations) {
-      return NextResponse.json(
-        { error: 'File ID and operations are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'File ID and operations are required' }, { status: 400 })
     }
 
     const mediaStorage = new MediaStorageService()
     const file = await mediaStorage.getFile(fileId, profile.organization_id)
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'File not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'File not found' }, { status: 404 })
     }
 
     // Only process image files
     if (!file.mimeType.startsWith('image/')) {
-      return NextResponse.json(
-        { error: 'File must be an image' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
     }
 
     // Download original file
@@ -54,7 +49,7 @@ export async function POST(request: NextRequest) {
         case 'resize':
           processor = processor.resize(operation.width, operation.height, {
             fit: operation.fit || 'cover',
-            withoutEnlargement: operation.withoutEnlargement || false
+            withoutEnlargement: operation.withoutEnlargement || false,
           })
           break
 
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
             left: operation.left,
             top: operation.top,
             width: operation.width,
-            height: operation.height
+            height: operation.height,
           })
           break
 
@@ -112,10 +107,12 @@ export async function POST(request: NextRequest) {
               </svg>
             `
             const textBuffer = Buffer.from(svgText)
-            processor = processor.composite([{
-              input: textBuffer,
-              gravity: operation.position || 'southeast'
-            }])
+            processor = processor.composite([
+              {
+                input: textBuffer,
+                gravity: operation.position || 'southeast',
+              },
+            ])
           }
           break
       }
@@ -132,16 +129,15 @@ export async function POST(request: NextRequest) {
       {
         organizationId: profile.organization_id,
         uploadedBy: user.id,
-        generateThumbnail: true
+        generateThumbnail: true,
       }
     )
 
     return createSuccessResponse({
       originalFile: file,
       processedFile,
-      operations
+      operations,
     })
-
   } catch (error) {
     console.error('Media processing error:', error)
     return createErrorResponse(error)

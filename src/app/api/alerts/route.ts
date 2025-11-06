@@ -11,13 +11,12 @@ export async function GET(request: NextRequest) {
 
     // Get user context
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check if user has admin access
@@ -28,10 +27,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
     let alerts = alertManager.getAlerts(
@@ -64,16 +60,12 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: alerts.length,
-        totalPages: Math.ceil(alerts.length / limit)
-      }
+        totalPages: Math.ceil(alerts.length / limit),
+      },
     })
-
   } catch (error) {
     console.error('Alerts API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch alerts' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch alerts' }, { status: 500 })
   }
 }
 
@@ -83,10 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Validate alert data
     if (!alert.type || !alert.severity || !alert.title) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
     // TODO: Phase 3 - Create alerts table migration
@@ -104,13 +93,9 @@ export async function POST(request: NextRequest) {
     // alertManager.addAlert(alert)
 
     return NextResponse.json({ success: true })
-
   } catch (error) {
     console.error('Alert storage error:', error)
-    return NextResponse.json(
-      { error: 'Failed to store alert' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to store alert' }, { status: 500 })
   }
 }
 
@@ -121,21 +106,17 @@ export async function PATCH(request: NextRequest) {
     const { resolved } = await request.json()
 
     if (!alertId) {
-      return NextResponse.json(
-        { error: 'Alert ID is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Alert ID is required' }, { status: 400 })
     }
 
     // Get user context
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Update alert
@@ -159,12 +140,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-
   } catch (error) {
     console.error('Alert update error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update alert' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update alert' }, { status: 500 })
   }
 }

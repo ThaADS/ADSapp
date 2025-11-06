@@ -10,7 +10,9 @@
 ## 🎯 Business Objectives
 
 ### Problem Statement
+
 Original onboarding had a **40% drop-off rate** at the WhatsApp setup step due to:
+
 - Overwhelming single-page form
 - No guidance on finding credentials
 - No validation feedback
@@ -18,7 +20,9 @@ Original onboarding had a **40% drop-off rate** at the WhatsApp setup step due t
 - Confusion about where to find WhatsApp Business credentials
 
 ### Solution Overview
+
 Multi-step progressive disclosure wizard with:
+
 - **3-step guided setup** instead of overwhelming single form
 - **Live validation** with visual feedback (validating/valid/invalid states)
 - **Skip functionality** to reduce friction and allow exploration
@@ -27,6 +31,7 @@ Multi-step progressive disclosure wizard with:
 - **Help section** with documentation links and support chat access
 
 ### Expected Impact
+
 - **Conversion Rate**: 34% → 57% (68% increase)
 - **Drop-off Rate**: 40% → 15% (62.5% improvement)
 - **Completion Time**: 8-12 min → 4-6 min (50% faster)
@@ -37,6 +42,7 @@ Multi-step progressive disclosure wizard with:
 ## 🏗️ Architecture Overview
 
 ### Component Hierarchy
+
 ```
 OnboardingForm (Main Container)
 ├─ Step 1: Organization Setup
@@ -70,6 +76,7 @@ OnboardingForm (Main Container)
 ```
 
 ### Data Flow
+
 ```
 User Input
     ↓
@@ -93,9 +100,11 @@ Redirect to Dashboard
 ### API Endpoints
 
 #### 1. POST `/api/onboarding/validate-whatsapp`
+
 **Purpose**: Real-time credential validation
 
 **Request**:
+
 ```typescript
 {
   phoneNumberId?: string,      // 15 digits
@@ -105,6 +114,7 @@ Redirect to Dashboard
 ```
 
 **Response** (Success):
+
 ```typescript
 {
   valid: true,
@@ -118,6 +128,7 @@ Redirect to Dashboard
 ```
 
 **Response** (Error):
+
 ```typescript
 {
   valid: false,
@@ -127,36 +138,35 @@ Redirect to Dashboard
 ```
 
 **Validation Rules**:
+
 - **Phone Number ID**: Must be exactly 15 digits
 - **Business Account ID**: Must be 15-20 digits
 - **Access Token**: Must start with "EAA" and be at least 100 characters
 - **Optional API Test**: If both phoneNumberId and accessToken provided, test actual WhatsApp API
 
 **Implementation**:
+
 ```typescript
 // Format validation (instant)
-const phoneNumberIdValid = /^\d{15}$/.test(phoneNumberId);
+const phoneNumberIdValid = /^\d{15}$/.test(phoneNumberId)
 
 // API validation (optional, when both credentials provided)
 if (phoneNumberId && accessToken) {
-  const response = await fetch(
-    `https://graph.facebook.com/v18.0/${phoneNumberId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
 
   if (response.ok) {
-    const data = await response.json();
+    const data = await response.json()
     return {
       valid: true,
       data: {
         verified_name: data.verified_name,
-        display_phone_number: data.display_phone_number
-      }
-    };
+        display_phone_number: data.display_phone_number,
+      },
+    }
   }
 }
 ```
@@ -164,9 +174,11 @@ if (phoneNumberId && accessToken) {
 ---
 
 #### 2. POST `/api/onboarding`
+
 **Purpose**: Complete onboarding and create organization
 
 **Request**:
+
 ```typescript
 {
   // Step 1
@@ -187,6 +199,7 @@ if (phoneNumberId && accessToken) {
 ```
 
 **Response** (Success):
+
 ```typescript
 {
   success: true,
@@ -207,6 +220,7 @@ if (phoneNumberId && accessToken) {
 ```
 
 **Implementation Logic**:
+
 ```typescript
 // 1. Validate required fields
 if (!organizationName || !subdomain || !fullName || !role) {
@@ -285,9 +299,11 @@ return { success: true, data: { organization, profile } }
 ---
 
 #### 3. GET `/api/organizations/current`
+
 **Purpose**: Retrieve current user's organization (used by E2E tests and dashboard)
 
 **Response**:
+
 ```typescript
 {
   organization: {
@@ -310,6 +326,7 @@ return { success: true, data: { organization, profile } }
 ```
 
 **Security**:
+
 - ✅ Requires authentication
 - ✅ Returns only user's own organization
 - ✅ Sensitive fields excluded from SELECT query:
@@ -323,11 +340,13 @@ return { success: true, data: { organization, profile } }
 ## 🗄️ Database Schema
 
 ### Migration 1: Team Invitations & Licenses
+
 **File**: `supabase/migrations/20251105_team_invitations_licenses_simple.sql`
 
 **Purpose**: Enable team member invitations with license seat management
 
 **Tables Created**:
+
 ```sql
 CREATE TABLE team_invitations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -346,6 +365,7 @@ CREATE TABLE team_invitations (
 ```
 
 **Columns Added to Organizations**:
+
 ```sql
 ALTER TABLE organizations
 ADD COLUMN IF NOT EXISTS max_team_members INTEGER DEFAULT 1 NOT NULL;
@@ -355,12 +375,14 @@ ADD COLUMN IF NOT EXISTS used_team_members INTEGER DEFAULT 1 NOT NULL;
 ```
 
 **Key Functions**:
+
 - `check_duplicate_pending_invitation()`: Trigger to prevent duplicate pending invitations
 - `update_team_member_count()`: Auto-update used_team_members on profile insert/delete
 - `check_available_licenses()`: Check if organization has available license seats
 - `accept_team_invitation()`: Process invitation acceptance with validation
 
 **RLS Policies**:
+
 - Users can view invitations for their organization
 - Admins can create, update, and delete invitations
 - Enforces tenant isolation
@@ -368,11 +390,13 @@ ADD COLUMN IF NOT EXISTS used_team_members INTEGER DEFAULT 1 NOT NULL;
 ---
 
 ### Migration 2: WhatsApp Credentials
+
 **File**: `supabase/migrations/20251105_whatsapp_credentials_enhancement.sql`
 
 **Purpose**: Store WhatsApp API credentials for enhanced onboarding
 
 **Columns Added**:
+
 ```sql
 ALTER TABLE organizations
 ADD COLUMN IF NOT EXISTS whatsapp_access_token TEXT;
@@ -382,6 +406,7 @@ ADD COLUMN IF NOT EXISTS whatsapp_webhook_verify_token TEXT;
 ```
 
 **Security Considerations**:
+
 ```sql
 COMMENT ON COLUMN organizations.whatsapp_access_token IS
 'WhatsApp Business API access token for authenticating API requests. SENSITIVE - handle with care.';
@@ -391,12 +416,14 @@ COMMENT ON COLUMN organizations.whatsapp_webhook_verify_token IS
 ```
 
 **Recommendations**:
+
 1. Consider encrypting these fields at rest using `pgcrypto`
 2. Audit access to these fields via RLS policies
 3. Implement token rotation policies (every 60 days)
 4. Never expose these tokens in client-side code or API responses
 
 **Future Enhancement (Encryption)**:
+
 ```sql
 -- Encrypt existing access tokens (implement later)
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -422,52 +449,55 @@ WHERE id = $1;
 ## 🎨 Component Implementation Details
 
 ### WhatsAppSetupWizard Component
+
 **File**: `src/components/onboarding/WhatsAppSetupWizard.tsx`
 **Lines**: 415 (complete implementation)
 
 #### State Management
+
 ```typescript
 interface WhatsAppCredentials {
-  phoneNumberId: string;
-  businessAccountId: string;
-  accessToken: string;
-  webhookVerifyToken: string;
+  phoneNumberId: string
+  businessAccountId: string
+  accessToken: string
+  webhookVerifyToken: string
 }
 
-type ValidationStatus = 'idle' | 'validating' | 'valid' | 'invalid';
+type ValidationStatus = 'idle' | 'validating' | 'valid' | 'invalid'
 
 interface FieldValidation {
-  phoneNumberId: ValidationStatus;
-  businessAccountId: ValidationStatus;
-  accessToken: ValidationStatus;
+  phoneNumberId: ValidationStatus
+  businessAccountId: ValidationStatus
+  accessToken: ValidationStatus
 }
 
-const [step, setStep] = useState(1); // 1, 2, or 3
+const [step, setStep] = useState(1) // 1, 2, or 3
 const [credentials, setCredentials] = useState<WhatsAppCredentials>({
   phoneNumberId: '',
   businessAccountId: '',
   accessToken: '',
   webhookVerifyToken: '',
-});
+})
 const [validation, setValidation] = useState<FieldValidation>({
   phoneNumberId: 'idle',
   businessAccountId: 'idle',
   accessToken: 'idle',
-});
-const [showVideo, setShowVideo] = useState(false);
+})
+const [showVideo, setShowVideo] = useState(false)
 ```
 
 #### Live Validation Implementation
+
 ```typescript
 const validatePhoneNumberId = async (value: string) => {
   // Ignore if too short
   if (!value || value.length < 10) {
-    setValidation(prev => ({ ...prev, phoneNumberId: 'idle' }));
-    return;
+    setValidation(prev => ({ ...prev, phoneNumberId: 'idle' }))
+    return
   }
 
   // Set validating state
-  setValidation(prev => ({ ...prev, phoneNumberId: 'validating' }));
+  setValidation(prev => ({ ...prev, phoneNumberId: 'validating' }))
 
   try {
     // Call validation API
@@ -475,90 +505,98 @@ const validatePhoneNumberId = async (value: string) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phoneNumberId: value }),
-    });
+    })
 
-    const data = await response.json();
+    const data = await response.json()
 
     // Update validation state
     setValidation(prev => ({
       ...prev,
       phoneNumberId: data.valid ? 'valid' : 'invalid',
-    }));
+    }))
   } catch (error) {
-    setValidation(prev => ({ ...prev, phoneNumberId: 'invalid' }));
+    setValidation(prev => ({ ...prev, phoneNumberId: 'invalid' }))
   }
-};
+}
 
 // Debounced validation (500ms delay to reduce API calls)
 const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
-  setCredentials(prev => ({ ...prev, [field]: value }));
+  setCredentials(prev => ({ ...prev, [field]: value }))
 
   if (field === 'phoneNumberId') {
-    const timeoutId = setTimeout(() => validatePhoneNumberId(value), 500);
-    return () => clearTimeout(timeoutId);
+    const timeoutId = setTimeout(() => validatePhoneNumberId(value), 500)
+    return () => clearTimeout(timeoutId)
   }
-};
+}
 ```
 
 #### Visual Feedback
+
 ```tsx
-{/* Input with validation styling */}
-<input
-  id="phoneNumberId"
-  type="text"
+{
+  /* Input with validation styling */
+}
+;<input
+  id='phoneNumberId'
+  type='text'
   value={credentials.phoneNumberId}
-  onChange={(e) => handleFieldChange('phoneNumberId', e.target.value)}
-  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+  onChange={e => handleFieldChange('phoneNumberId', e.target.value)}
+  className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:ring-blue-500 ${
     validation.phoneNumberId === 'valid'
       ? 'border-green-500 bg-green-50'
       : validation.phoneNumberId === 'invalid'
-      ? 'border-red-500 bg-red-50'
-      : 'border-gray-300'
+        ? 'border-red-500 bg-red-50'
+        : 'border-gray-300'
   }`}
 />
 
-{/* Validation indicator */}
-{validation.phoneNumberId === 'validating' && (
-  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-    <div className="animate-spin w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full" />
-  </div>
-)}
+{
+  /* Validation indicator */
+}
+{
+  validation.phoneNumberId === 'validating' && (
+    <div className='absolute top-1/2 right-3 -translate-y-1/2 transform'>
+      <div className='h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent' />
+    </div>
+  )
+}
 
-{validation.phoneNumberId === 'valid' && (
-  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
-    ✓ Valid
-  </div>
-)}
+{
+  validation.phoneNumberId === 'valid' && (
+    <div className='absolute top-1/2 right-3 -translate-y-1/2 transform text-green-500'>
+      ✓ Valid
+    </div>
+  )
+}
 
-{validation.phoneNumberId === 'invalid' && (
-  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
-    ✕ Invalid
-  </div>
-)}
+{
+  validation.phoneNumberId === 'invalid' && (
+    <div className='absolute top-1/2 right-3 -translate-y-1/2 transform text-red-500'>
+      ✕ Invalid
+    </div>
+  )
+}
 ```
 
 #### Progress Indicator
+
 ```tsx
-<div className="flex items-center justify-between mb-8">
-  {[1, 2, 3].map((stepNumber) => (
-    <div key={stepNumber} className="flex items-center flex-1">
+<div className='mb-8 flex items-center justify-between'>
+  {[1, 2, 3].map(stepNumber => (
+    <div key={stepNumber} className='flex flex-1 items-center'>
       <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+        className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
           stepNumber < step
-            ? 'bg-green-500 text-white'  // Completed
+            ? 'bg-green-500 text-white' // Completed
             : stepNumber === step
-            ? 'bg-blue-500 text-white'   // Active
-            : 'bg-gray-200 text-gray-500' // Pending
+              ? 'bg-blue-500 text-white' // Active
+              : 'bg-gray-200 text-gray-500' // Pending
         }`}
       >
         {stepNumber < step ? '✓' : stepNumber}
       </div>
       {stepNumber < 3 && (
-        <div
-          className={`flex-1 h-1 mx-2 ${
-            stepNumber < step ? 'bg-green-500' : 'bg-gray-200'
-          }`}
-        />
+        <div className={`mx-2 h-1 flex-1 ${stepNumber < step ? 'bg-green-500' : 'bg-gray-200'}`} />
       )}
     </div>
   ))}
@@ -566,41 +604,42 @@ const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
 ```
 
 #### Video Tutorial Integration
+
 ```tsx
-{showVideo && (
-  <div className="bg-gray-50 rounded-lg p-6 mb-6">
-    <div className="flex justify-between items-start mb-4">
-      <h3 className="text-lg font-semibold">Video Tutorial</h3>
-      <button
-        onClick={() => setShowVideo(false)}
-        className="text-gray-500 hover:text-gray-700"
-      >
-        ✕
-      </button>
+{
+  showVideo && (
+    <div className='mb-6 rounded-lg bg-gray-50 p-6'>
+      <div className='mb-4 flex items-start justify-between'>
+        <h3 className='text-lg font-semibold'>Video Tutorial</h3>
+        <button onClick={() => setShowVideo(false)} className='text-gray-500 hover:text-gray-700'>
+          ✕
+        </button>
+      </div>
+      <div className='flex aspect-video items-center justify-center rounded-lg bg-gray-900'>
+        <video
+          controls
+          poster='/images/whatsapp-tutorial-thumbnail.jpg'
+          className='h-full w-full rounded-lg'
+        >
+          <source src='/tutorials/whatsapp-setup.mp4' type='video/mp4' />
+          Your browser does not support the video tag.
+        </video>
+      </div>
     </div>
-    <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-      <video
-        controls
-        poster="/images/whatsapp-tutorial-thumbnail.jpg"
-        className="w-full h-full rounded-lg"
-      >
-        <source src="/tutorials/whatsapp-setup.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  </div>
-)}
+  )
+}
 ```
 
 #### Help Section
+
 ```tsx
-<div className="bg-gray-50 rounded-lg p-4 space-y-2">
-  <h4 className="font-semibold text-gray-900">Need Help?</h4>
-  <ul className="space-y-2">
+<div className='space-y-2 rounded-lg bg-gray-50 p-4'>
+  <h4 className='font-semibold text-gray-900'>Need Help?</h4>
+  <ul className='space-y-2'>
     <li>
       <button
         onClick={() => setShowVideo(!showVideo)}
-        className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-2"
+        className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
       >
         <span>📹</span>
         Watch video tutorial (2 min)
@@ -608,10 +647,10 @@ const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
     </li>
     <li>
       <a
-        href="/docs/whatsapp-setup"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-2"
+        href='/docs/whatsapp-setup'
+        target='_blank'
+        rel='noopener noreferrer'
+        className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
       >
         <span>📚</span>
         Read detailed setup guide
@@ -619,8 +658,10 @@ const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
     </li>
     <li>
       <button
-        onClick={() => {/* Open support chat */}}
-        className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-2"
+        onClick={() => {
+          /* Open support chat */
+        }}
+        className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
       >
         <span>💬</span>
         Chat with support
@@ -635,150 +676,156 @@ const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
 ## 🧪 Testing Implementation
 
 ### E2E Test Suite
+
 **File**: `tests/e2e/onboarding-whatsapp-setup.spec.ts`
 **Lines**: 600+ (comprehensive test coverage)
 
 #### Test Structure
+
 ```typescript
 test.describe('Onboarding Flow - WhatsApp Setup', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/onboarding');
-    await expect(page.locator('h2').filter({ hasText: 'Create Your Organization' })).toBeVisible();
-  });
+    await page.goto('/onboarding')
+    await expect(page.locator('h2').filter({ hasText: 'Create Your Organization' })).toBeVisible()
+  })
 
   // Functional Tests
   test('Complete onboarding with WhatsApp setup (full flow)', async ({ page }) => {
     // Test complete happy path
-  });
+  })
 
   test('Skip WhatsApp setup and complete onboarding', async ({ page }) => {
     // Test skip functionality
-  });
+  })
 
   test('Validate Phone Number ID format', async ({ page }) => {
     // Test validation logic
-  });
+  })
 
   test('Navigate backwards through wizard', async ({ page }) => {
     // Test navigation and data persistence
-  });
+  })
 
   test('Video tutorial interaction', async ({ page }) => {
     // Test video toggle functionality
-  });
+  })
 
   test('Help links are present and accessible', async ({ page }) => {
     // Test help section
-  });
+  })
 
   test('Progress indicator reflects current step', async ({ page }) => {
     // Test visual feedback
-  });
+  })
 
   test('Error handling for duplicate organization slug', async ({ page }) => {
     // Test error scenarios
-  });
-});
+  })
+})
 
 test.describe('Onboarding - Accessibility', () => {
   test('Keyboard navigation through wizard', async ({ page }) => {
     // Test keyboard accessibility
-  });
+  })
 
   test('Screen reader labels present', async ({ page }) => {
     // Test ARIA labels
-  });
-});
+  })
+})
 
 test.describe('Onboarding - Performance', () => {
   test('Page loads within performance budget', async ({ page }) => {
     // Test load time < 3 seconds
-  });
+  })
 
   test('Wizard transitions are smooth', async ({ page }) => {
     // Test transition time < 500ms
-  });
-});
+  })
+})
 ```
 
 #### Key Test Scenarios
 
 **1. Complete Flow Test**
+
 ```typescript
 // Step 1: Create organization
-await page.fill('[name="organizationName"]', 'Test Company Inc');
-await expect(page.locator('[name="subdomain"]')).toHaveValue('test-company-inc');
-await page.click('button:has-text("Next")');
+await page.fill('[name="organizationName"]', 'Test Company Inc')
+await expect(page.locator('[name="subdomain"]')).toHaveValue('test-company-inc')
+await page.click('button:has-text("Next")')
 
 // Step 2.1: Phone Number ID
-await page.fill('[id="phoneNumberId"]', '123456789012345');
-await page.waitForTimeout(600); // Wait for validation
-await page.click('button:has-text("Continue →")');
+await page.fill('[id="phoneNumberId"]', '123456789012345')
+await page.waitForTimeout(600) // Wait for validation
+await page.click('button:has-text("Continue →")')
 
 // Step 2.2: Business Account ID
-await page.fill('[id="businessAccountId"]', '987654321098765');
-await page.click('button:has-text("Continue →")');
+await page.fill('[id="businessAccountId"]', '987654321098765')
+await page.click('button:has-text("Continue →")')
 
 // Step 2.3: Access Token
-await page.fill('[id="accessToken"]', 'EAA' + 'x'.repeat(200));
-await page.fill('[id="webhookVerifyToken"]', 'my_secure_token_123');
-await page.click('button:has-text("Complete Setup ✓")');
+await page.fill('[id="accessToken"]', 'EAA' + 'x'.repeat(200))
+await page.fill('[id="webhookVerifyToken"]', 'my_secure_token_123')
+await page.click('button:has-text("Complete Setup ✓")')
 
 // Step 3: Profile
-await page.fill('[name="fullName"]', 'John Doe');
-await page.selectOption('[name="role"]', 'owner');
-await page.click('button:has-text("Complete Setup")');
+await page.fill('[name="fullName"]', 'John Doe')
+await page.selectOption('[name="role"]', 'owner')
+await page.click('button:has-text("Complete Setup")')
 
 // Verify redirect
-await page.waitForURL('/dashboard', { timeout: 10000 });
-await expect(page.locator('h1').filter({ hasText: /Dashboard|Welcome/i })).toBeVisible();
+await page.waitForURL('/dashboard', { timeout: 10000 })
+await expect(page.locator('h1').filter({ hasText: /Dashboard|Welcome/i })).toBeVisible()
 
 // Verify database persistence
-const response = await page.request.get('/api/organizations/current');
-expect(response.ok()).toBeTruthy();
-const data = await response.json();
-expect(data.organization.whatsapp_phone_number_id).toBe('123456789012345');
+const response = await page.request.get('/api/organizations/current')
+expect(response.ok()).toBeTruthy()
+const data = await response.json()
+expect(data.organization.whatsapp_phone_number_id).toBe('123456789012345')
 ```
 
 **2. Skip Flow Test**
+
 ```typescript
-await page.fill('[name="organizationName"]', 'Quick Start Company');
-await page.click('button:has-text("Next")');
+await page.fill('[name="organizationName"]', 'Quick Start Company')
+await page.click('button:has-text("Next")')
 
 // Click skip button
-const skipButton = page.locator('button:has-text("Skip for now")');
-await expect(skipButton).toBeVisible();
-await skipButton.click();
+const skipButton = page.locator('button:has-text("Skip for now")')
+await expect(skipButton).toBeVisible()
+await skipButton.click()
 
 // Should jump to Step 3
-await expect(page.locator('h2').filter({ hasText: 'Complete Your Profile' })).toBeVisible();
+await expect(page.locator('h2').filter({ hasText: 'Complete Your Profile' })).toBeVisible()
 
 // Complete profile
-await page.fill('[name="fullName"]', 'Jane Smith');
-await page.selectOption('[name="role"]', 'admin');
-await page.click('button:has-text("Complete Setup")');
+await page.fill('[name="fullName"]', 'Jane Smith')
+await page.selectOption('[name="role"]', 'admin')
+await page.click('button:has-text("Complete Setup")')
 
 // Verify WhatsApp fields are null
-const response = await page.request.get('/api/organizations/current');
-const data = await response.json();
-expect(data.organization.whatsapp_phone_number_id).toBeNull();
+const response = await page.request.get('/api/organizations/current')
+const data = await response.json()
+expect(data.organization.whatsapp_phone_number_id).toBeNull()
 ```
 
 **3. Validation Test**
+
 ```typescript
 // Test invalid format
-await page.fill('[id="phoneNumberId"]', '123'); // Too short
-await page.waitForTimeout(600);
-const continueButton = page.locator('button:has-text("Continue →")');
-await expect(continueButton).toBeDisabled();
+await page.fill('[id="phoneNumberId"]', '123') // Too short
+await page.waitForTimeout(600)
+const continueButton = page.locator('button:has-text("Continue →")')
+await expect(continueButton).toBeDisabled()
 
 // Test valid format
-await page.fill('[id="phoneNumberId"]', '123456789012345');
-await page.waitForTimeout(600);
-await expect(continueButton).not.toBeDisabled();
+await page.fill('[id="phoneNumberId"]', '123456789012345')
+await page.waitForTimeout(600)
+await expect(continueButton).not.toBeDisabled()
 ```
 
 #### Running Tests
+
 ```bash
 # Run all onboarding E2E tests
 npm run test:e2e -- tests/e2e/onboarding-whatsapp-setup.spec.ts
@@ -801,6 +848,7 @@ npm run test:e2e -- --reporter=html tests/e2e/onboarding-whatsapp-setup.spec.ts
 ## 📊 Performance Metrics
 
 ### Build Analysis
+
 ```bash
 npm run build
 
@@ -810,12 +858,14 @@ npm run build
 ```
 
 **Performance Budget**:
+
 - Page Size: <10 kB ✅ (5.3 kB achieved)
 - First Load: <150 kB ✅ (107 kB achieved)
 - Load Time: <3 seconds ✅
 - Transition Time: <500ms ✅
 
 ### Lighthouse Scores (Target)
+
 - Performance: >90
 - Accessibility: >95
 - Best Practices: >95
@@ -826,11 +876,13 @@ npm run build
 ## 🔐 Security Audit Checklist
 
 ### Authentication
+
 - [x] Requires authenticated user
 - [x] Session verification on every request
 - [x] Proper error handling for unauthorized access
 
 ### Input Validation
+
 - [x] Organization name: Required, max 255 chars
 - [x] Subdomain: Required, lowercase alphanumeric + hyphens only
 - [x] Phone Number ID: Optional, exactly 15 digits if provided
@@ -840,16 +892,19 @@ npm run build
 - [x] Role: Required, enum validation
 
 ### SQL Injection Prevention
+
 - [x] All queries use Supabase query builder (parameterized)
 - [x] No raw SQL with user input
 - [x] Input sanitization on validation endpoints
 
 ### XSS Prevention
+
 - [x] React auto-escapes by default
 - [x] No dangerouslySetInnerHTML usage
 - [x] Content-Security-Policy headers configured
 
 ### Credential Security
+
 - [x] Access tokens stored in database (TEXT column)
 - [x] Tokens NEVER exposed in API responses
 - [x] Tokens NEVER sent to client-side
@@ -857,6 +912,7 @@ npm run build
 - [ ] TODO: Token rotation policy (60-day expiration)
 
 ### RLS Policies
+
 - [x] Organizations table has tenant isolation
 - [x] Profiles table enforces user-org relationship
 - [x] Team invitations table enforces tenant boundaries
@@ -866,6 +922,7 @@ npm run build
 ## 📦 Deployment
 
 ### Pre-Deployment Checklist
+
 - [x] Code implemented and tested locally
 - [x] E2E tests written
 - [ ] E2E tests passing (pending assets)
@@ -876,6 +933,7 @@ npm run build
 - [x] Production build succeeds
 
 ### Migration Deployment
+
 ```bash
 # Step 1: Backup production database (CRITICAL)
 # Use Supabase Dashboard → Database → Backups → Create Backup
@@ -899,6 +957,7 @@ npm run build
 ```
 
 ### Rollback Plan
+
 ```sql
 -- If issues occur, rollback migrations:
 
@@ -917,6 +976,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 ## 🎯 Success Criteria
 
 ### Code Quality
+
 - [x] TypeScript types fully defined
 - [x] No `any` types used
 - [x] Component props properly typed
@@ -925,6 +985,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 - [x] Code documented with comments
 
 ### Functionality
+
 - [x] 3-step wizard implemented
 - [x] Live validation working
 - [x] Skip functionality working
@@ -934,6 +995,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 - [x] Error handling working
 
 ### User Experience
+
 - [x] Clear visual feedback
 - [x] Helpful error messages
 - [x] Smooth transitions
@@ -943,6 +1005,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 - [ ] Screenshots present (assets pending)
 
 ### Testing
+
 - [x] E2E test suite created (15+ tests)
 - [ ] E2E tests passing (pending assets)
 - [x] Test coverage >80%
@@ -950,6 +1013,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 - [x] Accessibility tests included
 
 ### Performance
+
 - [x] Page size <10 kB
 - [x] First Load <150 kB
 - [x] Build time <30 seconds
@@ -961,6 +1025,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 ## 🚀 Next Steps
 
 ### Immediate (Required for Production)
+
 1. **Create Annotated Screenshots** (30-60 min)
    - Phone Number ID location
    - Business Account ID location
@@ -977,6 +1042,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
    - Verify success
 
 ### Short-term (1-2 weeks)
+
 1. Implement token encryption at rest
 2. Add token rotation policy
 3. Monitor conversion metrics
@@ -984,6 +1050,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 5. A/B test variations
 
 ### Long-term (1-3 months)
+
 1. Add WhatsApp API health checks
 2. Implement credential auto-validation on dashboard
 3. Add credential rotation reminders
@@ -995,6 +1062,7 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 ## 📚 References
 
 ### Documentation
+
 - WhatsApp Business API: https://developers.facebook.com/docs/whatsapp
 - Meta Business Suite: https://business.facebook.com
 - Playwright Testing: https://playwright.dev
@@ -1002,12 +1070,13 @@ ALTER TABLE organizations DROP COLUMN IF EXISTS used_team_members;
 - Supabase: https://supabase.com/docs
 
 ### Internal Docs
+
 - [Onboarding Enhancement Complete](./ONBOARDING_ENHANCEMENT_COMPLETE.md)
 - [CLAUDE.md](../CLAUDE.md) - Project overview
 - [Database Schema](../supabase/migrations/)
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: 2025-11-05*
-*Status: Implementation Complete - Pending Assets*
+_Document Version: 1.0_
+_Last Updated: 2025-11-05_
+_Status: Implementation Complete - Pending Assets_

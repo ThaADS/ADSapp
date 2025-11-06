@@ -1,30 +1,32 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuthenticatedUser, getUserOrganization, createErrorResponse, createSuccessResponse } from '@/lib/api-utils'
+import {
+  requireAuthenticatedUser,
+  getUserOrganization,
+  createErrorResponse,
+  createSuccessResponse,
+} from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId } = getTenantContext(request)
+    const { id } = await params
 
     const supabase = await createClient()
 
     const { data: contact, error } = await supabase
       .from('contacts')
-      .select(`
+      .select(
+        `
         *,
         conversations (
           id,
@@ -45,16 +47,14 @@ export async function GET(
             created_at
           )
         )
-      `)
+      `
+      )
       .eq('id', id)
       .eq('organization_id', organizationId)
       .single()
 
     if (error || !contact) {
-      return NextResponse.json(
-        { error: 'Contact not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
     }
 
     // Calculate contact statistics
@@ -63,16 +63,20 @@ export async function GET(
 
     const stats = {
       totalConversations: conversations.length,
-      activeConversations: conversations.filter(c => c.status === 'open' || c.status === 'pending').length,
+      activeConversations: conversations.filter(c => c.status === 'open' || c.status === 'pending')
+        .length,
       totalMessages: allMessages.length,
       inboundMessages: allMessages.filter(m => m.sender_type === 'contact').length,
       outboundMessages: allMessages.filter(m => m.sender_type === 'agent').length,
-      firstContactDate: conversations.length > 0
-        ? conversations.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0].created_at
-        : contact.created_at,
+      firstContactDate:
+        conversations.length > 0
+          ? conversations.sort(
+              (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            )[0].created_at
+          : contact.created_at,
       lastContactDate: contact.last_message_at,
       averageResponseTime: calculateAverageResponseTime(conversations),
-      messageFrequency: calculateMessageFrequency(allMessages)
+      messageFrequency: calculateMessageFrequency(allMessages),
     }
 
     const contactWithStats = {
@@ -81,30 +85,26 @@ export async function GET(
       conversations: conversations.map(conv => ({
         ...conv,
         messageCount: conv.messages?.length || 0,
-        assignedAgent: conv.profiles?.full_name || null
-      }))
+        assignedAgent: conv.profiles?.full_name || null,
+      })),
     }
 
     return createSuccessResponse(contactWithStats)
-
   } catch (error) {
     console.error('Error fetching contact:', error)
     return createErrorResponse(error)
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId, userId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId, userId } = getTenantContext(request)
+    const { id } = await params
 
     const body = await request.json()
     const { name, email, tags, notes, metadata, is_blocked } = body
@@ -120,26 +120,20 @@ export async function PUT(
       .single()
 
     if (!existingContact) {
-      return NextResponse.json(
-        { error: 'Contact not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
     }
 
     // Validate email if provided
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(email)) {
-        return NextResponse.json(
-          { error: 'Invalid email format' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
       }
     }
 
     // Update contact
     const updateData: Record<string, unknown> = {
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     }
 
     if (name !== undefined) updateData.name = name
@@ -160,7 +154,7 @@ export async function PUT(
         ...(current?.metadata || {}),
         ...metadata,
         updated_by: userId,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
     }
 
@@ -177,7 +171,6 @@ export async function PUT(
     }
 
     return createSuccessResponse(updatedContact)
-
   } catch (error) {
     console.error('Error updating contact:', error)
     return createErrorResponse(error)
@@ -189,13 +182,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Apply standard API middleware (tenant validation + standard rate limiting)
-  const middlewareResponse = await standardApiMiddleware(request);
-  if (middlewareResponse) return middlewareResponse;
+  const middlewareResponse = await standardApiMiddleware(request)
+  if (middlewareResponse) return middlewareResponse
 
   try {
     // Get tenant context from middleware (already validated)
-    const { organizationId } = getTenantContext(request);
-    const { id } = await params;
+    const { organizationId } = getTenantContext(request)
+    const { id } = await params
 
     const supabase = await createClient()
 
@@ -208,10 +201,7 @@ export async function DELETE(
       .single()
 
     if (!contact) {
-      return NextResponse.json(
-        { error: 'Contact not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
     }
 
     // Check if contact has active conversations
@@ -223,7 +213,10 @@ export async function DELETE(
 
     if (activeConversations && activeConversations.length > 0) {
       return NextResponse.json(
-        { error: 'Cannot delete contact with active conversations. Please close all conversations first.' },
+        {
+          error:
+            'Cannot delete contact with active conversations. Please close all conversations first.',
+        },
         { status: 400 }
       )
     }
@@ -241,9 +234,8 @@ export async function DELETE(
 
     return createSuccessResponse({
       id: id,
-      message: 'Contact deleted successfully'
+      message: 'Contact deleted successfully',
     })
-
   } catch (error) {
     console.error('Error deleting contact:', error)
     return createErrorResponse(error)
@@ -251,12 +243,12 @@ export async function DELETE(
 }
 
 interface ConversationMessage {
-  created_at: string;
-  sender_type: string;
+  created_at: string
+  sender_type: string
 }
 
 interface ConversationWithMessages {
-  messages?: ConversationMessage[];
+  messages?: ConversationMessage[]
 }
 
 function calculateAverageResponseTime(conversations: ConversationWithMessages[]): number {
@@ -264,8 +256,8 @@ function calculateAverageResponseTime(conversations: ConversationWithMessages[])
 
   for (const conversation of conversations) {
     const messages = conversation.messages || []
-    const sortedMessages = messages.sort((a, b) =>
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    const sortedMessages = messages.sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     )
 
     for (let i = 0; i < sortedMessages.length - 1; i++) {
@@ -274,7 +266,8 @@ function calculateAverageResponseTime(conversations: ConversationWithMessages[])
 
       // Calculate response time from contact message to agent message
       if (currentMessage.sender_type === 'contact' && nextMessage.sender_type === 'agent') {
-        const responseTime = new Date(nextMessage.created_at).getTime() - new Date(currentMessage.created_at).getTime()
+        const responseTime =
+          new Date(nextMessage.created_at).getTime() - new Date(currentMessage.created_at).getTime()
         responseTimes.push(responseTime)
       }
     }
@@ -287,10 +280,14 @@ function calculateAverageResponseTime(conversations: ConversationWithMessages[])
 }
 
 interface Message {
-  created_at: string;
+  created_at: string
 }
 
-function calculateMessageFrequency(messages: Message[]): { daily: number; weekly: number; monthly: number } {
+function calculateMessageFrequency(messages: Message[]): {
+  daily: number
+  weekly: number
+  monthly: number
+} {
   if (messages.length === 0) {
     return { daily: 0, weekly: 0, monthly: 0 }
   }
@@ -307,6 +304,6 @@ function calculateMessageFrequency(messages: Message[]): { daily: number; weekly
   return {
     daily: dailyMessages,
     weekly: weeklyMessages,
-    monthly: monthlyMessages
+    monthly: monthlyMessages,
   }
 }

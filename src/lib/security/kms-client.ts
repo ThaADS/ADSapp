@@ -18,7 +18,6 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-
 import {
   KMSClient as AWSKMSClient,
   GenerateDataKeyCommand,
@@ -32,26 +31,26 @@ import {
   GenerateDataKeyCommandInput,
   DecryptCommandInput,
   EncryptCommandInput,
-} from '@aws-sdk/client-kms';
-import { fromEnv } from '@aws-sdk/credential-providers';
-import { KeyManagementError } from '@/lib/crypto/types';
+} from '@aws-sdk/client-kms'
+import { fromEnv } from '@aws-sdk/credential-providers'
+import { KeyManagementError } from '@/lib/crypto/types'
 
 /**
  * KMS Configuration
  */
 export interface KMSConfig {
   /** AWS Region */
-  region: string;
+  region: string
   /** KMS Key ID or ARN */
-  keyId: string;
+  keyId: string
   /** Access Key ID (optional, uses environment if not provided) */
-  accessKeyId?: string;
+  accessKeyId?: string
   /** Secret Access Key (optional, uses environment if not provided) */
-  secretAccessKey?: string;
+  secretAccessKey?: string
   /** Maximum retry attempts */
-  maxRetries?: number;
+  maxRetries?: number
   /** Request timeout in milliseconds */
-  timeout?: number;
+  timeout?: number
 }
 
 /**
@@ -59,11 +58,11 @@ export interface KMSConfig {
  */
 export interface DataKeyResult {
   /** Encrypted data key (for storage) */
-  ciphertext: string;
+  ciphertext: string
   /** Plaintext data key (for immediate use) */
-  plaintext: Buffer;
+  plaintext: Buffer
   /** Key ID used for generation */
-  keyId: string;
+  keyId: string
 }
 
 /**
@@ -71,17 +70,17 @@ export interface DataKeyResult {
  */
 export interface KeyMetadata {
   /** Key ID */
-  keyId: string;
+  keyId: string
   /** Key ARN */
-  arn: string;
+  arn: string
   /** Key state (Enabled, Disabled, etc.) */
-  state: string;
+  state: string
   /** Creation date */
-  createdAt: Date;
+  createdAt: Date
   /** Key description */
-  description?: string;
+  description?: string
   /** Whether key rotation is enabled */
-  rotationEnabled: boolean;
+  rotationEnabled: boolean
 }
 
 /**
@@ -89,9 +88,9 @@ export interface KeyMetadata {
  */
 export interface DecryptionResult {
   /** Decrypted plaintext key */
-  plaintext: Buffer;
+  plaintext: Buffer
   /** Key ID used for decryption */
-  keyId: string;
+  keyId: string
 }
 
 /**
@@ -99,28 +98,28 @@ export interface DecryptionResult {
  */
 export interface KMSStats {
   /** Total operations performed */
-  totalOperations: number;
+  totalOperations: number
   /** Successful operations */
-  successful: number;
+  successful: number
   /** Failed operations */
-  failed: number;
+  failed: number
   /** Cache hits */
-  cacheHits: number;
+  cacheHits: number
   /** Cache misses */
-  cacheMisses: number;
+  cacheMisses: number
   /** Average response time in ms */
-  averageResponseTime: number;
+  averageResponseTime: number
 }
 
 /**
  * AWS KMS Client for encryption key management
  */
 export class KMSClient {
-  private client: AWSKMSClient;
-  private config: Required<KMSConfig>;
-  private keyCache: Map<string, { key: Buffer; timestamp: number }>;
-  private readonly CACHE_TTL = 3600000; // 1 hour in milliseconds
-  private stats: KMSStats;
+  private client: AWSKMSClient
+  private config: Required<KMSConfig>
+  private keyCache: Map<string, { key: Buffer; timestamp: number }>
+  private readonly CACHE_TTL = 3600000 // 1 hour in milliseconds
+  private stats: KMSStats
 
   /**
    * Create a new KMS client
@@ -129,25 +128,26 @@ export class KMSClient {
    * @throws {KeyManagementError} If configuration is invalid
    */
   constructor(config?: Partial<KMSConfig>) {
-    this.config = this.loadConfig(config);
-    this.validateConfig();
+    this.config = this.loadConfig(config)
+    this.validateConfig()
 
     // Initialize AWS KMS client
     this.client = new AWSKMSClient({
       region: this.config.region,
-      credentials: this.config.accessKeyId && this.config.secretAccessKey
-        ? {
-            accessKeyId: this.config.accessKeyId,
-            secretAccessKey: this.config.secretAccessKey,
-          }
-        : fromEnv(),
+      credentials:
+        this.config.accessKeyId && this.config.secretAccessKey
+          ? {
+              accessKeyId: this.config.accessKeyId,
+              secretAccessKey: this.config.secretAccessKey,
+            }
+          : fromEnv(),
       maxAttempts: this.config.maxRetries,
       requestHandler: {
         requestTimeout: this.config.timeout,
       } as any,
-    });
+    })
 
-    this.keyCache = new Map();
+    this.keyCache = new Map()
     this.stats = {
       totalOperations: 0,
       successful: 0,
@@ -155,7 +155,7 @@ export class KMSClient {
       cacheHits: 0,
       cacheMisses: 0,
       averageResponseTime: 0,
-    };
+    }
   }
 
   /**
@@ -169,7 +169,7 @@ export class KMSClient {
       secretAccessKey: config?.secretAccessKey || process.env.AWS_SECRET_ACCESS_KEY,
       maxRetries: config?.maxRetries || 3,
       timeout: config?.timeout || 30000,
-    };
+    }
   }
 
   /**
@@ -179,40 +179,28 @@ export class KMSClient {
    */
   private validateConfig(): void {
     if (!this.config.keyId) {
-      throw new KeyManagementError(
-        'AWS_KMS_KEY_ID is required',
-        'MISSING_KMS_KEY_ID',
-        {
-          hint: 'Set AWS_KMS_KEY_ID environment variable or provide keyId in config',
-        }
-      );
+      throw new KeyManagementError('AWS_KMS_KEY_ID is required', 'MISSING_KMS_KEY_ID', {
+        hint: 'Set AWS_KMS_KEY_ID environment variable or provide keyId in config',
+      })
     }
 
     if (!this.config.region) {
-      throw new KeyManagementError(
-        'AWS_REGION is required',
-        'MISSING_AWS_REGION',
-        {
-          hint: 'Set AWS_REGION environment variable or provide region in config',
-        }
-      );
+      throw new KeyManagementError('AWS_REGION is required', 'MISSING_AWS_REGION', {
+        hint: 'Set AWS_REGION environment variable or provide region in config',
+      })
     }
 
     // Validate key ID format (should be UUID or ARN)
     const isValidKeyId =
       /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(this.config.keyId) ||
       /^arn:aws:kms:[a-z0-9-]+:\d{12}:key\/[a-f0-9-]+$/i.test(this.config.keyId) ||
-      /^alias\/[a-zA-Z0-9/_-]+$/.test(this.config.keyId);
+      /^alias\/[a-zA-Z0-9/_-]+$/.test(this.config.keyId)
 
     if (!isValidKeyId) {
-      throw new KeyManagementError(
-        'Invalid KMS Key ID format',
-        'INVALID_KEY_ID_FORMAT',
-        {
-          keyId: this.config.keyId,
-          hint: 'Key ID should be UUID, ARN, or alias format',
-        }
-      );
+      throw new KeyManagementError('Invalid KMS Key ID format', 'INVALID_KEY_ID_FORMAT', {
+        keyId: this.config.keyId,
+        hint: 'Key ID should be UUID, ARN, or alias format',
+      })
     }
   }
 
@@ -228,8 +216,8 @@ export class KMSClient {
     tenantId: string,
     keySpec: 'AES_256' | 'AES_128' = 'AES_256'
   ): Promise<DataKeyResult> {
-    const startTime = Date.now();
-    this.stats.totalOperations++;
+    const startTime = Date.now()
+    this.stats.totalOperations++
 
     try {
       // Create encryption context for tenant isolation
@@ -237,57 +225,51 @@ export class KMSClient {
         TenantId: tenantId,
         Purpose: 'DataEncryption',
         Timestamp: new Date().toISOString(),
-      };
+      }
 
       const input: GenerateDataKeyCommandInput = {
         KeyId: this.config.keyId,
         KeySpec: keySpec,
         EncryptionContext: encryptionContext,
-      };
+      }
 
-      const command = new GenerateDataKeyCommand(input);
-      const response = await this.client.send(command);
+      const command = new GenerateDataKeyCommand(input)
+      const response = await this.client.send(command)
 
       if (!response.CiphertextBlob || !response.Plaintext) {
-        throw new KeyManagementError(
-          'KMS returned incomplete data key',
-          'INCOMPLETE_DATA_KEY',
-          { response }
-        );
+        throw new KeyManagementError('KMS returned incomplete data key', 'INCOMPLETE_DATA_KEY', {
+          response,
+        })
       }
 
       const result: DataKeyResult = {
         ciphertext: Buffer.from(response.CiphertextBlob).toString('base64'),
         plaintext: Buffer.from(response.Plaintext),
         keyId: response.KeyId || this.config.keyId,
-      };
-
-      // Cache the plaintext key
-      this.cacheKey(tenantId, result.plaintext);
-
-      this.stats.successful++;
-      this.updateAverageResponseTime(Date.now() - startTime);
-
-      // Audit log
-      this.logOperation('generateDataKey', tenantId, true);
-
-      return result;
-    } catch (error) {
-      this.stats.failed++;
-      this.logOperation('generateDataKey', tenantId, false, error);
-
-      if (error instanceof KMSServiceException) {
-        throw this.handleKMSError(error, 'generateDataKey');
       }
 
-      throw new KeyManagementError(
-        'Failed to generate data key',
-        'GENERATE_KEY_FAILED',
-        {
-          tenantId,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      // Cache the plaintext key
+      this.cacheKey(tenantId, result.plaintext)
+
+      this.stats.successful++
+      this.updateAverageResponseTime(Date.now() - startTime)
+
+      // Audit log
+      this.logOperation('generateDataKey', tenantId, true)
+
+      return result
+    } catch (error) {
+      this.stats.failed++
+      this.logOperation('generateDataKey', tenantId, false, error)
+
+      if (error instanceof KMSServiceException) {
+        throw this.handleKMSError(error, 'generateDataKey')
+      }
+
+      throw new KeyManagementError('Failed to generate data key', 'GENERATE_KEY_FAILED', {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -299,79 +281,68 @@ export class KMSClient {
    * @returns Decrypted plaintext key
    * @throws {KeyManagementError} If decryption fails
    */
-  async decryptDataKey(
-    ciphertext: string,
-    tenantId: string
-  ): Promise<DecryptionResult> {
-    const startTime = Date.now();
-    this.stats.totalOperations++;
+  async decryptDataKey(ciphertext: string, tenantId: string): Promise<DecryptionResult> {
+    const startTime = Date.now()
+    this.stats.totalOperations++
 
     try {
       // Check cache first
-      const cached = this.getCachedKey(tenantId);
+      const cached = this.getCachedKey(tenantId)
       if (cached) {
-        this.stats.cacheHits++;
+        this.stats.cacheHits++
         return {
           plaintext: cached,
           keyId: this.config.keyId,
-        };
+        }
       }
 
-      this.stats.cacheMisses++;
+      this.stats.cacheMisses++
 
       // Create encryption context for tenant validation
       const encryptionContext = {
         TenantId: tenantId,
         Purpose: 'DataEncryption',
-      };
+      }
 
       const input: DecryptCommandInput = {
         CiphertextBlob: Buffer.from(ciphertext, 'base64'),
         EncryptionContext: encryptionContext,
-      };
-
-      const command = new DecryptCommand(input);
-      const response = await this.client.send(command);
-
-      if (!response.Plaintext) {
-        throw new KeyManagementError(
-          'KMS returned no plaintext',
-          'NO_PLAINTEXT',
-          { response }
-        );
       }
 
-      const plaintext = Buffer.from(response.Plaintext);
+      const command = new DecryptCommand(input)
+      const response = await this.client.send(command)
+
+      if (!response.Plaintext) {
+        throw new KeyManagementError('KMS returned no plaintext', 'NO_PLAINTEXT', { response })
+      }
+
+      const plaintext = Buffer.from(response.Plaintext)
 
       // Cache the decrypted key
-      this.cacheKey(tenantId, plaintext);
+      this.cacheKey(tenantId, plaintext)
 
-      this.stats.successful++;
-      this.updateAverageResponseTime(Date.now() - startTime);
+      this.stats.successful++
+      this.updateAverageResponseTime(Date.now() - startTime)
 
       // Audit log
-      this.logOperation('decryptDataKey', tenantId, true);
+      this.logOperation('decryptDataKey', tenantId, true)
 
       return {
         plaintext,
         keyId: response.KeyId || this.config.keyId,
-      };
+      }
     } catch (error) {
-      this.stats.failed++;
-      this.logOperation('decryptDataKey', tenantId, false, error);
+      this.stats.failed++
+      this.logOperation('decryptDataKey', tenantId, false, error)
 
       if (error instanceof KMSServiceException) {
-        throw this.handleKMSError(error, 'decryptDataKey');
+        throw this.handleKMSError(error, 'decryptDataKey')
       }
 
-      throw new KeyManagementError(
-        'Failed to decrypt data key',
-        'DECRYPT_KEY_FAILED',
-        {
-          tenantId,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      throw new KeyManagementError('Failed to decrypt data key', 'DECRYPT_KEY_FAILED', {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -384,54 +355,46 @@ export class KMSClient {
    * @throws {KeyManagementError} If encryption fails
    */
   async encrypt(plaintext: string, tenantId: string): Promise<string> {
-    const startTime = Date.now();
-    this.stats.totalOperations++;
+    const startTime = Date.now()
+    this.stats.totalOperations++
 
     try {
       const encryptionContext = {
         TenantId: tenantId,
         Purpose: 'DirectEncryption',
-      };
+      }
 
       const input: EncryptCommandInput = {
         KeyId: this.config.keyId,
         Plaintext: Buffer.from(plaintext),
         EncryptionContext: encryptionContext,
-      };
+      }
 
-      const command = new EncryptCommand(input);
-      const response = await this.client.send(command);
+      const command = new EncryptCommand(input)
+      const response = await this.client.send(command)
 
       if (!response.CiphertextBlob) {
-        throw new KeyManagementError(
-          'KMS returned no ciphertext',
-          'NO_CIPHERTEXT',
-          { response }
-        );
+        throw new KeyManagementError('KMS returned no ciphertext', 'NO_CIPHERTEXT', { response })
       }
 
-      this.stats.successful++;
-      this.updateAverageResponseTime(Date.now() - startTime);
+      this.stats.successful++
+      this.updateAverageResponseTime(Date.now() - startTime)
 
-      this.logOperation('encrypt', tenantId, true);
+      this.logOperation('encrypt', tenantId, true)
 
-      return Buffer.from(response.CiphertextBlob).toString('base64');
+      return Buffer.from(response.CiphertextBlob).toString('base64')
     } catch (error) {
-      this.stats.failed++;
-      this.logOperation('encrypt', tenantId, false, error);
+      this.stats.failed++
+      this.logOperation('encrypt', tenantId, false, error)
 
       if (error instanceof KMSServiceException) {
-        throw this.handleKMSError(error, 'encrypt');
+        throw this.handleKMSError(error, 'encrypt')
       }
 
-      throw new KeyManagementError(
-        'Failed to encrypt with KMS',
-        'ENCRYPT_FAILED',
-        {
-          tenantId,
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      throw new KeyManagementError('Failed to encrypt with KMS', 'ENCRYPT_FAILED', {
+        tenantId,
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -443,14 +406,11 @@ export class KMSClient {
    */
   async getKeyMetadata(): Promise<KeyMetadata> {
     try {
-      const command = new DescribeKeyCommand({ KeyId: this.config.keyId });
-      const response = await this.client.send(command);
+      const command = new DescribeKeyCommand({ KeyId: this.config.keyId })
+      const response = await this.client.send(command)
 
       if (!response.KeyMetadata) {
-        throw new KeyManagementError(
-          'No key metadata returned',
-          'NO_KEY_METADATA'
-        );
+        throw new KeyManagementError('No key metadata returned', 'NO_KEY_METADATA')
       }
 
       return {
@@ -460,19 +420,15 @@ export class KMSClient {
         createdAt: response.KeyMetadata.CreationDate || new Date(),
         description: response.KeyMetadata.Description,
         rotationEnabled: response.KeyMetadata.KeyRotationEnabled || false,
-      };
+      }
     } catch (error) {
       if (error instanceof KMSServiceException) {
-        throw this.handleKMSError(error, 'getKeyMetadata');
+        throw this.handleKMSError(error, 'getKeyMetadata')
       }
 
-      throw new KeyManagementError(
-        'Failed to get key metadata',
-        'GET_METADATA_FAILED',
-        {
-          originalError: error instanceof Error ? error.message : String(error),
-        }
-      );
+      throw new KeyManagementError('Failed to get key metadata', 'GET_METADATA_FAILED', {
+        originalError: error instanceof Error ? error.message : String(error),
+      })
     }
   }
 
@@ -483,9 +439,9 @@ export class KMSClient {
    */
   clearCache(tenantId?: string): void {
     if (tenantId) {
-      this.keyCache.delete(tenantId);
+      this.keyCache.delete(tenantId)
     } else {
-      this.keyCache.clear();
+      this.keyCache.clear()
     }
   }
 
@@ -495,7 +451,7 @@ export class KMSClient {
    * @returns Current statistics
    */
   getStats(): KMSStats {
-    return { ...this.stats };
+    return { ...this.stats }
   }
 
   /**
@@ -509,7 +465,7 @@ export class KMSClient {
       cacheHits: 0,
       cacheMisses: 0,
       averageResponseTime: 0,
-    };
+    }
   }
 
   /**
@@ -519,11 +475,11 @@ export class KMSClient {
    */
   async testConnection(): Promise<boolean> {
     try {
-      await this.getKeyMetadata();
-      return true;
+      await this.getKeyMetadata()
+      return true
     } catch (error) {
-      console.error('KMS connection test failed:', error);
-      return false;
+      console.error('KMS connection test failed:', error)
+      return false
     }
   }
 
@@ -534,34 +490,34 @@ export class KMSClient {
     this.keyCache.set(tenantId, {
       key: Buffer.from(key), // Clone the buffer
       timestamp: Date.now(),
-    });
+    })
   }
 
   /**
    * Get cached key if valid
    */
   private getCachedKey(tenantId: string): Buffer | null {
-    const cached = this.keyCache.get(tenantId);
+    const cached = this.keyCache.get(tenantId)
 
     if (!cached) {
-      return null;
+      return null
     }
 
     // Check if cache entry is still valid
     if (Date.now() - cached.timestamp > this.CACHE_TTL) {
-      this.keyCache.delete(tenantId);
-      return null;
+      this.keyCache.delete(tenantId)
+      return null
     }
 
-    return Buffer.from(cached.key); // Return a copy
+    return Buffer.from(cached.key) // Return a copy
   }
 
   /**
    * Update average response time
    */
   private updateAverageResponseTime(responseTime: number): void {
-    const total = this.stats.averageResponseTime * (this.stats.successful - 1) + responseTime;
-    this.stats.averageResponseTime = total / this.stats.successful;
+    const total = this.stats.averageResponseTime * (this.stats.successful - 1) + responseTime
+    this.stats.averageResponseTime = total / this.stats.successful
   }
 
   /**
@@ -597,22 +553,18 @@ export class KMSClient {
         code: 'INVALID_KEY_STATE',
         message: 'KMS key is in invalid state',
       },
-    };
+    }
 
     const mapped = errorMap[error.name] || {
       code: 'KMS_ERROR',
       message: 'AWS KMS operation failed',
-    };
+    }
 
-    return new KeyManagementError(
-      `${mapped.message}: ${error.message}`,
-      mapped.code,
-      {
-        operation,
-        awsError: error.name,
-        requestId: error.$metadata?.requestId,
-      }
-    );
+    return new KeyManagementError(`${mapped.message}: ${error.message}`, mapped.code, {
+      operation,
+      awsError: error.name,
+      requestId: error.$metadata?.requestId,
+    })
   }
 
   /**
@@ -630,11 +582,11 @@ export class KMSClient {
       tenantId,
       success,
       error: error instanceof Error ? error.message : undefined,
-    };
+    }
 
     // In production, send to proper logging service
     if (process.env.NODE_ENV === 'development') {
-      console.log('[KMS Audit]', JSON.stringify(logEntry));
+      console.log('[KMS Audit]', JSON.stringify(logEntry))
     }
 
     // TODO: Integrate with centralized logging service
@@ -645,15 +597,15 @@ export class KMSClient {
    * Destroy the client and clean up resources
    */
   destroy(): void {
-    this.clearCache();
-    this.client.destroy();
+    this.clearCache()
+    this.client.destroy()
   }
 }
 
 /**
  * Singleton KMS client instance
  */
-let kmsClientInstance: KMSClient | null = null;
+let kmsClientInstance: KMSClient | null = null
 
 /**
  * Get or create KMS client singleton
@@ -663,9 +615,9 @@ let kmsClientInstance: KMSClient | null = null;
  */
 export function getKMSClient(config?: Partial<KMSConfig>): KMSClient {
   if (!kmsClientInstance) {
-    kmsClientInstance = new KMSClient(config);
+    kmsClientInstance = new KMSClient(config)
   }
-  return kmsClientInstance;
+  return kmsClientInstance
 }
 
 /**
@@ -673,8 +625,8 @@ export function getKMSClient(config?: Partial<KMSConfig>): KMSClient {
  */
 export function resetKMSClient(): void {
   if (kmsClientInstance) {
-    kmsClientInstance.destroy();
-    kmsClientInstance = null;
+    kmsClientInstance.destroy()
+    kmsClientInstance = null
   }
 }
 
@@ -684,4 +636,4 @@ export function resetKMSClient(): void {
 export const __testing__ = {
   KMSClient,
   resetKMSClient,
-};
+}

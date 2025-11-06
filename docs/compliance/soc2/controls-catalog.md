@@ -45,6 +45,7 @@ SOC 2 Type II compliance encompasses five Trust Service Categories:
 ### ADSapp Application
 
 ADSapp has implemented comprehensive controls across all five categories to ensure:
+
 - Enterprise-grade security for multi-tenant SaaS operations
 - 99.9% uptime SLA compliance
 - Accurate WhatsApp message processing and delivery
@@ -66,6 +67,7 @@ The Common Criteria section contains the foundational security controls that app
 
 **Control Description:**
 ADSapp maintains a documented Code of Conduct that establishes expectations for ethical behavior and integrity across the organization. The Code of Conduct is:
+
 - Communicated to all employees during onboarding
 - Acknowledged annually through signed attestations
 - Enforced through disciplinary procedures
@@ -129,6 +131,7 @@ The organization's tone at the top emphasizes ethical decision-making, complianc
 
 **Control Description:**
 ADSapp's Board of Directors provides independent oversight of the organization's operations, risk management, and control systems. The Board:
+
 - Includes independent directors with relevant expertise in technology, security, and compliance
 - Meets quarterly to review organizational performance, risks, and strategic direction
 - Receives regular reports on system performance, security incidents, and compliance status
@@ -136,6 +139,7 @@ ADSapp's Board of Directors provides independent oversight of the organization's
 - Establishes and monitors key performance indicators (KPIs)
 
 An Audit Committee, composed of independent board members, provides specialized oversight of:
+
 - Financial reporting and internal controls
 - Information security and data protection programs
 - External audit processes
@@ -342,6 +346,7 @@ ADSapp holds personnel accountable for their control responsibilities through:
 - **Security Champions Program**: Recognition and rewards for employees who excel in security practices
 
 Control owners are formally designated for each SOC 2 control. Owners are responsible for:
+
 - Ensuring control is designed effectively
 - Monitoring control operation
 - Maintaining evidence of control execution
@@ -413,6 +418,7 @@ ADSapp maintains comprehensive information systems that provide relevant, timely
 - **Monitoring Dashboards**: Real-time visibility into system performance and security metrics
 
 Information systems are designed to:
+
 - Capture complete and accurate data
 - Process and transform data appropriately
 - Maintain data integrity and security
@@ -484,6 +490,7 @@ ADSapp maintains effective internal communication channels to ensure personnel r
 - **Direct Reporting Channels**: Whistleblower hotline and security team contact information
 
 Communications are:
+
 - Timely and relevant to the audience
 - Clear and actionable
 - Delivered through appropriate channels
@@ -556,6 +563,7 @@ ADSapp maintains communication channels with external parties relevant to contro
 - **Industry Groups**: Participation in security communities and threat intelligence sharing
 
 External communications are:
+
 - Reviewed and approved by appropriate management
 - Documented and retained according to policy
 - Timely and accurate
@@ -623,18 +631,21 @@ External communications are:
 ADSapp has established and documented clear objectives for its systems and operations that enable effective risk identification and assessment. Objectives include:
 
 **Security Objectives:**
+
 - Protect confidentiality, integrity, and availability of customer data
 - Prevent unauthorized access to systems and data
 - Detect and respond to security incidents within defined timeframes
 - Maintain compliance with SOC 2, GDPR, and other applicable regulations
 
 **Operational Objectives:**
+
 - Achieve 99.9% system uptime
 - Process WhatsApp messages with < 2 second latency
 - Scale to support 10,000+ concurrent users
 - Maintain RPO of 4 hours and RTO of 1 hour
 
 **Compliance Objectives:**
+
 - Maintain SOC 2 Type II certification
 - Achieve GDPR compliance score of 95/100
 - Pass annual penetration testing with no critical findings
@@ -700,6 +711,7 @@ These objectives are documented in strategic plans, reviewed quarterly by execut
 ADSapp conducts comprehensive risk identification and analysis processes to identify and evaluate risks to achieving security and operational objectives. The risk assessment process includes:
 
 **Risk Identification Methods:**
+
 - Internal risk workshops with security and IT teams
 - Review of industry threat intelligence and vulnerability databases
 - Analysis of security incidents and near-misses
@@ -708,12 +720,14 @@ ADSapp conducts comprehensive risk identification and analysis processes to iden
 - Penetration testing and vulnerability scanning results
 
 **Risk Analysis Framework:**
+
 - **Likelihood Assessment**: Probability of risk occurrence (1-5 scale)
 - **Impact Assessment**: Business impact if risk materializes (1-5 scale)
 - **Risk Rating**: Likelihood × Impact = Risk Score (1-25)
 - **Risk Categorization**: Strategic, operational, compliance, financial, reputational
 
 **Risk Assessment Outputs:**
+
 - Risk register documenting all identified risks
 - Risk heat map visualizing likelihood and impact
 - Risk treatment plans for high and critical risks
@@ -788,6 +802,7 @@ Formal risk assessments are conducted annually with quarterly updates. Emerging 
 ADSapp specifically assesses fraud risks as part of the broader risk assessment process. Fraud risk considerations include:
 
 **Internal Fraud Risks:**
+
 - Unauthorized access to customer data by employees
 - Manipulation of billing or subscription data
 - Theft of intellectual property or trade secrets
@@ -795,6 +810,7 @@ ADSapp specifically assesses fraud risks as part of the broader risk assessment 
 - Collusion with external parties
 
 **External Fraud Risks:**
+
 - Account takeover and credential compromise
 - Payment fraud and subscription abuse
 - Business email compromise targeting employees
@@ -802,6 +818,7 @@ ADSapp specifically assesses fraud risks as part of the broader risk assessment 
 - API abuse and automated attacks
 
 **Fraud Prevention Controls:**
+
 - Segregation of duties in critical processes
 - Dual authorization for sensitive transactions
 - Background checks for employees with access to sensitive data
@@ -877,6 +894,7 @@ Fraud risk assessments are conducted annually. Any identified fraud incidents ar
 ADSapp has established processes to identify and assess changes that could significantly impact the effectiveness of internal controls. Changes considered include:
 
 **Internal Changes:**
+
 - New products, services, or business models
 - Organizational restructuring or leadership changes
 - New technology implementations or system upgrades
@@ -885,6 +903,7 @@ ADSapp has established processes to identify and assess changes that could signi
 - Geographic expansion
 
 **External Changes:**
+
 - New laws, regulations, or industry standards
 - Changes to threat landscape or attack vectors
 - Economic or market conditions
@@ -892,6 +911,7 @@ ADSapp has established processes to identify and assess changes that could signi
 - Technology evolution (e.g., cloud, AI)
 
 The change assessment process includes:
+
 1. Identification of significant changes
 2. Analysis of control impact
 3. Gap analysis if controls are insufficient
@@ -969,6 +989,7 @@ Significant changes are reported to the board of directors and compliance commit
 ADSapp conducts both ongoing monitoring and separate evaluations of internal controls to verify they are operating effectively:
 
 **Ongoing Monitoring:**
+
 - Automated control monitoring through SIEM, compliance platform, and monitoring dashboards
 - Real-time alerting for control failures or anomalies
 - Daily/weekly/monthly control execution reviews
@@ -976,6 +997,7 @@ ADSapp conducts both ongoing monitoring and separate evaluations of internal con
 - Key risk indicator (KRI) tracking
 
 **Separate Evaluations:**
+
 - Quarterly internal control self-assessments by control owners
 - Annual internal audit of SOC 2 controls
 - External SOC 2 Type II audit (annual)
@@ -1054,6 +1076,7 @@ Monitoring results are reported to management and the board. Control deficiencie
 ADSapp has established processes to evaluate control deficiencies, determine their severity, and communicate them to appropriate parties for remediation:
 
 **Deficiency Identification:**
+
 - Control failures detected through automated monitoring
 - Exceptions identified in self-assessments
 - Findings from internal audits
@@ -1062,12 +1085,14 @@ ADSapp has established processes to evaluate control deficiencies, determine the
 - Vulnerability assessments and penetration tests
 
 **Deficiency Classification:**
+
 - **Critical**: Control deficiency that could result in immediate material impact
 - **High**: Significant control deficiency requiring prompt remediation
 - **Medium**: Control weakness that should be addressed in near term
 - **Low**: Minor control gap or improvement opportunity
 
 **Communication and Escalation:**
+
 - Critical deficiencies: Immediate notification to CISO, CEO, and board
 - High deficiencies: Notification to executive leadership within 24 hours
 - Medium deficiencies: Communicated to relevant department heads within 1 week
@@ -1144,17 +1169,20 @@ All deficiencies are tracked in a centralized remediation tracker. Control owner
 ADSapp selects and implements control activities designed to mitigate identified risks to acceptable levels. Control selection is based on:
 
 **Risk-Based Control Selection:**
+
 - Each control mapped to specific risk(s) it mitigates
 - Control design considers risk likelihood and impact
 - Multiple controls (defense in depth) for critical risks
 - Cost-benefit analysis for control implementation
 
 **Control Types:**
+
 - **Preventive**: Controls that prevent risks from occurring (e.g., access controls, change approval)
 - **Detective**: Controls that detect risks that have occurred (e.g., monitoring, log reviews)
 - **Corrective**: Controls that correct identified issues (e.g., incident response, remediation)
 
 **Control Design Principles:**
+
 - Aligns with industry standards and best practices (ISO 27001, NIST CSF, CIS Controls)
 - Considers both manual and automated controls
 - Appropriate for technology environment
@@ -1162,6 +1190,7 @@ ADSapp selects and implements control activities designed to mitigate identified
 - Operates at appropriate frequency
 
 Control effectiveness is periodically assessed and controls are enhanced or redesigned as needed based on:
+
 - Changes in risk landscape
 - Control operating effectiveness results
 - Audit findings and recommendations
@@ -1234,6 +1263,7 @@ Control effectiveness is periodically assessed and controls are enhanced or rede
 ADSapp has implemented comprehensive general IT controls (GITCs) that support the integrity, security, and availability of information systems:
 
 **Access Controls (CC6 series):**
+
 - User account provisioning and deprovisioning
 - Role-based access control (RBAC)
 - Multi-factor authentication (MFA)
@@ -1241,6 +1271,7 @@ ADSapp has implemented comprehensive general IT controls (GITCs) that support th
 - Periodic access reviews
 
 **Change Management (CC8 series):**
+
 - Formalized change request and approval process
 - Testing requirements for changes
 - Documented rollback procedures
@@ -1248,6 +1279,7 @@ ADSapp has implemented comprehensive general IT controls (GITCs) that support th
 - Post-implementation reviews
 
 **System Operations (CC7 series):**
+
 - System monitoring and alerting
 - Job scheduling and automated processes
 - Backup and recovery procedures
@@ -1255,12 +1287,14 @@ ADSapp has implemented comprehensive general IT controls (GITCs) that support th
 - Database administration controls
 
 **Network Security:**
+
 - Firewalls and network segmentation
 - Intrusion detection and prevention systems (IDS/IPS)
 - VPN for remote access
 - Network monitoring and traffic analysis
 
 **Data Security:**
+
 - Encryption at rest and in transit
 - Data classification and handling procedures
 - Data loss prevention (DLP)

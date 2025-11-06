@@ -56,9 +56,7 @@ export class EventBus {
 
     // Execute handlers in parallel
     await Promise.all(
-      allHandlers.map(handler =>
-        this.executeHandler(handler, { ...event, id: eventId })
-      )
+      allHandlers.map(handler => this.executeHandler(handler, { ...event, id: eventId }))
     )
 
     return eventId
@@ -67,10 +65,7 @@ export class EventBus {
   /**
    * Execute handler with error handling
    */
-  private static async executeHandler(
-    handler: EventHandler,
-    event: DomainEvent
-  ): Promise<void> {
+  private static async executeHandler(handler: EventHandler, event: DomainEvent): Promise<void> {
     try {
       await handler(event)
     } catch (error) {
