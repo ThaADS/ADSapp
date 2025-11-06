@@ -413,14 +413,14 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
 
     try {
       setIsLoading(true)
-      const response = await fetch(`/api/messages?conversation_id=${selectedConversation.id}`)
+      const response = await fetch(`/api/conversations/${selectedConversation.id}/messages`)
 
       if (!response.ok) {
         throw new Error('Failed to load messages')
       }
 
       const data = await response.json()
-      setMessages(data.messages || [])
+      setMessages(data || [])
     } catch (error) {
       console.error('Failed to load messages:', error)
       setMessages([])
