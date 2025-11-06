@@ -1,29 +1,59 @@
 'use client'
 
 /**
- * AI Settings Panel Component
+ * AI Settings Component
  * Configure AI features for organization
  */
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { AISettings } from '@/lib/ai/types'
+import type { AISettings } from '@/types/ai'
 
-interface AISettingsPanelProps {
-  organizationId: string
-}
-
-export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
+export default function AISettingsComponent() {
+  const [organizationId, setOrganizationId] = useState<string | null>(null)
   const [settings, setSettings] = useState<Partial<AISettings> | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // Load settings on mount
+  // Load organization ID and settings on mount
   useEffect(() => {
-    loadSettings()
+    loadOrganizationId()
+  }, [])
+
+  useEffect(() => {
+    if (organizationId) {
+      loadSettings()
+    }
   }, [organizationId])
+
+  const loadOrganizationId = async () => {
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        setError('Not authenticated')
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+      if (profile?.organization_id) {
+        setOrganizationId(profile.organization_id)
+      }
+    } catch (err) {
+      console.error('Load organization error:', err)
+      setError('Failed to load organization')
+    }
+  }
 
   const loadSettings = async () => {
     try {
@@ -79,8 +109,29 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
     }
   }
 
-  const updateSetting = <K extends keyof AISettings>(key: K, value: AISettings[K]) => {
-    setSettings(prev => (prev ? { ...prev, [key]: value } : null))
+  const updateSetting = (key: string, value: unknown) => {
+    setSettings(prev => {
+      if (!prev) return null
+
+      // Handle nested features_enabled updates
+      if (
+        key === 'draft_suggestions' ||
+        key === 'auto_response' ||
+        key === 'sentiment_analysis' ||
+        key === 'summarization'
+      ) {
+        return {
+          ...prev,
+          features_enabled: {
+            ...prev.features_enabled,
+            [key]: value,
+          },
+        }
+      }
+
+      // Handle top-level updates
+      return { ...prev, [key]: value }
+    })
   }
 
   if (loading) {
@@ -165,7 +216,7 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                 <div className='flex items-center justify-between border-l-2 border-gray-200 pl-4'>
                   <div>
                     <label
-                      htmlFor='draft_suggestions_enabled'
+                      htmlFor='draft_suggestions'
                       className='text-sm font-medium text-gray-700'
                     >
                       Concept Suggesties
@@ -175,21 +226,23 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                     </p>
                   </div>
                   <button
-                    id='draft_suggestions_enabled'
+                    id='draft_suggestions'
                     type='button'
                     onClick={() =>
                       updateSetting(
-                        'draft_suggestions_enabled',
-                        !settings.draft_suggestions_enabled
+                        'draft_suggestions',
+                        !settings.features_enabled?.draft_suggestions
                       )
                     }
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                      settings.draft_suggestions_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                      settings.features_enabled?.draft_suggestions ? 'bg-blue-600' : 'bg-gray-200'
                     }`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ${
-                        settings.draft_suggestions_enabled ? 'translate-x-5' : 'translate-x-0'
+                        settings.features_enabled?.draft_suggestions
+                          ? 'translate-x-5'
+                          : 'translate-x-0'
                       }`}
                     />
                   </button>
@@ -197,10 +250,7 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
 
                 <div className='flex items-center justify-between border-l-2 border-gray-200 pl-4'>
                   <div>
-                    <label
-                      htmlFor='auto_response_enabled'
-                      className='text-sm font-medium text-gray-700'
-                    >
+                    <label htmlFor='auto_response' className='text-sm font-medium text-gray-700'>
                       Auto-Antwoorden
                     </label>
                     <p className='text-xs text-gray-500'>
@@ -208,18 +258,18 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                     </p>
                   </div>
                   <button
-                    id='auto_response_enabled'
+                    id='auto_response'
                     type='button'
                     onClick={() =>
-                      updateSetting('auto_response_enabled', !settings.auto_response_enabled)
+                      updateSetting('auto_response', !settings.features_enabled?.auto_response)
                     }
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                      settings.auto_response_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                      settings.features_enabled?.auto_response ? 'bg-blue-600' : 'bg-gray-200'
                     }`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ${
-                        settings.auto_response_enabled ? 'translate-x-5' : 'translate-x-0'
+                        settings.features_enabled?.auto_response ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
                   </button>
@@ -228,7 +278,7 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                 <div className='flex items-center justify-between border-l-2 border-gray-200 pl-4'>
                   <div>
                     <label
-                      htmlFor='sentiment_analysis_enabled'
+                      htmlFor='sentiment_analysis'
                       className='text-sm font-medium text-gray-700'
                     >
                       Sentiment Analyse
@@ -236,21 +286,23 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                     <p className='text-xs text-gray-500'>Detecteer klanttevredenheid en urgentie</p>
                   </div>
                   <button
-                    id='sentiment_analysis_enabled'
+                    id='sentiment_analysis'
                     type='button'
                     onClick={() =>
                       updateSetting(
-                        'sentiment_analysis_enabled',
-                        !settings.sentiment_analysis_enabled
+                        'sentiment_analysis',
+                        !settings.features_enabled?.sentiment_analysis
                       )
                     }
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                      settings.sentiment_analysis_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                      settings.features_enabled?.sentiment_analysis ? 'bg-blue-600' : 'bg-gray-200'
                     }`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ${
-                        settings.sentiment_analysis_enabled ? 'translate-x-5' : 'translate-x-0'
+                        settings.features_enabled?.sentiment_analysis
+                          ? 'translate-x-5'
+                          : 'translate-x-0'
                       }`}
                     />
                   </button>
@@ -258,27 +310,24 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
 
                 <div className='flex items-center justify-between border-l-2 border-gray-200 pl-4'>
                   <div>
-                    <label
-                      htmlFor='summarization_enabled'
-                      className='text-sm font-medium text-gray-700'
-                    >
+                    <label htmlFor='summarization' className='text-sm font-medium text-gray-700'>
                       Samenvatten
                     </label>
                     <p className='text-xs text-gray-500'>Automatische conversatie samenvattingen</p>
                   </div>
                   <button
-                    id='summarization_enabled'
+                    id='summarization'
                     type='button'
                     onClick={() =>
-                      updateSetting('summarization_enabled', !settings.summarization_enabled)
+                      updateSetting('summarization', !settings.features_enabled?.summarization)
                     }
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                      settings.summarization_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                      settings.features_enabled?.summarization ? 'bg-blue-600' : 'bg-gray-200'
                     }`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ${
-                        settings.summarization_enabled ? 'translate-x-5' : 'translate-x-0'
+                        settings.features_enabled?.summarization ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
                   </button>
@@ -302,9 +351,9 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                   Primair Model
                 </label>
                 <select
-                  id='preferred_model'
-                  value={settings.preferred_model}
-                  onChange={e => updateSetting('preferred_model', e.target.value)}
+                  id='default_model'
+                  value={settings.default_model}
+                  onChange={e => updateSetting('default_model', e.target.value)}
                   className='block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
                 >
                   <option value='anthropic/claude-3.5-sonnet'>
@@ -423,52 +472,14 @@ export function AISettingsPanel({ organizationId }: AISettingsPanelProps) {
                   min='0'
                   max='100'
                   step='5'
-                  value={(settings.budget_alert_threshold || 0.8) * 100}
-                  onChange={e =>
-                    updateSetting('budget_alert_threshold', parseInt(e.target.value) / 100)
-                  }
+                  value={(settings.alert_threshold || 0.8) * 100}
+                  onChange={e => updateSetting('alert_threshold', parseInt(e.target.value) / 100)}
                   className='block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
                 />
                 <p className='mt-1 text-xs text-gray-500'>
                   Ontvang waarschuwing bij dit percentage van het budget
                 </p>
               </div>
-
-              {settings.current_month_spend_usd !== undefined && (
-                <div className='mt-4 rounded-lg bg-gray-50 p-4'>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-sm font-medium text-gray-700'>
-                      Huidige maand verbruik:
-                    </span>
-                    <span className='text-lg font-bold text-gray-900'>
-                      ${settings.current_month_spend_usd.toFixed(2)}
-                    </span>
-                  </div>
-                  {settings.monthly_budget_usd && (
-                    <div className='mt-2'>
-                      <div className='h-2 w-full rounded-full bg-gray-200'>
-                        <div
-                          className='h-2 rounded-full bg-blue-600'
-                          style={{
-                            width: `${Math.min(
-                              (settings.current_month_spend_usd / settings.monthly_budget_usd) *
-                                100,
-                              100
-                            )}%`,
-                          }}
-                        />
-                      </div>
-                      <p className='mt-1 text-xs text-gray-500'>
-                        {(
-                          (settings.current_month_spend_usd / settings.monthly_budget_usd) *
-                          100
-                        ).toFixed(1)}
-                        % van budget gebruikt
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         )}
