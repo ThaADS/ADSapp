@@ -113,7 +113,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
                   {conversation.status}
                 </span>
                 <Link
-                  href={`/dashboard/conversations/${conversation.id}`}
+                  href={`/dashboard/inbox?conversation=${conversation.id}`}
                   className='text-sm font-medium text-emerald-600 hover:text-emerald-900'
                 >
                   View
@@ -125,7 +125,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
       </ul>
       <div className='border-t border-gray-200 px-6 py-3'>
         <Link
-          href='/dashboard/conversations'
+          href='/dashboard/inbox'
           className='text-sm font-medium text-emerald-600 hover:text-emerald-500'
         >
           View all conversations →

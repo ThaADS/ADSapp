@@ -55,6 +55,8 @@ interface ConversationListProps {
   onConversationSelect: (conversation: Conversation) => void
   selectedConversationId?: string
   className?: string
+  initialConversationId?: string | null
+  onConversationsLoaded?: () => void
 }
 
 interface AdvancedFiltersProps {
@@ -204,6 +206,8 @@ export default function EnhancedConversationList({
   onConversationSelect,
   selectedConversationId,
   className = '',
+  initialConversationId,
+  onConversationsLoaded,
 }: ConversationListProps) {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
@@ -222,6 +226,17 @@ export default function EnhancedConversationList({
     loadQuickFilters()
     loadConversations()
   }, [organizationId, activeFilter, filterCriteria])
+
+  // Auto-select conversation from URL
+  useEffect(() => {
+    if (initialConversationId && conversations.length > 0 && onConversationsLoaded) {
+      const conversation = conversations.find(c => c.id === initialConversationId)
+      if (conversation) {
+        onConversationSelect(conversation)
+      }
+      onConversationsLoaded()
+    }
+  }, [initialConversationId, conversations, onConversationSelect, onConversationsLoaded])
 
   const loadQuickFilters = () => {
     const filters = filterManager.getQuickFilters()

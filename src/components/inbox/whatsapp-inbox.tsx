@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import {
   Settings,
@@ -341,6 +342,9 @@ function ConversationDetails({
 }
 
 export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAppInboxProps) {
+  const searchParams = useSearchParams()
+  const conversationIdFromUrl = searchParams.get('conversation')
+
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [showDetails, setShowDetails] = useState(false)
@@ -354,6 +358,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
     responseRate: 0,
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [conversationsLoaded, setConversationsLoaded] = useState(false)
 
   const whatsappService = new WhatsAppService('', '')
 
@@ -556,6 +561,8 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
             currentUserId={currentUserId}
             onConversationSelect={handleConversationSelect}
             selectedConversationId={selectedConversation?.id}
+            initialConversationId={conversationIdFromUrl}
+            onConversationsLoaded={() => setConversationsLoaded(true)}
           />
         </div>
 
