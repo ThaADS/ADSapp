@@ -37,6 +37,10 @@ export type Refund = Database['public']['Tables']['refunds']['Row']
 export type PaymentIntent = Database['public']['Tables']['payment_intents']['Row']
 export type BillingEvent = Database['public']['Tables']['billing_events']['Row']
 export type Subscription = Database['public']['Tables']['subscriptions']['Row']
+export type AgentCapacity = Database['public']['Tables']['agent_capacity']['Row']
+export type ConversationQueue = Database['public']['Tables']['conversation_queue']['Row']
+export type RoutingHistory = Database['public']['Tables']['routing_history']['Row']
+export type RoutingRule = Database['public']['Tables']['routing_rules']['Row']
 
 // Insert types
 export type OrganizationInsert = Database['public']['Tables']['organizations']['Insert']
@@ -49,6 +53,10 @@ export type RefundInsert = Database['public']['Tables']['refunds']['Insert']
 export type PaymentIntentInsert = Database['public']['Tables']['payment_intents']['Insert']
 export type BillingEventInsert = Database['public']['Tables']['billing_events']['Insert']
 export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert']
+export type AgentCapacityInsert = Database['public']['Tables']['agent_capacity']['Insert']
+export type ConversationQueueInsert = Database['public']['Tables']['conversation_queue']['Insert']
+export type RoutingHistoryInsert = Database['public']['Tables']['routing_history']['Insert']
+export type RoutingRuleInsert = Database['public']['Tables']['routing_rules']['Insert']
 
 // Update types
 export type OrganizationUpdate = Database['public']['Tables']['organizations']['Update']
@@ -61,10 +69,77 @@ export type RefundUpdate = Database['public']['Tables']['refunds']['Update']
 export type PaymentIntentUpdate = Database['public']['Tables']['payment_intents']['Update']
 export type BillingEventUpdate = Database['public']['Tables']['billing_events']['Update']
 export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update']
+export type AgentCapacityUpdate = Database['public']['Tables']['agent_capacity']['Update']
+export type ConversationQueueUpdate = Database['public']['Tables']['conversation_queue']['Update']
+export type RoutingHistoryUpdate = Database['public']['Tables']['routing_history']['Update']
+export type RoutingRuleUpdate = Database['public']['Tables']['routing_rules']['Update']
 
 export type Database = {
   public: {
     Tables: {
+      agent_capacity: {
+        Row: {
+          id: string
+          organization_id: string
+          agent_id: string
+          max_concurrent_conversations: number
+          auto_assign_enabled: boolean
+          status: 'available' | 'busy' | 'away' | 'offline'
+          skills: string[]
+          languages: string[]
+          current_active_conversations: number
+          avg_response_time_seconds: number
+          customer_satisfaction_score: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          agent_id: string
+          max_concurrent_conversations?: number
+          auto_assign_enabled?: boolean
+          status?: 'available' | 'busy' | 'away' | 'offline'
+          skills?: string[]
+          languages?: string[]
+          current_active_conversations?: number
+          avg_response_time_seconds?: number
+          customer_satisfaction_score?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          agent_id?: string
+          max_concurrent_conversations?: number
+          auto_assign_enabled?: boolean
+          status?: 'available' | 'busy' | 'away' | 'offline'
+          skills?: string[]
+          languages?: string[]
+          current_active_conversations?: number
+          avg_response_time_seconds?: number
+          customer_satisfaction_score?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'agent_capacity_organization_id_fkey'
+            columns: ['organization_id']
+            isOneToOne: false
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'agent_capacity_agent_id_fkey'
+            columns: ['agent_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       ai_settings: {
         Row: {
           id: string
@@ -611,6 +686,133 @@ export type Database = {
           },
         ]
       }
+      routing_history: {
+        Row: {
+          id: string
+          organization_id: string
+          conversation_id: string
+          assigned_to: string
+          routing_strategy: string
+          available_agents: string[]
+          workload_scores: Json
+          selection_reason: string | null
+          accepted: boolean
+          rejected_at: string | null
+          rejection_reason: string | null
+          routed_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          conversation_id: string
+          assigned_to: string
+          routing_strategy: string
+          available_agents: string[]
+          workload_scores?: Json
+          selection_reason?: string | null
+          accepted?: boolean
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          routed_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          conversation_id?: string
+          assigned_to?: string
+          routing_strategy?: string
+          available_agents?: string[]
+          workload_scores?: Json
+          selection_reason?: string | null
+          accepted?: boolean
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          routed_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'routing_history_organization_id_fkey'
+            columns: ['organization_id']
+            isOneToOne: false
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'routing_history_conversation_id_fkey'
+            columns: ['conversation_id']
+            isOneToOne: false
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'routing_history_assigned_to_fkey'
+            columns: ['assigned_to']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      routing_rules: {
+        Row: {
+          id: string
+          organization_id: string
+          rule_name: string
+          is_active: boolean
+          priority: number
+          strategy: 'round_robin' | 'least_loaded' | 'skill_based' | 'priority_based' | 'custom'
+          strategy_config: Json
+          conditions: Json
+          created_at: string
+          updated_at: string
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          rule_name: string
+          is_active?: boolean
+          priority?: number
+          strategy: 'round_robin' | 'least_loaded' | 'skill_based' | 'priority_based' | 'custom'
+          strategy_config?: Json
+          conditions?: Json
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          rule_name?: string
+          is_active?: boolean
+          priority?: number
+          strategy?: 'round_robin' | 'least_loaded' | 'skill_based' | 'priority_based' | 'custom'
+          strategy_config?: Json
+          conditions?: Json
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'routing_rules_organization_id_fkey'
+            columns: ['organization_id']
+            isOneToOne: false
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'routing_rules_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       subscriptions: {
         Row: {
           id: string
@@ -1043,6 +1245,83 @@ export type Database = {
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           },
+        ]
+      }
+      conversation_queue: {
+        Row: {
+          id: string
+          organization_id: string
+          conversation_id: string
+          priority: number
+          queued_at: string
+          assigned_at: string | null
+          assigned_to: string | null
+          assignment_method: string | null
+          required_skills: string[]
+          required_language: string | null
+          preferred_agent_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          conversation_id: string
+          priority?: number
+          queued_at?: string
+          assigned_at?: string | null
+          assigned_to?: string | null
+          assignment_method?: string | null
+          required_skills?: string[]
+          required_language?: string | null
+          preferred_agent_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          conversation_id?: string
+          priority?: number
+          queued_at?: string
+          assigned_at?: string | null
+          assigned_to?: string | null
+          assignment_method?: string | null
+          required_skills?: string[]
+          required_language?: string | null
+          preferred_agent_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'conversation_queue_organization_id_fkey'
+            columns: ['organization_id']
+            isOneToOne: false
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversation_queue_conversation_id_fkey'
+            columns: ['conversation_id']
+            isOneToOne: true
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversation_queue_assigned_to_fkey'
+            columns: ['assigned_to']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversation_queue_preferred_agent_id_fkey'
+            columns: ['preferred_agent_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
         ]
       }
       messages: {

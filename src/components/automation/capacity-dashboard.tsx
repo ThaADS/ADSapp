@@ -3,12 +3,7 @@
 /**
  * Capacity Dashboard - Real-Time Agent Monitoring
  * Shows agent availability, workload, and performance metrics in real-time
- *
- * NOTE: Uses 'as any' for database tables that don't exist in current types yet.
- * Will be fixed when migration 044 is applied and types are regenerated.
  */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -53,7 +48,7 @@ export default function CapacityDashboard({ organizationId }: CapacityDashboardP
       try {
         const supabase = createClient()
 
-        const { data, error } = await (supabase as any)
+        const { data, error } = await supabase
           .from('agent_capacity')
           .select(
             `

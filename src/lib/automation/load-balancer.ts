@@ -1,15 +1,10 @@
 /**
  * Intelligent Load Balancer for Conversation Routing
  * Implements multiple routing strategies with agent capacity tracking
- *
- * NOTE: This file uses 'as any' type assertions for database tables (agent_capacity, routing_rules, etc.)
- * that don't exist in the current database.ts types. These assertions will be removed once
- * the database migrations are applied and types are regenerated with: npx supabase gen types typescript
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { createClient } from '@/lib/supabase/server'
+import type { AgentCapacity, RoutingRule, ConversationQueue, RoutingHistory } from '@/types/database'
 
 export type RoutingStrategy =
   | 'round_robin' // Rotate through available agents
@@ -164,7 +159,7 @@ export class ConversationRouter {
     organizationId: string,
     requirements: RoutingRequirements = {}
   ): Promise<Agent[]> {
-    const query = (this.supabase as any)
+    const query = this.supabase
       .from('agent_capacity')
       .select(
         `
@@ -204,7 +199,7 @@ export class ConversationRouter {
         languages: Array.isArray(ac.languages) ? ac.languages : ['nl'],
         status: ac.status,
         avgResponseTime: ac.avg_response_time_seconds || 60,
-        satisfactionScore: parseFloat(ac.customer_satisfaction_score) || 4.5,
+        satisfactionScore: ac.customer_satisfaction_score || 4.5,
       }))
 
     // Apply skill filtering
@@ -308,7 +303,7 @@ export class ConversationRouter {
     _requirements: RoutingRequirements
   ): Promise<Agent> {
     // Fetch custom routing rules
-    const { data: rules } = await (this.supabase as any)
+    const { data: rules } = await this.supabase
       .from('routing_rules')
       .select('*')
       .eq('organization_id', organizationId)
@@ -334,7 +329,7 @@ export class ConversationRouter {
     organizationId: string,
     requirements: RoutingRequirements
   ): Promise<RoutingStrategy> {
-    const { data: rules } = await (this.supabase as any)
+    const { data: rules } = await this.supabase
       .from('routing_rules')
       .select('strategy')
       .eq('organization_id', organizationId)
@@ -381,7 +376,7 @@ export class ConversationRouter {
     }
 
     // Update queue record if exists
-    await (this.supabase as any)
+    await this.supabase
       .from('conversation_queue')
       .update({
         assigned_to: agentId,
@@ -403,7 +398,7 @@ export class ConversationRouter {
     requirements: RoutingRequirements
   ): Promise<RoutingResult> {
     // Calculate queue position
-    const { data: queueData } = await (this.supabase as any)
+    const { data: queueData } = await this.supabase
       .from('conversation_queue')
       .select('id')
       .eq('organization_id', organizationId)
@@ -416,7 +411,7 @@ export class ConversationRouter {
     // Add to queue
     const priority = this.getPriorityValue(requirements.priority)
 
-    await (this.supabase as any).from('conversation_queue').upsert({
+    await this.supabase.from('conversation_queue').upsert({
       conversation_id: conversationId,
       organization_id: organizationId,
       priority,
@@ -447,7 +442,7 @@ export class ConversationRouter {
   ) {
     const workloadScores = Object.fromEntries(availableAgents.map(a => [a.id, a.loadPercentage]))
 
-    await (this.supabase as any).from('routing_history').insert({
+    await this.supabase.from('routing_history').insert({
       conversation_id: conversationId,
       organization_id: organizationId,
       assigned_to: assignedTo,
