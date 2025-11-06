@@ -420,7 +420,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
       }
 
       const data = await response.json()
-      setMessages(data || [])
+      setMessages(data.messages || [])
     } catch (error) {
       console.error('Failed to load messages:', error)
       setMessages([])
