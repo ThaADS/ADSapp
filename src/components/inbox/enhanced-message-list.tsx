@@ -120,10 +120,10 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
               <img
                 src={message.media.thumbnailUrl || message.media.url}
                 alt='Shared image'
-                className='max-h-64 w-auto cursor-pointer rounded-lg'
+                className='max-h-64 w-auto cursor-pointer rounded-md'
                 onClick={() => window.open(message.media.url, '_blank')}
               />
-              <div className='bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 flex items-center justify-center rounded-lg bg-black transition-all duration-200'>
+              <div className='bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 flex items-center justify-center rounded-md bg-black transition-all duration-200'>
                 <button
                   onClick={handleDownload}
                   disabled={loading}
@@ -134,15 +134,15 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
               </div>
             </div>
           ) : (
-            <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
+            <div className='flex items-center space-x-3 rounded-md bg-black/5 p-3'>
               <ImageIcon className='h-8 w-8 text-gray-400' />
               <div>
-                <p className='text-sm font-medium text-gray-900'>Image</p>
-                <p className='text-xs text-gray-500'>Unable to load image</p>
+                <p className='text-sm font-medium'>Image</p>
+                <p className='text-xs opacity-60'>Unable to load image</p>
               </div>
             </div>
           )}
-          {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
+          {message.content && <p className='mt-2 text-sm'>{message.content}</p>}
         </div>
       )
 
@@ -255,7 +255,7 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
       )
 
     default:
-      return <p className='text-sm text-gray-700'>{message.content}</p>
+      return <p className='text-sm leading-relaxed whitespace-pre-wrap break-words'>{message.content}</p>
   }
 }
 
@@ -388,7 +388,7 @@ export default function EnhancedMessageList({
       )}
 
       {/* Messages */}
-      <div className='flex-1 space-y-4 overflow-y-auto p-4'>
+      <div className='flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4' style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h100v100H0z\' fill=\'%23f9fafb\'/%3E%3Cpath d=\'M0 0L50 50M50 0L100 50M0 50L50 100M50 50L100 100\' stroke=\'%23e5e7eb\' stroke-width=\'0.5\' opacity=\'0.1\'/%3E%3C/svg%3E")' }}>
         {messageGroups.length === 0 ? (
           <div className='py-8 text-center text-gray-500'>
             <p className='mb-2 text-lg font-medium'>No messages yet</p>
@@ -405,15 +405,16 @@ export default function EnhancedMessageList({
               </div>
 
               {/* Messages in this date group */}
-              <div className='space-y-2'>
+              <div className='space-y-1'>
                 {group.messages.map((message, messageIndex) => {
                   const isFromCurrentUser =
                     message.sender_type === 'agent' && message.sender_id === currentUserId
                   const isSystem = message.sender_type === 'system'
+                  const isContact = message.sender_type === 'contact'
 
                   if (isSystem) {
                     return (
-                      <div key={message.id} className='text-center'>
+                      <div key={message.id} className='my-3 text-center'>
                         <span className='rounded-full bg-yellow-100 px-3 py-1 text-xs text-yellow-800'>
                           {message.content}
                         </span>
@@ -426,43 +427,35 @@ export default function EnhancedMessageList({
                       key={message.id}
                       className={`flex ${isFromCurrentUser ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-[70%] ${isFromCurrentUser ? 'order-2' : 'order-1'}`}>
-                        {/* Sender Avatar (for agent messages from others) */}
-                        {!isFromCurrentUser && message.sender_type === 'agent' && (
-                          <div className='mb-1 flex items-center space-x-2'>
-                            {message.sender?.avatar_url ? (
-                              <img
-                                src={message.sender.avatar_url}
-                                alt={message.sender.full_name}
-                                className='h-6 w-6 rounded-full'
-                              />
-                            ) : (
-                              <div className='flex h-6 w-6 items-center justify-center rounded-full bg-blue-500'>
-                                <span className='text-xs font-medium text-white'>
-                                  {message.sender?.full_name?.charAt(0) || 'A'}
-                                </span>
-                              </div>
-                            )}
-                            <span className='text-xs text-gray-500'>
-                              {message.sender?.full_name || 'Agent'}
+                      <div className={`max-w-[75%] ${isFromCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                        {/* Sender Name (above bubble) */}
+                        {!isFromCurrentUser && (
+                          <div className='mb-1 px-3'>
+                            <span className='text-xs font-medium text-gray-700'>
+                              {isContact
+                                ? 'Contact'
+                                : message.sender?.full_name || 'Agent'}
                             </span>
                           </div>
                         )}
 
                         {/* Message Bubble */}
                         <div
-                          className={`rounded-lg px-3 py-2 ${
+                          className={`rounded-lg shadow-sm ${
                             isFromCurrentUser
-                              ? 'bg-blue-500 text-white'
-                              : 'bg-gray-100 text-gray-900'
+                              ? 'rounded-tr-none bg-emerald-500 text-white'
+                              : 'rounded-tl-none bg-white text-gray-900'
                           }`}
+                          style={{
+                            padding: message.message_type === 'text' ? '10px 14px' : '6px',
+                          }}
                         >
                           <MediaMessage message={message} onDownload={handleMediaDownload} />
                         </div>
 
                         {/* Message Status and Time */}
                         <div
-                          className={`mt-1 flex items-center space-x-1 ${
+                          className={`mt-1 flex items-center space-x-1 px-1 ${
                             isFromCurrentUser ? 'justify-end' : 'justify-start'
                           }`}
                         >
