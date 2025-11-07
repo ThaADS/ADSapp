@@ -21,8 +21,8 @@ import {
 } from 'recharts'
 import {
   CurrencyDollarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   UsersIcon,
   ShoppingCartIcon,
   ArrowPathIcon,
@@ -164,9 +164,9 @@ export default function RevenueDashboard({
               </p>
               <div className='mt-2 flex items-center gap-2'>
                 {metrics.revenueGrowth.percentageChange >= 0 ? (
-                  <TrendingUpIcon className='h-4 w-4 text-green-600' />
+                  <ArrowTrendingUpIcon className='h-4 w-4 text-green-600' />
                 ) : (
-                  <TrendingDownIcon className='h-4 w-4 text-red-600' />
+                  <ArrowTrendingDownIcon className='h-4 w-4 text-red-600' />
                 )}
                 <span
                   className={`text-sm font-medium ${
@@ -197,7 +197,7 @@ export default function RevenueDashboard({
               </p>
             </div>
             <div className='rounded-lg bg-blue-100 p-3'>
-              <TrendingUpIcon className='h-6 w-6 text-blue-600' />
+              <ArrowTrendingUpIcon className='h-6 w-6 text-blue-600' />
             </div>
           </div>
         </div>
