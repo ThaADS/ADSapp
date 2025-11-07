@@ -16,15 +16,10 @@ import {
   ChevronUp,
   FileText,
   Bot,
-  Tags,
-  Bell,
   Lock,
   Smartphone,
   Mail,
-  Clock,
-  TrendingUp,
   UserPlus,
-  Building,
 } from 'lucide-react'
 
 interface FAQItem {
