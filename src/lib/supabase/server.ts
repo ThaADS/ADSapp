@@ -61,15 +61,9 @@ export function createServiceRoleClient() {
   const url = requireEnvVar('NEXT_PUBLIC_SUPABASE_URL')
   const serviceKey = requireEnvVar('SUPABASE_SERVICE_ROLE_KEY')
 
-  // Debug logging to verify correct credentials
-  console.log('🔑 Creating Service Role Client:', {
-    url,
-    keyPrefix: serviceKey.substring(0, 25) + '...',
-    keyLength: serviceKey.length,
-    isServiceRole:
-      serviceKey.includes('service_role') ||
-      serviceKey.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'),
-  })
+  // 🔒 SECURITY: Service role key logging removed
+  // Previously logged service role key prefix - security risk in production
+  // Service role client creation should be minimal and secure
 
   return createSupabaseClient<Database>(url, serviceKey, {
     auth: {

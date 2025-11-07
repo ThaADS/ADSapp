@@ -14,6 +14,10 @@ import {
 import { MediaStorageService } from '@/lib/media/storage'
 import { rateLimit, createErrorResponse } from '@/lib/api-utils'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import {
+  validateWhatsAppSignature,
+  validateWebhookVerification,
+} from '@/lib/middleware/whatsapp-webhook-validator'
 
 // Define interfaces for better type safety
 interface WhatsAppContact {
@@ -71,12 +75,16 @@ export async function GET(request: NextRequest) {
   const token = searchParams.get('hub.verify_token')
   const challenge = searchParams.get('hub.challenge')
 
-  // Webhook verification
-  if (mode === 'subscribe' && token === process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN) {
-    console.log('WhatsApp webhook verified')
-    return new NextResponse(challenge)
+  // 🔒 SECURITY: Webhook verification with constant-time comparison
+  const expectedToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || ''
+  const verificationChallenge = validateWebhookVerification(mode, token, challenge, expectedToken)
+
+  if (verificationChallenge) {
+    console.log('✅ WhatsApp webhook verified successfully')
+    return new NextResponse(verificationChallenge)
   }
 
+  console.warn('⚠️ WhatsApp webhook verification failed', { mode, tokenProvided: !!token })
   return new NextResponse('Forbidden', { status: 403 })
 }
 
@@ -85,7 +93,25 @@ export async function POST(request: NextRequest) {
     // Apply rate limiting
     await webhookRateLimit(request)
 
-    const body: WhatsAppWebhookPayload = await request.json()
+    // 🔒 SECURITY: Verify webhook signature before processing
+    const signature = request.headers.get('x-hub-signature-256')
+    const appSecret = process.env.WHATSAPP_APP_SECRET || ''
+
+    // Get raw body for signature verification
+    const rawBody = await request.text()
+
+    const validationResult = validateWhatsAppSignature(rawBody, signature, appSecret)
+
+    if (!validationResult.isValid) {
+      console.error('🚨 WhatsApp webhook signature verification failed:', validationResult.error)
+      await logWebhook({ error: validationResult.error, timestamp: Date.now() }, 'whatsapp_signature_failure')
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    }
+
+    console.log('✅ WhatsApp webhook signature verified')
+
+    // Parse body after signature validation
+    const body: WhatsAppWebhookPayload = JSON.parse(rawBody)
 
     // Validate webhook payload
     if (!body.entry || !Array.isArray(body.entry)) {

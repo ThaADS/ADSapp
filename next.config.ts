@@ -3,24 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   eslint: {
-    // Temporarily disable ESLint during builds for Vercel deployment
-    ignoreDuringBuilds: true,
+    // 🔒 SECURITY: Enable ESLint validation in production builds
+    // Ensures code quality and prevents security issues from reaching production
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    // Temporarily disable TypeScript errors for Vercel deployment
-    ignoreBuildErrors: true,
+    // 🔒 SECURITY: Enable TypeScript type checking in production builds
+    // Critical for production - prevents type-related runtime errors
+    ignoreBuildErrors: false,
   },
-  env: {
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_APP_DOMAIN: process.env.NEXT_PUBLIC_APP_DOMAIN,
-    // Ensure all required Stripe environment variables are included
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    STRIPE_STARTER_PRICE_ID: process.env.STRIPE_STARTER_PRICE_ID,
-    STRIPE_PROFESSIONAL_PRICE_ID: process.env.STRIPE_PROFESSIONAL_PRICE_ID,
-    STRIPE_ENTERPRISE_PRICE_ID: process.env.STRIPE_ENTERPRISE_PRICE_ID,
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-  },
+  // 🔒 SECURITY: Removed env block - secrets must NEVER be exposed to client
+  // Server-side code automatically reads from process.env
+  // Only NEXT_PUBLIC_* variables need explicit exposure
 
   // Bundle Analyzer (only when not using Turbopack)
   ...(process.env.TURBOPACK !== '1' && {

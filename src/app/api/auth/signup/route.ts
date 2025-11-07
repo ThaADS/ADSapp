@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/api-utils'
+
+// 🔒 SECURITY: Strict rate limiting for signup to prevent spam and abuse
+// 5 attempts per 15 minutes per IP address
+const signupRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts (stricter than signin)
+  keyGenerator: request => {
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'anonymous'
+    return `signup:${ip}`
+  },
+})
 
 export async function POST(request: NextRequest) {
   try {
+    // 🔒 SECURITY: Apply rate limiting before processing
+    await signupRateLimit(request)
+
     const body = await request.json()
     console.log('Signup request body:', body)
 
