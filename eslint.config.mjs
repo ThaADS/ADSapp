@@ -21,7 +21,7 @@ const eslintConfig = [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-require-imports': 'warn',
-      '@typescript-eslint/ban-types': 'warn',
+      // Note: ban-types rule removed - not available in current @typescript-eslint version
       'react/no-unescaped-entities': 'warn',
       'react-hooks/rules-of-hooks': 'warn',
       'prefer-const': 'warn',

@@ -923,11 +923,10 @@ export default async function Home() {
         <div className='mx-auto max-w-4xl px-4 sm:px-6 lg:px-8'>
           <div className='mb-16 text-center'>
             <h2 className='mb-4 text-3xl font-bold text-gray-900 lg:text-4xl'>
-              Frequently Asked Questions
+              Veelgestelde Vragen
             </h2>
             <p className='text-xl text-gray-600'>
-              Have questions? We have answers. If you can&apos;t find what you&apos;re looking for,
-              contact our support team.
+              Heb je vragen? Bekijk onze uitgebreide FAQ voor antwoorden op alle vragen over ADSapp.
             </p>
           </div>
           <div className='space-y-8'>
@@ -936,13 +935,29 @@ export default async function Home() {
             ))}
           </div>
           <div className='mt-12 text-center'>
-            <p className='mb-4 text-gray-600'>Still have questions?</p>
             <Link
-              href='mailto:support@adsapp.com'
-              className='font-semibold text-green-600 hover:text-green-500'
+              href='/faq'
+              className='inline-flex items-center gap-2 rounded-lg bg-green-600 px-8 py-4 font-semibold text-white transition-colors hover:bg-green-700'
             >
-              Contact our support team
+              <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+                />
+              </svg>
+              Bekijk Alle FAQ&apos;s
             </Link>
+            <p className='mt-4 text-gray-600'>
+              Of{' '}
+              <Link
+                href='mailto:support@adsapp.com'
+                className='font-semibold text-green-600 hover:text-green-500'
+              >
+                contact onze support team
+              </Link>
+            </p>
           </div>
         </div>
       </section>
