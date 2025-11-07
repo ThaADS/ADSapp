@@ -93,15 +93,28 @@ export class WhatsAppTemplateManager {
 
       const response = await fetch(`${this.baseUrl}?${params}`)
       if (!response.ok) {
+        console.error('Templates API returned error:', response.status, response.statusText)
         throw new Error(`Failed to fetch templates: ${response.statusText}`)
       }
 
       const data = await response.json()
-      return data.templates || []
+      console.log('📋 Templates API Response:', data)
+      console.log('📊 Templates count:', data.templates?.length || 0)
+
+      // Handle both direct response and data-wrapped response
+      const templates = data.templates || data.data?.templates || []
+
+      if (templates.length === 0) {
+        console.warn('⚠️ No templates returned from API, using mock data')
+        return this.getMockTemplates(organizationId)
+      }
+
+      return templates
     } catch (error) {
-      console.error('Error fetching templates:', error)
+      console.error('❌ Error fetching templates:', error)
 
       // Return mock templates for development
+      console.log('🔄 Falling back to mock templates')
       return this.getMockTemplates(organizationId)
     }
   }

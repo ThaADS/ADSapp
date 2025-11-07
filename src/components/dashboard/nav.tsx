@@ -153,7 +153,8 @@ export function DashboardNav({ profile }: DashboardNavProps) {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
+                        prefetch={true}
+                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${
                           isActive
                             ? 'bg-emerald-50 text-emerald-700'
                             : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'

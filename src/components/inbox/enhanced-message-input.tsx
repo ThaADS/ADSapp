@@ -98,43 +98,84 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
   if (!isOpen) return null
 
   return (
-    <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
-      <div className='max-h-[80vh] w-full max-w-2xl overflow-hidden rounded-lg bg-white'>
-        <div className='flex items-center justify-between border-b border-gray-200 p-4'>
-          <h3 className='text-lg font-medium text-gray-900'>Select Template</h3>
-          <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
-            <X className='h-5 w-5' />
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'
+      onClick={onClose}
+    >
+      <div
+        className='max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl'
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header with close button */}
+        <div className='flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4'>
+          <div className='flex items-center gap-3'>
+            <div className='rounded-lg bg-blue-100 p-2'>
+              <LayoutTemplate className='h-5 w-5 text-blue-600' />
+            </div>
+            <div>
+              <h3 className='text-lg font-semibold text-gray-900'>Templates</h3>
+              <p className='text-xs text-gray-600'>Kies een template om te gebruiken</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className='rounded-lg bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:text-gray-900 hover:shadow-md'
+            aria-label='Sluiten'
+          >
+            <X className='h-6 w-6' />
           </button>
         </div>
 
-        <div className='flex h-[60vh]'>
+        <div className='flex h-[65vh]'>
           {/* Template List */}
-          <div className='w-1/2 overflow-y-auto border-r border-gray-200'>
+          <div className='w-2/5 overflow-y-auto border-r border-gray-100 bg-gray-50'>
             {loading ? (
-              <div className='p-4 text-center text-gray-500'>Loading templates...</div>
+              <div className='flex items-center justify-center p-8'>
+                <div className='text-center'>
+                  <div className='mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent'></div>
+                  <p className='text-sm text-gray-600'>Templates laden...</p>
+                </div>
+              </div>
             ) : templates.length === 0 ? (
-              <div className='p-4 text-center text-gray-500'>
-                <LayoutTemplate className='mx-auto mb-2 h-8 w-8 text-gray-300' />
-                <p>No approved templates found</p>
+              <div className='flex items-center justify-center p-8 text-gray-500'>
+                <div className='text-center'>
+                  <LayoutTemplate className='mx-auto mb-3 h-12 w-12 text-gray-300' />
+                  <p className='font-medium'>Geen templates gevonden</p>
+                  <p className='mt-1 text-xs text-gray-400'>Maak eerst templates aan</p>
+                </div>
               </div>
             ) : (
-              <div className='divide-y divide-gray-100'>
+              <div className='divide-y divide-gray-200'>
                 {templates.map(template => (
                   <div
                     key={template.id}
                     onClick={() => handleTemplateSelect(template)}
-                    className={`cursor-pointer p-4 hover:bg-gray-50 ${
+                    className={`group cursor-pointer p-4 transition-all ${
                       selectedTemplate?.id === template.id
-                        ? 'border-r-2 border-blue-500 bg-blue-50'
-                        : ''
+                        ? 'border-r-4 border-blue-600 bg-white shadow-sm'
+                        : 'hover:bg-white/80'
                     }`}
                   >
-                    <h4 className='font-medium text-gray-900'>{template.displayName}</h4>
-                    <p className='mt-1 text-sm text-gray-500'>{template.category}</p>
-                    <div className='mt-2'>
-                      <span className='inline-flex items-center rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800'>
-                        {template.status}
-                      </span>
+                    <div className='flex items-start justify-between'>
+                      <div className='flex-1'>
+                        <h4 className='font-semibold text-gray-900 group-hover:text-blue-600'>
+                          {template.displayName}
+                        </h4>
+                        <p className='mt-1 text-xs font-medium uppercase tracking-wide text-gray-500'>
+                          {template.category}
+                        </p>
+                      </div>
+                      {selectedTemplate?.id === template.id && (
+                        <div className='ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600'>
+                          <svg className='h-3 w-3 text-white' fill='currentColor' viewBox='0 0 20 20'>
+                            <path
+                              fillRule='evenodd'
+                              d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                              clipRule='evenodd'
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -143,42 +184,64 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
           </div>
 
           {/* Template Preview */}
-          <div className='w-1/2 overflow-y-auto p-4'>
+          <div className='w-3/5 overflow-y-auto bg-white p-6'>
             {selectedTemplate ? (
-              <div>
-                <h4 className='mb-4 font-medium text-gray-900'>Template Preview</h4>
-
-                {/* Header */}
-                {selectedTemplate.content.header && (
-                  <div className='mb-3 rounded bg-gray-50 p-3'>
-                    <p className='text-sm font-medium text-gray-700'>Header</p>
-                    <p className='text-sm text-gray-600'>{selectedTemplate.content.header.text}</p>
-                  </div>
-                )}
-
-                {/* Body */}
-                <div className='mb-3 rounded bg-gray-50 p-3'>
-                  <p className='text-sm font-medium text-gray-700'>Body</p>
-                  <p className='text-sm text-gray-600'>{selectedTemplate.content.body.text}</p>
+              <div className='space-y-6'>
+                <div className='flex items-center justify-between'>
+                  <h4 className='text-base font-semibold text-gray-900'>Preview</h4>
+                  <span className='rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700'>
+                    Goedgekeurd
+                  </span>
                 </div>
 
-                {/* Footer */}
-                {selectedTemplate.content.footer && (
-                  <div className='mb-3 rounded bg-gray-50 p-3'>
-                    <p className='text-sm font-medium text-gray-700'>Footer</p>
-                    <p className='text-sm text-gray-600'>{selectedTemplate.content.footer.text}</p>
+                {/* WhatsApp-style preview */}
+                <div className='rounded-lg border-2 border-gray-200 bg-gradient-to-br from-green-50 to-teal-50 p-4'>
+                  {/* Header */}
+                  {selectedTemplate.content.header && (
+                    <div className='mb-3 rounded-lg bg-white p-3 shadow-sm'>
+                      <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                        Header
+                      </p>
+                      <p className='mt-1 font-medium text-gray-900'>
+                        {selectedTemplate.content.header.text}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Body */}
+                  <div className='mb-3 rounded-lg bg-white p-3 shadow-sm'>
+                    <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                      Bericht
+                    </p>
+                    <p className='mt-1 whitespace-pre-wrap text-gray-900'>
+                      {selectedTemplate.content.body.text}
+                    </p>
                   </div>
-                )}
+
+                  {/* Footer */}
+                  {selectedTemplate.content.footer && (
+                    <div className='rounded-lg bg-white p-3 shadow-sm'>
+                      <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                        Footer
+                      </p>
+                      <p className='mt-1 text-sm text-gray-600'>
+                        {selectedTemplate.content.footer.text}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Variables */}
                 {selectedTemplate.variables.length > 0 && (
-                  <div className='mb-4'>
-                    <p className='mb-2 text-sm font-medium text-gray-700'>Variables</p>
-                    <div className='space-y-2'>
+                  <div>
+                    <p className='mb-3 text-sm font-semibold text-gray-900'>
+                      Variabelen invullen
+                    </p>
+                    <div className='space-y-3'>
                       {selectedTemplate.variables.map(variable => (
                         <div key={variable.name}>
-                          <label className='block text-xs font-medium text-gray-600'>
-                            {variable.name} {variable.required && '*'}
+                          <label className='block text-sm font-medium text-gray-700'>
+                            {variable.name} {variable.required && <span className='text-red-500'>*</span>}
                           </label>
                           <input
                             type='text'
@@ -187,10 +250,10 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                               setVariables({ ...variables, [variable.name]: e.target.value })
                             }
                             placeholder={variable.example}
-                            className='mt-1 block w-full rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-blue-500'
+                            className='mt-1 block w-full rounded-lg border-gray-300 px-4 py-2.5 text-sm shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
                           />
                           {variable.description && (
-                            <p className='mt-1 text-xs text-gray-500'>{variable.description}</p>
+                            <p className='mt-1.5 text-xs text-gray-500'>{variable.description}</p>
                           )}
                         </div>
                       ))}
@@ -198,18 +261,29 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                   </div>
                 )}
 
-                {/* Send Button */}
-                <button
-                  onClick={handleSendTemplate}
-                  className='w-full rounded-md bg-blue-600 py-2 text-white transition-colors hover:bg-blue-700'
-                >
-                  Send Template
-                </button>
+                {/* Action Buttons */}
+                <div className='flex gap-3 border-t border-gray-100 pt-4'>
+                  <button
+                    onClick={onClose}
+                    className='flex-1 rounded-lg border-2 border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50'
+                  >
+                    Annuleren
+                  </button>
+                  <button
+                    onClick={handleSendTemplate}
+                    className='flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-xl'
+                  >
+                    Template Versturen
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className='mt-8 text-center text-gray-500'>
-                <LayoutTemplate className='mx-auto mb-4 h-12 w-12 text-gray-300' />
-                <p>Select a template to preview</p>
+              <div className='flex h-full items-center justify-center text-gray-400'>
+                <div className='text-center'>
+                  <LayoutTemplate className='mx-auto mb-4 h-16 w-16 text-gray-300' />
+                  <p className='font-medium text-gray-600'>Selecteer een template</p>
+                  <p className='mt-1 text-sm text-gray-500'>Kies links een template om de preview te zien</p>
+                </div>
               </div>
             )}
           </div>
@@ -450,15 +524,16 @@ export default function EnhancedMessageInput({
       )}
 
       {/* Message Input */}
-      <div className='flex items-end space-x-3 p-4'>
+      <div className='flex items-center gap-3 p-4 bg-white border-t-2 border-gray-200'>
         {/* Attachment Button */}
         <div className='relative'>
           <button
             onClick={() => setShowAttachments(!showAttachments)}
-            className='rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+            className='group flex items-center justify-center rounded-lg p-3 text-gray-600 transition-all hover:bg-emerald-50 hover:text-emerald-600 border-2 border-gray-300 hover:border-emerald-400'
             disabled={disabled}
+            title='Bijlagen toevoegen (Afbeeldingen, Documenten, Audio, Video)'
           >
-            <Paperclip className='h-5 w-5' />
+            <Paperclip className='h-6 w-6' />
           </button>
 
           {/* Attachment Menu */}
@@ -500,24 +575,25 @@ export default function EnhancedMessageInput({
         {/* Template Button */}
         <button
           onClick={() => setShowTemplates(true)}
-          className='rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+          className='group flex items-center justify-center rounded-lg p-3 text-gray-600 transition-all hover:bg-emerald-50 hover:text-emerald-600 border-2 border-gray-300 hover:border-emerald-400'
           disabled={disabled}
+          title='Sjablonen (WhatsApp bericht templates)'
         >
-          <LayoutTemplate className='h-5 w-5' />
+          <LayoutTemplate className='h-6 w-6' />
         </button>
 
         {/* AI Drafts Button */}
         <button
           onClick={() => setShowAIDrafts(!showAIDrafts)}
-          className={`rounded-full p-2 transition-colors ${
+          className={`group flex items-center justify-center rounded-lg p-3 transition-all border-2 ${
             showAIDrafts
-              ? 'bg-emerald-100 text-emerald-600'
-              : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+              ? 'bg-emerald-100 text-emerald-600 border-emerald-400'
+              : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 border-gray-300 hover:border-emerald-400'
           }`}
           disabled={disabled}
-          title='AI Draft Suggestions'
+          title='AI Antwoord Suggesties (Automatisch gegenereerde berichten)'
         >
-          <Sparkles className='h-5 w-5' />
+          <Sparkles className='h-6 w-6' />
         </button>
 
         {/* Message Input */}
@@ -539,9 +615,10 @@ export default function EnhancedMessageInput({
         <button
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0)}
-          className='rounded-full bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
+          className='group flex items-center justify-center rounded-lg p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 border-2 border-blue-600 hover:border-blue-700'
+          title='Bericht Versturen'
         >
-          <Send className='h-5 w-5' />
+          <Send className='h-6 w-6' />
         </button>
       </div>
 

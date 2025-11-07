@@ -1,19 +1,21 @@
 // @ts-nocheck - Database types need regeneration from Supabase schema
 // TODO: Run 'npx supabase gen types typescript' to fix type mismatches
 
-import { createClient } from '@/lib/supabase/server'
 import { WhatsAppClient } from './client'
 import crypto from 'crypto'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export class WhatsAppService {
   private whatsapp: WhatsAppClient
+  private supabase: SupabaseClient
 
-  constructor(accessToken: string, phoneNumberId: string) {
+  constructor(accessToken: string, phoneNumberId: string, supabaseClient: SupabaseClient) {
     this.whatsapp = new WhatsAppClient(accessToken, phoneNumberId)
+    this.supabase = supabaseClient
   }
 
-  static async createFromOrganization(organizationId: string) {
-    const supabase = await createClient()
+  static async createFromOrganization(organizationId: string, supabaseClient: SupabaseClient) {
+    const supabase = supabaseClient
 
     const { data: organization } = await supabase
       .from('organizations')
@@ -30,7 +32,7 @@ export class WhatsAppService {
       throw new Error('WhatsApp access token not configured')
     }
 
-    return new WhatsAppService(accessToken, organization.whatsapp_phone_number_id)
+    return new WhatsAppService(accessToken, organization.whatsapp_phone_number_id, supabaseClient)
   }
 
   async sendMessage(
@@ -39,7 +41,7 @@ export class WhatsAppService {
     senderId: string,
     messageType: 'text' | 'template' | 'image' | 'document' = 'text'
   ) {
-    const supabase = await createClient()
+    const supabase = this.supabase
 
     // Get conversation and contact details
     const { data: conversation } = await supabase
@@ -128,7 +130,7 @@ export class WhatsAppService {
   }
 
   async markMessageAsRead(messageId: string) {
-    const supabase = await createClient()
+    const supabase = this.supabase
 
     // Get message details
     const { data: message } = await supabase

@@ -21,8 +21,11 @@ import {
 import EnhancedConversationList from './enhanced-conversation-list'
 import EnhancedMessageList from './enhanced-message-list'
 import EnhancedMessageInput from './enhanced-message-input'
+import ConversationTagSelector from './conversation-tag-selector'
+import BubbleColorPicker from './bubble-color-picker'
 import { WhatsAppService } from '@/lib/whatsapp/service'
 import ConversationSummary from '@/components/ai/conversation-summary'
+import { createClient } from '@/lib/supabase/client'
 
 interface Conversation {
   id: string
@@ -359,8 +362,27 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
   })
   const [isLoading, setIsLoading] = useState(false)
   const [conversationsLoaded, setConversationsLoaded] = useState(false)
+  const [bubbleColors, setBubbleColors] = useState<Record<string, { bubble: string; text: string }>>({})
+  const [whatsappService, setWhatsappService] = useState<WhatsAppService | null>(null)
 
-  const whatsappService = new WhatsAppService('', '')
+  // Initialize WhatsApp service with client Supabase instance
+  useEffect(() => {
+    const initService = async () => {
+      try {
+        const supabase = createClient()
+        const service = await WhatsAppService.createFromOrganization(organizationId, supabase)
+        setWhatsappService(service)
+      } catch (error) {
+        console.error('Failed to initialize WhatsApp service:', error)
+        // WhatsApp service is optional - app can still function for viewing messages
+        setWhatsappService(null)
+      }
+    }
+
+    if (organizationId) {
+      initService()
+    }
+  }, [organizationId])
 
   useEffect(() => {
     loadStats()
@@ -443,7 +465,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
     content: string,
     type: 'text' | 'template' | 'image' | 'document' | 'audio' | 'video'
   ) => {
-    if (!selectedConversation) return
+    if (!selectedConversation || !whatsappService) return
 
     try {
       // WhatsAppService currently only supports text, template, image, document
@@ -493,19 +515,53 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
     })
   }
 
-  const handleAddTag = (tag: string) => {
+  const handleAddTag = async (tagId: string) => {
     if (!selectedConversation) return
-    setSelectedConversation({
-      ...selectedConversation,
-      tags: [...selectedConversation.tags, tag],
-    })
+
+    try {
+      const response = await fetch(`/api/conversations/${selectedConversation.id}/tags`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tagId }),
+      })
+
+      if (response.ok) {
+        setSelectedConversation({
+          ...selectedConversation,
+          tags: [...selectedConversation.tags, tagId],
+        })
+      }
+    } catch (error) {
+      console.error('Error adding tag:', error)
+    }
   }
 
-  const handleRemoveTag = (tag: string) => {
+  const handleRemoveTag = async (tagId: string) => {
     if (!selectedConversation) return
-    setSelectedConversation({
-      ...selectedConversation,
-      tags: selectedConversation.tags.filter(t => t !== tag),
+
+    try {
+      const response = await fetch(`/api/conversations/${selectedConversation.id}/tags/${tagId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setSelectedConversation({
+          ...selectedConversation,
+          tags: selectedConversation.tags.filter(t => t !== tagId),
+        })
+      }
+    } catch (error) {
+      console.error('Error removing tag:', error)
+    }
+  }
+
+  const handleColorChange = async (bubbleColor: string, textColor: string) => {
+    if (!selectedConversation) return
+
+    // Store color preference in local state (can be persisted to backend later)
+    setBubbleColors({
+      ...bubbleColors,
+      [selectedConversation.id]: { bubble: bubbleColor, text: textColor },
     })
   }
 
@@ -604,7 +660,23 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                     </div>
                   </div>
 
-                  <div className='flex items-center space-x-2'>
+                  <div className='flex flex-wrap items-center gap-2'>
+                    {/* Tags Selector */}
+                    <ConversationTagSelector
+                      conversationId={selectedConversation.id}
+                      organizationId={organizationId}
+                      selectedTags={selectedConversation.tags}
+                      onAddTag={handleAddTag}
+                      onRemoveTag={handleRemoveTag}
+                    />
+
+                    {/* Bubble Color Picker */}
+                    <BubbleColorPicker
+                      conversationId={selectedConversation.id}
+                      currentColor={bubbleColors[selectedConversation.id]?.bubble}
+                      onColorChange={handleColorChange}
+                    />
+
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-medium ${
                         selectedConversation.status === 'open'
@@ -647,6 +719,8 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                   currentUserId={currentUserId}
                   onMessageRead={handleMessageRead}
                   loading={isLoading}
+                  contactBubbleColor={bubbleColors[selectedConversation.id]?.bubble || 'bg-white'}
+                  contactTextColor={bubbleColors[selectedConversation.id]?.text || 'text-gray-900'}
                 />
               </div>
 

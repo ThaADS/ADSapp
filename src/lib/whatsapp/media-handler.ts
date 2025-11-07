@@ -1,5 +1,5 @@
 // @ts-nocheck - Type definitions need review
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/client'
 import { WhatsAppClient } from './client'
 
 export interface MediaFile {

@@ -65,6 +65,9 @@ const nextConfig: NextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   // Security headers - Enterprise-grade protection
@@ -143,7 +146,11 @@ const nextConfig: NextConfig = {
   // Enable experimental features
   experimental: {
     // Enable optimized package imports
-    optimizePackageImports: ['@heroicons/react'],
+    optimizePackageImports: ['@heroicons/react', 'lucide-react'],
+    // Speed up server-side code changes
+    serverComponentsHmrCache: true,
+    // Optimize CSS
+    optimizeCss: true,
   },
 
   // Turbopack configuration (moved from experimental.turbo)

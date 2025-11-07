@@ -20,6 +20,10 @@ function PageLoadingSkeleton() {
 // ⚡ PERFORMANCE: Cache layout for 5 minutes to avoid re-renders on tab switches
 export const revalidate = 300
 
+// Dynamic routing optimization
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireOrganization()
 
