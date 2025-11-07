@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 // Remove tag from conversation
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; tagId: string } }
+  { params }: { params: Promise<{ id: string; tagId: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -21,8 +21,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const conversationId = params.id
-    const tagId = params.tagId
+    // Next.js 15: params is now a Promise
+    const { id: conversationId, tagId } = await params
 
     // Get current conversation
     const { data: conversation, error: fetchError } = await supabase

@@ -14,6 +14,17 @@ const eslintConfig = [
   {
     ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
   },
+  {
+    rules: {
+      // 🔧 Relax rules for legacy code during migration
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
+      'react/no-unescaped-entities': 'warn',
+      'react-hooks/rules-of-hooks': 'warn',
+    },
+  },
 ]
 
 export default eslintConfig

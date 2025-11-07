@@ -112,7 +112,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Send message via WhatsApp
-    const whatsappService = await WhatsAppService.createFromOrganization(organizationId)
+    const whatsappService = await WhatsAppService.createFromOrganization(organizationId, supabase)
     const message = await whatsappService.sendMessage(conversationId, content, userId, type)
 
     // Return the created message
@@ -182,7 +182,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Mark message as read via WhatsApp
-    const whatsappService = await WhatsAppService.createFromOrganization(organizationId)
+    const whatsappService = await WhatsAppService.createFromOrganization(organizationId, supabase)
     await whatsappService.markMessageAsRead(messageId)
 
     return NextResponse.json({ success: true })

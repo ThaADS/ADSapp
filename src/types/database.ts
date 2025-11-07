@@ -1259,6 +1259,7 @@ export type Database = {
           priority: 'low' | 'medium' | 'high' | 'urgent'
           subject: string | null
           last_message_at: string | null
+          tags: string[] | null
           created_at: string
           updated_at: string
         }
@@ -1271,6 +1272,7 @@ export type Database = {
           priority?: 'low' | 'medium' | 'high' | 'urgent'
           subject?: string | null
           last_message_at?: string | null
+          tags?: string[] | null
           created_at?: string
           updated_at?: string
         }
@@ -1283,6 +1285,7 @@ export type Database = {
           priority?: 'low' | 'medium' | 'high' | 'urgent'
           subject?: string | null
           last_message_at?: string | null
+          tags?: string[] | null
           created_at?: string
           updated_at?: string
         }

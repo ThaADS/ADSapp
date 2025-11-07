@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 // Add tag to conversation
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -21,7 +21,8 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const conversationId = params.id
+    // Next.js 15: params is now a Promise
+    const { id: conversationId } = await params
     const { tagId } = await request.json()
 
     if (!tagId) {
