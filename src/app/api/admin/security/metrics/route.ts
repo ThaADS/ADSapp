@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate time threshold based on range
     const now = new Date()
-    let threshold = new Date()
+    const threshold = new Date()
     switch (timeRange) {
       case '24h':
         threshold.setHours(now.getHours() - 24)

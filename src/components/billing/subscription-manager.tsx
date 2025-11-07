@@ -53,6 +53,7 @@ import {
   Crown,
   AlertTriangle,
   RefreshCw,
+  BarChart3,
 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 
