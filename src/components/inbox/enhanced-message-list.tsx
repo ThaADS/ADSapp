@@ -397,7 +397,17 @@ export default function EnhancedMessageList({
       )}
 
       {/* Messages */}
-      <div className='flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4' style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h100v100H0z\' fill=\'%23f9fafb\'/%3E%3Cpath d=\'M0 0L50 50M50 0L100 50M0 50L50 100M50 50L100 100\' stroke=\'%23e5e7eb\' stroke-width=\'0.5\' opacity=\'0.1\'/%3E%3C/svg%3E")' }}>
+      <div
+        className='flex-1 space-y-4 overflow-y-auto p-4'
+        style={{
+          background: 'linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%)',
+          backgroundImage: `
+            linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%),
+            url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0zM10 10h10v10H10z' fill='%23f0f0f0' opacity='0.3'/%3E%3C/svg%3E")
+          `,
+          backgroundBlendMode: 'overlay'
+        }}
+      >
         {messageGroups.length === 0 ? (
           <div className='py-8 text-center text-gray-500'>
             <p className='mb-2 text-lg font-medium'>No messages yet</p>
@@ -416,8 +426,8 @@ export default function EnhancedMessageList({
               {/* Messages in this date group */}
               <div className='space-y-1'>
                 {group.messages.map((message, messageIndex) => {
-                  const isFromCurrentUser =
-                    message.sender_type === 'agent' && message.sender_id === currentUserId
+                  // Simplified alignment logic: agent messages RIGHT, contact messages LEFT
+                  const isFromAgent = message.sender_type === 'agent'
                   const isSystem = message.sender_type === 'system'
                   const isContact = message.sender_type === 'contact'
 
@@ -434,11 +444,11 @@ export default function EnhancedMessageList({
                   return (
                     <div
                       key={message.id}
-                      className={`flex ${isFromCurrentUser ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${isFromAgent ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-[75%] ${isFromCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                      <div className={`max-w-[75%] ${isFromAgent ? 'items-end' : 'items-start'} flex flex-col`}>
                         {/* Sender Name (above bubble) */}
-                        {!isFromCurrentUser && (
+                        {!isFromAgent && (
                           <div className='mb-1 px-3'>
                             <span className='text-xs font-medium text-gray-700'>
                               {isContact
@@ -450,13 +460,16 @@ export default function EnhancedMessageList({
 
                         {/* Message Bubble */}
                         <div
-                          className={`rounded-lg shadow-sm ${
-                            isFromCurrentUser
-                              ? `rounded-tr-none ${agentBubbleColor} ${agentTextColor}`
-                              : `rounded-tl-none ${contactBubbleColor} ${contactTextColor}`
+                          className={`rounded-2xl shadow-sm ${
+                            isFromAgent
+                              ? `rounded-tr-sm bg-gradient-to-br from-emerald-50 to-emerald-100 ${agentTextColor}`
+                              : `rounded-tl-sm border border-gray-200 ${contactBubbleColor} ${contactTextColor}`
                           }`}
                           style={{
-                            padding: message.message_type === 'text' ? '10px 14px' : '6px',
+                            padding: message.message_type === 'text' ? '12px 16px' : '8px',
+                            boxShadow: isFromAgent
+                              ? '0 1px 2px rgba(0, 0, 0, 0.05)'
+                              : '0 1px 2px rgba(0, 0, 0, 0.06)',
                           }}
                         >
                           <MediaMessage message={message} onDownload={handleMediaDownload} />
@@ -465,13 +478,13 @@ export default function EnhancedMessageList({
                         {/* Message Status and Time */}
                         <div
                           className={`mt-1 flex items-center space-x-1 px-1 ${
-                            isFromCurrentUser ? 'justify-end' : 'justify-start'
+                            isFromAgent ? 'justify-end' : 'justify-start'
                           }`}
                         >
                           <span className='text-xs text-gray-500'>
                             {formatTime(message.created_at)}
                           </span>
-                          {isFromCurrentUser && getDeliveryStatus(message)}
+                          {isFromAgent && getDeliveryStatus(message)}
                         </div>
                       </div>
                     </div>

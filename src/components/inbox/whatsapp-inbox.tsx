@@ -362,7 +362,10 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
   })
   const [isLoading, setIsLoading] = useState(false)
   const [conversationsLoaded, setConversationsLoaded] = useState(false)
-  const [bubbleColors, setBubbleColors] = useState<Record<string, { bubble: string; text: string }>>({})
+  const [globalBubbleColor, setGlobalBubbleColor] = useState<{ bubble: string; text: string }>({
+    bubble: 'bg-white',
+    text: 'text-gray-900',
+  })
   const [whatsappService, setWhatsappService] = useState<WhatsAppService | null>(null)
 
   // Initialize WhatsApp service with client Supabase instance
@@ -383,6 +386,36 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
       initService()
     }
   }, [organizationId])
+
+  // Load global bubble color preference from user profile
+  useEffect(() => {
+    const loadBubbleColor = async () => {
+      try {
+        const supabase = createClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('bubble_color_preference, bubble_text_color_preference')
+          .eq('id', user.id)
+          .single()
+
+        if (profile?.bubble_color_preference) {
+          setGlobalBubbleColor({
+            bubble: profile.bubble_color_preference,
+            text: profile.bubble_text_color_preference || 'text-gray-900',
+          })
+        }
+      } catch (error) {
+        console.error('Error loading bubble color preference:', error)
+      }
+    }
+
+    loadBubbleColor()
+  }, [])
 
   useEffect(() => {
     loadStats()
@@ -556,13 +589,29 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
   }
 
   const handleColorChange = async (bubbleColor: string, textColor: string) => {
-    if (!selectedConversation) return
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
 
-    // Store color preference in local state (can be persisted to backend later)
-    setBubbleColors({
-      ...bubbleColors,
-      [selectedConversation.id]: { bubble: bubbleColor, text: textColor },
-    })
+      // Update global bubble color in user profile (applies to ALL conversations)
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          bubble_color_preference: bubbleColor,
+          bubble_text_color_preference: textColor,
+        })
+        .eq('id', user.id)
+
+      if (error) throw error
+
+      // Update local state immediately for instant UI feedback
+      setGlobalBubbleColor({ bubble: bubbleColor, text: textColor })
+    } catch (error) {
+      console.error('Error saving bubble color preference:', error)
+    }
   }
 
   return (
@@ -673,7 +722,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                     {/* Bubble Color Picker */}
                     <BubbleColorPicker
                       conversationId={selectedConversation.id}
-                      currentColor={bubbleColors[selectedConversation.id]?.bubble}
+                      currentColor={globalBubbleColor.bubble}
                       onColorChange={handleColorChange}
                     />
 
@@ -719,8 +768,8 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                   currentUserId={currentUserId}
                   onMessageRead={handleMessageRead}
                   loading={isLoading}
-                  contactBubbleColor={bubbleColors[selectedConversation.id]?.bubble || 'bg-white'}
-                  contactTextColor={bubbleColors[selectedConversation.id]?.text || 'text-gray-900'}
+                  contactBubbleColor={globalBubbleColor.bubble}
+                  contactTextColor={globalBubbleColor.text}
                 />
               </div>
 

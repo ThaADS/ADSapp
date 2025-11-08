@@ -1,4 +1,8 @@
+'use client'
+
+import { useState } from 'react'
 import type { ConversationWithDetails } from '@/types'
+import ConversationTagSelector from './conversation-tag-selector'
 
 // Simple time formatter
 function formatDateTime(date: Date) {
@@ -13,6 +17,39 @@ interface ConversationDetailsProps {
 
 export function ConversationDetails({ conversation, profile, onClose }: ConversationDetailsProps) {
   const contact = conversation.contact
+  const [conversationTags, setConversationTags] = useState<string[]>(
+    conversation.tags || []
+  )
+
+  const handleAddTag = async (tagId: string) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversation.id}/tags`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tagId }),
+      })
+
+      if (!response.ok) throw new Error('Failed to add tag')
+
+      setConversationTags([...conversationTags, tagId])
+    } catch (error) {
+      console.error('Error adding tag:', error)
+    }
+  }
+
+  const handleRemoveTag = async (tagId: string) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversation.id}/tags/${tagId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) throw new Error('Failed to remove tag')
+
+      setConversationTags(conversationTags.filter(id => id !== tagId))
+    } catch (error) {
+      console.error('Error removing tag:', error)
+    }
+  }
 
   return (
     <div className='flex h-full flex-col bg-white'>
@@ -102,34 +139,13 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
         <div>
           <h5 className='mb-2 text-sm font-medium text-gray-900'>Tags</h5>
           <div className='flex flex-wrap gap-2'>
-            {contact.tags && contact.tags.length > 0 ? (
-              contact.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800'
-                >
-                  {tag}
-                  <button
-                    type='button'
-                    className='ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500'
-                  >
-                    <svg className='h-2 w-2' stroke='currentColor' fill='none' viewBox='0 0 8 8'>
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={1.5}
-                        d='m1 1 6 6m0-6-6 6'
-                      />
-                    </svg>
-                  </button>
-                </span>
-              ))
-            ) : (
-              <p className='text-sm text-gray-500'>No tags</p>
-            )}
-            <button className='inline-flex items-center rounded-full border border-dashed border-gray-300 px-2.5 py-0.5 text-xs font-medium text-gray-600 hover:border-gray-400'>
-              + Add tag
-            </button>
+            <ConversationTagSelector
+              conversationId={conversation.id}
+              organizationId={conversation.organization_id}
+              selectedTags={conversationTags}
+              onAddTag={handleAddTag}
+              onRemoveTag={handleRemoveTag}
+            />
           </div>
         </div>
 

@@ -500,16 +500,19 @@ export default function EnhancedConversationList({
             </p>
           </div>
         ) : (
-          <div className='divide-y divide-gray-100'>
+          <div className='flex flex-col gap-2 p-2'>
             {conversations.map(conversation => (
               <div
                 key={conversation.id}
                 onClick={() => onConversationSelect(conversation)}
-                className={`cursor-pointer p-4 transition-colors hover:bg-gray-50 ${
-                  selectedConversationId === conversation.id
-                    ? 'border-r-2 border-blue-500 bg-blue-50'
-                    : ''
-                }`}
+                className={`
+                  cursor-pointer rounded-lg border-2 p-3 transition-all
+                  ${
+                    selectedConversationId === conversation.id
+                      ? 'border-blue-500 bg-blue-50 shadow-sm'
+                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                  }
+                `}
               >
                 <div className='flex items-start space-x-3'>
                   {/* Contact Avatar */}
