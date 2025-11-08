@@ -272,10 +272,10 @@ export default function EnhancedMessageList({
   onLoadMore,
   hasMore,
   loading,
-  agentBubbleColor = 'bg-emerald-500',
+  agentBubbleColor = 'bg-emerald-600',
   contactBubbleColor = 'bg-white',
   agentTextColor = 'text-white',
-  contactTextColor = 'text-gray-900',
+  contactTextColor = 'text-gray-800',
 }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const mediaHandler = new WhatsAppMediaHandler('', '') // Would be initialized with proper tokens
@@ -462,14 +462,14 @@ export default function EnhancedMessageList({
                         <div
                           className={`rounded-2xl shadow-sm ${
                             isFromAgent
-                              ? `rounded-tr-sm bg-gradient-to-br from-emerald-50 to-emerald-100 ${agentTextColor}`
+                              ? `rounded-tr-sm ${agentBubbleColor} ${agentTextColor}`
                               : `rounded-tl-sm border border-gray-200 ${contactBubbleColor} ${contactTextColor}`
                           }`}
                           style={{
                             padding: message.message_type === 'text' ? '12px 16px' : '8px',
                             boxShadow: isFromAgent
-                              ? '0 1px 2px rgba(0, 0, 0, 0.05)'
-                              : '0 1px 2px rgba(0, 0, 0, 0.06)',
+                              ? '0 2px 4px rgba(0, 0, 0, 0.1)'
+                              : '0 1px 3px rgba(0, 0, 0, 0.08)',
                           }}
                         >
                           <MediaMessage message={message} onDownload={handleMediaDownload} />

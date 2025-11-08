@@ -540,35 +540,64 @@ export default function EnhancedConversationList({
 
                   {/* Conversation Details */}
                   <div className='min-w-0 flex-1'>
-                    <div className='mb-1 flex items-center justify-between'>
-                      <div className='flex items-center space-x-2'>
-                        <h3
-                          className={`truncate text-sm font-medium text-gray-900 ${
-                            conversation.unread_count > 0 ? 'font-semibold' : ''
-                          }`}
+                    {/* Name and Status Row */}
+                    <div className='mb-1 flex items-center space-x-2'>
+                      <h3
+                        className={`truncate text-sm font-medium text-gray-900 ${
+                          conversation.unread_count > 0 ? 'font-semibold' : ''
+                        }`}
+                      >
+                        {conversation.contact.name || conversation.contact.phone_number}
+                      </h3>
+                      {getStatusIcon(conversation.status)}
+                      {conversation.priority !== 'medium' && (
+                        <span
+                          className={`flex-shrink-0 rounded border px-1.5 py-0.5 text-xs font-medium ${getPriorityColor(conversation.priority)}`}
                         >
-                          {conversation.contact.name || conversation.contact.phone_number}
-                        </h3>
-                        {getStatusIcon(conversation.status)}
-                        {conversation.priority !== 'medium' && (
-                          <span
-                            className={`rounded border px-1.5 py-0.5 text-xs font-medium ${getPriorityColor(conversation.priority)}`}
-                          >
-                            {conversation.priority}
-                          </span>
-                        )}
-                      </div>
-                      <span className='flex-shrink-0 text-xs text-gray-500'>
+                          {conversation.priority}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Date Below Name */}
+                    <div className='mb-2'>
+                      <span className='text-xs text-gray-500'>
                         {formatTime(conversation.last_message_at)}
                       </span>
                     </div>
 
+                    {/* Tags Row */}
+                    {conversation.tags && conversation.tags.length > 0 && (
+                      <div className='mb-2 flex flex-wrap gap-1'>
+                        {conversation.tags.slice(0, 3).map((tag, index) => (
+                          <span
+                            key={tag}
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                              index === 0 ? 'bg-blue-100 text-blue-800' :
+                              index === 1 ? 'bg-purple-100 text-purple-800' :
+                              'bg-pink-100 text-pink-800'
+                            }`}
+                          >
+                            <Tag className='mr-1 h-3 w-3' />
+                            {tag}
+                          </span>
+                        ))}
+                        {conversation.tags.length > 3 && (
+                          <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600'>
+                            +{conversation.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Last Message */}
                     {conversation.last_message && (
-                      <div className='mb-2 flex items-center space-x-1'>
-                        {getMessageTypeIcon(conversation.last_message.message_type)}
+                      <div className='mb-2 flex items-start space-x-1'>
+                        <div className='flex-shrink-0 mt-0.5'>
+                          {getMessageTypeIcon(conversation.last_message.message_type)}
+                        </div>
                         <p
-                          className={`truncate text-sm text-gray-600 ${
+                          className={`line-clamp-2 text-sm text-gray-600 ${
                             conversation.unread_count > 0 ? 'font-medium text-gray-800' : ''
                           }`}
                         >
@@ -576,53 +605,29 @@ export default function EnhancedConversationList({
                             <span className='mr-1 text-blue-600'>You:</span>
                           )}
                           {conversation.last_message.message_type === 'text'
-                            ? truncateMessage(conversation.last_message.content)
+                            ? conversation.last_message.content
                             : `[${conversation.last_message.message_type}]`}
                         </p>
                       </div>
                     )}
 
-                    {/* Tags and Assignment */}
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center space-x-2'>
-                        {conversation.tags && conversation.tags.length > 0 && (
-                          <div className='flex space-x-1'>
-                            {conversation.tags.slice(0, 2).map(tag => (
-                              <span
-                                key={tag}
-                                className='inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800'
-                              >
-                                <Tag className='mr-1 h-3 w-3' />
-                                {tag}
-                              </span>
-                            ))}
-                            {conversation.tags.length > 2 && (
-                              <span className='text-xs text-gray-500'>
-                                +{conversation.tags.length - 2}
-                              </span>
-                            )}
-                          </div>
+                    {/* Assigned Agent */}
+                    {conversation.assigned_agent && (
+                      <div className='flex items-center space-x-1'>
+                        {conversation.assigned_agent.avatar_url ? (
+                          <img
+                            src={conversation.assigned_agent.avatar_url}
+                            alt={conversation.assigned_agent.full_name}
+                            className='h-4 w-4 rounded-full'
+                          />
+                        ) : (
+                          <User className='h-4 w-4 text-gray-400' />
                         )}
+                        <span className='truncate text-xs text-gray-500'>
+                          {conversation.assigned_agent.full_name}
+                        </span>
                       </div>
-
-                      {/* Assigned Agent */}
-                      {conversation.assigned_agent && (
-                        <div className='flex items-center space-x-1'>
-                          {conversation.assigned_agent.avatar_url ? (
-                            <img
-                              src={conversation.assigned_agent.avatar_url}
-                              alt={conversation.assigned_agent.full_name}
-                              className='h-4 w-4 rounded-full'
-                            />
-                          ) : (
-                            <User className='h-4 w-4 text-gray-400' />
-                          )}
-                          <span className='truncate text-xs text-gray-500'>
-                            {conversation.assigned_agent.full_name}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
 
                   {/* More Options */}
