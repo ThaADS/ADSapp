@@ -9,21 +9,21 @@
 -- ============================================================================
 
 -- Conversations: Inbox view queries (filter by org + status, sort by last message)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversations_inbox_view
+CREATE INDEX IF NOT EXISTS idx_conversations_inbox_view
   ON conversations(organization_id, status, last_message_at DESC NULLS LAST)
   WHERE status IN ('open', 'pending');
 
 -- Conversations: Agent assignment view
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversations_agent_status
+CREATE INDEX IF NOT EXISTS idx_conversations_agent_status
   ON conversations(organization_id, assigned_to, status, last_message_at DESC NULLS LAST);
 
 -- Conversations: Unassigned conversations (for auto-assignment)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversations_unassigned
+CREATE INDEX IF NOT EXISTS idx_conversations_unassigned
   ON conversations(organization_id, created_at DESC)
   WHERE assigned_to IS NULL AND status IN ('open', 'pending');
 
 -- Conversations: Priority queue
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversations_priority_queue
+CREATE INDEX IF NOT EXISTS idx_conversations_priority_queue
   ON conversations(organization_id, priority DESC, created_at DESC)
   WHERE status IN ('open', 'pending');
 
@@ -32,21 +32,21 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversations_priority_queue
 -- ============================================================================
 
 -- Messages: Conversation history (most common query)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_conversation_history
+CREATE INDEX IF NOT EXISTS idx_messages_conversation_history
   ON messages(conversation_id, created_at DESC);
 
 -- Messages: Unread messages count
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_unread
+CREATE INDEX IF NOT EXISTS idx_messages_unread
   ON messages(conversation_id, sender_type)
   WHERE is_read = false AND sender_type = 'contact';
 
 -- Messages: WhatsApp message lookup (for webhook processing)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_whatsapp_id
+CREATE INDEX IF NOT EXISTS idx_messages_whatsapp_id
   ON messages(whatsapp_message_id)
   WHERE whatsapp_message_id IS NOT NULL;
 
 -- Messages: Delivery tracking
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_delivery_tracking
+CREATE INDEX IF NOT EXISTS idx_messages_delivery_tracking
   ON messages(conversation_id, delivered_at, read_at)
   WHERE sender_type = 'agent';
 
@@ -55,21 +55,21 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_delivery_tracking
 -- ============================================================================
 
 -- Contacts: Active contacts list
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contacts_active_list
+CREATE INDEX IF NOT EXISTS idx_contacts_active_list
   ON contacts(organization_id, last_message_at DESC NULLS LAST)
   WHERE is_blocked = false;
 
 -- Contacts: Tag filtering (GIN index for array containment)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contacts_tags_gin
+CREATE INDEX IF NOT EXISTS idx_contacts_tags_gin
   ON contacts USING GIN(tags)
   WHERE tags IS NOT NULL AND tags <> '{}';
 
 -- Contacts: Phone number lookup (for WhatsApp integration)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contacts_phone_lookup
+CREATE INDEX IF NOT EXISTS idx_contacts_phone_lookup
   ON contacts(phone_number, organization_id);
 
 -- Contacts: Blocked contacts
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contacts_blocked
+CREATE INDEX IF NOT EXISTS idx_contacts_blocked
   ON contacts(organization_id, is_blocked, created_at DESC);
 
 -- ============================================================================
@@ -77,12 +77,12 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contacts_blocked
 -- ============================================================================
 
 -- Templates: Active templates by category
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_templates_active_category
+CREATE INDEX IF NOT EXISTS idx_templates_active_category
   ON message_templates(organization_id, category, name)
   WHERE is_active = true;
 
 -- Templates: Search by name (for autocomplete)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_templates_name_search
+CREATE INDEX IF NOT EXISTS idx_templates_name_search
   ON message_templates(organization_id, name text_pattern_ops)
   WHERE is_active = true;
 
@@ -91,7 +91,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_templates_name_search
 -- ============================================================================
 
 -- Automation: Active rules by trigger type
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_automation_active_trigger
+CREATE INDEX IF NOT EXISTS idx_automation_active_trigger
   ON automation_rules(organization_id, trigger_type, created_at DESC)
   WHERE is_active = true;
 
@@ -100,11 +100,11 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_automation_active_trigger
 -- ============================================================================
 
 -- Conversation metrics: Date range queries
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversation_metrics_date_range
+CREATE INDEX IF NOT EXISTS idx_conversation_metrics_date_range
   ON conversation_metrics(organization_id, date DESC, agent_id);
 
 -- Conversation metrics: Agent performance
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversation_metrics_agent
+CREATE INDEX IF NOT EXISTS idx_conversation_metrics_agent
   ON conversation_metrics(agent_id, date DESC)
   WHERE agent_id IS NOT NULL;
 
@@ -113,12 +113,12 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_conversation_metrics_agent
 -- ============================================================================
 
 -- Webhook logs: Recent errors (for debugging)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_webhook_logs_errors
+CREATE INDEX IF NOT EXISTS idx_webhook_logs_errors
   ON webhook_logs(organization_id, created_at DESC)
   WHERE error_message IS NOT NULL;
 
 -- Webhook logs: Unprocessed webhooks
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_webhook_logs_unprocessed
+CREATE INDEX IF NOT EXISTS idx_webhook_logs_unprocessed
   ON webhook_logs(created_at DESC)
   WHERE processed_at IS NULL;
 
@@ -127,12 +127,12 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_webhook_logs_unprocessed
 -- ============================================================================
 
 -- Profiles: Active agents by organization
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_profiles_active_agents
+CREATE INDEX IF NOT EXISTS idx_profiles_active_agents
   ON profiles(organization_id, role, last_seen_at DESC NULLS LAST)
   WHERE is_active = true;
 
 -- Profiles: Email lookup (for authentication)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_profiles_email_lookup
+CREATE INDEX IF NOT EXISTS idx_profiles_email_lookup
   ON profiles(email)
   WHERE is_active = true;
 
@@ -141,12 +141,12 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_profiles_email_lookup
 -- ============================================================================
 
 -- Organizations: Active subscriptions
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_organizations_active_subs
+CREATE INDEX IF NOT EXISTS idx_organizations_active_subs
   ON organizations(subscription_status, subscription_tier)
   WHERE subscription_status IN ('trial', 'active');
 
 -- Organizations: Trial expiration tracking
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_organizations_trial_expiry
+CREATE INDEX IF NOT EXISTS idx_organizations_trial_expiry
   ON organizations(trial_ends_at)
   WHERE subscription_status = 'trial';
 
@@ -155,26 +155,26 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_organizations_trial_expiry
 -- ============================================================================
 
 -- Bulk message jobs: Scheduled jobs queue
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_bulk_jobs_scheduled_queue
+CREATE INDEX IF NOT EXISTS idx_bulk_jobs_scheduled_queue
   ON bulk_message_jobs(scheduled_at)
   WHERE status = 'pending' AND scheduled_at <= NOW() + INTERVAL '5 minutes';
 
 -- Bulk message jobs: Failed jobs retry
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_bulk_jobs_failed_retry
+CREATE INDEX IF NOT EXISTS idx_bulk_jobs_failed_retry
   ON bulk_message_jobs(campaign_id, status, retry_count)
   WHERE status = 'failed' AND retry_count < max_retries;
 
 -- Contact lists: Organization lists
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contact_lists_org
+CREATE INDEX IF NOT EXISTS idx_contact_lists_org
   ON contact_lists(organization_id, created_at DESC);
 
 -- Drip enrollments: Due messages queue
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_drip_enrollments_due
+CREATE INDEX IF NOT EXISTS idx_drip_enrollments_due
   ON drip_enrollments(next_message_at)
   WHERE status = 'active' AND next_message_at <= NOW() + INTERVAL '5 minutes';
 
 -- Drip message logs: Retry queue
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_drip_message_logs_retry
+CREATE INDEX IF NOT EXISTS idx_drip_message_logs_retry
   ON drip_message_logs(scheduled_at, status)
   WHERE status IN ('pending', 'failed') AND retry_count < 3;
 
