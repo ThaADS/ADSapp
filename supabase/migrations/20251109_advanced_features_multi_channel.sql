@@ -612,11 +612,9 @@ DECLARE
   avg_response_time INTERVAL;
   days_since_last_engagement INTEGER;
 BEGIN
-  -- Get conversation metrics
-  SELECT COUNT(*), AVG(
-    EXTRACT(EPOCH FROM (first_agent_response_at - created_at)) / 60
-  )
-  INTO conversation_count, avg_response_time
+  -- Get conversation metrics (count only, response time calculation removed due to missing column)
+  SELECT COUNT(*)
+  INTO conversation_count
   FROM conversations
   WHERE contact_id = contact_id_param;
 
