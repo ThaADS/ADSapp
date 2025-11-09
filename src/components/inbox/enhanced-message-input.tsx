@@ -524,49 +524,48 @@ export default function EnhancedMessageInput({
       )}
 
       {/* Message Input */}
-      <div className='flex items-center gap-3 p-4 bg-white border-t-2 border-gray-200'>
+      <div className='flex items-center gap-2 p-4 bg-white border-t-2 border-gray-200'>
         {/* Attachment Button */}
         <div className='relative'>
           <button
             onClick={() => setShowAttachments(!showAttachments)}
-            className='group flex items-center justify-center rounded-lg p-3 text-gray-600 transition-all hover:bg-emerald-50 hover:text-emerald-600 border-2 border-gray-300 hover:border-emerald-400'
+            className='flex items-center justify-center rounded-full p-2 text-gray-600 transition-all hover:bg-gray-100'
             disabled={disabled}
-            title='Bijlagen toevoegen (Afbeeldingen, Documenten, Audio, Video)'
+            title='Bijlage toevoegen'
           >
-            <Paperclip className='h-6 w-6' />
+            <Paperclip className='h-5 w-5' />
           </button>
 
-          {/* Attachment Menu */}
+          {/* Attachment Menu - WhatsApp/Telegram Style */}
           {showAttachments && (
-            <div className='absolute bottom-full left-0 z-10 mb-2 rounded-lg border border-gray-200 bg-white py-2 shadow-lg'>
+            <div className='absolute bottom-full left-0 z-10 mb-2 flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-2xl border border-gray-200'>
               <button
                 onClick={() => handleFileSelect('image')}
-                className='flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                className='flex items-center justify-center rounded-full p-3 bg-purple-500 text-white transition-all hover:bg-purple-600 shadow-md'
+                title='Afbeelding'
               >
-                {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <Image className='h-4 w-4 text-blue-500' />
-                <span>Image</span>
+                <Image className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('document')}
-                className='flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                className='flex items-center justify-center rounded-full p-3 bg-blue-500 text-white transition-all hover:bg-blue-600 shadow-md'
+                title='Document'
               >
-                <FileText className='h-4 w-4 text-gray-500' />
-                <span>Document</span>
+                <FileText className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('audio')}
-                className='flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                className='flex items-center justify-center rounded-full p-3 bg-orange-500 text-white transition-all hover:bg-orange-600 shadow-md'
+                title='Audio'
               >
-                <Mic className='h-4 w-4 text-green-500' />
-                <span>Audio</span>
+                <Mic className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('video')}
-                className='flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                className='flex items-center justify-center rounded-full p-3 bg-red-500 text-white transition-all hover:bg-red-600 shadow-md'
+                title='Video'
               >
-                <Video className='h-4 w-4 text-purple-500' />
-                <span>Video</span>
+                <Video className='h-5 w-5' />
               </button>
             </div>
           )}
@@ -575,25 +574,25 @@ export default function EnhancedMessageInput({
         {/* Template Button */}
         <button
           onClick={() => setShowTemplates(true)}
-          className='group flex items-center justify-center rounded-lg p-3 text-gray-600 transition-all hover:bg-emerald-50 hover:text-emerald-600 border-2 border-gray-300 hover:border-emerald-400'
+          className='flex items-center justify-center rounded-full p-2 text-gray-600 transition-all hover:bg-gray-100'
           disabled={disabled}
-          title='Sjablonen (WhatsApp bericht templates)'
+          title='Sjablonen'
         >
-          <LayoutTemplate className='h-6 w-6' />
+          <LayoutTemplate className='h-5 w-5' />
         </button>
 
         {/* AI Drafts Button */}
         <button
           onClick={() => setShowAIDrafts(!showAIDrafts)}
-          className={`group flex items-center justify-center rounded-lg p-3 transition-all border-2 ${
+          className={`flex items-center justify-center rounded-full p-2 transition-all ${
             showAIDrafts
-              ? 'bg-emerald-100 text-emerald-600 border-emerald-400'
-              : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 border-gray-300 hover:border-emerald-400'
+              ? 'bg-emerald-100 text-emerald-600'
+              : 'text-gray-600 hover:bg-gray-100'
           }`}
           disabled={disabled}
-          title='AI Antwoord Suggesties (Automatisch gegenereerde berichten)'
+          title='AI Suggesties'
         >
-          <Sparkles className='h-6 w-6' />
+          <Sparkles className='h-5 w-5' />
         </button>
 
         {/* Message Input */}
@@ -606,19 +605,19 @@ export default function EnhancedMessageInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className='max-h-32 w-full resize-none rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-            style={{ minHeight: '40px' }}
+            className='max-h-32 w-full resize-none rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+            style={{ minHeight: '42px' }}
           />
         </div>
 
-        {/* Send Button */}
+        {/* Send Button - Telegram Style Round */}
         <button
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0)}
-          className='group flex items-center justify-center rounded-lg p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 border-2 border-blue-600 hover:border-blue-700'
-          title='Bericht Versturen'
+          className='flex items-center justify-center rounded-full p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md'
+          title='Versturen'
         >
-          <Send className='h-6 w-6' />
+          <Send className='h-5 w-5' />
         </button>
       </div>
 

@@ -120,57 +120,110 @@ const navigation = [
   { name: 'Help', href: '/dashboard/help', icon: HelpIcon },
 ]
 
+const CloseIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M6 18L18 6M6 6l12 12'
+    />
+  </svg>
+)
+
 interface DashboardNavProps {
   profile: any // TODO: Type this properly
+  isOpen?: boolean
+  onClose?: () => void
 }
 
-export function DashboardNav({ profile }: DashboardNavProps) {
+export function DashboardNav({ profile, isOpen = false, onClose }: DashboardNavProps) {
   const pathname = usePathname()
 
-  return (
-    <div className='hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col'>
-      <div className='flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4'>
-        <div className='flex h-16 shrink-0 items-center'>
-          <div className='text-xl font-bold text-emerald-600'>ADSapp</div>
-        </div>
-
-        <div className='text-sm'>
-          <div className='font-semibold text-gray-900'>{profile.organization?.name}</div>
-          <div className='text-gray-500'>{profile.full_name}</div>
-          <div className='text-xs text-gray-400'>{profile.role}</div>
-        </div>
-
-        <nav className='flex flex-1 flex-col'>
-          <ul role='list' className='flex flex-1 flex-col gap-y-7'>
-            <li>
-              <ul role='list' className='-mx-2 space-y-1'>
-                {navigation.map(item => {
-                  const isActive =
-                    pathname === item.href ||
-                    (item.href !== '/dashboard' && pathname.startsWith(item.href))
-
-                  return (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        prefetch={true}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${
-                          isActive
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
-                        } `}
-                      >
-                        <item.icon />
-                        {item.name}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </li>
-          </ul>
-        </nav>
+  // Shared sidebar content component
+  const SidebarContent = () => (
+    <div className='flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4'>
+      <div className='flex h-16 shrink-0 items-center justify-between'>
+        <div className='text-xl font-bold text-emerald-600'>ADSapp</div>
+        {/* Close button only visible on mobile */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className='lg:hidden rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500'
+            aria-label='Sluit menu'
+          >
+            <CloseIcon />
+          </button>
+        )}
       </div>
+
+      <div className='text-sm'>
+        <div className='font-semibold text-gray-900'>{profile.organization?.name}</div>
+        <div className='text-gray-500'>{profile.full_name}</div>
+        <div className='text-xs text-gray-400'>{profile.role}</div>
+      </div>
+
+      <nav className='flex flex-1 flex-col'>
+        <ul role='list' className='flex flex-1 flex-col gap-y-7'>
+          <li>
+            <ul role='list' className='-mx-2 space-y-1'>
+              {navigation.map(item => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/dashboard' && pathname.startsWith(item.href))
+
+                return (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      prefetch={true}
+                      onClick={onClose}
+                      className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${
+                        isActive
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
+                      } `}
+                    >
+                      <item.icon />
+                      {item.name}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </li>
+        </ul>
+      </nav>
     </div>
+  )
+
+  return (
+    <>
+      {/* Desktop Sidebar - Always visible on large screens */}
+      <div className='hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col'>
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Sidebar - Slides in from left */}
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className='fixed inset-0 z-40 bg-black/50 lg:hidden transition-opacity duration-300'
+            onClick={onClose}
+            aria-hidden='true'
+          />
+
+          {/* Sidebar */}
+          <div
+            className={`fixed inset-y-0 left-0 z-50 w-64 lg:hidden transition-transform duration-300 ease-in-out ${
+              isOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <SidebarContent />
+          </div>
+        </>
+      )}
+    </>
   )
 }

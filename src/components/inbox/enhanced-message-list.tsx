@@ -272,10 +272,10 @@ export default function EnhancedMessageList({
   onLoadMore,
   hasMore,
   loading,
-  agentBubbleColor = 'bg-emerald-600',
+  agentBubbleColor = 'bg-emerald-700',
   contactBubbleColor = 'bg-white',
   agentTextColor = 'text-white',
-  contactTextColor = 'text-gray-800',
+  contactTextColor = 'text-gray-900',
 }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const mediaHandler = new WhatsAppMediaHandler('', '') // Would be initialized with proper tokens
