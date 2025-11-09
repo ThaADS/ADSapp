@@ -220,22 +220,22 @@ LIMIT 50;
 CREATE OR REPLACE VIEW performance_table_sizes AS
 SELECT
   schemaname,
-  tablename,
-  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS total_size,
-  pg_size_pretty(pg_relation_size(schemaname||'.'||tablename)) AS table_size,
-  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename) - pg_relation_size(schemaname||'.'||tablename)) AS index_size,
+  relname AS tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||relname)) AS total_size,
+  pg_size_pretty(pg_relation_size(schemaname||'.'||relname)) AS table_size,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||relname) - pg_relation_size(schemaname||'.'||relname)) AS index_size,
   n_live_tup AS row_count,
   n_dead_tup AS dead_rows
 FROM pg_stat_user_tables
 WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+ORDER BY pg_total_relation_size(schemaname||'.'||relname) DESC;
 
 -- Create view for index usage
 CREATE OR REPLACE VIEW performance_index_usage AS
 SELECT
   schemaname,
-  tablename,
-  indexname,
+  relname AS tablename,
+  indexrelname AS indexname,
   idx_scan AS index_scans,
   idx_tup_read AS tuples_read,
   idx_tup_fetch AS tuples_fetched,
