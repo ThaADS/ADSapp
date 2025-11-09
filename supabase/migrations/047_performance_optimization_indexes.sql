@@ -157,7 +157,7 @@ CREATE INDEX IF NOT EXISTS idx_organizations_trial_expiry
 -- Bulk message jobs: Scheduled jobs queue
 CREATE INDEX IF NOT EXISTS idx_bulk_jobs_scheduled_queue
   ON bulk_message_jobs(scheduled_at)
-  WHERE status = 'pending' AND scheduled_at <= NOW() + INTERVAL '5 minutes';
+  WHERE status = 'pending';
 
 -- Bulk message jobs: Failed jobs retry
 CREATE INDEX IF NOT EXISTS idx_bulk_jobs_failed_retry
@@ -171,7 +171,7 @@ CREATE INDEX IF NOT EXISTS idx_contact_lists_org
 -- Drip enrollments: Due messages queue
 CREATE INDEX IF NOT EXISTS idx_drip_enrollments_due
   ON drip_enrollments(next_message_at)
-  WHERE status = 'active' AND next_message_at <= NOW() + INTERVAL '5 minutes';
+  WHERE status = 'active';
 
 -- Drip message logs: Retry queue
 CREATE INDEX IF NOT EXISTS idx_drip_message_logs_retry
