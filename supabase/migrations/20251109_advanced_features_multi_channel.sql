@@ -564,7 +564,7 @@ CREATE INDEX IF NOT EXISTS idx_messages_search
 
 -- Trigram indexes for fuzzy search
 CREATE INDEX IF NOT EXISTS idx_contacts_name_trgm ON contacts USING gin(name gin_trgm_ops);
-CREATE INDEX IF NOT EXISTS idx_contacts_phone_trgm ON contacts USING gin(phone gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_contacts_phone_trgm ON contacts USING gin(phone_number gin_trgm_ops);
 
 -- ============================================================================
 -- FUNCTIONS & TRIGGERS
