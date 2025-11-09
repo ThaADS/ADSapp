@@ -916,9 +916,49 @@ npm run test:e2e
 # E2E with UI
 npm run test:e2e:ui
 
+# CI mode (all tests with coverage)
+npm run test:ci
+
 # Specific test file
 npm run test -- tests/unit/lib/drip-campaigns.test.ts
 ```
+
+---
+
+## Test Coverage Status (Phase 1)
+
+### Initial Test Suite Coverage
+
+**Unit Tests Written:**
+- ✅ CSV Parser (`tests/unit/lib/utils/csv-parser.test.ts`) - 100+ test cases
+- ✅ Drip Campaign Engine (`tests/unit/lib/whatsapp/drip-campaigns.test.ts`) - 40+ test cases
+- 🎯 Campaign creation, enrollment, scheduling logic
+- 🎯 Edge cases, error handling, delay calculations
+
+**E2E Tests Written:**
+- ✅ Authentication Flow (`tests/e2e/auth.spec.ts`) - Login, signup, logout, password reset
+- ✅ Drip Campaigns (`tests/e2e/drip-campaigns.spec.ts`) - Campaign CRUD, activation, management
+- ✅ Broadcast Campaigns (`tests/e2e/broadcast-campaigns.spec.ts`) - Broadcast creation, scheduling, analytics
+
+**Infrastructure:**
+- ✅ Jest configuration with Next.js support
+- ✅ Playwright E2E testing setup
+- ✅ Supabase mocks and test helpers
+- ✅ GitHub Actions CI/CD pipeline
+- ✅ Coverage reporting with Codecov
+
+**Current Coverage:**
+- Target: 30%+ (Phase 1 completion)
+- Long-term goal: 80%
+- Critical paths prioritized: CSV parsing, drip campaigns, authentication
+
+### Next Testing Priorities (Phase 2)
+
+1. **API Route Tests**: `/api/drip-campaigns/*`, `/api/contacts/*`
+2. **Component Tests**: Campaign builders, dashboard UI
+3. **Integration Tests**: Multi-tenant workflows, billing flows
+4. **Additional Unit Tests**: WhatsApp client, template manager, billing logic
+5. **Performance Tests**: Load testing for message scheduling
 
 ---
 
@@ -926,3 +966,8 @@ Voor meer informatie, zie de officiële documentatie:
 - Jest: https://jestjs.io/docs/getting-started
 - Testing Library: https://testing-library.com/docs/react-testing-library/intro/
 - Playwright: https://playwright.dev/docs/intro
+
+---
+
+**Last Updated**: 2025-11-09
+**Phase**: 1.0.0 - Testing Infrastructure Complete
