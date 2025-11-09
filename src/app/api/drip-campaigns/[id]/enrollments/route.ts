@@ -11,8 +11,9 @@ import { NextRequest, NextResponse } from 'next/server'
  * GET /api/drip-campaigns/[id]/enrollments
  * Get all enrollments for a campaign
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     // Get enrollments
     const engine = new DripCampaignEngine(supabase)
-    const result = await engine.getEnrollments(params.id, {
+    const result = await engine.getEnrollments(id, {
       status: status as any,
       limit,
       offset,
@@ -56,8 +57,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * POST /api/drip-campaigns/[id]/enrollments
  * Enroll contact(s) in a campaign
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -86,11 +88,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     if (body.contactIds.length === 1) {
       // Single enrollment
-      const enrollment = await engine.enrollContact(params.id, body.contactIds[0], user.id)
+      const enrollment = await engine.enrollContact(id, body.contactIds[0], user.id)
       return NextResponse.json(enrollment, { status: 201 })
     } else {
       // Bulk enrollment
-      const result = await engine.enrollContacts(params.id, body.contactIds, user.id)
+      const result = await engine.enrollContacts(id, body.contactIds, user.id)
       return NextResponse.json(result, { status: 201 })
     }
   } catch (error) {

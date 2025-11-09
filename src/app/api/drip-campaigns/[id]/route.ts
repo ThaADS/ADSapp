@@ -11,8 +11,9 @@ import { NextRequest, NextResponse } from 'next/server'
  * GET /api/drip-campaigns/[id]
  * Get a specific drip campaign with all steps
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     // Get campaign (RLS will ensure user can only access their org's campaigns)
     const engine = new DripCampaignEngine(supabase)
-    const campaign = await engine.getCampaign(params.id)
+    const campaign = await engine.getCampaign(id)
 
     return NextResponse.json(campaign)
   } catch (error) {
@@ -46,8 +47,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * PATCH /api/drip-campaigns/[id]
  * Update a drip campaign
  */
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -88,7 +90,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         settings: body.settings,
         updated_at: new Date(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -113,8 +115,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
  * DELETE /api/drip-campaigns/[id]
  * Delete (archive) a drip campaign
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -150,7 +153,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         is_active: false,
         updated_at: new Date(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       throw new Error(`Failed to archive campaign: ${error.message}`)

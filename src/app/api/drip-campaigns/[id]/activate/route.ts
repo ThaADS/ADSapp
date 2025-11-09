@@ -7,8 +7,9 @@ import { createClient } from '@/lib/supabase/server'
 import { DripCampaignEngine } from '@/lib/whatsapp/drip-campaigns'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     // Activate campaign
     const engine = new DripCampaignEngine(supabase)
-    const campaign = await engine.activateCampaign(params.id)
+    const campaign = await engine.activateCampaign(id)
 
     return NextResponse.json(campaign)
   } catch (error) {

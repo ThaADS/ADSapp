@@ -11,8 +11,9 @@ import { NextRequest, NextResponse } from 'next/server'
  * POST /api/drip-campaigns/[id]/steps
  * Add a new step to the campaign
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
 
     // Verify authentication
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     // Create step
     const engine = new DripCampaignEngine(supabase)
-    const step = await engine.addStep(params.id, {
+    const step = await engine.addStep(id, {
       stepOrder: body.stepOrder,
       name: body.name,
       delayType: body.delayType,
