@@ -27,6 +27,12 @@ import { TriggerNode } from './nodes/trigger-node';
 import { MessageNode } from './nodes/message-node';
 import { DelayNode } from './nodes/delay-node';
 import { ConditionNode } from './nodes/condition-node';
+import { ActionNode } from './nodes/action-node';
+import { WaitUntilNode } from './nodes/wait-until-node';
+import { SplitNode } from './nodes/split-node';
+import { WebhookNode } from './nodes/webhook-node';
+import { AINode } from './nodes/ai-node';
+import { GoalNode } from './nodes/goal-node';
 
 // ============================================================================
 // NODE TYPE MAPPING
@@ -37,7 +43,12 @@ const nodeTypes = {
   message: MessageNode,
   delay: DelayNode,
   condition: ConditionNode,
-  action: MessageNode, // Reuse MessageNode for now, will create ActionNode later
+  action: ActionNode,
+  wait_until: WaitUntilNode,
+  split: SplitNode,
+  webhook: WebhookNode,
+  ai: AINode,
+  goal: GoalNode,
 };
 
 // ============================================================================
@@ -202,6 +213,16 @@ function WorkflowCanvasInner() {
                 return '#8b5cf6'; // violet
               case 'action':
                 return '#ec4899'; // pink
+              case 'wait_until':
+                return '#06b6d4'; // cyan
+              case 'split':
+                return '#6366f1'; // indigo
+              case 'webhook':
+                return '#14b8a6'; // teal
+              case 'ai':
+                return '#a855f7'; // purple
+              case 'goal':
+                return '#10b981'; // emerald
               default:
                 return '#64748b'; // slate
             }

@@ -6,6 +6,7 @@ import '@/styles/accessibility.css'
 import { DemoProvider } from '@/contexts/demo-context'
 import { AccessibilityProvider } from '@/components/accessibility/accessibility-provider'
 import { ToastProvider } from '@/components/ui/toast'
+import { WebVitals } from '@/components/performance/web-vitals'
 
 // const geistSans = Geist({
 //   variable: '--font-geist-sans',
@@ -40,6 +41,7 @@ export default function RootLayout({
         className="antialiased"
         suppressHydrationWarning
       >
+        <WebVitals />
         <ToastProvider>
           <AccessibilityProvider>
             <DemoProvider>{children}</DemoProvider>

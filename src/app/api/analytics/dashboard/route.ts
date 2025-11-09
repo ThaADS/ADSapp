@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   requireAuthenticatedUser,
   getUserOrganization,
@@ -8,6 +8,14 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database'
+import {
+  generateApiCacheKey,
+  getCachedApiResponse,
+  cacheApiResponse,
+  CacheConfigs,
+  getCacheHeaders,
+  addCacheHitHeader,
+} from '@/lib/cache/api-cache'
 
 type TypedSupabaseClient = SupabaseClient<Database>
 
@@ -77,6 +85,17 @@ export async function GET(request: NextRequest) {
     const timeframe = searchParams.get('timeframe') || '7d'
     // const timezone = searchParams.get('timezone') || 'UTC' // TODO: Implement timezone support
 
+    // 🚀 PERFORMANCE: Generate cache key from request parameters
+    const cacheKey = generateApiCacheKey(profile.organization_id!, 'analytics-dashboard', request)
+
+    // 🚀 PERFORMANCE: Try to get from cache (10 min TTL - analytics data can be slightly stale)
+    const cached = await getCachedApiResponse<any>(cacheKey, CacheConfigs.analytics)
+    if (cached) {
+      const headers = new Headers(getCacheHeaders(CacheConfigs.analytics.ttl))
+      addCacheHitHeader(headers, true, cached.cacheAge)
+      return NextResponse.json(cached.data, { headers })
+    }
+
     const supabase = await createClient()
 
     // Calculate date range
@@ -139,7 +158,7 @@ export async function GET(request: NextRequest) {
       endDate
     )
 
-    return createSuccessResponse({
+    const responseData = {
       timeframe,
       dateRange: {
         start: startDate.toISOString(),
@@ -151,7 +170,15 @@ export async function GET(request: NextRequest) {
       responseTimes,
       topAgents,
       contactSources,
-    })
+    }
+
+    // 🚀 PERFORMANCE: Cache the response (10 min TTL)
+    await cacheApiResponse(cacheKey, responseData, CacheConfigs.analytics)
+
+    const headers = new Headers(getCacheHeaders(CacheConfigs.analytics.ttl))
+    addCacheHitHeader(headers, false)
+
+    return NextResponse.json(responseData, { headers })
   } catch (error) {
     console.error('Analytics dashboard error:', error)
     return createErrorResponse(error)

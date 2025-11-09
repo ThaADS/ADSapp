@@ -211,6 +211,56 @@ const createDefaultNodeData = (type: WorkflowNodeType): WorkflowNodeData => {
           actionType: 'add_tag',
         },
       };
+    case 'wait_until':
+      return {
+        ...baseData,
+        label: 'Wait Until',
+        waitUntilConfig: {
+          eventType: 'tag_applied',
+          timeoutEnabled: false,
+        },
+      };
+    case 'split':
+      return {
+        ...baseData,
+        label: 'A/B Split',
+        splitConfig: {
+          splitType: 'percentage',
+          branches: [
+            { id: 'branch_a', label: 'Branch A', percentage: 50 },
+            { id: 'branch_b', label: 'Branch B', percentage: 50 },
+          ],
+        },
+      };
+    case 'webhook':
+      return {
+        ...baseData,
+        label: 'Webhook',
+        webhookConfig: {
+          url: '',
+          method: 'POST',
+          authType: 'none',
+        },
+      };
+    case 'ai':
+      return {
+        ...baseData,
+        label: 'AI Action',
+        aiConfig: {
+          action: 'sentiment_analysis',
+          model: 'gpt-3.5-turbo',
+        },
+      };
+    case 'goal':
+      return {
+        ...baseData,
+        label: 'Goal',
+        goalConfig: {
+          goalType: 'conversion',
+          goalName: '',
+          trackInAnalytics: true,
+        },
+      };
     default:
       return baseData as any;
   }

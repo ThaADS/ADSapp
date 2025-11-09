@@ -19,7 +19,12 @@ export type WorkflowNodeType =
   | 'message'      // Send WhatsApp message
   | 'delay'        // Wait/delay before next action
   | 'condition'    // Conditional branching (if/else logic)
-  | 'action';      // Other actions (add tag, update field, etc.)
+  | 'action'       // Other actions (add tag, update field, etc.)
+  | 'wait_until'   // Wait until specific event or condition
+  | 'split'        // A/B testing split
+  | 'webhook'      // Call external webhook
+  | 'ai'           // AI-powered actions (sentiment, categorize)
+  | 'goal';        // Track conversion goals
 
 /**
  * Trigger event types for campaign start
@@ -184,6 +189,145 @@ export interface ActionNodeData extends BaseNodeData {
 }
 
 /**
+ * Wait Until node configuration
+ * Pauses workflow until a specific event or condition is met
+ */
+export interface WaitUntilNodeData extends BaseNodeData {
+  waitUntilConfig: {
+    eventType: 'tag_applied' | 'field_changed' | 'message_received' | 'specific_date' | 'webhook_received';
+
+    // For tag_applied event
+    tagId?: string;
+
+    // For field_changed event
+    fieldName?: string;
+    expectedValue?: string;
+
+    // For specific_date event
+    date?: string;
+    time?: string;
+
+    // For webhook_received event
+    webhookUrl?: string;
+
+    // Timeout configuration
+    timeoutEnabled?: boolean;
+    timeoutAmount?: number;
+    timeoutUnit?: DelayUnit;
+  };
+}
+
+/**
+ * Split node configuration (A/B testing)
+ * Randomly splits contacts into different paths
+ */
+export interface SplitNodeData extends BaseNodeData {
+  splitConfig: {
+    splitType: 'random' | 'field_based' | 'percentage';
+
+    // For random split
+    branches: Array<{
+      id: string;
+      label: string;
+      percentage: number;
+    }>;
+
+    // For field-based split
+    fieldName?: string;
+    fieldValues?: Record<string, string>; // field value -> branch id
+  };
+}
+
+/**
+ * Webhook node configuration
+ * Calls external webhook APIs
+ */
+export interface WebhookNodeData extends BaseNodeData {
+  webhookConfig: {
+    url: string;
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    headers?: Record<string, string>;
+    body?: string;
+
+    // Authentication
+    authType?: 'none' | 'bearer' | 'basic' | 'api_key';
+    authToken?: string;
+    authUsername?: string;
+    authPassword?: string;
+    authApiKey?: string;
+    authApiKeyHeader?: string;
+
+    // Response handling
+    saveResponse?: boolean;
+    responseField?: string; // Where to save response data
+
+    // Retry settings
+    retryOnFailure?: boolean;
+    maxRetries?: number;
+  };
+}
+
+/**
+ * AI node configuration
+ * AI-powered actions and analysis
+ */
+export interface AINodeData extends BaseNodeData {
+  aiConfig: {
+    action: 'sentiment_analysis' | 'categorize' | 'extract_info' | 'generate_response' | 'translate';
+
+    // For sentiment analysis
+    sentimentField?: string; // Where to save sentiment result
+
+    // For categorization
+    categories?: string[];
+    categoryField?: string;
+
+    // For information extraction
+    extractionPrompt?: string;
+    extractionFields?: string[];
+
+    // For response generation
+    responsePrompt?: string;
+    responseContext?: string;
+
+    // For translation
+    sourceLanguage?: string;
+    targetLanguage?: string;
+
+    // Model settings
+    model?: 'gpt-3.5-turbo' | 'gpt-4' | 'claude-3-sonnet';
+    temperature?: number;
+    maxTokens?: number;
+  };
+}
+
+/**
+ * Goal node configuration
+ * Tracks conversion goals and success metrics
+ */
+export interface GoalNodeData extends BaseNodeData {
+  goalConfig: {
+    goalType: 'conversion' | 'engagement' | 'revenue' | 'custom';
+
+    // Goal identification
+    goalName: string;
+    goalDescription?: string;
+
+    // For revenue goals
+    revenueAmount?: number;
+    currency?: string;
+
+    // For custom goals
+    customMetrics?: Record<string, number | string>;
+
+    // Tracking
+    trackInAnalytics?: boolean;
+    notifyOnCompletion?: boolean;
+    notificationEmail?: string;
+  };
+}
+
+/**
  * Union type for all node data types
  */
 export type WorkflowNodeData =
@@ -191,7 +335,12 @@ export type WorkflowNodeData =
   | MessageNodeData
   | DelayNodeData
   | ConditionNodeData
-  | ActionNodeData;
+  | ActionNodeData
+  | WaitUntilNodeData
+  | SplitNodeData
+  | WebhookNodeData
+  | AINodeData
+  | GoalNodeData;
 
 // ============================================================================
 // WORKFLOW NODE & EDGE
@@ -424,4 +573,24 @@ export const isConditionNode = (node: WorkflowNode): node is WorkflowNode & { da
 
 export const isActionNode = (node: WorkflowNode): node is WorkflowNode & { data: ActionNodeData } => {
   return node.type === 'action';
+};
+
+export const isWaitUntilNode = (node: WorkflowNode): node is WorkflowNode & { data: WaitUntilNodeData } => {
+  return node.type === 'wait_until';
+};
+
+export const isSplitNode = (node: WorkflowNode): node is WorkflowNode & { data: SplitNodeData } => {
+  return node.type === 'split';
+};
+
+export const isWebhookNode = (node: WorkflowNode): node is WorkflowNode & { data: WebhookNodeData } => {
+  return node.type === 'webhook';
+};
+
+export const isAINode = (node: WorkflowNode): node is WorkflowNode & { data: AINodeData } => {
+  return node.type === 'ai';
+};
+
+export const isGoalNode = (node: WorkflowNode): node is WorkflowNode & { data: GoalNodeData } => {
+  return node.type === 'goal';
 };

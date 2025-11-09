@@ -140,12 +140,36 @@ const nextConfig: NextConfig = {
 
   // Enable experimental features
   experimental: {
-    // Enable optimized package imports
-    optimizePackageImports: ['@heroicons/react', 'lucide-react'],
+    // 🚀 PERFORMANCE: Enable optimized package imports (tree-shaking)
+    optimizePackageImports: [
+      '@heroicons/react',
+      'lucide-react',
+      'recharts',
+      'reactflow',
+      '@supabase/supabase-js',
+      '@stripe/stripe-js',
+      'date-fns',
+    ],
     // Speed up server-side code changes
     serverComponentsHmrCache: true,
     // Optimize CSS
     optimizeCss: true,
+  },
+
+  // 🚀 PERFORMANCE: Modular imports for tree-shaking
+  modularizeImports: {
+    '@heroicons/react/24/outline': {
+      transform: '@heroicons/react/24/outline/{{member}}',
+    },
+    '@heroicons/react/24/solid': {
+      transform: '@heroicons/react/24/solid/{{member}}',
+    },
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+    },
+    'lodash': {
+      transform: 'lodash/{{member}}',
+    },
   },
 
   // Turbopack configuration (moved from experimental.turbo)
