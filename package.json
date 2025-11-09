@@ -69,6 +69,7 @@
     "@types/dagre": "^0.7.53",
     "@types/qrcode": "^1.5.5",
     "@upstash/redis": "^1.35.5",
+    "@xyflow/react": "^12.9.2",
     "bcryptjs": "^3.0.2",
     "bullmq": "^5.61.0",
     "dagre": "^0.8.5",
@@ -92,7 +93,8 @@
     "uuid": "^9.0.1",
     "xml-crypto": "^6.1.2",
     "xml2js": "^0.6.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
