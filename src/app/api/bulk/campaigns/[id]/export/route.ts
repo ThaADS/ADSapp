@@ -13,11 +13,12 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuthenticatedUser()
     const profile = await getUserOrganization(user.id)
+    const { id } = await params
 
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'csv'
@@ -35,7 +36,7 @@ export async function GET(
     const { data: campaign, error: campaignError } = await supabase
       .from('bulk_campaigns')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single()
 
@@ -50,7 +51,7 @@ export async function GET(
     const { data: jobs, error: jobsError } = await supabase
       .from('bulk_message_jobs')
       .select('*, contact:contacts(phone, first_name, last_name, email)')
-      .eq('campaign_id', params.id)
+      .eq('campaign_id', id)
       .order('created_at', { ascending: false })
 
     if (jobsError) {

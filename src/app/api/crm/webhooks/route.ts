@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       case 'salesforce':
         // Salesforce Platform Events
         organizationId = await getOrganizationFromSalesforcePayload(payload)
-        contactId = await processS alesforceWebhook(payload, organizationId)
+        contactId = await processSalesforceWebhook(payload, organizationId)
         break
 
       case 'hubspot':
