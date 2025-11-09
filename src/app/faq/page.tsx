@@ -174,6 +174,46 @@ const faqData: FAQItem[] = [
       'Ja! Configureer business hours in Settings > Organization. Stel auto-replies in voor buiten kantooruren en weekend. Gesprekken worden automatisch geparkeerd tot de volgende werkdag.',
     tags: ['business-hours', 'scheduling', 'availability'],
   },
+  {
+    id: 'auto-6',
+    category: 'Automatisering',
+    question: 'Wat zijn Drip Campaigns?',
+    answer:
+      'Drip Campaigns zijn geautomatiseerde berichtreeksen die in een bepaalde volgorde worden verstuurd. Ideaal voor onboarding, nurturing, en opvolging. Configureer stappen met tijdsintervallen (minuten, uren, dagen) en personaliseer berichten per contact.',
+    tags: ['drip-campaigns', 'automation', 'sequences', 'nurturing'],
+  },
+  {
+    id: 'auto-7',
+    category: 'Automatisering',
+    question: 'Hoe maak ik een Drip Campaign aan?',
+    answer:
+      'Ga naar Dashboard > Drip Campaigns > Nieuwe Campaign. Kies een trigger (tag toegevoegd, nieuw contact, handmatig, scheduled, of API), voeg stappen toe met berichten en delays, en activeer de campaign. Contacten worden automatisch ingeschreven wanneer de trigger voorkomt.',
+    tags: ['drip-campaigns', 'setup', 'triggers', 'workflow'],
+  },
+  {
+    id: 'auto-8',
+    category: 'Automatisering',
+    question: 'Wat zijn Broadcast Campaigns?',
+    answer:
+      'Broadcast Campaigns zijn bulk berichten naar grote groepen contacten tegelijk. Perfect voor announcements, promoties, en nieuwsbrieven. Selecteer je doelgroep (alle contacten, specifieke tags, CSV upload, of custom selectie), stel een schema in, en verstuur.',
+    tags: ['broadcast', 'bulk-messaging', 'campaigns', 'announcements'],
+  },
+  {
+    id: 'auto-9',
+    category: 'Automatisering',
+    question: 'Hoe target ik de juiste contacten voor een Broadcast?',
+    answer:
+      'ADSapp biedt 4 targeting opties: 1) Alle contacten (gefilterd op blocked status), 2) Tags (selecteer meerdere tags), 3) Custom selectie (kies specifieke contacten), 4) CSV upload (importeer een lijst). Je ziet altijd het aantal targets voordat je verstuurt.',
+    tags: ['broadcast', 'targeting', 'segmentation', 'audience'],
+  },
+  {
+    id: 'auto-10',
+    category: 'Automatisering',
+    question: 'Kan ik campaign resultaten exporteren?',
+    answer:
+      'Ja! Exporteer campaign data naar CSV of PDF. Zie statistieken zoals verzonden, afgeleverd, gelezen, en failed berichten per contact. Gebruik deze data voor analyse en rapportage. Export via Dashboard > Campaigns > [Campaign] > Export.',
+    tags: ['export', 'analytics', 'reporting', 'campaigns'],
+  },
 
   // Contacten Management
   {
@@ -189,8 +229,8 @@ const faqData: FAQItem[] = [
     category: 'Contacten',
     question: 'Kan ik contacten importeren?',
     answer:
-      'Ja! Upload een CSV bestand met kolommen: phone_number, name, email, company. Wij valideren automatisch de telefoonnummers en voorkomen duplicaten.',
-    tags: ['import', 'csv', 'bulk'],
+      'Ja! Upload een CSV/Excel bestand met kolommen: phone, firstName, lastName, email, tags. Wij valideren automatisch telefoonnummers naar E.164 formaat, detecteren duplicaten, en rapporteren errors per rij. Custom fields worden ook ondersteund. Download een template via Dashboard > Contacts > Import.',
+    tags: ['import', 'csv', 'excel', 'bulk'],
   },
   {
     id: 'contact-3',
@@ -207,6 +247,14 @@ const faqData: FAQItem[] = [
     answer:
       'Voeg eigen velden toe zoals "Order Number", "Subscription Type", of "Lead Score". Configureer in Settings > Contact Fields en gebruik ze voor filtering en personalisatie.',
     tags: ['custom-fields', 'personalization', 'data'],
+  },
+  {
+    id: 'contact-5',
+    category: 'Contacten',
+    question: 'Kan ik contacten exporteren?',
+    answer:
+      'Ja! Exporteer contacten naar CSV, Excel, of JSON. Filter op tags, segments (actief/inactief/nieuw/VIP), of datum ranges. Kies welke velden je wilt exporteren. Voor kleine exports (< 100 contacten) direct downloaden, grotere exports worden asynchroon verwerkt.',
+    tags: ['export', 'csv', 'excel', 'json', 'bulk'],
   },
 
   // Analytics & Rapportage
