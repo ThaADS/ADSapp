@@ -558,11 +558,7 @@ CREATE POLICY "Admins can manage all agent skills"
 -- ADVANCED SEARCH INDEXES
 -- ============================================================================
 
--- Full-text search on conversations
-CREATE INDEX IF NOT EXISTS idx_conversations_search
-  ON conversations USING gin(to_tsvector('english', COALESCE(last_message_preview, '')));
-
--- Full-text search on messages
+-- Full-text search on messages (conversations search removed - column doesn't exist)
 CREATE INDEX IF NOT EXISTS idx_messages_search
   ON messages USING gin(to_tsvector('english', COALESCE(content, '')));
 
