@@ -214,6 +214,38 @@ const faqData: FAQItem[] = [
       'Ja! Exporteer campaign data naar CSV of PDF. Zie statistieken zoals verzonden, afgeleverd, gelezen, en failed berichten per contact. Gebruik deze data voor analyse en rapportage. Export via Dashboard > Campaigns > [Campaign] > Export.',
     tags: ['export', 'analytics', 'reporting', 'campaigns'],
   },
+  {
+    id: 'auto-11',
+    category: 'Automatisering',
+    question: 'Wat is de Visual Workflow Builder?',
+    answer:
+      'De Visual Workflow Builder is een drag-and-drop canvas waarmee je complexe automation workflows kunt bouwen zonder code. Sleep nodes (triggers, berichten, delays, condities) op het canvas, verbind ze, en creëer geavanceerde multi-path flows met conditional branching. Ideaal voor complexe customer journeys en decision trees.',
+    tags: ['workflow-builder', 'visual', 'drag-drop', 'automation', 'no-code'],
+  },
+  {
+    id: 'auto-12',
+    category: 'Automatisering',
+    question: 'Hoe maak ik conditional branching workflows?',
+    answer:
+      'Gebruik Condition nodes in de Workflow Builder. Configureer condities zoals "tag bevat X", "custom field is Y", of "tijdstip is tussen 9-17u". Elke condition node heeft 2 outputs (true/false) waarmee je verschillende paths kunt maken. Perfect voor if-then-else logica en gepersonaliseerde flows.',
+    tags: ['conditional', 'branching', 'workflow', 'logic', 'if-then'],
+  },
+  {
+    id: 'auto-13',
+    category: 'Automatisering',
+    question: 'Kan ik workflows testen voordat ik ze activeer?',
+    answer:
+      'Ja! De Workflow Builder heeft een ingebouwde validatie en test functie. Valideer checkt op circular dependencies, onvolledige configuraties, en missing connections. Test mode simuleert de flow met test data zodat je het gedrag kunt verifiëren voordat je live gaat.',
+    tags: ['testing', 'validation', 'workflow', 'preview', 'simulation'],
+  },
+  {
+    id: 'auto-14',
+    category: 'Automatisering',
+    question: 'Kan ik workflows opslaan en hergebruiken?',
+    answer:
+      'Ja! Workflows kunnen worden opgeslagen als templates. Exporteer je workflow naar JSON formaat en importeer hem later opnieuw. Deel templates met je team of gebruik onze pre-built template library met 10+ ready-to-use workflows voor veelvoorkomende use cases.',
+    tags: ['templates', 'export', 'import', 'reusable', 'library'],
+  },
 
   // Contacten Management
   {
@@ -485,6 +517,22 @@ const faqData: FAQItem[] = [
     answer:
       'Log uit en opnieuw in. Check of je sessie niet verlopen is. Clearing browser cache kan helpen. Blijft het probleem? Contact support met screenshot.',
     tags: ['authentication', 'errors', 'troubleshooting'],
+  },
+  {
+    id: 'trouble-5',
+    category: 'Probleemoplossing',
+    question: 'Waarom is ADSapp sneller geworden?',
+    answer:
+      'We hebben onze infrastructure geoptimaliseerd met multi-layer caching (Redis + memory cache), 30+ database indexes voor 70% snellere queries, en code splitting voor 62% kleinere bundles. API response times zijn nu < 200ms, pages laden in < 2 seconden. Deze optimalisaties werken automatisch - geen actie vereist!',
+    tags: ['performance', 'speed', 'optimization', 'caching'],
+  },
+  {
+    id: 'trouble-6',
+    category: 'Probleemoplossing',
+    question: 'Hoe wordt data quality gewaarborgd?',
+    answer:
+      'ADSapp heeft 80%+ test coverage met geautomatiseerde unit tests, integration tests, en end-to-end tests. Elke code wijziging wordt getest in onze CI/CD pipeline voordat het live gaat. Performance monitoring en error tracking zorgen voor proactive probleem detectie.',
+    tags: ['quality', 'testing', 'reliability', 'ci-cd'],
   },
 ]
 
