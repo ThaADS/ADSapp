@@ -72,19 +72,19 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   ]
 
   return (
-    <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4'>
+    <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4'>
       {statItems.map(item => (
-        <div key={item.name} className='overflow-hidden rounded-lg bg-white shadow-sm'>
-          <div className='p-5'>
+        <div key={item.name} className='overflow-hidden rounded-lg bg-white shadow-sm border border-gray-200 hover:shadow-md transition-shadow'>
+          <div className='p-4 sm:p-5'>
             <div className='flex items-center'>
               <div className='flex-shrink-0'>
-                <div className={`rounded-md p-3 ${item.color}`}>{item.icon}</div>
+                <div className={`rounded-lg p-2.5 sm:p-3 ${item.color}`}>{item.icon}</div>
               </div>
-              <div className='ml-5 w-0 flex-1'>
+              <div className='ml-4 sm:ml-5 w-0 flex-1'>
                 <dl>
-                  <dt className='truncate text-sm font-medium text-gray-500'>{item.name}</dt>
+                  <dt className='truncate text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide'>{item.name}</dt>
                   <dd>
-                    <div className='text-lg font-medium text-gray-900'>
+                    <div className='text-xl sm:text-2xl font-bold text-gray-900 mt-1'>
                       {item.value.toLocaleString()}
                     </div>
                   </dd>

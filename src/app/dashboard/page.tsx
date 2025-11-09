@@ -38,13 +38,13 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className='space-y-8'>
+    <div className='space-y-6 sm:space-y-8'>
       {/* Page header */}
       <div>
-        <h1 className='text-2xl leading-7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight'>
+        <h1 className='text-xl leading-7 font-bold text-gray-900 sm:text-2xl sm:truncate lg:text-3xl sm:tracking-tight'>
           Dashboard
         </h1>
-        <p className='mt-2 text-sm text-gray-500'>
+        <p className='mt-1 sm:mt-2 text-sm sm:text-base text-gray-600'>
           Welcome back, {profile.full_name}. Here's what's happening with your WhatsApp inbox.
         </p>
       </div>

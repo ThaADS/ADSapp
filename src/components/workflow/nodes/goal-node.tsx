@@ -7,18 +7,20 @@
  * Used to measure campaign effectiveness.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Target, Settings2, DollarSign, TrendingUp, CheckCircle, BarChart } from 'lucide-react';
 import type { CustomNodeProps, GoalNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { GoalConfigModal } from '../config-modals';
 
 // ============================================================================
 // GOAL NODE COMPONENT
 // ============================================================================
 
 export const GoalNode = memo(({ id, data, selected }: CustomNodeProps<GoalNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get goal type display name
@@ -154,7 +156,7 @@ export const GoalNode = memo(({ id, data, selected }: CustomNodeProps<GoalNodeDa
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -284,6 +286,16 @@ export const GoalNode = memo(({ id, data, selected }: CustomNodeProps<GoalNodeDa
       {selected && (
         <div className={`absolute -inset-0.5 border-2 ${colors.selectedBorder} rounded-xl pointer-events-none`} />
       )}
+
+      {/* Configuration Modal */}
+      <GoalConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

@@ -7,18 +7,20 @@
  * Triggers can be events like contact added, tag applied, webhook, etc.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Zap, Settings2 } from 'lucide-react';
 import type { CustomNodeProps, TriggerNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { TriggerConfigModal } from '../config-modals';
 
 // ============================================================================
 // TRIGGER NODE COMPONENT
 // ============================================================================
 
 export const TriggerNode = memo(({ id, data, selected }: CustomNodeProps<TriggerNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get trigger type display name
@@ -82,7 +84,7 @@ export const TriggerNode = memo(({ id, data, selected }: CustomNodeProps<Trigger
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -161,6 +163,16 @@ export const TriggerNode = memo(({ id, data, selected }: CustomNodeProps<Trigger
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-emerald-500 dark:border-emerald-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <TriggerConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

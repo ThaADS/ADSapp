@@ -7,18 +7,20 @@
  * Can use templates or custom messages with personalization.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { MessageSquare, Settings2, Image, FileText } from 'lucide-react';
 import type { CustomNodeProps, MessageNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { MessageConfigModal } from '../config-modals';
 
 // ============================================================================
 // MESSAGE NODE COMPONENT
 // ============================================================================
 
 export const MessageNode = memo(({ id, data, selected }: CustomNodeProps<MessageNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get message preview (truncated)
@@ -90,7 +92,7 @@ export const MessageNode = memo(({ id, data, selected }: CustomNodeProps<Message
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -193,6 +195,16 @@ export const MessageNode = memo(({ id, data, selected }: CustomNodeProps<Message
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-blue-500 dark:border-blue-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <MessageConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

@@ -7,18 +7,20 @@
  * Can wait for tags, field changes, messages, dates, or webhooks.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Pause, Settings2, Tag, Edit, MessageCircle, Calendar, Webhook, Clock } from 'lucide-react';
 import type { CustomNodeProps, WaitUntilNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { WaitUntilConfigModal } from '../config-modals';
 
 // ============================================================================
 // WAIT UNTIL NODE COMPONENT
 // ============================================================================
 
 export const WaitUntilNode = memo(({ id, data, selected }: CustomNodeProps<WaitUntilNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get event type display name
@@ -113,7 +115,7 @@ export const WaitUntilNode = memo(({ id, data, selected }: CustomNodeProps<WaitU
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -213,6 +215,16 @@ export const WaitUntilNode = memo(({ id, data, selected }: CustomNodeProps<WaitU
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-cyan-500 dark:border-cyan-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <WaitUntilConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

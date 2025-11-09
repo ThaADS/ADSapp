@@ -6,18 +6,20 @@
  * Represents generic actions like adding/removing tags, updating fields, etc.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Zap, Settings2, Tag, Edit, List, Bell } from 'lucide-react';
 import type { CustomNodeProps, ActionNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { ActionConfigModal } from '../config-modals';
 
 // ============================================================================
 // ACTION NODE COMPONENT
 // ============================================================================
 
 export const ActionNode = memo(({ id, data, selected }: CustomNodeProps<ActionNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get action type display name
@@ -109,7 +111,7 @@ export const ActionNode = memo(({ id, data, selected }: CustomNodeProps<ActionNo
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -201,6 +203,16 @@ export const ActionNode = memo(({ id, data, selected }: CustomNodeProps<ActionNo
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-pink-500 dark:border-pink-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <ActionConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

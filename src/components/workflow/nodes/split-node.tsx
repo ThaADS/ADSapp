@@ -7,18 +7,20 @@
  * Supports percentage-based and field-based splitting.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { GitBranch, Settings2, Percent, Database } from 'lucide-react';
 import type { CustomNodeProps, SplitNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { SplitConfigModal } from '../config-modals';
 
 // ============================================================================
 // SPLIT NODE COMPONENT
 // ============================================================================
 
 export const SplitNode = memo(({ id, data, selected }: CustomNodeProps<SplitNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get split type display name
@@ -96,7 +98,7 @@ export const SplitNode = memo(({ id, data, selected }: CustomNodeProps<SplitNode
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -216,6 +218,16 @@ export const SplitNode = memo(({ id, data, selected }: CustomNodeProps<SplitNode
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-indigo-500 dark:border-indigo-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <SplitConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

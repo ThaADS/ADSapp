@@ -7,18 +7,20 @@
  * Can delay for minutes, hours, days, or weeks with advanced options.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Clock, Settings2, Calendar, Sun } from 'lucide-react';
 import type { CustomNodeProps, DelayNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { DelayConfigModal } from '../config-modals';
 
 // ============================================================================
 // DELAY NODE COMPONENT
 // ============================================================================
 
 export const DelayNode = memo(({ id, data, selected }: CustomNodeProps<DelayNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Format delay duration
@@ -100,7 +102,7 @@ export const DelayNode = memo(({ id, data, selected }: CustomNodeProps<DelayNode
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -195,6 +197,16 @@ export const DelayNode = memo(({ id, data, selected }: CustomNodeProps<DelayNode
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-amber-500 dark:border-amber-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <DelayConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

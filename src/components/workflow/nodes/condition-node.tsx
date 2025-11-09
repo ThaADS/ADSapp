@@ -7,18 +7,20 @@
  * Evaluates conditions and routes to different paths (true/false).
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { GitBranch, Settings2, Check, X } from 'lucide-react';
 import type { CustomNodeProps, ConditionNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { ConditionConfigModal } from '../config-modals';
 
 // ============================================================================
 // CONDITION NODE COMPONENT
 // ============================================================================
 
 export const ConditionNode = memo(({ id, data, selected }: CustomNodeProps<ConditionNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get field name display
@@ -119,7 +121,7 @@ export const ConditionNode = memo(({ id, data, selected }: CustomNodeProps<Condi
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -232,6 +234,16 @@ export const ConditionNode = memo(({ id, data, selected }: CustomNodeProps<Condi
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-violet-500 dark:border-violet-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <ConditionConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

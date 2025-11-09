@@ -6,18 +6,20 @@
  * Calls external webhook APIs with authentication and retry support.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Webhook, Settings2, Lock, RefreshCw } from 'lucide-react';
 import type { CustomNodeProps, WebhookNodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { WebhookConfigModal } from '../config-modals';
 
 // ============================================================================
 // WEBHOOK NODE COMPONENT
 // ============================================================================
 
 export const WebhookNode = memo(({ id, data, selected }: CustomNodeProps<WebhookNodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get HTTP method badge color
@@ -93,7 +95,7 @@ export const WebhookNode = memo(({ id, data, selected }: CustomNodeProps<Webhook
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -195,6 +197,16 @@ export const WebhookNode = memo(({ id, data, selected }: CustomNodeProps<Webhook
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-teal-500 dark:border-teal-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <WebhookConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });

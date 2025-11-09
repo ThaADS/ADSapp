@@ -7,18 +7,20 @@
  * information extraction, response generation, and translation.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Brain, Settings2, Sparkles, Tag, FileText, Languages, MessageSquare } from 'lucide-react';
 import type { CustomNodeProps, AINodeData } from '@/types/workflow';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import { AIConfigModal } from '../config-modals';
 
 // ============================================================================
 // AI NODE COMPONENT
 // ============================================================================
 
 export const AINode = memo(({ id, data, selected }: CustomNodeProps<AINodeData>) => {
-  const { setSelectedNode } = useWorkflowStore();
+  const { setSelectedNode, updateNode } = useWorkflowStore();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   /**
    * Get AI action display name
@@ -122,7 +124,7 @@ export const AINode = memo(({ id, data, selected }: CustomNodeProps<AINodeData>)
             className="p-1 hover:bg-white/20 rounded transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              // TODO: Open settings modal
+              setIsConfigOpen(true);
             }}
           >
             <Settings2 className="w-4 h-4 text-white" />
@@ -256,6 +258,16 @@ export const AINode = memo(({ id, data, selected }: CustomNodeProps<AINodeData>)
       {selected && (
         <div className="absolute -inset-0.5 border-2 border-purple-500 dark:border-purple-400 rounded-xl pointer-events-none" />
       )}
+
+      {/* Configuration Modal */}
+      <AIConfigModal
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(newData) => {
+          updateNode(id, newData);
+        }}
+        initialData={data}
+      />
     </div>
   );
 });
