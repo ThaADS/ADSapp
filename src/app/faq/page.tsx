@@ -174,6 +174,78 @@ const faqData: FAQItem[] = [
       'Ja! Configureer business hours in Settings > Organization. Stel auto-replies in voor buiten kantooruren en weekend. Gesprekken worden automatisch geparkeerd tot de volgende werkdag.',
     tags: ['business-hours', 'scheduling', 'availability'],
   },
+  {
+    id: 'auto-6',
+    category: 'Automatisering',
+    question: 'Wat zijn Drip Campaigns?',
+    answer:
+      'Drip Campaigns zijn geautomatiseerde berichtreeksen die in een bepaalde volgorde worden verstuurd. Ideaal voor onboarding, nurturing, en opvolging. Configureer stappen met tijdsintervallen (minuten, uren, dagen) en personaliseer berichten per contact.',
+    tags: ['drip-campaigns', 'automation', 'sequences', 'nurturing'],
+  },
+  {
+    id: 'auto-7',
+    category: 'Automatisering',
+    question: 'Hoe maak ik een Drip Campaign aan?',
+    answer:
+      'Ga naar Dashboard > Drip Campaigns > Nieuwe Campaign. Kies een trigger (tag toegevoegd, nieuw contact, handmatig, scheduled, of API), voeg stappen toe met berichten en delays, en activeer de campaign. Contacten worden automatisch ingeschreven wanneer de trigger voorkomt.',
+    tags: ['drip-campaigns', 'setup', 'triggers', 'workflow'],
+  },
+  {
+    id: 'auto-8',
+    category: 'Automatisering',
+    question: 'Wat zijn Broadcast Campaigns?',
+    answer:
+      'Broadcast Campaigns zijn bulk berichten naar grote groepen contacten tegelijk. Perfect voor announcements, promoties, en nieuwsbrieven. Selecteer je doelgroep (alle contacten, specifieke tags, CSV upload, of custom selectie), stel een schema in, en verstuur.',
+    tags: ['broadcast', 'bulk-messaging', 'campaigns', 'announcements'],
+  },
+  {
+    id: 'auto-9',
+    category: 'Automatisering',
+    question: 'Hoe target ik de juiste contacten voor een Broadcast?',
+    answer:
+      'ADSapp biedt 4 targeting opties: 1) Alle contacten (gefilterd op blocked status), 2) Tags (selecteer meerdere tags), 3) Custom selectie (kies specifieke contacten), 4) CSV upload (importeer een lijst). Je ziet altijd het aantal targets voordat je verstuurt.',
+    tags: ['broadcast', 'targeting', 'segmentation', 'audience'],
+  },
+  {
+    id: 'auto-10',
+    category: 'Automatisering',
+    question: 'Kan ik campaign resultaten exporteren?',
+    answer:
+      'Ja! Exporteer campaign data naar CSV of PDF. Zie statistieken zoals verzonden, afgeleverd, gelezen, en failed berichten per contact. Gebruik deze data voor analyse en rapportage. Export via Dashboard > Campaigns > [Campaign] > Export.',
+    tags: ['export', 'analytics', 'reporting', 'campaigns'],
+  },
+  {
+    id: 'auto-11',
+    category: 'Automatisering',
+    question: 'Wat is de Visual Workflow Builder?',
+    answer:
+      'De Visual Workflow Builder is een drag-and-drop canvas waarmee je complexe automation workflows kunt bouwen zonder code. Sleep nodes (triggers, berichten, delays, condities) op het canvas, verbind ze, en creëer geavanceerde multi-path flows met conditional branching. Ideaal voor complexe customer journeys en decision trees.',
+    tags: ['workflow-builder', 'visual', 'drag-drop', 'automation', 'no-code'],
+  },
+  {
+    id: 'auto-12',
+    category: 'Automatisering',
+    question: 'Hoe maak ik conditional branching workflows?',
+    answer:
+      'Gebruik Condition nodes in de Workflow Builder. Configureer condities zoals "tag bevat X", "custom field is Y", of "tijdstip is tussen 9-17u". Elke condition node heeft 2 outputs (true/false) waarmee je verschillende paths kunt maken. Perfect voor if-then-else logica en gepersonaliseerde flows.',
+    tags: ['conditional', 'branching', 'workflow', 'logic', 'if-then'],
+  },
+  {
+    id: 'auto-13',
+    category: 'Automatisering',
+    question: 'Kan ik workflows testen voordat ik ze activeer?',
+    answer:
+      'Ja! De Workflow Builder heeft een ingebouwde validatie en test functie. Valideer checkt op circular dependencies, onvolledige configuraties, en missing connections. Test mode simuleert de flow met test data zodat je het gedrag kunt verifiëren voordat je live gaat.',
+    tags: ['testing', 'validation', 'workflow', 'preview', 'simulation'],
+  },
+  {
+    id: 'auto-14',
+    category: 'Automatisering',
+    question: 'Kan ik workflows opslaan en hergebruiken?',
+    answer:
+      'Ja! Workflows kunnen worden opgeslagen als templates. Exporteer je workflow naar JSON formaat en importeer hem later opnieuw. Deel templates met je team of gebruik onze pre-built template library met 10+ ready-to-use workflows voor veelvoorkomende use cases.',
+    tags: ['templates', 'export', 'import', 'reusable', 'library'],
+  },
 
   // Contacten Management
   {
@@ -189,8 +261,8 @@ const faqData: FAQItem[] = [
     category: 'Contacten',
     question: 'Kan ik contacten importeren?',
     answer:
-      'Ja! Upload een CSV bestand met kolommen: phone_number, name, email, company. Wij valideren automatisch de telefoonnummers en voorkomen duplicaten.',
-    tags: ['import', 'csv', 'bulk'],
+      'Ja! Upload een CSV/Excel bestand met kolommen: phone, firstName, lastName, email, tags. Wij valideren automatisch telefoonnummers naar E.164 formaat, detecteren duplicaten, en rapporteren errors per rij. Custom fields worden ook ondersteund. Download een template via Dashboard > Contacts > Import.',
+    tags: ['import', 'csv', 'excel', 'bulk'],
   },
   {
     id: 'contact-3',
@@ -207,6 +279,14 @@ const faqData: FAQItem[] = [
     answer:
       'Voeg eigen velden toe zoals "Order Number", "Subscription Type", of "Lead Score". Configureer in Settings > Contact Fields en gebruik ze voor filtering en personalisatie.',
     tags: ['custom-fields', 'personalization', 'data'],
+  },
+  {
+    id: 'contact-5',
+    category: 'Contacten',
+    question: 'Kan ik contacten exporteren?',
+    answer:
+      'Ja! Exporteer contacten naar CSV, Excel, of JSON. Filter op tags, segments (actief/inactief/nieuw/VIP), of datum ranges. Kies welke velden je wilt exporteren. Voor kleine exports (< 100 contacten) direct downloaden, grotere exports worden asynchroon verwerkt.',
+    tags: ['export', 'csv', 'excel', 'json', 'bulk'],
   },
 
   // Analytics & Rapportage
@@ -437,6 +517,22 @@ const faqData: FAQItem[] = [
     answer:
       'Log uit en opnieuw in. Check of je sessie niet verlopen is. Clearing browser cache kan helpen. Blijft het probleem? Contact support met screenshot.',
     tags: ['authentication', 'errors', 'troubleshooting'],
+  },
+  {
+    id: 'trouble-5',
+    category: 'Probleemoplossing',
+    question: 'Waarom is ADSapp sneller geworden?',
+    answer:
+      'We hebben onze infrastructure geoptimaliseerd met multi-layer caching (Redis + memory cache), 30+ database indexes voor 70% snellere queries, en code splitting voor 62% kleinere bundles. API response times zijn nu < 200ms, pages laden in < 2 seconden. Deze optimalisaties werken automatisch - geen actie vereist!',
+    tags: ['performance', 'speed', 'optimization', 'caching'],
+  },
+  {
+    id: 'trouble-6',
+    category: 'Probleemoplossing',
+    question: 'Hoe wordt data quality gewaarborgd?',
+    answer:
+      'ADSapp heeft 80%+ test coverage met geautomatiseerde unit tests, integration tests, en end-to-end tests. Elke code wijziging wordt getest in onze CI/CD pipeline voordat het live gaat. Performance monitoring en error tracking zorgen voor proactive probleem detectie.',
+    tags: ['quality', 'testing', 'reliability', 'ci-cd'],
   },
 ]
 

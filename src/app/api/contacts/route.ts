@@ -9,6 +9,15 @@ import {
   validateSortOrder,
 } from '@/lib/api-utils'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
+import {
+  generateApiCacheKey,
+  getCachedApiResponse,
+  cacheApiResponse,
+  CacheConfigs,
+  invalidateCache,
+  getCacheHeaders,
+  addCacheHitHeader,
+} from '@/lib/cache/api-cache'
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,6 +39,18 @@ export async function GET(request: NextRequest) {
       'created_at',
       'last_message_at',
     ])
+
+    // 🚀 PERFORMANCE: Generate cache key from request parameters
+    const cacheKey = generateApiCacheKey(organizationId, 'contacts', request)
+
+    // 🚀 PERFORMANCE: Try to get from cache
+    const cached = await getCachedApiResponse<any>(cacheKey, CacheConfigs.contacts)
+    if (cached) {
+      // Return cached response with cache headers
+      const headers = new Headers(getCacheHeaders(CacheConfigs.contacts.ttl))
+      addCacheHitHeader(headers, true, cached.cacheAge)
+      return NextResponse.json(cached.data, { headers })
+    }
 
     const supabase = await createClient()
 
@@ -95,7 +116,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return createSuccessResponse({
+    const responseData = {
       contacts: enhancedContacts,
       pagination: {
         page,
@@ -111,7 +132,16 @@ export async function GET(request: NextRequest) {
         sortBy,
         sortOrder: ascending ? 'asc' : 'desc',
       },
-    })
+    }
+
+    // 🚀 PERFORMANCE: Cache the response
+    await cacheApiResponse(cacheKey, responseData, CacheConfigs.contacts)
+
+    // Add cache miss header
+    const headers = new Headers(getCacheHeaders(CacheConfigs.contacts.ttl))
+    addCacheHitHeader(headers, false)
+
+    return NextResponse.json(responseData, { headers })
   } catch (error) {
     console.error('Error fetching contacts:', error)
     return createErrorResponse(error)
@@ -187,6 +217,9 @@ export async function POST(request: NextRequest) {
     if (error) {
       throw error
     }
+
+    // 🚀 PERFORMANCE: Invalidate contacts cache after creating new contact
+    await invalidateCache.contacts(organizationId)
 
     return createSuccessResponse(contact, 201)
   } catch (error) {

@@ -12,6 +12,15 @@ import {
 } from '@/lib/api-utils'
 import { getWhatsAppClient } from '@/lib/whatsapp/enhanced-client'
 import { standardApiMiddleware, getTenantContext } from '@/lib/middleware'
+import {
+  generateApiCacheKey,
+  getCachedApiResponse,
+  cacheApiResponse,
+  CacheConfigs,
+  invalidateCache,
+  getCacheHeaders,
+  addCacheHitHeader,
+} from '@/lib/cache/api-cache'
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,6 +58,17 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const whatsappStatus = searchParams.get('whatsappStatus')
     const { page, limit, offset} = validatePagination(request)
+
+    // 🚀 PERFORMANCE: Generate cache key from request parameters
+    const cacheKey = generateApiCacheKey(organizationId, 'templates', request)
+
+    // 🚀 PERFORMANCE: Try to get from cache (30 min TTL - templates rarely change)
+    const cached = await getCachedApiResponse<any>(cacheKey, CacheConfigs.templates)
+    if (cached) {
+      const headers = new Headers(getCacheHeaders(CacheConfigs.templates.ttl))
+      addCacheHitHeader(headers, true, cached.cacheAge)
+      return NextResponse.json(cached.data, { headers })
+    }
 
     let query = supabase
       .from('message_templates')
@@ -124,7 +144,7 @@ export async function GET(request: NextRequest) {
 
     // Return direct JSON to match frontend expectations
     // Frontend expects { templates: [...], pagination: {...} } directly
-    return NextResponse.json({
+    const responseData = {
       templates: transformedTemplates,
       pagination: {
         page,
@@ -132,7 +152,15 @@ export async function GET(request: NextRequest) {
         total: count || 0,
         hasMore: offset + limit < (count || 0),
       },
-    })
+    }
+
+    // 🚀 PERFORMANCE: Cache the response (30 min TTL)
+    await cacheApiResponse(cacheKey, responseData, CacheConfigs.templates)
+
+    const headers = new Headers(getCacheHeaders(CacheConfigs.templates.ttl))
+    addCacheHitHeader(headers, false)
+
+    return NextResponse.json(responseData, { headers })
   } catch (error) {
     console.error('Error fetching templates:', error)
     return createErrorResponse(error)
@@ -252,6 +280,9 @@ export async function POST(request: NextRequest) {
     if (error) {
       throw error
     }
+
+    // 🚀 PERFORMANCE: Invalidate templates cache after creating new template
+    await invalidateCache.templates(organizationId)
 
     return createSuccessResponse(template, 201)
   } catch (error) {

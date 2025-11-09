@@ -99,19 +99,21 @@ export function DashboardDemoWrapper({
       <DashboardStats stats={stats} />
 
       {/* Main content grid */}
-      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2'>
         {/* Recent conversations */}
-        <div className='rounded-lg bg-white shadow-sm'>
-          <div className='border-b border-gray-200 px-6 py-4'>
-            <h3 className='text-lg leading-6 font-medium text-gray-900'>Recent Conversations</h3>
+        <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
+          <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
+            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Recent Conversations</h3>
+            <p className='mt-1 text-xs sm:text-sm text-gray-600'>Your latest customer chats</p>
           </div>
           <RecentConversations conversations={conversations || []} />
         </div>
 
         {/* Activity feed */}
-        <div className='rounded-lg bg-white shadow-sm'>
-          <div className='border-b border-gray-200 px-6 py-4'>
-            <h3 className='text-lg leading-6 font-medium text-gray-900'>Recent Activity</h3>
+        <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
+          <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
+            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Recent Activity</h3>
+            <p className='mt-1 text-xs sm:text-sm text-gray-600'>Latest messages across all chats</p>
           </div>
           <ActivityFeed messages={messages || []} />
         </div>

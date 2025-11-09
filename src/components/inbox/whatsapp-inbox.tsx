@@ -616,8 +616,8 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
 
   return (
     <div className='flex h-screen flex-col bg-gray-100'>
-      {/* Header */}
-      <div className='border-b border-gray-200 bg-white px-6 py-4'>
+      {/* Header - Desktop */}
+      <div className='hidden md:block border-b border-gray-200 bg-white px-6 py-4'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-4'>
             <h1 className='text-2xl font-bold text-gray-900'>WhatsApp Inbox</h1>
@@ -644,23 +644,98 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
           </div>
 
           <div className='flex items-center space-x-3'>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
               <Search className='h-5 w-5' />
             </button>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
               <Filter className='h-5 w-5' />
             </button>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
               <Settings className='h-5 w-5' />
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Header - Only show when conversation is selected */}
+      {selectedConversation && (
+        <div className='md:hidden border-b border-gray-200 bg-white'>
+          <div className='flex items-center gap-3 px-4 py-3'>
+            <button
+              onClick={() => setSelectedConversation(null)}
+              className='flex-shrink-0 p-2 -ml-2 text-gray-600 hover:text-gray-900 min-h-[44px] min-w-[44px] flex items-center justify-center'
+              aria-label='Back to conversations'
+            >
+              <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
+              </svg>
+            </button>
+            <div className='flex items-center gap-3 flex-1 min-w-0'>
+              {selectedConversation.contact.profile_picture_url ? (
+                <div className='relative h-10 w-10 flex-shrink-0'>
+                  <Image
+                    src={selectedConversation.contact.profile_picture_url}
+                    alt={selectedConversation.contact.name}
+                    fill
+                    sizes='40px'
+                    className='rounded-full object-cover'
+                    priority
+                  />
+                </div>
+              ) : (
+                <div className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-500'>
+                  <span className='text-sm font-medium text-white'>
+                    {selectedConversation.contact.name?.charAt(0).toUpperCase() ||
+                      selectedConversation.contact.phone_number.slice(-2)}
+                  </span>
+                </div>
+              )}
+              <div className='flex-1 min-w-0'>
+                <h3 className='text-base font-semibold text-gray-900 truncate'>
+                  {selectedConversation.contact.name || selectedConversation.contact.phone_number}
+                </h3>
+                <p className='text-xs text-gray-500 truncate'>{selectedConversation.contact.phone_number}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className='flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] flex items-center justify-center'
+              aria-label='Show details'
+            >
+              <MoreVertical className='h-5 w-5' />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Stats Bar - Only show when no conversation selected */}
+      {!selectedConversation && (
+        <div className='md:hidden border-b border-gray-200 bg-white px-4 py-3'>
+          <div className='grid grid-cols-2 gap-3 text-xs'>
+            <div className='flex items-center gap-2'>
+              <MessageSquare className='h-4 w-4 text-gray-400' />
+              <span className='text-gray-600'>{stats.totalConversations} total</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+              <span className='text-gray-600'>{stats.unreadConversations} unread</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <Users className='h-4 w-4 text-gray-400' />
+              <span className='text-gray-600'>{stats.activeConversations} active</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <TrendingUp className='h-4 w-4 text-gray-400' />
+              <span className='text-gray-600'>{stats.responseRate}% rate</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className='flex flex-1 overflow-hidden'>
-        {/* Conversation List */}
-        <div className='w-80 flex-shrink-0'>
+        {/* Conversation List - Full width on mobile when no conversation selected, hidden when selected */}
+        <div className={`${selectedConversation ? 'hidden md:block md:w-80' : 'w-full md:w-80'} flex-shrink-0`}>
           <EnhancedConversationList
             organizationId={organizationId}
             currentUserId={currentUserId}
@@ -671,12 +746,12 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
           />
         </div>
 
-        {/* Chat Area */}
-        <div className='flex flex-1 flex-col'>
+        {/* Chat Area - Full width on mobile, flex on desktop */}
+        <div className={`flex flex-1 flex-col ${!selectedConversation ? 'hidden md:flex' : 'w-full md:w-auto'}`}>
           {selectedConversation ? (
             <>
-              {/* Chat Header */}
-              <div className='border-b border-gray-200 bg-white px-6 py-4'>
+              {/* Chat Header - Desktop only (mobile header is above) */}
+              <div className='hidden md:block border-b border-gray-200 bg-white px-6 py-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-3'>
                     {selectedConversation.contact.profile_picture_url ? (
@@ -798,17 +873,47 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
           )}
         </div>
 
-        {/* Conversation Details */}
+        {/* Conversation Details - Modal on mobile, sidebar on desktop */}
         {showDetails && selectedConversation && (
-          <ConversationDetails
-            conversation={selectedConversation}
-            onClose={() => setShowDetails(false)}
-            onStatusChange={handleStatusChange}
-            onPriorityChange={handlePriorityChange}
-            onAssigneeChange={handleAssigneeChange}
-            onAddTag={handleAddTag}
-            onRemoveTag={handleRemoveTag}
-          />
+          <>
+            {/* Mobile: Full screen modal */}
+            <div className='md:hidden fixed inset-0 z-50 bg-white overflow-y-auto'>
+              <div className='sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3'>
+                <button
+                  onClick={() => setShowDetails(false)}
+                  className='p-2 -ml-2 text-gray-600 hover:text-gray-900 min-h-[44px] min-w-[44px] flex items-center justify-center'
+                  aria-label='Close details'
+                >
+                  <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+                  </svg>
+                </button>
+                <h2 className='text-lg font-semibold text-gray-900'>Contact Details</h2>
+              </div>
+              <ConversationDetails
+                conversation={selectedConversation}
+                onClose={() => setShowDetails(false)}
+                onStatusChange={handleStatusChange}
+                onPriorityChange={handlePriorityChange}
+                onAssigneeChange={handleAssigneeChange}
+                onAddTag={handleAddTag}
+                onRemoveTag={handleRemoveTag}
+              />
+            </div>
+
+            {/* Desktop: Sidebar */}
+            <div className='hidden md:block'>
+              <ConversationDetails
+                conversation={selectedConversation}
+                onClose={() => setShowDetails(false)}
+                onStatusChange={handleStatusChange}
+                onPriorityChange={handlePriorityChange}
+                onAssigneeChange={handleAssigneeChange}
+                onAddTag={handleAddTag}
+                onRemoveTag={handleRemoveTag}
+              />
+            </div>
+          </>
         )}
       </div>
 
