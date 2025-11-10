@@ -11,6 +11,9 @@ import { randomUUID } from 'crypto'
 import { shouldAutoRespond, generateAutoResponse } from '@/lib/ai/auto-response'
 import type { ConversationContext } from '@/lib/ai/types'
 
+// Mark as dynamic to prevent build-time rendering (requires runtime env vars)
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()

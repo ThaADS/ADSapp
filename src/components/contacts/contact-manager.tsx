@@ -488,55 +488,55 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
   )
 
   return (
-    <div className='flex h-screen flex-col bg-gray-50'>
+    <div className='flex flex-col bg-gray-50 min-h-screen'>
       {/* Header */}
       <div className='border-b border-gray-200 bg-white'>
-        <div className='px-6 py-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-4'>
-              <h1 className='text-2xl font-bold text-gray-900'>Contacts</h1>
-              <span className='text-sm text-gray-500'>
-                {filteredContacts.length} of {contacts.length} contacts
+        <div className='px-4 py-3 sm:px-6 sm:py-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+            <div className='flex items-center gap-3'>
+              <h1 className='text-xl sm:text-2xl font-bold text-gray-900'>Contacts</h1>
+              <span className='text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full'>
+                {filteredContacts.length} of {contacts.length}
               </span>
             </div>
 
-            <div className='flex items-center space-x-3'>
-              {/* View Toggle */}
-              <div className='flex rounded-lg border border-gray-300'>
+            <div className='flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0'>
+              {/* View Toggle - Hidden on mobile */}
+              <div className='hidden sm:flex rounded-lg border border-gray-300'>
                 <button
                   type='button'
                   onClick={() => setViewMode('table')}
-                  className={`p-2 ${viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+                  className={`p-2 min-h-[40px] min-w-[40px] ${viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
                   aria-label='Table view'
                 >
-                  <TableCellsIcon className='h-4 w-4' />
+                  <TableCellsIcon className='h-5 w-5' />
                 </button>
                 <button
                   type='button'
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+                  className={`p-2 min-h-[40px] min-w-[40px] ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
                   aria-label='Grid view'
                 >
-                  <Bars3Icon className='h-4 w-4' />
+                  <Bars3Icon className='h-5 w-5' />
                 </button>
               </div>
 
               <button
                 type='button'
                 onClick={() => setShowImportModal(true)}
-                className='flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
+                className='flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap min-h-[44px]'
               >
-                <DocumentArrowUpIcon className='mr-2 h-4 w-4' />
-                Import
+                <DocumentArrowUpIcon className='h-5 w-5 sm:mr-2' />
+                <span className='hidden sm:inline'>Import</span>
               </button>
 
               <button
                 type='button'
                 onClick={() => exportContacts('csv')}
-                className='flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
+                className='flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap min-h-[44px]'
               >
-                <DocumentArrowDownIcon className='mr-2 h-4 w-4' />
-                Export
+                <DocumentArrowDownIcon className='h-5 w-5 sm:mr-2' />
+                <span className='hidden sm:inline'>Export</span>
               </button>
 
               <button
@@ -545,37 +545,37 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                   setEditingContact(null)
                   setShowContactModal(true)
                 }}
-                className='flex items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700'
+                className='flex items-center rounded-lg border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 active:bg-blue-800 whitespace-nowrap min-h-[44px] shadow-sm'
               >
-                <UserPlusIcon className='mr-2 h-4 w-4' />
-                Add Contact
+                <UserPlusIcon className='h-5 w-5 sm:mr-2' />
+                <span className='hidden sm:inline'>Add Contact</span>
               </button>
             </div>
           </div>
 
           {/* Search and Filters */}
-          <div className='mt-4 flex items-center space-x-4'>
+          <div className='mt-3 sm:mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4'>
             <div className='relative flex-1'>
-              <MagnifyingGlassIcon className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+              <MagnifyingGlassIcon className='absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400' />
               <input
                 type='text'
                 placeholder='Search contacts...'
                 value={filters.search}
                 onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className='w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+                className='w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none min-h-[44px]'
               />
             </div>
 
             <button
               type='button'
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium ${
+              className={`flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium min-h-[44px] whitespace-nowrap transition-colors ${
                 showFilters
-                  ? 'bg-blue-100 text-blue-700'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <FunnelIcon className='mr-2 h-4 w-4' />
+              <FunnelIcon className='h-5 w-5 mr-2' />
               Filters
             </button>
 

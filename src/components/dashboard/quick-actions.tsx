@@ -88,20 +88,22 @@ export function QuickActions() {
   ]
 
   return (
-    <div className='rounded-lg bg-white shadow-sm'>
-      <div className='border-b border-gray-200 px-6 py-4'>
-        <h3 className='text-lg leading-6 font-medium text-gray-900'>Quick Actions</h3>
+    <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
+      <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
+        <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Quick Actions</h3>
+        <p className='mt-1 text-xs sm:text-sm text-gray-600'>Get started with common tasks</p>
       </div>
-      <div className='p-6'>
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='p-4 sm:p-6'>
+        <div className='grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4'>
           {actions.map(action => (
             <button
               key={action.name}
               onClick={action.onClick}
-              className={`flex flex-col items-center rounded-lg p-4 text-center transition-colors ${action.color}`}
+              className={`flex flex-col items-center justify-center rounded-lg p-4 sm:p-5 text-center transition-all min-h-[120px] sm:min-h-[140px] ${action.color} active:scale-95`}
             >
-              <div className='mb-2'>{action.icon}</div>
-              <span className='text-sm font-medium text-gray-900'>{action.name}</span>
+              <div className='mb-2 sm:mb-3'>{action.icon}</div>
+              <span className='text-sm sm:text-base font-semibold text-gray-900'>{action.name}</span>
+              <span className='mt-1 text-xs text-gray-600 hidden sm:block'>{action.description}</span>
             </button>
           ))}
         </div>

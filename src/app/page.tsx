@@ -461,7 +461,7 @@ export default async function Home() {
               <Link href='#demo' className='text-gray-600 transition-colors hover:text-gray-900'>
                 Demo
               </Link>
-              <Link href='#faq' className='text-gray-600 transition-colors hover:text-gray-900'>
+              <Link href='/faq' className='text-gray-600 transition-colors hover:text-gray-900'>
                 FAQ
               </Link>
             </nav>

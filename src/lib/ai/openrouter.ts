@@ -29,6 +29,13 @@ export class OpenRouterClient {
     this.maxTokens = parseInt(process.env.OPENROUTER_MAX_TOKENS || '1000')
     this.temperature = parseFloat(process.env.OPENROUTER_TEMPERATURE || '0.7')
 
+    // Note: API key validation is deferred to actual usage to allow module loading during build
+  }
+
+  /**
+   * Validate API key before making requests
+   */
+  private validateApiKey(): void {
     if (!this.apiKey) {
       throw new Error('OPENROUTER_API_KEY not configured in environment variables')
     }
@@ -41,6 +48,7 @@ export class OpenRouterClient {
     messages: OpenRouterMessage[],
     options: Partial<OpenRouterRequest> = {}
   ): Promise<OpenRouterResponse> {
+    this.validateApiKey()
     const model = options.model || this.defaultModel
     const startTime = Date.now()
 
@@ -220,6 +228,7 @@ export class OpenRouterClient {
    * Get available models from OpenRouter
    */
   async getAvailableModels(): Promise<string[]> {
+    this.validateApiKey()
     try {
       const response = await fetch(`${this.baseUrl}/models`, {
         headers: {
@@ -249,6 +258,7 @@ export class OpenRouterClient {
    * Test API connection
    */
   async testConnection(): Promise<{ success: boolean; error?: string }> {
+    this.validateApiKey()
     try {
       const response = await this.chat(
         [{ role: 'user', content: 'Hello! Please respond with just "OK".' }],

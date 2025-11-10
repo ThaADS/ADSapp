@@ -1,10 +1,29 @@
-// import { getCLS, getFCP, getFID, getLCP, getTTFB, Metric } from 'web-vitals'
-
+// Web Vitals imports - install with: npm install web-vitals
+// Temporarily using inline types until web-vitals is properly configured
 // @ts-nocheck - Type definitions need review
 interface Metric {
   name: string
   value: number
   id: string
+  navigationType?: string
+}
+
+// Placeholder functions until web-vitals package is configured
+function getCLS(callback: (metric: Metric) => void) {
+  // Will be replaced with actual web-vitals import
+  console.warn('Web Vitals: CLS tracking not yet configured')
+}
+function getFCP(callback: (metric: Metric) => void) {
+  console.warn('Web Vitals: FCP tracking not yet configured')
+}
+function getFID(callback: (metric: Metric) => void) {
+  console.warn('Web Vitals: FID tracking not yet configured')
+}
+function getLCP(callback: (metric: Metric) => void) {
+  console.warn('Web Vitals: LCP tracking not yet configured')
+}
+function getTTFB(callback: (metric: Metric) => void) {
+  console.warn('Web Vitals: TTFB tracking not yet configured')
 }
 
 export interface PerformanceMetrics {

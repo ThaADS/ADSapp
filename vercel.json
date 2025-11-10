@@ -1,18 +1,14 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "installCommand": "npm ci --legacy-peer-deps",
   "devCommand": "npm run dev",
-  "functions": {
-    "src/app/api/**": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["ams1"],
+  "crons": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "path": "/api/cron/process-drip-messages",
+      "schedule": "*/5 * * * *"
     }
   ],
   "headers": [
@@ -20,16 +16,20 @@
       "source": "/api/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
         {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
       ]
     }
