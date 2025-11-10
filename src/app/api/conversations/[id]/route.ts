@@ -15,7 +15,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get conversation with details
+    // Get user's organization for tenant isolation
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
+    }
+
+    // Get conversation with details (filtered by organization_id for tenant isolation)
     const { data: conversation, error } = await supabase
       .from('conversations')
       .select(
@@ -26,11 +37,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       `
       )
       .eq('id', id)
+      .eq('organization_id', profile.organization_id)  // CRITICAL: Tenant isolation
       .single()
 
-    if (error) {
-      console.error('Error fetching conversation:', error)
-      return NextResponse.json({ error: 'Failed to fetch conversation' }, { status: 500 })
+    if (error || !conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
     return NextResponse.json({ conversation })
