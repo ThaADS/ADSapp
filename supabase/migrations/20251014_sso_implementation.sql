@@ -338,8 +338,27 @@ CREATE POLICY sso_audit_insert ON sso_audit_logs
   WITH CHECK (true);
 
 -- SAML Requests and OAuth States: System-only access
-CREATE POLICY saml_request_system ON sso_saml_requests FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY oauth_state_system ON sso_oauth_states FOR ALL USING (true) WITH CHECK (true);
+-- SAML requests: Users can only access their organization's SAML requests
+CREATE POLICY "Users can manage their org SAML requests" ON sso_saml_requests
+  FOR ALL USING (
+    sso_config_id IN (
+      SELECT id FROM sso_configurations
+      WHERE organization_id IN (
+        SELECT organization_id FROM profiles WHERE id = auth.uid()
+      )
+    )
+  );
+
+-- OAuth states: Users can only access their organization's OAuth states
+CREATE POLICY "Users can manage their org OAuth states" ON sso_oauth_states
+  FOR ALL USING (
+    sso_config_id IN (
+      SELECT id FROM sso_configurations
+      WHERE organization_id IN (
+        SELECT organization_id FROM profiles WHERE id = auth.uid()
+      )
+    )
+  );
 
 -- =====================================================
 -- Triggers and Functions
