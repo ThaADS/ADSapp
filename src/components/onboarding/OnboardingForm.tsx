@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { WhatsAppSetupWizard } from './WhatsAppSetupWizard'
+import { ProviderSelector, type WhatsAppCredentials, type WhatsAppProvider } from './ProviderSelector'
+import { TeamInvitationStep, type TeamInvitation } from './TeamInvitationStep'
 
 interface OnboardingData {
   // Step 1: Organization
@@ -10,21 +11,32 @@ interface OnboardingData {
   subdomain: string
 
   // Step 2: WhatsApp Business
+  whatsappProvider: WhatsAppProvider | null
   whatsappPhoneNumberId: string
   whatsappBusinessAccountId: string
   whatsappAccessToken: string
   whatsappWebhookVerifyToken: string
   whatsappSkipped: boolean
+  // Twilio specific
+  twilioAccountSid?: string
+  twilioAuthToken?: string
+  twilioPhoneNumber?: string
+  // QR specific
+  whatsappSessionId?: string
 
   // Step 3: Profile
   fullName: string
   role: 'owner' | 'admin' | 'agent'
+
+  // Step 4: Team Invitations
+  teamInvitations: TeamInvitation[]
 }
 
 const STEPS = [
   { id: 1, name: 'Organization', description: 'Create your organization' },
-  { id: 2, name: 'WhatsApp Setup', description: 'Connect WhatsApp Business' },
+  { id: 2, name: 'WhatsApp', description: 'Connect WhatsApp Business' },
   { id: 3, name: 'Profile', description: 'Complete your profile' },
+  { id: 4, name: 'Team', description: 'Invite your team' },
 ]
 
 export function OnboardingForm({ userEmail }: { userEmail: string }) {
@@ -36,6 +48,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
   const [formData, setFormData] = useState<OnboardingData>({
     organizationName: '',
     subdomain: '',
+    whatsappProvider: null,
     whatsappPhoneNumberId: '',
     whatsappBusinessAccountId: '',
     whatsappAccessToken: '',
@@ -43,6 +56,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
     whatsappSkipped: false,
     fullName: '',
     role: 'owner',
+    teamInvitations: [],
   })
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
@@ -283,17 +297,24 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {/* Step 2: WhatsApp Business Setup */}
+        {/* Step 2: WhatsApp Business Setup - Now with Provider Selection */}
         {currentStep === 2 && (
-          <WhatsAppSetupWizard
-            onComplete={credentials => {
+          <ProviderSelector
+            onComplete={(credentials: WhatsAppCredentials) => {
               setFormData(prev => ({
                 ...prev,
+                whatsappProvider: credentials.provider,
                 whatsappPhoneNumberId: credentials.phoneNumberId,
                 whatsappBusinessAccountId: credentials.businessAccountId,
                 whatsappAccessToken: credentials.accessToken,
                 whatsappWebhookVerifyToken: credentials.webhookVerifyToken,
                 whatsappSkipped: false,
+                // Twilio specific
+                twilioAccountSid: credentials.twilioAccountSid,
+                twilioAuthToken: credentials.twilioAuthToken,
+                twilioPhoneNumber: credentials.twilioPhoneNumber,
+                // QR specific
+                whatsappSessionId: credentials.sessionId,
               }))
               setCurrentStep(3)
             }}
@@ -369,6 +390,67 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
+        {/* Step 4: Team Invitations */}
+        {currentStep === 4 && (
+          <TeamInvitationStep
+            onComplete={async (invitations: TeamInvitation[]) => {
+              // Update form data with invitations
+              const updatedFormData = {
+                ...formData,
+                teamInvitations: invitations,
+              }
+              setFormData(updatedFormData)
+
+              // Submit the form with updated data
+              setIsLoading(true)
+              setError(null)
+              try {
+                const response = await fetch('/api/onboarding', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(updatedFormData),
+                })
+                const result = await response.json()
+                if (!response.ok) {
+                  setError(result.error || 'Onboarding failed. Please try again.')
+                  return
+                }
+                router.push('/dashboard')
+                router.refresh()
+              } catch (err) {
+                console.error('Onboarding error:', err)
+                setError('An unexpected error occurred. Please try again.')
+              } finally {
+                setIsLoading(false)
+              }
+            }}
+            onSkip={async () => {
+              // Submit without team invitations
+              setIsLoading(true)
+              setError(null)
+              try {
+                const response = await fetch('/api/onboarding', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(formData),
+                })
+                const result = await response.json()
+                if (!response.ok) {
+                  setError(result.error || 'Onboarding failed. Please try again.')
+                  return
+                }
+                router.push('/dashboard')
+                router.refresh()
+              } catch (err) {
+                console.error('Onboarding error:', err)
+                setError('An unexpected error occurred. Please try again.')
+              } finally {
+                setIsLoading(false)
+              }
+            }}
+          />
+        )}
+
         {/* Error Message */}
         {error && (
           <div className='mt-6 rounded-md bg-red-50 p-4'>
@@ -390,82 +472,84 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
           </div>
         )}
 
-        {/* Navigation Buttons */}
-        <div className='mt-8 flex justify-between'>
-          {currentStep > 1 ? (
-            <button
-              type='button'
-              onClick={handleBack}
-              disabled={isLoading}
-              className='inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            >
-              <svg className='mr-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M15 19l-7-7 7-7'
-                />
-              </svg>
-              Back
-            </button>
-          ) : (
-            <div />
-          )}
+        {/* Navigation Buttons - Hidden on Step 2 (ProviderSelector) and Step 4 (TeamInvitation) as they handle their own navigation */}
+        {currentStep !== 2 && currentStep !== 4 && (
+          <div className='mt-8 flex justify-between'>
+            {currentStep > 1 ? (
+              <button
+                type='button'
+                onClick={handleBack}
+                disabled={isLoading}
+                className='inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+              >
+                <svg className='mr-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M15 19l-7-7 7-7'
+                  />
+                </svg>
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
 
-          {currentStep < STEPS.length ? (
-            <button
-              type='button'
-              onClick={handleNext}
-              disabled={isLoading}
-              className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            >
-              Next
-              <svg className='ml-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M9 5l7 7-7 7'
-                />
-              </svg>
-            </button>
-          ) : (
-            <button
-              type='submit'
-              disabled={isLoading}
-              className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className='mr-3 -ml-1 h-4 w-4 animate-spin text-white'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                  >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
-                      stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
-                  Setting up...
-                </>
-              ) : (
-                'Complete Setup'
-              )}
-            </button>
-          )}
-        </div>
+            {currentStep < STEPS.length ? (
+              <button
+                type='button'
+                onClick={handleNext}
+                disabled={isLoading}
+                className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+              >
+                Next
+                <svg className='ml-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M9 5l7 7-7 7'
+                  />
+                </svg>
+              </button>
+            ) : (
+              <button
+                type='submit'
+                disabled={isLoading}
+                className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+              >
+                {isLoading ? (
+                  <>
+                    <svg
+                      className='mr-3 -ml-1 h-4 w-4 animate-spin text-white'
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
+                    </svg>
+                    Setting up...
+                  </>
+                ) : (
+                  'Complete Setup'
+                )}
+              </button>
+            )}
+          </div>
+        )}
       </form>
     </div>
   )

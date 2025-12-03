@@ -121,7 +121,21 @@ export async function GET(request: NextRequest) {
     // Apply pagination
     query = query.range(offset, offset + limit - 1)
 
-    const { data: conversations, error, count } = await query
+    // ⚡ PERFORMANCE: Run main query and aggregation query in parallel
+    const aggregationQuery = includeAggregations
+      ? supabase
+          .from('conversations')
+          .select('status, priority, tags')
+          .eq('organization_id', organizationId)
+      : null
+
+    // Execute queries in parallel
+    const [conversationsResult, aggregationsResult] = await Promise.all([
+      query,
+      aggregationQuery,
+    ])
+
+    const { data: conversations, error, count } = conversationsResult
 
     if (error) {
       console.error('Error fetching conversations:', error)
@@ -141,35 +155,29 @@ export async function GET(request: NextRequest) {
     }
 
     // Add aggregations if requested
-    if (includeAggregations) {
-      const { data: allConversations } = await supabase
-        .from('conversations')
-        .select('status, priority, tags')
-        .eq('organization_id', organizationId)
+    if (includeAggregations && aggregationsResult?.data) {
+      const allConversations = aggregationsResult.data
+      const statusCounts: Record<string, number> = {}
+      const priorityCounts: Record<string, number> = {}
+      const tagCounts: Record<string, number> = {}
 
-      if (allConversations) {
-        const statusCounts: Record<string, number> = {}
-        const priorityCounts: Record<string, number> = {}
-        const tagCounts: Record<string, number> = {}
+      allConversations.forEach(conv => {
+        // Count statuses
+        statusCounts[conv.status] = (statusCounts[conv.status] || 0) + 1
 
-        allConversations.forEach(conv => {
-          // Count statuses
-          statusCounts[conv.status] = (statusCounts[conv.status] || 0) + 1
+        // Count priorities
+        priorityCounts[conv.priority] = (priorityCounts[conv.priority] || 0) + 1
 
-          // Count priorities
-          priorityCounts[conv.priority] = (priorityCounts[conv.priority] || 0) + 1
-
-          // Count tags
-          conv.tags?.forEach((tag: string) => {
-            tagCounts[tag] = (tagCounts[tag] || 0) + 1
-          })
+        // Count tags
+        conv.tags?.forEach((tag: string) => {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1
         })
+      })
 
-        response.aggregations = {
-          statusCounts,
-          priorityCounts,
-          tagCounts,
-        }
+      response.aggregations = {
+        statusCounts,
+        priorityCounts,
+        tagCounts,
       }
     }
 

@@ -109,11 +109,59 @@ const HelpIcon = () => (
   </svg>
 )
 
+const WorkflowIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 17a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2zM14 17a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z'
+    />
+  </svg>
+)
+
+const BroadcastIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z'
+    />
+  </svg>
+)
+
+const DripIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+    />
+  </svg>
+)
+
+const AnalyticsIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+    />
+  </svg>
+)
+
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
   { name: 'Inbox', href: '/dashboard/inbox', icon: InboxIcon },
   { name: 'Contacts', href: '/dashboard/contacts', icon: UsersIcon },
   { name: 'Templates', href: '/dashboard/templates', icon: DocumentIcon },
+  { name: 'Workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
+  { name: 'Broadcast', href: '/dashboard/broadcast', icon: BroadcastIcon },
+  { name: 'Drip Campaigns', href: '/dashboard/drip-campaigns', icon: DripIcon },
+  { name: 'Analytics', href: '/dashboard/analytics/advanced', icon: AnalyticsIcon },
   { name: 'Automation', href: '/dashboard/automation', icon: BoltIcon },
   { name: 'WhatsApp', href: '/dashboard/whatsapp', icon: PhoneIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },

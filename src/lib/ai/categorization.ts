@@ -319,7 +319,7 @@ export async function batchCategorizeConversations(
 /**
  * Get categorization statistics for an organization
  */
-export async function getCategorization Stats(
+export async function getCategorizationStats(
   organizationId: string,
   startDate?: Date,
   endDate?: Date

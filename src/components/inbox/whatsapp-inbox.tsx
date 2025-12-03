@@ -368,57 +368,59 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
   })
   const [whatsappService, setWhatsappService] = useState<WhatsAppService | null>(null)
 
-  // Initialize WhatsApp service with client Supabase instance
+  // ⚡ PERFORMANCE: Initialize WhatsApp service, load bubble color, and stats in parallel
   useEffect(() => {
-    const initService = async () => {
-      try {
-        const supabase = createClient()
-        const service = await WhatsAppService.createFromOrganization(organizationId, supabase)
-        setWhatsappService(service)
-      } catch (error) {
-        console.error('Failed to initialize WhatsApp service:', error)
-        // WhatsApp service is optional - app can still function for viewing messages
+    const initializeInbox = async () => {
+      const supabase = createClient()
+
+      // Run all initialization tasks in parallel
+      const [serviceResult, colorResult] = await Promise.allSettled([
+        // Task 1: Initialize WhatsApp service
+        (async () => {
+          const service = await WhatsAppService.createFromOrganization(organizationId, supabase)
+          return service
+        })(),
+
+        // Task 2: Load bubble color preference
+        (async () => {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser()
+          if (!user) return null
+
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('bubble_color_preference, bubble_text_color_preference')
+            .eq('id', user.id)
+            .single()
+
+          return profile
+        })(),
+      ])
+
+      // Handle WhatsApp service result
+      if (serviceResult.status === 'fulfilled' && serviceResult.value) {
+        setWhatsappService(serviceResult.value)
+      } else {
+        console.error('Failed to initialize WhatsApp service:', serviceResult.status === 'rejected' ? serviceResult.reason : 'Unknown error')
         setWhatsappService(null)
       }
+
+      // Handle bubble color result
+      if (colorResult.status === 'fulfilled' && colorResult.value?.bubble_color_preference) {
+        setGlobalBubbleColor({
+          bubble: colorResult.value.bubble_color_preference,
+          text: colorResult.value.bubble_text_color_preference || 'text-gray-900',
+        })
+      }
+
+      // Load stats after initialization
+      loadStats()
     }
 
     if (organizationId) {
-      initService()
+      initializeInbox()
     }
-  }, [organizationId])
-
-  // Load global bubble color preference from user profile
-  useEffect(() => {
-    const loadBubbleColor = async () => {
-      try {
-        const supabase = createClient()
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (!user) return
-
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('bubble_color_preference, bubble_text_color_preference')
-          .eq('id', user.id)
-          .single()
-
-        if (profile?.bubble_color_preference) {
-          setGlobalBubbleColor({
-            bubble: profile.bubble_color_preference,
-            text: profile.bubble_text_color_preference || 'text-gray-900',
-          })
-        }
-      } catch (error) {
-        console.error('Error loading bubble color preference:', error)
-      }
-    }
-
-    loadBubbleColor()
-  }, [])
-
-  useEffect(() => {
-    loadStats()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationId])
 

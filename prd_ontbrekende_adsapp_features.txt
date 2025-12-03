@@ -1,0 +1,246 @@
+# Product Requirements Document (PRD)
+
+## Titel
+**Uitbreiding adsapp.nl: Implementatie van Geavanceerde WhatsApp Business-functionaliteiten**
+
+---
+
+## Inhoudsopgave
+1. Inleiding
+2. Doelstellingen
+3. Scope van het project
+4. Functionaliteiten
+   - 4.1 Visuele chatbot/flow builder
+   - 4.2 WhatsApp Broadcasts (bulkberichten)
+   - 4.3 Drip-campagnes
+   - 4.4 Gedeelde team-inbox (multi-agent ondersteuning)
+   - 4.5 CRM- en betaalintegraties
+   - 4.6 WhatsApp-webwidget en QR-code generator
+   - 4.7 Analytics-dashboard
+   - 4.8 WhatsApp-betaalfunctie (Mollie/iDEAL)
+5. Technische vereisten
+6. Niet-functionele vereisten
+7. UX/UI-overwegingen
+8. Acceptatiecriteria
+9. Afhankelijkheden
+10. Planning (Roadmap & Milestones)
+
+---
+
+## 1. Inleiding
+Adsapp.nl is een laagdrempelig platform voor bedrijven die WhatsApp Business willen inzetten met AI-chatbots. Dit document specificeert de vereisten voor het uitbreiden van adsapp.nl met functies die momenteel nog ontbreken, maar cruciaal zijn om te concurreren met platforms zoals Gallabox.
+
+## 2. Doelstellingen
+- Functiepariteit bereiken met concurrenten als Gallabox.
+- Geschiktheid vergroten voor mkb en teams.
+- Mogelijkheden uitbreiden voor marketing en verkoop via WhatsApp.
+- Conversie verhogen door betaal- en analytics-integratie.
+
+## 3. Scope van het project
+### In Scope
+- Ontwerp en bouw van alle nieuwe functionaliteiten in deze PRD.
+- Back-end en front-end implementatie.
+- Interne API’s & mogelijke integraties (Zapier, Mollie, CRM’s).
+
+### Out of Scope
+- SMS-, e-mail- of andere niet-WhatsApp communicatiekanalen.
+- UI-redesign buiten wat nodig is voor nieuwe functies.
+
+---
+
+## 4. Functionaliteiten
+
+### 4.1 Visuele chatbot/flow builder
+**Probleemstelling:** Gebruikers kunnen nu alleen AI-chatbots gebruiken. Ze missen controle en structuur voor standaard- of scenario-gebaseerde conversaties.
+
+**Gebruikersverhalen:**
+- Als gebruiker wil ik drag-and-drop elementen gebruiken om gespreksflows op te bouwen.
+- Als admin wil ik flows kunnen exporteren, dupliceren en previewen.
+
+**Functionele vereisten:**
+- Flow editor met nodes voor: tekst, vraag, keuzemenu, API-call, verwijzing naar AI, eindpunt.
+- Mogelijkheid om condities toe te voegen (bijv. "Als antwoord X, dan Y").
+- Opslaan als versiebare objecten in database (bv. MongoDB schema).
+- Preview-modus met simulatie van chat.
+
+**Technisch:**
+- JS front-end library: [React Flow](https://reactflow.dev/) of [Botpress SDK].
+- Back-end: opslaan als JSON-flows, uitrol naar WhatsApp bij activering.
+
+**Acceptatiecriteria:**
+- Gebruiker kan flow bouwen zonder codering.
+- Flows worden correct uitgevoerd in testmodus.
+
+---
+
+### 4.2 WhatsApp Broadcasts (bulkberichten)
+**Probleemstelling:** Gebruikers kunnen geen promoties of updates sturen naar meerdere contacten tegelijk.
+
+**Vereisten:**
+- Verzenden van bulkberichten op basis van goedgekeurde WhatsApp-templates.
+- Contactsegmentatie (handmatig of tag-gebaseerd).
+- Verzendlimieten (1.000/dag of API quota).
+- Statistieken: geopend/afgeleverd/geklikt.
+
+**Technisch:**
+- WhatsApp Cloud API (template messages + list management).
+- Scheduler microservice (queue & retries).
+
+**Acceptatiecriteria:**
+- Gebruiker kan een campagne inplannen.
+- Berichten worden correct afgeleverd of gelogd als error.
+
+---
+
+### 4.3 Drip-campagnes
+**Doel:** Automatisch opvolgberichten sturen na X tijd vanaf een trigger (bijv. contactmoment of inschrijving).
+
+**Vereisten:**
+- Configuratie van sequenties (bv. Dag 0: Welkom, Dag 1: Aanbieding, Dag 3: Review-vraag).
+- Tijdzones en vertragingen.
+- Stoppen na conversie of uitschrijving.
+
+**Technisch:**
+- Job scheduling (Node.js cron-jobs of Celery queue).
+- Gebaseerd op user-triggered events.
+
+**Acceptatie:**
+- Alle stappen worden verstuurd volgens configuratie.
+
+---
+
+### 4.4 Team-inbox (multi-agent)
+**Probleem:** Bedrijven willen meerdere medewerkers toegang geven tot dezelfde WhatsApp-inbox.
+
+**Vereisten:**
+- Accountsysteem voor agents + rollenbeheer (admin, agent).
+- Realtime inbox met toewijzing: automatisch of handmatig.
+- Interne notities.
+- Statusbeheer (open, opgelost).
+
+**Technisch:**
+- WebSockets of polling.
+- ACL-systeem met RBAC (role-based access control).
+
+**Acceptatie:**
+- Gesprekken worden zichtbaar voor meerdere gebruikers.
+- Agents kunnen toegewezen worden per chat.
+
+---
+
+### 4.5 CRM- & Betaalintegraties
+**CRM:**
+- HubSpot, Pipedrive: contacten syncen + notities aanmaken.
+
+**Betaalmethodes:**
+- iDEAL via Mollie.
+- Betaallink genereren in chat met bijv. `!betaal 25.00` → link verschijnt.
+
+**Technisch:**
+- OAuth integratie met CRM’s.
+- Mollie API v2 endpoints voor betaalverzoek aanmaken.
+
+**Acceptatie:**
+- CRM-integratie toont notities bij contacten.
+- Klant kan betalen via WhatsApp-chat met veilige link.
+
+---
+
+### 4.6 WhatsApp-widget & QR-generator
+**Doel:** Websitebezoekers direct naar WhatsApp leiden.
+
+**Vereisten:**
+- Embed-code voor chat-knop op websites (met bedrijfsnaam, delay, tijdschema).
+- QR-code gegenereerd voor marketingmateriaal.
+
+**Technisch:**
+- WhatsApp link generator (https://wa.me/...) + QR-lib zoals qrcode.react.
+
+**Acceptatie:**
+- Klik op button leidt naar WhatsApp.
+- QR-code scan werkt direct op mobiel.
+
+---
+
+### 4.7 Analytics Dashboard
+**Doel:** Inzicht in conversie, bereik en performance.
+
+**Metrieken:**
+- Aantal gesprekken per dag/week.
+- Responsratio.
+- Populairste triggers of vragen.
+
+**Technisch:**
+- Aggregatie via Mongo/Redis → visualisatie met Chart.js of Recharts.
+
+**Acceptatie:**
+- Dashboard toont live en historische data.
+
+---
+
+### 4.8 WhatsApp-betaalfunctie
+**Doel:** Direct betaling vragen en afhandelen in WhatsApp.
+
+**Vereisten:**
+- Command trigger (!betaal 15.00)
+- Klant ontvangt betaallink via Mollie.
+- Betalingstatus getoond in interface.
+
+**Technisch:**
+- Mollie payment-links + webhook endpoint voor status.
+
+**Acceptatie:**
+- Gebruiker kan link genereren.
+- Klant kan afronden zonder in app te hoeven verlaten.
+
+---
+
+## 5. Technische vereisten
+- Node.js of Python back-end met microservices structuur.
+- MongoDB/Postgres opslag afhankelijk van type data.
+- Redis/Cron queue voor time-based triggers (drip, broadcast).
+- Secure API authentication (JWT).
+- OAuth voor CRM/betaal integraties.
+
+## 6. Niet-functionele vereisten
+- **Beveiliging:**
+  - End-to-end encryptie via WhatsApp API.
+  - TLS/HTTPS overal.
+  - ACL met gebruikersrollen.
+- **Schaalbaarheid:** microservice structuur en autoscaling.
+- **Performance:** Berichten afleveren binnen <1s waar mogelijk.
+
+## 7. UX/UI-overwegingen
+- Mobielvriendelijk dashboard (responsive).
+- Intuïtieve flow editor met undo/redo, zoom, dupliceren.
+- Meertalige ondersteuning (NL/EN minimaal).
+- UI-bibliotheken: Tailwind, Radix, Shadcn, Chart.js.
+
+## 8. Acceptatiecriteria
+- Alle functionaliteiten werken foutloos bij testgebruik.
+- Bereikbaar via beveiligd dashboard met gebruikersauthenticatie.
+- Documentatie voor elke module (gebruik + technisch).
+
+## 9. Afhankelijkheden
+- WhatsApp Cloud API account
+- Meta Business Verification
+- Mollie API keys
+- CRM API credentials (HubSpot, Pipedrive)
+
+## 10. Planning & Roadmap
+
+| Fase | Functionaliteit | Duur | Deliverable |
+|------|------------------|------|-------------|
+| Fase 1 | Widget + QR, Broadcast, CRM integratie | 3 weken | Werkende modules in staging |
+| Fase 2 | Flow builder + Drip campagnes | 4 weken | MVP in testomgeving |
+| Fase 3 | Multi-agent inbox + analytics | 4 weken | Volledige teammodule + dashboard |
+| Fase 4 | Mollie integratie + payment flow | 2 weken | Betaalfunctie operationeel |
+| Fase 5 | UI-optimalisatie + documentatie | 1 week | Productie klaar release |
+
+---
+
+**Laatste update:** {{datum automatisch gegenereerd}}
+
+---
+
+Wil je dit document in PDF of als downloadbare handleiding? Laat het me weten.

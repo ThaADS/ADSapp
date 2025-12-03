@@ -184,3 +184,4 @@ temp-docs/
 .env.test.backup
 auth.setup.ts.bak
 
+.env*.local
