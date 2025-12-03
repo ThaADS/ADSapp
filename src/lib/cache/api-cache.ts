@@ -15,7 +15,7 @@ import { NextRequest } from 'next/server'
 
 export interface CacheConfig {
   ttl: number // Time to live in seconds
-  tags?: string[] // Tags for cache invalidation
+  tags?: readonly string[] | string[] // Tags for cache invalidation
   keyPrefix?: string // Optional custom prefix
   skipCache?: boolean // Skip cache for this request
   cacheOnlySuccess?: boolean // Only cache successful responses
