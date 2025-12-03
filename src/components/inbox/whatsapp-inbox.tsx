@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import EnhancedConversationList from './enhanced-conversation-list'
 import EnhancedMessageList from './enhanced-message-list'
-import EnhancedMessageInput from './enhanced-message-input'
+import MessageInputWithTyping from './message-input-with-typing'
 import ConversationTagSelector from './conversation-tag-selector'
 import BubbleColorPicker from './bubble-color-picker'
 import { WhatsAppService } from '@/lib/whatsapp/service'
@@ -367,6 +367,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
     text: 'text-gray-900',
   })
   const [whatsappService, setWhatsappService] = useState<WhatsAppService | null>(null)
+  const [userName, setUserName] = useState<string>('Agent')
 
   // ⚡ PERFORMANCE: Initialize WhatsApp service, load bubble color, and stats in parallel
   useEffect(() => {
@@ -381,16 +382,16 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
           return service
         })(),
 
-        // Task 2: Load bubble color preference
+        // Task 2: Load bubble color preference and user name
         (async () => {
           const {
             data: { user },
           } = await supabase.auth.getUser()
-          if (!user) return null
+          if (!user) return null as { bubble_color_preference?: string; bubble_text_color_preference?: string; full_name?: string } | null
 
           const { data: profile } = await supabase
             .from('profiles')
-            .select('bubble_color_preference, bubble_text_color_preference')
+            .select('bubble_color_preference, bubble_text_color_preference, full_name')
             .eq('id', user.id)
             .single()
 
@@ -406,12 +407,17 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
         setWhatsappService(null)
       }
 
-      // Handle bubble color result
-      if (colorResult.status === 'fulfilled' && colorResult.value?.bubble_color_preference) {
-        setGlobalBubbleColor({
-          bubble: colorResult.value.bubble_color_preference,
-          text: colorResult.value.bubble_text_color_preference || 'text-gray-900',
-        })
+      // Handle bubble color result and user name
+      if (colorResult.status === 'fulfilled' && colorResult.value) {
+        if (colorResult.value.bubble_color_preference) {
+          setGlobalBubbleColor({
+            bubble: colorResult.value.bubble_color_preference,
+            text: colorResult.value.bubble_text_color_preference || 'text-gray-900',
+          })
+        }
+        if (colorResult.value.full_name) {
+          setUserName(colorResult.value.full_name)
+        }
       }
 
       // Load stats after initialization
@@ -850,11 +856,12 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                 />
               </div>
 
-              {/* Message Input */}
-              <EnhancedMessageInput
+              {/* Message Input with Typing Indicators */}
+              <MessageInputWithTyping
                 conversationId={selectedConversation.id}
                 organizationId={organizationId}
                 currentUserId={currentUserId}
+                userName={userName}
                 contactName={selectedConversation.contact.name || 'Contact'}
                 onSendMessage={handleSendMessage}
               />

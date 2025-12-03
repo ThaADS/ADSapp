@@ -15,9 +15,10 @@ import type { Workflow } from '@/types/workflow';
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Verify authentication
@@ -59,7 +60,7 @@ export async function POST(
     const { data: workflow, error: workflowError } = await supabase
       .from('workflows')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single();
 

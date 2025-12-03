@@ -12,8 +12,9 @@ import { Plus, Search, Filter, Play, Pause, Trash2, Copy, BarChart3 } from 'luci
 export default async function WorkflowsPage({
   searchParams,
 }: {
-  searchParams: { status?: string; type?: string; search?: string };
+  searchParams: Promise<{ status?: string; type?: string; search?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const supabase = await createClient();
 
   // Check authentication
@@ -44,16 +45,16 @@ export default async function WorkflowsPage({
     .order('updated_at', { ascending: false });
 
   // Apply filters
-  if (searchParams.status) {
-    query = query.eq('status', searchParams.status);
+  if (resolvedSearchParams.status) {
+    query = query.eq('status', resolvedSearchParams.status);
   }
 
-  if (searchParams.type) {
-    query = query.eq('type', searchParams.type);
+  if (resolvedSearchParams.type) {
+    query = query.eq('type', resolvedSearchParams.type);
   }
 
-  if (searchParams.search) {
-    query = query.ilike('name', `%${searchParams.search}%`);
+  if (resolvedSearchParams.search) {
+    query = query.ilike('name', `%${resolvedSearchParams.search}%`);
   }
 
   const { data: workflows, count } = await query;
@@ -94,7 +95,7 @@ export default async function WorkflowsPage({
                 <input
                   type="text"
                   placeholder="Search workflows..."
-                  defaultValue={searchParams.search}
+                  defaultValue={resolvedSearchParams.search}
                   className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -102,7 +103,7 @@ export default async function WorkflowsPage({
 
             {/* Status filter */}
             <select
-              defaultValue={searchParams.status || 'all'}
+              defaultValue={resolvedSearchParams.status || 'all'}
               className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
@@ -114,7 +115,7 @@ export default async function WorkflowsPage({
 
             {/* Type filter */}
             <select
-              defaultValue={searchParams.type || 'all'}
+              defaultValue={resolvedSearchParams.type || 'all'}
               className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>

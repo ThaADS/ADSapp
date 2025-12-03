@@ -4,8 +4,8 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { generateDrafts } from '@/lib/ai/drafts'
-import type { ConversationContext } from '@/lib/ai/types'
+import { generateDraftSuggestions } from '@/lib/ai/drafts'
+import type { ConversationContext, DraftSuggestion } from '@/lib/ai/types'
 
 export async function POST(request: Request) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { conversationId, organizationId, messages, tone, count = 3 } = body
+    const { conversationId, organizationId, messages, customerPhone, tone, count = 3 } = body
 
     // Validate organizationId matches user's organization
     if (organizationId !== profile.organization_id) {
@@ -48,14 +48,15 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if AI is enabled for organization
+    // Check if AI is enabled for organization (use type assertion for dynamic query)
     const { data: aiSettings } = await supabase
       .from('ai_settings')
-      .select('enabled, draft_suggestions_enabled')
+      .select('*')
       .eq('organization_id', organizationId)
       .single()
 
-    if (!aiSettings?.enabled || !aiSettings?.draft_suggestions_enabled) {
+    const settings = aiSettings as { enabled?: boolean; draft_suggestions_enabled?: boolean } | null
+    if (!settings?.enabled || !settings?.draft_suggestions_enabled) {
       return Response.json({ error: 'AI suggestions are not enabled' }, { status: 403 })
     }
 
@@ -63,21 +64,22 @@ export async function POST(request: Request) {
     const context: ConversationContext = {
       organizationId,
       conversationId,
-      messages: messages.map((m: any) => ({
-        sender: m.sender || (m.is_from_contact ? 'customer' : 'agent'),
+      customerPhone: customerPhone || 'unknown',
+      messages: messages.map((m: { sender?: string; is_from_contact?: boolean; content: string; timestamp?: string; created_at?: string }) => ({
+        sender: (m.sender || (m.is_from_contact ? 'customer' : 'agent')) as 'customer' | 'agent',
         content: m.content,
-        timestamp: m.timestamp || m.created_at,
+        timestamp: m.timestamp || m.created_at || new Date().toISOString(),
       })),
     }
 
     // Generate drafts
-    const draftsResult = await generateDrafts(context, count, tone)
+    const drafts = await generateDraftSuggestions(context, count)
 
     // Transform to suggestions format
-    const suggestions = draftsResult.drafts.map((draft, index) => ({
+    const suggestions = drafts.map((draft: DraftSuggestion, index: number) => ({
       id: `suggestion-${Date.now()}-${index}`,
-      text: draft.text,
-      tone: draft.tone,
+      text: draft.content,
+      tone: draft.tone || tone || 'professional',
       confidence: draft.confidence,
       reasoning: draft.reasoning,
     }))
@@ -88,7 +90,6 @@ export async function POST(request: Request) {
       metadata: {
         conversationId,
         generatedAt: new Date().toISOString(),
-        model: draftsResult.model,
       },
     })
   } catch (error) {

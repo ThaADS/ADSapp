@@ -15,9 +15,10 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Verify authentication
@@ -45,7 +46,7 @@ export async function GET(
     const { data: workflow, error } = await supabase
       .from('workflows')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .single();
 
@@ -69,9 +70,10 @@ export async function GET(
  */
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Verify authentication
@@ -100,7 +102,7 @@ export async function PUT(
     const { name, description, type, status, nodes, edges, settings } = body;
 
     // Build update object (only include provided fields)
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     };
 
@@ -116,7 +118,7 @@ export async function PUT(
     const { data: workflow, error } = await supabase
       .from('workflows')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id)
       .select()
       .single();
@@ -149,9 +151,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Verify authentication
@@ -179,7 +182,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('workflows')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('organization_id', profile.organization_id);
 
     if (error) {

@@ -24,9 +24,9 @@ import {
 // ============================================================================
 
 interface WorkflowAnalyticsPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // ============================================================================
@@ -203,7 +203,7 @@ function ConversionFunnel({ data }: { data: typeof getMockAnalytics extends () =
 // ============================================================================
 
 export default async function WorkflowAnalyticsPage({ params }: WorkflowAnalyticsPageProps) {
-  const { id: workflowId } = params;
+  const { id: workflowId } = await params;
 
   // TODO: Replace with real API call
   // const analytics = await fetchWorkflowAnalytics(workflowId);
