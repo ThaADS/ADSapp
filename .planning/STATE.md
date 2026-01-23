@@ -1,29 +1,31 @@
 # Project State: ADSapp
 
-**Updated:** 2026-01-23
+**Updated:** 2026-01-24
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-01-23)
 
 **Core value:** Businesses can efficiently manage all WhatsApp customer communications in one secure, multi-tenant inbox with AI assistance
-**Current focus:** v2.0 Feature Gap Implementation - Planning Complete
+**Current focus:** v1.0 Phase 6 (Test Coverage) - then v2.0
 
 ## Current Status
 
 ```
-Milestone: v2.0 Feature Gap Implementation
-Phase: 8 - Foundation Layer (first v2 phase)
-Status: Ready to plan
-Progress: [----------] 0%
+Milestone: v1.0 Technical Debt Cleanup
+Phase: 6 - Test Coverage Improvement
+Status: In Progress
+Progress: [######----] 86%
 ```
 
 ## Milestone Overview
 
 ### v1.0 Technical Debt Cleanup
 - **Phases:** 1-7
-- **Status:** In progress (Phase 1 complete)
-- **Progress:** 14% (1/7 phases)
+- **Status:** In progress (6/7 phases complete)
+- **Progress:** 86% (6/7 phases)
+- **Completed:** Phases 1, 2, 3, 4, 5, 7
+- **Remaining:** Phase 6 (Test Coverage)
 
 ### v2.0 Feature Gap Implementation
 - **Phases:** 8-19 (12 phases total)
@@ -31,7 +33,19 @@ Progress: [----------] 0%
 - **Progress:** 0% (0/12 phases)
 - **Requirements:** 73 total, all mapped
 
-## Phase 8: Foundation Layer (Next)
+## Phase 6: Test Coverage (Current)
+
+**Goal:** Increase test coverage to 70%+
+**Status:** In Progress
+
+**Success Criteria:**
+1. Overall test coverage reaches 70%+
+2. Critical paths (auth, billing, messaging) have 80%+ coverage
+3. All tests pass in CI
+
+**Next Action:** Run coverage report and improve tests
+
+## Phase 8: Foundation Layer (Next after v1.0)
 
 **Goal:** Build unified message router and channel abstraction layer
 **Requirements:** FOUND-01 through FOUND-05
@@ -49,9 +63,9 @@ Progress: [----------] 0%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1 (Phase 1 only)
-- v2.0 plans completed: 0
-- Total execution time: TBD
+- v1.0 phases completed: 6/7 (Phases 1, 2, 3, 4, 5, 7)
+- v2.0 phases completed: 0/12
+- Total execution time: Multi-session
 
 **v2.0 Phases:**
 
@@ -88,15 +102,21 @@ None yet for v2.0.
 
 ### Blockers/Concerns
 
-- v1.0 must complete (Phases 2-7) before Phase 8 can begin
+- Phase 6 (Test Coverage) must complete before Phase 8 can begin
 - WhatsApp Calling needs legal review for consent requirements
 - pgvector performance needs load testing at scale
 
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: v2.0 roadmap creation complete
+Last session: 2026-01-24
+Stopped at: Completed Phases 2-5, 7; Phase 6 (Test Coverage) in progress
 Resume file: None
+
+### v1.0 Completion Summary (2026-01-23 - 2026-01-24)
+- **Phase 2-3**: Removed all @ts-nocheck from 206 source files
+- **Phase 4**: Enabled TypeScript strict mode (0 errors)
+- **Phase 5**: Enabled ESLint and TypeScript checking in builds
+- **Phase 7**: Removed duplicate `reactflow` dependency (migrated to `@xyflow/react`)
 
 ## Quick Reference
 

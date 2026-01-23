@@ -21,9 +21,9 @@ import ReactFlow, {
   ReactFlowProvider,
   ReactFlowInstance,
   MarkerType,
-} from 'reactflow'
+} from '@xyflow/react'
 import dagre from 'dagre'
-import 'reactflow/dist/style.css'
+import '@xyflow/react/dist/style.css'
 
 // Custom node components
 import TriggerNode from './nodes/TriggerNode'
