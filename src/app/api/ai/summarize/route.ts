@@ -3,7 +3,6 @@
  * Generate intelligent summaries of WhatsApp conversations
  */
 
-// @ts-nocheck - Type definitions need review
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { summarizeConversation, generateExecutiveSummary } from '@/lib/ai/summarization'

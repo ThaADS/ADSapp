@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 'use client'
 
 import React, { useState, useEffect } from 'react'

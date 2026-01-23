@@ -11,9 +11,6 @@
  * - Performance recommendations
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { getCacheManager } from './cache-manager'
 import { getCacheStats, getCacheHitRate } from './redis-client'
 import { getL1Cache } from './l1-cache'

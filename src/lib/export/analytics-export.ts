@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
 
 export interface ExportOptions {
@@ -14,8 +11,6 @@ export interface ExportOptions {
 }
 
 export class AnalyticsExporter {
-  private supabase = createClient()
-
   async exportData(options: ExportOptions) {
     const { format, dateRange, metrics, organizationId } = options
 
@@ -34,12 +29,13 @@ export class AnalyticsExporter {
     }
   }
 
-  private async fetchAnalyticsData(organizationId: string, dateRange: any, metrics: string[]) {
+  private async fetchAnalyticsData(organizationId: string, dateRange: { start: string; end: string }, metrics: string[]) {
+    const supabase = await createClient()
     const queries = []
 
     if (metrics.includes('messages')) {
       queries.push(
-        this.supabase
+        supabase
           .from('messages')
           .select('*')
           .eq('organization_id', organizationId)
@@ -50,7 +46,7 @@ export class AnalyticsExporter {
 
     if (metrics.includes('conversations')) {
       queries.push(
-        this.supabase
+        supabase
           .from('conversations')
           .select('*')
           .eq('organization_id', organizationId)
@@ -61,7 +57,7 @@ export class AnalyticsExporter {
 
     if (metrics.includes('contacts')) {
       queries.push(
-        this.supabase
+        supabase
           .from('contacts')
           .select('*')
           .eq('organization_id', organizationId)

@@ -1,18 +1,26 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 
-export async function getUser() {
+// ⚡ PERFORMANCE: Use React cache() to deduplicate auth calls within a single request
+// This prevents multiple Supabase calls when getUser is called multiple times
+const getCachedUser = cache(async () => {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   return user
+})
+
+export async function getUser() {
+  return getCachedUser()
 }
 
-export async function getUserProfile() {
+// ⚡ PERFORMANCE: Cached profile fetch - only called once per request
+const getCachedUserProfile = cache(async () => {
   const supabase = await createClient()
-  const user = await getUser()
+  const user = await getCachedUser()
 
   if (!user) {
     return null
@@ -31,7 +39,7 @@ export async function getUserProfile() {
   }
 
   // Fallback: Fetch profile and organization separately if join fails
-  console.warn('Profile join query failed, using fallback:', error)
+  // Note: Join failure is handled gracefully - attempting fallback fetch
 
   const { data: basicProfile, error: basicError } = await supabase
     .from('profiles')
@@ -40,7 +48,7 @@ export async function getUserProfile() {
     .single()
 
   if (basicError || !basicProfile) {
-    console.error('Failed to fetch basic profile:', basicError)
+    // Profile fetch failed - user may need to complete onboarding
     return null
   }
 
@@ -57,11 +65,15 @@ export async function getUserProfile() {
       return { ...basicProfile, organization: org } as any
     }
 
-    // Log warning but continue with basic profile
-    console.warn('Failed to fetch organization, continuing with basic profile:', orgError)
+    // Organization fetch failed - continuing with basic profile only
   }
 
   return basicProfile
+})
+
+// ⚡ PERFORMANCE: Export the cached version
+export async function getUserProfile() {
+  return getCachedUserProfile()
 }
 
 export async function requireAuth() {
@@ -74,25 +86,23 @@ export async function requireAuth() {
   return user
 }
 
+// ⚡ PERFORMANCE: This now benefits from React cache() - multiple calls = one DB query
 export async function requireOrganization() {
-  const profile = await getUserProfile()
+  const profile = await getCachedUserProfile()
 
   // If no profile exists at all, redirect to sign in
   if (!profile) {
-    console.error('requireOrganization: No profile found, redirecting to signin')
     redirect('/auth/signin')
   }
 
   // Check if user is super admin - they don't need an organization
   if (profile.is_super_admin) {
     // Super admins should go to admin dashboard instead
-    console.log('requireOrganization: Super admin detected, redirecting to admin')
     redirect('/admin')
   }
 
   // Require organization_id for regular users
   if (!profile.organization_id) {
-    console.error('requireOrganization: No organization_id, redirecting to onboarding')
     redirect('/onboarding')
   }
 
@@ -100,7 +110,7 @@ export async function requireOrganization() {
 }
 
 export async function requireSuperAdminOrOrganization() {
-  const profile = await getUserProfile()
+  const profile = await getCachedUserProfile()
 
   // If user is super admin, they can access without organization
   if (profile?.is_super_admin) {

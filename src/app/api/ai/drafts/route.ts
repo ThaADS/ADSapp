@@ -3,7 +3,6 @@
  * Generate intelligent response suggestions for WhatsApp conversations
  */
 
-// @ts-nocheck - Type definitions need review
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateDraftSuggestions, improveDraft } from '@/lib/ai/drafts'

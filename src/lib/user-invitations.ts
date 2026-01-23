@@ -3,7 +3,6 @@
  * Multi-step invitations, role-based templates, bulk operations, and customization
  */
 
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { Resend } from 'resend'
@@ -96,12 +95,14 @@ export interface InvitationSettings {
 
 // Advanced Invitation Manager
 export class UserInvitationManager {
-  private supabase: TypedSupabaseClient
   private resend: Resend
 
   constructor() {
-    this.supabase = createClient() as TypedSupabaseClient
     this.resend = new Resend(process.env.RESEND_API_KEY)
+  }
+
+  private async getSupabase(): Promise<TypedSupabaseClient> {
+    return await createClient() as TypedSupabaseClient
   }
 
   // Single invitation methods

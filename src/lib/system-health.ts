@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 /**
  *
  * Comprehensive system health monitoring and alerting for the multi-tenant
@@ -19,7 +16,6 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
 
 // Types for system health monitoring
 export interface SystemHealthStatus {
@@ -182,10 +178,8 @@ export interface SLAMetrics {
 }
 
 export class SystemHealthMonitor {
-  private supabase
-
-  constructor() {
-    this.supabase = createClient(cookies())
+  private async getSupabase() {
+    return await createClient()
   }
 
   /**
@@ -227,7 +221,8 @@ export class SystemHealthMonitor {
    */
   async getComponentHealth(): Promise<ComponentHealth[]> {
     try {
-      const { data, error } = await this.supabase.from('system_components').select(`
+      const supabase = await this.getSupabase()
+      const { data, error } = await supabase.from('system_components').select(`
           *,
           component_metrics (*),
           component_dependencies (*)
@@ -256,9 +251,10 @@ export class SystemHealthMonitor {
     incident: Omit<Incident, 'id' | 'created_at' | 'updated_at' | 'timeline'>
   ): Promise<string> {
     try {
+      const supabase = await this.getSupabase()
       const incidentId = crypto.randomUUID()
 
-      const { error } = await this.supabase.from('incidents').insert({
+      const { error } = await supabase.from('incidents').insert({
         id: incidentId,
         title: incident.title,
         description: incident.description,
@@ -304,8 +300,9 @@ export class SystemHealthMonitor {
     isPublic: boolean = true
   ): Promise<void> {
     try {
+      const supabase = await this.getSupabase()
       // Update incident status
-      await this.supabase
+      await supabase
         .from('incidents')
         .update({
           status,
@@ -330,9 +327,10 @@ export class SystemHealthMonitor {
    */
   async createAlertRule(rule: Omit<AlertRule, 'id' | 'created_at'>): Promise<string> {
     try {
+      const supabase = await this.getSupabase()
       const ruleId = crypto.randomUUID()
 
-      const { error } = await this.supabase.from('alert_rules').insert({
+      const { error } = await supabase.from('alert_rules').insert({
         id: ruleId,
         name: rule.name,
         description: rule.description,
@@ -366,8 +364,9 @@ export class SystemHealthMonitor {
     thresholdValue?: number
   ): Promise<string | null> {
     try {
+      const supabase = await this.getSupabase()
       // Check if alert rule exists and is enabled
-      const { data: rules } = await this.supabase
+      const { data: rules } = await supabase
         .from('alert_rules')
         .select('*')
         .eq('component_id', componentId)
@@ -390,7 +389,7 @@ export class SystemHealthMonitor {
       // Create alert
       const alertId = crypto.randomUUID()
 
-      const { error } = await this.supabase.from('alerts').insert({
+      const { error } = await supabase.from('alerts').insert({
         id: alertId,
         type: 'threshold',
         severity: rule.severity,
@@ -448,7 +447,8 @@ export class SystemHealthMonitor {
    */
   async getSLAMetrics(serviceName?: string): Promise<SLAMetrics[]> {
     try {
-      let query = this.supabase.from('sla_configurations').select(`
+      const supabase = await this.getSupabase()
+      let query = supabase.from('sla_configurations').select(`
           *,
           sla_measurements (*)
         `)
@@ -531,8 +531,9 @@ export class SystemHealthMonitor {
   }
 
   private async calculateComponentHealth(component: any): Promise<ComponentHealth> {
+    const supabase = await this.getSupabase()
     // Get latest metrics
-    const { data: metrics } = await this.supabase
+    const { data: metrics } = await supabase
       .from('component_metrics')
       .select('*')
       .eq('component_id', component.id)
@@ -569,7 +570,7 @@ export class SystemHealthMonitor {
     else if (healthScore < 80) status = 'degraded'
 
     // Get dependencies
-    const { data: dependencies } = await this.supabase
+    const { data: dependencies } = await supabase
       .from('component_dependencies')
       .select('dependency_id')
       .eq('component_id', component.id)
@@ -598,7 +599,8 @@ export class SystemHealthMonitor {
   }
 
   private async getActiveIncidents(): Promise<Incident[]> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('incidents')
       .select(
         `
@@ -618,7 +620,8 @@ export class SystemHealthMonitor {
   }
 
   private async getPerformanceSummary(): Promise<PerformanceSummary> {
-    const { data, error } = await this.supabase.rpc('get_performance_summary', {
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase.rpc('get_performance_summary', {
       hours: 24,
     })
 
@@ -640,7 +643,8 @@ export class SystemHealthMonitor {
   }
 
   private async calculateSystemUptime(): Promise<{ percentage: number; downtime_minutes: number }> {
-    const { data, error } = await this.supabase.rpc('calculate_system_uptime', {
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase.rpc('calculate_system_uptime', {
       hours: 24,
     })
 
@@ -659,7 +663,8 @@ export class SystemHealthMonitor {
     createdBy: string,
     isPublic: boolean
   ): Promise<void> {
-    await this.supabase.from('incident_updates').insert({
+    const supabase = await this.getSupabase()
+    await supabase.from('incident_updates').insert({
       incident_id: incidentId,
       status,
       message,
@@ -712,8 +717,9 @@ export class SystemHealthMonitor {
     component: ComponentHealth
   ): Promise<CapacityForecast | null> {
     try {
+      const supabase = await this.getSupabase()
       // Get historical usage data
-      const { data: historicalData } = await this.supabase
+      const { data: historicalData } = await supabase
         .from('component_metrics')
         .select('*')
         .eq('component_id', component.id)
@@ -838,8 +844,9 @@ export class SystemHealthMonitor {
   }
 
   private async calculateComponentSLACompliance(componentId: string): Promise<number> {
+    const supabase = await this.getSupabase()
     // Simplified SLA compliance calculation
-    const { data, error } = await this.supabase.rpc('calculate_component_sla_compliance', {
+    const { data, error } = await supabase.rpc('calculate_component_sla_compliance', {
       component_id: componentId,
       hours: 24,
     })

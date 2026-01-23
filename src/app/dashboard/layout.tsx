@@ -16,14 +16,12 @@ function PageLoadingSkeleton() {
   )
 }
 
-// ⚡ PERFORMANCE: Cache layout for 5 minutes to avoid re-renders on tab switches
-export const revalidate = 300
-
-// Dynamic routing optimization
+// ⚡ PERFORMANCE: Remove conflicting settings
+// dynamic = 'force-dynamic' is required for auth, but we handle caching in the auth layer
 export const dynamic = 'force-dynamic'
-export const dynamicParams = true
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // ⚡ PERFORMANCE: Profile is now cached in the auth layer
   const profile = await requireOrganization()
 
   return (

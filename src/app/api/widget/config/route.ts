@@ -1,5 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-
 /**
  * WhatsApp Widget Configuration API
  * GET: Get organization's widget configuration

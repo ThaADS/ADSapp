@@ -3,7 +3,6 @@
  * Generate WhatsApp Business message templates with AI
  */
 
-// @ts-nocheck - Type definitions need review
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import {

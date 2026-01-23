@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { Resend } from 'resend'
 import { TeamInvitation, UserRole } from '@/types/team'
 

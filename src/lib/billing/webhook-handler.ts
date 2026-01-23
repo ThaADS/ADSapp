@@ -8,9 +8,6 @@
  * Compliance: PCI DSS requirements for payment processing audit trails
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'

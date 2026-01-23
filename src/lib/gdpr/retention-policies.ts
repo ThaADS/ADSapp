@@ -18,10 +18,7 @@
  * @module gdpr/retention-policies
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Data type categories
@@ -232,7 +229,7 @@ export async function getRetentionPolicy(
   }
 
   // Check for tenant-specific override
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const { data: override, error } = await supabase
     .from('retention_policy_overrides')
     .select('*')
@@ -282,7 +279,7 @@ export async function getRetentionPolicy(
 export async function createRetentionOverride(
   override: Omit<RetentionOverride, 'id' | 'created_at'>
 ): Promise<RetentionOverride> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
 
   // Validate override
   const validation = await validateRetentionOverride(override.data_type, override.retention_days)
@@ -465,7 +462,7 @@ export async function getExpiredRecords(
   organizationId: string,
   limit: number = 1000
 ): Promise<ExpirationCheckResult[]> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const policy = await getRetentionPolicy(dataType, organizationId)
 
   // Skip if indefinite retention
@@ -614,7 +611,7 @@ export async function validateAllPolicies(organizationId: string): Promise<Polic
   const warnings: string[] = []
   const conflicts: PolicyConflict[] = []
 
-  const supabase = await createServerClient()
+  const supabase = await createClient()
 
   // Get all active overrides
   const { data: overrides } = await supabase

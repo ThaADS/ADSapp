@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { stripe, SUBSCRIPTION_PLANS } from '@/lib/stripe/server'

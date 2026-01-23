@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { WhatsAppClient } from './client'
 import crypto from 'crypto'
 import type { SupabaseClient } from '@supabase/supabase-js'

@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { Queue, Worker, QueueEvents, ConnectionOptions } from 'bullmq'
 import IORedis from 'ioredis'
 

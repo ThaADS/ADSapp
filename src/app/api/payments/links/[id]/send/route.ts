@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
 /**
  * Send Payment Link via WhatsApp
  * POST /api/payments/links/[id]/send
@@ -13,6 +12,7 @@ import {
 } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
 import { PaymentLinksService } from '@/lib/stripe/payment-links'
+import { WhatsAppService } from '@/lib/whatsapp/service'
 
 export async function POST(
   request: NextRequest,
@@ -121,19 +121,73 @@ export async function POST(
       .from('conversations')
       .update({
         last_message_at: new Date().toISOString(),
-        last_message_preview: `=³ Betaalverzoek: ${paymentLink.name}`,
+        last_message_preview: `ðŸ’³ Betaalverzoek: ${paymentLink.name}`,
         updated_at: new Date().toISOString(),
       })
       .eq('id', conversationId)
 
-    // TODO: Actually send via WhatsApp API
-    // This would integrate with the WhatsApp service to send the message
-    // For now, we'll mark it as sent
+    // Send via WhatsApp API
+    try {
+      const whatsappService = await WhatsAppService.createFromOrganization(
+        profile.organization_id,
+        supabase
+      )
 
-    await supabase
-      .from('messages')
-      .update({ status: 'sent', sent_at: new Date().toISOString() })
-      .eq('id', message.id)
+      // Get contact's WhatsApp ID
+      const { data: contactWithWhatsApp } = await supabase
+        .from('contacts')
+        .select('whatsapp_id')
+        .eq('id', contactId)
+        .single()
+
+      if (!contactWithWhatsApp?.whatsapp_id) {
+        // No WhatsApp ID - update message status and return error
+        await supabase
+          .from('messages')
+          .update({ status: 'failed', metadata: { ...message.metadata, error: 'Contact has no WhatsApp ID' } })
+          .eq('id', message.id)
+
+        return NextResponse.json(
+          { error: 'Contact does not have a WhatsApp ID configured' },
+          { status: 400 }
+        )
+      }
+
+      // Send message via WhatsApp
+      await whatsappService.sendMessage(
+        conversationId,
+        messageText,
+        user.id,
+        'text'
+      )
+
+      // Update message status to sent
+      await supabase
+        .from('messages')
+        .update({ status: 'sent', sent_at: new Date().toISOString() })
+        .eq('id', message.id)
+
+      console.log(`[PaymentLinks] Successfully sent payment link ${id} to contact ${contactId}`)
+    } catch (whatsappError) {
+      console.error('[PaymentLinks] WhatsApp send error:', whatsappError)
+
+      // Update message status to failed
+      await supabase
+        .from('messages')
+        .update({
+          status: 'failed',
+          metadata: {
+            ...message.metadata,
+            error: whatsappError instanceof Error ? whatsappError.message : 'WhatsApp send failed',
+          },
+        })
+        .eq('id', message.id)
+
+      return NextResponse.json(
+        { error: 'Failed to send payment link via WhatsApp' },
+        { status: 500 }
+      )
+    }
 
     return createSuccessResponse({
       message: 'Payment link sent successfully',

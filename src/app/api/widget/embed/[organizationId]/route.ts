@@ -1,5 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-
 /**
  * Public Widget Embed Endpoint
  * Returns organization's widget configuration and JavaScript
@@ -61,10 +59,12 @@ export async function GET(
       }
     }
 
-    // Return configuration (sanitized for public use)
+    // SECURITY FIX: Return ONLY public-safe widget configuration
+    // Do NOT expose: organization name, WhatsApp phone ID, or internal identifiers
+    // These can be used for social engineering or competitive intelligence
     return NextResponse.json({
-      organizationId: org.id,
-      organizationName: org.name,
+      // Only return a hashed/obfuscated identifier for widget initialization
+      widgetId: Buffer.from(org.id).toString('base64').slice(0, 12),
       config: {
         position: config.position || 'bottom-right',
         primaryColor: config.primaryColor || '#25D366',
@@ -77,7 +77,8 @@ export async function GET(
         delaySeconds: config.delaySeconds ?? 3,
         businessHours: config.businessHours,
       },
-      whatsappPhone: org.whatsapp_phone_number_id,
+      // Widget enabled status only - no sensitive data
+      enabled: true,
     }, {
       headers: {
         'Access-Control-Allow-Origin': origin || '*',

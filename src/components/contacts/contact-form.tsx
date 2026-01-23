@@ -1,7 +1,14 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+
+interface Tag {
+  id: string
+  name: string
+  color_class?: string
+  color_hex?: string
+}
 
 interface ContactFormData {
   name: string
@@ -22,23 +29,31 @@ interface ContactFormProps {
     notes?: string
     metadata?: Record<string, unknown>
   } | null
+  availableTags?: Tag[]
   onSubmit: (data: ContactFormData, contactId?: string) => Promise<void>
   onCancel: () => void
   isLoading?: boolean
 }
 
-const AVAILABLE_TAGS = [
-  { id: 'vip', label: 'VIP', color: 'bg-purple-100 text-purple-800' },
-  { id: 'potential-client', label: 'Potential Client', color: 'bg-blue-100 text-blue-800' },
-  { id: 'active-lead', label: 'Active Lead', color: 'bg-green-100 text-green-800' },
-  { id: 'marketing', label: 'Marketing', color: 'bg-orange-100 text-orange-800' },
-  { id: 'startup', label: 'Startup', color: 'bg-pink-100 text-pink-800' },
-  { id: 'tech', label: 'Tech', color: 'bg-indigo-100 text-indigo-800' },
-  { id: 'enterprise', label: 'Enterprise', color: 'bg-gray-100 text-gray-800' },
+// Default colors for tags without color_class
+const TAG_COLORS = [
+  'bg-purple-100 text-purple-800',
+  'bg-blue-100 text-blue-800',
+  'bg-green-100 text-green-800',
+  'bg-orange-100 text-orange-800',
+  'bg-pink-100 text-pink-800',
+  'bg-indigo-100 text-indigo-800',
+  'bg-gray-100 text-gray-800',
 ]
+
+function getTagColor(tag: Tag, index: number): string {
+  if (tag.color_class) return tag.color_class
+  return TAG_COLORS[index % TAG_COLORS.length]
+}
 
 export default function ContactForm({
   contact,
+  availableTags = [],
   onSubmit,
   onCancel,
   isLoading = false,
@@ -249,24 +264,30 @@ export default function ContactForm({
       {/* Tags Selection */}
       <div>
         <label className='mb-2 block text-sm font-medium text-gray-700'>Tags</label>
-        <div className='flex flex-wrap gap-2'>
-          {AVAILABLE_TAGS.map(tag => (
-            <button
-              key={tag.id}
-              type='button'
-              onClick={() => toggleTag(tag.id)}
-              disabled={isSubmitting || isLoading}
-              className={`rounded-full px-3 py-1 text-sm transition-colors ${
-                formData.tags.includes(tag.id)
-                  ? tag.color
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              } disabled:opacity-50`}
-              aria-pressed={formData.tags.includes(tag.id)}
-            >
-              {tag.label}
-            </button>
-          ))}
-        </div>
+        {availableTags.length > 0 ? (
+          <div className='flex flex-wrap gap-2'>
+            {availableTags.map((tag, index) => (
+              <button
+                key={tag.id}
+                type='button'
+                onClick={() => toggleTag(tag.id)}
+                disabled={isSubmitting || isLoading}
+                className={`rounded-full px-3 py-1 text-sm transition-colors ${
+                  formData.tags.includes(tag.id)
+                    ? getTagColor(tag, index)
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                } disabled:opacity-50`}
+                aria-pressed={formData.tags.includes(tag.id)}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className='text-sm text-gray-500 italic'>
+            No tags available. Create tags in Settings → Tags.
+          </p>
+        )}
       </div>
 
       {/* Custom Fields */}

@@ -3,8 +3,6 @@
  * Automatically detect and translate messages between languages
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-
 import { openRouter } from './openrouter'
 import { createClient } from '@/lib/supabase/server'
 

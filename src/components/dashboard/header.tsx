@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 import { useRouter } from 'next/navigation'
+import { CommandPalette } from '@/components/search/command-palette'
 
-const MenuIcon = () => (
+// ⚡ PERFORMANCE: Memoized icons
+const MenuIcon = memo(() => (
   <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
     <path
       strokeLinecap='round'
@@ -12,9 +14,10 @@ const MenuIcon = () => (
       d='M4 6h16M4 12h16M4 18h16'
     />
   </svg>
-)
+))
+MenuIcon.displayName = 'MenuIcon'
 
-const BellIcon = () => (
+const BellIcon = memo(() => (
   <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
     <path
       strokeLinecap='round'
@@ -23,18 +26,29 @@ const BellIcon = () => (
       d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
     />
   </svg>
-)
+))
+BellIcon.displayName = 'BellIcon'
 
 interface DashboardHeaderProps {
-  profile: any
+  profile: {
+    id: string
+    full_name: string | null
+    email: string | null
+    organization_id: string | null
+    role: 'owner' | 'admin' | 'agent' | null
+  }
+  organizationId?: string
   onMenuClick?: () => void
 }
 
-export function DashboardHeader({ profile, onMenuClick }: DashboardHeaderProps) {
+function DashboardHeaderInner({ profile, organizationId, onMenuClick }: DashboardHeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const router = useRouter()
 
-  const handleSignOut = async () => {
+  // ⚡ PERFORMANCE: Memoize callbacks
+  const toggleUserMenu = useCallback(() => setUserMenuOpen(prev => !prev), [])
+
+  const handleSignOut = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
@@ -48,7 +62,7 @@ export function DashboardHeader({ profile, onMenuClick }: DashboardHeaderProps) 
     } catch (error) {
       console.error('Signout error:', error)
     }
-  }
+  }, [router])
 
   return (
     <div className='sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8'>
@@ -66,23 +80,8 @@ export function DashboardHeader({ profile, onMenuClick }: DashboardHeaderProps) 
 
       <div className='flex flex-1 gap-x-4 self-stretch lg:gap-x-6'>
         <div className='flex items-center gap-x-4 lg:gap-x-6'>
-          {/* Search */}
-          <div className='relative flex-1'>
-            <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-              <svg className='h-5 w-5 text-gray-400' viewBox='0 0 20 20' fill='currentColor'>
-                <path
-                  fillRule='evenodd'
-                  d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z'
-                  clipRule='evenodd'
-                />
-              </svg>
-            </div>
-            <input
-              type='search'
-              placeholder='Search conversations...'
-              className='block w-full rounded-md border-0 py-1.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 focus:ring-inset sm:text-sm sm:leading-6'
-            />
-          </div>
+          {/* Global Search Command Palette */}
+          {organizationId && <CommandPalette organizationId={organizationId} />}
         </div>
 
         <div className='flex items-center gap-x-4 lg:gap-x-6'>
@@ -96,7 +95,7 @@ export function DashboardHeader({ profile, onMenuClick }: DashboardHeaderProps) 
             <button
               type='button'
               className='-m-1.5 flex items-center p-1.5'
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              onClick={toggleUserMenu}
             >
               <span className='sr-only'>Open user menu</span>
               <div className='flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500'>
@@ -140,3 +139,7 @@ export function DashboardHeader({ profile, onMenuClick }: DashboardHeaderProps) 
     </div>
   )
 }
+
+// ⚡ PERFORMANCE: Memoize header component
+export const DashboardHeader = memo(DashboardHeaderInner)
+DashboardHeader.displayName = 'DashboardHeader'

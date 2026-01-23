@@ -4,9 +4,6 @@
  * Expose OpenTelemetry metrics for monitoring and alerting
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { withAuth } from '@/lib/api-middleware'
 import { createClient } from '@/lib/supabase/server'

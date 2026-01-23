@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
@@ -42,14 +41,12 @@ export interface PaymentRetryStrategy {
 }
 
 export class PaymentMethodManager {
-  private supabase = createClient()
-
   async attachPaymentMethod(
     organizationId: string,
     paymentMethodId: string,
     options: PaymentMethodSetupOptions = {}
   ): Promise<PaymentMethodData> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization's customer ID
     const { data: org } = await supabase
@@ -99,7 +96,7 @@ export class PaymentMethodManager {
     organizationId: string,
     options: PaymentMethodSetupOptions = {}
   ): Promise<{ clientSecret: string; setupIntentId: string }> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization's customer ID
     const { data: org } = await supabase
@@ -143,7 +140,7 @@ export class PaymentMethodManager {
   }
 
   async handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization from customer
     const organizationId = await this.getOrganizationFromCustomer(paymentMethod.customer as string)
@@ -155,7 +152,7 @@ export class PaymentMethodManager {
   }
 
   async handlePaymentMethodDetached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('payment_methods')
@@ -167,7 +164,7 @@ export class PaymentMethodManager {
   }
 
   async detachPaymentMethod(organizationId: string, paymentMethodId: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get payment method
     const { data: paymentMethodRecord } = await supabase
@@ -212,7 +209,7 @@ export class PaymentMethodManager {
   }
 
   async setDefaultPaymentMethod(organizationId: string, paymentMethodId: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization and payment method
     const { data: org } = await supabase
@@ -246,7 +243,7 @@ export class PaymentMethodManager {
   }
 
   async getPaymentMethods(organizationId: string): Promise<PaymentMethodData[]> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const { data: paymentMethods } = await supabase
       .from('payment_methods')
@@ -268,7 +265,7 @@ export class PaymentMethodManager {
       metadata?: Record<string, string>
     }
   ): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get payment method
     const { data: paymentMethodRecord } = await supabase
@@ -313,7 +310,7 @@ export class PaymentMethodManager {
     paymentMethodId: string,
     failure: { code: string; message: string }
   ): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('payment_methods')
@@ -336,7 +333,7 @@ export class PaymentMethodManager {
     organizationId: string,
     strategy: PaymentRetryStrategy
   ): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase.from('payment_retry_strategies').upsert({
       organization_id: organizationId,
@@ -350,7 +347,7 @@ export class PaymentMethodManager {
   }
 
   async getPaymentRetryStrategy(organizationId: string): Promise<PaymentRetryStrategy | null> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const { data: strategy } = await supabase
       .from('payment_retry_strategies')
@@ -464,7 +461,7 @@ export class PaymentMethodManager {
     methodTypes: Record<string, number>
     recentFailures: number
   }> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const { data: methods } = await supabase
       .from('payment_methods')
@@ -554,7 +551,7 @@ export class PaymentMethodManager {
   }
 
   private async getOrganizationFromCustomer(customerId: string): Promise<string | null> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
     const { data } = await supabase
       .from('organizations')
       .select('id')

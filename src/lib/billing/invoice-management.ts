@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
@@ -50,8 +49,6 @@ export interface PaymentRetryConfig {
 }
 
 export class InvoiceManager {
-  private supabase = createClient()
-
   private readonly defaultRetryConfig: PaymentRetryConfig = {
     maxAttempts: 4,
     retryIntervals: [24, 72, 168, 336], // 1 day, 3 days, 1 week, 2 weeks
@@ -64,7 +61,7 @@ export class InvoiceManager {
   }
 
   async createInvoiceRecord(stripeInvoice: Stripe.Invoice): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization from customer
     const organizationId = await this.getOrganizationFromCustomer(stripeInvoice.customer as string)
@@ -118,7 +115,7 @@ export class InvoiceManager {
   }
 
   async finalizeInvoice(stripeInvoice: Stripe.Invoice): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('invoices')
@@ -136,7 +133,7 @@ export class InvoiceManager {
   }
 
   async markInvoicePaid(stripeInvoice: Stripe.Invoice): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('invoices')
@@ -155,7 +152,7 @@ export class InvoiceManager {
   }
 
   async markPaymentFailed(stripeInvoice: Stripe.Invoice): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const attemptCount = (stripeInvoice.attempt_count || 0) + 1
     const nextAttempt = this.calculateNextPaymentAttempt(attemptCount)
@@ -186,7 +183,7 @@ export class InvoiceManager {
       metadata?: Record<string, any>
     } = {}
   ): Promise<string> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization and customer info
     const { data: organization } = await supabase
@@ -244,7 +241,7 @@ export class InvoiceManager {
       endDate?: Date
     } = {}
   ): Promise<{ invoices: InvoiceData[]; total: number }> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
     let query = supabase
       .from('invoices')
       .select('*', { count: 'exact' })
@@ -285,7 +282,7 @@ export class InvoiceManager {
 
   async retryFailedPayment(invoiceId: string): Promise<boolean> {
     try {
-      const supabase = await this.supabase
+      const supabase = await createClient()
 
       // Get invoice details
       const { data: invoice } = await supabase
@@ -316,7 +313,7 @@ export class InvoiceManager {
   }
 
   async voidInvoice(invoiceId: string, reason?: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get Stripe invoice ID
     const { data: invoice } = await supabase
@@ -352,7 +349,7 @@ export class InvoiceManager {
     averageInvoiceAmount: number
     paymentSuccessRate: number
   }> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const { data: invoices } = await supabase
       .from('invoices')
@@ -396,7 +393,7 @@ export class InvoiceManager {
 
   // Private helper methods
   private async getOrganizationFromCustomer(customerId: string): Promise<string | null> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
     const { data } = await supabase
       .from('organizations')
       .select('id')
@@ -461,7 +458,7 @@ export class InvoiceManager {
   }
 
   private async resetPaymentRetries(stripeInvoiceId: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('invoices')

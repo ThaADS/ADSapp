@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 'use client'
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'

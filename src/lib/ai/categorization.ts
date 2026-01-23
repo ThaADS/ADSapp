@@ -3,8 +3,6 @@
  * Automatically categorize conversations by topic, issue type, and intent
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-
 import { openRouter } from './openrouter'
 import { createClient } from '@/lib/supabase/server'
 import type { ConversationContext } from './types'

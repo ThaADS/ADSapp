@@ -6,9 +6,6 @@
  * Standard: RFC 6238 (TOTP) compliant
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
 import * as crypto from 'crypto'
 import { authenticator } from 'otplib'

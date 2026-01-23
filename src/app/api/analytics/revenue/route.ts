@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 

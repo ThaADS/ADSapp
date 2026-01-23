@@ -656,18 +656,63 @@ export const useWorkflowStore = create<WorkflowState>()(
               updatedAt: new Date().toISOString(),
             };
 
-            // TODO: Implement API call to save workflow
-            // await fetch('/api/workflows', { method: 'POST', body: JSON.stringify(updatedWorkflow) });
+            // Determine if this is a new workflow or an update
+            const isNewWorkflow = workflow.id.startsWith('workflow_') && !workflow.id.includes('-');
+
+            let response: Response;
+            if (isNewWorkflow) {
+              // Create new workflow
+              response = await fetch('/api/workflows', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: updatedWorkflow.name,
+                  description: updatedWorkflow.description,
+                  type: updatedWorkflow.type,
+                  nodes: updatedWorkflow.nodes,
+                  edges: updatedWorkflow.edges,
+                  settings: updatedWorkflow.settings,
+                }),
+              });
+            } else {
+              // Update existing workflow
+              response = await fetch(`/api/workflows/${workflow.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: updatedWorkflow.name,
+                  description: updatedWorkflow.description,
+                  type: updatedWorkflow.type,
+                  status: updatedWorkflow.status,
+                  nodes: updatedWorkflow.nodes,
+                  edges: updatedWorkflow.edges,
+                  settings: updatedWorkflow.settings,
+                }),
+              });
+            }
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Failed to save workflow');
+            }
+
+            const { workflow: savedWorkflow } = await response.json();
 
             set({
-              workflow: updatedWorkflow,
+              workflow: {
+                ...updatedWorkflow,
+                id: savedWorkflow.id,
+                organizationId: savedWorkflow.organization_id,
+                createdBy: savedWorkflow.created_by,
+                createdAt: savedWorkflow.created_at,
+                updatedAt: savedWorkflow.updated_at,
+              },
               isDirty: false,
               isSaving: false,
             });
 
-            console.log('Workflow saved successfully');
+            // Workflow saved successfully
           } catch (error) {
-            console.error('Failed to save workflow:', error);
             set({ isSaving: false });
             throw error;
           }
@@ -675,15 +720,39 @@ export const useWorkflowStore = create<WorkflowState>()(
 
         loadWorkflow: async (workflowId: string) => {
           try {
-            // TODO: Implement API call to load workflow
-            // const response = await fetch(`/api/workflows/${workflowId}`);
-            // const workflow = await response.json();
+            const response = await fetch(`/api/workflows/${workflowId}`);
 
-            // get().setWorkflow(workflow);
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Failed to load workflow');
+            }
 
-            console.log('Workflow loaded:', workflowId);
+            const { workflow: loadedWorkflow } = await response.json();
+
+            // Transform API response to Workflow type
+            const workflow: Workflow = {
+              id: loadedWorkflow.id,
+              organizationId: loadedWorkflow.organization_id,
+              name: loadedWorkflow.name,
+              description: loadedWorkflow.description || '',
+              type: loadedWorkflow.type,
+              status: loadedWorkflow.status,
+              nodes: loadedWorkflow.nodes || [],
+              edges: loadedWorkflow.edges || [],
+              createdAt: loadedWorkflow.created_at,
+              updatedAt: loadedWorkflow.updated_at,
+              createdBy: loadedWorkflow.created_by,
+              version: loadedWorkflow.version || 1,
+              settings: loadedWorkflow.settings || {
+                allowReentry: false,
+                stopOnError: true,
+                trackConversions: false,
+              },
+            };
+
+            get().setWorkflow(workflow);
+            // Workflow loaded successfully
           } catch (error) {
-            console.error('Failed to load workflow:', error);
             throw error;
           }
         },
@@ -709,8 +778,7 @@ export const useWorkflowStore = create<WorkflowState>()(
           try {
             const importData = JSON.parse(data);
             get().setWorkflow(importData.workflow);
-          } catch (error) {
-            console.error('Failed to import workflow:', error);
+          } catch {
             throw new Error('Invalid workflow data');
           }
         },

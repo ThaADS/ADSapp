@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { v4 as uuidv4 } from 'uuid'
 import { createClient } from '@/lib/supabase/server'
 import { RedisSessionStore, createRedisSessionStore, RedisSession, DeviceInfo } from './redis-store'

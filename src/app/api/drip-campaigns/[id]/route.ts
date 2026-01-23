@@ -88,7 +88,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         description: body.description,
         trigger_config: body.triggerConfig,
         settings: body.settings,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -151,7 +151,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       .update({
         status: 'archived',
         is_active: false,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
 

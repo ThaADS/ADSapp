@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration
 import { requireAuth, getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import SecurityDashboard from '@/components/admin/security-dashboard'

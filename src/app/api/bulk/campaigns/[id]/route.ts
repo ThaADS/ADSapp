@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 /**
  * Individual Broadcast Campaign API
  * GET/PATCH/DELETE /api/bulk/campaigns/[id]

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, validateSearchQuery } from '@/lib/supabase/server'
 import {
   requireAuthenticatedUser,
   getUserOrganization,
@@ -70,10 +70,14 @@ export async function GET(request: NextRequest) {
       .eq('organization_id', organizationId)
 
     // Apply filters
+    // SECURITY FIX: Sanitize search query to prevent PostgREST filter injection
     if (search) {
-      query = query.or(
-        `name.ilike.%${search}%,phone_number.ilike.%${search}%,email.ilike.%${search}%`
-      )
+      const sanitizedSearch = validateSearchQuery(search, 100)
+      if (sanitizedSearch) {
+        query = query.or(
+          `name.ilike.%${sanitizedSearch}%,phone_number.ilike.%${sanitizedSearch}%,email.ilike.%${sanitizedSearch}%`
+        )
+      }
     }
 
     if (tags && tags.length > 0) {
@@ -216,6 +220,23 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       throw error
+    }
+
+    // Also insert into contact_tags junction table for detailed tracking
+    if (tags && tags.length > 0 && contact) {
+      const contactTagInserts = tags.map((tagId: string) => ({
+        contact_id: contact.id,
+        tag_id: tagId,
+        assigned_by: userId,
+      }))
+
+      // Insert tags - ignore errors (tag might not exist or already assigned)
+      await supabase
+        .from('contact_tags')
+        .upsert(contactTagInserts, { onConflict: 'contact_id,tag_id', ignoreDuplicates: true })
+        .catch((err) => {
+          console.warn('Failed to insert contact_tags (non-critical):', err)
+        })
     }
 
     // 🚀 PERFORMANCE: Invalidate contacts cache after creating new contact

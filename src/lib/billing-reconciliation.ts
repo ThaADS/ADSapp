@@ -15,9 +15,7 @@
  * - Subscription lifecycle management
  */
 
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
 import Stripe from 'stripe'
 
 // Initialize Stripe client
@@ -145,12 +143,14 @@ export interface PricingTier {
 }
 
 export class BillingReconciliationEngine {
-  private supabase
   private stripe: Stripe
 
   constructor() {
-    this.supabase = createClient(cookies())
     this.stripe = stripe
+  }
+
+  private async getSupabaseClient() {
+    return await createClient()
   }
 
   /**
@@ -199,7 +199,7 @@ export class BillingReconciliationEngine {
   }> {
     try {
       // Get organization's subscription tier
-      const { data: org, error: orgError } = await this.supabase
+      const { data: org, error: orgError } = await (await this.getSupabaseClient())
         .from('organizations')
         .select('subscription_tier, stripe_subscription_id')
         .eq('id', organizationId)
@@ -254,7 +254,7 @@ export class BillingReconciliationEngine {
       const invoice = await this.stripe.invoices.retrieve(invoiceId)
 
       // Get organization and usage data
-      const { data: org } = await this.supabase
+      const { data: org } = await (await this.getSupabaseClient())
         .from('organizations')
         .select('*')
         .eq('stripe_customer_id', invoice.customer)
@@ -379,7 +379,7 @@ export class BillingReconciliationEngine {
       const subscription = await this.stripe.subscriptions.retrieve(subscriptionId)
 
       // Get contract details
-      const { data: contract, error } = await this.supabase
+      const { data: contract, error } = await (await this.getSupabaseClient())
         .from('subscription_contracts')
         .select('*')
         .eq('stripe_subscription_id', subscriptionId)
@@ -488,7 +488,7 @@ export class BillingReconciliationEngine {
     startDate: string,
     endDate: string
   ): Promise<BillingTransaction[]> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabaseClient())
       .from('billing_transactions')
       .select('*')
       .gte('created_at', startDate)
@@ -584,7 +584,7 @@ export class BillingReconciliationEngine {
   }
 
   private async storeReconciliationResults(report: ReconciliationReport): Promise<void> {
-    await this.supabase.from('billing_reconciliation_reports').insert({
+    await (await this.getSupabaseClient()).from('billing_reconciliation_reports').insert({
       period: report.period,
       total_stripe_revenue: report.total_stripe_revenue,
       total_recorded_revenue: report.total_recorded_revenue,
@@ -654,7 +654,7 @@ export class BillingReconciliationEngine {
     startDate: string,
     endDate: string
   ): Promise<UsageData> {
-    const { data, error } = await this.supabase.rpc('calculate_organization_usage', {
+    const { data, error } = await (await this.getSupabaseClient()).rpc('calculate_organization_usage', {
       org_id: organizationId,
       start_date: startDate,
       end_date: endDate,
@@ -703,7 +703,7 @@ export class BillingReconciliationEngine {
     startDate: string,
     endDate: string
   ): Promise<void> {
-    await this.supabase.from('usage_records').insert({
+    await (await this.getSupabaseClient()).from('usage_records').insert({
       organization_id: organizationId,
       billing_period_start: startDate,
       billing_period_end: endDate,
@@ -719,7 +719,7 @@ export class BillingReconciliationEngine {
     invoiceId: string,
     adjustments: any[]
   ): Promise<void> {
-    await this.supabase.from('billing_transactions').insert({
+    await (await this.getSupabaseClient()).from('billing_transactions').insert({
       organization_id: organizationId,
       stripe_invoice_id: invoiceId,
       type: 'adjustment',
@@ -795,7 +795,7 @@ export class BillingReconciliationEngine {
     organizationId: string
   ): Promise<{ declining: boolean; trend: number }> {
     // Simplified usage trend calculation
-    const { data, error } = await this.supabase.rpc('get_usage_trend', {
+    const { data, error } = await (await this.getSupabaseClient()).rpc('get_usage_trend', {
       org_id: organizationId,
       months: 3,
     })
@@ -812,7 +812,7 @@ export class BillingReconciliationEngine {
   private async getRecentSupportTickets(
     organizationId: string
   ): Promise<{ unresolved: number; total: number }> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabaseClient())
       .from('support_tickets')
       .select('status')
       .eq('organization_id', organizationId)
@@ -911,15 +911,15 @@ export class BillingReconciliationEngine {
   }
 
   private async storeRevenueRecognitionSchedule(schedule: RevenueRecognition): Promise<void> {
-    await this.supabase.from('revenue_recognition_schedules').insert(schedule)
+    await (await this.getSupabaseClient()).from('revenue_recognition_schedules').insert(schedule)
   }
 
   private async storeChurnPredictions(predictions: ChurnPrediction[]): Promise<void> {
-    await this.supabase.from('churn_predictions').insert(predictions)
+    await (await this.getSupabaseClient()).from('churn_predictions').insert(predictions)
   }
 
   private async getRevenueMetrics(startDate: string, endDate: string): Promise<any> {
-    const { data, error } = await this.supabase.rpc('get_billing_revenue_metrics', {
+    const { data, error } = await (await this.getSupabaseClient()).rpc('get_billing_revenue_metrics', {
       start_date: startDate,
       end_date: endDate,
     })
@@ -929,7 +929,7 @@ export class BillingReconciliationEngine {
   }
 
   private async getReconciliationStatus(startDate: string, endDate: string): Promise<any> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabaseClient())
       .from('billing_reconciliation_reports')
       .select('*')
       .gte('period', startDate)
@@ -943,7 +943,7 @@ export class BillingReconciliationEngine {
   }
 
   private async getChurnAnalysis(): Promise<any> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabaseClient())
       .from('churn_predictions')
       .select('*')
       .order('churn_probability', { ascending: false })
@@ -963,7 +963,7 @@ export class BillingReconciliationEngine {
   }
 
   private async getComplianceStatus(): Promise<any> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabaseClient())
       .from('revenue_recognition_schedules')
       .select('*')
       .is('compliance_notes', null)

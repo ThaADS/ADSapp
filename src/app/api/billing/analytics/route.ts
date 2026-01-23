@@ -1,18 +1,23 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe/server'
+import { requireAuthenticatedUser, getUserOrganization } from '@/lib/api-utils'
 
 export async function GET(request: NextRequest) {
   try {
+    // SECURITY FIX: Require authentication and validate organization access
+    const user = await requireAuthenticatedUser()
+    const profile = await getUserOrganization(user.id)
+
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '30d'
-    const organizationId = request.headers.get('X-Organization-ID')
+
+    // SECURITY FIX: Use authenticated user's organization, not header
+    // This prevents attackers from accessing other organizations' billing data
+    const organizationId = profile.organization_id
 
     if (!organizationId) {
-      return NextResponse.json({ error: 'Organization ID is required' }, { status: 400 })
+      return NextResponse.json({ error: 'Organization not found' }, { status: 403 })
     }
 
     const supabase = await createClient()

@@ -9,9 +9,6 @@
  * - PUT /api/organizations/[id] - Update organization settings
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { ApiException, createErrorResponse } from '@/lib/api-utils'

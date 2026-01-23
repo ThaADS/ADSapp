@@ -3,9 +3,6 @@
  * Prevents services from being initialized during build time when environment variables may not be available
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 export function isBuildTime(): boolean {
   // Check if we're in a build environment
   return (

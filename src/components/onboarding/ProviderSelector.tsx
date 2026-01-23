@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import { WhatsAppSetupWizard } from './WhatsAppSetupWizard'
-import { WhatsAppQRSetup } from './WhatsAppQRSetup'
 import { TwilioSetup } from './TwilioSetup'
 
-export type WhatsAppProvider = 'cloud-api' | 'qr-code' | 'twilio'
+export type WhatsAppProvider = 'cloud-api' | 'twilio'
 
 interface ProviderSelectorProps {
   onComplete: (credentials: WhatsAppCredentials) => void
@@ -22,8 +21,6 @@ export interface WhatsAppCredentials {
   twilioAccountSid?: string
   twilioAuthToken?: string
   twilioPhoneNumber?: string
-  // QR specific
-  sessionId?: string
 }
 
 const PROVIDERS = [
@@ -34,14 +31,6 @@ const PROVIDERS = [
     icon: '☁️',
     features: ['Official API', 'Best reliability', 'Full features', 'Direct support'],
     recommended: true,
-  },
-  {
-    id: 'qr-code' as WhatsAppProvider,
-    name: 'QR Code Scan',
-    description: 'Connect via WhatsApp Web - Quick start for testing',
-    icon: '📱',
-    features: ['Instant setup', 'No credentials needed', 'Perfect for demos', 'Limited features'],
-    recommended: false,
   },
   {
     id: 'twilio' as WhatsAppProvider,
@@ -87,21 +76,6 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
               ← Back to provider selection
             </button>
             <WhatsAppSetupWizard
-              onComplete={creds => handleComplete(creds)}
-              onSkip={onSkip}
-            />
-          </div>
-        )
-      case 'qr-code':
-        return (
-          <div>
-            <button
-              onClick={handleBack}
-              className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900"
-            >
-              ← Back to provider selection
-            </button>
-            <WhatsAppQRSetup
               onComplete={creds => handleComplete(creds)}
               onSkip={onSkip}
             />
@@ -192,10 +166,6 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
           <p>
             <strong>For businesses:</strong> Choose <span className="font-medium">Cloud API</span>{' '}
             for the official Meta integration with full features and best reliability.
-          </p>
-          <p>
-            <strong>For quick testing:</strong> Choose <span className="font-medium">QR Code</span>{' '}
-            to instantly connect your personal WhatsApp and test the platform.
           </p>
           <p>
             <strong>If you use Twilio:</strong> Choose <span className="font-medium">Twilio</span>{' '}

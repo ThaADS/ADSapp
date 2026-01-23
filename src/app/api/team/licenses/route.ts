@@ -3,9 +3,6 @@
  * Check license availability and manage seat allocation
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 

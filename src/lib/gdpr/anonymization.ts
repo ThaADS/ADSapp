@@ -23,9 +23,6 @@
  * @module gdpr/anonymization
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createHash, randomBytes } from 'crypto'
 
 /**

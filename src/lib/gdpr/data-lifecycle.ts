@@ -17,10 +17,7 @@
  * @module gdpr/data-lifecycle
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { getAnonymizedValue, AnonymizationConfig } from './anonymization'
 import { getRetentionPolicy, isDataExpired } from './retention-policies'
 import { getQueueManager } from '@/lib/queue/queue-manager'
@@ -134,7 +131,7 @@ export async function scheduleDataDeletion(
     gracePeriodDays?: number
   }
 ): Promise<DeletionRequest> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
 
   // Calculate scheduled deletion date (default 30 days)
   const gracePeriodDays = options?.gracePeriodDays || 30
@@ -213,7 +210,7 @@ export async function cancelDeletionRequest(
   cancelledBy: string,
   reason?: string
 ): Promise<DeletionRequest> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
 
   // Update deletion request
   const { data: updatedRequest, error } = await supabase
@@ -265,7 +262,7 @@ export async function cancelDeletionRequest(
  * @returns Deletion result with verification
  */
 export async function executeDataDeletion(deletionRequestId: string): Promise<DeletionResult> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const startTime = Date.now()
 
   // Get deletion request
@@ -456,7 +453,7 @@ export async function anonymizeData(
   userId: string,
   organizationId: string
 ): Promise<AnonymizationResult> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const startTime = Date.now()
 
   let recordsAnonymized = 0
@@ -582,7 +579,7 @@ export async function exportUserData(
   organizationId: string,
   format: ExportFormat = ExportFormat.JSON
 ): Promise<ExportResult> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const exportId = `export_${Date.now()}_${userId}`
 
   try {
@@ -735,7 +732,7 @@ export async function verifyDeletion(
   userId: string,
   organizationId: string
 ): Promise<VerificationResult> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const unverifiedTables: string[] = []
   const details: Record<string, number> = {}
   let remainingRecords = 0
@@ -791,7 +788,7 @@ async function logGdprEvent(event: {
   organization_id: string
   details: Record<string, any>
 }): Promise<void> {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
 
   await supabase.from('gdpr_audit_log').insert({
     event_type: event.event_type,

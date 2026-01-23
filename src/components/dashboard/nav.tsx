@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { memo } from 'react'
 
-// Simple SVG icons until we can install @heroicons/react
+// ⚡ PERFORMANCE: Memoized SVG icons to prevent re-renders
 const DashboardIcon = () => (
   <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
     <path
@@ -185,7 +186,7 @@ interface DashboardNavProps {
   onClose?: () => void
 }
 
-export function DashboardNav({ profile, isOpen = false, onClose }: DashboardNavProps) {
+function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavProps) {
   const pathname = usePathname()
 
   // Shared sidebar content component
@@ -275,3 +276,7 @@ export function DashboardNav({ profile, isOpen = false, onClose }: DashboardNavP
     </>
   )
 }
+
+// ⚡ PERFORMANCE: Memoize navigation component
+export const DashboardNav = memo(DashboardNavInner)
+DashboardNav.displayName = 'DashboardNav'

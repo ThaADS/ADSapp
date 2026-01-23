@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { UpdateMemberSchema, MemberUpdatedResponse, MemberRemovedResponse } from '@/types/team'

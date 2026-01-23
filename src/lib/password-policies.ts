@@ -1,12 +1,8 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 /**
  * Configurable password complexity, history, rotation, and security policies
  */
 
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createClientClient } from '@/lib/supabase/client'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 
@@ -101,12 +97,10 @@ export interface BreachedPassword {
 
 // Password Policy Manager
 export class PasswordPolicyManager {
-  private supabase: any
   private commonPasswords: Set<string>
   private keyboardPatterns: string[]
 
   constructor() {
-    this.supabase = createClient()
     this.commonPasswords = new Set([
       'password',
       '123456',
@@ -141,11 +135,15 @@ export class PasswordPolicyManager {
     ]
   }
 
+  private async getSupabase() {
+    return await createClient()
+  }
+
   // Policy Management
   async createPasswordPolicy(
     policy: Omit<PasswordPolicy, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<PasswordPolicy> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabase())
       .from('password_policies')
       .insert({
         organization_id: policy.organizationId,
@@ -163,7 +161,7 @@ export class PasswordPolicyManager {
   }
 
   async getPasswordPolicy(organizationId: string): Promise<PasswordPolicy | null> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabase())
       .from('password_policies')
       .select('*')
       .eq('organization_id', organizationId)
@@ -178,7 +176,7 @@ export class PasswordPolicyManager {
     policyId: string,
     updates: Partial<PasswordPolicy>
   ): Promise<PasswordPolicy> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabase())
       .from('password_policies')
       .update({
         name: updates.name,
@@ -340,7 +338,7 @@ export class PasswordPolicyManager {
   async savePasswordHistory(userId: string, password: string): Promise<void> {
     const passwordHash = await bcrypt.hash(password, 12)
 
-    await this.supabase.from('password_history').insert({
+    await (await this.getSupabase()).from('password_history').insert({
       user_id: userId,
       password_hash: passwordHash,
     })
@@ -353,7 +351,7 @@ export class PasswordPolicyManager {
   }
 
   private async cleanupPasswordHistory(userId: string, keepCount: number): Promise<void> {
-    const { data: history } = await this.supabase
+    const { data: history } = await (await this.getSupabase())
       .from('password_history')
       .select('id')
       .eq('user_id', userId)
@@ -362,7 +360,7 @@ export class PasswordPolicyManager {
 
     if (history && history.length > 0) {
       const idsToDelete = history.map(h => h.id)
-      await this.supabase.from('password_history').delete().in('id', idsToDelete)
+      await (await this.getSupabase()).from('password_history').delete().in('id', idsToDelete)
     }
   }
 
@@ -371,7 +369,7 @@ export class PasswordPolicyManager {
     password: string,
     historyCount: number
   ): Promise<boolean> {
-    const { data: history } = await this.supabase
+    const { data: history } = await (await this.getSupabase())
       .from('password_history')
       .select('password_hash')
       .eq('user_id', userId)
@@ -401,7 +399,7 @@ export class PasswordPolicyManager {
     }
 
     // Get current failure count
-    const { data: existing } = await this.supabase
+    const { data: existing } = await (await this.getSupabase())
       .from('login_attempts')
       .select('failure_count, last_attempt')
       .eq('user_id', userId)
@@ -410,7 +408,7 @@ export class PasswordPolicyManager {
     const failureCount = (existing?.failure_count || 0) + 1
 
     // Update failure count
-    await this.supabase.from('login_attempts').upsert({
+    await (await this.getSupabase()).from('login_attempts').upsert({
       user_id: userId,
       organization_id: organizationId,
       failure_count: failureCount,
@@ -435,7 +433,7 @@ export class PasswordPolicyManager {
     const policy = await this.getPasswordPolicy(organizationId)
     const lockedUntil = new Date(Date.now() + policy.enforcement.lockoutDurationMinutes * 60 * 1000)
 
-    const { data: lockout, error } = await this.supabase
+    const { data: lockout, error } = await (await this.getSupabase())
       .from('account_lockouts')
       .insert({
         user_id: userId,
@@ -451,7 +449,7 @@ export class PasswordPolicyManager {
     if (error) throw error
 
     // Deactivate user profile temporarily
-    await this.supabase.from('profiles').update({ is_active: false }).eq('id', userId)
+    await (await this.getSupabase()).from('profiles').update({ is_active: false }).eq('id', userId)
 
     return {
       id: lockout.id,
@@ -467,7 +465,7 @@ export class PasswordPolicyManager {
   }
 
   async unlockAccount(lockoutId: string, unlockedBy: string): Promise<void> {
-    const { data: lockout } = await this.supabase
+    const { data: lockout } = await (await this.getSupabase())
       .from('account_lockouts')
       .select('user_id')
       .eq('id', lockoutId)
@@ -476,7 +474,7 @@ export class PasswordPolicyManager {
     if (!lockout) throw new Error('Lockout not found')
 
     // Update lockout record
-    await this.supabase
+    await (await this.getSupabase())
       .from('account_lockouts')
       .update({
         unlocked: true,
@@ -486,17 +484,17 @@ export class PasswordPolicyManager {
       .eq('id', lockoutId)
 
     // Reactivate user profile
-    await this.supabase.from('profiles').update({ is_active: true }).eq('id', lockout.user_id)
+    await (await this.getSupabase()).from('profiles').update({ is_active: true }).eq('id', lockout.user_id)
 
     // Reset failure count
-    await this.supabase
+    await (await this.getSupabase())
       .from('login_attempts')
       .update({ failure_count: 0 })
       .eq('user_id', lockout.user_id)
   }
 
   async isAccountLocked(userId: string): Promise<AccountLockout | null> {
-    const { data: lockout } = await this.supabase
+    const { data: lockout } = await (await this.getSupabase())
       .from('account_lockouts')
       .select('*')
       .eq('user_id', userId)
@@ -687,7 +685,7 @@ export class PasswordPolicyManager {
   }
 
   private async getUserPasswordPolicy(userId: string): Promise<PasswordPolicy | null> {
-    const { data: profile } = await this.supabase
+    const { data: profile } = await (await this.getSupabase())
       .from('profiles')
       .select('organization_id')
       .eq('id', userId)

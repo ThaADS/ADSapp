@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { Job } from 'bullmq'
 import { Resend } from 'resend'
 import { createClient } from '@/lib/supabase/server'

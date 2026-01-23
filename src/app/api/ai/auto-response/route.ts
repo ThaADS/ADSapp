@@ -3,7 +3,6 @@
  * Generate and send automated responses based on conditions
  */
 
-// @ts-nocheck - Type definitions need review
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { AISettings } from '@/types/ai'

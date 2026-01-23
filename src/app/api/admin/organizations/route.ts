@@ -3,9 +3,6 @@
  * Provides comprehensive organization listing, search, filtering, and management functionality
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { adminMiddleware } from '@/lib/middleware'
@@ -32,9 +29,17 @@ export async function GET(request: NextRequest) {
     // Build the query - simplified without heavy joins
     let query = supabase.from('organizations').select('*', { count: 'exact' })
 
-    // Apply filters
+    // Apply filters - sanitize search input to prevent SQL injection
     if (search) {
-      query = query.or(`name.ilike.%${search}%,slug.ilike.%${search}%`)
+      // Sanitize search input: remove special SQL characters and limit length
+      const sanitizedSearch = search
+        .replace(/[%_'"\\;]/g, '') // Remove SQL wildcards and escape chars
+        .substring(0, 100) // Limit length
+        .trim()
+
+      if (sanitizedSearch.length > 0) {
+        query = query.or(`name.ilike.%${sanitizedSearch}%,slug.ilike.%${sanitizedSearch}%`)
+      }
     }
 
     if (status) {

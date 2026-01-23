@@ -1,7 +1,5 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
+import { decryptWhatsAppCredentials } from '@/lib/security/credential-manager'
 
 export interface WhatsAppMedia {
   id: string
@@ -361,7 +359,7 @@ export async function getWhatsAppClient(organizationId: string): Promise<Enhance
 
   const { data: organization, error } = await supabase
     .from('organizations')
-    .select('whatsapp_access_token')
+    .select('whatsapp_access_token, whatsapp_phone_number_id, whatsapp_business_account_id, whatsapp_webhook_verify_token')
     .eq('id', organizationId)
     .single()
 
@@ -369,5 +367,18 @@ export async function getWhatsAppClient(organizationId: string): Promise<Enhance
     throw new Error('WhatsApp access token not found for organization')
   }
 
-  return new EnhancedWhatsAppClient(organization.whatsapp_access_token)
+  // Decrypt credentials (handles both encrypted and legacy plaintext)
+  const credentials = decryptWhatsAppCredentials(
+    organizationId,
+    organization.whatsapp_access_token,
+    organization.whatsapp_phone_number_id,
+    organization.whatsapp_business_account_id,
+    organization.whatsapp_webhook_verify_token
+  )
+
+  if (!credentials) {
+    throw new Error('Failed to decrypt WhatsApp credentials for organization')
+  }
+
+  return new EnhancedWhatsAppClient(credentials.accessToken)
 }

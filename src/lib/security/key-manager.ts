@@ -11,7 +11,6 @@
  * @module security/key-manager
  */
 
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 import { getKMSClient, KMSClient, DataKeyResult } from './kms-client'
 import { KeyManagementError } from '@/lib/crypto/types'

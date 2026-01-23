@@ -109,7 +109,16 @@ export function validateWebhookVerification(
     return null
   }
 
-  if (token !== expectedToken) {
+  // Use constant-time comparison to prevent timing attacks
+  // This ensures token verification takes same time regardless of how many chars match
+  if (!token || !expectedToken || token.length !== expectedToken.length) {
+    return null
+  }
+
+  const tokenBuffer = Buffer.from(token, 'utf8')
+  const expectedBuffer = Buffer.from(expectedToken, 'utf8')
+
+  if (!crypto.timingSafeEqual(tokenBuffer, expectedBuffer)) {
     return null
   }
 

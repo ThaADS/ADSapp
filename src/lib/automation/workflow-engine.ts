@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration
 /**
  * Workflow Execution Engine
  * State machine for executing automation workflows with error handling and rollback
@@ -46,13 +45,8 @@ export interface ExecutionResult {
 }
 
 export class WorkflowExecutionEngine {
-  private supabase: ReturnType<typeof createClient>
   private maxNodeExecutions = 100 // Prevent infinite loops
   private executionTimeout = 300000 // 5 minutes
-
-  constructor() {
-    this.supabase = createClient()
-  }
 
   /**
    * Execute a complete workflow
@@ -61,6 +55,7 @@ export class WorkflowExecutionEngine {
     workflow: WorkflowDefinition,
     context: ExecutionContext
   ): Promise<ExecutionResult> {
+    const supabase = await createClient()
     const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const executionPath: string[] = []
     const executionData: Record<string, any> = {
@@ -70,7 +65,7 @@ export class WorkflowExecutionEngine {
 
     try {
       // Create execution record
-      const { error: createError } = await this.supabase.from('workflow_executions').insert({
+      const { error: createError } = await supabase.from('workflow_executions').insert({
         id: executionId,
         workflow_id: workflow.id,
         conversation_id: context.conversationId,
@@ -137,7 +132,7 @@ export class WorkflowExecutionEngine {
           })
 
           // Update execution with error
-          await this.supabase
+          await supabase
             .from('workflow_executions')
             .update({
               status: 'failed',
@@ -165,7 +160,7 @@ export class WorkflowExecutionEngine {
       }
 
       // Mark execution as completed
-      await this.supabase
+      await supabase
         .from('workflow_executions')
         .update({
           status: 'completed',
@@ -184,7 +179,7 @@ export class WorkflowExecutionEngine {
       }
     } catch (error: any) {
       // Update execution with error
-      await this.supabase
+      await supabase
         .from('workflow_executions')
         .update({
           status: 'failed',
@@ -460,7 +455,8 @@ export class WorkflowExecutionEngine {
       error_message?: string
     }
   ) {
-    const { error } = await this.supabase.from('workflow_execution_logs').insert({
+    const supabase = await createClient()
+    const { error } = await supabase.from('workflow_execution_logs').insert({
       execution_id: executionId,
       organization_id: organizationId,
       ...logData,
@@ -542,7 +538,8 @@ export class WorkflowExecutionEngine {
       throw new Error('No conversation ID provided for assignment')
     }
 
-    const { error } = await this.supabase
+    const supabase = await createClient()
+    const { error } = await supabase
       .from('conversations')
       .update({ assigned_to: agent_id })
       .eq('id', context.conversationId)
@@ -564,7 +561,8 @@ export class WorkflowExecutionEngine {
       throw new Error('No conversation ID provided for priority update')
     }
 
-    const { error } = await this.supabase
+    const supabase = await createClient()
+    const { error } = await supabase
       .from('conversations')
       .update({ priority })
       .eq('id', context.conversationId)
@@ -586,8 +584,10 @@ export class WorkflowExecutionEngine {
       throw new Error('No conversation ID provided for note creation')
     }
 
+    const supabase = await createClient()
+
     // Get existing notes
-    const { data: conversation } = await this.supabase
+    const { data: conversation } = await supabase
       .from('conversations')
       .select('notes')
       .eq('id', context.conversationId)
@@ -602,7 +602,7 @@ export class WorkflowExecutionEngine {
 
     const updatedNotes = [...(conversation?.notes || []), newNote]
 
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('conversations')
       .update({ notes: updatedNotes })
       .eq('id', context.conversationId)

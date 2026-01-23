@@ -13,9 +13,7 @@
  * - Advanced filtering, aggregation, and visualization support
  */
 
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
 
 // Types for the reporting system
 export interface RevenueAnalytics {

@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createErrorResponse, rateLimit, ApiException } from '@/lib/api-utils'
 import { createClient } from '@/lib/supabase/server'
@@ -290,6 +287,20 @@ export const withStrictRateLimit = (handler: any) =>
     },
   })
 
+// Allowed origins for public endpoints - whitelist instead of wildcard
+const ALLOWED_PUBLIC_ORIGINS = [
+  'https://app.adsapp.nl',
+  'https://adsapp.nl',
+  'https://www.adsapp.nl',
+  process.env.NEXT_PUBLIC_APP_URL,
+  // Development origins
+  ...(process.env.NODE_ENV === 'development' ? [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+  ] : []),
+].filter(Boolean) as string[]
+
 export const withPublicAccess = (handler: any) =>
   withApiMiddleware(handler, {
     requireAuth: false,
@@ -299,7 +310,7 @@ export const withPublicAccess = (handler: any) =>
       max: 50, // 50 requests per minute for public endpoints
     },
     cors: {
-      origin: '*',
+      origin: ALLOWED_PUBLIC_ORIGINS, // Whitelist instead of wildcard for security
       methods: ['GET', 'POST', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization'],
     },

@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
 /**
  * Individual Payment Link API
  * GET /api/payments/links/[id] - Get payment link details

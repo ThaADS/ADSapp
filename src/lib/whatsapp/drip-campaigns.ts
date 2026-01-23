@@ -16,6 +16,7 @@ import { WhatsAppTemplateManager } from './templates'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database'
 import crypto from 'crypto'
+import { decryptWhatsAppCredentials } from '@/lib/security/credential-manager'
 
 type TypedSupabaseClient = SupabaseClient<Database>
 
@@ -187,8 +188,8 @@ export class DripCampaignEngine {
           averageCompletionRate: 0,
         },
         created_by: campaign.createdBy,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       }
 
       const { data, error } = await this.supabase
@@ -229,8 +230,8 @@ export class DripCampaignEngine {
         template_variables: step.templateVariables,
         conditions: step.conditions,
         settings: step.settings,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       }
 
       const { data, error } = await this.supabase
@@ -827,22 +828,39 @@ export class DripCampaignEngine {
     }
   }
 
+  /**
+   * Get WhatsApp configuration for organization
+   * Retrieves and decrypts per-tenant WhatsApp credentials
+   */
   private async getWhatsAppConfig(
     organizationId: string
   ): Promise<{ phoneNumberId: string; accessToken: string } | null> {
     const { data: organization } = await this.supabase
       .from('organizations')
-      .select('whatsapp_phone_number_id, whatsapp_business_account_id')
+      .select('whatsapp_phone_number_id, whatsapp_business_account_id, whatsapp_access_token, whatsapp_webhook_verify_token')
       .eq('id', organizationId)
       .single()
 
-    if (!organization?.whatsapp_phone_number_id) {
+    if (!organization?.whatsapp_phone_number_id || !organization?.whatsapp_access_token) {
+      return null
+    }
+
+    // Decrypt credentials (handles both encrypted and legacy plaintext)
+    const credentials = decryptWhatsAppCredentials(
+      organizationId,
+      organization.whatsapp_access_token,
+      organization.whatsapp_phone_number_id,
+      organization.whatsapp_business_account_id,
+      organization.whatsapp_webhook_verify_token
+    )
+
+    if (!credentials) {
       return null
     }
 
     return {
-      accessToken: process.env.WHATSAPP_ACCESS_TOKEN || '',
-      phoneNumberId: organization.whatsapp_phone_number_id,
+      accessToken: credentials.accessToken,
+      phoneNumberId: credentials.phoneNumberId,
     }
   }
 

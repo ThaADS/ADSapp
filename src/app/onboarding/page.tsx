@@ -1,3 +1,7 @@
+/**
+ * Onboarding Page
+ */
+
 import { requireAuth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'

@@ -57,9 +57,15 @@ export async function GET(request: NextRequest) {
       { count: 'exact' }
     )
 
-    // Apply filters
+    // Apply filters with input sanitization
     if (search) {
-      query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`)
+      const sanitizedSearch = search
+        .replace(/[%_'"\\;]/g, '') // Remove SQL wildcards and escape chars
+        .substring(0, 100) // Limit length
+        .trim()
+      if (sanitizedSearch.length > 0) {
+        query = query.or(`email.ilike.%${sanitizedSearch}%,full_name.ilike.%${sanitizedSearch}%`)
+      }
     }
 
     if (role) {

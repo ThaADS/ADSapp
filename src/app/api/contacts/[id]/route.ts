@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import {
   requireAuthenticatedUser,
@@ -168,6 +165,31 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     if (error) {
       throw error
+    }
+
+    // Sync tags to contact_tags junction table if tags were updated
+    if (tags !== undefined) {
+      // First, remove all existing tag assignments for this contact
+      await supabase
+        .from('contact_tags')
+        .delete()
+        .eq('contact_id', id)
+
+      // Then, insert new tag assignments
+      if (tags && tags.length > 0) {
+        const contactTagInserts = tags.map((tagId: string) => ({
+          contact_id: id,
+          tag_id: tagId,
+          assigned_by: userId,
+        }))
+
+        await supabase
+          .from('contact_tags')
+          .upsert(contactTagInserts, { onConflict: 'contact_id,tag_id', ignoreDuplicates: true })
+          .catch((err) => {
+            console.warn('Failed to sync contact_tags (non-critical):', err)
+          })
+      }
     }
 
     return createSuccessResponse(updatedContact)

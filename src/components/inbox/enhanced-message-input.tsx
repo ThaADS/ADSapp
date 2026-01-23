@@ -524,46 +524,55 @@ export default function EnhancedMessageInput({
       )}
 
       {/* Message Input */}
-      <div className='flex items-center gap-2 p-4 bg-white border-t-2 border-gray-200'>
+      <div className='flex items-center gap-3 p-4 bg-white border-t-2 border-gray-200'>
         {/* Attachment Button */}
-        <div className='relative'>
+        <div className='relative flex-shrink-0'>
           <button
             onClick={() => setShowAttachments(!showAttachments)}
-            className='flex items-center justify-center rounded-full p-2 text-gray-600 transition-all hover:bg-gray-100'
+            className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-600 transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
             disabled={disabled}
-            title='Bijlage toevoegen'
+            aria-label='Bijlage toevoegen'
+            aria-expanded={showAttachments}
           >
             <Paperclip className='h-5 w-5' />
           </button>
 
           {/* Attachment Menu - WhatsApp/Telegram Style */}
           {showAttachments && (
-            <div className='absolute bottom-full left-0 z-10 mb-2 flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-2xl border border-gray-200'>
+            <div
+              className='absolute bottom-full left-0 z-10 mb-2 flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-2xl border border-gray-200'
+              role='menu'
+              aria-label='Bijlage opties'
+            >
               <button
                 onClick={() => handleFileSelect('image')}
-                className='flex items-center justify-center rounded-full p-3 bg-purple-500 text-white transition-all hover:bg-purple-600 shadow-md'
-                title='Afbeelding'
+                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-purple-500 text-white transition-all hover:bg-purple-600 shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300'
+                role='menuitem'
+                aria-label='Afbeelding uploaden'
               >
                 <Image className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('document')}
-                className='flex items-center justify-center rounded-full p-3 bg-blue-500 text-white transition-all hover:bg-blue-600 shadow-md'
-                title='Document'
+                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-blue-500 text-white transition-all hover:bg-blue-600 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300'
+                role='menuitem'
+                aria-label='Document uploaden'
               >
                 <FileText className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('audio')}
-                className='flex items-center justify-center rounded-full p-3 bg-orange-500 text-white transition-all hover:bg-orange-600 shadow-md'
-                title='Audio'
+                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-orange-500 text-white transition-all hover:bg-orange-600 shadow-md focus:outline-none focus:ring-2 focus:ring-orange-300'
+                role='menuitem'
+                aria-label='Audio uploaden'
               >
                 <Mic className='h-5 w-5' />
               </button>
               <button
                 onClick={() => handleFileSelect('video')}
-                className='flex items-center justify-center rounded-full p-3 bg-red-500 text-white transition-all hover:bg-red-600 shadow-md'
-                title='Video'
+                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-red-500 text-white transition-all hover:bg-red-600 shadow-md focus:outline-none focus:ring-2 focus:ring-red-300'
+                role='menuitem'
+                aria-label='Video uploaden'
               >
                 <Video className='h-5 w-5' />
               </button>
@@ -574,9 +583,9 @@ export default function EnhancedMessageInput({
         {/* Template Button */}
         <button
           onClick={() => setShowTemplates(true)}
-          className='flex items-center justify-center rounded-full p-2 text-gray-600 transition-all hover:bg-gray-100'
+          className='flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-600 transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
           disabled={disabled}
-          title='Sjablonen'
+          aria-label='Sjablonen openen'
         >
           <LayoutTemplate className='h-5 w-5' />
         </button>
@@ -584,27 +593,34 @@ export default function EnhancedMessageInput({
         {/* AI Drafts Button */}
         <button
           onClick={() => setShowAIDrafts(!showAIDrafts)}
-          className={`flex items-center justify-center rounded-full p-2 transition-all ${
+          className={`flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
             showAIDrafts
               ? 'bg-emerald-100 text-emerald-600'
               : 'text-gray-600 hover:bg-gray-100'
           }`}
           disabled={disabled}
-          title='AI Suggesties'
+          aria-label='AI suggesties tonen'
+          aria-pressed={showAIDrafts}
         >
           <Sparkles className='h-5 w-5' />
         </button>
 
         {/* Message Input */}
-        <div className='flex-1'>
+        <div className='flex-1 min-w-0'>
           <textarea
             ref={textareaRef}
             value={message}
             onChange={e => handleInputChange(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSend()
+              }
+            }}
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
+            aria-label='Typ een bericht'
             className='max-h-32 w-full resize-none rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
             style={{ minHeight: '42px' }}
           />
@@ -614,8 +630,8 @@ export default function EnhancedMessageInput({
         <button
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0)}
-          className='flex items-center justify-center rounded-full p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md'
-          title='Versturen'
+          className='flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300'
+          aria-label='Bericht versturen'
         >
           <Send className='h-5 w-5' />
         </button>

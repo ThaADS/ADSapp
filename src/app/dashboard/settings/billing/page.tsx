@@ -1,4 +1,3 @@
-// @ts-nocheck - Type instantiation depth issue with Supabase Promise.all
 import { requireOrganization } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { BillingDashboard } from '@/components/billing/billing-dashboard'

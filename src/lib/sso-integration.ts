@@ -3,9 +3,6 @@
  * Provides SAML 2.0, OAuth, and enterprise SSO capabilities
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -97,16 +94,11 @@ export interface SCIMConfig {
 
 // SSO Provider Management
 export class SSOProviderManager {
-  private supabase: any
-
-  constructor() {
-    this.supabase = createClient()
-  }
-
   async createProvider(
     provider: Omit<SSOProvider, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<SSOProvider> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from('sso_providers')
       .insert({
         ...provider,
@@ -120,7 +112,8 @@ export class SSOProviderManager {
   }
 
   async getProvider(id: string): Promise<SSOProvider | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from('sso_providers')
       .select('*')
       .eq('id', id)
@@ -132,7 +125,8 @@ export class SSOProviderManager {
   }
 
   async getProviderByOrganization(organizationId: string): Promise<SSOProvider[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from('sso_providers')
       .select('*')
       .eq('organization_id', organizationId)
@@ -143,7 +137,8 @@ export class SSOProviderManager {
   }
 
   async updateProvider(id: string, updates: Partial<SSOProvider>): Promise<SSOProvider> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from('sso_providers')
       .update({
         ...updates,
@@ -159,7 +154,8 @@ export class SSOProviderManager {
   }
 
   async deleteProvider(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const supabase = await createClient()
+    const { error } = await supabase
       .from('sso_providers')
       .update({ is_active: false })
       .eq('id', id)
@@ -354,12 +350,6 @@ export class OAuthHandler {
 
 // Just-in-Time User Provisioning
 export class JITProvisioning {
-  private supabase: any
-
-  constructor() {
-    this.supabase = createClient()
-  }
-
   async provisionUser(
     userInfo: any,
     organizationId: string,
@@ -382,8 +372,10 @@ export class JITProvisioning {
     // Determine user role from group mapping
     const role = this.determineUserRole(userInfo.groups, config)
 
+    const supabase = await createClient()
+
     // Create or update user in Supabase Auth
-    const { data: user, error: authError } = await this.supabase.auth.admin.createUser({
+    const { data: user, error: authError } = await supabase.auth.admin.createUser({
       email: userInfo.email,
       email_confirm: true,
       user_metadata: {
@@ -397,7 +389,7 @@ export class JITProvisioning {
     if (authError) throw authError
 
     // Create or update profile
-    const { data: profile, error: profileError } = await this.supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .upsert({
         id: user.user.id,
@@ -428,11 +420,9 @@ export class JITProvisioning {
 // SCIM Protocol Handler
 export class SCIMHandler {
   private config: SCIMConfig
-  private supabase: any
 
   constructor(config: SCIMConfig) {
     this.config = config
-    this.supabase = createClient()
   }
 
   async handleUserProvisioning(scimUser: any): Promise<any> {
@@ -448,8 +438,10 @@ export class SCIMHandler {
       active: scimUser.active,
     }
 
+    const supabase = await createClient()
+
     // Create user in Supabase
-    const { data: user, error } = await this.supabase.auth.admin.createUser({
+    const { data: user, error } = await supabase.auth.admin.createUser({
       email: userInfo.email,
       email_confirm: true,
       user_metadata: {
@@ -485,8 +477,10 @@ export class SCIMHandler {
       throw new Error('User deprovisioning is not supported')
     }
 
+    const supabase = await createClient()
+
     // Deactivate user
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('profiles')
       .update({ is_active: false })
       .eq('id', userId)
@@ -515,16 +509,11 @@ export class SCIMHandler {
 
 // SSO Session Manager
 export class SSOSessionManager {
-  private supabase: any
-
-  constructor() {
-    this.supabase = createClient()
-  }
-
   async createSSOSession(userId: string, providerId: string, sessionData: any): Promise<string> {
+    const supabase = await createClient()
     const sessionId = crypto.randomUUID()
 
-    const { error } = await this.supabase.from('sso_sessions').insert({
+    const { error } = await supabase.from('sso_sessions').insert({
       id: sessionId,
       user_id: userId,
       provider_id: providerId,
@@ -537,7 +526,8 @@ export class SSOSessionManager {
   }
 
   async validateSSOSession(sessionId: string): Promise<boolean> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from('sso_sessions')
       .select('expires_at')
       .eq('id', sessionId)
@@ -548,7 +538,8 @@ export class SSOSessionManager {
   }
 
   async invalidateSSOSession(sessionId: string): Promise<void> {
-    const { error } = await this.supabase.from('sso_sessions').delete().eq('id', sessionId)
+    const supabase = await createClient()
+    const { error } = await supabase.from('sso_sessions').delete().eq('id', sessionId)
 
     if (error) throw error
   }
@@ -623,7 +614,8 @@ export class SSOService {
     }
 
     // Get JIT configuration for the organization
-    const { data: jitConfig } = await this.providerManager.supabase
+    const supabase = await createClient()
+    const { data: jitConfig } = await supabase
       .from('sso_jit_configs')
       .select('*')
       .eq('organization_id', provider.organizationId)

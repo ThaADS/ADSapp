@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
 /**
  * Stripe Payment Links Service
  * Create and manage payment links for WhatsApp conversations
@@ -395,14 +394,14 @@ export class PaymentLinksService {
       ? `${personalMessage}\n\n`
       : ''
 
-    message += `=³ *Betaalverzoek: ${paymentLink.name}*\n`
-    message += `=° Bedrag: ${amount}\n`
+    message += `ğŸ’³ *Betaalverzoek: ${paymentLink.name}*\n`
+    message += `ğŸ’° Bedrag: ${amount}\n`
 
     if (paymentLink.description) {
-      message += `=İ ${paymentLink.description}\n`
+      message += `ğŸ“ ${paymentLink.description}\n`
     }
 
-    message += `\n= Klik hier om te betalen:\n${paymentLink.stripePaymentLinkUrl}`
+    message += `\nğŸ”— Klik hier om te betalen:\n${paymentLink.stripePaymentLinkUrl}`
 
     return message
   }

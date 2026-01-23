@@ -1,4 +1,3 @@
-// @ts-nocheck - Database types need regeneration
 'use client'
 
 import { useState, useEffect } from 'react'

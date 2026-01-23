@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 import { LeadScore } from './conversion-optimization'

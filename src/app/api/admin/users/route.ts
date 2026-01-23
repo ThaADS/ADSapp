@@ -9,6 +9,7 @@ import { cookies } from 'next/headers'
 import { Database } from '@/types/database'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { adminMiddleware } from '@/lib/middleware'
+import { logSuperAdminAction } from '@/lib/super-admin'
 
 type TypedSupabaseClient = SupabaseClient<Database>
 
@@ -57,9 +58,15 @@ export async function GET(request: NextRequest) {
     // Build the query - simplified to avoid complex joins
     let query = supabase.from('profiles').select('*', { count: 'exact' })
 
-    // Apply filters
+    // Apply filters with input sanitization
     if (search) {
-      query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`)
+      const sanitizedSearch = search
+        .replace(/[%_'"\\;]/g, '') // Remove SQL wildcards and escape chars
+        .substring(0, 100) // Limit length
+        .trim()
+      if (sanitizedSearch.length > 0) {
+        query = query.or(`full_name.ilike.%${sanitizedSearch}%,email.ilike.%${sanitizedSearch}%`)
+      }
     }
 
     if (organizationId) {
@@ -281,7 +288,17 @@ export async function PATCH(request: NextRequest) {
             user: updatedUser,
           })
 
-          // Note: Audit logging removed - system_audit_logs table doesn't exist yet
+          // Log the audit action
+          await logSuperAdminAction(
+            action,
+            'profile',
+            userId,
+            {
+              action,
+              updatedUser,
+              actionData,
+            }
+          )
         }
       } catch (err) {
         console.error('Error updating user:', err)
@@ -292,8 +309,6 @@ export async function PATCH(request: NextRequest) {
         })
       }
     }
-
-    // Note: Audit logging removed - system_audit_logs table doesn't exist yet
 
     const successCount = results.filter(r => r.success).length
     const failureCount = results.length - successCount

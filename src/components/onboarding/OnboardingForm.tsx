@@ -21,8 +21,6 @@ interface OnboardingData {
   twilioAccountSid?: string
   twilioAuthToken?: string
   twilioPhoneNumber?: string
-  // QR specific
-  whatsappSessionId?: string
 
   // Step 3: Profile
   fullName: string
@@ -313,8 +311,6 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 twilioAccountSid: credentials.twilioAccountSid,
                 twilioAuthToken: credentials.twilioAuthToken,
                 twilioPhoneNumber: credentials.twilioPhoneNumber,
-                // QR specific
-                whatsappSessionId: credentials.sessionId,
               }))
               setCurrentStep(3)
             }}

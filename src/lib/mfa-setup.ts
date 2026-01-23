@@ -3,11 +3,7 @@
  * TOTP, SMS, Email, Recovery codes, and MFA policy enforcement
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createClientClient } from '@/lib/supabase/client'
 import { authenticator } from 'otplib'
 import QRCode from 'qrcode'
 import crypto from 'crypto'
@@ -133,18 +129,20 @@ export interface MFAVerificationResult {
 
 // MFA Manager Class
 export class MFAManager {
-  private supabase: any
   private resend: Resend
 
   constructor() {
-    this.supabase = createClient()
     this.resend = new Resend(process.env.RESEND_API_KEY)
+  }
+
+  private async getSupabase() {
+    return await createClient()
   }
 
   // MFA Setup Methods
   async setupTOTP(userId: string, name: string = 'Authenticator App'): Promise<MFASetupResult> {
     // Get user info for TOTP setup
-    const { data: profile } = await this.supabase
+    const { data: profile } = await (await this.getSupabase())
       .from('profiles')
       .select('email, full_name, organization_id')
       .eq('id', userId)
@@ -173,7 +171,7 @@ export class MFAManager {
     const qrCodeDataUrl = await QRCode.toDataURL(otpauth)
 
     // Create MFA method record
-    const { data: method, error } = await this.supabase
+    const { data: method, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .insert({
         user_id: userId,
@@ -215,7 +213,7 @@ export class MFAManager {
     }
 
     // Create MFA method record
-    const { data: method, error } = await this.supabase
+    const { data: method, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .insert({
         user_id: userId,
@@ -251,7 +249,7 @@ export class MFAManager {
     }
 
     // Create MFA method record
-    const { data: method, error } = await this.supabase
+    const { data: method, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .insert({
         user_id: userId,
@@ -290,7 +288,7 @@ export class MFAManager {
     }
 
     // Create MFA method record
-    const { data: method, error } = await this.supabase
+    const { data: method, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .insert({
         user_id: userId,
@@ -318,7 +316,7 @@ export class MFAManager {
 
   // MFA Verification Methods
   async verifySetup(methodId: string, verificationCode: string): Promise<boolean> {
-    const { data: method, error } = await this.supabase
+    const { data: method, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('*')
       .eq('id', methodId)
@@ -343,7 +341,7 @@ export class MFAManager {
 
     if (isValid) {
       // Enable and verify the method
-      await this.supabase
+      await (await this.getSupabase())
         .from('mfa_methods')
         .update({
           is_enabled: true,
@@ -400,7 +398,7 @@ export class MFAManager {
       }
     }
 
-    const { data: challenge, error } = await this.supabase
+    const { data: challenge, error } = await (await this.getSupabase())
       .from('mfa_challenges')
       .insert({
         id: challengeId,
@@ -437,7 +435,7 @@ export class MFAManager {
     challengeId: string,
     verificationCode: string
   ): Promise<MFAVerificationResult> {
-    const { data: challenge, error } = await this.supabase
+    const { data: challenge, error } = await (await this.getSupabase())
       .from('mfa_challenges')
       .select('*')
       .eq('id', challengeId)
@@ -482,7 +480,7 @@ export class MFAManager {
     }
 
     // Update challenge attempts
-    await this.supabase
+    await (await this.getSupabase())
       .from('mfa_challenges')
       .update({
         attempts: challenge.attempts + 1,
@@ -493,7 +491,7 @@ export class MFAManager {
 
     if (isValid) {
       // Update method last used timestamp
-      await this.supabase
+      await (await this.getSupabase())
         .from('mfa_methods')
         .update({ last_used: new Date().toISOString() })
         .eq('id', challenge.method_id)
@@ -514,7 +512,7 @@ export class MFAManager {
 
   // MFA Management Methods
   async getUserMFAMethods(userId: string): Promise<MFAMethod[]> {
-    const { data: methods, error } = await this.supabase
+    const { data: methods, error } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('*')
       .eq('user_id', userId)
@@ -525,7 +523,7 @@ export class MFAManager {
   }
 
   async setPrimaryMethod(methodId: string): Promise<void> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('user_id')
       .eq('id', methodId)
@@ -534,21 +532,21 @@ export class MFAManager {
     if (!method) throw new Error('Method not found')
 
     // Remove primary flag from all other methods
-    await this.supabase
+    await (await this.getSupabase())
       .from('mfa_methods')
       .update({ is_primary: false })
       .eq('user_id', method.user_id)
 
     // Set this method as primary
-    await this.supabase.from('mfa_methods').update({ is_primary: true }).eq('id', methodId)
+    await (await this.getSupabase()).from('mfa_methods').update({ is_primary: true }).eq('id', methodId)
   }
 
   async disableMFAMethod(methodId: string): Promise<void> {
-    await this.supabase.from('mfa_methods').update({ is_enabled: false }).eq('id', methodId)
+    await (await this.getSupabase()).from('mfa_methods').update({ is_enabled: false }).eq('id', methodId)
   }
 
   async deleteMFAMethod(methodId: string): Promise<void> {
-    await this.supabase.from('mfa_methods').delete().eq('id', methodId)
+    await (await this.getSupabase()).from('mfa_methods').delete().eq('id', methodId)
   }
 
   async isMFAEnabled(userId: string): Promise<boolean> {
@@ -557,7 +555,7 @@ export class MFAManager {
   }
 
   async isMFARequired(userId: string): Promise<boolean> {
-    const { data: profile } = await this.supabase
+    const { data: profile } = await (await this.getSupabase())
       .from('profiles')
       .select('organization_id, role')
       .eq('id', userId)
@@ -578,7 +576,7 @@ export class MFAManager {
 
   // Policy Management
   async getMFAPolicy(organizationId: string): Promise<MFAPolicy> {
-    const { data: policy, error } = await this.supabase
+    const { data: policy, error } = await (await this.getSupabase())
       .from('mfa_policies')
       .select('*')
       .eq('organization_id', organizationId)
@@ -603,7 +601,7 @@ export class MFAManager {
   }
 
   async updateMFAPolicy(organizationId: string, policy: Partial<MFAPolicy>): Promise<MFAPolicy> {
-    const { data, error } = await this.supabase
+    const { data, error } = await (await this.getSupabase())
       .from('mfa_policies')
       .upsert({
         organization_id: organizationId,
@@ -640,7 +638,7 @@ export class MFAManager {
   }
 
   private async verifyTOTPChallenge(methodId: string, token: string): Promise<boolean> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)
@@ -653,7 +651,7 @@ export class MFAManager {
   }
 
   private async verifySMS(methodId: string, code: string): Promise<boolean> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)
@@ -666,7 +664,7 @@ export class MFAManager {
   }
 
   private async verifyEmail(methodId: string, code: string): Promise<boolean> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)
@@ -679,7 +677,7 @@ export class MFAManager {
   }
 
   private async verifyBackupCode(userId: string, code: string): Promise<{ success: boolean }> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('*')
       .eq('user_id', userId)
@@ -698,7 +696,7 @@ export class MFAManager {
     targetCode.usedAt = new Date()
     metadata.usedCount++
 
-    await this.supabase
+    await (await this.getSupabase())
       .from('mfa_methods')
       .update({
         metadata: JSON.stringify(metadata),
@@ -714,7 +712,7 @@ export class MFAManager {
     const verificationCode = crypto.randomInt(100000, 999999).toString()
 
     // Update method with verification code
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)
@@ -725,7 +723,7 @@ export class MFAManager {
       metadata.lastVerificationCode = verificationCode
       metadata.lastVerificationSent = new Date()
 
-      await this.supabase
+      await (await this.getSupabase())
         .from('mfa_methods')
         .update({ metadata: JSON.stringify(metadata) })
         .eq('id', methodId)
@@ -739,7 +737,7 @@ export class MFAManager {
     const verificationCode = crypto.randomInt(100000, 999999).toString()
 
     // Update method with verification code
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)
@@ -750,7 +748,7 @@ export class MFAManager {
       metadata.lastVerificationCode = verificationCode
       metadata.lastVerificationSent = new Date()
 
-      await this.supabase
+      await (await this.getSupabase())
         .from('mfa_methods')
         .update({ metadata: JSON.stringify(metadata) })
         .eq('id', methodId)
@@ -776,7 +774,7 @@ export class MFAManager {
   }
 
   private async sendEmailChallenge(methodId: string, code: string): Promise<void> {
-    const { data: method } = await this.supabase
+    const { data: method } = await (await this.getSupabase())
       .from('mfa_methods')
       .select('metadata')
       .eq('id', methodId)

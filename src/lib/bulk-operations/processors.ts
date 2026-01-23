@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import {
   BulkOperation,
   BulkOperationQueue,

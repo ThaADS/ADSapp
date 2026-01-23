@@ -1,9 +1,6 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 'use client'
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react'
 import {
   ChartBarIcon,
   ArrowUpIcon,
@@ -98,224 +95,94 @@ interface AlertData {
   }>
 }
 
-// Enhanced sample data
-const ENHANCED_METRICS: MetricData[] = [
-  {
-    id: 'total-messages',
-    label: 'Total Messages',
-    value: 15847,
-    previousValue: 14203,
-    change: 11.6,
-    changeType: 'increase',
-    period: 'vs last month',
-    target: 16000,
-    unit: 'messages',
-    trend: [12000, 12500, 13200, 14203, 15847],
-    status: 'good',
-    description: 'Total messages sent and received across all conversations',
-  },
-  {
-    id: 'active-conversations',
-    label: 'Active Conversations',
-    value: 428,
-    previousValue: 445,
-    change: -3.8,
-    changeType: 'decrease',
-    period: 'vs last week',
-    target: 450,
-    unit: 'conversations',
-    trend: [520, 480, 445, 410, 428],
-    status: 'warning',
-    description: 'Currently active conversation threads',
-  },
-  {
-    id: 'avg-response-time',
-    label: 'Avg Response Time',
-    value: 2.3,
-    previousValue: 2.8,
-    change: -17.9,
-    changeType: 'decrease',
-    period: 'minutes',
-    target: 2.0,
-    unit: 'minutes',
-    trend: [3.2, 2.9, 2.8, 2.5, 2.3],
-    status: 'good',
-    description: 'Average time to respond to customer messages',
-  },
-  {
-    id: 'customer-satisfaction',
-    label: 'Customer Satisfaction',
-    value: 4.8,
-    previousValue: 4.6,
-    change: 4.3,
-    changeType: 'increase',
-    period: 'out of 5.0',
-    target: 4.5,
-    unit: 'rating',
-    trend: [4.2, 4.4, 4.6, 4.7, 4.8],
-    status: 'good',
-    description: 'Average customer satisfaction rating',
-  },
-  {
-    id: 'conversion-rate',
-    label: 'Conversion Rate',
-    value: 12.4,
-    previousValue: 11.8,
-    change: 5.1,
-    changeType: 'increase',
-    period: 'vs last month',
-    target: 15.0,
-    unit: '%',
-    trend: [10.5, 11.1, 11.8, 12.0, 12.4],
-    status: 'good',
-    description: 'Percentage of conversations that result in conversions',
-  },
-  {
-    id: 'resolution-rate',
-    label: 'First Contact Resolution',
-    value: 78.5,
-    previousValue: 82.1,
-    change: -4.4,
-    changeType: 'decrease',
-    period: 'vs last month',
-    target: 85.0,
-    unit: '%',
-    trend: [85.2, 83.8, 82.1, 79.3, 78.5],
-    status: 'danger',
-    description: 'Percentage of issues resolved on first contact',
-  },
-]
+interface AnalyticsApiResponse {
+  conversationMetrics: {
+    volumeTrend: Array<{ date: string; count: number; resolved: number; pending: number }>
+    peakHours: Array<{ hour: number; count: number }>
+    responseTimeByHour: Array<{ hour: number; avgMinutes: number }>
+    statusDistribution: Array<{ status: string; count: number }>
+  }
+  customerJourney: {
+    touchpoints: Array<{ stage: string; count: number; conversionRate: number }>
+    funnel: Array<{ stage: string; count: number; dropoff: number }>
+    cohortRetention: Array<{ week: number; retention: number }>
+  }
+  agentPerformance: {
+    leaderboard: Array<{
+      agentName: string
+      messagesHandled: number
+      avgResponseTime: number
+      satisfaction: number
+    }>
+    workloadDistribution: Array<{ agentName: string; workload: number }>
+    productivityTrend: Array<{ date: string; productivity: number }>
+  }
+  campaignROI: {
+    comparison: Array<{
+      campaign: string
+      sent: number
+      opened: number
+      clicked: number
+      converted: number
+      roi: number
+    }>
+    revenueByChannel: Array<{ channel: string; revenue: number }>
+  }
+  predictive: {
+    volumeForecast: Array<{ date: string; actual?: number; forecast: number }>
+    churnRisk: Array<{ segment: string; risk: number }>
+  }
+}
 
-const TIME_SERIES_DATA: TimeSeriesData[] = [
-  {
-    id: 'messages',
-    name: 'Messages',
-    color: '#3b82f6',
-    type: 'line',
-    data: Array.from({ length: 30 }, (_, i) => ({
-      date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      value: Math.floor(Math.random() * 200) + 400 + i * 5,
-    })),
-  },
-  {
-    id: 'conversations',
-    name: 'New Conversations',
-    color: '#10b981',
-    type: 'area',
-    data: Array.from({ length: 30 }, (_, i) => ({
-      date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      value: Math.floor(Math.random() * 50) + 15 + i * 0.5,
-    })),
-  },
-  {
-    id: 'response-time',
-    name: 'Response Time (min)',
-    color: '#f59e0b',
-    type: 'bar',
-    data: Array.from({ length: 30 }, (_, i) => ({
-      date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      value: Math.random() * 2 + 1.5,
-    })),
-  },
-]
-
-const GEOGRAPHIC_DATA: GeographicData[] = [
-  {
-    country: 'United States',
-    countryCode: 'US',
-    value: 1247,
-    percentage: 42.3,
-    coordinates: [-95.7129, 37.0902],
-  },
-  {
-    country: 'Canada',
-    countryCode: 'CA',
-    value: 567,
-    percentage: 19.2,
-    coordinates: [-106.3468, 56.1304],
-  },
-  {
-    country: 'United Kingdom',
-    countryCode: 'GB',
-    value: 423,
-    percentage: 14.3,
-    coordinates: [-3.436, 55.3781],
-  },
-  {
-    country: 'Germany',
-    countryCode: 'DE',
-    value: 312,
-    percentage: 10.6,
-    coordinates: [10.4515, 51.1657],
-  },
-  {
-    country: 'Australia',
-    countryCode: 'AU',
-    value: 234,
-    percentage: 7.9,
-    coordinates: [133.7751, -25.2744],
-  },
-  {
-    country: 'France',
-    countryCode: 'FR',
-    value: 178,
-    percentage: 6.0,
-    coordinates: [2.2137, 46.2276],
-  },
-]
-
-const DEVICE_DATA: DeviceData[] = [
-  {
-    device: 'Mobile',
-    icon: DevicePhoneMobileIcon,
-    value: 1834,
-    percentage: 62.1,
-    color: '#3b82f6',
-  },
-  { device: 'Desktop', icon: ComputerDesktopIcon, value: 892, percentage: 30.2, color: '#10b981' },
-  { device: 'Tablet', icon: DevicePhoneMobileIcon, value: 227, percentage: 7.7, color: '#f59e0b' },
-]
-
-const SAMPLE_ALERTS: AlertData[] = [
-  {
-    id: '1',
-    type: 'warning',
-    title: 'Response Time Alert',
-    message: 'Average response time has increased by 15% in the last hour',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000),
-    isRead: false,
-    actions: [
-      { label: 'View Details', action: () => {}, style: 'primary' },
-      { label: 'Dismiss', action: () => {}, style: 'secondary' },
-    ],
-  },
-  {
-    id: '2',
-    type: 'success',
-    title: 'Goal Achieved',
-    message: 'Customer satisfaction target of 4.5 has been exceeded',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    isRead: false,
-  },
-  {
-    id: '3',
-    type: 'error',
-    title: 'High Unresponded Messages',
-    message: '23 messages have been waiting for response for over 30 minutes',
-    timestamp: new Date(Date.now() - 45 * 60 * 1000),
-    isRead: true,
-    actions: [
-      { label: 'View Messages', action: () => {}, style: 'danger' },
-      { label: 'Assign Team', action: () => {}, style: 'primary' },
-    ],
-  },
+// Default empty data for fallback
+const DEFAULT_deviceData: DeviceData[] = [
+  { device: 'Mobile', icon: DevicePhoneMobileIcon, value: 0, percentage: 0, color: '#3b82f6' },
+  { device: 'Desktop', icon: ComputerDesktopIcon, value: 0, percentage: 0, color: '#10b981' },
+  { device: 'Tablet', icon: DevicePhoneMobileIcon, value: 0, percentage: 0, color: '#f59e0b' },
 ]
 
 interface EnhancedAnalyticsDashboardProps {
   organizationId: string
 }
 
-export default function EnhancedAnalyticsDashboard({
+// ⚡ PERFORMANCE: Memoized sparkline component
+const Sparkline = memo(({
+  data,
+  color = '#3b82f6',
+  width = 80,
+  height = 24,
+}: {
+  data: number[]
+  color?: string
+  width?: number
+  height?: number
+}) => {
+  const max = Math.max(...data)
+  const min = Math.min(...data)
+  const range = max - min || 1
+
+  return (
+    <svg width={width} height={height} className='inline-block'>
+      <polyline
+        fill='none'
+        stroke={color}
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        points={data
+          .map((value, index) => {
+            const x = (index / (data.length - 1 || 1)) * width
+            const y = height - ((value - min) / range) * height
+            return `${x},${y}`
+          })
+          .join(' ')}
+      />
+    </svg>
+  )
+})
+Sparkline.displayName = 'Sparkline'
+
+function EnhancedAnalyticsDashboardInner({
   organizationId,
 }: EnhancedAnalyticsDashboardProps) {
   const [selectedDateRange, setSelectedDateRange] = useState('30d')
@@ -328,28 +195,281 @@ export default function EnhancedAnalyticsDashboard({
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [refreshInterval, setRefreshInterval] = useState(30)
   const [selectedChart, setSelectedChart] = useState<string>('messages')
-  const [alerts, setAlerts] = useState<AlertData[]>(SAMPLE_ALERTS)
+  const [alerts, setAlerts] = useState<AlertData[]>([])
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(['overview', 'trends'])
   )
   const [chartViewType, setChartViewType] = useState<'combined' | 'individual'>('combined')
   const [showComparisons, setShowComparisons] = useState(true)
 
+  // Real data state
+  const [loading, setLoading] = useState(true)
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsApiResponse | null>(null)
+  const [metrics, setMetrics] = useState<MetricData[]>([])
+  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([])
+  const [geographicData, setGeographicData] = useState<GeographicData[]>([])
+  const [deviceData, setDeviceData] = useState<DeviceData[]>(DEFAULT_deviceData)
+
+  // Fetch real analytics data from API
+  const fetchAnalytics = useCallback(async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/analytics/advanced?range=${selectedDateRange}`)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics')
+      }
+
+      const data: AnalyticsApiResponse = await response.json()
+      setAnalyticsData(data)
+
+      // Transform API data to component format
+      transformDataToMetrics(data)
+      transformDataToTimeSeries(data)
+      generateAlerts(data)
+
+    } catch {
+      // Analytics fetch failed - component will show loading/empty state
+    } finally {
+      setLoading(false)
+    }
+  }, [selectedDateRange])
+
+  // Transform API data to metrics format
+  const transformDataToMetrics = (data: AnalyticsApiResponse) => {
+    const volumeTrend = data.conversationMetrics.volumeTrend
+    const totalMessages = volumeTrend.reduce((sum, day) => sum + day.count, 0)
+    const previousMessages = volumeTrend.slice(0, Math.floor(volumeTrend.length / 2))
+      .reduce((sum, day) => sum + day.count, 0)
+    const messageChange = previousMessages > 0
+      ? ((totalMessages - previousMessages * 2) / (previousMessages * 2)) * 100
+      : 0
+
+    const statusDist = data.conversationMetrics.statusDistribution
+    const activeConvs = statusDist
+      .filter(s => s.status === 'open' || s.status === 'assigned')
+      .reduce((sum, s) => sum + s.count, 0)
+
+    const avgResponseTime = data.conversationMetrics.responseTimeByHour
+      .reduce((sum, h) => sum + h.avgMinutes, 0) /
+      Math.max(data.conversationMetrics.responseTimeByHour.length, 1)
+
+    const agentSatisfaction = data.agentPerformance.leaderboard.length > 0
+      ? data.agentPerformance.leaderboard.reduce((sum, a) => sum + a.satisfaction, 0) /
+        data.agentPerformance.leaderboard.length / 2 // Scale from 10 to 5
+      : 0
+
+    const funnel = data.customerJourney.funnel
+    const conversionRate = funnel.length >= 2
+      ? (funnel[funnel.length - 1].count / Math.max(funnel[0].count, 1)) * 100
+      : 0
+
+    const resolvedCount = statusDist
+      .filter(s => s.status === 'resolved')
+      .reduce((sum, s) => sum + s.count, 0)
+    const totalConvs = statusDist.reduce((sum, s) => sum + s.count, 0)
+    const resolutionRate = totalConvs > 0 ? (resolvedCount / totalConvs) * 100 : 0
+
+    const transformedMetrics: MetricData[] = [
+      {
+        id: 'total-messages',
+        label: 'Total Messages',
+        value: totalMessages,
+        previousValue: previousMessages * 2,
+        change: Math.abs(messageChange),
+        changeType: messageChange >= 0 ? 'increase' : 'decrease',
+        period: 'vs previous period',
+        target: Math.round(totalMessages * 1.1),
+        unit: 'messages',
+        trend: volumeTrend.slice(-5).map(d => d.count),
+        status: messageChange >= 0 ? 'good' : 'warning',
+        description: 'Total messages sent and received across all conversations',
+      },
+      {
+        id: 'active-conversations',
+        label: 'Active Conversations',
+        value: activeConvs,
+        change: 0,
+        changeType: 'neutral',
+        period: 'current',
+        target: Math.round(activeConvs * 1.2),
+        unit: 'conversations',
+        trend: volumeTrend.slice(-5).map(d => d.pending),
+        status: activeConvs > 0 ? 'good' : 'neutral',
+        description: 'Currently active conversation threads',
+      },
+      {
+        id: 'avg-response-time',
+        label: 'Avg Response Time',
+        value: Math.round(avgResponseTime * 10) / 10,
+        change: 0,
+        changeType: 'neutral',
+        period: 'minutes',
+        target: 5.0,
+        unit: 'minutes',
+        trend: data.conversationMetrics.responseTimeByHour.slice(-5).map(h => h.avgMinutes),
+        status: avgResponseTime < 5 ? 'good' : avgResponseTime < 10 ? 'warning' : 'danger',
+        description: 'Average time to respond to customer messages',
+      },
+      {
+        id: 'customer-satisfaction',
+        label: 'Customer Satisfaction',
+        value: Math.round(agentSatisfaction * 10) / 10,
+        change: 0,
+        changeType: 'neutral',
+        period: 'out of 5.0',
+        target: 4.5,
+        unit: 'rating',
+        trend: data.agentPerformance.leaderboard.slice(-5).map(a => a.satisfaction / 2),
+        status: agentSatisfaction >= 4.5 ? 'good' : agentSatisfaction >= 4.0 ? 'warning' : 'danger',
+        description: 'Average customer satisfaction rating',
+      },
+      {
+        id: 'conversion-rate',
+        label: 'Conversion Rate',
+        value: Math.round(conversionRate * 10) / 10,
+        change: 0,
+        changeType: 'neutral',
+        period: 'funnel completion',
+        target: 15.0,
+        unit: '%',
+        trend: data.customerJourney.touchpoints.slice(-5).map(t => t.conversionRate),
+        status: conversionRate >= 15 ? 'good' : conversionRate >= 10 ? 'warning' : 'danger',
+        description: 'Percentage of conversations that result in conversions',
+      },
+      {
+        id: 'resolution-rate',
+        label: 'First Contact Resolution',
+        value: Math.round(resolutionRate * 10) / 10,
+        change: 0,
+        changeType: 'neutral',
+        period: 'resolved rate',
+        target: 85.0,
+        unit: '%',
+        trend: data.customerJourney.cohortRetention.slice(-5).map(c => c.retention),
+        status: resolutionRate >= 80 ? 'good' : resolutionRate >= 60 ? 'warning' : 'danger',
+        description: 'Percentage of issues resolved on first contact',
+      },
+    ]
+
+    setMetrics(transformedMetrics)
+  }
+
+  // Transform API data to time series format
+  const transformDataToTimeSeries = (data: AnalyticsApiResponse) => {
+    const volumeTrend = data.conversationMetrics.volumeTrend
+    const productivityTrend = data.agentPerformance.productivityTrend
+    const responseTimeByHour = data.conversationMetrics.responseTimeByHour
+
+    const transformed: TimeSeriesData[] = [
+      {
+        id: 'messages',
+        name: 'Messages',
+        color: '#3b82f6',
+        type: 'line',
+        data: volumeTrend.map(d => ({
+          date: d.date,
+          value: d.count,
+        })),
+      },
+      {
+        id: 'conversations',
+        name: 'New Conversations',
+        color: '#10b981',
+        type: 'area',
+        data: volumeTrend.map(d => ({
+          date: d.date,
+          value: d.resolved + d.pending,
+        })),
+      },
+      {
+        id: 'response-time',
+        name: 'Response Time (min)',
+        color: '#f59e0b',
+        type: 'bar',
+        data: responseTimeByHour.map((h, i) => ({
+          date: productivityTrend[i]?.date || `Hour ${h.hour}`,
+          value: h.avgMinutes,
+        })),
+      },
+    ]
+
+    setTimeSeriesData(transformed)
+  }
+
+  // Generate alerts based on data
+  const generateAlerts = (data: AnalyticsApiResponse) => {
+    const newAlerts: AlertData[] = []
+
+    // Check for high response time
+    const avgResponseTime = data.conversationMetrics.responseTimeByHour
+      .reduce((sum, h) => sum + h.avgMinutes, 0) /
+      Math.max(data.conversationMetrics.responseTimeByHour.length, 1)
+
+    if (avgResponseTime > 10) {
+      newAlerts.push({
+        id: 'response-time-alert',
+        type: 'warning',
+        title: 'Response Time Alert',
+        message: `Average response time is ${avgResponseTime.toFixed(1)} minutes, which is above the recommended threshold`,
+        timestamp: new Date(),
+        isRead: false,
+      })
+    }
+
+    // Check for high churn risk
+    const highChurnSegments = data.predictive.churnRisk.filter(s => s.risk > 50)
+    if (highChurnSegments.length > 0) {
+      newAlerts.push({
+        id: 'churn-risk-alert',
+        type: 'error',
+        title: 'High Churn Risk Detected',
+        message: `${highChurnSegments.length} customer segments have churn risk above 50%`,
+        timestamp: new Date(),
+        isRead: false,
+      })
+    }
+
+    // Check for agent satisfaction
+    const avgSatisfaction = data.agentPerformance.leaderboard.length > 0
+      ? data.agentPerformance.leaderboard.reduce((sum, a) => sum + a.satisfaction, 0) /
+        data.agentPerformance.leaderboard.length
+      : 0
+
+    if (avgSatisfaction >= 8) {
+      newAlerts.push({
+        id: 'satisfaction-success',
+        type: 'success',
+        title: 'Goal Achieved',
+        message: 'Customer satisfaction target has been exceeded!',
+        timestamp: new Date(),
+        isRead: false,
+      })
+    }
+
+    setAlerts(newAlerts)
+  }
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchAnalytics()
+  }, [fetchAnalytics])
+
   // Real-time data updates
   useEffect(() => {
     if (!autoRefresh) return
 
     const interval = setInterval(() => {
-      // Simulate real-time data updates
+      fetchAnalytics()
     }, refreshInterval * 1000)
 
     return () => clearInterval(interval)
-  }, [autoRefresh, refreshInterval])
+  }, [autoRefresh, refreshInterval, fetchAnalytics])
 
   // Filter metrics based on selection
   const filteredMetrics = useMemo(() => {
-    return ENHANCED_METRICS.filter(metric => selectedMetrics.includes(metric.id))
-  }, [selectedMetrics])
+    return metrics.filter(metric => selectedMetrics.includes(metric.id))
+  }, [selectedMetrics, metrics])
 
   // Get metric status icon and color
   const getMetricStatusIcon = (status: MetricData['status']) => {
@@ -552,39 +672,15 @@ export default function EnhancedAnalyticsDashboard({
     )
   }
 
-  // Mini sparkline component
-  const Sparkline = ({
-    data,
-    color = '#3b82f6',
-    width = 80,
-    height = 24,
-  }: {
-    data: number[]
-    color?: string
-    width?: number
-    height?: number
-  }) => {
-    const max = Math.max(...data)
-    const min = Math.min(...data)
-    const range = max - min
-
+  // Loading state
+  if (loading && metrics.length === 0) {
     return (
-      <svg width={width} height={height} className='inline-block'>
-        <polyline
-          fill='none'
-          stroke={color}
-          strokeWidth='2'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          points={data
-            .map((value, index) => {
-              const x = (index / (data.length - 1)) * width
-              const y = height - ((value - min) / range) * height
-              return `${x},${y}`
-            })
-            .join(' ')}
-        />
-      </svg>
+      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+        <div className='text-center'>
+          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+          <p className='mt-4 text-gray-600'>Loading analytics data...</p>
+        </div>
+      </div>
     )
   }
 
@@ -672,7 +768,7 @@ export default function EnhancedAnalyticsDashboard({
                     Metrics to Display
                   </label>
                   <div className='space-y-1'>
-                    {ENHANCED_METRICS.map(metric => (
+                    {metrics.map(metric => (
                       <label key={metric.id} className='flex items-center'>
                         <input
                           type='checkbox'
@@ -954,7 +1050,7 @@ export default function EnhancedAnalyticsDashboard({
                     onChange={e => setSelectedChart(e.target.value)}
                     className='rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    {TIME_SERIES_DATA.map(series => (
+                    {timeSeriesData.map(series => (
                       <option key={series.id} value={series.id}>
                         {series.name}
                       </option>
@@ -962,7 +1058,7 @@ export default function EnhancedAnalyticsDashboard({
                   </select>
 
                   <div className='flex items-center space-x-2'>
-                    {TIME_SERIES_DATA.map(series => (
+                    {timeSeriesData.map(series => (
                       <button
                         key={series.id}
                         onClick={() => setSelectedChart(series.id)}
@@ -980,9 +1076,9 @@ export default function EnhancedAnalyticsDashboard({
 
                 <div className='h-80'>
                   <EnhancedChart
-                    data={TIME_SERIES_DATA.find(s => s.id === selectedChart)?.data || []}
+                    data={timeSeriesData.find(s => s.id === selectedChart)?.data || []}
                     height={300}
-                    type={TIME_SERIES_DATA.find(s => s.id === selectedChart)?.type || 'line'}
+                    type={timeSeriesData.find(s => s.id === selectedChart)?.type || 'line'}
                   />
                 </div>
               </div>
@@ -1008,8 +1104,15 @@ export default function EnhancedAnalyticsDashboard({
 
             {expandedSections.has('geographic') && (
               <div className='p-4'>
+                {geographicData.length === 0 ? (
+                  <div className='py-8 text-center text-gray-500'>
+                    <MapPinIcon className='mx-auto h-12 w-12 text-gray-300' />
+                    <p className='mt-2'>Geographic data is not available yet.</p>
+                    <p className='text-sm'>This feature requires additional tracking setup.</p>
+                  </div>
+                ) : (
                 <div className='space-y-3'>
-                  {GEOGRAPHIC_DATA.map(country => (
+                  {geographicData.map(country => (
                     <div key={country.countryCode} className='flex items-center justify-between'>
                       <div className='flex items-center space-x-3'>
                         <MapPinIcon className='h-4 w-4 text-gray-400' />
@@ -1032,6 +1135,7 @@ export default function EnhancedAnalyticsDashboard({
                     </div>
                   ))}
                 </div>
+                )}
               </div>
             )}
           </div>
@@ -1053,7 +1157,7 @@ export default function EnhancedAnalyticsDashboard({
             {expandedSections.has('devices') && (
               <div className='p-4'>
                 <div className='space-y-4'>
-                  {DEVICE_DATA.map(device => {
+                  {deviceData.map(device => {
                     const IconComponent = device.icon
                     return (
                       <div key={device.device} className='flex items-center justify-between'>
@@ -1104,3 +1208,9 @@ export default function EnhancedAnalyticsDashboard({
     </div>
   )
 }
+
+// ⚡ PERFORMANCE: Memoize the entire dashboard component
+const EnhancedAnalyticsDashboard = memo(EnhancedAnalyticsDashboardInner)
+EnhancedAnalyticsDashboard.displayName = 'EnhancedAnalyticsDashboard'
+
+export default EnhancedAnalyticsDashboard

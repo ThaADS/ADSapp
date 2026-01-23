@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 /**
  * OAuth 2.0 / OIDC Authentication Handler
  * Implements OAuth 2.0 with PKCE and OpenID Connect support

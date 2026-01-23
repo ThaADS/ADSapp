@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
     // Create campaign
     const engine = new DripCampaignEngine(supabase)
     const campaign = await engine.createCampaign(profile.organization_id, {
+      organizationId: profile.organization_id,
       name: body.name,
       description: body.description,
       triggerType: body.triggerType,

@@ -1,16 +1,30 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface MessageInputProps {
   onSendMessage: (content: string, type?: string) => Promise<void>
+  initialValue?: string
+  onValueChange?: (value: string) => void
 }
 
-export function MessageInput({ onSendMessage }: MessageInputProps) {
-  const [message, setMessage] = useState('')
+export function MessageInput({ onSendMessage, initialValue = '', onValueChange }: MessageInputProps) {
+  const [message, setMessage] = useState(initialValue)
   const [isLoading, setIsLoading] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Sync with initialValue when it changes (e.g., from AI draft)
+  useEffect(() => {
+    if (initialValue && initialValue !== message) {
+      setMessage(initialValue)
+      // Auto-resize textarea to fit the new content
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto'
+        textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px'
+      }
+    }
+  }, [initialValue])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,6 +35,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
     try {
       await onSendMessage(message.trim())
       setMessage('')
+      onValueChange?.('')
       // Reset textarea height
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
@@ -40,7 +55,9 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
   }
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value)
+    const newValue = e.target.value
+    setMessage(newValue)
+    onValueChange?.(newValue)
 
     // Auto-resize textarea
     const textarea = e.target
@@ -84,8 +101,8 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
           {/* Attachment Button */}
           <button
             type='button'
-            className='flex-shrink-0 rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
-            title='Attach file'
+            className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500'
+            aria-label='Attach file'
           >
             <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
               <path
@@ -101,10 +118,11 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
           <button
             type='button'
             onClick={() => setShowTemplates(!showTemplates)}
-            className={`flex-shrink-0 rounded-full p-2 hover:bg-gray-100 ${
+            className={`flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 ${
               showTemplates ? 'bg-green-50 text-green-600' : 'text-gray-400 hover:text-gray-600'
             }`}
-            title='Quick replies'
+            aria-label='Quick replies'
+            aria-expanded={showTemplates}
           >
             <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
               <path
@@ -117,7 +135,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
           </button>
 
           {/* Text Input */}
-          <div className='relative flex-1'>
+          <div className='relative flex-1 min-w-0'>
             <textarea
               ref={textareaRef}
               value={message}
@@ -125,6 +143,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
               onKeyDown={handleKeyDown}
               placeholder='Type your message...'
               disabled={isLoading}
+              aria-label='Type your message'
               className='w-full resize-none rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none disabled:opacity-50'
               rows={1}
               style={{ minHeight: '40px', maxHeight: '120px' }}
@@ -135,11 +154,11 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
           <button
             type='submit'
             disabled={!message.trim() || isLoading}
-            className='flex-shrink-0 rounded-full bg-green-600 p-2 text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            title='Send message (Enter)'
+            className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] bg-green-600 p-2 text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+            aria-label='Send message'
           >
             {isLoading ? (
-              <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+              <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent' aria-label='Sending...'></div>
             ) : (
               <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path

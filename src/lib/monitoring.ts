@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 
 export interface ErrorEvent {
@@ -41,15 +40,13 @@ export interface SystemAlert {
 }
 
 class MonitoringService {
-  private supabase = createClient()
-
-  constructor() {
-    this.supabase = createClient()
+  private async getSupabase() {
+    return await createClient()
   }
 
   async logError(error: ErrorEvent): Promise<void> {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
 
       await supabase.from('error_logs').insert({
         type: error.type,
@@ -86,7 +83,7 @@ class MonitoringService {
 
   async logPerformance(metric: PerformanceMetric): Promise<void> {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
 
       await supabase.from('performance_metrics').insert({
         endpoint: metric.endpoint,
@@ -124,7 +121,7 @@ class MonitoringService {
 
   async createAlert(alert: SystemAlert): Promise<void> {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
 
       // Check if similar alert was created recently (avoid spam)
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
@@ -181,7 +178,7 @@ class MonitoringService {
     uptime: number
   }> {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
 
       // Get error rate (last hour)
@@ -248,7 +245,7 @@ class MonitoringService {
 
   async resolveAlert(alertId: string): Promise<void> {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
 
       await supabase
         .from('system_alerts')
@@ -274,7 +271,7 @@ class MonitoringService {
     }>
   > {
     try {
-      const supabase = await this.supabase
+      const supabase = await this.getSupabase()
       const trends = []
 
       for (let i = days - 1; i >= 0; i--) {

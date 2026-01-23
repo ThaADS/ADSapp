@@ -3,9 +3,6 @@
  * Comprehensive type system for Single Sign-On implementation
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { Database } from '@/types/database'
 
 // Database types

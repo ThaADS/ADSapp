@@ -5,6 +5,7 @@
  * Handles all node types with proper state tracking and error handling.
  */
 
+import { WhatsAppClient } from '@/lib/whatsapp/client';
 import type {
   Workflow,
   WorkflowNode,
@@ -40,6 +41,26 @@ import {
 // ============================================================================
 
 /**
+ * WhatsApp credentials for sending messages
+ */
+export interface WhatsAppCredentials {
+  accessToken: string;
+  phoneNumberId: string;
+}
+
+/**
+ * Contact information for workflow execution
+ */
+export interface ContactInfo {
+  id: string;
+  phone: string;
+  name?: string;
+  email?: string;
+  tags?: string[];
+  customFields?: Record<string, any>;
+}
+
+/**
  * Execution context passed through workflow execution
  */
 export interface ExecutionContext {
@@ -54,6 +75,9 @@ export interface ExecutionContext {
   errorMessage?: string;
   errorNodeId?: string;
   retryCount: number;
+  // Added for actual message sending
+  contact?: ContactInfo;
+  whatsappCredentials?: WhatsAppCredentials;
 }
 
 /**
@@ -88,7 +112,9 @@ export class WorkflowExecutionEngine {
    */
   async startExecution(
     contactId: string,
-    organizationId: string
+    organizationId: string,
+    contact?: ContactInfo,
+    whatsappCredentials?: WhatsAppCredentials
   ): Promise<ExecutionContext> {
     // Find trigger node
     const triggerNode = this.workflow.nodes.find((n) => n.type === 'trigger');
@@ -107,6 +133,8 @@ export class WorkflowExecutionEngine {
       context: {},
       status: 'running',
       retryCount: 0,
+      contact,
+      whatsappCredentials,
     };
 
     // Execute from trigger node
@@ -244,19 +272,90 @@ export class WorkflowExecutionEngine {
     try {
       const { messageConfig } = node.data;
 
-      // TODO: Call WhatsApp API to send message
-      // await WhatsAppClient.sendMessage({
-      //   to: contactPhone,
-      //   message: messageConfig.customMessage || '',
-      //   templateId: messageConfig.templateId,
-      //   mediaUrl: messageConfig.mediaUrl,
-      //   variables: messageConfig.variables,
-      // });
+      // Check if we have the required data for sending
+      if (!context.contact?.phone) {
+        console.warn(`[Workflow] No phone number for contact ${context.contactId}, skipping message`);
+        return { success: true }; // Continue workflow but skip message
+      }
 
-      console.log(`[Workflow] Sending message to contact ${context.contactId}:`, messageConfig.customMessage);
+      if (!context.whatsappCredentials) {
+        console.warn(`[Workflow] No WhatsApp credentials available, skipping message`);
+        return { success: true }; // Continue workflow but skip message
+      }
 
-      return { success: true };
+      // Create WhatsApp client with organization credentials
+      const whatsappClient = new WhatsAppClient(
+        context.whatsappCredentials.accessToken,
+        context.whatsappCredentials.phoneNumberId
+      );
+
+      // Prepare message content with variable substitution
+      let messageText = messageConfig.customMessage || '';
+
+      // Replace variables with contact data
+      if (context.contact) {
+        messageText = messageText
+          .replace(/\{\{name\}\}/gi, context.contact.name || '')
+          .replace(/\{\{phone\}\}/gi, context.contact.phone || '')
+          .replace(/\{\{email\}\}/gi, context.contact.email || '');
+
+        // Replace custom field variables
+        if (context.contact.customFields) {
+          Object.entries(context.contact.customFields).forEach(([key, value]) => {
+            messageText = messageText.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'gi'), String(value || ''));
+          });
+        }
+      }
+
+      // Send message based on type
+      if (messageConfig.templateId) {
+        // Send template message
+        await whatsappClient.sendTemplateMessage(
+          context.contact.phone,
+          messageConfig.templateId,
+          messageConfig.templateLanguage || 'en',
+          messageConfig.templateComponents || []
+        );
+        console.log(`[Workflow] Sent template message "${messageConfig.templateId}" to ${context.contact.phone}`);
+      } else if (messageConfig.mediaUrl) {
+        // Send media message
+        const mediaType = messageConfig.mediaType || 'image';
+        if (mediaType === 'image') {
+          await whatsappClient.sendImageMessage(
+            context.contact.phone,
+            messageConfig.mediaUrl,
+            messageText || undefined
+          );
+        } else if (mediaType === 'document') {
+          await whatsappClient.sendDocumentMessage(
+            context.contact.phone,
+            messageConfig.mediaUrl,
+            messageConfig.mediaFilename,
+            messageText || undefined
+          );
+        }
+        console.log(`[Workflow] Sent ${mediaType} message to ${context.contact.phone}`);
+      } else if (messageText) {
+        // Send text message
+        await whatsappClient.sendTextMessage(context.contact.phone, messageText);
+        console.log(`[Workflow] Sent text message to ${context.contact.phone}: "${messageText.substring(0, 50)}..."`);
+      } else {
+        console.warn(`[Workflow] No message content configured for node ${node.id}`);
+      }
+
+      return {
+        success: true,
+        context: {
+          ...context.context,
+          [`message_${node.id}`]: {
+            sentAt: new Date().toISOString(),
+            to: context.contact.phone,
+            type: messageConfig.templateId ? 'template' : messageConfig.mediaUrl ? 'media' : 'text',
+          },
+        },
+      };
     } catch (error) {
+      console.error(`[Workflow] Failed to send message:`, error);
       return {
         success: false,
         error: `Failed to send message: ${error instanceof Error ? error.message : 'Unknown error'}`,

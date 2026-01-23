@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 import { v4 as uuidv4 } from 'uuid'
 import sharp from 'sharp'
@@ -29,11 +28,10 @@ export interface UploadOptions {
 }
 
 export class MediaStorageService {
-  private supabase = createClient()
   private bucketName = 'media'
 
-  constructor() {
-    this.supabase = createClient()
+  private async getSupabase() {
+    return await createClient()
   }
 
   async uploadFile(
@@ -57,8 +55,10 @@ export class MediaStorageService {
     const fileName = `${options.organizationId}/${fileId}${fileExtension}`
 
     try {
+      const supabase = await this.getSupabase()
+
       // Upload original file
-      const { data: uploadData, error: uploadError } = await (await this.supabase).storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from(this.bucketName)
         .upload(fileName, file, {
           contentType: mimeType,
@@ -70,7 +70,7 @@ export class MediaStorageService {
       }
 
       // Get public URL
-      const { data: urlData } = await (await this.supabase).storage
+      const { data: urlData } = await supabase.storage
         .from(this.bucketName)
         .getPublicUrl(fileName)
 
@@ -96,7 +96,7 @@ export class MediaStorageService {
         metadata,
       }
 
-      const { error: dbError } = await (await this.supabase).from('media_files').insert({
+      const { error: dbError } = await supabase.from('media_files').insert({
         id: fileId,
         original_name: originalName,
         mime_type: mimeType,
@@ -111,7 +111,7 @@ export class MediaStorageService {
 
       if (dbError) {
         // Clean up uploaded file if database insert fails
-        await (await this.supabase).storage.from(this.bucketName).remove([fileName])
+        await supabase.storage.from(this.bucketName).remove([fileName])
         throw new Error(`Failed to store file record: ${dbError.message}`)
       }
 
@@ -123,7 +123,8 @@ export class MediaStorageService {
   }
 
   async getFile(fileId: string, organizationId: string): Promise<MediaFile | null> {
-    const { data, error } = await (await this.supabase)
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('media_files')
       .select('*')
       .eq('id', fileId)
@@ -154,11 +155,13 @@ export class MediaStorageService {
     }
 
     try {
+      const supabase = await this.getSupabase()
+
       // Extract storage path from URL or construct it
       const storagePath = `${organizationId}/${fileId}${this.getFileExtension(file.originalName, file.mimeType)}`
 
       // Delete from storage
-      const { error: storageError } = await (await this.supabase).storage
+      const { error: storageError } = await supabase.storage
         .from(this.bucketName)
         .remove([storagePath])
 
@@ -169,11 +172,11 @@ export class MediaStorageService {
       // Delete thumbnail if exists
       if (file.thumbnailUrl) {
         const thumbnailPath = `${organizationId}/thumbnails/${fileId}.jpg`
-        await (await this.supabase).storage.from(this.bucketName).remove([thumbnailPath])
+        await supabase.storage.from(this.bucketName).remove([thumbnailPath])
       }
 
       // Delete from database
-      const { error: dbError } = await (await this.supabase)
+      const { error: dbError } = await supabase
         .from('media_files')
         .delete()
         .eq('id', fileId)
@@ -197,7 +200,8 @@ export class MediaStorageService {
       uploadedBy?: string
     }
   ): Promise<{ files: MediaFile[]; total: number }> {
-    let query = (await this.supabase)
+    const supabase = await this.getSupabase()
+    let query = supabase
       .from('media_files')
       .select('*', { count: 'exact' })
       .eq('organization_id', organizationId)
@@ -259,7 +263,9 @@ export class MediaStorageService {
       const fileId = originalFileName.split('/')[1].split('.')[0]
       const thumbnailPath = `${organizationId}/thumbnails/${fileId}.jpg`
 
-      const { error } = await (await this.supabase).storage
+      const supabase = await this.getSupabase()
+
+      const { error } = await supabase.storage
         .from(this.bucketName)
         .upload(thumbnailPath, thumbnailBuffer, {
           contentType: 'image/jpeg',
@@ -271,7 +277,7 @@ export class MediaStorageService {
         return ''
       }
 
-      const { data: urlData } = await (await this.supabase).storage
+      const { data: urlData } = await supabase.storage
         .from(this.bucketName)
         .getPublicUrl(thumbnailPath)
 
@@ -331,10 +337,12 @@ export class MediaStorageService {
   async cleanupOrphanedFiles(organizationId: string): Promise<void> {
     // This method can be called periodically to clean up files that are no longer referenced
     try {
+      const supabase = await this.getSupabase()
+
       // Find files that haven't been accessed in 30 days and aren't referenced in messages
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-      const { data: orphanedFiles } = await (await this.supabase)
+      const { data: orphanedFiles } = await supabase
         .from('media_files')
         .select('id')
         .eq('organization_id', organizationId)

@@ -1,4 +1,3 @@
-// @ts-nocheck - Type definitions need review
 import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 import { isBuildTime } from '@/lib/build-safe-init'
@@ -31,7 +30,6 @@ export interface EmailTemplate {
 }
 
 export class NotificationService {
-  private supabase = createClient()
   private resend: Resend | null = null
 
   constructor() {
@@ -241,7 +239,7 @@ export class NotificationService {
 
   // Core notification methods
   async sendNotification(notification: NotificationData): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     // Get organization and notification preferences
     const { data: org } = await supabase
@@ -304,7 +302,7 @@ export class NotificationService {
   }
 
   async getNotificationPreferences(organizationId: string): Promise<NotificationPreferences> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     const { data: preferences } = await supabase
       .from('notification_preferences')
@@ -337,7 +335,7 @@ export class NotificationService {
     organizationId: string,
     preferences: Partial<NotificationPreferences>
   ): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase.from('notification_preferences').upsert({
       organization_id: organizationId,
@@ -361,7 +359,7 @@ export class NotificationService {
       type?: string
     } = {}
   ): Promise<{ notifications: any[]; total: number }> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     let query = supabase
       .from('notifications')
@@ -398,7 +396,7 @@ export class NotificationService {
   }
 
   async markNotificationAsRead(notificationId: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('notifications')
@@ -410,7 +408,7 @@ export class NotificationService {
   }
 
   async markAllNotificationsAsRead(organizationId: string): Promise<void> {
-    const supabase = await this.supabase
+    const supabase = await createClient()
 
     await supabase
       .from('notifications')

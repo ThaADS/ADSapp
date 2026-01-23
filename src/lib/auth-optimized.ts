@@ -1,3 +1,9 @@
+/**
+ * Optimized Auth Utilities
+ *
+ * Request-scoped caching for auth operations using React's cache() utility.
+ */
+
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'

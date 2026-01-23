@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { safeEncryptCredential } from '@/lib/security/encryption'
 
 export async function POST(request: NextRequest) {
   try {
@@ -102,6 +103,9 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Create organization using service role client (bypasses RLS)
     const serviceSupabase = createServiceRoleClient()
+
+    // Generate a temporary organization ID for encryption (will be replaced with actual ID)
+    // We need to create the org first to get the ID, then encrypt with it
     const { data: newOrganization, error: orgError } = await serviceSupabase
       .from('organizations')
       .insert({
@@ -109,8 +113,9 @@ export async function POST(request: NextRequest) {
         slug: subdomain,
         whatsapp_phone_number_id: whatsappPhoneNumberId || null,
         whatsapp_business_account_id: whatsappBusinessAccountId || null,
-        whatsapp_access_token: whatsappAccessToken || null,
-        whatsapp_webhook_verify_token: whatsappWebhookVerifyToken || null,
+        // Store plaintext temporarily - will encrypt after we have the org ID
+        whatsapp_access_token: null,
+        whatsapp_webhook_verify_token: null,
         subscription_status: 'trial',
         subscription_tier: 'starter',
       })
@@ -125,7 +130,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Organization created:', newOrganization.id)
+    // Now encrypt credentials with the actual organization ID for tenant isolation
+    let encryptedAccessToken: string | null = null
+    let encryptedWebhookToken: string | null = null
+
+    if (whatsappAccessToken) {
+      try {
+        const encrypted = safeEncryptCredential(whatsappAccessToken, newOrganization.id)
+        encryptedAccessToken = encrypted ? JSON.stringify(encrypted) : null
+      } catch (encryptError) {
+        console.error('Failed to encrypt access token:', encryptError)
+        // Clean up the organization we just created
+        await serviceSupabase.from('organizations').delete().eq('id', newOrganization.id)
+        return NextResponse.json(
+          { error: 'Failed to secure credentials. Please ensure ENCRYPTION_MASTER_KEY is configured.' },
+          { status: 500 }
+        )
+      }
+    }
+
+    if (whatsappWebhookVerifyToken) {
+      try {
+        const encrypted = safeEncryptCredential(whatsappWebhookVerifyToken, newOrganization.id)
+        encryptedWebhookToken = encrypted ? JSON.stringify(encrypted) : null
+      } catch (encryptError) {
+        console.error('Failed to encrypt webhook token:', encryptError)
+        await serviceSupabase.from('organizations').delete().eq('id', newOrganization.id)
+        return NextResponse.json(
+          { error: 'Failed to secure credentials. Please ensure ENCRYPTION_MASTER_KEY is configured.' },
+          { status: 500 }
+        )
+      }
+    }
+
+    // Update organization with encrypted credentials
+    if (encryptedAccessToken || encryptedWebhookToken) {
+      const { error: updateError } = await serviceSupabase
+        .from('organizations')
+        .update({
+          whatsapp_access_token: encryptedAccessToken,
+          whatsapp_webhook_verify_token: encryptedWebhookToken,
+        })
+        .eq('id', newOrganization.id)
+
+      if (updateError) {
+        console.error('Failed to save encrypted credentials:', updateError)
+        await serviceSupabase.from('organizations').delete().eq('id', newOrganization.id)
+        return NextResponse.json(
+          { error: 'Failed to save encrypted credentials' },
+          { status: 500 }
+        )
+      }
+    }
+
+    console.log('Organization created with encrypted credentials:', newOrganization.id)
 
     // Step 2: Create or update user profile using UPSERT
     const { data: updatedProfile, error: profileError } = await serviceSupabase

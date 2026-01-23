@@ -1,6 +1,7 @@
 import { requireOrganization } from '@/lib/auth'
 import { OrganizationSettings } from '@/components/dashboard/organization-settings'
 import WhiteLabelBranding from '@/components/dashboard/white-label-branding'
+import { BusinessHoursEditor } from '@/components/settings/business-hours-editor'
 import { SettingsErrorBoundary } from '@/components/error-boundary'
 import { redirect } from 'next/navigation'
 
@@ -27,6 +28,14 @@ export default async function OrganizationSettingsPage() {
       <SettingsErrorBoundary>
         <OrganizationSettings profile={profile} />
       </SettingsErrorBoundary>
+
+      {/* Business Hours Section */}
+      <div>
+        <h2 className='mb-4 text-xl font-semibold text-gray-900'>Business Hours</h2>
+        <SettingsErrorBoundary>
+          <BusinessHoursEditor organizationId={profile.organization_id!} />
+        </SettingsErrorBoundary>
+      </div>
 
       {/* White-Label Branding Section */}
       <div>

@@ -78,7 +78,7 @@ interface ContactManagerProps {
 
 export default function ContactManager({ organizationId }: ContactManagerProps) {
   const [contacts, setContacts] = useState<Contact[]>([])
-  const [tags, setTags] = useState<Array<{ id: string; label: string; color: string }>>([])
+  const [tags, setTags] = useState<Array<{ id: string; label: string; name: string; color: string; color_class?: string; color_hex?: string }>>([])
   const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedContacts, setSelectedContacts] = useState<string[]>([])
@@ -154,9 +154,12 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
       if (data.tags) {
         const formattedTags = data.tags.map((t: any) => ({
-          id: t.name.toLowerCase().replace(/\s+/g, '-'),
+          id: t.id, // Use actual UUID, not slug
           label: t.name,
+          name: t.name,
           color: t.color_class || 'bg-gray-100 text-gray-800',
+          color_class: t.color_class,
+          color_hex: t.color_hex,
         }))
         setTags(formattedTags)
       }
@@ -1040,6 +1043,12 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                       }
                     : null
                 }
+                availableTags={tags.map(t => ({
+                  id: t.id,
+                  name: t.name,
+                  color_class: t.color_class,
+                  color_hex: t.color_hex,
+                }))}
                 onSubmit={handleContactSubmit}
                 onCancel={() => {
                   setShowContactModal(false)

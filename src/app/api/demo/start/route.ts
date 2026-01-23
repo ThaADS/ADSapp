@@ -1,11 +1,32 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import { DemoSessionManager } from '@/lib/demo'
 import { CreateDemoSessionRequest, CreateDemoSessionResponse, BusinessScenario } from '@/types/demo'
+
+// SECURITY FIX: Allowed origins for demo endpoints - whitelist instead of wildcard
+const ALLOWED_DEMO_ORIGINS = [
+  'https://app.adsapp.nl',
+  'https://adsapp.nl',
+  'https://www.adsapp.nl',
+  process.env.NEXT_PUBLIC_APP_URL,
+  // Development origins
+  ...(process.env.NODE_ENV === 'development' ? [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+  ] : []),
+].filter(Boolean) as string[]
+
+function getCorsHeaders(request: NextRequest): Record<string, string> {
+  const origin = request.headers.get('origin') || ''
+  const allowedOrigin = ALLOWED_DEMO_ORIGINS.includes(origin) ? origin : ALLOWED_DEMO_ORIGINS[0]
+
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Credentials': 'true',
+  }
+}
 
 // Rate limiting store (in production, use Redis)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -157,7 +178,10 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    return NextResponse.json(response, { status: 201 })
+    return NextResponse.json(response, {
+      status: 201,
+      headers: getCorsHeaders(request),
+    })
   } catch (error) {
     console.error('Error creating demo session:', error)
 
@@ -292,14 +316,19 @@ function generateDemoAccessToken(sessionToken: string, organizationId: string): 
 
 /**
  * OPTIONS handler for CORS
+ * SECURITY: Uses origin whitelist instead of wildcard
  */
 export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin') || ''
+  const allowedOrigin = ALLOWED_DEMO_ORIGINS.includes(origin) ? origin : ALLOWED_DEMO_ORIGINS[0]
+
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
     },
   })
 }

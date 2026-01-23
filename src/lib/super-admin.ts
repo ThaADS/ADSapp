@@ -16,9 +16,6 @@
  * - Real-time platform monitoring
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile } from '@/lib/auth'
 import { redirect } from 'next/navigation'
@@ -621,16 +618,6 @@ export async function getAuditLogs(
     // Verify super admin access
     await requireSuperAdmin()
 
-    // TODO: Re-enable when super_admin_audit_logs table is created
-    // The table doesn't exist yet, so return empty results
-    console.log('Audit logs table not yet created - returning empty results')
-
-    return {
-      logs: [],
-      total: 0,
-    }
-
-    /* ORIGINAL CODE - Uncomment when table exists:
     const supabase = await createClient()
 
     let query = supabase
@@ -662,7 +649,6 @@ export async function getAuditLogs(
       logs: data || [],
       total: count || 0
     }
-    */
   } catch (error) {
     console.error('Error fetching audit logs:', error)
     return null

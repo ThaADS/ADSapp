@@ -3,7 +3,6 @@
  * Analyze conversation sentiment and urgency in real-time
  */
 
-// @ts-nocheck - Type definitions need review
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { analyzeSentiment, getSentimentTrend } from '@/lib/ai/sentiment'

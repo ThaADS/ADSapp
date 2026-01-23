@@ -1,3 +1,7 @@
+/**
+ * Debug Profile Page
+ */
+
 import { requireAuth } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 

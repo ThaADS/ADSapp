@@ -1,6 +1,5 @@
 // Web Vitals imports - install with: npm install web-vitals
 // Temporarily using inline types until web-vitals is properly configured
-// @ts-nocheck - Type definitions need review
 interface Metric {
   name: string
   value: number

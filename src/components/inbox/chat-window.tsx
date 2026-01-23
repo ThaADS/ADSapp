@@ -5,11 +5,20 @@ import { MessageList } from './message-list'
 import { MessageInput } from './message-input'
 import { QuickActionsButton } from './quick-actions-menu'
 import { useToast } from '@/components/ui/toast'
+import ConversationSummary from '@/components/ai/conversation-summary'
+import DraftSuggestions from '@/components/ai/draft-suggestions'
+import SentimentBadge from '@/components/ai/sentiment-badge'
+import { FileText, Sparkles } from 'lucide-react'
 import type { ConversationWithDetails, MessageWithSender } from '@/types'
 
 interface ChatWindowProps {
   conversation: ConversationWithDetails
-  profile: any
+  profile: {
+    id: string
+    full_name: string | null
+    organization_id: string | null
+    role: 'owner' | 'admin' | 'agent' | null
+  }
   onShowDetails: () => void
   showDetails: boolean
   onConversationUpdate?: () => void
@@ -24,6 +33,9 @@ export function ChatWindow({
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<MessageWithSender[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
+  const [showDraftSuggestions, setShowDraftSuggestions] = useState(false)
+  const [draftText, setDraftText] = useState('')
   const { addToast } = useToast()
 
   // Fetch messages for the conversation
@@ -41,8 +53,8 @@ export function ChatWindow({
         const data = await response.json()
         setMessages(data.messages || [])
       }
-    } catch (error) {
-      console.error('Failed to fetch messages:', error)
+    } catch {
+      // Message fetch failed - will show empty state
     } finally {
       setIsLoading(false)
     }
@@ -66,8 +78,11 @@ export function ChatWindow({
         throw new Error(error.error || 'Failed to send message')
       }
     } catch (error) {
-      console.error('Failed to send message:', error)
-      // TODO: Show error toast
+      addToast({
+        type: 'error',
+        title: 'Failed to send message',
+        message: error instanceof Error ? error.message : 'Please try again',
+      })
     }
   }
 
@@ -113,6 +128,17 @@ export function ChatWindow({
     }
   }
 
+  // Handle selecting an AI-generated draft
+  const handleSelectDraft = (content: string) => {
+    setDraftText(content)
+    setShowDraftSuggestions(false)
+    addToast({
+      type: 'success',
+      title: 'Draft inserted',
+      message: 'Edit the draft before sending',
+    })
+  }
+
   return (
     <div className='flex h-full flex-col'>
       {/* Chat Header */}
@@ -129,9 +155,17 @@ export function ChatWindow({
 
             {/* Contact Info */}
             <div>
-              <h2 className='text-lg font-semibold text-gray-900'>
-                {conversation.contact.name || 'Unknown Contact'}
-              </h2>
+              <div className='flex items-center space-x-2'>
+                <h2 className='text-lg font-semibold text-gray-900'>
+                  {conversation.contact.name || 'Unknown Contact'}
+                </h2>
+                {/* Sentiment Badge */}
+                <SentimentBadge
+                  sentiment={(conversation as any).sentiment}
+                  urgency={(conversation as any).urgency}
+                  compact={true}
+                />
+              </div>
               <div className='flex items-center space-x-2 text-sm text-gray-500'>
                 <span>{conversation.contact.phone_number}</span>
                 {conversation.priority !== 'medium' && (
@@ -152,9 +186,21 @@ export function ChatWindow({
             <select
               value={conversation.status}
               className='rounded-md border border-gray-300 bg-white px-3 py-1 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none'
-              onChange={e => {
-                // TODO: Update conversation status
-                console.log('Status changed to:', e.target.value)
+              onChange={async e => {
+                const newStatus = e.target.value
+                try {
+                  const response = await fetch(`/api/conversations/${conversation.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                  })
+                  if (response.ok) {
+                    onConversationUpdate?.()
+                    addToast({ type: 'success', title: `Status changed to ${newStatus}` })
+                  }
+                } catch {
+                  addToast({ type: 'error', title: 'Failed to update status' })
+                }
               }}
             >
               <option value='open'>Open</option>
@@ -168,6 +214,30 @@ export function ChatWindow({
               {conversation.assigned_agent
                 ? `Assigned to ${conversation.assigned_agent.full_name}`
                 : 'Assign'}
+            </button>
+
+            {/* AI Summary Button */}
+            <button
+              onClick={() => setShowSummary(true)}
+              className='flex items-center space-x-1 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1 text-sm text-emerald-700 hover:bg-emerald-100'
+              title='Generate AI Summary'
+            >
+              <FileText className='h-4 w-4' />
+              <span>Summary</span>
+            </button>
+
+            {/* AI Draft Suggestions Toggle */}
+            <button
+              onClick={() => setShowDraftSuggestions(!showDraftSuggestions)}
+              className={`flex items-center space-x-1 rounded-md border px-3 py-1 text-sm ${
+                showDraftSuggestions
+                  ? 'border-purple-300 bg-purple-100 text-purple-700'
+                  : 'border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100'
+              }`}
+              title='AI Draft Suggestions'
+            >
+              <Sparkles className='h-4 w-4' />
+              <span>AI Drafts</span>
             </button>
 
             {/* Quick Actions */}
@@ -207,8 +277,33 @@ export function ChatWindow({
         )}
       </div>
 
+      {/* AI Draft Suggestions Panel */}
+      {showDraftSuggestions && (
+        <div className='border-t border-gray-200 p-4'>
+          <DraftSuggestions
+            conversationId={conversation.id}
+            organizationId={conversation.organization_id}
+            contactName={conversation.contact.name || 'Contact'}
+            onSelectDraft={handleSelectDraft}
+          />
+        </div>
+      )}
+
       {/* Message Input */}
-      <MessageInput onSendMessage={handleSendMessage} />
+      <MessageInput
+        onSendMessage={handleSendMessage}
+        initialValue={draftText}
+        onValueChange={setDraftText}
+      />
+
+      {/* AI Conversation Summary Modal */}
+      <ConversationSummary
+        conversationId={conversation.id}
+        organizationId={conversation.organization_id}
+        contactName={conversation.contact.name || 'Contact'}
+        isOpen={showSummary}
+        onClose={() => setShowSummary(false)}
+      />
     </div>
   )
 }

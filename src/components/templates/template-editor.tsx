@@ -208,7 +208,7 @@ interface TemplateEditorProps {
   organizationId: string
 }
 
-export default function TemplateEditor({ organizationId }: TemplateEditorProps) {
+export function TemplateEditor({ organizationId }: TemplateEditorProps) {
   const [templates, setTemplates] = useState<MessageTemplate[]>(SAMPLE_TEMPLATES)
   const [currentTemplate, setCurrentTemplate] = useState<MessageTemplate | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -884,3 +884,5 @@ export default function TemplateEditor({ organizationId }: TemplateEditorProps) 
     </div>
   )
 }
+
+export default TemplateEditor

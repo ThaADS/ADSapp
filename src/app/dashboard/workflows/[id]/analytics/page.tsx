@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { cookies } from 'next/headers';
 import {
   Activity,
   TrendingUp,
@@ -27,53 +28,96 @@ interface WorkflowAnalyticsPageProps {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{
+    days?: string;
+  }>;
+}
+
+interface AnalyticsData {
+  overview: {
+    totalExecutions: number;
+    successRate: number;
+    averageCompletionTime: string;
+    conversionRate: number;
+    activeExecutions: number;
+  };
+  timeSeriesData: Array<{
+    date: string;
+    executions: number;
+    conversions: number;
+  }>;
+  nodePerformance: Array<{
+    nodeId: string;
+    nodeName: string;
+    executions: number;
+    avgTime: string;
+    errorRate: number;
+  }>;
+  funnelData: Array<{
+    stage: string;
+    count: number;
+    percentage: number;
+  }>;
+  abTestResults: Array<{
+    name: string;
+    branches: Array<{
+      name: string;
+      executions: number;
+      conversions: number;
+      conversionRate: number;
+    }>;
+  }>;
 }
 
 // ============================================================================
-// MOCK DATA (Replace with real API calls)
+// DATA FETCHING
 // ============================================================================
 
-const getMockAnalytics = () => ({
-  overview: {
-    totalExecutions: 1247,
-    successRate: 87.3,
-    averageCompletionTime: '4.2 hours',
-    conversionRate: 23.5,
-    activeExecutions: 34,
-  },
-  timeSeriesData: [
-    { date: '2024-01-01', executions: 45, conversions: 12 },
-    { date: '2024-01-02', executions: 52, conversions: 14 },
-    { date: '2024-01-03', executions: 38, conversions: 9 },
-    { date: '2024-01-04', executions: 61, conversions: 18 },
-    { date: '2024-01-05', executions: 49, conversions: 11 },
-    { date: '2024-01-06', executions: 55, conversions: 15 },
-    { date: '2024-01-07', executions: 48, conversions: 13 },
-  ],
-  nodePerformance: [
-    { nodeId: 'trigger_1', nodeName: 'Campaign Trigger', executions: 1247, avgTime: '0s', errorRate: 0 },
-    { nodeId: 'message_1', nodeName: 'Welcome Message', executions: 1247, avgTime: '2.3s', errorRate: 0.4 },
-    { nodeId: 'delay_1', nodeName: 'Wait 24 Hours', executions: 1199, avgTime: '24h', errorRate: 0 },
-    { nodeId: 'condition_1', nodeName: 'Check Response', executions: 1199, avgTime: '0.1s', errorRate: 0 },
-    { nodeId: 'message_2', nodeName: 'Follow-up', executions: 856, avgTime: '2.1s', errorRate: 1.2 },
-    { nodeId: 'goal_1', nodeName: 'Conversion', executions: 293, avgTime: '0s', errorRate: 0 },
-  ],
-  funnelData: [
-    { stage: 'Started', count: 1247, percentage: 100 },
-    { stage: 'Message Sent', count: 1199, percentage: 96.2 },
-    { stage: 'Response Received', count: 856, percentage: 68.7 },
-    { stage: 'Converted', count: 293, percentage: 23.5 },
-  ],
-  abTestResults: [
-    {
-      name: 'Message Variant Test',
-      branches: [
-        { name: 'Variant A', executions: 612, conversions: 152, conversionRate: 24.8 },
-        { name: 'Variant B', executions: 635, conversions: 141, conversionRate: 22.2 },
-      ],
+async function fetchWorkflowAnalytics(workflowId: string, days: number = 7): Promise<AnalyticsData> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+  try {
+    // Forward cookies for authentication
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.getAll()
+      .map(c => `${c.name}=${c.value}`)
+      .join('; ');
+
+    const response = await fetch(`${baseUrl}/api/workflows/${workflowId}/analytics?days=${days}`, {
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch analytics:', response.status);
+      // Return empty data on error
+      return getEmptyAnalytics();
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Analytics fetch error:', error);
+    return getEmptyAnalytics();
+  }
+}
+
+function getEmptyAnalytics(): AnalyticsData {
+  return {
+    overview: {
+      totalExecutions: 0,
+      successRate: 0,
+      averageCompletionTime: 'N/A',
+      conversionRate: 0,
+      activeExecutions: 0,
     },
-  ],
-});
+    timeSeriesData: [],
+    nodePerformance: [],
+    funnelData: [{ stage: 'No Data', count: 0, percentage: 0 }],
+    abTestResults: [],
+  };
+}
 
 // ============================================================================
 // COMPONENTS
@@ -120,7 +164,7 @@ function StatCard({
   );
 }
 
-function NodePerformanceTable({ nodes }: { nodes: typeof getMockAnalytics extends () => infer R ? R['nodePerformance'] : never }) {
+function NodePerformanceTable({ nodes }: { nodes: AnalyticsData['nodePerformance'] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -168,7 +212,7 @@ function NodePerformanceTable({ nodes }: { nodes: typeof getMockAnalytics extend
   );
 }
 
-function ConversionFunnel({ data }: { data: typeof getMockAnalytics extends () => infer R ? R['funnelData'] : never }) {
+function ConversionFunnel({ data }: { data: AnalyticsData['funnelData'] }) {
   return (
     <div className="space-y-3">
       {data.map((stage, index) => (
@@ -205,9 +249,7 @@ function ConversionFunnel({ data }: { data: typeof getMockAnalytics extends () =
 export default async function WorkflowAnalyticsPage({ params }: WorkflowAnalyticsPageProps) {
   const { id: workflowId } = await params;
 
-  // TODO: Replace with real API call
-  // const analytics = await fetchWorkflowAnalytics(workflowId);
-  const analytics = getMockAnalytics();
+  const analytics = await fetchWorkflowAnalytics(workflowId);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">

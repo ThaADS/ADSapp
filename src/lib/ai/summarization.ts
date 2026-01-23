@@ -3,9 +3,6 @@
  * Automatically summarize conversations with key points and action items
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { openRouter } from './openrouter'
 import { createClient } from '@/lib/supabase/server'
 import type { ConversationContext, ConversationSummary } from './types'

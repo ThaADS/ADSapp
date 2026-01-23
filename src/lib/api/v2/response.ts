@@ -3,9 +3,6 @@
  * Standardized response format with HATEOAS support
  */
 
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 

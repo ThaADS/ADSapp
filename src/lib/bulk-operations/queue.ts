@@ -1,6 +1,3 @@
-// @ts-nocheck - Database types need regeneration from Supabase schema
-// TODO: Run 'npx supabase gen types typescript' to fix type mismatches
-
 import { createClient } from '@/lib/supabase/server'
 
 export interface BulkOperation {
@@ -53,10 +50,6 @@ export interface BulkContactImportConfig {
 
 export class BulkOperationQueue {
   private supabase = createClient()
-
-  constructor() {
-    this.supabase = createClient()
-  }
 
   async createOperation(
     operation: Omit<BulkOperation, 'id' | 'createdAt' | 'processedItems' | 'failedItems'>
