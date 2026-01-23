@@ -1,67 +1,110 @@
 # Project State: ADSapp
 
-**Updated:** 2026-01-21
+**Updated:** 2026-01-23
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-01-21)
+See: `.planning/PROJECT.md` (updated 2026-01-23)
 
-**Core value:** Businesses can efficiently manage all WhatsApp customer communications in one secure, multi-tenant inbox
-**Current focus:** Technical Debt Cleanup - Phase 1 (Database Types)
+**Core value:** Businesses can efficiently manage all WhatsApp customer communications in one secure, multi-tenant inbox with AI assistance
+**Current focus:** v2.0 Feature Gap Implementation - Planning Complete
 
 ## Current Status
 
 ```
-Phase: 1 - Database Types Regeneration
-Status: COMPLETE ✓
-Progress: ██████████ 100%
+Milestone: v2.0 Feature Gap Implementation
+Phase: 8 - Foundation Layer (first v2 phase)
+Status: Ready to plan
+Progress: [----------] 0%
 ```
 
-## Completed Phase
+## Milestone Overview
 
-### Phase 1: Database Types Regeneration ✓
+### v1.0 Technical Debt Cleanup
+- **Phases:** 1-7
+- **Status:** In progress (Phase 1 complete)
+- **Progress:** 14% (1/7 phases)
 
-**Objective:** Fix the root cause - regenerate types from Supabase schema
+### v2.0 Feature Gap Implementation
+- **Phases:** 8-19 (12 phases total)
+- **Status:** Roadmap created, ready to plan
+- **Progress:** 0% (0/12 phases)
+- **Requirements:** 73 total, all mapped
 
-**Tasks:**
-- [x] Run `supabase gen types typescript --linked > src/types/database.ts`
-- [x] Verify regenerated types compile without errors
-- [x] Add custom API types and type aliases
+## Phase 8: Foundation Layer (Next)
 
-**Results:**
-- Generated 5,153 lines of TypeScript types (161KB)
-- Includes auth, graphql_public, and public schemas
-- Type check passes without errors
-- 200 files still have @ts-nocheck (Phase 2-3)
+**Goal:** Build unified message router and channel abstraction layer
+**Requirements:** FOUND-01 through FOUND-05
+**Dependencies:** Phase 7 (v1.0 complete)
 
-## Next Phase
+**Success Criteria:**
+1. Messages route through UnifiedMessageRouter
+2. ChannelAdapter interface enables new channels
+3. Cross-channel conversation threading works
+4. RLS policies on all new tables
+5. Canonical message format documented
 
-### Phase 2: Core Library @ts-nocheck Removal
+**Next Action:** `/gsd:plan-phase 8` (after v1.0 completes)
 
-**Objective:** Remove type suppression from critical library code
+## Performance Metrics
 
-**Next Action:** Execute Phase 2 with `/gsd:execute-phase 2`
+**Velocity:**
+- Total plans completed: 1 (Phase 1 only)
+- v2.0 plans completed: 0
+- Total execution time: TBD
 
-## Session Context
+**v2.0 Phases:**
 
-- **Milestone:** v1.0 - Technical Debt Cleanup
-- **Total Phases:** 7
-- **Completed:** 0
-- **Current:** Phase 1
+| Phase | Name | Plans | Status |
+|-------|------|-------|--------|
+| 8 | Foundation Layer | TBD | Not started |
+| 9 | WhatsApp Catalog | TBD | Not started |
+| 10 | Zapier Integration | TBD | Not started |
+| 11 | Team Collaboration | TBD | Not started |
+| 12 | Shopify Integration | TBD | Not started |
+| 13 | Instagram DM | TBD | Not started |
+| 14 | Facebook Messenger | TBD | Not started |
+| 15 | SMS Channel | TBD | Not started |
+| 16 | Mobile Backend | TBD | Not started |
+| 17 | Mobile Apps | TBD | Not started |
+| 18 | WhatsApp Calling | TBD | Not started |
+| 19 | Knowledge Base AI | TBD | Not started |
+
+## Accumulated Context
+
+### Decisions
+
+Decisions logged in PROJECT.md Key Decisions table.
+Recent decisions affecting v2.0 work:
+
+- [2026-01-23]: Build UnifiedMessageRouter FIRST before any channel
+- [2026-01-23]: ADSapp is OAuth PROVIDER for Zapier (not consumer)
+- [2026-01-23]: Single webhook for Meta platforms with page_id routing
+- [2026-01-23]: pgvector over external vector DB for RAG
+
+### Pending Todos
+
+None yet for v2.0.
+
+### Blockers/Concerns
+
+- v1.0 must complete (Phases 2-7) before Phase 8 can begin
+- WhatsApp Calling needs legal review for consent requirements
+- pgvector performance needs load testing at scale
+
+## Session Continuity
+
+Last session: 2026-01-23
+Stopped at: v2.0 roadmap creation complete
+Resume file: None
 
 ## Quick Reference
 
 | Command | Purpose |
 |---------|---------|
-| `/gsd:execute-phase 1` | Start Phase 1 execution |
-| `/gsd:plan-phase 1` | Create detailed plan first |
+| `/gsd:plan-phase 8` | Plan Foundation Layer |
 | `/gsd:progress` | Check overall progress |
-
-## Notes
-
-- Codebase mapped on 2026-01-21
-- 200+ files with @ts-nocheck identified
-- Root cause: database types out of sync
+| `/gsd:execute-phase 2` | Continue v1.0 cleanup |
 
 ---
-*State updated: 2026-01-21*
+*State updated: 2026-01-23*
