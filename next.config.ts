@@ -1,17 +1,21 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+// Extended config type to include eslint settings
+interface ExtendedNextConfig extends NextConfig {
+  eslint?: {
+    ignoreDuringBuilds?: boolean;
+  };
+}
+
+const nextConfig: ExtendedNextConfig = {
   /* config options here */
   eslint: {
-    // ⚠️ TEMPORARY: Disable ESLint during builds to allow deployment
-    // ESLint warnings (no-explicit-any) are blocking production builds
-    // TODO: Fix all TypeScript 'any' types and re-enable strict checking
-    ignoreDuringBuilds: true,
+    // ESLint checking enabled during builds
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    // ⚠️ TEMPORARY: Disable TypeScript strict checking for Next.js 15 migration
-    // TODO: Fix all dynamic route params (should be Promise<{ id: string }> in Next.js 15)
-    ignoreBuildErrors: true,
+    // TypeScript strict checking enabled
+    ignoreBuildErrors: false,
   },
   // 🔒 SECURITY: Removed env block - secrets must NEVER be exposed to client
   // Server-side code automatically reads from process.env
