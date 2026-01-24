@@ -1,5 +1,6 @@
 import { requireOrganization } from '@/lib/auth'
 import { IntegrationsSettings } from '@/components/dashboard/integrations-settings'
+import { CatalogSettings } from '@/components/settings/CatalogSettings'
 import { SettingsErrorBoundary } from '@/components/error-boundary'
 
 // ⚡ PERFORMANCE: Cache page for faster tab switches
@@ -19,6 +20,11 @@ export default async function IntegrationsPage() {
 
       <SettingsErrorBoundary>
         <IntegrationsSettings profile={profile} />
+      </SettingsErrorBoundary>
+
+      {/* WhatsApp Product Catalog Settings */}
+      <SettingsErrorBoundary>
+        <CatalogSettings />
       </SettingsErrorBoundary>
     </div>
   )
