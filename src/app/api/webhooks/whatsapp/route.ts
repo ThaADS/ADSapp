@@ -15,6 +15,7 @@ import {
   validateWhatsAppSignature,
   validateWebhookVerification,
 } from '@/lib/middleware/whatsapp-webhook-validator'
+import { handleCartOrder } from '@/lib/whatsapp/order-handler'
 
 // Channel abstraction layer imports
 import { UnifiedMessageRouter, ChannelType } from '@/lib/channels'
@@ -61,6 +62,23 @@ interface MessageStatusUpdate {
 interface ProcessingError extends Error {
   message: string
   stack?: string
+}
+
+// WhatsApp order message from cart submission
+interface WhatsAppOrderMessage {
+  catalog_id: string
+  product_items: {
+    product_retailer_id: string
+    quantity: number
+    item_price: number
+    currency: string
+  }[]
+  text?: string
+}
+
+// Extended message type for order handling
+interface ExtendedWhatsAppMessage extends WhatsAppMessage {
+  order?: WhatsAppOrderMessage
 }
 
 // Rate limit webhook processing
@@ -209,7 +227,8 @@ async function processMessages(value: WhatsAppWebhookValue) {
   if (value.messages) {
     for (const message of value.messages) {
       console.log(`[Channel Router] Received ${ChannelType.WHATSAPP} message from ${message.from}`)
-      await processIncomingMessage(message, organization.id, value.contacts?.[0])
+      // Cast to ExtendedWhatsAppMessage to handle order messages
+      await processIncomingMessage(message as ExtendedWhatsAppMessage, organization.id, value.contacts?.[0])
     }
   }
 
@@ -222,7 +241,7 @@ async function processMessages(value: WhatsAppWebhookValue) {
 }
 
 async function processIncomingMessage(
-  message: WhatsAppMessage,
+  message: ExtendedWhatsAppMessage,
   organizationId: string,
   contact?: WhatsAppContact
 ) {
@@ -260,6 +279,33 @@ async function processIncomingMessage(
     if (!contactData) {
       console.error('Failed to upsert contact')
       return
+    }
+
+    // Handle order messages (cart submissions) with dedicated handler
+    if (message.type === 'order' && message.order) {
+      console.log('[WhatsApp Webhook] Processing order from:', message.from)
+
+      const result = await handleCartOrder(
+        organizationId,
+        contactData.id,
+        {
+          catalog_id: message.order.catalog_id,
+          product_items: message.order.product_items,
+          text: message.order.text,
+        },
+        new Date(parseInt(message.timestamp) * 1000).toISOString()
+      )
+
+      if (result.success) {
+        console.log('[WhatsApp Webhook] Order processed, conversation:', result.conversationId)
+        // Update contact timestamp for order
+        await updateContactTimestamp(supabase, contactData.id, message.timestamp)
+        await incrementMessageCount(supabase, organizationId, 'inbound')
+      } else {
+        console.error('[WhatsApp Webhook] Order processing failed:', result.error)
+      }
+
+      return // Order handled, exit early
     }
 
     // Find or create conversation
