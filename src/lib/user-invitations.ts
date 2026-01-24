@@ -143,7 +143,8 @@ export class UserInvitationManager {
     const expiresAt = new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000)
 
     // Create invitation record
-    const { data: invitation, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data: invitation, error } = await supabase
       .from('user_invitations')
       .insert({
         organization_id: organizationId,
@@ -194,7 +195,8 @@ export class UserInvitationManager {
     }
 
     // Create user account in Supabase Auth
-    const { data: authData, error: authError } = await this.supabase.auth.admin.createUser({
+    const supabase = await this.getSupabase()
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: invitation.email,
       password: userData.password,
       email_confirm: true,
@@ -208,7 +210,7 @@ export class UserInvitationManager {
     if (authError) throw authError
 
     // Create profile
-    const { data: profile, error: profileError } = await this.supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .insert({
         id: authData.user.id,
@@ -224,7 +226,7 @@ export class UserInvitationManager {
     if (profileError) throw profileError
 
     // Update invitation status
-    await this.supabase
+    await supabase
       .from('user_invitations')
       .update({
         status: 'accepted',
@@ -247,7 +249,8 @@ export class UserInvitationManager {
   }
 
   async cancelInvitation(invitationId: string, cancelledBy: string): Promise<void> {
-    const { error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { error } = await supabase
       .from('user_invitations')
       .update({
         status: 'cancelled',
@@ -262,7 +265,8 @@ export class UserInvitationManager {
   }
 
   async resendInvitation(invitationId: string, resentBy: string): Promise<void> {
-    const { data: invitation, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data: invitation, error } = await supabase
       .from('user_invitations')
       .select('*')
       .eq('id', invitationId)
@@ -290,7 +294,7 @@ export class UserInvitationManager {
     await this.sendInvitationEmail(invitationObj, true)
 
     // Update reminder count
-    await this.supabase
+    await supabase
       .from('user_invitations')
       .update({
         reminders_sent: invitationObj.remindersSent + 1,
@@ -304,11 +308,12 @@ export class UserInvitationManager {
 
   // Bulk invitation methods
   async createBulkInvitations(request: BulkInvitationRequest): Promise<BulkInvitationResult> {
+    const supabase = await this.getSupabase()
     const bulkId = crypto.randomUUID()
     const results: BulkInvitationResult['results'] = []
 
     // Create bulk operation record
-    await this.supabase.from('bulk_invitation_operations').insert({
+    await supabase.from('bulk_invitation_operations').insert({
       id: bulkId,
       organization_id: request.organizationId,
       total_invitations: request.invitations.length,
@@ -365,7 +370,7 @@ export class UserInvitationManager {
       completedAt: new Date(),
     }
 
-    await this.supabase
+    await supabase
       .from('bulk_invitation_operations')
       .update({
         successful_invitations: successCount,
@@ -380,7 +385,8 @@ export class UserInvitationManager {
   }
 
   async getBulkInvitationStatus(bulkId: string): Promise<BulkInvitationResult | null> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('bulk_invitation_operations')
       .select('*')
       .eq('id', bulkId)
@@ -406,7 +412,8 @@ export class UserInvitationManager {
   async createInvitationTemplate(
     template: Omit<InvitationTemplate, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<InvitationTemplate> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('invitation_templates')
       .insert({
         organization_id: template.organizationId,
@@ -432,7 +439,8 @@ export class UserInvitationManager {
     organizationId: string,
     role?: string
   ): Promise<InvitationTemplate[]> {
-    let query = this.supabase
+    const supabase = await this.getSupabase()
+    let query = supabase
       .from('invitation_templates')
       .select('*')
       .eq('organization_id', organizationId)
@@ -452,7 +460,8 @@ export class UserInvitationManager {
     templateId: string,
     updates: Partial<InvitationTemplate>
   ): Promise<InvitationTemplate> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('invitation_templates')
       .update({
         ...updates,
@@ -472,7 +481,8 @@ export class UserInvitationManager {
 
   // Settings management
   async getInvitationSettings(organizationId: string): Promise<InvitationSettings> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('invitation_settings')
       .select('*')
       .eq('organization_id', organizationId)
@@ -512,7 +522,8 @@ export class UserInvitationManager {
     organizationId: string,
     settings: Partial<InvitationSettings>
   ): Promise<InvitationSettings> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('invitation_settings')
       .upsert({
         organization_id: organizationId,
@@ -557,7 +568,8 @@ export class UserInvitationManager {
       offset?: number
     } = {}
   ): Promise<{ invitations: UserInvitation[]; total: number }> {
-    let query = this.supabase
+    const supabase = await this.getSupabase()
+    let query = supabase
       .from('user_invitations')
       .select('*', { count: 'exact' })
       .eq('organization_id', organizationId)
@@ -587,7 +599,8 @@ export class UserInvitationManager {
   }
 
   async getInvitationById(invitationId: string): Promise<UserInvitation | null> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('user_invitations')
       .select('*')
       .eq('id', invitationId)
@@ -599,7 +612,8 @@ export class UserInvitationManager {
 
   // Automation methods
   async processExpiredInvitations(): Promise<number> {
-    const { data: expiredInvitations, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data: expiredInvitations, error } = await supabase
       .from('user_invitations')
       .update({ status: 'expired' })
       .eq('status', 'pending')
@@ -611,7 +625,8 @@ export class UserInvitationManager {
   }
 
   async sendScheduledReminders(): Promise<number> {
-    const { data: invitations, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data: invitations, error } = await supabase
       .from('user_invitations')
       .select(
         `
@@ -648,7 +663,7 @@ export class UserInvitationManager {
         try {
           await this.sendInvitationEmail(invitation, true)
 
-          await this.supabase
+          await supabase
             .from('user_invitations')
             .update({
               reminders_sent: invitation.remindersSent + 1,
@@ -682,7 +697,8 @@ export class UserInvitationManager {
   }
 
   private async checkExistingUser(email: string, organizationId: string): Promise<boolean> {
-    const { data } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data } = await supabase
       .from('profiles')
       .select('id')
       .eq('email', email.toLowerCase())
@@ -696,7 +712,8 @@ export class UserInvitationManager {
     email: string,
     organizationId: string
   ): Promise<UserInvitation | null> {
-    const { data } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data } = await supabase
       .from('user_invitations')
       .select('*')
       .eq('email', email.toLowerCase())
@@ -708,7 +725,8 @@ export class UserInvitationManager {
   }
 
   private async validateInvitationToken(token: string): Promise<UserInvitation | null> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('user_invitations')
       .select('*')
       .eq('token', token)
@@ -831,7 +849,8 @@ export class UserInvitationManager {
   }
 
   private async getTemplateById(templateId: string): Promise<InvitationTemplate | null> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getSupabase()
+    const { data, error } = await supabase
       .from('invitation_templates')
       .select('*')
       .eq('id', templateId)
@@ -846,7 +865,8 @@ export class UserInvitationManager {
     activity: string,
     performedBy: string
   ): Promise<void> {
-    await this.supabase.from('invitation_activity_logs').insert({
+    const supabase = await this.getSupabase()
+    await supabase.from('invitation_activity_logs').insert({
       invitation_id: invitationId,
       activity,
       performed_by: performedBy,

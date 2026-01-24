@@ -1,167 +1,169 @@
 # Technology Stack
 
-**Generated:** 2026-01-21
+**Analysis Date:** 2026-01-23
 
-## Runtime & Language
+## Languages
 
-| Component | Version | Notes |
-|-----------|---------|-------|
-| Node.js | 20.x | LTS version |
-| TypeScript | ^5.x | `strict: false`, `noImplicitAny: false` |
-| React | 19.1.0 | Latest React with RSC |
-| Next.js | ^16.0.7 | App Router, Turbopack support |
+**Primary:**
+- TypeScript 5.x - All frontend and backend code in `src/`
+- JavaScript (Node.js compatible) - Configuration files and build tooling
 
-## Framework Configuration
+**Secondary:**
+- SQL - Database schemas and migrations in `supabase/migrations/`
 
-### Next.js (`next.config.ts`)
-- **App Router** enabled (not Pages Router)
-- **Turbopack** support via `npm run dev:turbo`
-- TypeScript/ESLint errors ignored during build
-- Path alias: `@/*` → `./src/*`
+## Runtime
 
-### TypeScript (`tsconfig.json`)
-```json
-{
-  "strict": false,
-  "noImplicitAny": false,
-  "moduleResolution": "bundler",
-  "jsx": "react-jsx"
-}
-```
-**Note:** Strict mode disabled - technical debt item.
+**Environment:**
+- Node.js 20.x (inferred from tsconfig target: ES2017, module resolution: bundler)
 
-## Core Dependencies
+**Package Manager:**
+- npm 10.x (implied by package-lock.json presence)
+- Lockfile: `package-lock.json` present
 
-### Frontend
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `react` | 19.1.0 | UI framework |
-| `tailwindcss` | ^4 | CSS framework |
-| `@headlessui/react` | ^2.2.9 | Accessible UI components |
-| `@heroicons/react` | ^2.2.0 | Icon library |
-| `lucide-react` | ^0.544.0 | Additional icons |
-| `framer-motion` | ^12.23.25 | Animations |
-| `recharts` | ^3.3.0 | Charts/analytics |
-| `@xyflow/react` | ^12.9.2 | Workflow canvas |
-| `reactflow` | ^11.11.4 | Flow diagrams |
+## Frameworks
 
-### Backend/Database
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@supabase/supabase-js` | ^2.58.0 | Database client |
-| `@supabase/ssr` | ^0.7.0 | Server-side rendering support |
-| `ioredis` | ^5.8.1 | Redis client |
-| `@upstash/redis` | ^1.35.5 | Serverless Redis |
-| `bullmq` | ^5.61.0 | Job queue |
+**Core:**
+- Next.js 16.0.7 - Full-stack framework with App Router for frontend and API routes
+- React 19.1.0 - UI component library
+- Tailwind CSS 4 - Utility-first CSS framework with PostCSS 4 integration
 
-### State Management
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `zustand` | ^5.0.8 | Client state management |
+**State Management:**
+- Zustand 5.0.8 - Client-side state management (located in `src/stores/`)
 
-### Authentication & Security
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@boxyhq/saml-jackson` | ^1.52.2 | SAML 2.0 SSO |
-| `openid-client` | ^6.8.1 | OAuth 2.0/OIDC |
-| `jose` | ^6.1.0 | JWT handling |
-| `bcryptjs` | ^3.0.2 | Password hashing |
-| `otplib` | ^12.0.1 | 2FA/OTP |
-| `@aws-sdk/client-kms` | ^3.908.0 | Key management |
-| `zod` | ^3.22.4 | Schema validation |
-| `dompurify` | ^3.3.0 | XSS sanitization |
+**UI & Visualization:**
+- Recharts 3.3.0 - Data visualization and charting
+- ReactFlow 11.11.4 / XYFlow 12.9.2 - Workflow diagram rendering in `src/components/automation/`
+- Framer Motion 12.23.25 - Animation library
+- Headless UI 2.2.9 - Unstyled accessible components
+- Heroicons 2.2.0 - SVG icon library
+- Lucide React 0.544.0 - Icon library
 
-### External Services
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `stripe` | ^18.5.0 | Payment processing |
-| `@stripe/stripe-js` | ^7.9.0 | Client-side Stripe |
-| `resend` | ^6.1.0 | Email service |
-| `qrcode` | ^1.5.4 | QR generation |
-| `libphonenumber-js` | ^1.12.26 | Phone validation |
+**Testing:**
+- Jest 29.7.0 - Unit and integration testing
+- Playwright 1.47.0 - E2E browser testing with real-world scenarios
+- @testing-library/react 14.3.1 - React component testing utilities
+- @testing-library/user-event 14.5.2 - User interaction simulation
+- @swc/jest 0.2.39 - Fast Rust-based JavaScript transpiler for tests
+- nock 13.5.5 - HTTP request mocking for testing
 
-### Observability
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@opentelemetry/api` | ^1.9.0 | Tracing API |
-| `@opentelemetry/sdk-node` | ^0.45.1 | Node.js SDK |
-| `@opentelemetry/exporter-jaeger` | ^1.30.1 | Jaeger export |
-| `@sentry/nextjs` | ^8.40.0 | Error tracking |
+**Build & Development:**
+- Turbopack (next dev --turbopack flag support) - Next.js's Rust-based bundler for faster dev builds
+- Webpack (fallback) - Standard build tool when not using Turbopack
+- @swc/core 1.13.5 - Rust-based transpiler alternative to Babel
+- ESLint 9 - Code quality and standards enforcement
+- Prettier 3.1.1 - Code formatter with prettier-plugin-tailwindcss
+- TypeScript 5.x - Type checking and compilation
+- Lighthouse 12.2.1 - Performance auditing
+- @lhci/cli 0.13.0 - Lighthouse CI integration
+- @next/bundle-analyzer 15.5.4 - Bundle size analysis
 
-### Internationalization
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `next-intl` | ^4.3.9 | i18n support |
+## Key Dependencies
 
-## Development Dependencies
+**Critical:**
+- @supabase/supabase-js 2.58.0 - PostgreSQL database client and real-time subscriptions
+- @supabase/ssr 0.7.0 - Server-side rendering utilities for Supabase cookies
+- stripe 18.5.0 - Stripe payment processing backend
+- @stripe/stripe-js 7.9.0 - Stripe frontend SDK for payments
 
-### Testing
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `jest` | ^29.7.0 | Unit testing |
-| `@playwright/test` | ^1.47.0 | E2E testing |
-| `@testing-library/react` | ^14.3.1 | Component testing |
-| `@testing-library/jest-dom` | ^6.4.2 | DOM matchers |
-| `nock` | ^13.5.5 | HTTP mocking |
-| `supertest` | ^7.0.0 | API testing |
+**Infrastructure & Queue:**
+- bullmq 5.61.0 - Job queue system for async processing (bulk messaging, imports, notifications)
+- ioredis 5.8.1 - Redis client for BullMQ queue storage and caching
+- @upstash/redis 1.35.5 - Upstash Redis client for serverless environments
 
-### Quality
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `eslint` | ^9 | Linting |
-| `prettier` | ^3.1.1 | Formatting |
-| `husky` | ^8.0.3 | Git hooks |
-| `lint-staged` | ^15.2.0 | Staged file linting |
-| `@lhci/cli` | ^0.13.0 | Lighthouse CI |
+**Security & Authentication:**
+- bcryptjs 3.0.2 - Password hashing
+- jose 6.1.0 - JSON Web Tokens (JWT) for session management
+- @boxyhq/saml-jackson 1.52.2 - SAML and OAuth SSO integration
+- openid-client 6.8.1 - OpenID Connect client
+- @casl/ability 6.7.3 - Role-based access control (RBAC) policy engine
+- xml-crypto 6.1.2 - XML digital signatures for SAML
+- xml2js 0.6.2 - XML parsing for SAML responses
+- dompurify 3.3.0 - HTML sanitization to prevent XSS attacks
 
-### Build Tools
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@swc/core` | ^1.13.5 | Fast compilation |
-| `@swc/jest` | ^0.2.39 | Jest transformer |
-| `@next/bundle-analyzer` | ^15.5.4 | Bundle analysis |
-| `critters` | ^0.0.23 | Critical CSS |
+**Email & Communication:**
+- resend 6.1.0 - Email delivery service for transactional emails
+- @react-email/render 1.3.1 - React email template rendering
 
-## Infrastructure
+**Cloud & Encryption:**
+- @aws-sdk/client-kms 3.908.0 - AWS Key Management Service for encryption
+- @aws-sdk/credential-providers 3.908.0 - AWS credential handling
 
-### Database
-- **Supabase PostgreSQL** with Row Level Security (RLS)
-- **Redis** via Upstash (serverless) or ioredis
+**Monitoring & Observability:**
+- @opentelemetry/sdk-node 0.45.1 - Distributed tracing SDK
+- @opentelemetry/auto-instrumentations-node 0.40.3 - Automatic instrumentation
+- @opentelemetry/exporter-jaeger 1.30.1 - Jaeger exporter for traces
+- @opentelemetry/exporter-trace-otlp-http 0.45.1 - OTLP HTTP exporter
+- @opentelemetry/instrumentation-express 0.34.1 - Express middleware instrumentation
+- @opentelemetry/instrumentation-http 0.45.1 - HTTP request/response instrumentation
+- @opentelemetry/sdk-metrics 1.30.1 - Metrics collection
+- @sentry/nextjs 8.40.0 - Error tracking and performance monitoring (via dynamic import)
 
-### Deployment
-- **Docker** support with `Dockerfile` and `docker-compose.yml`
-- Next.js standalone output
+**Utilities:**
+- uuid 9.0.1 - Unique identifier generation
+- zod 3.22.4 - TypeScript-first schema validation
+- libphonenumber-js 1.12.26 - Phone number parsing and formatting
+- qrcode 1.5.4 - QR code generation
+- next-intl 4.3.9 - Internationalization (i18n) support
+- otplib 12.0.1 - One-time password generation for MFA
+- clsx 2.1.1 - Conditional CSS class management
+- tailwind-merge 3.4.0 - Tailwind class merging for better specificity
 
-### CI/CD
-- Husky pre-commit hooks
-- Jest CI mode (`npm run test:ci`)
-- Lighthouse performance testing
+**Development Utilities:**
+- cross-env 7.0.3 - Cross-platform environment variable support
+- husky 8.0.3 - Git hooks automation
+- lint-staged 15.2.0 - Run linters on staged files
+- critters 0.0.23 - Critical CSS extraction
+- web-vitals 4.2.4 - Core Web Vitals measurement
 
-## Key Scripts
+## Configuration
 
-```bash
-# Development
-npm run dev              # Standard dev server
-npm run dev:turbo        # Turbopack (faster)
+**Environment Variables:**
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase PostgreSQL endpoint
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key for client
+- `SUPABASE_SERVICE_ROLE_KEY` - Admin key for server operations (bypasses RLS)
+- `WHATSAPP_ACCESS_TOKEN` - Meta Business API token
+- `WHATSAPP_PHONE_NUMBER_ID` - WhatsApp Business Phone ID
+- `WHATSAPP_WEBHOOK_VERIFY_TOKEN` - Webhook verification token
+- `WHATSAPP_API_VERSION` - Default: v18.0
+- `STRIPE_SECRET_KEY` - Stripe backend API key
+- `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` - Stripe frontend publishable key
+- `STRIPE_WEBHOOK_SECRET` - Webhook signing secret
+- `STRIPE_*_PRICE_ID` - Product price IDs (STARTER, PROFESSIONAL, ENTERPRISE)
+- `RESEND_API_KEY` - Email delivery API key
+- `RESEND_FROM_EMAIL` - From email address
+- `NEXT_PUBLIC_APP_URL` - Application URL for OAuth redirects
+- `NEXTAUTH_SECRET` - Session encryption key (256-bit)
+- `NEXTAUTH_URL` - NextAuth callback URL
+- `CRON_SECRET` - Cron job authorization token
+- `OPENROUTER_API_KEY` - OpenRouter AI API key (optional)
+- `NODE_ENV` - development | production
 
-# Build
-npm run build            # Production build
-npm run analyze          # Bundle analyzer
+**Build Configuration:**
+- `tsconfig.json` - TypeScript compiler options with strict: false (TODO: enable strict mode)
+- `next.config.ts` - Security headers (HSTS, CSP), image optimization, experimental features
+- `jest.config.js` - Jest test configuration with jsdom environment
+- `.prettierrc` - Code formatter configuration
+- `eslint.config.mjs` - ESLint configuration (ignores during builds in next.config.ts)
 
-# Testing
-npm run test             # Jest unit tests
-npm run test:e2e         # Playwright E2E
-npm run test:coverage    # Coverage report
+## Platform Requirements
 
-# Quality
-npm run lint             # ESLint
-npm run type-check       # TypeScript check
-npm run format           # Prettier
+**Development:**
+- Node.js 20.x or higher
+- npm 10.x or higher
+- Supabase CLI for local database development
+- Git for version control
 
-# Database
-npm run migration:generate
-npm run migration:apply
-```
+**Production:**
+- Deployment target: Vercel (configured in next.config.ts with `process.env.VERCEL`)
+- Alternative: Any Node.js-compatible platform (Docker support in Dockerfile and docker-compose files)
+- PostgreSQL database (via Supabase)
+- Redis instance (BullMQ queue backend)
+- Environment variables from .env.local or deployment platform secrets
+
+**Browser Support:**
+- Modern browsers with ES2017 compatibility
+- Image formats: WebP, AVIF preferred; JPEG/PNG fallback
 
 ---
-*Stack mapped: 2026-01-21*
+
+*Stack analysis: 2026-01-23*

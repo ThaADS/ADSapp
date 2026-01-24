@@ -1,244 +1,227 @@
 # External Integrations
 
-**Generated:** 2026-01-21
+**Analysis Date:** 2026-01-23
 
-## Overview
+## APIs & External Services
 
-ADSapp integrates with multiple external services for messaging, payments, authentication, and observability.
+**Payment Processing:**
+- Stripe - Payment processing and subscription billing
+  - SDK/Client: `stripe` (backend), `@stripe/stripe-js` (frontend)
+  - Auth: `STRIPE_SECRET_KEY` (backend), `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` (frontend)
+  - Webhook: `STRIPE_WEBHOOK_SECRET` for validating webhook signatures
+  - Implementation: `src/lib/stripe/server.ts`, `src/lib/billing/`
+  - Features: Subscriptions (Starter, Professional, Enterprise), payment intents, refunds, webhooks in `src/app/api/webhooks/stripe`
 
-## WhatsApp Business Cloud API
+**Communication & Messaging:**
+- WhatsApp Business Cloud API - Messaging platform integration
+  - SDK/Client: Custom HTTP client in `src/lib/whatsapp/`
+  - Auth: `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
+  - Version: `WHATSAPP_API_VERSION` (default: v18.0)
+  - Implementation: `src/lib/whatsapp/enhanced-client.ts`, `src/lib/whatsapp/bulk-messaging.ts`, `src/lib/whatsapp/drip-campaigns.ts`
+  - Webhook: `src/app/api/webhooks/whatsapp` for inbound messages
+  - Features: Sending messages, media uploads, template management, webhook validation, bulk campaigns, drip sequences
 
-**Location:** `src/lib/whatsapp/`
+**Email Delivery:**
+- Resend - Transactional email service
+  - SDK/Client: `resend` package
+  - Auth: `RESEND_API_KEY`
+  - Configuration: `RESEND_FROM_EMAIL` for sender address
+  - Implementation: `src/lib/billing/notification-service.ts`, `src/lib/email/team-invitations.ts`, `src/lib/queue/processors/email-notification-processor.ts`
+  - Features: Team invitations, billing notifications, MFA setup emails
 
-### Components
-| File | Purpose |
-|------|---------|
-| `enhanced-client.ts` | Full-featured WhatsApp client |
-| `service.ts` | Core messaging service |
-| `media-handler.ts` | Media upload/download |
-| `bulk-messaging.ts` | Broadcast campaigns |
-| `drip-campaigns.ts` | Automated sequences |
-| `webhooks.ts` | Incoming message handler |
+**Artificial Intelligence:**
+- OpenRouter - Unified AI API for multiple LLM providers
+  - SDK/Client: Direct HTTP client in `src/lib/ai/openrouter.ts`
+  - Auth: `OPENROUTER_API_KEY`
+  - Config: `OPENROUTER_DEFAULT_MODEL`, `OPENROUTER_FALLBACK_MODEL`, `OPENROUTER_MAX_TOKENS`, `OPENROUTER_TEMPERATURE`
+  - Default Model: `anthropic/claude-3.5-sonnet`
+  - Fallback Model: `anthropic/claude-3-haiku`
+  - Implementation: `src/lib/ai/` (drafts, auto-response, sentiment, categorization, summarization, translation)
+  - Features: Message drafting, sentiment analysis, auto-responses, message categorization, content summarization
 
-### Configuration
-```env
-WHATSAPP_ACCESS_TOKEN=EAAb...
-WHATSAPP_PHONE_NUMBER_ID=123456789
-WHATSAPP_WEBHOOK_VERIFY_TOKEN=your-verify-token
-```
+**Cloud Key Management:**
+- AWS KMS (Key Management Service) - Encryption key management
+  - SDK: `@aws-sdk/client-kms`, `@aws-sdk/credential-providers`
+  - Implementation: `src/lib/security/credential-manager.ts` for credential encryption
+  - Use case: Encrypting WhatsApp tokens and sensitive credentials at rest
 
-### Webhook Endpoint
-- **Route:** `src/app/api/webhooks/whatsapp/route.ts`
-- **Validation:** `src/lib/middleware/whatsapp-webhook-validator.ts`
-- Handles: messages, status updates, delivery receipts
+**Error Tracking & Monitoring:**
+- Sentry (via @sentry/nextjs) - Error tracking and performance monitoring
+  - SDK: `@sentry/nextjs` (dynamically imported in API routes)
+  - Implementation: `src/app/api/auth/session/` routes, error handlers
+  - Features: Exception capture, distributed tracing context
 
-## Stripe Payments
+## Data Storage
 
-**Location:** `src/lib/stripe/`, `src/lib/billing/`
+**Databases:**
+- PostgreSQL (via Supabase)
+  - Connection: `NEXT_PUBLIC_SUPABASE_URL` (public), server operations use `SUPABASE_SERVICE_ROLE_KEY`
+  - Client: `@supabase/supabase-js` for querying, `@supabase/ssr` for server-side rendering
+  - Schema: `supabase/migrations/` contains schema definitions
+  - Implementation: `src/lib/supabase/server.ts` (server client), `src/lib/supabase/client.ts` (browser client)
+  - Features: Multi-tenant data isolation via Row-Level Security (RLS) policies, real-time subscriptions via `postgres_changes`
+  - Tables: organizations, profiles, contacts, conversations, messages, message_templates, automation_rules, ai_settings, ai_responses, subscriptions, workflows
 
-### Components
-| File | Purpose |
-|------|---------|
-| `payment-links.ts` | Payment link generation |
-| `src/lib/billing/stripe.ts` | Core Stripe client |
-| `src/lib/billing/usage.ts` | Usage-based billing |
+**Caching:**
+- Redis (via IORedis and Upstash)
+  - Redis Connection: IORedis client `ioredis` configured in `src/lib/queue/bull-config.ts`
+  - Serverless Redis: `@upstash/redis` for Vercel deployments
+  - Use cases: BullMQ job queue storage, session caching, rate limiting in `src/lib/middleware/rate-limit.ts`
+  - Implementation: `src/lib/queue/` for job queue, `src/lib/cache/` for caching utilities
+  - Connection Options: Configurable retry strategies and pool management
 
-### Configuration
-```env
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PUBLIC_KEY=pk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-```
+**File Storage:**
+- Supabase Storage - Cloud file storage
+  - Integration: Via Supabase client `@supabase/supabase-js`
+  - Use cases: Media uploads for WhatsApp messages (images, documents, audio, video)
+  - Implementation: `src/lib/media/` for media handling
 
-### Webhook Endpoint
-- **Route:** `src/app/api/webhooks/stripe/route.ts`
-- Handles: checkout.session.completed, invoice.paid, subscription events
+## Authentication & Identity
 
-### Features
-- Subscription plans
-- Usage-based billing
-- Payment links integration with WhatsApp
+**Auth Provider:**
+- Supabase Auth (built on GoTrue) - Custom implementation
+  - Implementation: `src/lib/auth.ts`, `src/lib/auth-optimized.ts`
+  - Session Management: `src/lib/session-management.ts` with JWT tokens via `jose`
+  - MFA: One-time passwords via `otplib` in `src/lib/mfa-setup.ts`
+  - Providers: Email/password, OAuth, SAML via `@boxyhq/saml-jackson`, OpenID Connect via `openid-client`
 
-## Supabase (Database & Auth)
+**Authorization:**
+- CASL (@casl/ability) - Role-based access control (RBAC)
+  - Implementation: `src/lib/rbac/` for permission policies
+  - Roles: Owner, Admin, Agent, Viewer (defined in database profiles table)
 
-**Location:** `src/lib/supabase/`
+**Single Sign-On:**
+- SAML 2.0 - Enterprise SAML support
+  - SDK: `@boxyhq/saml-jackson`, `xml-crypto`, `xml2js`
+  - Implementation: `src/lib/auth/sso/saml.ts`
+  - Features: SAML response validation, assertion processing, metadata generation
+- OAuth 2.0 - Third-party OAuth integration
+  - SDK: `openid-client`
+  - Implementation: `src/lib/auth/sso/oauth.ts`
 
-### Components
-| File | Purpose |
-|------|---------|
-| `server.ts` | Server-side client with RLS |
-| `client.ts` | Browser client |
-| `middleware.ts` | Session management |
-| `rpc-functions.ts` | Secure database functions |
+## Monitoring & Observability
 
-### Configuration
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-```
+**Error Tracking:**
+- Sentry - Error and performance tracking
+  - SDK: `@sentry/nextjs` (dynamically imported where needed)
+  - Configuration: Environment-specific (development vs production)
 
-### Security Features
-- Row Level Security (RLS) on all tenant tables
-- Service role client for admin operations only
-- Input validation via `QueryValidators`
+**Logs:**
+- Console logging (development) - Standard Node.js console methods
+- OpenTelemetry - Structured logging and distributed tracing
+  - SDK: `@opentelemetry/sdk-node`, `@opentelemetry/auto-instrumentations-node`
+  - Exporters: Jaeger (`@opentelemetry/exporter-jaeger`), OTLP HTTP (`@opentelemetry/exporter-trace-otlp-http`)
+  - Instrumentation: HTTP, Express middleware, database queries
+  - Implementation: `src/lib/telemetry/tracer.ts`, `src/lib/telemetry/metrics.ts`, `src/lib/telemetry/spans.ts`
+  - Configuration: Environment variables `OTEL_SERVICE_NAME`, `OTEL_EXPORTER_OTLP_ENDPOINT`
 
-## Email (Resend)
+**Metrics & Traces:**
+- OpenTelemetry Metrics - Performance and health metrics
+  - Resource attributes: Service name, version, environment, deployment
+  - Custom spans and metrics for API routes, external service calls, database queries
+  - Trace context: Automatic context propagation for distributed tracing
 
-**Location:** `src/lib/email/`
+## CI/CD & Deployment
 
-### Configuration
-```env
-RESEND_API_KEY=re_...
-```
+**Hosting:**
+- Vercel - Primary deployment platform (detected via `process.env.VERCEL`)
+  - Output: `output: 'standalone'` configured in next.config.ts
+  - Compression: Enabled for production
+  - Environment: Loads secrets from Vercel deployment settings
+  - Features: Automatic deployments on git push, preview deployments
 
-### Usage
-- Transactional emails
-- Email verification
-- Password reset
-- Notification emails
+**Alternative Hosting:**
+- Docker - Container support with Dockerfile and docker-compose
+  - Files: `Dockerfile`, `docker-compose.dev.yml`, `docker-compose.yml`
+  - Docker-based local development and production deployment
 
-## AI/LLM (OpenRouter)
+**CI Pipeline:**
+- Lighthouse CI - Performance testing
+  - CLI: `@lhci/cli` 0.13.0
+  - Run command: `npm run test:performance`
 
-**Location:** `src/lib/ai/`
+**Build Tools:**
+- Turbopack (experimental) - Next.js v16 bundler for faster builds
+- Webpack (fallback) - Standard build system with bundle analysis support
 
-### Components
-| File | Purpose |
-|------|---------|
-| `openrouter.ts` | Multi-model AI client |
-| `drafts.ts` | Message draft generation |
-| `sentiment.ts` | Sentiment analysis |
-| `auto-response.ts` | Automated responses |
+## Environment Configuration
 
-### Configuration
-```env
-OPENROUTER_API_KEY=sk-or-...
-```
+**Required env vars:**
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase public key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase admin key (server-side only)
+- `WHATSAPP_ACCESS_TOKEN` - Meta Business API token
+- `WHATSAPP_PHONE_NUMBER_ID` - WhatsApp phone ID
+- `WHATSAPP_WEBHOOK_VERIFY_TOKEN` - Webhook token
+- `STRIPE_SECRET_KEY` - Stripe API key (server-side only)
+- `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` - Stripe public key
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook secret
+- `RESEND_API_KEY` - Email API key
+- `NEXT_PUBLIC_APP_URL` - Application base URL
+- `NEXTAUTH_SECRET` - Session encryption key (256-bit)
+- `CRON_SECRET` - Cron job authorization
 
-### Features
-- Multiple LLM model support
-- Auto-responses
-- Message drafting
-- Sentiment analysis
+**Optional env vars:**
+- `OPENROUTER_API_KEY` - AI API key (if using AI features)
+- `OTEL_SERVICE_NAME` - OpenTelemetry service name
+- `OTEL_EXPORTER_OTLP_ENDPOINT` - Traces export endpoint
 
-## CRM Integrations
+**Secrets location:**
+- Local development: `.env.local` (not committed)
+- Production: Vercel Secrets or deployment platform environment variables
+- Docker: Passed via environment variables or `.env` file
 
-**Location:** `src/lib/crm/`
+## Webhooks & Callbacks
 
-### Supported CRMs
-| CRM | Status | Files |
-|-----|--------|-------|
-| Salesforce | Implemented | `sync-manager.ts` |
-| HubSpot | Implemented | `sync-manager.ts` |
-| Pipedrive | Implemented | `sync-manager.ts` |
+**Incoming:**
+- WhatsApp Webhooks - Message delivery and status updates
+  - Endpoint: `src/app/api/webhooks/whatsapp` (POST)
+  - Verification: `WHATSAPP_WEBHOOK_VERIFY_TOKEN` for GET challenge validation
+  - Middleware: `src/lib/middleware/whatsapp-webhook-validator.ts`
+  - Events: Inbound messages, delivery status (sent, delivered, read), read receipts, message status callbacks
+  - Processing: Via BullMQ job queue for async handling in `src/lib/queue/processors/`
 
-### Webhook Route
-- **Route:** `src/app/api/crm/webhooks/route.ts`
-- **Sync Route:** `src/app/api/crm/sync/route.ts`
+- Stripe Webhooks - Payment events
+  - Endpoint: `src/app/api/webhooks/stripe` (POST)
+  - Signature validation: Using `STRIPE_WEBHOOK_SECRET` with `stripe.webhooks.constructEvent()`
+  - Events: Subscription created, payment succeeded, invoice paid, customer updated, subscription deleted
+  - Processing: Via `src/lib/billing/webhook-processor.ts`
 
-## SSO Authentication
+**Outgoing:**
+- Webhook integrations - Configurable webhooks for custom events
+  - CRM Sync webhooks - Salesforce, HubSpot, Pipedrive sync endpoints in `src/lib/crm/`
+  - Implementation: `src/app/api/crm/webhooks/` (POST)
+  - Features: Contact sync, lead assignment, deal updates
 
-**Location:** `src/lib/auth/sso/`
+## Rate Limiting & Performance
 
-### SAML 2.0
-| File | Purpose |
-|------|---------|
-| `saml.ts` | SAML authentication handler |
-| Uses `@boxyhq/saml-jackson` for SAML processing |
+**Rate Limiting:**
+- Middleware-based rate limiting in `src/lib/middleware/rate-limit.ts`
+- Redis-backed rate limiting for API endpoints
+- Configuration: Limits per endpoint and user
 
-### OAuth 2.0/OIDC
-| File | Purpose |
-|------|---------|
-| `oauth.ts` | OAuth/OIDC handler |
-| Uses `openid-client` for OIDC flows |
+**Caching Strategy:**
+- Client-side: Zustand for state management, browser cache for assets
+- Server-side: Redis for session cache and queue storage
+- Browser cache: Image optimization with Cache-Control headers
 
-### Features
-- Enterprise SSO support
-- Identity provider integration
-- Token management
+## Security & Compliance
 
-## Redis (Caching & Queues)
+**Input Validation:**
+- Zod schema validation throughout API routes
+- `src/lib/security/input-validation.ts` with custom validators for UUID, email, enum, date, etc.
+- SQL injection detection: `detectSQLInjection()` function
 
-**Location:** Various files
+**Encryption:**
+- At-rest: AWS KMS for sensitive credentials
+- In-transit: HTTPS enforced via HSTS header (max-age=63072000)
+- Password: bcryptjs hashing with salt rounds
 
-### Usage
-| Purpose | Package |
-|---------|---------|
-| Serverless caching | `@upstash/redis` |
-| Persistent caching | `ioredis` |
-| Job queues | `bullmq` |
-
-### Configuration
-```env
-REDIS_URL=redis://...
-UPSTASH_REDIS_URL=...
-UPSTASH_REDIS_TOKEN=...
-```
-
-## Observability
-
-### OpenTelemetry
-- Distributed tracing
-- Metrics collection
-- Jaeger export
-
-### Sentry
-- Error tracking
-- Performance monitoring
-- `@sentry/nextjs` integration
-
-## AWS KMS
-
-**Location:** `src/lib/security/encryption.ts`
-
-### Usage
-- Field-level encryption
-- Key management
-- Secure credential storage
-
-### Configuration
-```env
-AWS_REGION=...
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-KMS_KEY_ID=...
-```
-
-## Integration Patterns
-
-### Webhook Processing
-```typescript
-// Pattern: Validate → Parse → Process → Respond
-export async function POST(request: Request) {
-  // 1. Validate webhook signature
-  const isValid = await validateSignature(request)
-  if (!isValid) return Response.json({ error: 'Invalid' }, { status: 401 })
-
-  // 2. Parse payload
-  const payload = await request.json()
-
-  // 3. Process asynchronously (queue)
-  await queue.add('process-webhook', payload)
-
-  // 4. Return quickly
-  return Response.json({ received: true })
-}
-```
-
-### External API Calls
-```typescript
-// Pattern: Retry with exponential backoff
-async function callExternalAPI() {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      return await api.call()
-    } catch (error) {
-      if (attempt === 2) throw error
-      await sleep(Math.pow(2, attempt) * 1000)
-    }
-  }
-}
-```
+**Content Security Policy (CSP):**
+- Comprehensive CSP header in next.config.ts
+- Allowed sources: Self, Stripe, Vercel Live, Supabase, Pusher
+- Script and style security: Minimal unsafe-inline usage for production
 
 ---
-*Integrations mapped: 2026-01-21*
+
+*Integration audit: 2026-01-23*
