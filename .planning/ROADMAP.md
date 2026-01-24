@@ -5,8 +5,9 @@
 
 ## Milestones
 
-- [x] **v1.0 Technical Debt Cleanup** - Phases 1-7 (in progress)
-- [ ] **v2.0 Feature Gap Implementation** - Phases 8-19 (planned)
+- [x] **v1.0 Technical Debt Cleanup** - Phases 1-7 (complete)
+- [ ] **v2.0 Feature Gap Implementation** - Phases 8-19 (in progress)
+- [ ] **v2.1 International Expansion (i18n + SEO)** - Phase 20 (planned)
 
 ## Phases
 
@@ -87,7 +88,7 @@ The following phases can execute in parallel after Phase 8 completes:
 **Goal:** Build unified message router and channel abstraction layer that all future channels depend on
 **Depends on:** Phase 7 (v1.0 Technical Debt Cleanup complete)
 **Requirements:** FOUND-01, FOUND-02, FOUND-03, FOUND-04, FOUND-05
-**Plans:** TBD
+**Plans:** 5 (08-01 to 08-05)
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. Messages from any channel route through UnifiedMessageRouter with consistent handling
@@ -503,7 +504,7 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 5 | Build Quality | v1.0 | 1/1 | Complete | 2026-01-23 |
 | 6 | Test Coverage | v1.0 | 1/1 | Complete | 2026-01-24 |
 | 7 | Dependency Cleanup | v1.0 | 1/1 | Complete | 2026-01-23 |
-| 8 | Foundation Layer | v2.0 | 0/TBD | Not started | - |
+| 8 | Foundation Layer | v2.0 | 5/5 | Complete | 2026-01-24 |
 | 9 | WhatsApp Catalog | v2.0 | 0/TBD | Not started | - |
 | 10 | Zapier Integration | v2.0 | 0/TBD | Not started | - |
 | 11 | Team Collaboration | v2.0 | 0/TBD | Not started | - |
@@ -517,8 +518,8 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 19 | Knowledge Base AI | v2.0 | 0/TBD | Not started | - |
 
 **v1.0 Progress:** [##########] 100% (7/7 phases) ✅ COMPLETE
-**v2.0 Progress:** [----------] 0% (0/12 phases)
-**Overall Progress:** [####------] 37% (7/19 phases)
+**v2.0 Progress:** [#---------] 8% (1/12 phases)
+**Overall Progress:** [####------] 42% (8/19 phases)
 
 ---
 
@@ -568,6 +569,51 @@ v1.0 Phases 1-7 (sequential)
 **Total v2.0:** 76 requirements mapped (73 unique + 3 CAT requirements split across phases)
 
 ---
+
+## v2.1 International Expansion (i18n + SEO)
+
+**Milestone Goal:** Expand ADSapp to 11 languages with 550-880 SEO-optimized landing pages targeting niche markets
+
+**Status:** Planned (after v2.0 completion)
+**Research:** `.planning/research/i18n-seo-strategy.md` (comprehensive strategy document)
+
+### Phase 20: Multi-Language + SEO Landing Pages
+**Goal:** Full i18n infrastructure with 11 languages and industry-specific SEO pages
+**Depends on:** v2.0 completion (core features needed for localized marketing)
+**Requirements:** I18N-01 through I18N-20
+
+**Languages (11 total):**
+- **Tier 1 (Core):** English, Dutch (NL), German, French
+- **Tier 2 (European):** Spanish, Polish, Italian
+- **Tier 3 (Strategic):** Portuguese (Brazil), Turkish, Arabic (RTL), Hindi
+
+**Landing Pages (~550-880 total):**
+- 50-80 base pages per language including:
+  - Niche/industry pages (restaurants, e-commerce, healthcare, etc.)
+  - Use case pages (customer support, sales, bookings)
+  - Client cases and success stories
+  - ROI calculators and comparison pages
+  - Feature-specific pages
+
+**Technical Stack:**
+- **i18n Library:** next-intl (App Router native, RSC compatible)
+- **URL Structure:** Subfolder (`/nl/`, `/de/`) for SEO authority inheritance
+- **RTL Support:** CSS logical properties for Arabic
+- **Generation:** Static Site Generation (SSG) for landing pages
+- **Performance:** ISR for dynamic content, edge caching
+
+**Success Criteria:**
+1. All 11 languages fully translated with professional localization
+2. hreflang tags correctly implemented across all pages
+3. 50+ industry-specific landing pages per language
+4. RTL layout works correctly for Arabic
+5. Core Web Vitals pass on all landing pages
+6. Language detection with user preference persistence
+
+**Estimated Plans:** 8-12 (TBD after v2.0 completion)
+
+---
 *Roadmap created: 2026-01-21*
 *v2.0 phases added: 2026-01-23*
-*Last updated: 2026-01-23*
+*v2.1 milestone added: 2026-01-24*
+*Last updated: 2026-01-24*

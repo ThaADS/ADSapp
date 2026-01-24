@@ -33,6 +33,12 @@ Plans: 5 (all complete)
 - **Progress:** ~8.3% (5/60 estimated plans across 12 phases)
 - **Requirements:** 73 total, all mapped
 
+### v2.1 International Expansion (Planned)
+- **Phases:** 20
+- **Status:** Planned (after v2.0)
+- **Scope:** 11 languages, 550-880 SEO landing pages
+- **Research:** `.planning/research/i18n-seo-strategy.md`
+
 ## v1.0 Completion Summary
 
 All 7 phases of v1.0 Technical Debt Cleanup are complete:
