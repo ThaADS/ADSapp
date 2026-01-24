@@ -13,12 +13,13 @@
 # testing
 /coverage
 /__tests__/
-*.test.js
-*.test.ts
-*.test.tsx
-*.spec.js
-*.spec.ts
-*.spec.tsx
+# Note: Test files in tests/ directory ARE tracked
+# *.test.js
+# *.test.ts
+# *.test.tsx
+# *.spec.js
+# *.spec.ts
+# *.spec.tsx
 
 # playwright
 /test-results/
