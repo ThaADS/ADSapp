@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { decryptWhatsAppCredentials } from '@/lib/security/credential-manager'
+import type { ProductSection } from '@/types/whatsapp-catalog'
 
 export interface WhatsAppMedia {
   id: string
@@ -351,6 +352,222 @@ export class EnhancedWhatsAppClient {
       console.error('Error deleting template:', error)
       throw error
     }
+  }
+
+  // ============================================================================
+  // Product Message Methods
+  // ============================================================================
+
+  /**
+   * Send a single product message
+   * @param phoneNumberId - Business phone number ID
+   * @param to - Recipient phone number
+   * @param catalogId - Catalog ID from Commerce Manager
+   * @param productRetailerId - Product SKU/retailer ID
+   * @param options - Optional body and footer text
+   * @returns Message ID
+   */
+  async sendProductMessage(
+    phoneNumberId: string,
+    to: string,
+    catalogId: string,
+    productRetailerId: string,
+    options?: {
+      bodyText?: string
+      footerText?: string
+    }
+  ): Promise<string> {
+    const payload: Record<string, unknown> = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to,
+      type: 'interactive',
+      interactive: {
+        type: 'product',
+        action: {
+          catalog_id: catalogId,
+          product_retailer_id: productRetailerId
+        }
+      }
+    }
+
+    // Add optional body text
+    if (options?.bodyText) {
+      (payload.interactive as Record<string, unknown>).body = {
+        text: options.bodyText.substring(0, 1024) // Max 1024 chars
+      }
+    }
+
+    // Add optional footer text
+    if (options?.footerText) {
+      (payload.interactive as Record<string, unknown>).footer = {
+        text: options.footerText.substring(0, 60) // Max 60 chars
+      }
+    }
+
+    const response = await fetch(
+      `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(`Failed to send product message: ${error.error?.message || response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.messages[0].id
+  }
+
+  /**
+   * Send a multi-product list message
+   * @param phoneNumberId - Business phone number ID
+   * @param to - Recipient phone number
+   * @param catalogId - Catalog ID from Commerce Manager
+   * @param sections - Product sections (max 10 sections, 30 products total)
+   * @param options - Required header and body text
+   * @returns Message ID
+   */
+  async sendProductListMessage(
+    phoneNumberId: string,
+    to: string,
+    catalogId: string,
+    sections: ProductSection[],
+    options: {
+      headerText: string
+      bodyText: string
+      footerText?: string
+    }
+  ): Promise<string> {
+    // Validate constraints
+    if (sections.length > 10) {
+      throw new Error('Maximum 10 sections allowed')
+    }
+
+    const totalProducts = sections.reduce(
+      (sum, section) => sum + section.product_items.length,
+      0
+    )
+    if (totalProducts > 30) {
+      throw new Error('Maximum 30 products allowed across all sections')
+    }
+
+    const payload: Record<string, unknown> = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to,
+      type: 'interactive',
+      interactive: {
+        type: 'product_list',
+        header: {
+          type: 'text',
+          text: options.headerText
+        },
+        body: {
+          text: options.bodyText
+        },
+        action: {
+          catalog_id: catalogId,
+          sections: sections.map(section => ({
+            title: section.title,
+            product_items: section.product_items
+          }))
+        }
+      }
+    }
+
+    // Add optional footer
+    if (options.footerText) {
+      (payload.interactive as Record<string, unknown>).footer = {
+        text: options.footerText.substring(0, 60)
+      }
+    }
+
+    const response = await fetch(
+      `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(`Failed to send product list message: ${error.error?.message || response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.messages[0].id
+  }
+
+  /**
+   * Send a catalog storefront message (opens full catalog)
+   * Note: Not available in India
+   */
+  async sendCatalogMessage(
+    phoneNumberId: string,
+    to: string,
+    options: {
+      bodyText: string
+      footerText?: string
+      thumbnailProductRetailerId?: string
+    }
+  ): Promise<string> {
+    const payload: Record<string, unknown> = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to,
+      type: 'interactive',
+      interactive: {
+        type: 'catalog_message',
+        body: {
+          text: options.bodyText
+        },
+        action: {
+          name: 'catalog_message',
+          parameters: options.thumbnailProductRetailerId
+            ? { thumbnail_product_retailer_id: options.thumbnailProductRetailerId }
+            : {}
+        }
+      }
+    }
+
+    if (options.footerText) {
+      (payload.interactive as Record<string, unknown>).footer = {
+        text: options.footerText.substring(0, 60)
+      }
+    }
+
+    const response = await fetch(
+      `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(`Failed to send catalog message: ${error.error?.message || response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.messages[0].id
   }
 }
 
