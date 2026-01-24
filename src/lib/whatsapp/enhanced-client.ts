@@ -569,6 +569,244 @@ export class EnhancedWhatsAppClient {
     const data = await response.json()
     return data.messages[0].id
   }
+
+  // ============================================================================
+  // Catalog Fetching Methods
+  // ============================================================================
+
+  /**
+   * Get products from a catalog with pagination
+   * @param catalogId - The Meta Commerce Manager catalog ID
+   * @param limit - Number of products to fetch (max 1000)
+   * @param after - Cursor for pagination
+   * @returns Catalog products response with pagination info
+   */
+  async getCatalogProducts(
+    catalogId: string,
+    limit: number = 100,
+    after?: string
+  ): Promise<{
+    data: Array<{
+      id: string
+      retailer_id: string
+      name: string
+      description?: string
+      price: string
+      currency: string
+      availability: string
+      image_url?: string
+      url?: string
+      brand?: string
+      category?: string
+    }>
+    paging?: {
+      cursors: { before: string; after: string }
+      next?: string
+    }
+  }> {
+    try {
+      const fields = [
+        'id',
+        'retailer_id',
+        'name',
+        'description',
+        'price',
+        'currency',
+        'availability',
+        'image_url',
+        'url',
+        'brand',
+        'category',
+      ].join(',')
+
+      let url = `${this.baseUrl}/${this.apiVersion}/${catalogId}/products?fields=${fields}&limit=${Math.min(limit, 1000)}`
+      if (after) {
+        url += `&after=${after}`
+      }
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(
+          `Failed to get catalog products: ${response.statusText}${
+            errorData.error?.message ? ` - ${errorData.error.message}` : ''
+          }`
+        )
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error getting catalog products:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get all products from a catalog (handles pagination automatically)
+   * @param catalogId - The Meta Commerce Manager catalog ID
+   * @param maxProducts - Maximum number of products to fetch (default 10000)
+   * @returns Array of all catalog products
+   */
+  async getAllCatalogProducts(
+    catalogId: string,
+    maxProducts: number = 10000
+  ): Promise<
+    Array<{
+      id: string
+      retailer_id: string
+      name: string
+      description?: string
+      price: string
+      currency: string
+      availability: string
+      image_url?: string
+      url?: string
+      brand?: string
+      category?: string
+    }>
+  > {
+    const allProducts: Array<{
+      id: string
+      retailer_id: string
+      name: string
+      description?: string
+      price: string
+      currency: string
+      availability: string
+      image_url?: string
+      url?: string
+      brand?: string
+      category?: string
+    }> = []
+
+    let after: string | undefined
+    let hasMore = true
+
+    while (hasMore && allProducts.length < maxProducts) {
+      const batchSize = Math.min(1000, maxProducts - allProducts.length)
+      const response = await this.getCatalogProducts(catalogId, batchSize, after)
+
+      if (response.data && response.data.length > 0) {
+        allProducts.push(...response.data)
+      }
+
+      if (response.paging?.next && response.paging.cursors?.after) {
+        after = response.paging.cursors.after
+      } else {
+        hasMore = false
+      }
+    }
+
+    return allProducts
+  }
+
+  /**
+   * Get catalogs linked to a WhatsApp Business Account
+   * @param businessAccountId - The WhatsApp Business Account ID
+   * @returns Array of linked catalogs
+   */
+  async getLinkedCatalogs(businessAccountId: string): Promise<
+    Array<{
+      id: string
+      name: string
+    }>
+  > {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/${this.apiVersion}/${businessAccountId}/owned_product_catalogs?fields=id,name`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(
+          `Failed to get linked catalogs: ${response.statusText}${
+            errorData.error?.message ? ` - ${errorData.error.message}` : ''
+          }`
+        )
+      }
+
+      const result = await response.json()
+      return result.data || []
+    } catch (error) {
+      console.error('Error getting linked catalogs:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get a single product by retailer ID from a catalog
+   * @param catalogId - The Meta Commerce Manager catalog ID
+   * @param retailerId - The product retailer ID (SKU)
+   * @returns Product details or null if not found
+   */
+  async getProductByRetailerId(
+    catalogId: string,
+    retailerId: string
+  ): Promise<{
+    id: string
+    retailer_id: string
+    name: string
+    description?: string
+    price: string
+    currency: string
+    availability: string
+    image_url?: string
+    url?: string
+    brand?: string
+    category?: string
+  } | null> {
+    try {
+      const fields = [
+        'id',
+        'retailer_id',
+        'name',
+        'description',
+        'price',
+        'currency',
+        'availability',
+        'image_url',
+        'url',
+        'brand',
+        'category',
+      ].join(',')
+
+      const response = await fetch(
+        `${this.baseUrl}/${this.apiVersion}/${catalogId}/products?fields=${fields}&filter=${encodeURIComponent(
+          JSON.stringify({ retailer_id: { eq: retailerId } })
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(
+          `Failed to get product: ${response.statusText}${
+            errorData.error?.message ? ` - ${errorData.error.message}` : ''
+          }`
+        )
+      }
+
+      const result = await response.json()
+      return result.data?.[0] || null
+    } catch (error) {
+      console.error('Error getting product by retailer ID:', error)
+      throw error
+    }
+  }
 }
 
 export async function getWhatsAppClient(organizationId: string): Promise<EnhancedWhatsAppClient> {
