@@ -16,6 +16,11 @@ import {
   validateWebhookVerification,
 } from '@/lib/middleware/whatsapp-webhook-validator'
 
+// Channel abstraction layer imports
+import { UnifiedMessageRouter, ChannelType } from '@/lib/channels'
+import { createWhatsAppAdapter } from '@/lib/channels/adapters'
+import { findOrCreateContact, normalizePhoneNumber } from '@/lib/channels/contact-dedup'
+
 // Define interfaces for better type safety
 interface WhatsAppContact {
   profile?: {
@@ -64,6 +69,46 @@ const webhookRateLimit = rateLimit({
   max: 100, // 100 requests per minute
   keyGenerator: request => request.headers.get('x-forwarded-for') || 'anonymous',
 })
+
+// ============================================================================
+// Channel Router Integration (Lazy Singleton)
+// ============================================================================
+
+let routerInstance: UnifiedMessageRouter | null = null
+
+/**
+ * Gets or creates the unified message router instance.
+ * Uses lazy initialization to avoid startup overhead.
+ */
+function getRouter(): UnifiedMessageRouter {
+  if (!routerInstance) {
+    routerInstance = new UnifiedMessageRouter({ enableHealthChecks: false })
+    console.log('[Channel Router] Initialized new UnifiedMessageRouter instance')
+  }
+  return routerInstance
+}
+
+/**
+ * Ensures the WhatsApp adapter is registered for an organization.
+ * Registers the adapter if not already present.
+ */
+async function ensureAdapterRegistered(organizationId: string): Promise<void> {
+  const router = getRouter()
+
+  // Check if adapter already registered
+  if (router.getAdapter(ChannelType.WHATSAPP)) {
+    return
+  }
+
+  try {
+    const adapter = await createWhatsAppAdapter(organizationId)
+    router.registerAdapter(adapter)
+    console.log(`[Channel Router] Registered WhatsApp adapter for org ${organizationId}`)
+  } catch (error) {
+    // Log but don't fail - webhook can still work without adapter
+    console.error('[Channel Router] Failed to register WhatsApp adapter:', error)
+  }
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -157,9 +202,13 @@ async function processMessages(value: WhatsAppWebhookValue) {
     return
   }
 
+  // Register WhatsApp adapter for this organization (lazy initialization)
+  await ensureAdapterRegistered(organization.id)
+
   // Process incoming messages
   if (value.messages) {
     for (const message of value.messages) {
+      console.log(`[Channel Router] Received ${ChannelType.WHATSAPP} message from ${message.from}`)
       await processIncomingMessage(message, organization.id, value.contacts?.[0])
     }
   }
@@ -181,7 +230,25 @@ async function processIncomingMessage(
   const mediaStorage = new MediaStorageService()
 
   try {
-    // Upsert contact with enhanced profile data
+    // Use new contact deduplication with channel abstraction layer
+    // This creates/updates both the contact and channel_connection records
+    const { contactId, isNew } = await findOrCreateContact(
+      supabase,
+      organizationId,
+      ChannelType.WHATSAPP,
+      message.from,
+      {
+        name: contact?.profile?.name || undefined,
+        metadata: { whatsappId: message.from }
+      }
+    )
+
+    if (isNew) {
+      console.log(`[Channel Router] Created new contact ${contactId} for ${normalizePhoneNumber(message.from)}`)
+    }
+
+    // BACKWARD COMPATIBILITY: Also upsert to the legacy contacts table format
+    // This ensures existing message storage logic continues to work
     const contactData = await upsertContact(supabase, {
       organizationId,
       whatsappId: message.from,
