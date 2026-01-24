@@ -1,11 +1,134 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { ShoppingCart, Package, ShoppingBag } from 'lucide-react'
 import type { MessageWithSender } from '@/types'
+import type { CartData, CartItem } from '@/types/whatsapp-catalog'
 
 // Simple time formatter
 function formatMessageTime(date: Date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+// Format currency
+function formatPrice(amount: number, currency: string) {
+  return new Intl.NumberFormat('nl-NL', {
+    style: 'currency',
+    currency: currency || 'EUR',
+  }).format(amount)
+}
+
+// Calculate cart total
+function calculateCartTotal(items: CartItem[]): { total: number; currency: string } {
+  if (!items || items.length === 0) return { total: 0, currency: 'EUR' }
+  const total = items.reduce((sum, item) => sum + item.item_price * item.quantity, 0)
+  return { total, currency: items[0]?.currency || 'EUR' }
+}
+
+// Parse cart data from message metadata
+function parseCartData(message: MessageWithSender): CartData | null {
+  try {
+    // Cart data could be in metadata or parsed from content
+    const metadata = message.metadata as Record<string, unknown> | null
+    if (metadata?.cart_data) {
+      return metadata.cart_data as CartData
+    }
+    // Try parsing from content if it's JSON
+    if (message.content?.startsWith('{')) {
+      return JSON.parse(message.content) as CartData
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+// Order Message Component
+function OrderMessageContent({ cartData, customerNote }: { cartData: CartData; customerNote?: string }) {
+  const { total, currency } = calculateCartTotal(cartData.product_items)
+
+  return (
+    <div className='space-y-2'>
+      <div className='flex items-center gap-2 text-sm font-medium'>
+        <ShoppingCart className='h-4 w-4' />
+        <span>Bestelling ontvangen</span>
+      </div>
+
+      {/* Product items */}
+      <div className='space-y-1.5'>
+        {cartData.product_items.map((item, index) => (
+          <div key={index} className='flex items-center justify-between text-sm bg-white/10 rounded px-2 py-1'>
+            <div className='flex items-center gap-2'>
+              <Package className='h-3.5 w-3.5 opacity-70' />
+              <span className='font-mono text-xs'>{item.product_retailer_id}</span>
+              <span className='opacity-70'>×{item.quantity}</span>
+            </div>
+            <span className='font-medium'>
+              {formatPrice(item.item_price * item.quantity, item.currency)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Total */}
+      <div className='flex items-center justify-between border-t border-white/20 pt-2 text-sm font-semibold'>
+        <span>Totaal</span>
+        <span>{formatPrice(total, currency)}</span>
+      </div>
+
+      {/* Customer note */}
+      {(customerNote || cartData.text) && (
+        <div className='text-xs opacity-80 italic border-t border-white/20 pt-2'>
+          &quot;{customerNote || cartData.text}&quot;
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Product Message Component (single product or product list sent by agent)
+function ProductMessageContent({ message }: { message: MessageWithSender }) {
+  const metadata = message.metadata as Record<string, unknown> | null
+
+  // Check if it's a product list message
+  const isProductList = metadata?.sections || metadata?.products
+  const products = (metadata?.products as string[]) || []
+  const headerText = metadata?.header_text as string | undefined
+  const bodyText = metadata?.body_text as string | undefined
+
+  if (isProductList && products.length > 0) {
+    return (
+      <div className='space-y-2'>
+        <div className='flex items-center gap-2 text-sm font-medium'>
+          <ShoppingBag className='h-4 w-4' />
+          <span>Producten gedeeld ({products.length})</span>
+        </div>
+        {headerText && <div className='text-sm font-medium'>{headerText}</div>}
+        {bodyText && <div className='text-sm opacity-90'>{bodyText}</div>}
+        <div className='text-xs opacity-70'>
+          {products.slice(0, 3).join(', ')}
+          {products.length > 3 && ` +${products.length - 3} meer`}
+        </div>
+      </div>
+    )
+  }
+
+  // Single product
+  const productId = metadata?.product_retailer_id as string | undefined
+  return (
+    <div className='space-y-1'>
+      <div className='flex items-center gap-2 text-sm font-medium'>
+        <Package className='h-4 w-4' />
+        <span>Product gedeeld</span>
+      </div>
+      {productId && (
+        <div className='text-xs font-mono opacity-70'>{productId}</div>
+      )}
+      {message.content && message.content !== productId && (
+        <div className='text-sm'>{message.content}</div>
+      )}
+    </div>
+  )
 }
 
 interface MessageListProps {
@@ -98,13 +221,33 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                     isFromAgent ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
                   }`}
                 >
-                  {/* Message Type Indicator */}
-                  {message.message_type !== 'text' && (
-                    <div className='mb-1 text-xs opacity-75'>[{message.message_type}]</div>
+                  {/* Order Message (from customer) */}
+                  {message.message_type === 'order' && (() => {
+                    const cartData = parseCartData(message)
+                    if (cartData) {
+                      return <OrderMessageContent cartData={cartData} customerNote={message.content} />
+                    }
+                    return <div className='text-sm'>{message.content}</div>
+                  })()}
+
+                  {/* Product Message (sent by agent) */}
+                  {(message.message_type === 'product' || message.message_type === 'product_list') && (
+                    <ProductMessageContent message={message} />
                   )}
 
-                  {/* Message Content */}
-                  <div className='text-sm'>{message.content}</div>
+                  {/* Regular text and other message types */}
+                  {message.message_type !== 'order' &&
+                   message.message_type !== 'product' &&
+                   message.message_type !== 'product_list' && (
+                    <>
+                      {/* Message Type Indicator */}
+                      {message.message_type !== 'text' && (
+                        <div className='mb-1 text-xs opacity-75'>[{message.message_type}]</div>
+                      )}
+                      {/* Message Content */}
+                      <div className='text-sm'>{message.content}</div>
+                    </>
+                  )}
 
                   {/* Media */}
                   {message.media_url && (

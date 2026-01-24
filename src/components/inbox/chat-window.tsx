@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MessageList } from './message-list'
 import { MessageInput } from './message-input'
 import { QuickActionsButton } from './quick-actions-menu'
@@ -8,8 +8,10 @@ import { useToast } from '@/components/ui/toast'
 import ConversationSummary from '@/components/ai/conversation-summary'
 import DraftSuggestions from '@/components/ai/draft-suggestions'
 import SentimentBadge from '@/components/ai/sentiment-badge'
+import ProductMessageComposer from '@/components/messaging/ProductMessageComposer'
 import { FileText, Sparkles } from 'lucide-react'
 import type { ConversationWithDetails, MessageWithSender } from '@/types'
+import type { SendProductMessageRequest, SendProductListMessageRequest, WhatsAppCatalog } from '@/types/whatsapp-catalog'
 
 interface ChatWindowProps {
   conversation: ConversationWithDetails
@@ -35,8 +37,26 @@ export function ChatWindow({
   const [isLoading, setIsLoading] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
   const [showDraftSuggestions, setShowDraftSuggestions] = useState(false)
+  const [showProductComposer, setShowProductComposer] = useState(false)
   const [draftText, setDraftText] = useState('')
+  const [catalog, setCatalog] = useState<WhatsAppCatalog | null>(null)
   const { addToast } = useToast()
+
+  // Check if organization has a product catalog
+  useEffect(() => {
+    const fetchCatalog = async () => {
+      try {
+        const response = await fetch('/api/whatsapp/catalog')
+        if (response.ok) {
+          const data = await response.json()
+          setCatalog(data.catalog)
+        }
+      } catch {
+        // No catalog available
+      }
+    }
+    fetchCatalog()
+  }, [])
 
   // Fetch messages for the conversation
   useEffect(() => {
@@ -138,6 +158,49 @@ export function ChatWindow({
       message: 'Edit the draft before sending',
     })
   }
+
+  // Handle sending product messages
+  const handleSendProductMessage = useCallback(async (request: SendProductMessageRequest | SendProductListMessageRequest) => {
+    try {
+      // Determine which endpoint to use based on request type
+      const isSingleProduct = 'product_retailer_id' in request
+      const endpoint = isSingleProduct
+        ? '/api/whatsapp/messages/product'
+        : '/api/whatsapp/messages/product-list'
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to send product message')
+      }
+
+      const data = await response.json()
+
+      // Add the message to the list
+      if (data.message) {
+        setMessages(prev => [...prev, data.message])
+      }
+
+      addToast({
+        type: 'success',
+        title: 'Product bericht verzonden',
+      })
+
+      setShowProductComposer(false)
+    } catch (error) {
+      addToast({
+        type: 'error',
+        title: 'Verzenden mislukt',
+        message: error instanceof Error ? error.message : 'Probeer opnieuw',
+      })
+      throw error // Re-throw so the composer can handle it
+    }
+  }, [addToast])
 
   return (
     <div className='flex h-full flex-col'>
@@ -294,6 +357,8 @@ export function ChatWindow({
         onSendMessage={handleSendMessage}
         initialValue={draftText}
         onValueChange={setDraftText}
+        hasProductCatalog={!!catalog}
+        onOpenProductPicker={() => setShowProductComposer(true)}
       />
 
       {/* AI Conversation Summary Modal */}
@@ -304,6 +369,20 @@ export function ChatWindow({
         isOpen={showSummary}
         onClose={() => setShowSummary(false)}
       />
+
+      {/* Product Message Composer Modal */}
+      {showProductComposer && catalog && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'>
+          <div className='w-full max-w-2xl max-h-[90vh] m-4'>
+            <ProductMessageComposer
+              conversationId={conversation.id}
+              catalogId={catalog.catalog_id}
+              onSend={handleSendProductMessage}
+              onCancel={() => setShowProductComposer(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

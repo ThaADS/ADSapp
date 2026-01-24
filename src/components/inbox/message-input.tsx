@@ -1,14 +1,23 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { ShoppingBag } from 'lucide-react'
 
 interface MessageInputProps {
   onSendMessage: (content: string, type?: string) => Promise<void>
   initialValue?: string
   onValueChange?: (value: string) => void
+  onOpenProductPicker?: () => void
+  hasProductCatalog?: boolean
 }
 
-export function MessageInput({ onSendMessage, initialValue = '', onValueChange }: MessageInputProps) {
+export function MessageInput({
+  onSendMessage,
+  initialValue = '',
+  onValueChange,
+  onOpenProductPicker,
+  hasProductCatalog = false,
+}: MessageInputProps) {
   const [message, setMessage] = useState(initialValue)
   const [isLoading, setIsLoading] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
@@ -133,6 +142,19 @@ export function MessageInput({ onSendMessage, initialValue = '', onValueChange }
               />
             </svg>
           </button>
+
+          {/* Product Catalog Button */}
+          {hasProductCatalog && onOpenProductPicker && (
+            <button
+              type='button'
+              onClick={onOpenProductPicker}
+              className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              aria-label='Send product'
+              title='Stuur product'
+            >
+              <ShoppingBag className='h-5 w-5' />
+            </button>
+          )}
 
           {/* Text Input */}
           <div className='relative flex-1 min-w-0'>
