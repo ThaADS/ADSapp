@@ -64,3 +64,26 @@ export {
   type ZapierMiddlewareOptions,
   type ZapierHandler,
 } from './middleware'
+
+// =====================================================
+// Webhook Service
+// =====================================================
+
+export {
+  WebhookService,
+  webhookService,
+  deliverWebhook,
+  processRetries,
+} from './webhook-service'
+
+// =====================================================
+// Event Emitter
+// =====================================================
+
+export {
+  emitZapierEvent,
+  emitMessageReceived,
+  emitContactCreated,
+  emitContactUpdated,
+  ZapierEventEmitter,
+} from './event-emitter'
