@@ -1,22 +1,22 @@
 # Project State: ADSapp
 
-**Updated:** 2026-01-24
+**Updated:** 2026-01-25
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-01-23)
 
 **Core value:** Businesses can efficiently manage all WhatsApp customer communications in one secure, multi-tenant inbox with AI assistance
-**Current focus:** v2.0 Feature Gap Implementation - Phase 9
+**Current focus:** v2.0 Feature Gap Implementation - Phase 10
 
 ## Current Status
 
 ```
 Milestone: v2.0 Feature Gap Implementation
-Phase: 9 - WhatsApp Catalog
-Status: ✅ COMPLETE
-Progress: [##########] 100% (6/6 plans complete)
-Plans: 6 (09-01 to 09-06)
+Phase: 10 - Zapier Integration
+Status: IN PROGRESS
+Progress: [###-------] 33% (1/3 plans complete)
+Plans: 3 (10-01 to 10-03)
 ```
 
 ## Milestone Overview
@@ -137,7 +137,7 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 |-------|------|-------|--------|
 | 8 | Foundation Layer | 5/5 | ✅ Complete |
 | 9 | WhatsApp Catalog | 6/6 | ✅ Complete |
-| 10 | Zapier Integration | TBD | Not started |
+| 10 | Zapier Integration | 1/3 | ◆ In Progress |
 | 11 | Team Collaboration | TBD | Not started |
 | 12 | Shopify Integration | TBD | Not started |
 | 13 | Instagram DM | TBD | Not started |
@@ -148,6 +148,36 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | 18 | WhatsApp Calling | TBD | Not started |
 | 19 | Knowledge Base AI | TBD | Not started |
 
+## Phase 10: Zapier Integration ◆ IN PROGRESS
+
+**Goal:** Enable Zapier integration with OAuth 2.0 provider and webhook subscriptions
+**Requirements:** ZAP-01 through ZAP-08
+**Started:** 2026-01-25
+
+**Plans:**
+| Plan | Wave | Description | Status |
+|------|------|-------------|--------|
+| 10-01 | 1 | Database schema + TypeScript types | ✅ COMPLETE |
+| 10-02 | TBD | OAuth endpoints + consent UI | Not started |
+| 10-03 | TBD | Webhook system + action APIs | Not started |
+
+**Progress:** 33% (1/3 plans complete)
+
+**Key Deliverables (Plan 10-01):**
+- ✅ Database migration: oauth_clients, oauth_authorization_codes, oauth_access_tokens, oauth_refresh_tokens
+- ✅ Database migration: zapier_subscriptions, zapier_webhook_deliveries
+- ✅ TypeScript types: src/types/oauth.ts with JWT payload and OAuth flow types
+- ✅ TypeScript types: src/types/zapier.ts with webhook and action types
+- ✅ RLS policies: Organization isolation on all OAuth and webhook tables
+
+**Success Criteria (Overall):**
+1. ⏳ OAuth 2.0 Authorization Code Grant flow works end-to-end
+2. ⏳ Zapier can subscribe to webhooks for real-time events
+3. ⏳ Zapier actions (send message, create/update contact) function correctly
+4. ⏳ Rate limiting enforced on all endpoints
+
+**Next Action:** Continue with Plan 10-02 (OAuth endpoints)
+
 ## Accumulated Context
 
 ### Decisions
@@ -155,6 +185,10 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-25]: OAuth access tokens: JWT format, 1 hour lifespan, SHA256 hash storage
+- [2026-01-25]: Refresh tokens: 30 day lifespan with single-use rotation
+- [2026-01-25]: Authorization codes: 10 minute expiration with PKCE support
+- [2026-01-25]: Webhook deliveries: 5-step retry (1s, 5s, 30s, 5m, 30m) with 410 handling
 - [2026-01-24]: Use JSONB for channel_metadata to support channel-specific extensions
 - [2026-01-24]: Include comprehensive error tracking (failed_reason, error_code, retry_count)
 - [2026-01-24]: Token encryption placeholder with `*_encrypted` suffix (implementation in later plans)
@@ -175,8 +209,8 @@ None yet for v2.0.
 
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Phase 8 complete, ready for Phase 9
+Last session: 2026-01-25
+Stopped at: Phase 10 Plan 10-01 complete, ready for 10-02
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
