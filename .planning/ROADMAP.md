@@ -192,7 +192,15 @@ Plans:
 **Goal:** Enable team members to @mention each other in conversation notes with real-time notifications
 **Depends on:** Phase 8 (Foundation Layer)
 **Requirements:** MENT-01, MENT-02, MENT-03, MENT-04, MENT-05, MENT-06
-**Plans:** TBD
+**Plans:** 6 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — Database schema (conversation_notes, mentions tables) + TypeScript types
+- [ ] 11-02-PLAN.md — Tiptap editor with @mention extension + accessible suggestion dropdown
+- [ ] 11-03-PLAN.md — Notes API migration to relational tables + mention record creation
+- [ ] 11-04-PLAN.md — Real-time notifications via Supabase Realtime + notification badge
+- [ ] 11-05-PLAN.md — BullMQ email queue for delayed notifications
+- [ ] 11-06-PLAN.md — UI integration + clickable mention links to user profiles
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can type @ in internal notes and see team member suggestions
@@ -515,7 +523,7 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 8 | Foundation Layer | v2.0 | 5/5 | Complete | 2026-01-24 |
 | 9 | WhatsApp Catalog | v2.0 | 6/6 | Complete | 2026-01-24 |
 | 10 | Zapier Integration | v2.0 | 6/6 | Complete | 2026-01-25 |
-| 11 | Team Collaboration | v2.0 | 0/TBD | Not started | - |
+| 11 | Team Collaboration | v2.0 | 0/6 | Not started | - |
 | 12 | Shopify Integration | v2.0 | 0/TBD | Not started | - |
 | 13 | Instagram DM Channel | v2.0 | 0/TBD | Not started | - |
 | 14 | Facebook Messenger | v2.0 | 0/TBD | Not started | - |
