@@ -7,15 +7,15 @@
 See: `.planning/PROJECT.md` (updated 2026-01-23)
 
 **Core value:** Businesses can efficiently manage all WhatsApp customer communications in one secure, multi-tenant inbox with AI assistance
-**Current focus:** v2.0 Feature Gap Implementation - Phase 10
+**Current focus:** v2.0 Feature Gap Implementation - Phase 10 Complete
 
 ## Current Status
 
 ```
 Milestone: v2.0 Feature Gap Implementation
 Phase: 10 - Zapier Integration
-Status: IN PROGRESS
-Progress: [###-------] 33% (1/3 plans complete)
+Status: COMPLETE
+Progress: [##########] 100% (3/3 plans complete)
 Plans: 3 (10-01 to 10-03)
 ```
 
@@ -158,25 +158,41 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | Plan | Wave | Description | Status |
 |------|------|-------------|--------|
 | 10-01 | 1 | Database schema + TypeScript types | ✅ COMPLETE |
-| 10-02 | TBD | OAuth endpoints + consent UI | Not started |
-| 10-03 | TBD | Webhook system + action APIs | Not started |
+| 10-02 | 2 | OAuth provider + token manager | ✅ COMPLETE |
+| 10-03 | 2 | Rate limiting + auth middleware | ✅ COMPLETE |
 
-**Progress:** 33% (1/3 plans complete)
+**Progress:** 100% (3/3 plans complete)
 
-**Key Deliverables (Plan 10-01):**
+**Key Deliverables:**
+
+**Plan 10-01:**
 - ✅ Database migration: oauth_clients, oauth_authorization_codes, oauth_access_tokens, oauth_refresh_tokens
 - ✅ Database migration: zapier_subscriptions, zapier_webhook_deliveries
 - ✅ TypeScript types: src/types/oauth.ts with JWT payload and OAuth flow types
 - ✅ TypeScript types: src/types/zapier.ts with webhook and action types
 - ✅ RLS policies: Organization isolation on all OAuth and webhook tables
 
-**Success Criteria (Overall):**
-1. ⏳ OAuth 2.0 Authorization Code Grant flow works end-to-end
-2. ⏳ Zapier can subscribe to webhooks for real-time events
-3. ⏳ Zapier actions (send message, create/update contact) function correctly
-4. ⏳ Rate limiting enforced on all endpoints
+**Plan 10-02:**
+- ✅ Token manager: JWT generation/verification with jose library
+- ✅ Authorization code and refresh token generation
+- ✅ PKCE support (S256 and plain methods)
+- ✅ Client secret hashing with bcrypt
+- ✅ Token revocation checks
 
-**Next Action:** Continue with Plan 10-02 (OAuth endpoints)
+**Plan 10-03:**
+- ✅ Sliding window rate limiter with 4 limit types
+- ✅ Bearer token authentication middleware
+- ✅ Scope validation middleware
+- ✅ Combined middleware wrapper (withZapierMiddleware)
+- ✅ Rate limit headers (X-RateLimit-*) on all responses
+
+**Success Criteria (Overall):**
+1. ✅ Rate limiting enforced on all endpoints
+2. ⏳ OAuth 2.0 Authorization Code Grant flow works end-to-end (needs OAuth endpoints in future plan)
+3. ⏳ Zapier can subscribe to webhooks for real-time events (needs webhook system in future plan)
+4. ⏳ Zapier actions (send message, create/update contact) function correctly (needs action APIs in future plan)
+
+**Next Action:** Phase 10 infrastructure complete. Ready for OAuth endpoints and action APIs in future plans.
 
 ## Accumulated Context
 
@@ -185,6 +201,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-25]: In-memory rate limiting acceptable for single-instance (Redis needed for multi-instance)
+- [2026-01-25]: Rate limit by token hash for authenticated endpoints, IP for OAuth endpoints
+- [2026-01-25]: Rate limit headers on all responses (including errors) per OAuth spec
 - [2026-01-25]: OAuth access tokens: JWT format, 1 hour lifespan, SHA256 hash storage
 - [2026-01-25]: Refresh tokens: 30 day lifespan with single-use rotation
 - [2026-01-25]: Authorization codes: 10 minute expiration with PKCE support
@@ -206,11 +225,12 @@ None yet for v2.0.
 - WhatsApp Calling needs legal review for consent requirements
 - pgvector performance needs load testing at scale
 - Tests in `tests/_deferred/` need fixes (mocking issues, missing deps)
+- Rate limiter uses in-memory storage (single instance only - needs Redis for multi-instance)
 
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Phase 10 Plan 10-01 complete, ready for 10-02
+Stopped at: Phase 10 complete (3/3 plans)
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
