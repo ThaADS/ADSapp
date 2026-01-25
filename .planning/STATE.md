@@ -173,11 +173,15 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ RLS policies: Organization isolation on all OAuth and webhook tables
 
 **Plan 10-02:**
-- ✅ Token manager: JWT generation/verification with jose library
-- ✅ Authorization code and refresh token generation
-- ✅ PKCE support (S256 and plain methods)
-- ✅ Client secret hashing with bcrypt
-- ✅ Token revocation checks
+- ✅ Token manager: JWT generation/verification with jose library (236933b)
+- ✅ OAuth provider: Authorization Code Grant flow (a77b3a5)
+- ✅ Authorization endpoint with client validation (55ca30f)
+- ✅ Token endpoint: code exchange and refresh (d0214f1)
+- ✅ Revocation endpoint: RFC 7009 compliant (2bcd0b3)
+- ✅ Consent UI page with scope display (39b1218)
+- ✅ Authorization callback with role checks (a7e52bf)
+- ✅ PKCE S256 and plain method support
+- ✅ Single-use refresh token rotation
 
 **Plan 10-03:**
 - ✅ Sliding window rate limiter with 4 limit types
@@ -187,8 +191,8 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ Rate limit headers (X-RateLimit-*) on all responses
 
 **Success Criteria (Overall):**
-1. ✅ Rate limiting enforced on all endpoints
-2. ⏳ OAuth 2.0 Authorization Code Grant flow works end-to-end (needs OAuth endpoints in future plan)
+1. ✅ OAuth 2.0 Authorization Code Grant flow works end-to-end
+2. ✅ Rate limiting enforced on all endpoints
 3. ⏳ Zapier can subscribe to webhooks for real-time events (needs webhook system in future plan)
 4. ⏳ Zapier actions (send message, create/update contact) function correctly (needs action APIs in future plan)
 
