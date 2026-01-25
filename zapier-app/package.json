@@ -1,0 +1,21 @@
+{
+  "name": "adsapp-zapier",
+  "version": "1.0.0",
+  "description": "ADSapp - WhatsApp Business Inbox integration for Zapier",
+  "main": "index.js",
+  "scripts": {
+    "test": "zapier test",
+    "push": "zapier push",
+    "validate": "zapier validate"
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=8"
+  },
+  "dependencies": {
+    "zapier-platform-core": "^15.0.0"
+  },
+  "devDependencies": {
+    "zapier-platform-cli": "^15.0.0"
+  }
+}

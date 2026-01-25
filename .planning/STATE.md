@@ -160,8 +160,11 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | 10-01 | 1 | Database schema + TypeScript types | ✅ COMPLETE |
 | 10-02 | 2 | OAuth provider + token manager | ✅ COMPLETE |
 | 10-03 | 2 | Rate limiting + auth middleware | ✅ COMPLETE |
+| 10-04 | 1 | REST Hook triggers + webhook delivery | ✅ COMPLETE |
+| 10-05 | 1 | Action endpoints (send message, contacts) | ✅ COMPLETE |
+| 10-06 | 1 | Event emission integration | TBD |
 
-**Progress:** 100% (3/3 plans complete)
+**Progress:** 83% (5/6 plans complete)
 
 **Key Deliverables:**
 
@@ -190,13 +193,27 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ Combined middleware wrapper (withZapierMiddleware)
 - ✅ Rate limit headers (X-RateLimit-*) on all responses
 
+**Plan 10-04:**
+- ✅ REST Hook subscribe endpoint: POST /api/integrations/zapier/hooks/subscribe
+- ✅ REST Hook unsubscribe endpoint: DELETE /api/integrations/zapier/hooks/{id}
+- ✅ WebhookService with retry logic (1s, 5s, 30s, 5m, 30m)
+- ✅ Event emitter with tag filtering (any_of, all_of, none_of)
+- ✅ 410 Gone handling for subscription cleanup
+
+**Plan 10-05:**
+- ✅ POST /api/integrations/zapier/actions/send-message (text + template)
+- ✅ POST /api/integrations/zapier/actions/contacts (create)
+- ✅ PUT /api/integrations/zapier/actions/contacts/{id} (update)
+- ✅ Auto-create contact/conversation on send-message
+- ✅ Custom fields merge on update
+
 **Success Criteria (Overall):**
 1. ✅ OAuth 2.0 Authorization Code Grant flow works end-to-end
 2. ✅ Rate limiting enforced on all endpoints
-3. ⏳ Zapier can subscribe to webhooks for real-time events (needs webhook system in future plan)
-4. ⏳ Zapier actions (send message, create/update contact) function correctly (needs action APIs in future plan)
+3. ⏳ Zapier can subscribe to webhooks for real-time events (10-06)
+4. ✅ Zapier actions (send message, create/update contact) function correctly
 
-**Next Action:** Phase 10 infrastructure complete. Ready for OAuth endpoints and action APIs in future plans.
+**Next Action:** Complete 10-06 (webhook subscription system) to finish Phase 10.
 
 ## Accumulated Context
 
@@ -205,6 +222,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-25]: Fire-and-forget webhook delivery to avoid blocking event emission
+- [2026-01-25]: Auto-create contact/conversation when sending message to unknown phone number
+- [2026-01-25]: Merge custom_fields on contact update instead of replace
 - [2026-01-25]: In-memory rate limiting acceptable for single-instance (Redis needed for multi-instance)
 - [2026-01-25]: Rate limit by token hash for authenticated endpoints, IP for OAuth endpoints
 - [2026-01-25]: Rate limit headers on all responses (including errors) per OAuth spec
@@ -234,7 +254,7 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Phase 10 complete (3/3 plans)
+Stopped at: Phase 10 Plan 04 complete (REST Hook triggers + webhook delivery)
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
@@ -275,4 +295,4 @@ All 5 plans executed across 4 waves:
 | `/gsd:progress` | Check overall progress |
 
 ---
-*State updated: 2026-01-24*
+*State updated: 2026-01-25*
