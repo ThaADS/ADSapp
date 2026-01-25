@@ -95,6 +95,7 @@ export async function GET(request: NextRequest) {
         .lt('created_at', startDate.toISOString()),
 
       // Current period revenue (from billing events)
+      // @ts-expect-error - billing_events table exists but not in generated types
       supabase
         .from('billing_events')
         .select('amount')
@@ -102,6 +103,7 @@ export async function GET(request: NextRequest) {
         .gte('created_at', startDate.toISOString()),
 
       // Previous period revenue
+      // @ts-expect-error - billing_events table exists but not in generated types
       supabase
         .from('billing_events')
         .select('amount')
