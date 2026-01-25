@@ -7,28 +7,8 @@
   "regions": ["ams1"],
   "crons": [
     {
-      "path": "/api/cron/process-drip-messages",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/crm-sync?job=delta-sync",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/crm-sync?job=health-check",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/crm-sync?job=detect-conflicts",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/crm-sync?job=retry-failed",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/crm-sync?job=cleanup",
-      "schedule": "0 2 * * *"
+      "path": "/api/cron/crm-sync?job=all",
+      "schedule": "0 6 * * *"
     }
   ],
   "headers": [
