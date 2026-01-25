@@ -155,9 +155,9 @@ Plans:
 - [x] 10-01-PLAN.md — Database schema + TypeScript types (OAuth, webhooks)
 - [x] 10-02-PLAN.md — OAuth Authorization Server (token manager, endpoints, consent UI)
 - [x] 10-03-PLAN.md — Rate limiting + authentication middleware
-- [ ] 10-04-PLAN.md — REST Hook trigger endpoints + webhook delivery service
-- [ ] 10-05-PLAN.md — Action endpoints (send message, create/update contact)
-- [ ] 10-06-PLAN.md — Zapier CLI app definition + templates
+- [x] 10-04-PLAN.md — REST Hook trigger endpoints + webhook delivery service
+- [x] 10-05-PLAN.md — Action endpoints (send message, create/update contact)
+- [x] 10-06-PLAN.md — Zapier CLI app definition + templates
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can connect ADSapp to Zapier using OAuth 2.0 authorization flow
@@ -514,7 +514,7 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 7 | Dependency Cleanup | v1.0 | 1/1 | Complete | 2026-01-23 |
 | 8 | Foundation Layer | v2.0 | 5/5 | Complete | 2026-01-24 |
 | 9 | WhatsApp Catalog | v2.0 | 6/6 | Complete | 2026-01-24 |
-| 10 | Zapier Integration | v2.0 | 3/6 | In Progress | - |
+| 10 | Zapier Integration | v2.0 | 6/6 | Complete | 2026-01-25 |
 | 11 | Team Collaboration | v2.0 | 0/TBD | Not started | - |
 | 12 | Shopify Integration | v2.0 | 0/TBD | Not started | - |
 | 13 | Instagram DM Channel | v2.0 | 0/TBD | Not started | - |
@@ -526,8 +526,8 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 19 | Knowledge Base AI | v2.0 | 0/TBD | Not started | - |
 
 **v1.0 Progress:** [##########] 100% (7/7 phases) COMPLETE
-**v2.0 Progress:** [###-------] 25% (3/12 phases)
-**Overall Progress:** [#####-----] 53% (10/19 phases)
+**v2.0 Progress:** [####------] 33% (4/12 phases)
+**Overall Progress:** [######----] 58% (11/19 phases)
 
 ---
 
