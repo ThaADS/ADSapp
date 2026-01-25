@@ -155,6 +155,7 @@ logs
 **/secrets/**
 leaked-*
 credential-*
+!**/credential-manager.ts
 
 # Status/Completion Files (often contain credentials)
 FINAL_STATUS_*.md
