@@ -1,34 +1,19 @@
 /**
  * Next.js Middleware Configuration
  *
- * This middleware integrates the tenant routing system with Next.js
- * to handle multi-tenant domain resolution and request routing.
+ * This middleware integrates:
+ * - Tenant routing for multi-tenant domain resolution
+ * - Supabase session management for authentication
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import { createTenantMiddleware } from './src/middleware/tenant-routing'
 
-// Debug environment variables
-console.log('🔍 Middleware Environment Debug:')
-console.log(
-  'NEXT_PUBLIC_SUPABASE_URL:',
-  process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing'
-)
-console.log(
-  'SUPABASE_SERVICE_ROLE_KEY:',
-  process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ Set' : '❌ Missing'
-)
-console.log(
-  'NEXT_PUBLIC_APP_DOMAIN:',
-  process.env.NEXT_PUBLIC_APP_DOMAIN || 'Using default: adsapp.com'
-)
-
-// Fallback values for development (temporary fix)
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://egaiyydjgeqlhthxmvbn.supabase.co'
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnYWl5eWRqZ2VxbGh0aHhtdmJuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODgzMzg2NCwiZXhwIjoyMDc0NDA5ODY0fQ.lShvQ---Poi9yQCzUzpVKWmfQtSkFY83W4VauXEIjxE'
+// Environment variables (fail gracefully if not set during build)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
 // Use localhost for development, adsapp.nl for production
 const mainDomain =
@@ -36,19 +21,56 @@ const mainDomain =
     ? process.env.NEXT_PUBLIC_APP_DOMAIN || 'adsapp.nl'
     : 'localhost'
 
-console.log('🔧 Using values:', {
-  url: supabaseUrl ? '✅ Set' : '❌ Missing',
-  key: supabaseKey ? '✅ Set' : '❌ Missing',
-  domain: mainDomain,
-  environment: process.env.NODE_ENV || 'development',
-})
+// Create tenant middleware instance (only if env vars are available)
+const tenantMiddleware = supabaseUrl && supabaseServiceKey
+  ? createTenantMiddleware({
+      supabaseUrl,
+      supabaseKey: supabaseServiceKey,
+      mainDomain,
+    })
+  : null
 
-// Create the tenant middleware instance
-const tenantMiddleware = createTenantMiddleware({
-  supabaseUrl,
-  supabaseKey,
-  mainDomain,
-})
+// Supabase session handler
+async function updateSession(request: NextRequest): Promise<NextResponse> {
+  let supabaseResponse = NextResponse.next({ request })
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return supabaseResponse
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+        supabaseResponse = NextResponse.next({ request })
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        )
+      },
+    },
+  })
+
+  // Refresh session
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Redirect to login if no user and accessing protected routes
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/auth') &&
+    !request.nextUrl.pathname.startsWith('/api') &&
+    request.nextUrl.pathname !== '/' &&
+    !request.nextUrl.pathname.startsWith('/_next')
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/signin'
+    return NextResponse.redirect(url)
+  }
+
+  return supabaseResponse
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -71,8 +93,20 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Apply tenant routing middleware
-    return await tenantMiddleware(request)
+    // First, handle Supabase session
+    const sessionResponse = await updateSession(request)
+
+    // If session handler returned a redirect, return it
+    if (sessionResponse.status === 307 || sessionResponse.status === 308) {
+      return sessionResponse
+    }
+
+    // Apply tenant routing middleware if available
+    if (tenantMiddleware) {
+      return await tenantMiddleware(request)
+    }
+
+    return sessionResponse
   } catch (error) {
     console.error('Middleware error:', error)
 
