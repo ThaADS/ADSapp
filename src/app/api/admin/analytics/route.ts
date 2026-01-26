@@ -95,16 +95,16 @@ export async function GET(request: NextRequest) {
         .lt('created_at', startDate.toISOString()),
 
       // Current period revenue (from billing events)
-      // @ts-expect-error - billing_events table exists but not in generated types
-      supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
         .from('billing_events')
         .select('amount')
         .eq('event_type', 'payment_succeeded')
         .gte('created_at', startDate.toISOString()),
 
       // Previous period revenue
-      // @ts-expect-error - billing_events table exists but not in generated types
-      supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
         .from('billing_events')
         .select('amount')
         .eq('event_type', 'payment_succeeded')
@@ -141,9 +141,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate revenue (convert from cents to dollars)
     const revenueTotal =
-      (currentRevenue.data || []).reduce((sum, event) => sum + (event.amount || 0), 0) / 100
+      ((currentRevenue.data || []) as { amount: number }[]).reduce((sum: number, event: { amount: number }) => sum + (event.amount || 0), 0) / 100
     const revenuePrevious =
-      (previousRevenue.data || []).reduce((sum, event) => sum + (event.amount || 0), 0) / 100
+      ((previousRevenue.data || []) as { amount: number }[]).reduce((sum: number, event: { amount: number }) => sum + (event.amount || 0), 0) / 100
     const revenueChange =
       revenuePrevious > 0
         ? ((revenueTotal - revenuePrevious) / revenuePrevious) * 100
@@ -163,7 +163,8 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: true })
 
     // Get revenue for time series
-    const { data: revenueTimeSeries } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: revenueTimeSeries } = await (supabase as any)
       .from('billing_events')
       .select('created_at, amount')
       .eq('event_type', 'payment_succeeded')
@@ -172,6 +173,7 @@ export async function GET(request: NextRequest) {
 
     // Aggregate users by date
     ;(timeSeriesData.data || []).forEach(item => {
+      if (!item.created_at) return
       const date = new Date(item.created_at).toISOString().split('T')[0]
       if (!dateMap.has(date)) {
         dateMap.set(date, { users: 0, messages: 0, revenue: 0 })
@@ -181,7 +183,8 @@ export async function GET(request: NextRequest) {
     })
 
     // Aggregate messages by date
-    ;(messagesTimeSeries || []).forEach(item => {
+    ;((messagesTimeSeries || []) as { created_at: string | null }[]).forEach(item => {
+      if (!item.created_at) return
       const date = new Date(item.created_at).toISOString().split('T')[0]
       if (!dateMap.has(date)) {
         dateMap.set(date, { users: 0, messages: 0, revenue: 0 })
@@ -191,7 +194,8 @@ export async function GET(request: NextRequest) {
     })
 
     // Aggregate revenue by date
-    ;(revenueTimeSeries || []).forEach(item => {
+    ;((revenueTimeSeries || []) as { created_at: string | null; amount: number }[]).forEach(item => {
+      if (!item.created_at) return
       const date = new Date(item.created_at).toISOString().split('T')[0]
       if (!dateMap.has(date)) {
         dateMap.set(date, { users: 0, messages: 0, revenue: 0 })

@@ -58,12 +58,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         .select('id, sender_type, message_type, created_at')
         .eq('organization_id', id)
     )
-    const billingEvents = toAny(
-      await supabase
-        .from('billing_events')
-        .select('id, event_type, amount, currency, created_at')
-        .eq('organization_id', id)
-    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const billingEvents = await (supabase as any)
+      .from('billing_events')
+      .select('id, event_type, amount, currency, created_at')
+      .eq('organization_id', id)
 
     // Analytics and usage records would be fetched from dedicated tables when implemented
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

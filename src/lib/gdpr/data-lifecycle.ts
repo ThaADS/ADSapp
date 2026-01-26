@@ -342,7 +342,8 @@ export async function executeDataDeletion(deletionRequestId: string): Promise<De
     }
 
     // 4. Delete billing events
-    const { count: billingDeleted, error: billingError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { count: billingDeleted, error: billingError } = await (supabase as any)
       .from('billing_events')
       .delete()
       .eq('organization_id', organizationId)
@@ -628,7 +629,8 @@ export async function exportUserData(
     userData.messages = messages || []
 
     // 6. Billing data
-    const { data: billingEvents } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: billingEvents } = await (supabase as any)
       .from('billing_events')
       .select('*')
       .eq('organization_id', organizationId)

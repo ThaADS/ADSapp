@@ -34,13 +34,15 @@ export async function GET(request: NextRequest) {
         churnedOrganizations,
       ] = await Promise.all([
         // Current month billing events
-        supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any)
           .from('billing_events')
           .select('event_type, amount, currency, created_at')
           .gte('created_at', startOfMonth.toISOString()),
 
         // Last month billing events
-        supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any)
           .from('billing_events')
           .select('event_type, amount, currency, created_at')
           .gte('created_at', startOfLastMonth.toISOString())
@@ -53,7 +55,8 @@ export async function GET(request: NextRequest) {
           .neq('status', 'cancelled' as any),
 
         // Recent billing events
-        supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any)
           .from('billing_events')
           .select(
             `
@@ -134,7 +137,8 @@ export async function GET(request: NextRequest) {
 
       // Trial conversion (organizations that converted from trial to paid in the last 30 days)
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      const { data: conversions } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: conversions } = await (supabase as any)
         .from('billing_events')
         .select('organization_id')
         .eq('event_type', 'subscription_created')
@@ -202,7 +206,8 @@ export async function GET(request: NextRequest) {
       const startDate = searchParams.get('startDate')
       const endDate = searchParams.get('endDate')
 
-      let query = supabase.from('billing_events').select(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let query = (supabase as any).from('billing_events').select(
         `
           *,
           organizations(id, name, slug)
