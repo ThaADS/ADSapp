@@ -3,7 +3,84 @@
   "dashboard": "Beheerdersdashboard",
   "organizations": "Organisaties",
   "users": "Gebruikers",
-  "auditLogs": "Auditlogs",
+  "messagesLabel": "Berichten",
+  "auditLogs": {
+    "title": "Auditlogs",
+    "subtitle": "Volledig activiteitenoverzicht over het platform voor beveiliging en compliance",
+    "loading": "Auditlogs laden...",
+    "errorLoading": "Fout bij laden van auditlogs",
+    "searchPlaceholder": "Zoek in logs...",
+    "allSeverities": "Alle niveaus",
+    "severityInfo": "Info",
+    "severityWarning": "Waarschuwing",
+    "severityError": "Fout",
+    "severityCritical": "Kritiek",
+    "allActions": "Alle acties",
+    "actionCreate": "Aanmaken",
+    "actionUpdate": "Bijwerken",
+    "actionDelete": "Verwijderen",
+    "actionLogin": "Inloggen",
+    "actionLogout": "Uitloggen",
+    "totalLogs": "totaal aantal logs",
+    "noLogsFound": "Geen auditlogs gevonden",
+    "noLogsSearchAdjust": "Probeer je zoekopdracht of filters aan te passen.",
+    "noLogsRecorded": "Er zijn nog geen auditlogs vastgelegd."
+  },
+  "settings": {
+    "title": "Platforminstellingen",
+    "subtitle": "Configureer platformbrede instellingen en voorkeuren",
+    "sections": {
+      "general": {
+        "title": "Algemene instellingen",
+        "description": "Platformbrede configuratie en voorkeuren"
+      },
+      "security": {
+        "title": "Beveiliging & Authenticatie",
+        "description": "Beveiligingsbeleid, authenticatiemethoden en toegangscontrole"
+      },
+      "notifications": {
+        "title": "Meldingen",
+        "description": "Configureer systeemmeldingen en waarschuwingen"
+      },
+      "email": {
+        "title": "E-mailconfiguratie",
+        "description": "E-mailservice instellingen en sjablonen"
+      },
+      "api": {
+        "title": "API & Webhooks",
+        "description": "API-limieten, webhook-configuraties en integraties"
+      },
+      "infrastructure": {
+        "title": "Infrastructuur",
+        "description": "Database, caching en prestatie-instellingen"
+      }
+    },
+    "fields": {
+      "platformName": "Platformnaam",
+      "platformUrl": "Platform URL",
+      "maintenanceMode": "Onderhoudsmodus",
+      "maintenanceModeDesc": "Tijdelijk toegang uitschakelen voor alle gebruikers",
+      "signupsEnabled": "Nieuwe aanmeldingen ingeschakeld",
+      "signupsEnabledDesc": "Toestaan dat nieuwe organisaties zich aanmelden",
+      "enforceStrongPasswords": "Sterke wachtwoorden afdwingen",
+      "enforceStrongPasswordsDesc": "Minimaal 12 tekens met speciale tekens vereisen",
+      "sessionTimeout": "Sessie-timeout (uren)",
+      "maxLoginAttempts": "Maximaal aantal inlogpogingen",
+      "requireEmailVerification": "E-mailverificatie vereisen",
+      "requireEmailVerificationDesc": "Gebruikers moeten e-mail verifiëren voordat ze toegang krijgen tot het platform",
+      "emailNotifications": "E-mailmeldingen",
+      "emailNotificationsDesc": "Systeemwaarschuwingen verzenden via e-mail",
+      "slackNotifications": "Slack-meldingen",
+      "slackNotificationsDesc": "Systeemwaarschuwingen naar Slack verzenden",
+      "slackWebhookUrl": "Slack Webhook URL"
+    },
+    "comingSoon": "Binnenkort beschikbaar",
+    "comingSoonDesc": "Deze sectie is in ontwikkeling.",
+    "saveChanges": "Wijzigingen opslaan",
+    "saving": "Opslaan...",
+    "saveSuccess": "Instellingen succesvol opgeslagen!",
+    "savePrompt": "Breng wijzigingen aan en klik op Opslaan om deze toe te passen"
+  },
   "systemSettings": "Systeeminstellingen",
   "systemHealth": "Systeemgezondheid",
   "monitoring": "Monitoring",
@@ -79,5 +156,39 @@
   "restoreDatabase": "Database herstellen",
   "confirmAction": "Actie bevestigen",
   "dangerZone": "Gevarenzone",
-  "irreversibleAction": "Deze actie is onomkeerbaar"
+  "irreversibleAction": "Deze actie is onomkeerbaar",
+  "loading": "Laden...",
+  "loadingOrganizations": "Organisaties laden...",
+  "errorLoadingOrganizations": "Fout bij laden van organisaties",
+  "loadingUsers": "Gebruikers laden...",
+  "noOrganizations": "Geen organisaties gevonden",
+  "noOrganizationsDesc": "Er zijn nog geen organisaties aangemaakt.",
+  "noUsers": "Geen gebruikers gevonden",
+  "noUsersDesc": "Probeer je zoekopdracht of filters aan te passen.",
+  "noUsersCreated": "Er zijn nog geen gebruikers aangemaakt.",
+  "unknownError": "Onbekende fout",
+  "errorLoading": "Fout bij laden",
+  "errorLoadingUsers": "Fout bij laden van gebruikers",
+  "searchPlaceholder": "Zoek gebruikers op naam of e-mail...",
+  "allRoles": "Alle rollen",
+  "previous": "Vorige",
+  "next": "Volgende",
+  "showing": "Toont",
+  "to": "tot",
+  "of": "van",
+  "results": "resultaten",
+  "status": {
+    "active": "Actief",
+    "suspended": "Opgeschort",
+    "cancelled": "Geannuleerd",
+    "pending_setup": "In afwachting",
+    "trial": "Proefperiode",
+    "past_due": "Achterstallig"
+  },
+  "messages": {
+    "organizationSuspended": "Organisatie succesvol opgeschort",
+    "organizationActivated": "Organisatie succesvol geactiveerd",
+    "suspendFailed": "Kon organisatie niet opschorten",
+    "activateFailed": "Kon organisatie niet activeren"
+  }
 }

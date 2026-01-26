@@ -15,6 +15,7 @@ import {
 import { WhatsAppTemplateManager, WhatsAppTemplate } from '@/lib/whatsapp/templates'
 import { WhatsAppMediaHandler } from '@/lib/whatsapp/media-handler'
 import DraftSuggestions from '@/components/ai/draft-suggestions'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface MessageInputProps {
   conversationId: string
@@ -47,6 +48,7 @@ interface AttachmentPreview {
 }
 
 function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: TemplateModalProps) {
+  const t = useTranslations('inbox')
   const [templates, setTemplates] = useState<WhatsAppTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplate | null>(null)
   const [variables, setVariables] = useState<Record<string, string>>({})
@@ -113,14 +115,15 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
               <LayoutTemplate className='h-5 w-5 text-blue-600' />
             </div>
             <div>
-              <h3 className='text-lg font-semibold text-gray-900'>Templates</h3>
-              <p className='text-xs text-gray-600'>Kies een template om te gebruiken</p>
+              <h3 className='text-lg font-semibold text-gray-900'>{t('templates.title')}</h3>
+              <p className='text-xs text-gray-600'>{t('templates.selectTemplate')}</p>
             </div>
           </div>
           <button
+            type='button'
             onClick={onClose}
             className='rounded-lg bg-white p-2.5 text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:text-gray-900 hover:shadow-md'
-            aria-label='Sluiten'
+            aria-label={t('templates.close')}
           >
             <X className='h-6 w-6' />
           </button>
@@ -133,15 +136,15 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
               <div className='flex items-center justify-center p-8'>
                 <div className='text-center'>
                   <div className='mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent'></div>
-                  <p className='text-sm text-gray-600'>Templates laden...</p>
+                  <p className='text-sm text-gray-600'>{t('templates.loading')}</p>
                 </div>
               </div>
             ) : templates.length === 0 ? (
               <div className='flex items-center justify-center p-8 text-gray-500'>
                 <div className='text-center'>
                   <LayoutTemplate className='mx-auto mb-3 h-12 w-12 text-gray-300' />
-                  <p className='font-medium'>Geen templates gevonden</p>
-                  <p className='mt-1 text-xs text-gray-400'>Maak eerst templates aan</p>
+                  <p className='font-medium'>{t('templates.noTemplates')}</p>
+                  <p className='mt-1 text-xs text-gray-400'>{t('templates.createFirst')}</p>
                 </div>
               </div>
             ) : (
@@ -188,9 +191,9 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
             {selectedTemplate ? (
               <div className='space-y-6'>
                 <div className='flex items-center justify-between'>
-                  <h4 className='text-base font-semibold text-gray-900'>Preview</h4>
+                  <h4 className='text-base font-semibold text-gray-900'>{t('templates.preview')}</h4>
                   <span className='rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700'>
-                    Goedgekeurd
+                    {t('templates.approved')}
                   </span>
                 </div>
 
@@ -200,7 +203,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                   {selectedTemplate.content.header && (
                     <div className='mb-3 rounded-lg bg-white p-3 shadow-sm'>
                       <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                        Header
+                        {t('templates.header')}
                       </p>
                       <p className='mt-1 font-medium text-gray-900'>
                         {selectedTemplate.content.header.text}
@@ -211,7 +214,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                   {/* Body */}
                   <div className='mb-3 rounded-lg bg-white p-3 shadow-sm'>
                     <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                      Bericht
+                      {t('templates.body')}
                     </p>
                     <p className='mt-1 whitespace-pre-wrap text-gray-900'>
                       {selectedTemplate.content.body.text}
@@ -222,7 +225,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                   {selectedTemplate.content.footer && (
                     <div className='rounded-lg bg-white p-3 shadow-sm'>
                       <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                        Footer
+                        {t('templates.footer')}
                       </p>
                       <p className='mt-1 text-sm text-gray-600'>
                         {selectedTemplate.content.footer.text}
@@ -235,7 +238,7 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                 {selectedTemplate.variables.length > 0 && (
                   <div>
                     <p className='mb-3 text-sm font-semibold text-gray-900'>
-                      Variabelen invullen
+                      {t('templates.fillVariables')}
                     </p>
                     <div className='space-y-3'>
                       {selectedTemplate.variables.map(variable => (
@@ -264,16 +267,18 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
                 {/* Action Buttons */}
                 <div className='flex gap-3 border-t border-gray-100 pt-4'>
                   <button
+                    type='button'
                     onClick={onClose}
                     className='flex-1 rounded-lg border-2 border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50'
                   >
-                    Annuleren
+                    {t('templates.cancel')}
                   </button>
                   <button
+                    type='button'
                     onClick={handleSendTemplate}
                     className='flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-xl'
                   >
-                    Template Versturen
+                    {t('templates.sendTemplate')}
                   </button>
                 </div>
               </div>
@@ -281,8 +286,8 @@ function TemplateModal({ isOpen, onClose, onSelectTemplate, organizationId }: Te
               <div className='flex h-full items-center justify-center text-gray-400'>
                 <div className='text-center'>
                   <LayoutTemplate className='mx-auto mb-4 h-16 w-16 text-gray-300' />
-                  <p className='font-medium text-gray-600'>Selecteer een template</p>
-                  <p className='mt-1 text-sm text-gray-500'>Kies links een template om de preview te zien</p>
+                  <p className='font-medium text-gray-600'>{t('templates.selectToPreview')}</p>
+                  <p className='mt-1 text-sm text-gray-500'>{t('templates.selectDescription')}</p>
                 </div>
               </div>
             )}
@@ -301,8 +306,9 @@ export default function EnhancedMessageInput({
   onStartTyping,
   onStopTyping,
   disabled = false,
-  placeholder = 'Type a message...',
+  placeholder,
 }: MessageInputProps) {
+  const t = useTranslations('inbox')
   const [message, setMessage] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
   const [showAttachments, setShowAttachments] = useState(false)
@@ -369,13 +375,6 @@ export default function EnhancedMessageInput({
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
-  }
-
   const handleFileSelect = (type: 'image' | 'document' | 'audio' | 'video') => {
     const input = document.createElement('input')
     input.type = 'file'
@@ -402,7 +401,7 @@ export default function EnhancedMessageInput({
         Array.from(files).forEach(file => {
           const validation = WhatsAppMediaHandler.validateMediaFile(file)
           if (!validation.valid) {
-            alert(`File validation failed: ${validation.errors.join(', ')}`)
+            alert(t('attachments.validationFailed', { errors: validation.errors.join(', ') }))
             return
           }
 
@@ -476,8 +475,10 @@ export default function EnhancedMessageInput({
                       className='h-16 w-16 rounded-lg object-cover'
                     />
                     <button
+                      type='button'
                       onClick={() => removeAttachment(attachment.id)}
                       className='absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white'
+                      title={t('tags.remove')}
                     >
                       <X className='h-3 w-3' />
                     </button>
@@ -498,8 +499,10 @@ export default function EnhancedMessageInput({
                       </p>
                     </div>
                     <button
+                      type='button'
                       onClick={() => removeAttachment(attachment.id)}
                       className='text-gray-400 hover:text-red-500'
+                      title={t('tags.remove')}
                     >
                       <X className='h-4 w-4' />
                     </button>
@@ -524,86 +527,116 @@ export default function EnhancedMessageInput({
       )}
 
       {/* Message Input */}
-      <div className='flex items-center gap-3 p-4 bg-white border-t-2 border-gray-200'>
-        {/* Attachment Button */}
-        <div className='relative flex-shrink-0'>
+      <div className='flex items-center gap-2 p-4 bg-white border-t border-gray-200'>
+        {/* Action Buttons Group */}
+        <div className='flex items-center gap-1'>
+          {/* Attachment Button */}
+          <div className='relative'>
+            <button
+              type='button'
+              onClick={() => setShowAttachments(!showAttachments)}
+              className={`group flex items-center justify-center rounded-xl min-h-[44px] px-3 py-2 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                showAttachments
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+              }`}
+              disabled={disabled}
+              aria-label={t('attachments.add')}
+              aria-expanded={showAttachments ? 'true' : 'false'}
+              title={t('attachments.add')}
+            >
+              <Paperclip className='h-5 w-5' />
+              <span className='ml-1.5 text-xs font-medium hidden sm:inline'>{t('message.attachment')}</span>
+            </button>
+
+            {/* Attachment Menu - WhatsApp/Telegram Style */}
+            {showAttachments && (
+              <div
+                className='absolute bottom-full left-0 z-10 mb-2 rounded-2xl bg-white p-3 shadow-2xl border border-gray-200'
+                role='menu'
+                aria-label={t('attachments.options')}
+              >
+                <div className='grid grid-cols-2 gap-2'>
+                  <button
+                    type='button'
+                    onClick={() => handleFileSelect('image')}
+                    className='flex flex-col items-center justify-center rounded-xl min-h-[64px] min-w-[64px] p-2 bg-purple-50 text-purple-600 transition-all hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-300'
+                    role='menuitem'
+                    aria-label={t('attachments.uploadImage')}
+                    title={t('attachments.uploadImage')}
+                  >
+                    <Image className='h-5 w-5 mb-1' />
+                    <span className='text-xs font-medium'>{t('attachments.photo')}</span>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => handleFileSelect('document')}
+                    className='flex flex-col items-center justify-center rounded-xl min-h-[64px] min-w-[64px] p-2 bg-blue-50 text-blue-600 transition-all hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300'
+                    role='menuitem'
+                    aria-label={t('attachments.uploadDocument')}
+                    title={t('attachments.uploadDocument')}
+                  >
+                    <FileText className='h-5 w-5 mb-1' />
+                    <span className='text-xs font-medium'>{t('attachments.document')}</span>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => handleFileSelect('audio')}
+                    className='flex flex-col items-center justify-center rounded-xl min-h-[64px] min-w-[64px] p-2 bg-orange-50 text-orange-600 transition-all hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-300'
+                    role='menuitem'
+                    aria-label={t('attachments.uploadAudio')}
+                    title={t('attachments.uploadAudio')}
+                  >
+                    <Mic className='h-5 w-5 mb-1' />
+                    <span className='text-xs font-medium'>{t('attachments.audio')}</span>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => handleFileSelect('video')}
+                    className='flex flex-col items-center justify-center rounded-xl min-h-[64px] min-w-[64px] p-2 bg-red-50 text-red-600 transition-all hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-300'
+                    role='menuitem'
+                    aria-label={t('attachments.uploadVideo')}
+                    title={t('attachments.uploadVideo')}
+                  >
+                    <Video className='h-5 w-5 mb-1' />
+                    <span className='text-xs font-medium'>{t('attachments.video')}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Template Button */}
           <button
-            onClick={() => setShowAttachments(!showAttachments)}
-            className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-600 transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
+            type='button'
+            onClick={() => setShowTemplates(true)}
+            className='group flex items-center justify-center rounded-xl min-h-[44px] px-3 py-2 bg-gray-100 text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
             disabled={disabled}
-            aria-label='Bijlage toevoegen'
-            aria-expanded={showAttachments}
+            aria-label={t('input.chooseTemplate')}
+            title={t('input.chooseTemplate')}
           >
-            <Paperclip className='h-5 w-5' />
+            <LayoutTemplate className='h-5 w-5' />
+            <span className='ml-1.5 text-xs font-medium hidden sm:inline'>{t('input.template')}</span>
           </button>
 
-          {/* Attachment Menu - WhatsApp/Telegram Style */}
-          {showAttachments && (
-            <div
-              className='absolute bottom-full left-0 z-10 mb-2 flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-2xl border border-gray-200'
-              role='menu'
-              aria-label='Bijlage opties'
-            >
-              <button
-                onClick={() => handleFileSelect('image')}
-                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-purple-500 text-white transition-all hover:bg-purple-600 shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300'
-                role='menuitem'
-                aria-label='Afbeelding uploaden'
-              >
-                <Image className='h-5 w-5' />
-              </button>
-              <button
-                onClick={() => handleFileSelect('document')}
-                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-blue-500 text-white transition-all hover:bg-blue-600 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300'
-                role='menuitem'
-                aria-label='Document uploaden'
-              >
-                <FileText className='h-5 w-5' />
-              </button>
-              <button
-                onClick={() => handleFileSelect('audio')}
-                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-orange-500 text-white transition-all hover:bg-orange-600 shadow-md focus:outline-none focus:ring-2 focus:ring-orange-300'
-                role='menuitem'
-                aria-label='Audio uploaden'
-              >
-                <Mic className='h-5 w-5' />
-              </button>
-              <button
-                onClick={() => handleFileSelect('video')}
-                className='flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-red-500 text-white transition-all hover:bg-red-600 shadow-md focus:outline-none focus:ring-2 focus:ring-red-300'
-                role='menuitem'
-                aria-label='Video uploaden'
-              >
-                <Video className='h-5 w-5' />
-              </button>
-            </div>
-          )}
+          {/* AI Drafts Button */}
+          <button
+            type='button'
+            onClick={() => setShowAIDrafts(!showAIDrafts)}
+            className={`group flex items-center justify-center rounded-xl min-h-[44px] px-3 py-2 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+              showAIDrafts
+                ? 'bg-emerald-100 text-emerald-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
+            }`}
+            disabled={disabled}
+            aria-label={t('input.showAiSuggestions')}
+            aria-pressed={showAIDrafts ? 'true' : 'false'}
+            title={t('input.showAiSuggestions')}
+          >
+            <Sparkles className='h-5 w-5' />
+            <span className='ml-1.5 text-xs font-medium hidden sm:inline'>{t('message.aiSuggestion')}</span>
+          </button>
         </div>
-
-        {/* Template Button */}
-        <button
-          onClick={() => setShowTemplates(true)}
-          className='flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-600 transition-all hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
-          disabled={disabled}
-          aria-label='Sjablonen openen'
-        >
-          <LayoutTemplate className='h-5 w-5' />
-        </button>
-
-        {/* AI Drafts Button */}
-        <button
-          onClick={() => setShowAIDrafts(!showAIDrafts)}
-          className={`flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-2 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-            showAIDrafts
-              ? 'bg-emerald-100 text-emerald-600'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-          disabled={disabled}
-          aria-label='AI suggesties tonen'
-          aria-pressed={showAIDrafts}
-        >
-          <Sparkles className='h-5 w-5' />
-        </button>
 
         {/* Message Input */}
         <div className='flex-1 min-w-0'>
@@ -617,23 +650,25 @@ export default function EnhancedMessageInput({
                 handleSend()
               }
             }}
-            placeholder={placeholder}
+            placeholder={placeholder || t('input.typeMessage')}
             disabled={disabled}
             rows={1}
-            aria-label='Typ een bericht'
-            className='max-h-32 w-full resize-none rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
-            style={{ minHeight: '42px' }}
+            aria-label={t('input.typeMessage')}
+            className='max-h-32 w-full resize-none rounded-2xl border border-gray-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none min-h-[44px]'
           />
         </div>
 
-        {/* Send Button - Telegram Style Round */}
+        {/* Send Button */}
         <button
+          type='button'
           onClick={handleSend}
           disabled={disabled || (!message.trim() && attachments.length === 0)}
-          className='flex-shrink-0 flex items-center justify-center rounded-full min-h-[44px] min-w-[44px] p-3 bg-blue-600 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300'
-          aria-label='Bericht versturen'
+          className='flex-shrink-0 flex items-center justify-center gap-1.5 rounded-xl min-h-[44px] px-4 py-2 bg-emerald-600 text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-300'
+          aria-label={t('input.sendMessage')}
+          title={t('input.sendEnter')}
         >
           <Send className='h-5 w-5' />
+          <span className='text-sm font-medium hidden sm:inline'>{t('input.send')}</span>
         </button>
       </div>
 

@@ -47,6 +47,7 @@ import {
   DollarSign,
 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export interface PaymentMethod {
   id: string
@@ -72,6 +73,7 @@ interface PaymentMethodsProps {
 }
 
 export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
+  const t = useTranslations('billing')
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -110,8 +112,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load payment methods',
+        title: t('errors.loadFailed'),
+        description: t('errors.loadPaymentMethods'),
         variant: 'destructive',
       })
     } finally {
@@ -142,8 +144,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to initialize payment method setup',
+        title: t('errors.loadFailed'),
+        description: t('errors.setupFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -165,8 +167,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
 
       if (response.ok) {
         toast({
-          title: 'Success',
-          description: 'Default payment method updated',
+          title: t('success.defaultUpdated'),
+          description: t('success.defaultUpdated'),
         })
         await fetchPaymentMethods()
       } else {
@@ -174,8 +176,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update default payment method',
+        title: t('errors.loadFailed'),
+        description: t('errors.setDefaultFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -195,8 +197,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
 
       if (response.ok) {
         toast({
-          title: 'Success',
-          description: 'Payment method removed',
+          title: t('success.paymentMethodRemoved'),
+          description: t('success.paymentMethodRemoved'),
         })
         await fetchPaymentMethods()
       } else {
@@ -204,8 +206,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to remove payment method',
+        title: t('errors.loadFailed'),
+        description: t('errors.removeFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -232,8 +234,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
 
       if (response.ok) {
         toast({
-          title: 'Success',
-          description: 'Payment method updated',
+          title: t('success.paymentMethodUpdated'),
+          description: t('success.paymentMethodUpdated'),
         })
         await fetchPaymentMethods()
         setShowEditDialog(false)
@@ -243,8 +245,8 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update payment method',
+        title: t('errors.loadFailed'),
+        description: t('errors.updatePaymentFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -311,7 +313,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <CreditCard className='h-5 w-5' />
-            Payment Methods
+            {t('paymentMethods')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -339,9 +341,9 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
           <div>
             <CardTitle className='flex items-center gap-2'>
               <CreditCard className='h-5 w-5' />
-              Payment Methods
+              {t('paymentMethods')}
             </CardTitle>
-            <CardDescription>Manage your payment methods and billing preferences</CardDescription>
+            <CardDescription>{t('paymentMethodsDescription')}</CardDescription>
           </div>
           <Button onClick={createSetupIntent} disabled={actionLoading}>
             {actionLoading ? (
@@ -349,7 +351,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
             ) : (
               <Plus className='mr-2 h-4 w-4' />
             )}
-            Add Payment Method
+            {t('addPaymentMethod')}
           </Button>
         </div>
       </CardHeader>
@@ -357,9 +359,9 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
         {paymentMethods.length === 0 ? (
           <div className='py-8 text-center'>
             <CreditCard className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-            <h3 className='mb-2 text-lg font-semibold'>No payment methods</h3>
+            <h3 className='mb-2 text-lg font-semibold'>{t('noPaymentMethods')}</h3>
             <p className='text-muted-foreground mb-4'>
-              Add a payment method to manage your subscription
+              {t('noPaymentMethodsDescription')}
             </p>
             <Button onClick={createSetupIntent} disabled={actionLoading}>
               {actionLoading ? (
@@ -367,7 +369,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
               ) : (
                 <Plus className='mr-2 h-4 w-4' />
               )}
-              Add Payment Method
+              {t('addPaymentMethod')}
             </Button>
           </div>
         ) : (
@@ -387,18 +389,18 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                       {method.isDefault && (
                         <Badge variant='default' className='text-xs'>
                           <Star className='mr-1 h-3 w-3' />
-                          Default
+                          {t('paymentMethod.default')}
                         </Badge>
                       )}
                       {isExpiringSoon(method.expiryMonth, method.expiryYear) && (
                         <Badge variant='destructive' className='text-xs'>
                           <AlertTriangle className='mr-1 h-3 w-3' />
-                          Expires Soon
+                          {t('paymentMethod.expiresSoon')}
                         </Badge>
                       )}
                       {method.failureCount > 0 && (
                         <Badge variant='destructive' className='text-xs'>
-                          {method.failureCount} failures
+                          {t('paymentMethod.failures', { count: method.failureCount })}
                         </Badge>
                       )}
                     </div>
@@ -406,7 +408,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                       {method.expiryMonth && method.expiryYear && (
                         <span className='flex items-center gap-1'>
                           <Calendar className='h-3 w-3' />
-                          Expires {formatExpiryDate(method.expiryMonth, method.expiryYear)}
+                          {t('paymentMethod.expires', { date: formatExpiryDate(method.expiryMonth, method.expiryYear) })}
                         </span>
                       )}
                       {method.country && <span className='uppercase'>{method.country}</span>}
@@ -422,7 +424,7 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                       onClick={() => setDefaultPaymentMethod(method.id)}
                       disabled={actionLoading}
                     >
-                      Set as Default
+                      {t('setDefault')}
                     </Button>
                   )}
 
@@ -440,26 +442,24 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Remove Payment Method</AlertDialogTitle>
+                        <AlertDialogTitle>{t('paymentMethod.removeTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to remove this payment method? This action cannot be
-                          undone.
+                          {t('paymentMethod.removeDescription')}
                           {method.isDefault && (
                             <span className='mt-2 block text-yellow-600'>
-                              You cannot remove your default payment method. Set another method as
-                              default first.
+                              {t('paymentMethod.cannotRemoveDefault')}
                             </span>
                           )}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deletePaymentMethod(method.id)}
                           disabled={method.isDefault || actionLoading}
                           className='bg-red-600 hover:bg-red-700'
                         >
-                          Remove
+                          {t('paymentMethod.remove')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -475,35 +475,34 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Payment Method</DialogTitle>
-            <DialogDescription>Add a new payment method for your subscription</DialogDescription>
+            <DialogTitle>{t('addPaymentMethod')}</DialogTitle>
+            <DialogDescription>{t('noPaymentMethodsDescription')}</DialogDescription>
           </DialogHeader>
           <div className='py-4'>
             {setupIntent ? (
               <div className='text-center'>
                 <Shield className='mx-auto mb-4 h-12 w-12 text-blue-600' />
                 <p className='text-muted-foreground text-sm'>
-                  Integration with Stripe Elements would go here to collect payment method details
-                  securely.
+                  {t('paymentMethod.stripeIntegration')}
                 </p>
                 <div className='mt-4 rounded-lg bg-gray-50 p-4'>
                   <p className='text-xs text-gray-600'>
-                    Setup Intent ID: {setupIntent.setupIntentId}
+                    {t('paymentMethod.setupIntentId', { id: setupIntent.setupIntentId })}
                   </p>
                 </div>
               </div>
             ) : (
               <div className='py-8 text-center'>
                 <RefreshCw className='mx-auto mb-4 h-8 w-8 animate-spin' />
-                <p>Setting up payment method...</p>
+                <p>{t('paymentMethod.settingUp')}</p>
               </div>
             )}
           </div>
           <DialogFooter>
             <Button variant='outline' onClick={() => setShowAddDialog(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
-            <Button disabled={!setupIntent}>Add Payment Method</Button>
+            <Button disabled={!setupIntent}>{t('addPaymentMethod')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -512,19 +511,19 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Payment Method</DialogTitle>
-            <DialogDescription>Update the expiry date for your card</DialogDescription>
+            <DialogTitle>{t('paymentMethod.updateTitle')}</DialogTitle>
+            <DialogDescription>{t('paymentMethod.updateDescription')}</DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <Label htmlFor='expiryMonth'>Expiry Month</Label>
+                <Label htmlFor='expiryMonth'>{t('paymentMethod.expiryMonth')}</Label>
                 <Select
                   value={editForm.expiryMonth}
                   onValueChange={value => setEditForm({ ...editForm, expiryMonth: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Month' />
+                    <SelectValue placeholder={t('paymentMethod.month')} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
@@ -536,13 +535,13 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
                 </Select>
               </div>
               <div>
-                <Label htmlFor='expiryYear'>Expiry Year</Label>
+                <Label htmlFor='expiryYear'>{t('paymentMethod.expiryYear')}</Label>
                 <Select
                   value={editForm.expiryYear}
                   onValueChange={value => setEditForm({ ...editForm, expiryYear: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Year' />
+                    <SelectValue placeholder={t('paymentMethod.year')} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(
@@ -559,14 +558,14 @@ export function PaymentMethods({ organizationId }: PaymentMethodsProps) {
           </div>
           <DialogFooter>
             <Button variant='outline' onClick={() => setShowEditDialog(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={updatePaymentMethod}
               disabled={!editForm.expiryMonth || !editForm.expiryYear || actionLoading}
             >
               {actionLoading ? <RefreshCw className='mr-2 h-4 w-4 animate-spin' /> : null}
-              Update
+              {t('paymentMethod.update')}
             </Button>
           </DialogFooter>
         </DialogContent>

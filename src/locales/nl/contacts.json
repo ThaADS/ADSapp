@@ -1,0 +1,136 @@
+{
+    "title": "Contacten",
+    "list": {
+        "count": "{count} van {total}",
+        "selected": "{count} geselecteerd",
+        "view": {
+            "table": "Tabelweergave",
+            "grid": "Rasterweergave"
+        },
+        "headers": {
+            "contact": "Contact",
+            "company": "Bedrijf",
+            "info": "Contactinfo",
+            "tags": "Tags",
+            "status": "Status",
+            "lastContact": "Laatst Contact",
+            "actions": "Acties"
+        },
+        "empty": "Geen contacten gevonden",
+        "messages": "berichten"
+    },
+    "actions": {
+        "add": "Contact Toevoegen",
+        "import": "Importeren",
+        "export": "Exporteren",
+        "delete": "Verwijderen",
+        "deleteConfirm": "Weet je zeker dat je {count} contact(en) wilt verwijderen?",
+        "edit": "Bewerken",
+        "viewDetails": "Details bekijken",
+        "star": "Favoriet maken",
+        "clearFilters": "Filters wissen",
+        "cancel": "Annuleren",
+        "save": "Opslaan",
+        "saving": "Opslaan...",
+        "creating": "Aanmaken...",
+        "addNote": "Notitie toevoegen",
+        "addField": "Veld toevoegen",
+        "removeField": "Veld verwijderen"
+    },
+    "filters": {
+        "search": "Zoek contacten...",
+        "button": "Filters",
+        "status": "Status",
+        "source": "Bron",
+        "assignedTo": "Toegewezen aan",
+        "tags": "Tags",
+        "starredOnly": "Alleen favorieten",
+        "allStatuses": "Alle statussen",
+        "allSources": "Alle bronnen",
+        "allTeamMembers": "Alle teamleden"
+    },
+    "status": {
+        "active": "Actief",
+        "inactive": "Inactief",
+        "blocked": "Geblokkeerd"
+    },
+    "source": {
+        "whatsapp": "WhatsApp",
+        "manual": "Handmatig",
+        "import": "Import",
+        "api": "API"
+    },
+    "form": {
+        "title": {
+            "add": "Contact Toevoegen",
+            "edit": "Contact Bewerken"
+        },
+        "labels": {
+            "fullName": "Volledige Naam",
+            "phone": "Telefoonnummer",
+            "email": "E-mail",
+            "tags": "Tags",
+            "customFields": "Aangepaste Velden",
+            "notes": "Notities"
+        },
+        "placeholders": {
+            "fullName": "Jan Jansen",
+            "phone": "+31612345678",
+            "email": "jan@voorbeeld.nl",
+            "notes": "Extra notities over dit contact...",
+            "fieldName": "Veldnaam",
+            "fieldValue": "Waarde"
+        },
+        "validation": {
+            "nameRequired": "Naam is verplicht",
+            "phoneRequired": "Telefoonnummer is verplicht",
+            "phoneInvalid": "Ongeldig telefoonnummer formaat. Gebruik internationaal formaat (bijv. +31612345678)",
+            "emailInvalid": "Ongeldig e-mail formaat"
+        },
+        "help": {
+            "phone": "Gebruik internationaal formaat met landcode",
+            "phoneLocked": "Telefoonnummer kan niet gewijzigd worden",
+            "noTags": "Geen tags beschikbaar. Maak tags aan in Instellingen → Tags.",
+            "noCustomFields": "Nog geen aangepaste velden toegevoegd.",
+            "emailOptional": "Optioneel"
+        }
+    },
+    "toasts": {
+        "loadError": "Fout bij laden contacten",
+        "created": "Contact succesvol aangemaakt",
+        "updated": "Contact succesvol bijgewerkt",
+        "saveError": "Fout bij opslaan contact",
+        "export": "Fout bij exporteren contacten",
+        "import": "Contacten succesvol geïmporteerd"
+    },
+    "navigation": {
+        "continue": "Doorgaan",
+        "back": "Terug",
+        "next": "Volgende"
+    },
+    "import": {
+        "title": "CSV Import",
+        "steps": {
+            "upload": "1. Upload",
+            "mapping": "2. Mapping",
+            "preview": "3. Preview"
+        },
+        "errors": {
+            "minRows": "CSV moet minimaal een header en één data rij bevatten",
+            "invalidFormat": "Alleen CSV bestanden zijn toegestaan"
+        },
+        "upload": {
+            "clickToUpload": "Klik om CSV te uploaden",
+            "dragAndDrop": "Of sleep je bestand hierheen",
+            "supportedFields": "Ondersteunde velden"
+        },
+        "mapping": {
+            "instruction": "Koppel de CSV kolommen aan de juiste velden:",
+            "notImport": "-- Niet importeren --"
+        },
+        "preview": {
+            "instruction": "Preview van de eerste {count} rijen:",
+            "importWithRows": "Importeren ({count} rijen)"
+        }
+    }
+}

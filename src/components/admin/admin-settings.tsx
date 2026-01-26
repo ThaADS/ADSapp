@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import {
   CogIcon,
   ShieldCheckIcon,
@@ -13,53 +14,49 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline'
 
-interface SettingsSection {
-  id: string
-  title: string
-  description: string
-  icon: React.ElementType
-}
-
-const sections: SettingsSection[] = [
-  {
-    id: 'general',
-    title: 'General Settings',
-    description: 'Platform-wide configuration and preferences',
-    icon: CogIcon,
-  },
-  {
-    id: 'security',
-    title: 'Security & Authentication',
-    description: 'Security policies, authentication methods, and access control',
-    icon: ShieldCheckIcon,
-  },
-  {
-    id: 'notifications',
-    title: 'Notifications',
-    description: 'Configure system notifications and alerts',
-    icon: BellIcon,
-  },
-  {
-    id: 'email',
-    title: 'Email Configuration',
-    description: 'Email service settings and templates',
-    icon: EnvelopeIcon,
-  },
-  {
-    id: 'api',
-    title: 'API & Webhooks',
-    description: 'API rate limits, webhook configurations, and integrations',
-    icon: KeyIcon,
-  },
-  {
-    id: 'infrastructure',
-    title: 'Infrastructure',
-    description: 'Database, caching, and performance settings',
-    icon: ServerIcon,
-  },
-]
 
 export function AdminSettings() {
+  const t = useTranslations('admin')
+
+  const sections = useMemo(() => [
+    {
+      id: 'general',
+      title: t('settings.sections.general.title'),
+      description: t('settings.sections.general.description'),
+      icon: CogIcon,
+    },
+    {
+      id: 'security',
+      title: t('settings.sections.security.title'),
+      description: t('settings.sections.security.description'),
+      icon: ShieldCheckIcon,
+    },
+    {
+      id: 'notifications',
+      title: t('settings.sections.notifications.title'),
+      description: t('settings.sections.notifications.description'),
+      icon: BellIcon,
+    },
+    {
+      id: 'email',
+      title: t('settings.sections.email.title'),
+      description: t('settings.sections.email.description'),
+      icon: EnvelopeIcon,
+    },
+    {
+      id: 'api',
+      title: t('settings.sections.api.title'),
+      description: t('settings.sections.api.description'),
+      icon: KeyIcon,
+    },
+    {
+      id: 'infrastructure',
+      title: t('settings.sections.infrastructure.title'),
+      description: t('settings.sections.infrastructure.description'),
+      icon: ServerIcon,
+    },
+  ], [t])
+
   const [activeSection, setActiveSection] = useState('general')
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -114,7 +111,7 @@ export function AdminSettings() {
                 htmlFor='platformName'
                 className='mb-2 block text-sm font-medium text-slate-900'
               >
-                Platform Name
+                {t('settings.fields.platformName')}
               </label>
               <input
                 type='text'
@@ -130,7 +127,7 @@ export function AdminSettings() {
                 htmlFor='platformUrl'
                 className='mb-2 block text-sm font-medium text-slate-900'
               >
-                Platform URL
+                {t('settings.fields.platformUrl')}
               </label>
               <input
                 type='url'
@@ -143,40 +140,36 @@ export function AdminSettings() {
 
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>Maintenance Mode</h4>
-                <p className='text-sm text-slate-600'>Temporarily disable access for all users</p>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.maintenanceMode')}</h4>
+                <p className='text-sm text-slate-600'>{t('settings.fields.maintenanceModeDesc')}</p>
               </div>
               <button
                 type='button'
                 onClick={() => setMaintenanceMode(!maintenanceMode)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  maintenanceMode ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${maintenanceMode ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    maintenanceMode ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${maintenanceMode ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
 
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>New Signups Enabled</h4>
-                <p className='text-sm text-slate-600'>Allow new organizations to sign up</p>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.signupsEnabled')}</h4>
+                <p className='text-sm text-slate-600'>{t('settings.fields.signupsEnabledDesc')}</p>
               </div>
               <button
                 type='button'
                 onClick={() => setSignupsEnabled(!signupsEnabled)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  signupsEnabled ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${signupsEnabled ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    signupsEnabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${signupsEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -188,22 +181,20 @@ export function AdminSettings() {
           <div className='space-y-6'>
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>Enforce Strong Passwords</h4>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.enforceStrongPasswords')}</h4>
                 <p className='text-sm text-slate-600'>
-                  Require minimum 12 characters with special characters
+                  {t('settings.fields.enforceStrongPasswordsDesc')}
                 </p>
               </div>
               <button
                 type='button'
                 onClick={() => setEnforceStrongPasswords(!enforceStrongPasswords)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  enforceStrongPasswords ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${enforceStrongPasswords ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    enforceStrongPasswords ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${enforceStrongPasswords ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -213,7 +204,7 @@ export function AdminSettings() {
                 htmlFor='sessionTimeout'
                 className='mb-2 block text-sm font-medium text-slate-900'
               >
-                Session Timeout (hours)
+                {t('settings.fields.sessionTimeout')}
               </label>
               <input
                 type='number'
@@ -229,7 +220,7 @@ export function AdminSettings() {
                 htmlFor='maxLoginAttempts'
                 className='mb-2 block text-sm font-medium text-slate-900'
               >
-                Max Login Attempts
+                {t('settings.fields.maxLoginAttempts')}
               </label>
               <input
                 type='number'
@@ -242,22 +233,20 @@ export function AdminSettings() {
 
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>Require Email Verification</h4>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.requireEmailVerification')}</h4>
                 <p className='text-sm text-slate-600'>
-                  Users must verify email before accessing the platform
+                  {t('settings.fields.requireEmailVerificationDesc')}
                 </p>
               </div>
               <button
                 type='button'
                 onClick={() => setRequireEmailVerification(!requireEmailVerification)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  requireEmailVerification ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${requireEmailVerification ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    requireEmailVerification ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${requireEmailVerification ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -269,40 +258,36 @@ export function AdminSettings() {
           <div className='space-y-6'>
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>Email Notifications</h4>
-                <p className='text-sm text-slate-600'>Send system alerts via email</p>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.emailNotifications')}</h4>
+                <p className='text-sm text-slate-600'>{t('settings.fields.emailNotificationsDesc')}</p>
               </div>
               <button
                 type='button'
                 onClick={() => setEmailNotifications(!emailNotifications)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  emailNotifications ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${emailNotifications ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    emailNotifications ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${emailNotifications ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
 
             <div className='flex items-center justify-between rounded-lg bg-slate-50 p-4'>
               <div>
-                <h4 className='text-sm font-medium text-slate-900'>Slack Notifications</h4>
-                <p className='text-sm text-slate-600'>Send system alerts to Slack</p>
+                <h4 className='text-sm font-medium text-slate-900'>{t('settings.fields.slackNotifications')}</h4>
+                <p className='text-sm text-slate-600'>{t('settings.fields.slackNotificationsDesc')}</p>
               </div>
               <button
                 type='button'
                 onClick={() => setSlackNotifications(!slackNotifications)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
-                  slackNotifications ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${slackNotifications ? 'bg-emerald-600' : 'bg-slate-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    slackNotifications ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${slackNotifications ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -313,7 +298,7 @@ export function AdminSettings() {
                   htmlFor='slackWebhookUrl'
                   className='mb-2 block text-sm font-medium text-slate-900'
                 >
-                  Slack Webhook URL
+                  {t('settings.fields.slackWebhookUrl')}
                 </label>
                 <input
                   type='url'
@@ -332,8 +317,8 @@ export function AdminSettings() {
         return (
           <div className='py-12 text-center'>
             <CogIcon className='mx-auto h-12 w-12 text-slate-400' />
-            <h3 className='mt-2 text-sm font-medium text-slate-900'>Coming Soon</h3>
-            <p className='mt-1 text-sm text-slate-500'>This section is under development.</p>
+            <h3 className='mt-2 text-sm font-medium text-slate-900'>{t('settings.comingSoon')}</h3>
+            <p className='mt-1 text-sm text-slate-500'>{t('settings.comingSoonDesc')}</p>
           </div>
         )
     }
@@ -343,9 +328,9 @@ export function AdminSettings() {
     <div className='space-y-6'>
       {/* Header */}
       <div>
-        <h2 className='text-2xl font-bold text-slate-900'>Platform Settings</h2>
+        <h2 className='text-2xl font-bold text-slate-900'>{t('settings.title')}</h2>
         <p className='mt-2 text-sm text-slate-600'>
-          Configure platform-wide settings and preferences
+          {t('settings.subtitle')}
         </p>
       </div>
 
@@ -362,11 +347,10 @@ export function AdminSettings() {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex w-full items-start gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
+                  className={`flex w-full items-start gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${isActive
+                    ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20'
+                    : 'text-slate-700 hover:bg-slate-50'
+                    }`}
                 >
                   <Icon
                     className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`}
@@ -394,10 +378,10 @@ export function AdminSettings() {
               {saveSuccess ? (
                 <div className='flex items-center gap-2 text-sm font-medium text-emerald-600'>
                   <CheckCircleIcon className='h-5 w-5' />
-                  Settings saved successfully!
+                  {t('settings.saveSuccess')}
                 </div>
               ) : (
-                <div className='text-sm text-slate-600'>Make changes and click Save to apply</div>
+                <div className='text-sm text-slate-600'>{t('settings.savePrompt')}</div>
               )}
               <button
                 onClick={handleSave}
@@ -407,10 +391,10 @@ export function AdminSettings() {
                 {isSaving ? (
                   <>
                     <div className='mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
-                    Saving...
+                    {t('settings.saving')}
                   </>
                 ) : (
-                  'Save Changes'
+                  t('settings.saveChanges')
                 )}
               </button>
             </div>

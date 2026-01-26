@@ -1,0 +1,157 @@
+{
+  "title": "Workflows",
+  "tabs": {
+    "workflows": {
+      "name": "Workflow Builder",
+      "description": "Visuele drag-and-drop automation builder"
+    },
+    "capacity": {
+      "name": "Agent Capaciteit",
+      "description": "Real-time agent monitoring en load balancing"
+    },
+    "escalations": {
+      "name": "Escalatie Regels",
+      "description": "Beheer escalatie beleid en SLA monitoring"
+    }
+  },
+  "builder": {
+    "title": "Workflow Builder",
+    "newWorkflow": "Nieuwe workflow",
+    "editWorkflow": "Workflow bewerken",
+    "duplicateWorkflow": "Workflow dupliceren",
+    "deleteWorkflow": "Workflow verwijderen",
+    "saveWorkflow": "Workflow opslaan",
+    "testWorkflow": "Workflow testen",
+    "publishWorkflow": "Workflow publiceren",
+    "unpublishWorkflow": "Workflow deactiveren"
+  },
+  "status": {
+    "active": "Actief",
+    "inactive": "Inactief",
+    "draft": "Concept",
+    "testing": "Testen"
+  },
+  "components": {
+    "title": "Componenten",
+    "triggers": "Triggers",
+    "conditions": "Voorwaarden",
+    "actions": "Acties",
+    "utilities": "Hulpmiddelen"
+  },
+  "triggers": {
+    "title": "Triggers",
+    "newMessage": "Nieuw bericht",
+    "newMessageDescription": "Start wanneer een nieuw bericht binnenkomt",
+    "keywordMatch": "Trefwoord match",
+    "keywordMatchDescription": "Start wanneer een bericht specifieke woorden bevat",
+    "newContact": "Nieuw contact",
+    "newContactDescription": "Start wanneer een nieuw contact wordt aangemaakt",
+    "tagAdded": "Tag toegevoegd",
+    "tagAddedDescription": "Start wanneer een tag wordt toegevoegd aan een gesprek",
+    "scheduled": "Gepland",
+    "scheduledDescription": "Start op een bepaald tijdstip",
+    "webhook": "Webhook",
+    "webhookDescription": "Start wanneer een externe webhook wordt ontvangen"
+  },
+  "conditions": {
+    "title": "Voorwaarden",
+    "if": "Als",
+    "then": "Dan",
+    "else": "Anders",
+    "and": "En",
+    "or": "Of",
+    "contains": "Bevat",
+    "equals": "Is gelijk aan",
+    "notEquals": "Is niet gelijk aan",
+    "startsWith": "Begint met",
+    "endsWith": "Eindigt met",
+    "isEmpty": "Is leeg",
+    "isNotEmpty": "Is niet leeg",
+    "greaterThan": "Groter dan",
+    "lessThan": "Kleiner dan",
+    "businessHours": "Binnen werktijden",
+    "outsideBusinessHours": "Buiten werktijden"
+  },
+  "actions": {
+    "title": "Acties",
+    "sendMessage": "Bericht versturen",
+    "sendMessageDescription": "Stuur een automatisch bericht",
+    "sendTemplate": "Sjabloon versturen",
+    "sendTemplateDescription": "Stuur een goedgekeurd WhatsApp sjabloon",
+    "assignAgent": "Toewijzen aan agent",
+    "assignAgentDescription": "Wijs het gesprek toe aan een specifieke agent",
+    "addTag": "Tag toevoegen",
+    "addTagDescription": "Voeg een tag toe aan het gesprek",
+    "removeTag": "Tag verwijderen",
+    "removeTagDescription": "Verwijder een tag van het gesprek",
+    "setStatus": "Status instellen",
+    "setStatusDescription": "Wijzig de status van het gesprek",
+    "setPriority": "Prioriteit instellen",
+    "setPriorityDescription": "Wijzig de prioriteit van het gesprek",
+    "delay": "Vertraging",
+    "delayDescription": "Wacht een bepaalde tijd voordat je doorgaat",
+    "webhook": "Webhook aanroepen",
+    "webhookDescription": "Stuur data naar een externe service",
+    "updateContact": "Contact bijwerken",
+    "updateContactDescription": "Wijzig contactgegevens",
+    "aiResponse": "AI Antwoord",
+    "aiResponseDescription": "Genereer een AI-gebaseerd antwoord"
+  },
+  "templates": {
+    "title": "Workflow sjablonen",
+    "useTemplate": "Sjabloon gebruiken",
+    "welcomeMessage": "Welkomstbericht",
+    "welcomeMessageDescription": "Stuur automatisch een welkomstbericht naar nieuwe contacten",
+    "awayMessage": "Afwezigheidsbericht",
+    "awayMessageDescription": "Stuur een bericht buiten werktijden",
+    "leadQualification": "Lead kwalificatie",
+    "leadQualificationDescription": "Kwalificeer leads met een reeks vragen",
+    "appointmentReminder": "Afspraakherinnering",
+    "appointmentReminderDescription": "Stuur herinneringen voor afspraken",
+    "feedbackCollection": "Feedback verzamelen",
+    "feedbackCollectionDescription": "Vraag om feedback na een gesprek"
+  },
+  "validation": {
+    "noTrigger": "Voeg minimaal één trigger toe",
+    "noActions": "Voeg minimaal één actie toe",
+    "invalidConnection": "Ongeldige verbinding",
+    "missingRequired": "Vereiste velden ontbreken",
+    "valid": "Workflow is geldig",
+    "invalid": "Workflow bevat fouten"
+  },
+  "canvas": {
+    "zoomIn": "Inzoomen",
+    "zoomOut": "Uitzoomen",
+    "fitView": "Pas in scherm",
+    "undo": "Ongedaan maken",
+    "redo": "Opnieuw",
+    "delete": "Verwijderen",
+    "copy": "Kopiëren",
+    "paste": "Plakken",
+    "selectAll": "Alles selecteren",
+    "clearCanvas": "Canvas wissen"
+  },
+  "settings": {
+    "title": "Workflow instellingen",
+    "name": "Naam",
+    "namePlaceholder": "Mijn workflow",
+    "description": "Beschrijving",
+    "descriptionPlaceholder": "Wat doet deze workflow?",
+    "enabled": "Ingeschakeld",
+    "runOnce": "Eenmalig uitvoeren per contact",
+    "schedule": "Planning",
+    "triggers": "Triggers",
+    "notifications": "Meldingen bij fouten"
+  },
+  "errors": {
+    "loadFailed": "Kon workflow niet laden",
+    "saveFailed": "Kon workflow niet opslaan",
+    "deleteFailed": "Kon workflow niet verwijderen",
+    "executionFailed": "Workflow uitvoering mislukt"
+  },
+  "empty": {
+    "noWorkflows": "Geen workflows",
+    "noWorkflowsDescription": "Maak je eerste workflow om taken te automatiseren",
+    "createFirst": "Eerste workflow maken"
+  }
+}

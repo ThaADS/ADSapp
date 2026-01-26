@@ -10,6 +10,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Profile {
   id: string
@@ -79,6 +80,7 @@ const DEFAULT_BUSINESS_HOURS: BusinessHours = {
 }
 
 export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
+  const t = useTranslations('settings')
   const [formData, setFormData] = useState<OrganizationFormData>({
     name: profile.organization?.name || '',
     slug: profile.organization?.slug || '',
@@ -156,7 +158,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
         if (error) {
           setError(error.message)
         } else {
-          setMessage('Organization settings updated successfully!')
+          setMessage(t('organization.updateSuccess'))
           setTimeout(() => setMessage(''), 3000)
         }
       } catch (err) {
@@ -196,13 +198,13 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
           className='rounded-md px-4 py-2 text-sm font-medium text-white'
           style={{ backgroundColor: formData.primaryColor }}
         >
-          Primary Button
+          {t('organization.primaryButton') || 'Primary Button'}
         </div>
         <div
           className='rounded-md px-4 py-2 text-sm font-medium text-white'
           style={{ backgroundColor: formData.secondaryColor }}
         >
-          Secondary Button
+          {t('organization.secondaryButton') || 'Secondary Button'}
         </div>
       </div>
     ),
@@ -216,14 +218,14 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <BuildingOfficeIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Basic Information</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.basicInfo')}</h3>
           </div>
 
           <form onSubmit={handleSubmit} className='space-y-6'>
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
                 <label htmlFor='name' className='block text-sm font-medium text-gray-700'>
-                  Organization Name
+                  {t('organization.name')}
                 </label>
                 <input
                   type='text'
@@ -233,13 +235,13 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                   value={formData.name}
                   onChange={handleChange}
                   className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
-                  placeholder='Enter organization name'
+                  placeholder={t('organization.enterName')}
                 />
               </div>
 
               <div>
                 <label htmlFor='slug' className='block text-sm font-medium text-gray-700'>
-                  Subdomain
+                  {t('organization.subdomain')}
                 </label>
                 <div className='mt-1 flex rounded-md shadow-sm'>
                   <input
@@ -258,25 +260,25 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                   </span>
                 </div>
                 {checkingSlug && (
-                  <p className='mt-1 text-xs text-gray-500'>Checking availability...</p>
+                  <p className='mt-1 text-xs text-gray-500'>{t('organization.checkAvailability')}</p>
                 )}
                 {slugAvailable === true && (
                   <p className='mt-1 flex items-center text-xs text-emerald-600'>
                     <CheckCircleIcon className='mr-1 h-4 w-4' />
-                    Subdomain available
+                    {t('organization.available')}
                   </p>
                 )}
                 {slugAvailable === false && (
                   <p className='mt-1 flex items-center text-xs text-red-600'>
                     <XCircleIcon className='mr-1 h-4 w-4' />
-                    Subdomain not available
+                    {t('organization.unavailable')}
                   </p>
                 )}
               </div>
 
               <div>
                 <label htmlFor='timezone' className='block text-sm font-medium text-gray-700'>
-                  Timezone
+                  {t('organization.timezone')}
                 </label>
                 <select
                   name='timezone'
@@ -295,7 +297,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
 
               <div>
                 <label htmlFor='locale' className='block text-sm font-medium text-gray-700'>
-                  Language
+                  {t('organization.language')}
                 </label>
                 <select
                   name='locale'
@@ -331,7 +333,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                 disabled={loading || slugAvailable === false}
                 className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
               >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('saving') : t('saveChanges')}
               </button>
             </div>
           </form>
@@ -343,12 +345,12 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <PaintBrushIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Branding</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.branding.title')}</h3>
           </div>
 
           <div className='space-y-6'>
             <div>
-              <label className='block text-sm font-medium text-gray-700'>Logo Upload</label>
+              <label className='block text-sm font-medium text-gray-700'>{t('organization.branding.logo')}</label>
               <div className='mt-1 flex items-center space-x-4'>
                 <div className='flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200'>
                   <BuildingOfficeIcon className='h-8 w-8 text-gray-400' />
@@ -357,18 +359,18 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                   type='button'
                   className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                 >
-                  Upload Logo
+                  {t('organization.branding.uploadLogo')}
                 </button>
               </div>
               <p className='mt-2 text-xs text-gray-500'>
-                PNG, JPG up to 2MB. Recommended size: 200x200px
+                {t('organization.branding.logoHelp')}
               </p>
             </div>
 
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
                 <label htmlFor='primaryColor' className='block text-sm font-medium text-gray-700'>
-                  Primary Color
+                  {t('organization.branding.primaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -390,7 +392,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
 
               <div>
                 <label htmlFor='secondaryColor' className='block text-sm font-medium text-gray-700'>
-                  Secondary Color
+                  {t('organization.branding.secondaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -418,7 +420,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
 
             {/* Preview */}
             <div className='border-t border-gray-200 pt-4'>
-              <h4 className='mb-3 text-sm font-medium text-gray-700'>Preview</h4>
+              <h4 className='mb-3 text-sm font-medium text-gray-700'>{t('organization.preview')}</h4>
               {colorPreview}
             </div>
           </div>
@@ -430,7 +432,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <ClockIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Business Hours</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.businessHours')}</h3>
           </div>
 
           <div className='space-y-3'>
@@ -446,7 +448,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                     onChange={e => handleBusinessHoursChange(day, 'enabled', e.target.checked)}
                     className='h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500'
                   />
-                  <span className='w-24 text-sm font-medium text-gray-700'>{day}</span>
+                  <span className='w-24 text-sm font-medium text-gray-700'>{t(`organization.days.${day}`)}</span>
                 </div>
 
                 {businessHours[day].enabled ? (
@@ -457,7 +459,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                       onChange={e => handleBusinessHoursChange(day, 'open', e.target.value)}
                       className='block rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
                     />
-                    <span className='text-gray-500'>to</span>
+                    <span className='text-gray-500'>{t('organization.to')}</span>
                     <input
                       type='time'
                       value={businessHours[day].close}
@@ -466,7 +468,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
                     />
                   </div>
                 ) : (
-                  <span className='text-sm text-gray-500'>Closed</span>
+                  <span className='text-sm text-gray-500'>{t('organization.closed')}</span>
                 )}
               </div>
             ))}
@@ -478,7 +480,7 @@ export function OrganizationSettings({ profile }: OrganizationSettingsProps) {
       {profile.role === 'admin' && (
         <div className='rounded-lg border border-amber-200 bg-amber-50 p-4'>
           <p className='text-sm text-amber-700'>
-            Note: Some settings can only be modified by the organization owner.
+            {t('organization.ownerOnly')}
           </p>
         </div>
       )}

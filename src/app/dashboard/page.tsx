@@ -2,6 +2,7 @@ import { requireOrganization } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardDemoWrapper } from '@/components/dashboard/dashboard-demo-wrapper'
 import { QuickActions } from '@/components/dashboard/quick-actions'
+import { DashboardPageHeader } from '@/components/dashboard/dashboard-page-header'
 
 // ⚡ PERFORMANCE: Cache dashboard data for 30 seconds
 export const revalidate = 30
@@ -40,14 +41,7 @@ export default async function DashboardPage() {
   return (
     <div className='space-y-6 sm:space-y-8'>
       {/* Page header */}
-      <div>
-        <h1 className='text-xl leading-7 font-bold text-gray-900 sm:text-2xl sm:truncate lg:text-3xl sm:tracking-tight'>
-          Dashboard
-        </h1>
-        <p className='mt-1 sm:mt-2 text-sm sm:text-base text-gray-600'>
-          Welcome back, {profile.full_name}. Here's what's happening with your WhatsApp inbox.
-        </p>
-      </div>
+      <DashboardPageHeader userName={profile.full_name || ''} />
 
       {/* Dashboard content with demo wrapper */}
       <DashboardDemoWrapper

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { memo } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 // ⚡ PERFORMANCE: Memoized SVG icons to prevent re-renders
 const DashboardIcon = () => (
@@ -154,21 +155,6 @@ const AnalyticsIcon = () => (
   </svg>
 )
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
-  { name: 'Inbox', href: '/dashboard/inbox', icon: InboxIcon },
-  { name: 'Contacts', href: '/dashboard/contacts', icon: UsersIcon },
-  { name: 'Templates', href: '/dashboard/templates', icon: DocumentIcon },
-  { name: 'Workflows', href: '/dashboard/workflows', icon: WorkflowIcon },
-  { name: 'Broadcast', href: '/dashboard/broadcast', icon: BroadcastIcon },
-  { name: 'Drip Campaigns', href: '/dashboard/drip-campaigns', icon: DripIcon },
-  { name: 'Analytics', href: '/dashboard/analytics/advanced', icon: AnalyticsIcon },
-  { name: 'Automation', href: '/dashboard/automation', icon: BoltIcon },
-  { name: 'WhatsApp', href: '/dashboard/whatsapp', icon: PhoneIcon },
-  { name: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },
-  { name: 'Help', href: '/dashboard/help', icon: HelpIcon },
-]
-
 const CloseIcon = () => (
   <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
     <path
@@ -180,14 +166,50 @@ const CloseIcon = () => (
   </svg>
 )
 
+const MapIcon = () => (
+  <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
+    />
+  </svg>
+)
+
+import type { Database } from '@/types/database'
+
+type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  organization?: {
+    name: string
+  }
+}
+
 interface DashboardNavProps {
-  profile: any // TODO: Type this properly
+  profile: Profile
   isOpen?: boolean
   onClose?: () => void
 }
 
-function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavProps) {
+const DashboardNavInner = ({ profile, isOpen = false, onClose }: DashboardNavProps) => {
   const pathname = usePathname()
+  const t = useTranslations('dashboard')
+
+  const navigation = [
+    { name: t('nav.dashboard'), href: '/dashboard', icon: DashboardIcon },
+    { name: t('inbox'), href: '/dashboard/inbox', icon: InboxIcon },
+    { name: t('contacts'), href: '/dashboard/contacts', icon: UsersIcon },
+    { name: t('templates'), href: '/dashboard/templates', icon: DocumentIcon },
+    { name: t('nav.workflows'), href: '/dashboard/workflows', icon: WorkflowIcon },
+    { name: t('nav.broadcast'), href: '/dashboard/broadcast', icon: BroadcastIcon },
+    { name: t('nav.dripCampaigns'), href: '/dashboard/drip-campaigns', icon: DripIcon },
+    { name: t('analytics'), href: '/dashboard/analytics/advanced', icon: AnalyticsIcon },
+    { name: t('automation'), href: '/dashboard/automation', icon: BoltIcon },
+    { name: t('whatsapp'), href: '/dashboard/whatsapp', icon: PhoneIcon },
+    { name: t('nav.roadmap'), href: '/dashboard/roadmap', icon: MapIcon },
+    { name: t('settings'), href: '/dashboard/settings', icon: SettingsIcon },
+    { name: t('help'), href: '/dashboard/help', icon: HelpIcon },
+  ]
 
   // Shared sidebar content component
   const SidebarContent = () => (
@@ -199,7 +221,7 @@ function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavPro
           <button
             onClick={onClose}
             className='lg:hidden rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500'
-            aria-label='Sluit menu'
+            aria-label={t('closeMenu') || 'Close menu'}
           >
             <CloseIcon />
           </button>
@@ -222,16 +244,15 @@ function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavPro
                   (item.href !== '/dashboard' && pathname.startsWith(item.href))
 
                 return (
-                  <li key={item.name}>
+                  <li key={item.href}>
                     <Link
                       href={item.href}
                       prefetch={true}
                       onClick={onClose}
-                      className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${
-                        isActive
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
-                      } `}
+                      className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors ${isActive
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
+                        } `}
                     >
                       <item.icon />
                       {item.name}
@@ -245,7 +266,6 @@ function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavPro
       </nav>
     </div>
   )
-
   return (
     <>
       {/* Desktop Sidebar - Always visible on large screens */}
@@ -265,9 +285,8 @@ function DashboardNavInner({ profile, isOpen = false, onClose }: DashboardNavPro
 
           {/* Sidebar */}
           <div
-            className={`fixed inset-y-0 left-0 z-50 w-64 lg:hidden transition-transform duration-300 ease-in-out ${
-              isOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
+            className={`fixed inset-y-0 left-0 z-50 w-64 lg:hidden transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+              }`}
           >
             <SidebarContent />
           </div>

@@ -1,17 +1,4 @@
-// Simple time formatter
-function formatDistanceToNow(date: Date, options?: { addSuffix?: boolean }) {
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m${options?.addSuffix ? ' ago' : ''}`
-  if (diffHours < 24) return `${diffHours}h${options?.addSuffix ? ' ago' : ''}`
-  if (diffDays < 30) return `${diffDays}d${options?.addSuffix ? ' ago' : ''}`
-  return date.toLocaleDateString()
-}
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Message {
   id: string
@@ -32,6 +19,25 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ messages }: ActivityFeedProps) {
+  const t = useTranslations('dashboard')
+
+  // Simple time formatter moved inside to access translations
+  function formatDistanceToNow(date: Date, options?: { addSuffix?: boolean }) {
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMins / 60)
+    const diffDays = Math.floor(diffHours / 24)
+
+    const suffix = options?.addSuffix ? ` ${t('activity.ago')}` : ''
+
+    if (diffMins < 1) return t('activity.justNow')
+    if (diffMins < 60) return `${diffMins}m${suffix}`
+    if (diffHours < 24) return `${diffHours}h${suffix}`
+    if (diffDays < 30) return `${diffDays}d${suffix}`
+    return date.toLocaleDateString()
+  }
+
   const getActivityIcon = (senderType: string) => {
     if (senderType === 'contact') {
       return (
@@ -88,8 +94,8 @@ export function ActivityFeed({ messages }: ActivityFeedProps) {
             d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
           />
         </svg>
-        <h3 className='mt-2 text-sm font-medium text-gray-900'>No recent activity</h3>
-        <p className='mt-1 text-sm text-gray-500'>Recent messages will appear here.</p>
+        <h3 className='mt-2 text-sm font-medium text-gray-900'>{t('activity.noActivity')}</h3>
+        <p className='mt-1 text-sm text-gray-500'>{t('activity.noActivityDesc')}</p>
       </div>
     )
   }
@@ -111,11 +117,11 @@ export function ActivityFeed({ messages }: ActivityFeedProps) {
                 <div className='flex min-w-0 flex-1 justify-between space-x-4 pt-1.5'>
                   <div>
                     <p className='text-sm text-gray-500'>
-                      {message.sender_type === 'contact' ? 'New message from' : 'Agent replied to'}{' '}
+                      {message.sender_type === 'contact' ? t('activity.newMessageFrom') : t('activity.agentRepliedTo')}{' '}
                       <span className='font-medium text-gray-900'>
                         {message.conversation?.contact?.name ||
                           message.conversation?.contact?.phone_number ||
-                          'Unknown'}
+                          t('activity.unknown')}
                       </span>
                     </p>
                     <p className='mt-1 line-clamp-2 text-sm text-gray-600'>{message.content}</p>

@@ -10,6 +10,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Profile {
   id: string
@@ -77,6 +78,7 @@ const DAYS_OF_WEEK = [
 ] as const
 
 function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
+  const t = useTranslations('settings')
   const [formData, setFormData] = useState<OrganizationFormData>({
     name: profile.organization?.name || '',
     slug: profile.organization?.slug || '',
@@ -205,11 +207,11 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
       if (error) {
         setError(error.message)
       } else {
-        setMessage('Organization settings updated successfully!')
+        setMessage(t('organization.updateSuccess'))
         setTimeout(() => setMessage(''), 3000)
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError(t('common.error'))
     } finally {
       setLoading(false)
     }
@@ -253,14 +255,14 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to save business hours')
+        throw new Error(data.error || t('organization.saveError'))
       }
 
-      setMessage('Business hours updated successfully')
+      setMessage(t('organization.businessHoursSuccess'))
       setTimeout(() => setMessage(''), 3000)
     } catch (error) {
       console.error('Error saving business hours:', error)
-      setError(error instanceof Error ? error.message : 'Failed to save business hours')
+      setError(error instanceof Error ? error.message : t('organization.saveError'))
     } finally {
       setLoading(false)
     }
@@ -273,13 +275,13 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml']
     if (!allowedTypes.includes(file.type)) {
-      setError('Invalid file type. Please upload JPEG, PNG, WebP, or SVG.')
+      setError(t('organization.invalidLogoType'))
       return
     }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setError('File too large. Maximum size: 5MB')
+      setError(t('organization.logoTooLarge'))
       return
     }
 
@@ -299,22 +301,22 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to upload logo')
+        throw new Error(data.error || t('organization.uploadError'))
       }
 
       setLogoUrl(data.logo_url)
-      setMessage('Logo uploaded successfully')
+      setMessage(t('organization.uploadSuccess'))
       setTimeout(() => setMessage(''), 3000)
     } catch (error) {
       console.error('Error uploading logo:', error)
-      setError(error instanceof Error ? error.message : 'Failed to upload logo')
+      setError(error instanceof Error ? error.message : t('organization.uploadError'))
     } finally {
       setUploadingLogo(false)
     }
   }
 
   const handleLogoDelete = async () => {
-    if (!confirm('Are you sure you want to delete the organization logo?')) {
+    if (!confirm(t('organization.confirmDeleteLogo'))) {
       return
     }
 
@@ -330,15 +332,15 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to delete logo')
+        throw new Error(data.error || t('organization.deleteError'))
       }
 
       setLogoUrl(null)
-      setMessage('Logo deleted successfully')
+      setMessage(t('organization.deleteSuccess'))
       setTimeout(() => setMessage(''), 3000)
     } catch (error) {
       console.error('Error deleting logo:', error)
-      setError(error instanceof Error ? error.message : 'Failed to delete logo')
+      setError(error instanceof Error ? error.message : t('organization.deleteError'))
     } finally {
       setUploadingLogo(false)
     }
@@ -351,14 +353,14 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <BuildingOfficeIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Basic Information</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.basicInfo')}</h3>
           </div>
 
           <form onSubmit={handleSubmit} className='space-y-6'>
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
                 <label htmlFor='name' className='block text-sm font-medium text-gray-700'>
-                  Organization Name
+                  {t('organization.name')}
                 </label>
                 <input
                   type='text'
@@ -368,13 +370,13 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                   value={formData.name}
                   onChange={handleChange}
                   className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
-                  placeholder='Enter organization name'
+                  placeholder={t('organization.enterName')}
                 />
               </div>
 
               <div>
                 <label htmlFor='slug' className='block text-sm font-medium text-gray-700'>
-                  Subdomain
+                  {t('organization.subdomain')}
                 </label>
                 <div className='mt-1 flex rounded-md shadow-sm'>
                   <input
@@ -393,25 +395,25 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                   </span>
                 </div>
                 {checkingSlug && (
-                  <p className='mt-1 text-xs text-gray-500'>Checking availability...</p>
+                  <p className='mt-1 text-xs text-gray-500'>{t('organization.checkAvailability')}</p>
                 )}
                 {slugAvailable === true && (
                   <p className='mt-1 flex items-center text-xs text-emerald-600'>
                     <CheckCircleIcon className='mr-1 h-4 w-4' />
-                    Subdomain available
+                    {t('organization.available')}
                   </p>
                 )}
                 {slugAvailable === false && (
                   <p className='mt-1 flex items-center text-xs text-red-600'>
                     <XCircleIcon className='mr-1 h-4 w-4' />
-                    Subdomain not available
+                    {t('organization.unavailable')}
                   </p>
                 )}
               </div>
 
               <div>
                 <label htmlFor='timezone' className='block text-sm font-medium text-gray-700'>
-                  Timezone
+                  {t('organization.timezone')}
                 </label>
                 <select
                   name='timezone'
@@ -430,7 +432,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
 
               <div>
                 <label htmlFor='locale' className='block text-sm font-medium text-gray-700'>
-                  Language
+                  {t('organization.language')}
                 </label>
                 <select
                   name='locale'
@@ -466,7 +468,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                 disabled={loading || slugAvailable === false}
                 className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
               >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('profile.saving') : t('profile.saveChanges')}
               </button>
             </div>
           </form>
@@ -478,12 +480,12 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <PaintBrushIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Branding</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.branding')}</h3>
           </div>
 
           <div className='space-y-6'>
             <div>
-              <label className='block text-sm font-medium text-gray-700'>Organization Logo</label>
+              <label className='block text-sm font-medium text-gray-700'>{t('organization.logo')}</label>
               <div className='mt-1 flex items-center space-x-4'>
                 <div className='flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-gray-200'>
                   {logoUrl ? (
@@ -498,7 +500,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                 </div>
                 <div className='flex space-x-2'>
                   <label className='cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'>
-                    {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
+                    {uploadingLogo ? t('organization.uploading') : t('organization.uploadLogo')}
                     <input
                       type='file'
                       accept='image/jpeg,image/jpg,image/png,image/webp,image/svg+xml'
@@ -510,24 +512,23 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                   {logoUrl && (
                     <button
                       type='button'
-                      onClick={handleLogoDelete}
                       disabled={uploadingLogo}
                       className='rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50'
                     >
-                      Remove
+                      {t('organization.removeLogo')}
                     </button>
                   )}
                 </div>
               </div>
               <p className='mt-2 text-xs text-gray-500'>
-                PNG, JPG, WebP, SVG up to 5MB. Recommended size: 200x200px
+                {t('organization.logoHelp')}
               </p>
             </div>
 
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
                 <label htmlFor='primaryColor' className='block text-sm font-medium text-gray-700'>
-                  Primary Color
+                  {t('organization.primaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -549,7 +550,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
 
               <div>
                 <label htmlFor='secondaryColor' className='block text-sm font-medium text-gray-700'>
-                  Secondary Color
+                  {t('organization.secondaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -577,7 +578,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
 
             {/* Preview */}
             <div className='border-t border-gray-200 pt-4'>
-              <h4 className='mb-3 text-sm font-medium text-gray-700'>Preview</h4>
+              <h4 className='mb-3 text-sm font-medium text-gray-700'>{t('organization.preview')}</h4>
               <div className='flex space-x-3'>
                 <div
                   className='rounded-md px-4 py-2 text-sm font-medium text-white'
@@ -602,7 +603,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <ClockIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>Business Hours</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.businessHours')}</h3>
           </div>
 
           <div className='space-y-3'>
@@ -618,7 +619,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                     onChange={e => handleBusinessHoursChange(day, 'enabled', e.target.checked)}
                     className='h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500'
                   />
-                  <span className='w-24 text-sm font-medium text-gray-700 capitalize'>{day}</span>
+                  <span className='w-24 text-sm font-medium text-gray-700 capitalize'>{t(`organization.days.${day}` as any)}</span>
                 </div>
 
                 {businessHours[day].enabled ? (
@@ -629,7 +630,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                       onChange={e => handleBusinessHoursChange(day, 'start', e.target.value)}
                       className='block rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
                     />
-                    <span className='text-gray-500'>to</span>
+                    <span className='text-gray-500'>{t('organization.to')}</span>
                     <input
                       type='time'
                       value={businessHours[day].end}
@@ -638,7 +639,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                     />
                   </div>
                 ) : (
-                  <span className='text-sm text-gray-500'>Closed</span>
+                  <span className='text-sm text-gray-500'>{t('organization.closed')}</span>
                 )}
               </div>
             ))}
@@ -652,7 +653,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
               disabled={loading}
               className='rounded-lg bg-emerald-600 px-4 py-2 text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {loading ? 'Saving...' : 'Save Business Hours'}
+              {loading ? t('profile.saving') : t('organization.saveBusinessHours')}
             </button>
           </div>
         </div>
@@ -662,7 +663,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
       {profile.role === 'admin' && (
         <div className='rounded-lg border border-amber-200 bg-amber-50 p-4'>
           <p className='text-sm text-amber-700'>
-            Note: Some settings can only be modified by the organization owner.
+            {t('organization.ownerOnly')}
           </p>
         </div>
       )}

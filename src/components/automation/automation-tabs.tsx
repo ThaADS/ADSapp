@@ -10,6 +10,7 @@ import { Squares2X2Icon, UsersIcon, ExclamationTriangleIcon } from '@heroicons/r
 import WorkflowBuilder from './workflow-builder'
 import CapacityDashboard from './capacity-dashboard'
 import EscalationRules from './escalation-rules'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface AutomationTabsProps {
   organizationId: string
@@ -19,34 +20,30 @@ type TabId = 'workflows' | 'capacity' | 'escalations'
 
 interface Tab {
   id: TabId
-  name: string
   icon: typeof Squares2X2Icon
-  description: string
 }
 
-const tabs: Tab[] = [
-  {
-    id: 'workflows',
-    name: 'Workflow Builder',
-    icon: Squares2X2Icon,
-    description: 'Visual drag-and-drop automation builder',
-  },
-  {
-    id: 'capacity',
-    name: 'Agent Capacity',
-    icon: UsersIcon,
-    description: 'Real-time agent monitoring and load balancing',
-  },
-  {
-    id: 'escalations',
-    name: 'Escalation Rules',
-    icon: ExclamationTriangleIcon,
-    description: 'Manage escalation policies and SLA monitoring',
-  },
-]
-
 export default function AutomationTabs({ organizationId }: AutomationTabsProps) {
+  const t = useTranslations('workflow')
   const [activeTab, setActiveTab] = useState<TabId>('workflows')
+
+  const tabs: Tab[] = [
+    {
+      id: 'workflows',
+      icon: Squares2X2Icon,
+    },
+    {
+      id: 'capacity',
+      icon: UsersIcon,
+    },
+    {
+      id: 'escalations',
+      icon: ExclamationTriangleIcon,
+    },
+  ]
+
+  const getTabName = (id: TabId) => t(`tabs.${id}.name` as any)
+  const getTabDescription = (id: TabId) => t(`tabs.${id}.description` as any)
 
   return (
     <div className='space-y-6'>
@@ -61,18 +58,17 @@ export default function AutomationTabs({ organizationId }: AutomationTabsProps) 
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium ${
-                  isActive
+                className={`group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium ${isActive
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } `}
+                  } `}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon
                   className={`mr-2 -ml-0.5 h-5 w-5 ${isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'} `}
                   aria-hidden='true'
                 />
-                <span>{tab.name}</span>
+                <span>{getTabName(tab.id)}</span>
               </button>
             )
           })}
@@ -81,7 +77,7 @@ export default function AutomationTabs({ organizationId }: AutomationTabsProps) 
 
       {/* Tab Description */}
       <div className='rounded-lg border border-blue-200 bg-blue-50 p-4'>
-        <p className='text-sm text-blue-800'>{tabs.find(t => t.id === activeTab)?.description}</p>
+        <p className='text-sm text-blue-800'>{getTabDescription(activeTab)}</p>
       </div>
 
       {/* Tab Content */}

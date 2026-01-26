@@ -1,3 +1,7 @@
+'use client'
+
+import { useTranslations } from '@/components/providers/translation-provider'
+
 interface PricingPlansProps {
   plans: any
   currentPlan: string
@@ -6,11 +10,13 @@ interface PricingPlansProps {
 }
 
 export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: PricingPlansProps) {
+  const t = useTranslations('billing')
+
   return (
     <div className='rounded-lg bg-white shadow'>
       <div className='border-b border-gray-200 px-6 py-4'>
-        <h2 className='text-lg font-medium text-gray-900'>Available Plans</h2>
-        <p className='text-sm text-gray-500'>Choose the plan that fits your needs</p>
+        <h2 className='text-lg font-medium text-gray-900'>{t('plans.title')}</h2>
+        <p className='text-sm text-gray-500'>{t('plans.description')}</p>
       </div>
       <div className='p-6'>
         <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
@@ -28,7 +34,7 @@ export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: Prici
               >
                 {isCurrent && (
                   <span className='absolute top-0 right-0 -mt-2 -mr-2 rounded-full bg-green-500 px-2 py-1 text-xs text-white'>
-                    Current
+                    {t('currentPlanBadge')}
                   </span>
                 )}
 
@@ -66,18 +72,20 @@ export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: Prici
                 <div className='mt-6'>
                   {isCurrent ? (
                     <button
+                      type='button'
                       disabled
                       className='w-full cursor-not-allowed rounded-md border border-green-300 bg-green-50 px-4 py-2 text-sm font-medium text-green-700'
                     >
-                      Current Plan
+                      {t('plans.currentPlan')}
                     </button>
                   ) : (
                     <button
+                      type='button'
                       onClick={() => onUpgrade(planId)}
                       disabled={isLoading}
                       className='w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                      {isLoading ? 'Loading...' : 'Upgrade'}
+                      {isLoading ? t('loading') : t('upgrade')}
                     </button>
                   )}
                 </div>
@@ -87,11 +95,11 @@ export function PricingPlans({ plans, currentPlan, onUpgrade, isLoading }: Prici
         </div>
 
         <div className='mt-8 text-center text-sm text-gray-500'>
-          <p>All plans include a 14-day free trial. Cancel anytime.</p>
+          <p>{t('plans.trialInfo')}</p>
           <p className='mt-1'>
-            Need a custom plan?{' '}
+            {t('plans.customPlan')}{' '}
             <a href='mailto:sales@adsapp.com' className='text-green-600 hover:text-green-500'>
-              Contact us
+              {t('plans.contactUs')}
             </a>
           </p>
         </div>

@@ -42,7 +42,7 @@ export default function MessageInputWithTyping({
   )
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-20 md:pb-0">
       {/* Typing indicator - shows who else is typing */}
       <TypingIndicatorSimple typingAgents={othersTyping} className="bg-gray-50 border-t border-gray-100" />
 

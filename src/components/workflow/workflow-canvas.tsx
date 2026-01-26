@@ -8,6 +8,7 @@
  */
 
 import React, { useCallback, useRef, useEffect } from 'react';
+import { useTranslations } from '@/components/providers/translation-provider';
 import {
   ReactFlow,
   Background,
@@ -56,6 +57,7 @@ const nodeTypes = {
 // ============================================================================
 
 function WorkflowCanvasInner() {
+  const t = useTranslations('workflow')
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -252,9 +254,9 @@ function WorkflowCanvasInner() {
         {/* Keyboard shortcuts hint */}
         <Panel position="bottom-right" className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm px-3 py-2">
           <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Delete</kbd> Remove selected</div>
-            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Ctrl+Z</kbd> Undo</div>
-            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Ctrl+Y</kbd> Redo</div>
+            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Delete</kbd> {t('canvas.delete')/* Remove selected */}</div>
+            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Ctrl+Z</kbd> {t('canvas.undo')/* Undo */}</div>
+            <div><kbd className="px-1 bg-slate-100 dark:bg-slate-700 rounded">Ctrl+Y</kbd> {t('canvas.redo')/* Redo */}</div>
           </div>
         </Panel>
       </ReactFlow>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from '@/components/providers/translation-provider'
+
 interface InboxFiltersProps {
   selectedTags: string[]
   onTagsChange: (tags: string[]) => void
@@ -23,6 +25,8 @@ export function InboxFilters({
   allAgents,
   onClearAll,
 }: InboxFiltersProps) {
+  const t = useTranslations('inbox')
+
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
       onTagsChange(selectedTags.filter(t => t !== tag))
@@ -45,23 +49,25 @@ export function InboxFilters({
     <div className='mt-3 space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3'>
       <div className='flex items-center justify-between'>
         <h3 className='text-xs font-semibold tracking-wide text-gray-700 uppercase'>
-          Advanced Filters
+          {t('filters.title')}
         </h3>
         <button
+          type='button'
           onClick={onClearAll}
           className='text-xs font-medium text-green-600 hover:text-green-700'
         >
-          Clear all
+          {t('filters.clearAll')}
         </button>
       </div>
 
       {/* Tags filter */}
       {allTags.length > 0 && (
         <div>
-          <label className='mb-2 block text-xs font-medium text-gray-700'>Tags</label>
+          <label className='mb-2 block text-xs font-medium text-gray-700'>{t('tags.label')}</label>
           <div className='flex flex-wrap gap-1.5'>
             {allTags.map(tag => (
               <button
+                type='button'
                 key={tag}
                 onClick={() => toggleTag(tag)}
                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
@@ -80,13 +86,14 @@ export function InboxFilters({
       {/* Agent filter */}
       {allAgents.length > 0 && (
         <div>
-          <label className='mb-2 block text-xs font-medium text-gray-700'>Assigned Agent</label>
+          <label className='mb-2 block text-xs font-medium text-gray-700'>{t('filters.assignedAgent')}</label>
           <select
             value={selectedAgent || ''}
             onChange={e => onAgentChange(e.target.value || null)}
             className='w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none'
+            aria-label={t('filters.assignedAgent')}
           >
-            <option value=''>All agents</option>
+            <option value=''>{t('filters.allAgents')}</option>
             {allAgents.map(agent => (
               <option key={agent.id} value={agent.id}>
                 {agent.name}
@@ -98,7 +105,7 @@ export function InboxFilters({
 
       {/* Date range filter */}
       <div>
-        <label className='mb-2 block text-xs font-medium text-gray-700'>Date Range</label>
+        <label className='mb-2 block text-xs font-medium text-gray-700'>{t('filters.dateRange')}</label>
         <div className='grid grid-cols-2 gap-2'>
           <div>
             <input
@@ -106,7 +113,7 @@ export function InboxFilters({
               value={formatDate(dateRange.start)}
               onChange={e => onDateRangeChange({ ...dateRange, start: parseDate(e.target.value) })}
               className='w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none'
-              placeholder='Start date'
+              aria-label={t('filters.dateRange')}
             />
           </div>
           <div>
@@ -115,7 +122,7 @@ export function InboxFilters({
               value={formatDate(dateRange.end)}
               onChange={e => onDateRangeChange({ ...dateRange, end: parseDate(e.target.value) })}
               className='w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none'
-              placeholder='End date'
+              aria-label={t('filters.dateRange')}
             />
           </div>
         </div>
@@ -127,20 +134,20 @@ export function InboxFilters({
           <div className='space-y-1 text-xs text-gray-600'>
             {selectedTags.length > 0 && (
               <div>
-                <span className='font-medium'>Tags:</span> {selectedTags.join(', ')}
+                <span className='font-medium'>{t('filters.activeSummary.tags')}:</span> {selectedTags.join(', ')}
               </div>
             )}
             {selectedAgent && (
               <div>
-                <span className='font-medium'>Agent:</span>{' '}
+                <span className='font-medium'>{t('filters.activeSummary.agent')}:</span>{' '}
                 {allAgents.find(a => a.id === selectedAgent)?.name}
               </div>
             )}
             {(dateRange.start || dateRange.end) && (
               <div>
-                <span className='font-medium'>Date:</span>{' '}
-                {dateRange.start ? formatDate(dateRange.start) : 'Any'} -{' '}
-                {dateRange.end ? formatDate(dateRange.end) : 'Any'}
+                <span className='font-medium'>{t('filters.activeSummary.date')}:</span>{' '}
+                {dateRange.start ? formatDate(dateRange.start) : '-'} -{' '}
+                {dateRange.end ? formatDate(dateRange.end) : '-'}
               </div>
             )}
           </div>

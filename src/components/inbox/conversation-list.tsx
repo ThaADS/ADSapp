@@ -4,25 +4,30 @@ import { useState } from 'react'
 import type { ConversationWithDetails } from '@/types'
 import { QuickActionsMenu } from './quick-actions-menu'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from '@/components/providers/translation-provider'
 
-// Simple time formatter
-function formatTime(date: Date) {
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-  const diffDays = Math.floor(diffHours / 24)
+// Simple time formatter using translations
+function useTimeFormatter() {
+  const t = useTranslations('inbox')
 
-  if (diffHours < 1) {
-    const diffMins = Math.floor(diffMs / (1000 * 60))
-    return diffMins < 1 ? 'now' : `${diffMins}m`
+  return (date: Date) => {
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffHours < 1) {
+      const diffMins = Math.floor(diffMs / (1000 * 60))
+      return diffMins < 1 ? t('time.now') : t('time.minutesAgo', { count: diffMins })
+    }
+    if (diffHours < 24) {
+      return t('time.hoursAgo', { count: diffHours })
+    }
+    if (diffDays < 7) {
+      return t('time.daysAgo', { count: diffDays })
+    }
+    return date.toLocaleDateString()
   }
-  if (diffHours < 24) {
-    return `${diffHours}h`
-  }
-  if (diffDays < 7) {
-    return `${diffDays}d`
-  }
-  return date.toLocaleDateString()
 }
 
 interface ConversationListProps {
@@ -38,6 +43,8 @@ export function ConversationList({
   onSelectConversation,
   onConversationUpdate,
 }: ConversationListProps) {
+  const t = useTranslations('inbox')
+  const formatTime = useTimeFormatter()
   const [contextMenu, setContextMenu] = useState<{
     conversation: ConversationWithDetails
     x: number
@@ -56,17 +63,17 @@ export function ConversationList({
   const handleActionComplete = (action: string, success: boolean) => {
     if (success) {
       const messages: Record<string, string> = {
-        mark_as_read: 'Conversation marked as read',
-        assign_to_me: 'Conversation assigned to you',
-        status_closed: 'Conversation archived',
-        delete: 'Conversation deleted',
-        block: 'Contact blocked successfully',
-        export: 'Conversation exported successfully',
+        mark_as_read: t('toasts.markedAsRead'),
+        assign_to_me: t('toasts.assignedToYou'),
+        status_closed: t('toasts.archived'),
+        delete: t('toasts.deleted'),
+        block: t('toasts.blocked'),
+        export: t('toasts.exported'),
       }
 
       addToast({
         type: 'success',
-        title: messages[action] || 'Action completed',
+        title: messages[action] || t('actions.actionCompleted'),
       })
 
       // Trigger refresh
@@ -74,8 +81,8 @@ export function ConversationList({
     } else {
       addToast({
         type: 'error',
-        title: 'Action failed',
-        message: 'Please try again',
+        title: t('actions.actionFailed'),
+        message: t('actions.pleaseTryAgain'),
       })
     }
   }
@@ -112,9 +119,9 @@ export function ConversationList({
               d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
             />
           </svg>
-          <h3 className='mt-2 text-sm font-medium text-gray-900'>No conversations</h3>
+          <h3 className='mt-2 text-sm font-medium text-gray-900'>{t('noConversations')}</h3>
           <p className='mt-1 text-sm text-gray-500'>
-            Connect your WhatsApp to start receiving messages.
+            {t('noConversationsDescription')}
           </p>
         </div>
       </div>
@@ -159,7 +166,7 @@ export function ConversationList({
                       })
                     }}
                     className='rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 md:hidden'
-                    aria-label='Quick actions'
+                    aria-label={t('actions.quickActions')}
                   >
                     <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                       <path
@@ -186,8 +193,7 @@ export function ConversationList({
                           </span>
                         )}
                         <span className='text-xs text-gray-500'>
-                          {conversation.last_message_at &&
-                            formatTime(new Date(conversation.last_message_at))}
+                          {conversation.last_message_at && formatTime(new Date(conversation.last_message_at))}
                         </span>
                       </div>
                     </div>
@@ -198,7 +204,7 @@ export function ConversationList({
                         className={`mt-1 truncate text-sm text-gray-500 ${hasUnread ? 'font-medium text-gray-700' : ''}`}
                       >
                         {conversation.last_message.sender_type === 'agent' && (
-                          <span className='text-blue-600'>You: </span>
+                          <span className='text-blue-600'>{t('message.you')}: </span>
                         )}
                         {conversation.last_message.content}
                       </p>
@@ -208,10 +214,10 @@ export function ConversationList({
                     <div className='mt-2 flex items-center justify-between'>
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(
-                          conversation.status
+                          conversation.status || 'open'
                         )}`}
                       >
-                        {conversation.status}
+                        {t(`status.${conversation.status || 'open'}`)}
                       </span>
 
                       {conversation.assigned_agent && (

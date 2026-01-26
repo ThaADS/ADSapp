@@ -1,0 +1,54 @@
+{
+    "title": "WhatsApp Configuratie",
+    "subtitle": "Beheer je WhatsApp Business API-verbinding en instellingen.",
+    "status": {
+        "title": "Verbindingsstatus",
+        "connected": "Verbonden",
+        "disconnected": "Niet verbonden",
+        "error": "Verbindingsfout",
+        "checking": "Status controleren..."
+    },
+    "account": {
+        "title": "WhatsApp Business Account",
+        "phoneNumber": "Telefoonnummer",
+        "businessName": "Bedrijfsnaam",
+        "quality": "Kwaliteitsscore",
+        "tier": "Messaging-tier",
+        "verified": "Geverifieerd"
+    },
+    "setup": {
+        "title": "WhatsApp instellen",
+        "description": "Volg de stappen om je WhatsApp Business API te configureren.",
+        "step1": "Maak een Meta Business Account",
+        "step2": "Configureer WhatsApp Business API",
+        "step3": "Voeg telefoonnummer toe",
+        "step4": "Verifieer je bedrijf",
+        "connect": "Verbinden met WhatsApp",
+        "disconnect": "Verbinding verbreken"
+    },
+    "webhook": {
+        "title": "Webhook Configuratie",
+        "url": "Webhook URL",
+        "verifyToken": "Verificatietoken",
+        "copy": "Kopiëren",
+        "copied": "Gekopieerd!"
+    },
+    "templates": {
+        "title": "Sjablonen synchroniseren",
+        "sync": "Sjablonen synchroniseren",
+        "lastSync": "Laatst gesynchroniseerd",
+        "syncing": "Synchroniseren..."
+    },
+    "limits": {
+        "title": "Berichtlimieten",
+        "daily": "Dagelijks",
+        "remaining": "Resterend",
+        "used": "Gebruikt"
+    },
+    "toasts": {
+        "connected": "Succesvol verbonden met WhatsApp",
+        "disconnected": "WhatsApp-verbinding verbroken",
+        "syncSuccess": "Sjablonen succesvol gesynchroniseerd",
+        "error": "Er is een fout opgetreden"
+    }
+}

@@ -5,6 +5,7 @@ import { DashboardStats } from './stats'
 import { RecentConversations } from './recent-conversations'
 import { ActivityFeed } from './activity-feed'
 import type { Profile } from '@/types/database'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface DashboardDemoWrapperProps {
   serverStats: {
@@ -25,6 +26,7 @@ export function DashboardDemoWrapper({
   profile,
 }: DashboardDemoWrapperProps) {
   const { state } = useDemo()
+  const t = useTranslations('dashboard')
 
   // Transform demo conversations to match the expected format
   const demoConversations = state.conversations.map(conv => {
@@ -43,10 +45,10 @@ export function DashboardDemoWrapper({
       },
       last_message: lastMsg
         ? {
-            content: lastMsg.content,
-            created_at: lastMsg.timestamp.toISOString(),
-            sender_type: lastMsg.type === 'incoming' ? 'contact' : 'agent',
-          }
+          content: lastMsg.content,
+          created_at: lastMsg.timestamp.toISOString(),
+          sender_type: lastMsg.type === 'incoming' ? 'contact' : 'agent',
+        }
         : undefined,
     }
   })
@@ -103,8 +105,8 @@ export function DashboardDemoWrapper({
         {/* Recent conversations */}
         <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
           <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
-            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Recent Conversations</h3>
-            <p className='mt-1 text-xs sm:text-sm text-gray-600'>Your latest customer chats</p>
+            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>{t('conversationList.recentConversations')}</h3>
+            <p className='mt-1 text-xs sm:text-sm text-gray-600'>{t('conversationList.recentSubtitle')}</p>
           </div>
           <RecentConversations conversations={conversations || []} />
         </div>
@@ -112,8 +114,8 @@ export function DashboardDemoWrapper({
         {/* Activity feed */}
         <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
           <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
-            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Recent Activity</h3>
-            <p className='mt-1 text-xs sm:text-sm text-gray-600'>Latest messages across all chats</p>
+            <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>{t('recentActivity')}</h3>
+            <p className='mt-1 text-xs sm:text-sm text-gray-600'>{t('activity.noActivityDesc')}</p>
           </div>
           <ActivityFeed messages={messages || []} />
         </div>

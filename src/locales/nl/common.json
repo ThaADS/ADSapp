@@ -5,10 +5,10 @@
   "edit": "Bewerken",
   "create": "Aanmaken",
   "search": "Zoeken",
-  "filter": "Filteren",
+  "filter": "Filter",
   "loading": "Laden...",
   "error": "Fout",
-  "success": "Succesvol",
+  "success": "Succes",
   "confirm": "Bevestigen",
   "close": "Sluiten",
   "submit": "Verzenden",
@@ -44,12 +44,13 @@
   "lastModified": "Laatst gewijzigd",
   "noResults": "Geen resultaten gevonden",
   "noData": "Geen gegevens beschikbaar",
-  "tryAgain": "Probeer opnieuw",
+  "tryAgain": "Opnieuw proberen",
   "copied": "Gekopieerd naar klembord",
   "copyFailed": "Kopiëren mislukt",
   "required": "Verplicht",
   "optional": "Optioneel",
   "all": "Alle",
   "none": "Geen",
-  "other": "Overig"
+  "other": "Anders",
+  "pleaseFixErrors": "Los de volgende fouten op"
 }

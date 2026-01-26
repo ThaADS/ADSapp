@@ -4,31 +4,51 @@
  * This middleware integrates:
  * - Tenant routing for multi-tenant domain resolution
  * - Supabase session management for authentication
+ * - i18n language detection and routing
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import { createTenantMiddleware } from './src/middleware/tenant-routing'
+// Tenant middleware disabled temporarily - re-enable when tenant_domains is set up
+// import { createTenantMiddleware } from './src/middleware/tenant-routing'
+
+// i18n configuration inline to avoid import issues
+const LOCALE_COOKIE = 'NEXT_LOCALE'
+const SUPPORTED_LOCALES = ['nl', 'en'] as const
+type Locale = 'nl' | 'en'
+
+/**
+ * Detect locale from Accept-Language header
+ * Returns 'nl' for Dutch browsers, 'en' for all others
+ */
+function detectLocale(acceptLanguage: string | null): Locale {
+  if (!acceptLanguage) return 'en'
+
+  const languages = acceptLanguage.toLowerCase()
+
+  // Check if Dutch is preferred
+  if (languages.startsWith('nl') || languages.includes(',nl') || languages.includes(';nl')) {
+    return 'nl'
+  }
+
+  return 'en'
+}
+
+function isValidLocale(locale: string): locale is Locale {
+  return SUPPORTED_LOCALES.includes(locale as Locale)
+}
 
 // Environment variables (fail gracefully if not set during build)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
-// Use localhost for development, adsapp.nl for production
-const mainDomain =
-  process.env.NODE_ENV === 'production'
-    ? process.env.NEXT_PUBLIC_APP_DOMAIN || 'adsapp.nl'
-    : 'localhost'
-
-// Create tenant middleware instance (only if env vars are available)
-const tenantMiddleware = supabaseUrl && supabaseServiceKey
-  ? createTenantMiddleware({
-      supabaseUrl,
-      supabaseKey: supabaseServiceKey,
-      mainDomain,
-    })
-  : null
+// Tenant middleware disabled temporarily - uncomment when tenant_domains table is set up
+// const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+// const mainDomain = process.env.NODE_ENV === 'production'
+//   ? process.env.NEXT_PUBLIC_APP_DOMAIN || 'adsapp.nl' : 'localhost'
+// const tenantMiddleware = supabaseUrl && supabaseServiceKey
+//   ? createTenantMiddleware({ supabaseUrl, supabaseKey: supabaseServiceKey, mainDomain })
+//   : null
 
 // Supabase session handler
 async function updateSession(request: NextRequest): Promise<NextResponse> {
@@ -72,6 +92,22 @@ async function updateSession(request: NextRequest): Promise<NextResponse> {
   return supabaseResponse
 }
 
+/**
+ * Detect and set the user's preferred locale
+ * Priority: 1. Cookie (user preference) 2. Browser Accept-Language 3. Default (nl)
+ */
+function getLocale(request: NextRequest): Locale {
+  // Check for existing locale cookie (user's explicit choice)
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value
+  if (cookieLocale && isValidLocale(cookieLocale)) {
+    return cookieLocale
+  }
+
+  // Detect from browser's Accept-Language header
+  const acceptLanguage = request.headers.get('accept-language')
+  return detectLocale(acceptLanguage)
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -101,10 +137,31 @@ export async function middleware(request: NextRequest) {
       return sessionResponse
     }
 
-    // Apply tenant routing middleware if available
-    if (tenantMiddleware) {
-      return await tenantMiddleware(request)
+    // Detect and set locale (safe, non-blocking)
+    try {
+      const locale = getLocale(request)
+
+      // Set locale cookie if not already set (for client-side access)
+      if (!request.cookies.get(LOCALE_COOKIE)) {
+        sessionResponse.cookies.set(LOCALE_COOKIE, locale, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 365, // 1 year
+          sameSite: 'lax',
+        })
+      }
+
+      // Add locale header for server components to access
+      sessionResponse.headers.set('x-locale', locale)
+    } catch (localeError) {
+      // Locale detection failed, continue without it
+      console.warn('Locale detection failed:', localeError)
     }
+
+    // Skip tenant routing for now to avoid redirect issues
+    // TODO: Re-enable when tenant_domains table is properly set up
+    // if (tenantMiddleware) {
+    //   return await tenantMiddleware(request)
+    // }
 
     return sessionResponse
   } catch (error) {

@@ -42,6 +42,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export interface BillingAnalyticsData {
   // Revenue metrics
@@ -100,6 +101,7 @@ interface BillingAnalyticsProps {
 }
 
 export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
+  const t = useTranslations('billing')
   const [data, setData] = useState<BillingAnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -185,7 +187,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
     return (
       <Card>
         <CardContent className='p-6'>
-          <div className='text-center text-red-600'>{error || 'No data available'}</div>
+          <div className='text-center text-red-600'>{error || t('errors.noDataAvailable')}</div>
         </CardContent>
       </Card>
     )
@@ -213,9 +215,9 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
       {/* Header */}
       <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
         <div>
-          <h2 className='text-2xl font-bold tracking-tight'>Billing Analytics</h2>
+          <h2 className='text-2xl font-bold tracking-tight'>{t('analytics.title')}</h2>
           <p className='text-muted-foreground'>
-            Track revenue, subscriptions, and payment performance
+            {t('analytics.description')}
           </p>
         </div>
         <div className='flex items-center gap-2'>
@@ -224,10 +226,10 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='7d'>Last 7 days</SelectItem>
-              <SelectItem value='30d'>Last 30 days</SelectItem>
-              <SelectItem value='90d'>Last 90 days</SelectItem>
-              <SelectItem value='1y'>Last year</SelectItem>
+              <SelectItem value='7d'>{t('analytics.period.7d')}</SelectItem>
+              <SelectItem value='30d'>{t('analytics.period.30d')}</SelectItem>
+              <SelectItem value='90d'>{t('analytics.period.90d')}</SelectItem>
+              <SelectItem value='1y'>{t('analytics.period.1y')}</SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -237,7 +239,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
             className='flex items-center gap-2'
           >
             <Download className='h-4 w-4' />
-            Export CSV
+            {t('analytics.exportCsv')}
           </Button>
           <Button
             variant='outline'
@@ -246,7 +248,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
             className='flex items-center gap-2'
           >
             <Download className='h-4 w-4' />
-            Export PDF
+            {t('analytics.exportPdf')}
           </Button>
         </div>
       </div>
@@ -255,7 +257,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Revenue</CardTitle>
+            <CardTitle className='text-sm font-medium'>{t('analytics.totalRevenue')}</CardTitle>
             <DollarSign className='text-muted-foreground h-4 w-4' />
           </CardHeader>
           <CardContent>
@@ -267,7 +269,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
                 <ArrowDownRight className='h-4 w-4 text-red-600' />
               )}
               <span className={data.revenueGrowth > 0 ? 'text-green-600' : 'text-red-600'}>
-                {formatPercentage(Math.abs(data.revenueGrowth))} from last period
+                {t('analytics.fromLastPeriod', { change: formatPercentage(Math.abs(data.revenueGrowth)) })}
               </span>
             </div>
           </CardContent>
@@ -275,39 +277,39 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Monthly Recurring Revenue</CardTitle>
+            <CardTitle className='text-sm font-medium'>{t('analytics.mrr')}</CardTitle>
             <TrendingUp className='text-muted-foreground h-4 w-4' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{formatCurrency(data.monthlyRecurringRevenue)}</div>
             <div className='text-muted-foreground text-xs'>
-              ARR: {formatCurrency(data.annualRecurringRevenue)}
+              {t('analytics.arr', { amount: formatCurrency(data.annualRecurringRevenue) })}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Active Subscriptions</CardTitle>
+            <CardTitle className='text-sm font-medium'>{t('analytics.activeSubscriptions')}</CardTitle>
             <Users className='text-muted-foreground h-4 w-4' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{data.activeSubscriptions}</div>
             <div className='text-muted-foreground text-xs'>
-              +{data.newSubscriptions} new this period
+              {t('analytics.newThisPeriod', { count: data.newSubscriptions })}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Payment Success Rate</CardTitle>
+            <CardTitle className='text-sm font-medium'>{t('analytics.paymentSuccessRate')}</CardTitle>
             <CreditCard className='text-muted-foreground h-4 w-4' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{formatPercentage(data.paymentSuccessRate)}</div>
             <div className='text-muted-foreground text-xs'>
-              {data.failedPayments} failed payments
+              {t('analytics.failedPayments', { count: data.failedPayments })}
             </div>
           </CardContent>
         </Card>
@@ -316,17 +318,17 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
       {/* Charts */}
       <Tabs value={selectedMetric} onValueChange={setSelectedMetric} className='space-y-4'>
         <TabsList>
-          <TabsTrigger value='revenue'>Revenue</TabsTrigger>
-          <TabsTrigger value='subscriptions'>Subscriptions</TabsTrigger>
-          <TabsTrigger value='churn'>Churn Analysis</TabsTrigger>
-          <TabsTrigger value='plans'>Plan Distribution</TabsTrigger>
+          <TabsTrigger value='revenue'>{t('analytics.revenue')}</TabsTrigger>
+          <TabsTrigger value='subscriptions'>{t('analytics.subscriptions')}</TabsTrigger>
+          <TabsTrigger value='churn'>{t('analytics.churnAnalysis')}</TabsTrigger>
+          <TabsTrigger value='plans'>{t('analytics.planDistribution')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value='revenue' className='space-y-4'>
           <Card>
             <CardHeader>
-              <CardTitle>Revenue Trend</CardTitle>
-              <CardDescription>Track revenue growth over time</CardDescription>
+              <CardTitle>{t('analytics.revenueTrend')}</CardTitle>
+              <CardDescription>{t('analytics.trackRevenueGrowth')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width='100%' height={350}>
@@ -342,7 +344,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
                     stroke='#3b82f6'
                     fill='#3b82f6'
                     fillOpacity={0.2}
-                    name='Revenue'
+                    name={t('analytics.revenue')}
                   />
                   <Area
                     type='monotone'
@@ -362,8 +364,8 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
           <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
             <Card>
               <CardHeader>
-                <CardTitle>Subscription Growth</CardTitle>
-                <CardDescription>New subscriptions vs churned subscriptions</CardDescription>
+                <CardTitle>{t('analytics.subscriptionGrowth')}</CardTitle>
+                <CardDescription>{t('analytics.subscriptionGrowthDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width='100%' height={300}>
@@ -373,7 +375,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey='subscriptions' fill='#3b82f6' name='Total Subscriptions' />
+                    <Bar dataKey='subscriptions' fill='#3b82f6' name={t('analytics.totalSubscriptions')} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -381,28 +383,28 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Subscription Health</CardTitle>
-                <CardDescription>Key subscription metrics</CardDescription>
+                <CardTitle>{t('analytics.subscriptionHealth')}</CardTitle>
+                <CardDescription>{t('analytics.subscriptionHealthDescription')}</CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
                 <div className='flex items-center justify-between'>
-                  <span className='text-sm font-medium'>Total Subscriptions</span>
+                  <span className='text-sm font-medium'>{t('analytics.totalSubscriptions')}</span>
                   <Badge variant='outline'>{data.totalSubscriptions}</Badge>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-sm font-medium'>Active Subscriptions</span>
+                  <span className='text-sm font-medium'>{t('analytics.activeSubscriptions')}</span>
                   <Badge variant='default'>{data.activeSubscriptions}</Badge>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-sm font-medium'>New This Period</span>
+                  <span className='text-sm font-medium'>{t('analytics.newThisLabel')}</span>
                   <Badge variant='secondary'>{data.newSubscriptions}</Badge>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-sm font-medium'>Churned This Period</span>
+                  <span className='text-sm font-medium'>{t('analytics.churnedThisLabel')}</span>
                   <Badge variant='destructive'>{data.churnedSubscriptions}</Badge>
                 </div>
                 <div className='flex items-center justify-between'>
-                  <span className='text-sm font-medium'>Churn Rate</span>
+                  <span className='text-sm font-medium'>{t('analytics.churnRate')}</span>
                   <Badge variant={data.churnRate > 5 ? 'destructive' : 'outline'}>
                     {formatPercentage(data.churnRate)}
                   </Badge>
@@ -415,8 +417,8 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
         <TabsContent value='churn' className='space-y-4'>
           <Card>
             <CardHeader>
-              <CardTitle>Churn Analysis</CardTitle>
-              <CardDescription>Monitor customer retention and churn patterns</CardDescription>
+              <CardTitle>{t('analytics.churnAnalysis')}</CardTitle>
+              <CardDescription>{t('analytics.churnDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width='100%' height={350}>
@@ -431,7 +433,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
                     dataKey='churn'
                     stroke='#ef4444'
                     strokeWidth={2}
-                    name='Churn Rate'
+                    name={t('analytics.churnRate')}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -443,14 +445,12 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
               <CardHeader>
                 <CardTitle className='flex items-center gap-2 text-yellow-800'>
                   <AlertTriangle className='h-5 w-5' />
-                  High Churn Alert
+                  {t('analytics.highChurnAlert')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className='text-yellow-800'>
-                  Your churn rate of {formatPercentage(data.churnRate)} is above the recommended
-                  threshold of 5%. Consider implementing retention strategies to improve customer
-                  satisfaction.
+                  {t('analytics.highChurnMessage', { rate: formatPercentage(data.churnRate) })}
                 </p>
               </CardContent>
             </Card>
@@ -461,8 +461,8 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
           <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
             <Card>
               <CardHeader>
-                <CardTitle>Plan Distribution</CardTitle>
-                <CardDescription>Revenue and subscription breakdown by plan</CardDescription>
+                <CardTitle>{t('analytics.planDistribution')}</CardTitle>
+                <CardDescription>{t('analytics.planBreakdown')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width='100%' height={300}>
@@ -489,8 +489,8 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Revenue by Plan</CardTitle>
-                <CardDescription>Revenue contribution from each plan</CardDescription>
+                <CardTitle>{t('analytics.revenueByPlan')}</CardTitle>
+                <CardDescription>{t('analytics.revenueContribution')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
@@ -506,7 +506,7 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
                       <div className='text-right'>
                         <div className='text-sm font-medium'>{formatCurrency(plan.revenue)}</div>
                         <div className='text-muted-foreground text-xs'>
-                          {plan.count} subscribers
+                          {t('analytics.subscribers', { count: plan.count })}
                         </div>
                       </div>
                     </div>
@@ -522,13 +522,13 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
       {data.overageCharges > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Usage & Overage</CardTitle>
-            <CardDescription>Track usage-based billing and overage charges</CardDescription>
+            <CardTitle>{t('analytics.usageOverage')}</CardTitle>
+            <CardDescription>{t('analytics.overageDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
               <div className='space-y-2'>
-                <span className='text-sm font-medium'>Overage Charges</span>
+                <span className='text-sm font-medium'>{t('analytics.overageCharges')}</span>
                 <div className='text-2xl font-bold text-orange-600'>
                   {formatCurrency(data.overageCharges)}
                 </div>
@@ -547,26 +547,26 @@ export function BillingAnalytics({ organizationId }: BillingAnalyticsProps) {
       {/* Customer Lifetime Value */}
       <Card>
         <CardHeader>
-          <CardTitle>Customer Lifetime Value</CardTitle>
-          <CardDescription>Average customer lifetime and value metrics</CardDescription>
+          <CardTitle>{t('analytics.customerLifetime')}</CardTitle>
+          <CardDescription>{t('analytics.lifetimeDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
             <div className='text-center'>
               <div className='text-2xl font-bold'>
-                {data.customerLifecycle.averageLifetime} days
+                {data.customerLifecycle.averageLifetime} {t('analytics.days')}
               </div>
-              <div className='text-muted-foreground text-sm'>Average Lifetime</div>
+              <div className='text-muted-foreground text-sm'>{t('analytics.averageLifetime')}</div>
             </div>
             <div className='text-center'>
               <div className='text-2xl font-bold'>
                 {formatCurrency(data.customerLifecycle.averageLifetimeValue)}
               </div>
-              <div className='text-muted-foreground text-sm'>Average Lifetime Value</div>
+              <div className='text-muted-foreground text-sm'>{t('analytics.averageLifetimeValue')}</div>
             </div>
             <div className='text-center'>
               <div className='text-2xl font-bold'>{formatCurrency(data.averageInvoiceAmount)}</div>
-              <div className='text-muted-foreground text-sm'>Average Invoice Amount</div>
+              <div className='text-muted-foreground text-sm'>{t('analytics.averageInvoiceAmount')}</div>
             </div>
           </div>
         </CardContent>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { ShoppingCart, Package, ShoppingBag } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import type { MessageWithSender } from '@/types'
 import type { CartData, CartItem } from '@/types/whatsapp-catalog'
 
@@ -44,14 +45,14 @@ function parseCartData(message: MessageWithSender): CartData | null {
 }
 
 // Order Message Component
-function OrderMessageContent({ cartData, customerNote }: { cartData: CartData; customerNote?: string }) {
+function OrderMessageContent({ cartData, customerNote, t }: { cartData: CartData; customerNote?: string; t: (key: string, params?: Record<string, unknown>) => string }) {
   const { total, currency } = calculateCartTotal(cartData.product_items)
 
   return (
     <div className='space-y-2'>
       <div className='flex items-center gap-2 text-sm font-medium'>
         <ShoppingCart className='h-4 w-4' />
-        <span>Bestelling ontvangen</span>
+        <span>{t('messageList.orderReceived')}</span>
       </div>
 
       {/* Product items */}
@@ -72,7 +73,7 @@ function OrderMessageContent({ cartData, customerNote }: { cartData: CartData; c
 
       {/* Total */}
       <div className='flex items-center justify-between border-t border-white/20 pt-2 text-sm font-semibold'>
-        <span>Totaal</span>
+        <span>{t('messageList.total')}</span>
         <span>{formatPrice(total, currency)}</span>
       </div>
 
@@ -87,7 +88,7 @@ function OrderMessageContent({ cartData, customerNote }: { cartData: CartData; c
 }
 
 // Product Message Component (single product or product list sent by agent)
-function ProductMessageContent({ message }: { message: MessageWithSender }) {
+function ProductMessageContent({ message, t }: { message: MessageWithSender; t: (key: string, params?: Record<string, unknown>) => string }) {
   const metadata = message.metadata as Record<string, unknown> | null
 
   // Check if it's a product list message
@@ -101,13 +102,13 @@ function ProductMessageContent({ message }: { message: MessageWithSender }) {
       <div className='space-y-2'>
         <div className='flex items-center gap-2 text-sm font-medium'>
           <ShoppingBag className='h-4 w-4' />
-          <span>Producten gedeeld ({products.length})</span>
+          <span>{t('messageList.productsShared', { count: products.length })}</span>
         </div>
         {headerText && <div className='text-sm font-medium'>{headerText}</div>}
         {bodyText && <div className='text-sm opacity-90'>{bodyText}</div>}
         <div className='text-xs opacity-70'>
           {products.slice(0, 3).join(', ')}
-          {products.length > 3 && ` +${products.length - 3} meer`}
+          {products.length > 3 && ` ${t('messageList.more', { count: products.length - 3 })}`}
         </div>
       </div>
     )
@@ -119,7 +120,7 @@ function ProductMessageContent({ message }: { message: MessageWithSender }) {
     <div className='space-y-1'>
       <div className='flex items-center gap-2 text-sm font-medium'>
         <Package className='h-4 w-4' />
-        <span>Product gedeeld</span>
+        <span>{t('messageList.productShared')}</span>
       </div>
       {productId && (
         <div className='text-xs font-mono opacity-70'>{productId}</div>
@@ -137,6 +138,7 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, currentUserId }: MessageListProps) {
+  const t = useTranslations('inbox')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -164,8 +166,8 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
               d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
             />
           </svg>
-          <h3 className='mt-2 text-sm font-medium text-gray-900'>No messages yet</h3>
-          <p className='mt-1 text-sm text-gray-500'>Start the conversation by sending a message.</p>
+          <h3 className='mt-2 text-sm font-medium text-gray-900'>{t('messageList.noMessages')}</h3>
+          <p className='mt-1 text-sm text-gray-500'>{t('messageList.startConversation')}</p>
         </div>
       </div>
     )
@@ -225,14 +227,14 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                   {message.message_type === 'order' && (() => {
                     const cartData = parseCartData(message)
                     if (cartData) {
-                      return <OrderMessageContent cartData={cartData} customerNote={message.content} />
+                      return <OrderMessageContent cartData={cartData} customerNote={message.content} t={t} />
                     }
                     return <div className='text-sm'>{message.content}</div>
                   })()}
 
                   {/* Product Message (sent by agent) */}
                   {(message.message_type === 'product' || message.message_type === 'product_list') && (
-                    <ProductMessageContent message={message} />
+                    <ProductMessageContent message={message} t={t} />
                   )}
 
                   {/* Regular text and other message types */}
@@ -255,7 +257,7 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                       {message.message_type === 'image' && (
                         <img
                           src={message.media_url}
-                          alt='Shared image'
+                          alt={t('messageList.sharedImage')}
                           className='max-w-full rounded'
                         />
                       )}
@@ -268,7 +270,7 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                           rel='noopener noreferrer'
                           className='text-xs underline opacity-75 hover:opacity-100'
                         >
-                          Download {message.message_type}
+                          {t('messageList.download', { type: message.message_type })}
                         </a>
                       )}
                     </div>

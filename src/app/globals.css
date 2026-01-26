@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Exclude .agent directory from Tailwind content scanning */
+@source not "../../.agent";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

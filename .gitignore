@@ -180,6 +180,7 @@ docker-compose.local.yml
 .jest-cache/
 temp-docs/
 .cursor/
+.agent/
 
 # Test files with real credentials
 *.test.backup

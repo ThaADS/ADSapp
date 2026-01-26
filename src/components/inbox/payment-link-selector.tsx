@@ -15,6 +15,7 @@ import {
   Loader2,
   ChevronDown,
 } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface PaymentLink {
   id: string
@@ -40,6 +41,7 @@ export function PaymentLinkSelector({
   onSend,
   onClose,
 }: PaymentLinkSelectorProps) {
+  const t = useTranslations('inbox')
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState<string | null>(null)
@@ -65,7 +67,7 @@ export function PaymentLinkSelector({
       const data = await response.json()
       setPaymentLinks(data.links || [])
     } catch (err) {
-      setError('Could not load payment links')
+      setError(t('payment.couldNotLoad'))
       console.error('Fetch payment links error:', err)
     } finally {
       setIsLoading(false)
@@ -167,11 +169,11 @@ export function PaymentLinkSelector({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
-        title="Betaallink versturen"
-        aria-label="Betaallink versturen"
+        title={t('payment.sendLink')}
+        aria-label={t('payment.sendLink')}
       >
         <CreditCard className="w-4 h-4" />
-        <span className="hidden sm:inline">Betaallink</span>
+        <span className="hidden sm:inline">{t('payment.sendLink')}</span>
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -180,7 +182,7 @@ export function PaymentLinkSelector({
         <div className="absolute bottom-full left-0 mb-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-            <h3 className="font-semibold text-gray-900">Betaallink versturen</h3>
+            <h3 className="font-semibold text-gray-900">{t('payment.title')}</h3>
             <button
               type="button"
               onClick={() => {
@@ -188,8 +190,8 @@ export function PaymentLinkSelector({
                 onClose?.()
               }}
               className="text-gray-400 hover:text-gray-600"
-              aria-label="Sluiten"
-              title="Sluiten"
+              aria-label={t('payment.close')}
+              title={t('payment.close')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -207,19 +209,19 @@ export function PaymentLinkSelector({
               <div className="p-4 space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Naam
+                    {t('payment.name')}
                   </label>
                   <input
                     type="text"
                     value={newLinkName}
                     onChange={e => setNewLinkName(e.target.value)}
-                    placeholder="Bijv. Factuur #123"
+                    placeholder={t('payment.namePlaceholder')}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Bedrag (EUR)
+                    {t('payment.amount')}
                   </label>
                   <input
                     type="number"
@@ -233,12 +235,12 @@ export function PaymentLinkSelector({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Omschrijving (optioneel)
+                    {t('payment.description')}
                   </label>
                   <textarea
                     value={newLinkDescription}
                     onChange={e => setNewLinkDescription(e.target.value)}
-                    placeholder="Korte omschrijving..."
+                    placeholder={t('payment.descriptionPlaceholder')}
                     rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
                   />
@@ -249,7 +251,7 @@ export function PaymentLinkSelector({
                     onClick={() => setShowCreateForm(false)}
                     className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    Annuleren
+                    {t('payment.cancel')}
                   </button>
                   <button
                     type="button"
@@ -262,7 +264,7 @@ export function PaymentLinkSelector({
                     ) : (
                       <>
                         <Plus className="w-4 h-4" />
-                        Aanmaken
+                        {t('payment.create')}
                       </>
                     )}
                   </button>
@@ -279,7 +281,7 @@ export function PaymentLinkSelector({
                   ) : paymentLinks.length === 0 ? (
                     <div className="text-center py-6 text-gray-500">
                       <CreditCard className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Geen betaallinks gevonden</p>
+                      <p className="text-sm">{t('payment.noLinksFound')}</p>
                     </div>
                   ) : (
                     <div className="space-y-1">
@@ -306,7 +308,7 @@ export function PaymentLinkSelector({
                             </p>
                           )}
                           <p className="text-xs text-gray-400 mt-1">
-                            {link.useCount} keer verstuurd
+                            {t('payment.timesSent', { count: link.useCount })}
                           </p>
                         </button>
                       ))}
@@ -320,7 +322,7 @@ export function PaymentLinkSelector({
                     className="w-full mt-2 px-3 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 flex items-center justify-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
-                    Nieuwe betaallink aanmaken
+                    {t('payment.createNew')}
                   </button>
                 </div>
 
@@ -329,12 +331,12 @@ export function PaymentLinkSelector({
                   <div className="p-4 border-t border-gray-200 bg-gray-50">
                     <div className="mb-3">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Persoonlijk bericht (optioneel)
+                        {t('payment.personalMessage')}
                       </label>
                       <textarea
                         value={personalMessage}
                         onChange={e => setPersonalMessage(e.target.value)}
-                        placeholder="Voeg een persoonlijk bericht toe..."
+                        placeholder={t('payment.personalMessagePlaceholder')}
                         rows={2}
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
                       />
@@ -347,7 +349,7 @@ export function PaymentLinkSelector({
                         className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 flex items-center gap-1"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        Preview
+                        {t('payment.preview')}
                       </a>
                       <button
                         type="button"
@@ -360,7 +362,7 @@ export function PaymentLinkSelector({
                         ) : (
                           <>
                             <Send className="w-4 h-4" />
-                            Versturen
+                            {t('payment.send')}
                           </>
                         )}
                       </button>

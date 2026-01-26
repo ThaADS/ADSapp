@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface TwilioSetupProps {
   onComplete: (credentials: TwilioCredentials) => void
@@ -20,6 +21,7 @@ interface TwilioCredentials {
 type ValidationStatus = 'idle' | 'validating' | 'valid' | 'invalid'
 
 export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
+  const t = useTranslations('onboarding')
   const [step, setStep] = useState(1)
   const [credentials, setCredentials] = useState({
     accountSid: '',
@@ -87,14 +89,18 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
     }
   }
 
+  const step1Instructions = [
+    t('twilio.step1.instructions.0'),
+    t('twilio.step1.instructions.1'),
+    t('twilio.step1.instructions.2'),
+  ]
+
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Connect via Twilio</h2>
-        <p className="mt-2 text-gray-600">
-          Use your existing Twilio account for WhatsApp messaging
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('twilio.title')}</h2>
+        <p className="mt-2 text-gray-600">{t('twilio.description')}</p>
       </div>
 
       {/* Progress Indicator */}
@@ -113,7 +119,7 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
               {stepNumber < step ? '✓' : stepNumber}
             </div>
             <span className={`text-sm ${stepNumber === step ? 'font-medium' : 'text-gray-500'}`}>
-              {stepNumber === 1 ? 'Account' : 'Phone Number'}
+              {stepNumber === 1 ? t('twilio.steps.account') : t('twilio.steps.phoneNumber')}
             </span>
             {stepNumber < 2 && <div className="h-px w-8 bg-gray-300" />}
           </div>
@@ -125,19 +131,17 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
         {step === 1 && (
           <div className="space-y-6">
             <div>
-              <h3 className="mb-2 text-xl font-semibold">Step 1: Twilio Account Credentials</h3>
-              <p className="text-gray-600">
-                Enter your Twilio Account SID and Auth Token from the Twilio Console
-              </p>
+              <h3 className="mb-2 text-xl font-semibold">{t('twilio.step1.title')}</h3>
+              <p className="text-gray-600">{t('twilio.step1.description')}</p>
             </div>
 
             {/* Where to find */}
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <h4 className="mb-2 font-semibold text-blue-900">Where to find these:</h4>
+              <h4 className="mb-2 font-semibold text-blue-900">{t('twilio.step1.whereToFind')}</h4>
               <ol className="space-y-2 text-sm text-blue-800">
-                <li>1. Log in to your Twilio Console at console.twilio.com</li>
-                <li>2. Your Account SID and Auth Token are shown on the dashboard</li>
-                <li>3. Click the eye icon to reveal your Auth Token</li>
+                {step1Instructions.map((instruction, idx) => (
+                  <li key={idx}>{idx + 1}. {instruction}</li>
+                ))}
               </ol>
               <a
                 href="https://console.twilio.com/"
@@ -145,31 +149,33 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
               >
-                Open Twilio Console →
+                {t('twilio.step1.openConsole')} →
               </a>
             </div>
 
             {/* Account SID */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Account SID
+              <label htmlFor="accountSid" className="mb-2 block text-sm font-medium text-gray-700">
+                {t('twilio.step1.accountSid')}
               </label>
               <input
+                id="accountSid"
                 type="text"
                 value={credentials.accountSid}
                 onChange={e => handleFieldChange('accountSid', e.target.value)}
-                placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                placeholder={t('twilio.step1.accountSidPlaceholder')}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
               />
-              <p className="mt-1 text-xs text-gray-500">Starts with "AC" followed by 32 characters</p>
+              <p className="mt-1 text-xs text-gray-500">{t('twilio.step1.accountSidHelper')}</p>
             </div>
 
             {/* Auth Token */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Auth Token
+              <label htmlFor="authToken" className="mb-2 block text-sm font-medium text-gray-700">
+                {t('twilio.step1.authToken')}
               </label>
               <input
+                id="authToken"
                 type="password"
                 value={credentials.authToken}
                 onChange={e => handleFieldChange('authToken', e.target.value)}
@@ -183,21 +189,19 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h3 className="mb-2 text-xl font-semibold">Step 2: WhatsApp Phone Number</h3>
-              <p className="text-gray-600">
-                Enter your Twilio WhatsApp-enabled phone number
-              </p>
+              <h3 className="mb-2 text-xl font-semibold">{t('twilio.step2.title')}</h3>
+              <p className="text-gray-600">{t('twilio.step2.description')}</p>
             </div>
 
             {/* Setup Notice */}
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-              <h4 className="mb-2 font-semibold text-yellow-900">⚠️ WhatsApp Sandbox vs Production</h4>
+              <h4 className="mb-2 font-semibold text-yellow-900">⚠️ {t('twilio.step2.sandboxNotice')}</h4>
               <div className="space-y-2 text-sm text-yellow-800">
                 <p>
-                  <strong>For testing:</strong> Use Twilio's WhatsApp Sandbox number (+14155238886)
+                  <strong>{t('twilio.step2.forTesting')}</strong> {t('twilio.step2.testingInfo')}
                 </p>
                 <p>
-                  <strong>For production:</strong> You need a Twilio phone number with WhatsApp enabled
+                  <strong>{t('twilio.step2.forProduction')}</strong> {t('twilio.step2.productionInfo')}
                 </p>
                 <a
                   href="https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn"
@@ -205,44 +209,45 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 font-medium text-yellow-700 underline"
                 >
-                  Learn about WhatsApp on Twilio →
+                  {t('twilio.step2.learnMore')} →
                 </a>
               </div>
             </div>
 
             {/* Phone Number */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                WhatsApp Phone Number
+              <label htmlFor="phoneNumber" className="mb-2 block text-sm font-medium text-gray-700">
+                {t('twilio.step2.phoneNumber')}
               </label>
               <input
+                id="phoneNumber"
                 type="text"
                 value={credentials.phoneNumber}
                 onChange={e => handleFieldChange('phoneNumber', e.target.value)}
-                placeholder="+1234567890"
+                placeholder={t('twilio.step2.phoneNumberPlaceholder')}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               />
-              <p className="mt-1 text-xs text-gray-500">Include country code (e.g., +1 for US)</p>
+              <p className="mt-1 text-xs text-gray-500">{t('twilio.step2.phoneNumberHelper')}</p>
             </div>
 
             {/* Validation Status */}
             {validation === 'validating' && (
               <div className="flex items-center gap-2 text-blue-600">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-                <span>Validating credentials...</span>
+                <span>{t('twilio.step2.validating')}</span>
               </div>
             )}
 
             {validation === 'valid' && (
               <div className="flex items-center gap-2 text-green-600">
                 <span>✓</span>
-                <span>Credentials validated successfully!</span>
+                <span>{t('twilio.step2.validSuccess')}</span>
               </div>
             )}
 
             {validation === 'invalid' && error && (
               <div className="rounded-lg bg-red-50 p-3 text-red-700">
-                <strong>Validation failed:</strong> {error}
+                <strong>{t('twilio.step2.validationFailed')}</strong> {error}
               </div>
             )}
           </div>
@@ -253,35 +258,39 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
           <div className="flex gap-3">
             {step > 1 && (
               <button
+                type="button"
                 onClick={() => setStep(step - 1)}
                 className="rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200"
               >
-                ← Back
+                ← {t('navigation.back')}
               </button>
             )}
             <button
+              type="button"
               onClick={onSkip}
               className="px-6 py-2 text-gray-600 underline hover:text-gray-800"
             >
-              Skip for now
+              {t('navigation.skipForNow')}
             </button>
           </div>
 
           {step < 2 ? (
             <button
+              type="button"
               onClick={() => setStep(step + 1)}
               disabled={!canProceed()}
               className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
-              Continue →
+              {t('navigation.continue')} →
             </button>
           ) : (
             <button
+              type="button"
               onClick={handleComplete}
               disabled={!canProceed() || validation === 'validating'}
               className="rounded-lg bg-green-600 px-8 py-3 font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
-              {validation === 'validating' ? 'Validating...' : 'Connect Twilio ✓'}
+              {validation === 'validating' ? t('twilio.step2.validating') : t('twilio.connectButton') + ' ✓'}
             </button>
           )}
         </div>
@@ -289,42 +298,34 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
 
       {/* Twilio Benefits */}
       <div className="rounded-lg bg-gray-50 p-6">
-        <h4 className="mb-3 font-semibold text-gray-900">Why use Twilio for WhatsApp?</h4>
+        <h4 className="mb-3 font-semibold text-gray-900">{t('twilio.benefits.title')}</h4>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex items-start gap-3">
             <span className="text-2xl">🔗</span>
             <div>
-              <h5 className="font-medium text-gray-900">Unified Platform</h5>
-              <p className="text-sm text-gray-600">
-                Manage SMS, WhatsApp, and Voice in one place
-              </p>
+              <h5 className="font-medium text-gray-900">{t('twilio.benefits.unifiedPlatform')}</h5>
+              <p className="text-sm text-gray-600">{t('twilio.benefits.unifiedPlatformDesc')}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="text-2xl">📊</span>
             <div>
-              <h5 className="font-medium text-gray-900">Detailed Analytics</h5>
-              <p className="text-sm text-gray-600">
-                Track message delivery and engagement
-              </p>
+              <h5 className="font-medium text-gray-900">{t('twilio.benefits.detailedAnalytics')}</h5>
+              <p className="text-sm text-gray-600">{t('twilio.benefits.detailedAnalyticsDesc')}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="text-2xl">💰</span>
             <div>
-              <h5 className="font-medium text-gray-900">Pay-as-you-go</h5>
-              <p className="text-sm text-gray-600">
-                Only pay for messages you send
-              </p>
+              <h5 className="font-medium text-gray-900">{t('twilio.benefits.payAsYouGo')}</h5>
+              <p className="text-sm text-gray-600">{t('twilio.benefits.payAsYouGoDesc')}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="text-2xl">🔒</span>
             <div>
-              <h5 className="font-medium text-gray-900">Enterprise Security</h5>
-              <p className="text-sm text-gray-600">
-                SOC 2, HIPAA, and GDPR compliant
-              </p>
+              <h5 className="font-medium text-gray-900">{t('twilio.benefits.enterpriseSecurity')}</h5>
+              <p className="text-sm text-gray-600">{t('twilio.benefits.enterpriseSecurityDesc')}</p>
             </div>
           </div>
         </div>
@@ -333,14 +334,14 @@ export function TwilioSetup({ onComplete, onSkip }: TwilioSetupProps) {
       {/* Don't have Twilio? */}
       <div className="text-center">
         <p className="text-sm text-gray-500">
-          Don't have a Twilio account?{' '}
+          {t('twilio.noAccount')}{' '}
           <a
             href="https://www.twilio.com/try-twilio"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-blue-600 hover:text-blue-700"
           >
-            Sign up for free
+            {t('twilio.signUpFree')}
           </a>
         </p>
       </div>

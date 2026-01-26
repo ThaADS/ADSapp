@@ -1,0 +1,54 @@
+{
+    "title": "WhatsApp Configuration",
+    "subtitle": "Manage your WhatsApp Business API connection and settings.",
+    "status": {
+        "title": "Connection Status",
+        "connected": "Connected",
+        "disconnected": "Not connected",
+        "error": "Connection error",
+        "checking": "Checking status..."
+    },
+    "account": {
+        "title": "WhatsApp Business Account",
+        "phoneNumber": "Phone Number",
+        "businessName": "Business Name",
+        "quality": "Quality Score",
+        "tier": "Messaging Tier",
+        "verified": "Verified"
+    },
+    "setup": {
+        "title": "Set up WhatsApp",
+        "description": "Follow the steps to configure your WhatsApp Business API.",
+        "step1": "Create a Meta Business Account",
+        "step2": "Configure WhatsApp Business API",
+        "step3": "Add phone number",
+        "step4": "Verify your business",
+        "connect": "Connect to WhatsApp",
+        "disconnect": "Disconnect"
+    },
+    "webhook": {
+        "title": "Webhook Configuration",
+        "url": "Webhook URL",
+        "verifyToken": "Verify Token",
+        "copy": "Copy",
+        "copied": "Copied!"
+    },
+    "templates": {
+        "title": "Sync Templates",
+        "sync": "Sync Templates",
+        "lastSync": "Last synced",
+        "syncing": "Syncing..."
+    },
+    "limits": {
+        "title": "Message Limits",
+        "daily": "Daily",
+        "remaining": "Remaining",
+        "used": "Used"
+    },
+    "toasts": {
+        "connected": "Successfully connected to WhatsApp",
+        "disconnected": "WhatsApp connection disconnected",
+        "syncSuccess": "Templates synced successfully",
+        "error": "An error occurred"
+    }
+}

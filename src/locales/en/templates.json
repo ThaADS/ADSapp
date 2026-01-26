@@ -1,0 +1,47 @@
+{
+    "title": "Message Templates",
+    "subtitle": "Create and manage WhatsApp message templates for your business.",
+    "actions": {
+        "create": "Create Template",
+        "edit": "Edit",
+        "delete": "Delete",
+        "duplicate": "Duplicate",
+        "preview": "Preview",
+        "save": "Save",
+        "cancel": "Cancel"
+    },
+    "form": {
+        "name": "Template Name",
+        "namePlaceholder": "e.g., Welcome Message",
+        "category": "Category",
+        "language": "Language",
+        "content": "Message Content",
+        "contentPlaceholder": "Type your message template here...",
+        "variables": "Variables",
+        "variablesHelp": "Use {{1}}, {{2}}, etc. for dynamic values",
+        "header": "Header",
+        "footer": "Footer",
+        "buttons": "Buttons"
+    },
+    "categories": {
+        "marketing": "Marketing",
+        "utility": "Utility",
+        "authentication": "Authentication"
+    },
+    "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+    },
+    "list": {
+        "empty": "No templates yet",
+        "emptyDescription": "Create your first message template to get started.",
+        "searchPlaceholder": "Search templates..."
+    },
+    "toasts": {
+        "created": "Template created successfully",
+        "updated": "Template updated successfully",
+        "deleted": "Template deleted successfully",
+        "error": "An error occurred"
+    }
+}

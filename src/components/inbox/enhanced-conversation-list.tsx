@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { ConversationFilterManager, FilterCriteria, QuickFilter } from '@/lib/whatsapp/filters'
 import { WhatsAppSearchEngine, SearchQueryBuilder } from '@/lib/whatsapp/search'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Conversation {
   id: string
@@ -63,9 +64,10 @@ interface AdvancedFiltersProps {
   criteria: FilterCriteria
   onChange: (criteria: FilterCriteria) => void
   onClose: () => void
+  t: (key: string, params?: Record<string, string | number>) => string
 }
 
-function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) {
+function AdvancedFilters({ criteria, onChange, onClose, t }: AdvancedFiltersProps) {
   const [tempCriteria, setTempCriteria] = useState<FilterCriteria>(criteria)
 
   const handleApply = () => {
@@ -82,8 +84,8 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
   return (
     <div className='absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border border-gray-200 bg-white p-4 shadow-lg'>
       <div className='mb-4 flex items-center justify-between'>
-        <h3 className='text-sm font-medium text-gray-900'>Advanced Filters</h3>
-        <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
+        <h3 className='text-sm font-medium text-gray-900'>{t('filters.title')}</h3>
+        <button type='button' onClick={onClose} className='text-gray-400 hover:text-gray-600'>
           <X className='h-4 w-4' />
         </button>
       </div>
@@ -91,10 +93,11 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
       <div className='space-y-4'>
         {/* Status Filter */}
         <div>
-          <label className='mb-2 block text-xs font-medium text-gray-700'>Status</label>
+          <label className='mb-2 block text-xs font-medium text-gray-700'>{t('conversationInfo.status')}</label>
           <div className='flex flex-wrap gap-2'>
             {['open', 'pending', 'resolved', 'closed'].map(status => (
               <button
+                type='button'
                 key={status}
                 onClick={() => {
                   const currentStatuses = tempCriteria.status || []
@@ -103,13 +106,12 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
                     : [...currentStatuses, status as any]
                   setTempCriteria({ ...tempCriteria, status: newStatuses })
                 }}
-                className={`rounded-full border px-3 py-1 text-xs ${
-                  tempCriteria.status?.includes(status as any)
+                className={`rounded-full border px-3 py-1 text-xs ${tempCriteria.status?.includes(status as any)
                     ? 'border-blue-200 bg-blue-100 text-blue-800'
                     : 'border-gray-200 bg-gray-100 text-gray-600'
-                }`}
+                  }`}
               >
-                {status}
+                {t(`status.${status}`)}
               </button>
             ))}
           </div>
@@ -117,10 +119,11 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
 
         {/* Priority Filter */}
         <div>
-          <label className='mb-2 block text-xs font-medium text-gray-700'>Priority</label>
+          <label className='mb-2 block text-xs font-medium text-gray-700'>{t('conversationInfo.priority')}</label>
           <div className='flex flex-wrap gap-2'>
             {['low', 'medium', 'high', 'urgent'].map(priority => (
               <button
+                type='button'
                 key={priority}
                 onClick={() => {
                   const currentPriorities = tempCriteria.priority || []
@@ -129,13 +132,12 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
                     : [...currentPriorities, priority as any]
                   setTempCriteria({ ...tempCriteria, priority: newPriorities })
                 }}
-                className={`rounded-full border px-3 py-1 text-xs ${
-                  tempCriteria.priority?.includes(priority as any)
+                className={`rounded-full border px-3 py-1 text-xs ${tempCriteria.priority?.includes(priority as any)
                     ? 'border-blue-200 bg-blue-100 text-blue-800'
                     : 'border-gray-200 bg-gray-100 text-gray-600'
-                }`}
+                  }`}
               >
-                {priority}
+                {t(`priority.${priority === 'medium' ? 'normal' : priority}`)}
               </button>
             ))}
           </div>
@@ -143,7 +145,7 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
 
         {/* Date Range Filter */}
         <div>
-          <label className='mb-2 block text-xs font-medium text-gray-700'>Date Range</label>
+          <label className='mb-2 block text-xs font-medium text-gray-700'>{t('filters.dateRange')}</label>
           <div className='flex space-x-2'>
             <input
               type='date'
@@ -183,16 +185,18 @@ function AdvancedFilters({ criteria, onChange, onClose }: AdvancedFiltersProps) 
         {/* Actions */}
         <div className='flex justify-end space-x-2 border-t border-gray-200 pt-2'>
           <button
+            type='button'
             onClick={handleReset}
             className='px-3 py-1 text-xs text-gray-600 hover:text-gray-800'
           >
-            Reset
+            {t('filters.reset')}
           </button>
           <button
+            type='button'
             onClick={handleApply}
             className='rounded-md bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700'
           >
-            Apply Filters
+            {t('filters.apply')}
           </button>
         </div>
       </div>
@@ -209,6 +213,7 @@ export default function EnhancedConversationList({
   initialConversationId,
   onConversationsLoaded,
 }: ConversationListProps) {
+  const t = useTranslations('inbox')
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -243,8 +248,8 @@ export default function EnhancedConversationList({
     setQuickFilters([
       {
         id: 'all',
-        name: 'All',
-        description: 'All conversations',
+        name: t('filters.all'),
+        description: t('conversations'),
         icon: 'inbox',
         criteria: {},
         sortBy: { field: 'last_message_at', direction: 'desc' },
@@ -376,11 +381,11 @@ export default function EnhancedConversationList({
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
     if (diffInHours < 1) {
-      return `${Math.floor(diffInHours * 60)}m ago`
+      return t('time.minutesAgo', { count: Math.floor(diffInHours * 60) })
     } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h ago`
+      return t('time.hoursAgo', { count: Math.floor(diffInHours) })
     } else if (diffInHours < 168) {
-      return `${Math.floor(diffInHours / 24)}d ago`
+      return t('time.daysAgo', { count: Math.floor(diffInHours / 24) })
     } else {
       return date.toLocaleDateString()
     }
@@ -401,8 +406,9 @@ export default function EnhancedConversationList({
       {/* Header */}
       <div className='relative border-b border-gray-200 p-4'>
         <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-lg font-semibold text-gray-900'>Conversations</h2>
+          <h2 className='text-lg font-semibold text-gray-900'>{t('conversations')}</h2>
           <button
+            type='button'
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
           >
@@ -415,7 +421,7 @@ export default function EnhancedConversationList({
           <Search className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
           <input
             type='text'
-            placeholder='Search conversations, contacts, messages...'
+            placeholder={t('search.placeholder')}
             value={searchQuery}
             onChange={e => {
               setSearchQuery(e.target.value)
@@ -446,21 +452,43 @@ export default function EnhancedConversationList({
           )}
         </div>
 
-        {/* Quick Filters */}
-        <div className='mt-3 flex flex-wrap gap-1'>
-          {quickFilters.map(filter => (
-            <button
-              key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              className={`rounded-full px-3 py-1 text-xs transition-colors ${
-                activeFilter === filter.id
-                  ? 'border border-blue-200 bg-blue-100 text-blue-800'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {filter.name}
-            </button>
-          ))}
+        {/* Quick Filters - Organized by Category */}
+        <div className='mt-3 space-y-2'>
+          {/* Main Filters (All + Category Tags) */}
+          <div className='flex flex-wrap gap-1.5'>
+            {quickFilters
+              .filter(f => f.id === 'all' || ['sales', 'leads', 'follow-up', 'service', 'backoffice', 'administratie'].includes(f.id))
+              .map(filter => (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${activeFilter === filter.id
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent hover:border-gray-300'
+                    }`}
+                >
+                  {filter.name}
+                </button>
+              ))}
+          </div>
+
+          {/* Agent Filters */}
+          <div className='flex flex-wrap gap-1.5'>
+            {quickFilters
+              .filter(f => f.id.startsWith('agent-'))
+              .map(filter => (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${activeFilter === filter.id
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                    }`}
+                >
+                  {filter.name}
+                </button>
+              ))}
+          </div>
         </div>
 
         {/* Advanced Filters */}
@@ -469,6 +497,7 @@ export default function EnhancedConversationList({
             criteria={filterCriteria}
             onChange={handleFilterChange}
             onClose={() => setShowAdvancedFilters(false)}
+            t={t}
           />
         )}
       </div>
@@ -492,11 +521,11 @@ export default function EnhancedConversationList({
         ) : conversations.length === 0 ? (
           <div className='p-8 text-center text-gray-500'>
             <MessageSquare className='mx-auto mb-4 h-12 w-12 text-gray-300' />
-            <p className='mb-2 text-lg font-medium'>No conversations found</p>
+            <p className='mb-2 text-lg font-medium'>{t('list.noConversationsFound')}</p>
             <p className='text-sm'>
               {searchQuery || Object.keys(filterCriteria).length > 0
-                ? 'Try adjusting your search or filters'
-                : 'Connect your WhatsApp to start receiving messages'}
+                ? t('filters.adjustFilters')
+                : t('noConversationsDescription')}
             </p>
           </div>
         ) : (
@@ -507,10 +536,9 @@ export default function EnhancedConversationList({
                 onClick={() => onConversationSelect(conversation)}
                 className={`
                   cursor-pointer rounded-lg border-2 p-3 transition-all
-                  ${
-                    selectedConversationId === conversation.id
-                      ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                  ${selectedConversationId === conversation.id
+                    ? 'border-blue-500 bg-blue-50 shadow-sm'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
                   }
                 `}
               >
@@ -543,9 +571,8 @@ export default function EnhancedConversationList({
                     {/* Name and Status Row */}
                     <div className='mb-1 flex items-center space-x-2'>
                       <h3
-                        className={`truncate text-sm font-medium text-gray-900 ${
-                          conversation.unread_count > 0 ? 'font-semibold' : ''
-                        }`}
+                        className={`truncate text-sm font-medium text-gray-900 ${conversation.unread_count > 0 ? 'font-semibold' : ''
+                          }`}
                       >
                         {conversation.contact.name || conversation.contact.phone_number}
                       </h3>
@@ -554,7 +581,7 @@ export default function EnhancedConversationList({
                         <span
                           className={`flex-shrink-0 rounded border px-1.5 py-0.5 text-xs font-medium ${getPriorityColor(conversation.priority)}`}
                         >
-                          {conversation.priority}
+                          {t(`priority.${conversation.priority}`)}
                         </span>
                       )}
                     </div>
@@ -572,11 +599,10 @@ export default function EnhancedConversationList({
                         {conversation.tags.slice(0, 3).map((tag, index) => (
                           <span
                             key={tag}
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                              index === 0 ? 'bg-blue-100 text-blue-800' :
-                              index === 1 ? 'bg-purple-100 text-purple-800' :
-                              'bg-pink-100 text-pink-800'
-                            }`}
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${index === 0 ? 'bg-blue-100 text-blue-800' :
+                                index === 1 ? 'bg-purple-100 text-purple-800' :
+                                  'bg-pink-100 text-pink-800'
+                              }`}
                           >
                             <Tag className='mr-1 h-3 w-3' />
                             {tag}
@@ -597,12 +623,11 @@ export default function EnhancedConversationList({
                           {getMessageTypeIcon(conversation.last_message.message_type)}
                         </div>
                         <p
-                          className={`line-clamp-2 text-sm text-gray-600 ${
-                            conversation.unread_count > 0 ? 'font-medium text-gray-800' : ''
-                          }`}
+                          className={`line-clamp-2 text-sm text-gray-600 ${conversation.unread_count > 0 ? 'font-medium text-gray-800' : ''
+                            }`}
                         >
                           {conversation.last_message.sender_type === 'agent' && (
-                            <span className='mr-1 text-blue-600'>You:</span>
+                            <span className='mr-1 text-blue-600'>{t('message.you')}:</span>
                           )}
                           {conversation.last_message.message_type === 'text'
                             ? conversation.last_message.content
@@ -631,7 +656,7 @@ export default function EnhancedConversationList({
                   </div>
 
                   {/* More Options */}
-                  <button className='rounded p-1 text-gray-400 hover:text-gray-600'>
+                  <button type='button' className='rounded p-1 text-gray-400 hover:text-gray-600'>
                     <MoreVertical className='h-4 w-4' />
                   </button>
                 </div>
@@ -645,11 +670,12 @@ export default function EnhancedConversationList({
       {conversations.length > 0 && (
         <div className='border-t border-gray-200 p-4'>
           <button
+            type='button'
             onClick={loadConversations}
             disabled={loading}
             className='w-full rounded-md py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-800 disabled:opacity-50'
           >
-            {loading ? 'Loading...' : 'Load more conversations'}
+            {loading ? t('list.loading') : t('list.loadMore')}
           </button>
         </div>
       )}

@@ -1,19 +1,5 @@
 import Link from 'next/link'
-
-// Simple time formatter until we install date-fns
-function formatDistanceToNow(date: Date, options?: { addSuffix?: boolean }) {
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m${options?.addSuffix ? ' ago' : ''}`
-  if (diffHours < 24) return `${diffHours}h${options?.addSuffix ? ' ago' : ''}`
-  if (diffDays < 30) return `${diffDays}d${options?.addSuffix ? ' ago' : ''}`
-  return date.toLocaleDateString()
-}
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Conversation {
   id: string
@@ -37,6 +23,23 @@ interface RecentConversationsProps {
 }
 
 export function RecentConversations({ conversations }: RecentConversationsProps) {
+  const t = useTranslations('dashboard')
+
+  // Simple time formatter using translations
+  const formatTime = (date: Date, options?: { addSuffix?: boolean }) => {
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMins / 60)
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffMins < 1) return t('activity.justNow')
+    if (diffMins < 60) return `${diffMins}${t('time.m')}${options?.addSuffix ? ` ${t('activity.ago')}` : ''}`
+    if (diffHours < 24) return `${diffHours}${t('time.h')}${options?.addSuffix ? ` ${t('activity.ago')}` : ''}`
+    if (diffDays < 30) return `${diffDays}${t('time.d')}${options?.addSuffix ? ` ${t('activity.ago')}` : ''}`
+    return date.toLocaleDateString()
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open':
@@ -68,9 +71,9 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
             d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
           />
         </svg>
-        <h3 className='mt-2 text-sm font-medium text-gray-900'>No conversations</h3>
+        <h3 className='mt-2 text-sm font-medium text-gray-900'>{t('conversationList.noConversationsTitle')}</h3>
         <p className='mt-1 text-sm text-gray-500'>
-          Start by connecting your WhatsApp Business account.
+          {t('conversationList.startByConnecting')}
         </p>
       </div>
     )
@@ -101,7 +104,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
                   </p>
                 )}
                 <p className='text-xs text-gray-400'>
-                  {formatDistanceToNow(new Date(conversation.updated_at), { addSuffix: true })}
+                  {formatTime(new Date(conversation.updated_at), { addSuffix: true })}
                 </p>
               </div>
               <div className='flex flex-shrink-0 items-center space-x-2'>
@@ -110,13 +113,13 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
                     conversation.status
                   )}`}
                 >
-                  {conversation.status}
+                  {t(`status.${conversation.status}` as any)}
                 </span>
                 <Link
                   href={`/dashboard/inbox?conversation=${conversation.id}`}
                   className='text-sm font-medium text-emerald-600 hover:text-emerald-900'
                 >
-                  View
+                  {t('common.view')}
                 </Link>
               </div>
             </div>
@@ -128,7 +131,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
           href='/dashboard/inbox'
           className='text-sm font-medium text-emerald-600 hover:text-emerald-500'
         >
-          View all conversations →
+          {t('conversationList.viewAllConversations')} →
         </Link>
       </div>
     </div>

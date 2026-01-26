@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface WhatsAppSetupWizardProps {
   onComplete: (credentials: WhatsAppCredentials) => void
@@ -24,6 +24,7 @@ interface FieldValidation {
 }
 
 export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardProps) {
+  const t = useTranslations('onboarding')
   const [step, setStep] = useState(1)
   const [credentials, setCredentials] = useState<WhatsAppCredentials>({
     phoneNumberId: '',
@@ -66,7 +67,6 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
   const handleFieldChange = (field: keyof WhatsAppCredentials, value: string) => {
     setCredentials(prev => ({ ...prev, [field]: value }))
 
-    // Trigger validation after user stops typing (debounced)
     if (field === 'phoneNumberId') {
       const timeoutId = setTimeout(() => validatePhoneNumberId(value), 500)
       return () => clearTimeout(timeoutId)
@@ -90,14 +90,35 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
     onComplete(credentials)
   }
 
+  // Instructions arrays for translations
+  const step1Instructions = [
+    t('whatsapp.step1.instructions.0'),
+    t('whatsapp.step1.instructions.1'),
+    t('whatsapp.step1.instructions.2'),
+    t('whatsapp.step1.instructions.3'),
+  ]
+
+  const step2Instructions = [
+    t('whatsapp.step2.instructions.0'),
+    t('whatsapp.step2.instructions.1'),
+    t('whatsapp.step2.instructions.2'),
+  ]
+
+  const step3Instructions = [
+    t('whatsapp.step3.instructions.0'),
+    t('whatsapp.step3.instructions.1'),
+    t('whatsapp.step3.instructions.2'),
+    t('whatsapp.step3.instructions.3'),
+    t('whatsapp.step3.instructions.4'),
+    t('whatsapp.step3.instructions.5'),
+  ]
+
   return (
     <div className='mx-auto max-w-4xl space-y-6 p-6'>
       {/* Header */}
       <div className='text-center'>
-        <h2 className='text-2xl font-bold text-gray-900'>WhatsApp Business Setup</h2>
-        <p className='mt-2 text-gray-600'>
-          Connect your WhatsApp Business account in a few simple steps
-        </p>
+        <h2 className='text-2xl font-bold text-gray-900'>{t('whatsapp.title')}</h2>
+        <p className='mt-2 text-gray-600'>{t('whatsapp.description')}</p>
       </div>
 
       {/* Progress Bar */}
@@ -155,10 +176,8 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
         {step === 1 && (
           <div className='space-y-6'>
             <div>
-              <h3 className='mb-2 text-xl font-semibold'>Step 1: Phone Number ID</h3>
-              <p className='text-gray-600'>
-                Your Phone Number ID is found in the Meta Business Suite
-              </p>
+              <h3 className='mb-2 text-xl font-semibold'>{t('whatsapp.step1.title')}</h3>
+              <p className='text-gray-600'>{t('whatsapp.step1.description')}</p>
             </div>
 
             {/* Visual Helper with Screenshot */}
@@ -170,21 +189,12 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                   </div>
                 </div>
                 <div className='flex-1'>
-                  <h4 className='mb-2 font-semibold text-blue-900'>Where to find it:</h4>
+                  <h4 className='mb-2 font-semibold text-blue-900'>{t('whatsapp.step1.whereToFind')}</h4>
                   <ol className='space-y-2 text-sm text-blue-800'>
-                    <li>1. Go to Meta Business Suite (business.facebook.com)</li>
-                    <li>2. Click on "WhatsApp Manager" in the left sidebar</li>
-                    <li>3. Select "Phone Numbers"</li>
-                    <li>4. Your Phone Number ID appears next to your phone number</li>
+                    {step1Instructions.map((instruction, idx) => (
+                      <li key={idx}>{idx + 1}. {instruction}</li>
+                    ))}
                   </ol>
-                </div>
-              </div>
-
-              {/* Screenshot placeholder */}
-              <div className='mt-4 rounded-lg border-2 border-dashed border-blue-300 bg-white p-4'>
-                <div className='text-center text-gray-500'>
-                  <p className='text-sm'>Screenshot: Phone Number ID Location</p>
-                  <p className='mt-1 text-xs'>(Annotated image will be placed here)</p>
                 </div>
               </div>
             </div>
@@ -203,7 +213,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                   type='text'
                   value={credentials.phoneNumberId}
                   onChange={e => handleFieldChange('phoneNumberId', e.target.value)}
-                  placeholder='123456789012345'
+                  placeholder={t('whatsapp.step1.placeholder')}
                   className={`w-full rounded-lg border px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                     validation.phoneNumberId === 'valid'
                       ? 'border-green-500 bg-green-50'
@@ -219,12 +229,12 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                 )}
                 {validation.phoneNumberId === 'valid' && (
                   <div className='absolute top-1/2 right-3 -translate-y-1/2 transform text-green-500'>
-                    ✓ Valid
+                    ✓ {t('whatsapp.step1.valid')}
                   </div>
                 )}
                 {validation.phoneNumberId === 'invalid' && (
                   <div className='absolute top-1/2 right-3 -translate-y-1/2 transform text-red-500'>
-                    ✕ Invalid
+                    ✕ {t('whatsapp.step1.invalid')}
                   </div>
                 )}
               </div>
@@ -232,7 +242,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
 
             {/* Help Links */}
             <div className='space-y-2 rounded-lg bg-gray-50 p-4'>
-              <h4 className='font-semibold text-gray-900'>Need Help?</h4>
+              <h4 className='font-semibold text-gray-900'>{t('whatsapp.help.title')}</h4>
               <ul className='space-y-2'>
                 <li>
                   <button
@@ -240,7 +250,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                     className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
                   >
                     <span>📹</span>
-                    Watch video tutorial (2 min)
+                    {t('whatsapp.help.watchVideo')}
                   </button>
                 </li>
                 <li>
@@ -251,7 +261,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                     className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
                   >
                     <span>📚</span>
-                    Read detailed setup guide
+                    {t('whatsapp.help.readGuide')}
                   </a>
                 </li>
                 <li>
@@ -262,7 +272,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                     className='flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700'
                   >
                     <span>💬</span>
-                    Chat with support
+                    {t('whatsapp.help.chatSupport')}
                   </button>
                 </li>
               </ul>
@@ -274,18 +284,16 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
         {step === 2 && (
           <div className='space-y-6'>
             <div>
-              <h3 className='mb-2 text-xl font-semibold'>Step 2: Business Account ID</h3>
-              <p className='text-gray-600'>
-                Your Business Account ID identifies your WhatsApp Business Account
-              </p>
+              <h3 className='mb-2 text-xl font-semibold'>{t('whatsapp.step2.title')}</h3>
+              <p className='text-gray-600'>{t('whatsapp.step2.description')}</p>
             </div>
 
             <div className='rounded-lg border border-blue-200 bg-blue-50 p-4'>
-              <h4 className='mb-2 font-semibold text-blue-900'>Where to find it:</h4>
+              <h4 className='mb-2 font-semibold text-blue-900'>{t('whatsapp.step2.whereToFind')}</h4>
               <ol className='space-y-2 text-sm text-blue-800'>
-                <li>1. In Meta Business Suite, go to "Business Settings"</li>
-                <li>2. Click on "WhatsApp Accounts" in the left sidebar</li>
-                <li>3. Your Business Account ID appears under your account name</li>
+                {step2Instructions.map((instruction, idx) => (
+                  <li key={idx}>{idx + 1}. {instruction}</li>
+                ))}
               </ol>
             </div>
 
@@ -301,7 +309,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                 type='text'
                 value={credentials.businessAccountId}
                 onChange={e => handleFieldChange('businessAccountId', e.target.value)}
-                placeholder='123456789012345'
+                placeholder={t('whatsapp.step2.placeholder')}
                 className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500'
               />
             </div>
@@ -312,36 +320,26 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
         {step === 3 && (
           <div className='space-y-6'>
             <div>
-              <h3 className='mb-2 text-xl font-semibold'>Step 3: Access Token</h3>
-              <p className='text-gray-600'>
-                Generate a permanent access token for API authentication
-              </p>
+              <h3 className='mb-2 text-xl font-semibold'>{t('whatsapp.step3.title')}</h3>
+              <p className='text-gray-600'>{t('whatsapp.step3.description')}</p>
             </div>
 
             <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-4'>
               <div className='flex items-start gap-2'>
                 <span className='text-yellow-600'>⚠️</span>
                 <div className='flex-1'>
-                  <h4 className='mb-1 font-semibold text-yellow-900'>Security Notice</h4>
-                  <p className='text-sm text-yellow-800'>
-                    Keep your access token secure. Never share it publicly or commit it to version
-                    control.
-                  </p>
+                  <h4 className='mb-1 font-semibold text-yellow-900'>{t('whatsapp.step3.securityNotice')}</h4>
+                  <p className='text-sm text-yellow-800'>{t('whatsapp.step3.securityWarning')}</p>
                 </div>
               </div>
             </div>
 
             <div className='rounded-lg border border-blue-200 bg-blue-50 p-4'>
-              <h4 className='mb-2 font-semibold text-blue-900'>How to generate:</h4>
+              <h4 className='mb-2 font-semibold text-blue-900'>{t('whatsapp.step3.howToGenerate')}</h4>
               <ol className='space-y-2 text-sm text-blue-800'>
-                <li>1. Go to Meta Business Suite → System Users</li>
-                <li>2. Create a new system user or select existing one</li>
-                <li>3. Click "Generate New Token"</li>
-                <li>4. Select your WhatsApp Business Account</li>
-                <li>
-                  5. Select permissions: whatsapp_business_messaging, whatsapp_business_management
-                </li>
-                <li>6. Click "Generate Token" and copy it immediately</li>
+                {step3Instructions.map((instruction, idx) => (
+                  <li key={idx}>{idx + 1}. {instruction}</li>
+                ))}
               </ol>
             </div>
 
@@ -353,7 +351,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                 id='accessToken'
                 value={credentials.accessToken}
                 onChange={e => handleFieldChange('accessToken', e.target.value)}
-                placeholder='EAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+                placeholder={t('whatsapp.step3.placeholder')}
                 rows={4}
                 className='w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500'
               />
@@ -364,19 +362,17 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                 htmlFor='webhookVerifyToken'
                 className='mb-2 block text-sm font-medium text-gray-700'
               >
-                Webhook Verify Token (Optional)
+                {t('whatsapp.step3.webhookToken')}
               </label>
               <input
                 id='webhookVerifyToken'
                 type='text'
                 value={credentials.webhookVerifyToken}
                 onChange={e => handleFieldChange('webhookVerifyToken', e.target.value)}
-                placeholder='my_secure_verify_token_123'
+                placeholder={t('whatsapp.step3.webhookTokenPlaceholder')}
                 className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500'
               />
-              <p className='mt-1 text-sm text-gray-500'>
-                A custom token to verify webhook requests. Leave empty to auto-generate.
-              </p>
+              <p className='mt-1 text-sm text-gray-500'>{t('whatsapp.step3.webhookTokenHelper')}</p>
             </div>
           </div>
         )}
@@ -389,14 +385,14 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
                 onClick={() => setStep(step - 1)}
                 className='rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200'
               >
-                ← Back
+                ← {t('navigation.back')}
               </button>
             )}
             <button
               onClick={onSkip}
               className='px-6 py-2 text-gray-600 underline hover:text-gray-800'
             >
-              Skip for now - I'll set this up later
+              {t('navigation.skip')}
             </button>
           </div>
 
@@ -406,7 +402,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
               disabled={!canProceedToNextStep()}
               className='rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300'
             >
-              Continue →
+              {t('navigation.continue')} →
             </button>
           ) : (
             <button
@@ -414,7 +410,7 @@ export function WhatsAppSetupWizard({ onComplete, onSkip }: WhatsAppSetupWizardP
               disabled={!canProceedToNextStep()}
               className='rounded-lg bg-green-600 px-8 py-3 font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300'
             >
-              Complete Setup ✓
+              {t('navigation.finish')} ✓
             </button>
           )}
         </div>

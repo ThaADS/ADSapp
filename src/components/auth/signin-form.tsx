@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { GoogleSignInButton } from './google-signin-button'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export function SignInForm() {
+  const t = useTranslations('auth')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -30,13 +32,13 @@ export function SignInForm() {
       const { data, error } = await supabase.auth.signInWithPassword(credentials)
 
       if (error) {
-        setError(`Demo account login failed: ${error.message}`)
+        setError(`${t('demo.loginFailed')}: ${error.message}`)
       } else if (data.user) {
         router.push('/dashboard')
         router.refresh()
       }
     } catch {
-      setError('An unexpected error occurred')
+      setError(t('unexpectedError'))
     } finally {
       setIsLoading(false)
     }
@@ -76,7 +78,7 @@ export function SignInForm() {
         router.refresh()
       }
     } catch {
-      setError('An unexpected error occurred')
+      setError(t('unexpectedError'))
     } finally {
       setIsLoading(false)
     }
@@ -97,7 +99,7 @@ export function SignInForm() {
               d='M10 19l-7-7m0 0l7-7m-7 7h18'
             />
           </svg>
-          Back to homepage
+          {t('backToHomepage')}
         </Link>
       </div>
 
@@ -110,7 +112,7 @@ export function SignInForm() {
           <div className='w-full border-t border-gray-300' />
         </div>
         <div className='relative flex justify-center text-sm'>
-          <span className='bg-white px-2 text-gray-500'>Or continue with email</span>
+          <span className='bg-white px-2 text-gray-500'>{t('orContinueWithEmail')}</span>
         </div>
       </div>
 
@@ -119,7 +121,7 @@ export function SignInForm() {
         <div className='-space-y-px rounded-md shadow-sm'>
           <div>
             <label htmlFor='email-address' className='sr-only'>
-              Email address
+              {t('email')}
             </label>
             <input
               id='email-address'
@@ -128,14 +130,14 @@ export function SignInForm() {
               autoComplete='email'
               required
               className='relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Email address'
+              placeholder={t('email')}
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
           </div>
           <div>
             <label htmlFor='password' className='sr-only'>
-              Password
+              {t('password')}
             </label>
             <input
               id='password'
@@ -144,7 +146,7 @@ export function SignInForm() {
               autoComplete='current-password'
               required
               className='relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Password'
+              placeholder={t('password')}
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
@@ -155,7 +157,7 @@ export function SignInForm() {
           <div className='rounded-md bg-red-50 p-4'>
             <div className='flex'>
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>Authentication Error</h3>
+                <h3 className='text-sm font-medium text-red-800'>{t('authenticationError')}</h3>
                 <div className='mt-2 text-sm text-red-700'>{error}</div>
               </div>
             </div>
@@ -171,7 +173,7 @@ export function SignInForm() {
               className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500'
             />
             <label htmlFor='remember-me' className='ml-2 block text-sm text-gray-900'>
-              Remember me
+              {t('rememberMe')}
             </label>
           </div>
 
@@ -180,7 +182,7 @@ export function SignInForm() {
               href='/auth/forgot-password'
               className='font-medium text-green-600 hover:text-green-500'
             >
-              Forgot your password?
+              {t('forgotPassword')}
             </Link>
           </div>
         </div>
@@ -194,7 +196,7 @@ export function SignInForm() {
             {isLoading ? (
               <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
             ) : (
-              'Sign in'
+              t('signin')
             )}
           </button>
         </div>
@@ -207,7 +209,7 @@ export function SignInForm() {
             <div className='w-full border-t border-gray-300' />
           </div>
           <div className='relative flex justify-center text-sm'>
-            <span className='bg-white px-2 text-gray-500'>Try Demo Account</span>
+            <span className='bg-white px-2 text-gray-500'>{t('demo.title')}</span>
           </div>
         </div>
 
@@ -227,9 +229,9 @@ export function SignInForm() {
               />
             </svg>
             <div className='text-sm text-blue-800'>
-              <p className='font-medium'>Explore with realistic demo data</p>
+              <p className='font-medium'>{t('demo.explore')}</p>
               <p className='mt-1 text-blue-700'>
-                Full access to all features with pre-loaded contacts, conversations, and analytics
+                {t('demo.fullAccess')}
               </p>
             </div>
           </div>
@@ -249,7 +251,7 @@ export function SignInForm() {
                   d='M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'
                 />
               </svg>
-              Owner
+              {t('demo.owner')}
             </button>
 
             <button
@@ -272,7 +274,7 @@ export function SignInForm() {
                   d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
                 />
               </svg>
-              Admin
+              {t('demo.admin')}
             </button>
 
             <button
@@ -289,12 +291,12 @@ export function SignInForm() {
                   d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
                 />
               </svg>
-              Agent
+              {t('demo.agent')}
             </button>
           </div>
 
           <p className='mt-3 text-xs text-blue-600'>
-            💡 Each role has different permissions - try them all to see the full platform
+            💡 {t('demo.rolesHint')}
           </p>
         </div>
       </div>

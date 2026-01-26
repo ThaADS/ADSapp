@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface TypingState {
   agent_id: string
@@ -23,15 +24,17 @@ interface TypingIndicatorProps {
  * ```
  */
 export default function TypingIndicator({ typingAgents, className = '' }: TypingIndicatorProps) {
+  const t = useTranslations('inbox')
+
   if (typingAgents.length === 0) return null
 
   const getTypingText = () => {
     if (typingAgents.length === 1) {
-      return `${typingAgents[0].agent_name} is typing`
+      return t('typingIndicator.isTyping', { name: typingAgents[0].agent_name })
     } else if (typingAgents.length === 2) {
-      return `${typingAgents[0].agent_name} and ${typingAgents[1].agent_name} are typing`
+      return t('typingIndicator.andTyping', { name1: typingAgents[0].agent_name, name2: typingAgents[1].agent_name })
     } else {
-      return `${typingAgents.length} people are typing`
+      return t('typingIndicator.peopleTyping', { count: typingAgents.length })
     }
   }
 
@@ -73,15 +76,17 @@ export default function TypingIndicator({ typingAgents, className = '' }: Typing
  * Simple typing indicator without framer-motion dependency
  */
 export function TypingIndicatorSimple({ typingAgents, className = '' }: TypingIndicatorProps) {
+  const t = useTranslations('inbox')
+
   if (typingAgents.length === 0) return null
 
   const getTypingText = () => {
     if (typingAgents.length === 1) {
-      return `${typingAgents[0].agent_name} is typing`
+      return t('typingIndicator.isTyping', { name: typingAgents[0].agent_name })
     } else if (typingAgents.length === 2) {
-      return `${typingAgents[0].agent_name} and ${typingAgents[1].agent_name} are typing`
+      return t('typingIndicator.andTyping', { name1: typingAgents[0].agent_name, name2: typingAgents[1].agent_name })
     } else {
-      return `${typingAgents.length} people are typing`
+      return t('typingIndicator.peopleTyping', { count: typingAgents.length })
     }
   }
 

@@ -1,0 +1,122 @@
+{
+    "list": {
+        "title": "Broadcast Campaigns",
+        "createButton": "Create New Broadcast",
+        "filters": {
+            "all": "All",
+            "scheduled": "Scheduled",
+            "running": "Running",
+            "completed": "Completed",
+            "draft": "Draft"
+        },
+        "empty": {
+            "title": "No campaigns found",
+            "description": "Create your first broadcast campaign to send bulk messages."
+        },
+        "stats": {
+            "targets": "Audience",
+            "sent": "Sent",
+            "delivered": "Delivered",
+            "deliveryRate": "Delivery Rate",
+            "openRate": "Open Rate",
+            "progress": "Progress",
+            "scheduledFor": "Scheduled for"
+        },
+        "status": {
+            "draft": "Draft",
+            "scheduled": "Scheduled",
+            "running": "Running",
+            "completed": "Completed",
+            "failed": "Failed",
+            "cancelled": "Cancelled",
+            "paused": "Paused"
+        }
+    },
+    "builder": {
+        "title": "Broadcast Campaign Builder",
+        "steps": {
+            "basicInfo": "Basic Info",
+            "audience": "Audience",
+            "message": "Message",
+            "scheduling": "Scheduling",
+            "review": "Review"
+        },
+        "buttons": {
+            "previous": "Previous",
+            "next": "Next",
+            "saveDraft": "Save as Draft",
+            "saving": "Saving...",
+            "sendNow": "Send Now",
+            "schedule": "Schedule",
+            "scheduling": "Processing...",
+            "processing": "Processing..."
+        },
+        "success": {
+            "saved": "Campaign saved",
+            "scheduled": "Campaign scheduled"
+        },
+        "errors": {
+            "saveFailed": "Failed to save campaign",
+            "scheduleFailed": "Failed to schedule campaign",
+            "generic": "An error occurred"
+        }
+    },
+    "common": {
+        "step": "Step {step}"
+    },
+    "drip": {
+        "builder": {
+            "title": "Drip Campaign Builder",
+            "description": "Create a sequence of messages triggered by specific events. Total steps: {steps}",
+            "steps": {
+                "basicInfo": "Basic Info",
+                "trigger": "Trigger",
+                "sequence": "Sequence",
+                "review": "Review"
+            },
+            "buttons": {
+                "saveDraft": "Save Draft",
+                "activate": "Save & Activate",
+                "activating": "Activating..."
+            },
+            "triggers": {
+                "manual": "Manual Trigger",
+                "contact_created": "Contact Created",
+                "tag_added": "Tag Added",
+                "custom_event": "Custom Event",
+                "api": "API Trigger"
+            },
+            "defaults": {
+                "welcomeMessage": "Welcome Message"
+            }
+        },
+        "list": {
+            "title": "Drip Campaigns",
+            "createButton": "New Drip Campaign",
+            "empty": {
+                "title": "No drip campaigns found",
+                "description": "Automate your follow-ups with drip campaigns."
+            },
+            "filters": {
+                "all": "All",
+                "active": "Active",
+                "paused": "Paused",
+                "draft": "Draft",
+                "archived": "Archived"
+            },
+            "stats": {
+                "enrolled": "enrolled",
+                "active": "active",
+                "completed": "completed",
+                "conversion": "conversion"
+            },
+            "actions": {
+                "pause": "Pause",
+                "activate": "Activate",
+                "edit": "Edit",
+                "archive": "Archive",
+                "archiveConfirm": "Are you sure you want to archive \"{name}\"?"
+            }
+        }
+    }
+}

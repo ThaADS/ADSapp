@@ -11,6 +11,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface MFAEnrollmentProps {
   onComplete?: () => void
@@ -23,6 +24,7 @@ interface EnrollmentData {
 }
 
 export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentProps) {
+  const t = useTranslations('auth')
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -59,7 +61,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
   // Step 2: User scans QR code and saves backup codes
   const handleContinueToVerification = () => {
     if (!backupCodesSaved) {
-      setError('Please confirm that you have saved your backup codes securely')
+      setError(t('mfa.confirmSavedCodes'))
       return
     }
     setStep(3)
@@ -68,7 +70,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
   // Step 3: Verify TOTP token
   const handleVerifyToken = async () => {
     if (!/^\d{6}$/.test(verificationToken)) {
-      setError('Verification code must be 6 digits')
+      setError(t('mfa.codeFormat6Digits'))
       return
     }
 
@@ -126,7 +128,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
           ))}
         </div>
         <div className='text-center text-sm text-gray-600'>
-          Step {step} of 3: {step === 1 ? 'Start' : step === 2 ? 'Scan QR Code' : 'Verify'}
+          {t('mfa.stepOf').replace('{step}', String(step)).replace('{total}', '3')}: {step === 1 ? t('mfa.stepStart') : step === 2 ? t('mfa.stepScanQR') : t('mfa.stepVerify')}
         </div>
       </div>
 
@@ -141,19 +143,18 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
       {step === 1 && (
         <div className='space-y-6'>
           <div>
-            <h2 className='mb-2 text-2xl font-bold'>Enable Two-Factor Authentication</h2>
+            <h2 className='mb-2 text-2xl font-bold'>{t('mfa.enrollTitle')}</h2>
             <p className='text-gray-600'>
-              Add an extra layer of security to your account by requiring a verification code from
-              your authenticator app when you sign in.
+              {t('mfa.enrollDescription')}
             </p>
           </div>
 
           <div className='rounded-md bg-blue-50 p-4'>
-            <h3 className='mb-2 font-semibold'>You'll need:</h3>
+            <h3 className='mb-2 font-semibold'>{t('mfa.youllNeed')}</h3>
             <ul className='list-inside list-disc space-y-1 text-sm text-gray-700'>
-              <li>An authenticator app (Google Authenticator, Authy, 1Password, etc.)</li>
-              <li>A secure place to store backup codes</li>
-              <li>5 minutes to complete setup</li>
+              <li>{t('mfa.needAuthenticatorApp')}</li>
+              <li>{t('mfa.needSecurePlace')}</li>
+              <li>{t('mfa.need5Minutes')}</li>
             </ul>
           </div>
 
@@ -163,7 +164,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
               disabled={loading}
               className='flex-1 rounded-md bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {loading ? 'Generating...' : 'Get Started'}
+              {loading ? t('mfa.generating') : t('mfa.getStarted')}
             </button>
             {onCancel && (
               <button
@@ -171,7 +172,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
                 disabled={loading}
                 className='rounded-md border border-gray-300 px-6 py-3 hover:bg-gray-50 disabled:opacity-50'
               >
-                Cancel
+                {t('mfa.cancel')}
               </button>
             )}
           </div>
@@ -182,9 +183,9 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
       {step === 2 && enrollmentData && (
         <div className='space-y-6'>
           <div>
-            <h2 className='mb-2 text-2xl font-bold'>Scan QR Code</h2>
+            <h2 className='mb-2 text-2xl font-bold'>{t('mfa.scanQRCodeTitle')}</h2>
             <p className='text-gray-600'>
-              Open your authenticator app and scan this QR code to add your ADSapp account.
+              {t('mfa.scanQRCodeDescription')}
             </p>
           </div>
 
@@ -192,7 +193,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
           <div className='flex justify-center rounded-lg bg-gray-50 p-6'>
             <Image
               src={enrollmentData.qrCode}
-              alt='MFA QR Code'
+              alt={t('mfa.qrCodeAlt')}
               width={256}
               height={256}
               className='border-4 border-white shadow-lg'
@@ -201,10 +202,9 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
 
           {/* Backup Codes */}
           <div className='rounded-md border border-yellow-200 bg-yellow-50 p-4'>
-            <h3 className='mb-2 font-semibold text-yellow-900'>⚠️ Save Your Backup Codes</h3>
+            <h3 className='mb-2 font-semibold text-yellow-900'>⚠️ {t('mfa.saveBackupCodes')}</h3>
             <p className='mb-3 text-sm text-yellow-800'>
-              These codes can be used if you lose access to your authenticator app. Each code can
-              only be used once.
+              {t('mfa.backupCodesWarning')}
             </p>
             <div className='mb-3 rounded border border-yellow-300 bg-white p-3'>
               <div className='grid grid-cols-2 gap-2 font-mono text-sm'>
@@ -220,7 +220,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
                 onClick={handleDownloadBackupCodes}
                 className='flex-1 rounded-md bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-900 hover:bg-yellow-200'
               >
-                Download Codes
+                {t('mfa.downloadCodes')}
               </button>
               <label className='flex flex-1 cursor-pointer items-center gap-2 rounded-md bg-yellow-100 px-4 py-2 hover:bg-yellow-200'>
                 <input
@@ -229,7 +229,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
                   onChange={e => setBackupCodesSaved(e.target.checked)}
                   className='h-4 w-4'
                 />
-                <span className='text-sm font-medium text-yellow-900'>I've saved these codes</span>
+                <span className='text-sm font-medium text-yellow-900'>{t('mfa.savedCodes')}</span>
               </label>
             </div>
           </div>
@@ -240,14 +240,14 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
               disabled={loading || !backupCodesSaved}
               className='flex-1 rounded-md bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
             >
-              Continue to Verification
+              {t('mfa.continueToVerification')}
             </button>
             <button
               onClick={() => setStep(1)}
               disabled={loading}
               className='rounded-md border border-gray-300 px-6 py-3 hover:bg-gray-50 disabled:opacity-50'
             >
-              Back
+              {t('mfa.back')}
             </button>
           </div>
         </div>
@@ -257,15 +257,15 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
       {step === 3 && (
         <div className='space-y-6'>
           <div>
-            <h2 className='mb-2 text-2xl font-bold'>Verify Your Setup</h2>
+            <h2 className='mb-2 text-2xl font-bold'>{t('mfa.verifySetupTitle')}</h2>
             <p className='text-gray-600'>
-              Enter the 6-digit code from your authenticator app to complete setup.
+              {t('mfa.verifySetupDescription')}
             </p>
           </div>
 
           <div>
             <label htmlFor='token' className='mb-2 block text-sm font-medium text-gray-700'>
-              Verification Code
+              {t('mfa.verificationCode')}
             </label>
             <input
               id='token'
@@ -279,7 +279,7 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
               autoComplete='off'
             />
             <p className='mt-2 text-sm text-gray-500'>
-              The code changes every 30 seconds. Enter the current code from your app.
+              {t('mfa.codeChanges30Sec')}
             </p>
           </div>
 
@@ -289,14 +289,14 @@ export default function MFAEnrollment({ onComplete, onCancel }: MFAEnrollmentPro
               disabled={loading || verificationToken.length !== 6}
               className='flex-1 rounded-md bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
             >
-              {loading ? 'Verifying...' : 'Verify and Enable MFA'}
+              {loading ? t('mfa.verifying') : t('mfa.verifyAndEnable')}
             </button>
             <button
               onClick={() => setStep(2)}
               disabled={loading}
               className='rounded-md border border-gray-300 px-6 py-3 hover:bg-gray-50 disabled:opacity-50'
             >
-              Back
+              {t('mfa.back')}
             </button>
           </div>
         </div>

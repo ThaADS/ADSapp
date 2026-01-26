@@ -7,9 +7,9 @@ import {
   TrashIcon,
   PencilIcon,
   ClockIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline'
 import type { Profile } from '@/types/database'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface TeamManagementProps {
   profile: Profile
@@ -41,13 +41,6 @@ const ROLE_COLORS = {
   super_admin: 'bg-red-100 text-red-800',
 } as const
 
-const ROLE_LABELS = {
-  owner: 'Owner',
-  admin: 'Admin',
-  agent: 'Agent',
-  super_admin: 'Super Admin',
-} as const
-
 // Memoized TeamMemberRow component
 const TeamMemberRow = memo(
   ({
@@ -56,25 +49,27 @@ const TeamMemberRow = memo(
     ownerCount,
     onEdit,
     onDelete,
+    t,
   }: {
     member: TeamMember
     currentUserId: string
     ownerCount: number
     onEdit: (member: TeamMember) => void
     onDelete: (member: TeamMember) => void
+    t: any
   }) => {
     const formatLastSeen = useCallback((lastSeen: string | null) => {
-      if (!lastSeen) return 'Never'
+      if (!lastSeen) return t('team.never')
       const date = new Date(lastSeen)
       const now = new Date()
       const diff = now.getTime() - date.getTime()
       const minutes = Math.floor(diff / 60000)
 
-      if (minutes < 1) return 'Just now'
-      if (minutes < 60) return `${minutes}m ago`
-      if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`
-      return `${Math.floor(minutes / 1440)}d ago`
-    }, [])
+      if (minutes < 1) return t('profile.time.justNow')
+      if (minutes < 60) return `${minutes}${t('time.m', { defaultValue: 'm' })} ${t('profile.time.ago')}`
+      if (minutes < 1440) return `${Math.floor(minutes / 60)}${t('time.h', { defaultValue: 'h' })} ${t('profile.time.ago')}`
+      return `${Math.floor(minutes / 1440)}${t('time.d', { defaultValue: 'd' })} ${t('profile.time.ago')}`
+    }, [t])
 
     const canEdit = member.id !== currentUserId
     const canDelete = member.id !== currentUserId && !(member.role === 'owner' && ownerCount <= 1)
@@ -96,9 +91,9 @@ const TeamMemberRow = memo(
             </div>
             <div className='ml-4'>
               <div className='text-sm font-medium text-gray-900'>
-                {member.full_name || 'No name set'}
+                {member.full_name || t('team.noNameSet')}
                 {member.id === currentUserId && (
-                  <span className='ml-2 text-xs text-gray-500'>(You)</span>
+                  <span className='ml-2 text-xs text-gray-500'>({t('team.you')})</span>
                 )}
               </div>
               <div className='text-sm text-gray-500'>{member.email}</div>
@@ -107,11 +102,10 @@ const TeamMemberRow = memo(
         </td>
         <td className='px-6 py-4 whitespace-nowrap'>
           <span
-            className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${
-              ROLE_COLORS[member.role]
-            }`}
+            className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${ROLE_COLORS[member.role]
+              }`}
           >
-            {ROLE_LABELS[member.role]}
+            {t(`team.roles.${member.role}` as any)}
           </span>
         </td>
         <td className='px-6 py-4 text-sm whitespace-nowrap text-gray-500'>
@@ -146,6 +140,7 @@ const TeamMemberRow = memo(
 TeamMemberRow.displayName = 'TeamMemberRow'
 
 export function TeamManagement({ profile }: TeamManagementProps) {
+  const t = useTranslations('settings')
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [pendingInvitations, setPendingInvitations] = useState<PendingInvitation[]>([])
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -203,11 +198,11 @@ export function TeamManagement({ profile }: TeamManagementProps) {
         },
       ])
     } catch (err) {
-      setError('Failed to load team data')
+      setError(t('team.loadingError', { defaultValue: 'Failed to load team data' }))
     } finally {
       setLoading(false)
     }
-  }, [profile.organization_id])
+  }, [profile.organization_id, t])
 
   useEffect(() => {
     loadTeamData()
@@ -221,7 +216,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
       setMessage('')
 
       try {
-        setMessage(`Invitation sent to ${inviteForm.email}`)
+        setMessage(t('team.invitationSent', { email: inviteForm.email }))
         setShowInviteModal(false)
         setInviteForm({
           email: '',
@@ -236,12 +231,12 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
         await loadTeamData()
       } catch (err) {
-        setError('Failed to send invitation')
+        setError(t('team.inviteSentError'))
       } finally {
         setActionLoading(false)
       }
     },
-    [inviteForm.email, loadTeamData]
+    [inviteForm.email, loadTeamData, t]
   )
 
   const handleUpdateRole = useCallback(
@@ -262,29 +257,29 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
         if (error) throw error
 
-        setMessage('Role updated successfully')
+        setMessage(t('team.roleUpdated'))
         setShowEditModal(false)
         setSelectedMember(null)
         await loadTeamData()
       } catch (err) {
-        setError('Failed to update role')
+        setError(t('team.updateRoleError'))
       } finally {
         setActionLoading(false)
       }
     },
-    [selectedMember, editForm.role, loadTeamData]
+    [selectedMember, editForm.role, loadTeamData, t]
   )
 
   const handleRemoveMember = useCallback(async () => {
     if (!selectedMember) return
 
     if (selectedMember.id === profile.id) {
-      setError('You cannot remove yourself from the team')
+      setError(t('team.removeSelfError'))
       return
     }
 
     if (selectedMember.role === 'owner' && ownerCount <= 1) {
-      setError('Cannot remove the last owner')
+      setError(t('team.lastOwnerError'))
       return
     }
 
@@ -301,19 +296,20 @@ export function TeamManagement({ profile }: TeamManagementProps) {
 
       if (error) throw error
 
-      setMessage('Team member removed successfully')
+      setMessage(t('team.memberRemoved'))
       setShowDeleteModal(false)
       setSelectedMember(null)
       await loadTeamData()
     } catch (err) {
-      setError('Failed to remove team member')
+      setError(t('team.removeMemberError'))
     } finally {
       setActionLoading(false)
     }
-  }, [selectedMember, profile.id, ownerCount, loadTeamData])
+  }, [selectedMember, profile.id, ownerCount, loadTeamData, t])
 
   const handleCancelInvitation = useCallback((invitationId: string) => {
     setPendingInvitations(prev => prev.filter(i => i.id !== invitationId))
+    // We might want to translate this too
     setMessage('Invitation cancelled')
   }, [])
 
@@ -331,7 +327,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
   if (loading) {
     return (
       <div className='flex h-64 items-center justify-center'>
-        <div className='text-gray-500'>Loading team data...</div>
+        <div className='text-gray-500'>{t('team.loading')}</div>
       </div>
     )
   }
@@ -341,14 +337,17 @@ export function TeamManagement({ profile }: TeamManagementProps) {
       {/* Header Actions */}
       <div className='flex items-center justify-between'>
         <div className='text-sm text-gray-600'>
-          {teamMembers.length} team member{teamMembers.length !== 1 ? 's' : ''}
+          {teamMembers.length}{' '}
+          {teamMembers.length === 1
+            ? t('team.memberCountSingle', { count: teamMembers.length })
+            : t('team.membersCount', { count: teamMembers.length }).replace('{count}', '')}
         </div>
         <button
           onClick={() => setShowInviteModal(true)}
           className='inline-flex items-center rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
         >
           <UserPlusIcon className='mr-2 h-5 w-5' />
-          Invite Member
+          {t('team.actionInvite')}
         </button>
       </div>
 
@@ -371,16 +370,16 @@ export function TeamManagement({ profile }: TeamManagementProps) {
           <thead className='bg-gray-50'>
             <tr>
               <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                Member
+                {t('team.table.member')}
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                Role
+                {t('team.table.role')}
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                Last Seen
+                {t('team.table.lastSeen')}
               </th>
               <th className='px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                Actions
+                {t('team.table.actions')}
               </th>
             </tr>
           </thead>
@@ -393,6 +392,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
                 ownerCount={ownerCount}
                 onEdit={handleEditMember}
                 onDelete={handleDeleteMember}
+                t={t}
               />
             ))}
           </tbody>
@@ -404,7 +404,7 @@ export function TeamManagement({ profile }: TeamManagementProps) {
         <div className='rounded-lg bg-white shadow'>
           <div className='px-4 py-5 sm:p-6'>
             <h3 className='mb-4 text-lg leading-6 font-medium text-gray-900'>
-              Pending Invitations
+              {t('team.pendingInvitations')}
             </h3>
             <div className='space-y-3'>
               {pendingInvitations.map(invitation => (
@@ -415,19 +415,19 @@ export function TeamManagement({ profile }: TeamManagementProps) {
                   <div className='flex-1'>
                     <div className='text-sm font-medium text-gray-900'>{invitation.email}</div>
                     <div className='text-xs text-gray-500'>
-                      Role: {ROLE_LABELS[invitation.role as keyof typeof ROLE_LABELS]} • Expires in{' '}
-                      {Math.ceil(
-                        (new Date(invitation.expires_at).getTime() - Date.now()) /
+                      {t('team.table.role')}: {t(`team.roles.${invitation.role}` as any)} • {t('team.expiresInDays', {
+                        days: Math.ceil(
+                          (new Date(invitation.expires_at).getTime() - Date.now()) /
                           (1000 * 60 * 60 * 24)
-                      )}{' '}
-                      days
+                        )
+                      })}
                     </div>
                   </div>
                   <button
                     onClick={() => handleCancelInvitation(invitation.id)}
                     className='text-red-600 hover:text-red-900'
                   >
-                    Cancel
+                    {t('team.cancel')}
                   </button>
                 </div>
               ))}

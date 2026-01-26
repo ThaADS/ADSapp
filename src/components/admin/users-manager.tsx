@@ -12,6 +12,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface User {
   id: string
@@ -33,6 +34,7 @@ interface UsersResponse {
 }
 
 export function UsersManager() {
+  const t = useTranslations('admin')
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -63,7 +65,7 @@ export function UsersManager() {
       setUsers(result.data || [])
       setTotalUsers(result.total || 0)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(err instanceof Error ? err.message : t('unknownError'))
     } finally {
       setLoading(false)
     }
@@ -76,7 +78,7 @@ export function UsersManager() {
           <svg className='h-1.5 w-1.5 fill-red-500' viewBox='0 0 6 6' aria-hidden='true'>
             <circle cx={3} cy={3} r={3} />
           </svg>
-          Super Admin
+          {t('superAdmin')}
         </span>
       )
     }
@@ -88,11 +90,13 @@ export function UsersManager() {
       viewer: 'bg-slate-50 text-slate-700 ring-slate-600/20',
     }
 
+    const roleName = t(role as any) || role.charAt(0).toUpperCase() + role.slice(1)
+
     return (
       <span
         className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${colors[role] || colors.viewer}`}
       >
-        {role.charAt(0).toUpperCase() + role.slice(1)}
+        {roleName}
       </span>
     )
   }
@@ -102,7 +106,7 @@ export function UsersManager() {
       <div className='flex h-96 items-center justify-center'>
         <div className='text-center'>
           <div className='inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-600'></div>
-          <p className='mt-4 text-sm text-slate-600'>Loading users...</p>
+          <p className='mt-4 text-sm text-slate-600'>{t('loadingUsers')}</p>
         </div>
       </div>
     )
@@ -116,7 +120,7 @@ export function UsersManager() {
             <XCircleIcon className='h-5 w-5 text-red-400' />
           </div>
           <div className='ml-3'>
-            <h3 className='text-sm font-medium text-red-800'>Error loading users</h3>
+            <h3 className='text-sm font-medium text-red-800'>{t('errorLoadingUsers')}</h3>
             <div className='mt-2 text-sm text-red-700'>
               <p>{error}</p>
             </div>
@@ -130,9 +134,9 @@ export function UsersManager() {
     <div className='space-y-6'>
       {/* Header */}
       <div>
-        <h2 className='text-2xl font-bold text-slate-900'>User Management</h2>
+        <h2 className='text-2xl font-bold text-slate-900'>{t('users')}</h2>
         <p className='mt-2 text-sm text-slate-600'>
-          Manage all users across organizations on the platform
+          {t('manageUsers')}
         </p>
       </div>
 
@@ -147,7 +151,7 @@ export function UsersManager() {
               </div>
               <input
                 type='text'
-                placeholder='Search users by name or email...'
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className='block w-full rounded-lg border-0 py-2.5 pr-3 pl-10 text-slate-900 ring-1 ring-slate-300 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-600 focus:ring-inset sm:text-sm sm:leading-6'
@@ -162,11 +166,14 @@ export function UsersManager() {
               onChange={e => setFilterRole(e.target.value)}
               className='block w-full rounded-lg border-0 py-2.5 pr-10 pl-3 text-slate-900 ring-1 ring-slate-300 ring-inset focus:ring-2 focus:ring-emerald-600 sm:text-sm sm:leading-6'
             >
-              <option value='all'>All Roles</option>
-              <option value='owner'>Owner</option>
-              <option value='admin'>Admin</option>
-              <option value='agent'>Agent</option>
-              <option value='viewer'>Viewer</option>
+              <option value='all'>{t('allRoles')}</option>
+              {/* Note: We rely on the role values staying in English for API filtering, 
+                  but we could translate the display text if we had a mapping. 
+                  For now, let's keep them as is or map them manually. */}
+              <option value='owner'>{t('admin', { defaultValue: 'Owner' })}</option>
+              <option value='admin'>{t('admin')}</option>
+              <option value='agent'>{t('agent')}</option>
+              <option value='viewer'>{t('viewer')}</option>
             </select>
           </div>
         </div>
@@ -176,7 +183,7 @@ export function UsersManager() {
           <div className='flex items-center gap-x-2'>
             <UsersIcon className='h-5 w-5 text-slate-400' />
             <span className='text-slate-600'>
-              <span className='font-semibold text-slate-900'>{totalUsers}</span> total users
+              <span className='font-semibold text-slate-900'>{totalUsers}</span> {t('totalUsers')}
             </span>
           </div>
         </div>
@@ -189,19 +196,19 @@ export function UsersManager() {
             <thead className='bg-slate-50'>
               <tr>
                 <th className='py-3.5 pr-3 pl-6 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  User
+                  {t('userName')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Organization
+                  {t('organizations')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Role
+                  {t('userRole')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Last Seen
+                  {t('lastLogin')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Joined
+                  {t('createdDate')}
                 </th>
               </tr>
             </thead>
@@ -265,11 +272,11 @@ export function UsersManager() {
           {users.length === 0 && (
             <div className='py-12 text-center'>
               <UsersIcon className='mx-auto h-12 w-12 text-slate-400' />
-              <h3 className='mt-2 text-sm font-medium text-slate-900'>No users found</h3>
+              <h3 className='mt-2 text-sm font-medium text-slate-900'>{t('noUsers')}</h3>
               <p className='mt-1 text-sm text-slate-500'>
                 {searchQuery || filterRole !== 'all'
-                  ? 'Try adjusting your search or filters.'
-                  : 'No users have been created yet.'}
+                  ? t('noUsersDesc')
+                  : t('noUsersCreated')}
               </p>
             </div>
           )}
@@ -284,22 +291,22 @@ export function UsersManager() {
                 disabled={currentPage === 1}
                 className='relative inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
               >
-                Previous
+                {t('previous')}
               </button>
               <button
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={currentPage * 20 >= totalUsers}
                 className='relative ml-3 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
               >
-                Next
+                {t('next')}
               </button>
             </div>
             <div className='hidden sm:flex sm:flex-1 sm:items-center sm:justify-between'>
               <div>
                 <p className='text-sm text-slate-700'>
-                  Showing <span className='font-medium'>{(currentPage - 1) * 20 + 1}</span> to{' '}
-                  <span className='font-medium'>{Math.min(currentPage * 20, totalUsers)}</span> of{' '}
-                  <span className='font-medium'>{totalUsers}</span> users
+                  {t('showing')} <span className='font-medium'>{(currentPage - 1) * 20 + 1}</span> {t('to')}{' '}
+                  <span className='font-medium'>{Math.min(currentPage * 20, totalUsers)}</span> {t('of')}{' '}
+                  <span className='font-medium'>{totalUsers}</span> {t('results')}
                 </p>
               </div>
               <div>
@@ -312,7 +319,7 @@ export function UsersManager() {
                     disabled={currentPage === 1}
                     className='relative inline-flex items-center rounded-l-lg px-2 py-2 text-slate-400 ring-1 ring-slate-300 ring-inset hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50'
                   >
-                    <span className='sr-only'>Previous</span>
+                    <span className='sr-only'>{t('previous')}</span>
                     <svg
                       className='h-5 w-5'
                       viewBox='0 0 20 20'
@@ -331,7 +338,7 @@ export function UsersManager() {
                     disabled={currentPage * 20 >= totalUsers}
                     className='relative inline-flex items-center rounded-r-lg px-2 py-2 text-slate-400 ring-1 ring-slate-300 ring-inset hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50'
                   >
-                    <span className='sr-only'>Next</span>
+                    <span className='sr-only'>{t('next')}</span>
                     <svg
                       className='h-5 w-5'
                       viewBox='0 0 20 20'

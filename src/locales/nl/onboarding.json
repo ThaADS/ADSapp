@@ -1,0 +1,248 @@
+{
+  "title": "Welkom bij ADSapp",
+  "subtitle": "Laten we je WhatsApp Business Inbox instellen in een paar eenvoudige stappen",
+  "steps": {
+    "organization": "Organisatie",
+    "whatsapp": "WhatsApp",
+    "profile": "Profiel",
+    "team": "Team",
+    "complete": "Voltooid"
+  },
+  "stepsDescriptions": {
+    "organization": "Maak je organisatie aan",
+    "whatsapp": "Verbind WhatsApp Business",
+    "profile": "Voltooi je profiel",
+    "team": "Nodig je team uit"
+  },
+  "organization": {
+    "title": "Maak je Organisatie",
+    "description": "Laten we beginnen met het instellen van je organisatiegegevens.",
+    "name": "Organisatienaam",
+    "nameRequired": "Organisatienaam *",
+    "namePlaceholder": "Acme Bedrijf",
+    "nameHelper": "Dit wordt weergegeven in je WhatsApp-berichten",
+    "subdomain": "Subdomein",
+    "subdomainRequired": "Subdomein *",
+    "subdomainPlaceholder": "acme-bedrijf",
+    "subdomainHelper": "Dit wordt gebruikt om je organisatie te identificeren (alleen kleine letters, cijfers en koppeltekens)",
+    "industry": "Branche",
+    "industryPlaceholder": "Selecteer je branche",
+    "size": "Bedrijfsgrootte",
+    "sizePlaceholder": "Selecteer bedrijfsgrootte",
+    "website": "Website (optioneel)",
+    "websitePlaceholder": "https://www.jouwbedrijf.nl",
+    "timezone": "Tijdzone",
+    "timezonePlaceholder": "Selecteer tijdzone"
+  },
+  "profile": {
+    "title": "Voltooi je Profiel",
+    "description": "Vertel ons iets over jezelf.",
+    "email": "E-mail",
+    "fullName": "Volledige naam",
+    "fullNameRequired": "Volledige naam *",
+    "fullNamePlaceholder": "Jan Jansen",
+    "role": "Je Rol",
+    "roleRequired": "Je Rol *",
+    "roles": {
+      "owner": "Eigenaar - Volledige toegang en factuurbeheer",
+      "admin": "Admin - Beheer team en instellingen",
+      "agent": "Agent - Beheer gesprekken"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp Business Setup",
+    "description": "Verbind je WhatsApp Business account in een paar eenvoudige stappen",
+    "provider": {
+      "title": "WhatsApp verbinden",
+      "description": "Kies hoe je je WhatsApp Business account wilt verbinden",
+      "cloudApi": {
+        "name": "WhatsApp Cloud API",
+        "description": "Directe Meta/Facebook integratie - Aanbevolen voor bedrijven",
+        "features": ["Officiële API", "Beste betrouwbaarheid", "Volledige functies", "Directe ondersteuning"]
+      },
+      "twilio": {
+        "name": "Twilio WhatsApp",
+        "description": "Via Twilio platform - Voor bestaande Twilio gebruikers",
+        "features": ["Twilio infrastructuur", "Eenvoudig schalen", "Uniforme facturering", "SMS fallback"]
+      },
+      "notSure": "Niet zeker welke te kiezen?",
+      "recommendation": "Voor bedrijven: kies Cloud API voor de officiële Meta integratie met volledige functies en beste betrouwbaarheid."
+    },
+    "step1": {
+      "title": "Stap 1: Phone Number ID",
+      "description": "Je Phone Number ID vind je in de Meta Business Suite",
+      "whereToFind": "Waar vind je het:",
+      "instructions": [
+        "Ga naar Meta Business Suite (business.facebook.com)",
+        "Klik op 'WhatsApp Manager' in de linker zijbalk",
+        "Selecteer 'Phone Numbers'",
+        "Je Phone Number ID staat naast je telefoonnummer"
+      ],
+      "placeholder": "123456789012345",
+      "valid": "Geldig",
+      "invalid": "Ongeldig"
+    },
+    "step2": {
+      "title": "Stap 2: Business Account ID",
+      "description": "Je Business Account ID identificeert je WhatsApp Business Account",
+      "whereToFind": "Waar vind je het:",
+      "instructions": [
+        "In Meta Business Suite, ga naar 'Business Settings'",
+        "Klik op 'WhatsApp Accounts' in de linker zijbalk",
+        "Je Business Account ID staat onder je accountnaam"
+      ],
+      "placeholder": "123456789012345"
+    },
+    "step3": {
+      "title": "Stap 3: Access Token",
+      "description": "Genereer een permanente access token voor API authenticatie",
+      "securityNotice": "Beveiligingsmelding",
+      "securityWarning": "Houd je access token veilig. Deel het nooit publiekelijk of commit het naar version control.",
+      "howToGenerate": "Hoe te genereren:",
+      "instructions": [
+        "Ga naar Meta Business Suite → System Users",
+        "Maak een nieuwe system user aan of selecteer een bestaande",
+        "Klik op 'Generate New Token'",
+        "Selecteer je WhatsApp Business Account",
+        "Selecteer permissions: whatsapp_business_messaging, whatsapp_business_management",
+        "Klik op 'Generate Token' en kopieer het direct"
+      ],
+      "placeholder": "EAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "webhookToken": "Webhook Verify Token (Optioneel)",
+      "webhookTokenPlaceholder": "mijn_veilige_verify_token_123",
+      "webhookTokenHelper": "Een aangepaste token om webhook requests te verifiëren. Laat leeg om automatisch te genereren."
+    },
+    "help": {
+      "title": "Hulp nodig?",
+      "watchVideo": "Bekijk video tutorial (2 min)",
+      "readGuide": "Lees gedetailleerde setup handleiding",
+      "chatSupport": "Chat met support"
+    }
+  },
+  "team": {
+    "title": "Nodig je Team uit",
+    "description": "Voeg teamleden toe om je WhatsApp gesprekken te beheren",
+    "inviteMembers": "Teamleden uitnodigen",
+    "email": "E-mailadres",
+    "emailPlaceholder": "collega@bedrijf.nl",
+    "name": "Naam",
+    "nameOptional": "optioneel",
+    "namePlaceholder": "Jan",
+    "role": "Rol",
+    "roles": {
+      "admin": "Admin",
+      "adminDescription": "Kan team, instellingen en alle gesprekken beheren",
+      "agent": "Agent",
+      "agentDescription": "Kan alleen toegewezen gesprekken beheren",
+      "viewer": "Viewer",
+      "viewerDescription": "Alleen-lezen toegang tot analytics en gesprekken"
+    },
+    "addAnother": "Nog een Teamlid Toevoegen",
+    "removeButton": "Verwijderen",
+    "sendInvites": "Uitnodigingen Versturen",
+    "sendInvitation": "Verstuur {count} Uitnodiging",
+    "sendInvitations": "Verstuur {count} Uitnodigingen",
+    "sending": "Versturen...",
+    "continueButton": "Doorgaan",
+    "skipForNow": "Later doen - ik nodig teamleden later uit",
+    "rolePermissions": "Rol Machtigingen",
+    "tip": "Tip:",
+    "tipMessage": "Je kunt altijd later meer teamleden uitnodigen via de Teaminstellingen pagina. Uitgenodigde gebruikers ontvangen een e-mail met instructies om lid te worden van je organisatie."
+  },
+  "complete": {
+    "title": "Je bent klaar!",
+    "description": "Je WhatsApp Business Inbox is succesvol ingesteld",
+    "whatNext": "Wat kun je nu doen:",
+    "nextSteps": [
+      "Start gesprekken met je klanten",
+      "Stel automatische antwoorden in",
+      "Maak berichtsjablonen",
+      "Bekijk je analytics dashboard"
+    ],
+    "goToDashboard": "Ga naar Dashboard",
+    "setupMore": "Meer instellingen configureren"
+  },
+  "twilio": {
+    "title": "Verbind via Twilio",
+    "description": "Gebruik je bestaande Twilio account voor WhatsApp berichten",
+    "step1": {
+      "title": "Stap 1: Twilio Account Gegevens",
+      "description": "Voer je Twilio Account SID en Auth Token in vanuit de Twilio Console",
+      "whereToFind": "Waar vind je deze:",
+      "instructions": [
+        "Log in op je Twilio Console op console.twilio.com",
+        "Je Account SID en Auth Token worden weergegeven op het dashboard",
+        "Klik op het oog-icoon om je Auth Token te tonen"
+      ],
+      "openConsole": "Open Twilio Console",
+      "accountSid": "Account SID",
+      "accountSidPlaceholder": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "accountSidHelper": "Begint met \"AC\" gevolgd door 32 tekens",
+      "authToken": "Auth Token"
+    },
+    "step2": {
+      "title": "Stap 2: WhatsApp Telefoonnummer",
+      "description": "Voer je Twilio WhatsApp-enabled telefoonnummer in",
+      "sandboxNotice": "WhatsApp Sandbox vs Productie",
+      "forTesting": "Voor testen:",
+      "testingInfo": "Gebruik Twilio's WhatsApp Sandbox nummer (+14155238886)",
+      "forProduction": "Voor productie:",
+      "productionInfo": "Je hebt een Twilio telefoonnummer met WhatsApp enabled nodig",
+      "learnMore": "Leer meer over WhatsApp op Twilio",
+      "phoneNumber": "WhatsApp Telefoonnummer",
+      "phoneNumberPlaceholder": "+31612345678",
+      "phoneNumberHelper": "Inclusief landcode (bijv. +31 voor Nederland)",
+      "validating": "Gegevens valideren...",
+      "validSuccess": "Gegevens succesvol gevalideerd!",
+      "validationFailed": "Validatie mislukt:"
+    },
+    "steps": {
+      "account": "Account",
+      "phoneNumber": "Telefoonnummer"
+    },
+    "connectButton": "Verbind Twilio",
+    "benefits": {
+      "title": "Waarom Twilio gebruiken voor WhatsApp?",
+      "unifiedPlatform": "Unified Platform",
+      "unifiedPlatformDesc": "Beheer SMS, WhatsApp en Voice op één plek",
+      "detailedAnalytics": "Gedetailleerde Analytics",
+      "detailedAnalyticsDesc": "Volg berichtbezorging en engagement",
+      "payAsYouGo": "Betaal per gebruik",
+      "payAsYouGoDesc": "Betaal alleen voor berichten die je verstuurt",
+      "enterpriseSecurity": "Enterprise Beveiliging",
+      "enterpriseSecurityDesc": "SOC 2, HIPAA en GDPR compliant"
+    },
+    "noAccount": "Nog geen Twilio account?",
+    "signUpFree": "Meld je gratis aan"
+  },
+  "provider": {
+    "backToSelection": "Terug naar provider selectie",
+    "recommended": "Aanbevolen",
+    "select": "Selecteren"
+  },
+  "navigation": {
+    "back": "Terug",
+    "next": "Volgende",
+    "continue": "Doorgaan",
+    "skip": "Overslaan - ik stel dit later in",
+    "skipForNow": "Nu overslaan",
+    "finish": "Setup voltooien",
+    "settingUp": "Instellen..."
+  },
+  "errors": {
+    "general": "Er is een onverwachte fout opgetreden. Probeer het opnieuw.",
+    "onboardingFailed": "Onboarding mislukt. Probeer het opnieuw.",
+    "error": "Fout"
+  },
+  "validation": {
+    "required": "Dit veld is verplicht",
+    "organizationNameRequired": "Organisatienaam is verplicht",
+    "subdomainRequired": "Subdomein is verplicht",
+    "subdomainInvalid": "Subdomein mag alleen kleine letters, cijfers en koppeltekens bevatten",
+    "fullNameRequired": "Volledige naam is verplicht",
+    "roleRequired": "Rol is verplicht",
+    "invalidEmail": "Voer een geldig e-mailadres in",
+    "invalidPhone": "Voer een geldig telefoonnummer in",
+    "invalidUrl": "Voer een geldige URL in"
+  }
+}

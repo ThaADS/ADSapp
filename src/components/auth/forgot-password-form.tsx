@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export function ForgotPasswordForm() {
+  const t = useTranslations('auth')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -24,10 +26,10 @@ export function ForgotPasswordForm() {
       if (error) {
         setError(error.message)
       } else {
-        setMessage('Check your email for the password reset link!')
+        setMessage(t('checkEmailReset'))
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError(t('unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -37,7 +39,7 @@ export function ForgotPasswordForm() {
     <form className='mt-8 space-y-6' onSubmit={handleSubmit}>
       <div>
         <label htmlFor='email' className='sr-only'>
-          Email address
+          {t('email')}
         </label>
         <input
           id='email'
@@ -46,7 +48,7 @@ export function ForgotPasswordForm() {
           autoComplete='email'
           required
           className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-          placeholder='Email address'
+          placeholder={t('email')}
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
@@ -70,7 +72,7 @@ export function ForgotPasswordForm() {
           disabled={loading}
           className='group relative flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50'
         >
-          {loading ? 'Sending...' : 'Send reset link'}
+          {loading ? t('sending') : t('sendResetLink')}
         </button>
       </div>
     </form>

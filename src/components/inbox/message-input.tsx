@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { ShoppingBag } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface MessageInputProps {
   onSendMessage: (content: string, type?: string) => Promise<void>
@@ -18,10 +19,18 @@ export function MessageInput({
   onOpenProductPicker,
   hasProductCatalog = false,
 }: MessageInputProps) {
+  const t = useTranslations('inbox')
   const [message, setMessage] = useState(initialValue)
   const [isLoading, setIsLoading] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const quickReplies = [
+    t('quickReplies.templates.thankYou'),
+    t('quickReplies.templates.howCanIHelp'),
+    t('quickReplies.templates.lookingInto'),
+    t('quickReplies.templates.anythingElse'),
+  ]
 
   // Sync with initialValue when it changes (e.g., from AI draft)
   useEffect(() => {
@@ -74,13 +83,6 @@ export function MessageInput({
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
   }
 
-  const quickReplies = [
-    'Thank you for contacting us!',
-    'How can I help you today?',
-    "I'll look into this for you.",
-    'Is there anything else I can help with?',
-  ]
-
   return (
     <div className='border-t border-gray-200 bg-white'>
       {/* Quick Replies */}
@@ -89,6 +91,7 @@ export function MessageInput({
           <div className='flex flex-wrap gap-2'>
             {quickReplies.map((reply, index) => (
               <button
+                type='button'
                 key={index}
                 onClick={() => {
                   setMessage(reply)
@@ -111,7 +114,7 @@ export function MessageInput({
           <button
             type='button'
             className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500'
-            aria-label='Attach file'
+            aria-label={t('message.attachFile')}
           >
             <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
               <path
@@ -130,7 +133,7 @@ export function MessageInput({
             className={`flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 ${
               showTemplates ? 'bg-green-50 text-green-600' : 'text-gray-400 hover:text-gray-600'
             }`}
-            aria-label='Quick replies'
+            aria-label={t('message.quickReplies')}
             aria-expanded={showTemplates}
           >
             <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -149,8 +152,8 @@ export function MessageInput({
               type='button'
               onClick={onOpenProductPicker}
               className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-              aria-label='Send product'
-              title='Stuur product'
+              aria-label={t('message.sendProduct')}
+              title={t('message.sendProduct')}
             >
               <ShoppingBag className='h-5 w-5' />
             </button>
@@ -163,9 +166,9 @@ export function MessageInput({
               value={message}
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
-              placeholder='Type your message...'
+              placeholder={t('message.placeholder')}
               disabled={isLoading}
-              aria-label='Type your message'
+              aria-label={t('message.placeholder')}
               className='w-full resize-none rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none disabled:opacity-50'
               rows={1}
               style={{ minHeight: '40px', maxHeight: '120px' }}
@@ -177,10 +180,10 @@ export function MessageInput({
             type='submit'
             disabled={!message.trim() || isLoading}
             className='flex-shrink-0 rounded-full min-h-[44px] min-w-[44px] bg-green-600 p-2 text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            aria-label='Send message'
+            aria-label={t('message.send')}
           >
             {isLoading ? (
-              <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent' aria-label='Sending...'></div>
+              <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent' aria-label={t('message.sending')}></div>
             ) : (
               <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path
@@ -197,7 +200,7 @@ export function MessageInput({
         {/* Character count or typing indicator */}
         <div className='mt-2 flex items-center justify-between text-xs text-gray-500'>
           <div>{/* Typing indicator would go here */}</div>
-          <div>Press Enter to send, Shift+Enter for new line</div>
+          <div>{t('message.sendHint')}</div>
         </div>
       </form>
     </div>

@@ -5,6 +5,7 @@ import { PricingPlans } from './pricing-plans'
 import { UsageMetrics } from './usage-metrics'
 import { BillingHistory } from './billing-history'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from '@/components/providers/translation-provider'
 import type { Organization, Profile } from '@/types'
 
 interface BillingDashboardProps {
@@ -15,6 +16,7 @@ interface BillingDashboardProps {
 }
 
 export function BillingDashboard({ organization, profile, usage, plans }: BillingDashboardProps) {
+  const t = useTranslations('billing')
   const [isLoading, setIsLoading] = useState(false)
   const { addToast } = useToast()
 
@@ -40,8 +42,8 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
       console.error('Upgrade error:', error)
       addToast({
         type: 'error',
-        title: 'Upgrade Failed',
-        message: 'Unable to process upgrade. Please try again.',
+        title: t('errors.upgradeFailed'),
+        message: t('errors.upgradeFailedDescription'),
       })
     } finally {
       setIsLoading(false)
@@ -66,8 +68,8 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
       console.error('Portal error:', error)
       addToast({
         type: 'error',
-        title: 'Portal Access Failed',
-        message: 'Unable to access billing portal. Please try again.',
+        title: t('errors.portalFailed'),
+        message: t('errors.portalFailedDescription'),
       })
     } finally {
       setIsLoading(false)
@@ -84,7 +86,7 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
       {/* Current Subscription Status */}
       <div className='rounded-lg bg-white shadow'>
         <div className='border-b border-gray-200 px-6 py-4'>
-          <h2 className='text-lg font-medium text-gray-900'>Current Subscription</h2>
+          <h2 className='text-lg font-medium text-gray-900'>{t('currentSubscription')}</h2>
         </div>
         <div className='p-6'>
           <div className='flex items-center justify-between'>
@@ -108,15 +110,16 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
                         : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                {organization.subscription_status || 'trial'}
+                {organization.subscription_status || t('trial')}
               </span>
               {organization.stripe_customer_id && (
                 <button
+                  type='button'
                   onClick={handleManageBilling}
                   disabled={isLoading}
                   className='mt-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none disabled:opacity-50'
                 >
-                  {isLoading ? 'Loading...' : 'Manage Billing'}
+                  {isLoading ? t('loading') : t('manageBilling')}
                 </button>
               )}
             </div>
@@ -135,10 +138,9 @@ export function BillingDashboard({ organization, profile, usage, plans }: Billin
                   </svg>
                 </div>
                 <div className='ml-3'>
-                  <h3 className='text-sm font-medium text-yellow-800'>Payment Issue</h3>
+                  <h3 className='text-sm font-medium text-yellow-800'>{t('alerts.paymentIssue')}</h3>
                   <p className='mt-1 text-sm text-yellow-700'>
-                    Your payment method failed. Please update your billing information to continue
-                    using the service.
+                    {t('alerts.paymentIssueDescription')}
                   </p>
                 </div>
               </div>

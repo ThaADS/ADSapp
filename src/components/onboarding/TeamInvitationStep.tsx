@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface TeamInvitationStepProps {
   onComplete: (invitations: TeamInvitation[]) => void
@@ -13,28 +14,44 @@ export interface TeamInvitation {
   name?: string
 }
 
-const ROLE_OPTIONS = [
-  {
-    value: 'admin' as const,
-    label: 'Admin',
-    description: 'Can manage team, settings, and all conversations',
-  },
-  {
-    value: 'agent' as const,
-    label: 'Agent',
-    description: 'Can handle assigned conversations only',
-  },
-]
-
 export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepProps) {
+  const t = useTranslations('onboarding')
+
+  const ROLE_OPTIONS = [
+    {
+      value: 'admin' as const,
+      label: t('team.roles.admin'),
+      description: t('team.roles.adminDescription'),
+    },
+    {
+      value: 'agent' as const,
+      label: t('team.roles.agent'),
+      description: t('team.roles.agentDescription'),
+    },
+  ]
   const [invitations, setInvitations] = useState<TeamInvitation[]>([
     { email: '', role: 'agent', name: '' },
   ])
   const [errors, setErrors] = useState<Record<number, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const filledInvitations = invitations.filter(inv => inv.email.trim()).length
+
   const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  const getSubmitButtonText = () => {
+    if (isSubmitting) {
+      return t('team.sending')
+    }
+    if (filledInvitations > 1) {
+      return t('team.sendInvitations', { count: filledInvitations })
+    }
+    if (filledInvitations === 1) {
+      return t('team.sendInvitation', { count: filledInvitations })
+    }
+    return t('team.continueButton')
   }
 
   const addInvitation = () => {
@@ -77,7 +94,7 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
     invitations.forEach((inv, index) => {
       if (inv.email.trim()) {
         if (!validateEmail(inv.email)) {
-          newErrors[index] = 'Please enter a valid email address'
+          newErrors[index] = t('validation.invalidEmail')
         } else {
           validInvitations.push(inv)
         }
@@ -119,8 +136,6 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
     }
   }
 
-  const filledInvitations = invitations.filter(inv => inv.email.trim()).length
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -128,10 +143,8 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
           <span className="text-3xl">👥</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Invite Your Team</h2>
-        <p className="mt-2 text-gray-600">
-          Add team members to help manage your WhatsApp conversations
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('team.title')}</h2>
+        <p className="mt-2 text-gray-600">{t('team.description')}</p>
       </div>
 
       {/* Invitation List */}
@@ -144,14 +157,15 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
             <div className="flex items-start gap-4">
               {/* Email Input */}
               <div className="flex-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Email Address
+                <label htmlFor={`email-${index}`} className="mb-1 block text-sm font-medium text-gray-700">
+                  {t('team.email')}
                 </label>
                 <input
+                  id={`email-${index}`}
                   type="email"
                   value={invitation.email}
                   onChange={e => updateInvitation(index, 'email', e.target.value)}
-                  placeholder="colleague@company.com"
+                  placeholder={t('team.emailPlaceholder')}
                   className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                     errors[index] ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
@@ -163,27 +177,30 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
 
               {/* Name Input (Optional) */}
               <div className="w-40">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Name <span className="text-gray-400">(optional)</span>
+                <label htmlFor={`name-${index}`} className="mb-1 block text-sm font-medium text-gray-700">
+                  {t('team.name')} <span className="text-gray-400">({t('team.nameOptional')})</span>
                 </label>
                 <input
+                  id={`name-${index}`}
                   type="text"
                   value={invitation.name}
                   onChange={e => updateInvitation(index, 'name', e.target.value)}
-                  placeholder="John"
+                  placeholder={t('team.namePlaceholder')}
                   className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               {/* Role Selector */}
               <div className="w-32">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Role
+                <label htmlFor={`role-${index}`} className="mb-1 block text-sm font-medium text-gray-700">
+                  {t('team.role')}
                 </label>
                 <select
+                  id={`role-${index}`}
                   value={invitation.role}
                   onChange={e => updateInvitation(index, 'role', e.target.value)}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  aria-label={t('team.role')}
                 >
                   {ROLE_OPTIONS.map(role => (
                     <option key={role.value} value={role.value}>
@@ -200,7 +217,7 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
                   onClick={() => removeInvitation(index)}
                   disabled={invitations.length === 1}
                   className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30"
-                  title="Remove"
+                  title={t('team.removeButton')}
                 >
                   <svg
                     className="h-5 w-5"
@@ -242,13 +259,13 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
               d="M12 4v16m8-8H4"
             />
           </svg>
-          Add Another Team Member
+          {t('team.addAnother')}
         </button>
       )}
 
       {/* Role Explanations */}
       <div className="rounded-lg bg-gray-50 p-4">
-        <h4 className="mb-3 font-semibold text-gray-900">Role Permissions</h4>
+        <h4 className="mb-3 font-semibold text-gray-900">{t('team.rolePermissions')}</h4>
         <div className="grid gap-3 sm:grid-cols-2">
           {ROLE_OPTIONS.map(role => (
             <div key={role.value} className="flex items-start gap-2">
@@ -277,7 +294,7 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
           onClick={onSkip}
           className="text-gray-500 underline hover:text-gray-700"
         >
-          Skip for now - I'll invite team members later
+          {t('team.skipForNow')}
         </button>
 
         <button
@@ -289,13 +306,11 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
           {isSubmitting ? (
             <>
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Sending...
+              {t('team.sending')}
             </>
           ) : (
             <>
-              {filledInvitations > 0
-                ? `Send ${filledInvitations} Invitation${filledInvitations > 1 ? 's' : ''}`
-                : 'Continue'}
+              {getSubmitButtonText()}
               <svg
                 className="h-4 w-4"
                 fill="none"
@@ -317,9 +332,7 @@ export function TeamInvitationStep({ onComplete, onSkip }: TeamInvitationStepPro
       {/* Tip */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <strong>Tip:</strong> You can always invite more team members later from the Team
-          Settings page. Invited users will receive an email with instructions to join your
-          organization.
+          <strong>{t('team.tip')}</strong> {t('team.tipMessage')}
         </p>
       </div>
     </div>

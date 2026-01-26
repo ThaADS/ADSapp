@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface MFAVerificationProps {
   userId: string
@@ -16,6 +17,7 @@ interface MFAVerificationProps {
 }
 
 export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVerificationProps) {
+  const t = useTranslations('auth')
   const [token, setToken] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,19 +25,19 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
 
   const handleVerify = async () => {
     if (!token) {
-      setError('Please enter a verification code')
+      setError(t('mfa.enterVerificationCode'))
       return
     }
 
     // Validate format
     if (useBackupCode) {
       if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(token.toUpperCase())) {
-        setError('Backup code format: XXXX-XXXX')
+        setError(t('mfa.backupCodeFormat'))
         return
       }
     } else {
       if (!/^\d{6}$/.test(token)) {
-        setError('Verification code must be 6 digits')
+        setError(t('mfa.codeFormat6Digits'))
         return
       }
     }
@@ -56,13 +58,13 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Verification failed')
+        throw new Error(data.error || t('mfa.verificationFailed'))
       }
 
       // Success!
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verification failed')
+      setError(err instanceof Error ? err.message : t('unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -90,11 +92,11 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
             <path d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' />
           </svg>
         </div>
-        <h2 className='mb-2 text-center text-2xl font-bold'>Two-Factor Authentication</h2>
+        <h2 className='mb-2 text-center text-2xl font-bold'>{t('mfa.verifySetupTitle')}</h2>
         <p className='text-center text-sm text-gray-600'>
           {useBackupCode
-            ? 'Enter one of your backup codes'
-            : 'Enter the code from your authenticator app'}
+            ? t('mfa.enterBackupCode')
+            : t('mfa.enterAuthenticatorCode')}
         </p>
       </div>
 
@@ -109,7 +111,7 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
         {/* Token input */}
         <div>
           <label htmlFor='token' className='mb-2 block text-sm font-medium text-gray-700'>
-            {useBackupCode ? 'Backup Code' : 'Verification Code'}
+            {useBackupCode ? t('mfa.backupCode') : t('mfa.verificationCode')}
           </label>
           <input
             id='token'
@@ -125,7 +127,7 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
               setError(null)
             }}
             onKeyPress={handleKeyPress}
-            placeholder={useBackupCode ? 'XXXX-XXXX' : '000000'}
+            placeholder={useBackupCode ? 'XXXX-XXXX' : '123456'}
             className='w-full rounded-md border border-gray-300 px-4 py-3 text-center font-mono text-2xl tracking-widest focus:border-transparent focus:ring-2 focus:ring-blue-500'
             autoComplete='off'
             autoFocus
@@ -133,8 +135,8 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
           />
           <p className='mt-2 text-xs text-gray-500'>
             {useBackupCode
-              ? 'Each backup code can only be used once'
-              : 'The code changes every 30 seconds'}
+              ? t('mfa.backupCodeUsedOnce')
+              : t('mfa.codeChanges30Sec')}
           </p>
         </div>
 
@@ -144,7 +146,7 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
           disabled={loading || !token}
           className='w-full rounded-md bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
         >
-          {loading ? 'Verifying...' : 'Verify'}
+          {loading ? t('mfa.verifying') : t('mfa.verify')}
         </button>
 
         {/* Toggle backup code mode */}
@@ -157,7 +159,7 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
           disabled={loading}
           className='w-full text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50'
         >
-          {useBackupCode ? 'Use authenticator app code' : 'Use backup code instead'}
+          {useBackupCode ? t('mfa.useAuthenticatorCode') : t('mfa.useBackupCodeInstead')}
         </button>
 
         {/* Cancel button */}
@@ -167,7 +169,7 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
             disabled={loading}
             className='w-full text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50'
           >
-            Cancel and sign out
+            {t('mfa.cancelAndSignOut')}
           </button>
         )}
       </div>
@@ -176,13 +178,13 @@ export default function MFAVerification({ userId, onSuccess, onCancel }: MFAVeri
       <div className='mt-6 border-t border-gray-200 pt-6'>
         <details className='text-sm'>
           <summary className='cursor-pointer font-medium text-gray-600 hover:text-gray-800'>
-            Having trouble?
+            {t('mfa.havingTrouble')}
           </summary>
           <div className='mt-3 space-y-2 text-gray-600'>
-            <p>• Make sure your device time is synchronized</p>
-            <p>• Try entering the current code from your authenticator app</p>
-            <p>• If you've lost access to your app, use a backup code</p>
-            <p>• Contact support if you've lost both your app and backup codes</p>
+            <p>• {t('mfa.troubleSyncTime')}</p>
+            <p>• {t('mfa.troubleEnterCurrent')}</p>
+            <p>• {t('mfa.troubleLostApp')}</p>
+            <p>• {t('mfa.troubleContactSupport')}</p>
           </div>
         </details>
       </div>

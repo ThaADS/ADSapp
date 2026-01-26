@@ -1,6 +1,9 @@
 import { requireOrganization } from '@/lib/auth'
 import { DashboardLayoutClient } from '@/components/dashboard/layout-client'
 import { Suspense } from 'react'
+import { TranslationProvider } from '@/components/providers/translation-provider'
+import { getServerLocale } from '@/lib/i18n/server'
+import { getDictionary } from '@/lib/i18n/dictionaries'
 
 // Loading skeleton for lazy-loaded pages
 function PageLoadingSkeleton() {
@@ -24,9 +27,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // ⚡ PERFORMANCE: Profile is now cached in the auth layer
   const profile = await requireOrganization()
 
+  // Load translations for the current locale
+  const locale = await getServerLocale()
+  const translations = await getDictionary(locale)
+
   return (
-    <DashboardLayoutClient profile={profile}>
-      <Suspense fallback={<PageLoadingSkeleton />}>{children}</Suspense>
-    </DashboardLayoutClient>
+    <TranslationProvider locale={locale} translations={translations}>
+      <DashboardLayoutClient profile={profile}>
+        <Suspense fallback={<PageLoadingSkeleton />}>{children}</Suspense>
+      </DashboardLayoutClient>
+    </TranslationProvider>
   )
 }

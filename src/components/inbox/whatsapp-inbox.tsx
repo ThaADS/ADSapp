@@ -26,6 +26,7 @@ import BubbleColorPicker from './bubble-color-picker'
 import { WhatsAppService } from '@/lib/whatsapp/service'
 import ConversationSummary from '@/components/ai/conversation-summary'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Conversation {
   id: string
@@ -118,6 +119,7 @@ function ConversationDetails({
   onAddTag,
   onRemoveTag,
 }: ConversationDetailsProps) {
+  const t = useTranslations('inbox')
   const [newTag, setNewTag] = useState('')
   const [agents] = useState([
     { id: '1', name: 'John Doe' },
@@ -136,8 +138,8 @@ function ConversationDetails({
       {/* Header */}
       <div className='border-b border-gray-200 bg-white p-4'>
         <div className='flex items-center justify-between'>
-          <h3 className='text-lg font-medium text-gray-900'>Contact Details</h3>
-          <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
+          <h3 className='text-lg font-medium text-gray-900'>{t('contact.details')}</h3>
+          <button type='button' onClick={onClose} className='text-gray-400 hover:text-gray-600'>
             <MoreVertical className='h-5 w-5' />
           </button>
         </div>
@@ -167,20 +169,20 @@ function ConversationDetails({
           )}
           <div>
             <h4 className='text-sm font-medium text-gray-900'>
-              {conversation.contact.name || 'Unknown Contact'}
+              {conversation.contact.name || t('contact.unknown')}
             </h4>
             <p className='text-sm text-gray-500'>{conversation.contact.phone_number}</p>
           </div>
         </div>
 
         <div className='mt-4 flex space-x-2'>
-          <button className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
+          <button type='button' className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
             <Phone className='mr-2 h-4 w-4' />
-            Call
+            {t('contact.call', { phone: '' })}
           </button>
-          <button className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
+          <button type='button' className='flex w-full items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'>
             <UserPlus className='mr-2 h-4 w-4' />
-            Profile
+            {t('contact.viewProfile')}
           </button>
         </div>
       </div>
@@ -189,43 +191,43 @@ function ConversationDetails({
       <div className='flex-1 overflow-y-auto'>
         {/* Status */}
         <div className='border-b border-gray-200 bg-white p-4'>
-          <label className='mb-2 block text-sm font-medium text-gray-700'>Status</label>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>{t('conversationInfo.status')}</label>
           <select
             value={conversation.status}
             onChange={e => onStatusChange(e.target.value)}
             className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value='open'>Open</option>
-            <option value='pending'>Pending</option>
-            <option value='resolved'>Resolved</option>
-            <option value='closed'>Closed</option>
+            <option value='open'>{t('status.open')}</option>
+            <option value='pending'>{t('status.pending')}</option>
+            <option value='resolved'>{t('status.resolved')}</option>
+            <option value='closed'>{t('status.closed')}</option>
           </select>
         </div>
 
         {/* Priority */}
         <div className='border-b border-gray-200 bg-white p-4'>
-          <label className='mb-2 block text-sm font-medium text-gray-700'>Priority</label>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>{t('conversationInfo.priority')}</label>
           <select
             value={conversation.priority}
             onChange={e => onPriorityChange(e.target.value)}
             className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value='low'>Low</option>
-            <option value='medium'>Medium</option>
-            <option value='high'>High</option>
-            <option value='urgent'>Urgent</option>
+            <option value='low'>{t('priority.low')}</option>
+            <option value='medium'>{t('priority.normal')}</option>
+            <option value='high'>{t('priority.high')}</option>
+            <option value='urgent'>{t('priority.urgent')}</option>
           </select>
         </div>
 
         {/* Assignment */}
         <div className='border-b border-gray-200 bg-white p-4'>
-          <label className='mb-2 block text-sm font-medium text-gray-700'>Assigned to</label>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>{t('conversationInfo.assignedTo')}</label>
           <select
             value={conversation.assigned_to || ''}
             onChange={e => onAssigneeChange(e.target.value)}
             className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500'
           >
-            <option value=''>Unassigned</option>
+            <option value=''>{t('assignment.unassigned')}</option>
             {agents.map(agent => (
               <option key={agent.id} value={agent.id}>
                 {agent.name}
@@ -236,43 +238,57 @@ function ConversationDetails({
 
         {/* Tags */}
         <div className='border-b border-gray-200 bg-white p-4'>
-          <label className='mb-2 block text-sm font-medium text-gray-700'>Tags</label>
+          <label className='mb-2 block text-sm font-medium text-gray-700'>{t('tags.label')}</label>
 
           {/* Existing Tags */}
-          <div className='mb-3 flex flex-wrap gap-1'>
-            {conversation.tags && conversation.tags.map(tag => (
-              <span
-                key={tag}
-                className='inline-flex items-center rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800'
-              >
-                {tag}
-                <button
-                  onClick={() => onRemoveTag(tag)}
-                  className='ml-1 text-blue-600 hover:text-blue-800'
+          <div className='mb-3 flex flex-wrap gap-1.5'>
+            {conversation.tags && conversation.tags.length > 0 ? (
+              conversation.tags.map(tag => (
+                <span
+                  key={tag}
+                  className='inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-800'
                 >
-                  ×
-                </button>
-              </span>
-            ))}
+                  {tag}
+                  <button
+                    type='button'
+                    onClick={() => onRemoveTag(tag)}
+                    className='ml-1.5 text-emerald-600 hover:text-emerald-900'
+                    title={t('tags.remove')}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))
+            ) : (
+              <span className='text-xs text-gray-400 italic'>{t('tags.noTags')}</span>
+            )}
           </div>
 
-          {/* Predefined Tags */}
+          {/* Category Tags */}
           <div className='mb-3'>
-            <p className='mb-2 text-xs font-medium text-gray-600'>Categorie</p>
-            <div className='flex flex-wrap gap-1'>
-              {['sales', 'leads', 'follow-up', 'service', 'backoffice', 'administratie'].map(tag => {
-                const isSelected = conversation.tags?.includes(tag)
+            <p className='mb-2 text-xs font-semibold text-gray-600 uppercase tracking-wide'>{t('tags.categories')}</p>
+            <div className='flex flex-wrap gap-1.5'>
+              {[
+                { id: 'sales', label: 'Sales', color: 'blue' },
+                { id: 'leads', label: 'Leads', color: 'purple' },
+                { id: 'follow-up', label: 'Follow-up', color: 'orange' },
+                { id: 'service', label: 'Service', color: 'teal' },
+                { id: 'backoffice', label: 'Backoffice', color: 'slate' },
+                { id: 'administratie', label: 'Administratie', color: 'gray' },
+              ].map(tag => {
+                const isSelected = conversation.tags?.includes(tag.id)
                 return (
                   <button
-                    key={tag}
-                    onClick={() => isSelected ? onRemoveTag(tag) : onAddTag(tag)}
-                    className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+                    type='button'
+                    key={tag.id}
+                    onClick={() => isSelected ? onRemoveTag(tag.id) : onAddTag(tag.id)}
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${
                       isSelected
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
                     }`}
                   >
-                    {tag}
+                    {tag.label}
                   </button>
                 )
               })}
@@ -281,21 +297,26 @@ function ConversationDetails({
 
           {/* Team Member Tags */}
           <div className='mb-3'>
-            <p className='mb-2 text-xs font-medium text-gray-600'>Team</p>
-            <div className='flex flex-wrap gap-1'>
-              {['agent-1', 'agent-2', 'agent-3'].map(tag => {
-                const isSelected = conversation.tags?.includes(tag)
+            <p className='mb-2 text-xs font-semibold text-gray-600 uppercase tracking-wide'>{t('team')}</p>
+            <div className='flex flex-wrap gap-1.5'>
+              {[
+                { id: 'agent-1', label: 'Agent 1' },
+                { id: 'agent-2', label: 'Agent 2' },
+                { id: 'agent-3', label: 'Agent 3' },
+              ].map(tag => {
+                const isSelected = conversation.tags?.includes(tag.id)
                 return (
                   <button
-                    key={tag}
-                    onClick={() => isSelected ? onRemoveTag(tag) : onAddTag(tag)}
-                    className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+                    type='button'
+                    key={tag.id}
+                    onClick={() => isSelected ? onRemoveTag(tag.id) : onAddTag(tag.id)}
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${
                       isSelected
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
                     }`}
                   >
-                    {tag}
+                    {tag.label}
                   </button>
                 )
               })}
@@ -304,21 +325,23 @@ function ConversationDetails({
 
           {/* Custom Tag Input */}
           <div>
-            <p className='mb-2 text-xs font-medium text-gray-600'>Custom</p>
-            <div className='flex space-x-2'>
+            <p className='mb-2 text-xs font-semibold text-gray-600 uppercase tracking-wide'>{t('tags.add')}</p>
+            <div className='flex gap-2'>
               <input
                 type='text'
                 value={newTag}
                 onChange={e => setNewTag(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && handleAddTag()}
-                placeholder='Custom tag...'
-                className='flex-1 rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-blue-500'
+                placeholder={t('tags.add')}
+                className='flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none'
               />
               <button
+                type='button'
                 onClick={handleAddTag}
-                className='rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
+                disabled={!newTag.trim()}
+                className='rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                Add
+                {t('tags.add')}
               </button>
             </div>
           </div>
@@ -326,17 +349,17 @@ function ConversationDetails({
 
         {/* Actions */}
         <div className='space-y-2 p-4'>
-          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
+          <button type='button' className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
             <Star className='mr-3 h-4 w-4' />
-            Add to favorites
+            {t('actions.star')}
           </button>
-          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
+          <button type='button' className='flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100'>
             <Archive className='mr-3 h-4 w-4' />
-            Archive conversation
+            {t('actions.archiveConversation')}
           </button>
-          <button className='flex w-full items-center rounded-md px-3 py-2 text-sm text-red-700 hover:bg-red-50'>
+          <button type='button' className='flex w-full items-center rounded-md px-3 py-2 text-sm text-red-700 hover:bg-red-50'>
             <Trash2 className='mr-3 h-4 w-4' />
-            Delete conversation
+            {t('actions.deleteConversation')}
           </button>
         </div>
       </div>
@@ -345,6 +368,7 @@ function ConversationDetails({
 }
 
 export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAppInboxProps) {
+  const t = useTranslations('inbox')
   const searchParams = useSearchParams()
   const conversationIdFromUrl = searchParams.get('conversation')
 
@@ -628,37 +652,37 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
       <div className='hidden md:block border-b border-gray-200 bg-white px-6 py-4'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-4'>
-            <h1 className='text-2xl font-bold text-gray-900'>WhatsApp Inbox</h1>
+            <h1 className='text-2xl font-bold text-gray-900'>{t('header.title')}</h1>
 
             {/* Stats */}
             <div className='hidden items-center space-x-6 text-sm text-gray-600 lg:flex'>
               <div className='flex items-center space-x-1'>
                 <MessageSquare className='h-4 w-4' />
-                <span>{stats.totalConversations} conversations</span>
+                <span>{t('stats.conversations', { count: stats.totalConversations })}</span>
               </div>
               <div className='flex items-center space-x-1'>
                 <div className='h-2 w-2 rounded-full bg-blue-500'></div>
-                <span>{stats.unreadConversations} unread</span>
+                <span>{t('stats.unread', { count: stats.unreadConversations })}</span>
               </div>
               <div className='flex items-center space-x-1'>
                 <Users className='h-4 w-4' />
-                <span>{stats.activeConversations} active</span>
+                <span>{t('stats.active', { count: stats.activeConversations })}</span>
               </div>
               <div className='flex items-center space-x-1'>
                 <TrendingUp className='h-4 w-4' />
-                <span>{stats.responseRate}% response rate</span>
+                <span>{t('stats.responseRate', { rate: stats.responseRate })}</span>
               </div>
             </div>
           </div>
 
           <div className='flex items-center space-x-3'>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
+            <button type='button' className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]' title={t('header.search')} aria-label={t('header.search')}>
               <Search className='h-5 w-5' />
             </button>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
+            <button type='button' className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]' title={t('filters.title')} aria-label={t('filters.title')}>
               <Filter className='h-5 w-5' />
             </button>
-            <button className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]'>
+            <button type='button' className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 min-h-[44px] min-w-[44px]' title={t('header.settings')} aria-label={t('header.settings')}>
               <Settings className='h-5 w-5' />
             </button>
           </div>
@@ -670,9 +694,11 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
         <div className='md:hidden border-b border-gray-200 bg-white'>
           <div className='flex items-center gap-3 px-4 py-3'>
             <button
+              type='button'
               onClick={() => setSelectedConversation(null)}
               className='flex-shrink-0 p-2 -ml-2 text-gray-600 hover:text-gray-900 min-h-[44px] min-w-[44px] flex items-center justify-center'
-              aria-label='Back to conversations'
+              aria-label={t('mobile.backToConversations')}
+              title={t('mobile.back')}
             >
               <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
@@ -706,9 +732,11 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
               </div>
             </div>
             <button
+              type='button'
               onClick={() => setShowDetails(!showDetails)}
               className='flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] flex items-center justify-center'
-              aria-label='Show details'
+              aria-label={t('mobile.showDetails')}
+              title={t('mobile.details')}
             >
               <MoreVertical className='h-5 w-5' />
             </button>
@@ -722,19 +750,19 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
           <div className='grid grid-cols-2 gap-3 text-xs'>
             <div className='flex items-center gap-2'>
               <MessageSquare className='h-4 w-4 text-gray-400' />
-              <span className='text-gray-600'>{stats.totalConversations} total</span>
+              <span className='text-gray-600'>{t('stats.total', { count: stats.totalConversations })}</span>
             </div>
             <div className='flex items-center gap-2'>
               <div className='h-2 w-2 rounded-full bg-blue-500'></div>
-              <span className='text-gray-600'>{stats.unreadConversations} unread</span>
+              <span className='text-gray-600'>{t('stats.unread', { count: stats.unreadConversations })}</span>
             </div>
             <div className='flex items-center gap-2'>
               <Users className='h-4 w-4 text-gray-400' />
-              <span className='text-gray-600'>{stats.activeConversations} active</span>
+              <span className='text-gray-600'>{t('stats.active', { count: stats.activeConversations })}</span>
             </div>
             <div className='flex items-center gap-2'>
               <TrendingUp className='h-4 w-4 text-gray-400' />
-              <span className='text-gray-600'>{stats.responseRate}% rate</span>
+              <span className='text-gray-600'>{t('stats.rate', { rate: stats.responseRate })}</span>
             </div>
           </div>
         </div>
@@ -825,17 +853,22 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
 
                     {/* AI Summary Button */}
                     <button
+                      type='button'
                       onClick={() => setShowSummary(true)}
                       className='flex items-center space-x-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100'
-                      title='AI Summary'
+                      title={t('ai.generateSummary')}
+                      aria-label={t('ai.generateSummary')}
                     >
                       <Sparkles className='h-4 w-4' />
-                      <span>Summarize</span>
+                      <span>{t('ai.summary')}</span>
                     </button>
 
                     <button
+                      type='button'
                       onClick={() => setShowDetails(!showDetails)}
                       className='rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                      title={t('mobile.details')}
+                      aria-label={t('mobile.showDetails')}
                     >
                       <MoreVertical className='h-5 w-5' />
                     </button>
@@ -872,10 +905,10 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
               <div className='text-center'>
                 <MessageSquare className='mx-auto mb-4 h-16 w-16 text-gray-300' />
                 <h3 className='mb-2 text-lg font-medium text-gray-900'>
-                  Welcome to WhatsApp Inbox
+                  {t('welcome.title')}
                 </h3>
                 <p className='max-w-sm text-gray-500'>
-                  Select a conversation from the list to start messaging with your customers
+                  {t('welcome.description')}
                 </p>
               </div>
             </div>
@@ -889,15 +922,17 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
             <div className='md:hidden fixed inset-0 z-50 bg-white overflow-y-auto'>
               <div className='sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3'>
                 <button
+                  type='button'
                   onClick={() => setShowDetails(false)}
                   className='p-2 -ml-2 text-gray-600 hover:text-gray-900 min-h-[44px] min-w-[44px] flex items-center justify-center'
-                  aria-label='Close details'
+                  aria-label={t('mobile.closeDetails')}
+                  title={t('templates.close')}
                 >
                   <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
                   </svg>
                 </button>
-                <h2 className='text-lg font-semibold text-gray-900'>Contact Details</h2>
+                <h2 className='text-lg font-semibold text-gray-900'>{t('contact.details')}</h2>
               </div>
               <ConversationDetails
                 conversation={selectedConversation}

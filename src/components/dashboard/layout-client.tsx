@@ -5,6 +5,7 @@ import { DashboardNav } from '@/components/dashboard/nav'
 import { DashboardHeader } from '@/components/dashboard/header'
 import { MobileBottomNav } from '@/components/ui/responsive/mobile-nav'
 import type { Profile } from '@/types/database'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface DashboardLayoutClientProps {
   profile: Profile
@@ -44,13 +45,15 @@ SettingsIcon.displayName = 'SettingsIcon'
 function DashboardLayoutClientInner({ profile, children }: DashboardLayoutClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  const t = useTranslations('dashboard')
+
   // ⚡ PERFORMANCE: Memoize nav items to prevent recreation on every render
   const mobileNavItems = useMemo(() => [
-    { name: 'Dashboard', href: '/dashboard', icon: <DashboardIcon /> },
-    { name: 'Inbox', href: '/dashboard/inbox', icon: <InboxIcon /> },
-    { name: 'Contacts', href: '/dashboard/contacts', icon: <UsersIcon /> },
-    { name: 'Settings', href: '/dashboard/settings', icon: <SettingsIcon /> },
-  ], [])
+    { name: t('nav.dashboard'), href: '/dashboard', icon: <DashboardIcon /> },
+    { name: t('inbox'), href: '/dashboard/inbox', icon: <InboxIcon /> },
+    { name: t('contacts'), href: '/dashboard/contacts', icon: <UsersIcon /> },
+    { name: t('settings'), href: '/dashboard/settings', icon: <SettingsIcon /> },
+  ], [t])
 
   // ⚡ PERFORMANCE: Memoize callbacks to prevent child re-renders
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
@@ -58,9 +61,13 @@ function DashboardLayoutClientInner({ profile, children }: DashboardLayoutClient
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <DashboardNav profile={profile} isOpen={sidebarOpen} onClose={closeSidebar} />
+      <DashboardNav profile={profile as any} isOpen={sidebarOpen} onClose={closeSidebar} />
       <div className='lg:pl-64'>
-        <DashboardHeader profile={profile} organizationId={profile.organization_id} onMenuClick={openSidebar} />
+        <DashboardHeader
+          profile={profile as any}
+          organizationId={profile.organization_id || undefined}
+          onMenuClick={openSidebar}
+        />
         <main className='py-4 sm:py-8 pb-20 md:pb-8'>
           <div className='px-4 sm:px-6 lg:px-8'>{children}</div>
         </main>

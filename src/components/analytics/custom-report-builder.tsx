@@ -9,6 +9,7 @@ import {
   PlusIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface ReportMetric {
   id: string
@@ -38,85 +39,87 @@ interface CustomReportConfig {
   visualization: 'table' | 'bar' | 'line' | 'pie' | 'area'
 }
 
-const AVAILABLE_METRICS: ReportMetric[] = [
-  { id: 'total_revenue', name: 'Totale Omzet', type: 'sum', field: 'amount', category: 'revenue' },
-  { id: 'mrr', name: 'MRR', type: 'sum', field: 'recurring_amount', category: 'revenue' },
-  {
-    id: 'avg_deal_size',
-    name: 'Gemiddelde Deal',
-    type: 'average',
-    field: 'amount',
-    category: 'revenue',
-  },
-  {
-    id: 'conversion_rate',
-    name: 'Conversie Ratio',
-    type: 'percentage',
-    field: 'converted',
-    category: 'revenue',
-  },
-
-  {
-    id: 'total_conversations',
-    name: 'Totaal Gesprekken',
-    type: 'count',
-    field: 'id',
-    category: 'conversations',
-  },
-  {
-    id: 'avg_response_time',
-    name: 'Gemiddelde Reactietijd',
-    type: 'average',
-    field: 'first_response_time',
-    category: 'conversations',
-  },
-  {
-    id: 'resolved_rate',
-    name: 'Oplospercentage',
-    type: 'percentage',
-    field: 'resolved',
-    category: 'conversations',
-  },
-
-  {
-    id: 'total_contacts',
-    name: 'Totaal Contacten',
-    type: 'count',
-    field: 'id',
-    category: 'contacts',
-  },
-  {
-    id: 'new_contacts',
-    name: 'Nieuwe Contacten',
-    type: 'count',
-    field: 'created_at',
-    category: 'contacts',
-  },
-  {
-    id: 'active_contacts',
-    name: 'Actieve Contacten',
-    type: 'count',
-    field: 'last_message_at',
-    category: 'contacts',
-  },
-
-  {
-    id: 'automation_triggers',
-    name: 'Automation Triggers',
-    type: 'count',
-    field: 'triggered_at',
-    category: 'automation',
-  },
-  {
-    id: 'automation_success',
-    name: 'Succesvolle Automations',
-    type: 'percentage',
-    field: 'success',
-    category: 'automation',
-  },
-]
-
 export default function CustomReportBuilder() {
+  const t = useTranslations('analytics')
+
+  const AVAILABLE_METRICS: ReportMetric[] = [
+    { id: 'total_revenue', name: t('reports.metrics.total_revenue'), type: 'sum', field: 'amount', category: 'revenue' },
+    { id: 'mrr', name: t('reports.metrics.mrr'), type: 'sum', field: 'recurring_amount', category: 'revenue' },
+    {
+      id: 'avg_deal_size',
+      name: t('reports.metrics.avg_deal_size'),
+      type: 'average',
+      field: 'amount',
+      category: 'revenue',
+    },
+    {
+      id: 'conversion_rate',
+      name: t('reports.metrics.conversion_rate'),
+      type: 'percentage',
+      field: 'converted',
+      category: 'revenue',
+    },
+
+    {
+      id: 'total_conversations',
+      name: t('reports.metrics.total_conversations'),
+      type: 'count',
+      field: 'id',
+      category: 'conversations',
+    },
+    {
+      id: 'avg_response_time',
+      name: t('reports.metrics.avg_response_time'),
+      type: 'average',
+      field: 'first_response_time',
+      category: 'conversations',
+    },
+    {
+      id: 'resolved_rate',
+      name: t('reports.metrics.resolved_rate'),
+      type: 'percentage',
+      field: 'resolved',
+      category: 'conversations',
+    },
+
+    {
+      id: 'total_contacts',
+      name: t('reports.metrics.total_contacts'),
+      type: 'count',
+      field: 'id',
+      category: 'contacts',
+    },
+    {
+      id: 'new_contacts',
+      name: t('reports.metrics.new_contacts'),
+      type: 'count',
+      field: 'created_at',
+      category: 'contacts',
+    },
+    {
+      id: 'active_contacts',
+      name: t('reports.metrics.active_contacts'),
+      type: 'count',
+      field: 'last_message_at',
+      category: 'contacts',
+    },
+
+    {
+      id: 'automation_triggers',
+      name: t('reports.metrics.automation_triggers'),
+      type: 'count',
+      field: 'triggered_at',
+      category: 'automation',
+    },
+    {
+      id: 'automation_success',
+      name: t('reports.metrics.automation_success'),
+      type: 'percentage',
+      field: 'success',
+      category: 'automation',
+    },
+  ]
+
   const [config, setConfig] = useState<CustomReportConfig>({
     name: '',
     description: '',
@@ -176,7 +179,7 @@ export default function CustomReportBuilder() {
       setReportData(data.report)
     } catch (error) {
       console.error('Failed to generate report:', error)
-      alert('Fout bij genereren van rapport')
+      alert(t('errors.loadFailed'))
     } finally {
       setIsGenerating(false)
     }
@@ -193,30 +196,30 @@ export default function CustomReportBuilder() {
       <div className='rounded-lg bg-white p-6 shadow'>
         <div className='mb-6 flex items-center gap-3'>
           <ChartBarIcon className='h-6 w-6 text-emerald-600' />
-          <h2 className='text-xl font-semibold text-gray-900'>Custom Report Builder</h2>
+          <h2 className='text-xl font-semibold text-gray-900'>{t('reports.title')}</h2>
         </div>
 
         {/* Basic Info */}
         <div className='mb-6 space-y-4'>
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Rapport Naam</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('reports.nameLabel')}</label>
             <input
               type='text'
               value={config.name}
               onChange={e => setConfig({ ...config, name: e.target.value })}
               className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
-              placeholder='Geef uw rapport een naam...'
+              placeholder={t('reports.namePlaceholder')}
             />
           </div>
 
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Beschrijving</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('reports.descriptionLabel')}</label>
             <textarea
               value={config.description}
               onChange={e => setConfig({ ...config, description: e.target.value })}
               rows={2}
               className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
-              placeholder='Optionele beschrijving...'
+              placeholder={t('reports.descriptionPlaceholder')}
             />
           </div>
         </div>
@@ -225,11 +228,11 @@ export default function CustomReportBuilder() {
         <div className='mb-6'>
           <label className='mb-2 block flex items-center gap-2 text-sm font-medium text-gray-700'>
             <CalendarIcon className='h-4 w-4' />
-            Datumbereik
+            {t('reports.dateRange')}
           </label>
           <div className='grid grid-cols-2 gap-4'>
             <div>
-              <label className='mb-1 block text-xs text-gray-500'>Van</label>
+              <label className='mb-1 block text-xs text-gray-500'>{t('reports.from')}</label>
               <input
                 type='date'
                 value={config.dateRange.from}
@@ -243,7 +246,7 @@ export default function CustomReportBuilder() {
               />
             </div>
             <div>
-              <label className='mb-1 block text-xs text-gray-500'>Tot</label>
+              <label className='mb-1 block text-xs text-gray-500'>{t('reports.to')}</label>
               <input
                 type='date'
                 value={config.dateRange.to}
@@ -261,7 +264,7 @@ export default function CustomReportBuilder() {
 
         {/* Metrics Selection */}
         <div className='mb-6'>
-          <label className='mb-3 block text-sm font-medium text-gray-700'>Selecteer Metrics</label>
+          <label className='mb-3 block text-sm font-medium text-gray-700'>{t('reports.selectMetrics')}</label>
 
           {/* Selected Metrics */}
           {config.metrics.length > 0 && (
@@ -288,10 +291,10 @@ export default function CustomReportBuilder() {
             {['revenue', 'conversations', 'contacts', 'automation'].map(category => (
               <div key={category} className='rounded-lg border border-gray-200 p-3'>
                 <h4 className='mb-2 text-xs font-medium text-gray-500 uppercase'>
-                  {category === 'revenue' && '💰 Revenue'}
-                  {category === 'conversations' && '💬 Gesprekken'}
-                  {category === 'contacts' && '👥 Contacten'}
-                  {category === 'automation' && '🤖 Automation'}
+                  {category === 'revenue' && t('reports.categories.revenue')}
+                  {category === 'conversations' && t('reports.categories.conversations')}
+                  {category === 'contacts' && t('reports.categories.contacts')}
+                  {category === 'automation' && t('reports.categories.automation')}
                 </h4>
                 <div className='space-y-1'>
                   {AVAILABLE_METRICS.filter(m => m.category === category).map(metric => (
@@ -315,20 +318,20 @@ export default function CustomReportBuilder() {
           <div className='mb-3 flex items-center justify-between'>
             <label className='block flex items-center gap-2 text-sm font-medium text-gray-700'>
               <FunnelIcon className='h-4 w-4' />
-              Filters
+              {t('reports.filters.title')}
             </label>
             <button
               onClick={addFilter}
               className='flex items-center gap-1 rounded-lg px-3 py-1 text-sm text-emerald-600 hover:bg-emerald-50'
             >
               <PlusIcon className='h-4 w-4' />
-              Filter toevoegen
+              {t('reports.filters.add')}
             </button>
           </div>
 
           {config.filters.length === 0 ? (
             <p className='text-sm text-gray-500 italic'>
-              Geen filters toegepast - alle data wordt getoond
+              {t('reports.filters.noFilters')}
             </p>
           ) : (
             <div className='space-y-3'>
@@ -339,11 +342,11 @@ export default function CustomReportBuilder() {
                     onChange={e => updateFilter(filter.id, { field: e.target.value })}
                     className='rounded-lg border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value=''>Selecteer veld...</option>
-                    <option value='status'>Status</option>
-                    <option value='amount'>Bedrag</option>
-                    <option value='plan'>Plan</option>
-                    <option value='source'>Bron</option>
+                    <option value=''>{t('reports.metrics.selectMetrics')}</option>
+                    <option value='status'>{t('reports.filters.fields.status')}</option>
+                    <option value='amount'>{t('reports.filters.fields.amount')}</option>
+                    <option value='plan'>{t('reports.filters.fields.plan')}</option>
+                    <option value='source'>{t('reports.filters.fields.source')}</option>
                   </select>
 
                   <select
@@ -351,11 +354,11 @@ export default function CustomReportBuilder() {
                     onChange={e => updateFilter(filter.id, { operator: e.target.value as any })}
                     className='rounded-lg border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value='equals'>Is gelijk aan</option>
-                    <option value='contains'>Bevat</option>
-                    <option value='greater'>Groter dan</option>
-                    <option value='less'>Kleiner dan</option>
-                    <option value='between'>Tussen</option>
+                    <option value='equals'>{t('reports.filters.operators.equals')}</option>
+                    <option value='contains'>{t('reports.filters.operators.contains')}</option>
+                    <option value='greater'>{t('reports.filters.operators.greater')}</option>
+                    <option value='less'>{t('reports.filters.operators.less')}</option>
+                    <option value='between'>{t('reports.filters.operators.between')}</option>
                   </select>
 
                   <input
@@ -363,7 +366,7 @@ export default function CustomReportBuilder() {
                     value={typeof filter.value === 'string' ? filter.value : ''}
                     onChange={e => updateFilter(filter.id, { value: e.target.value })}
                     className='flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm'
-                    placeholder='Waarde...'
+                    placeholder={t('reports.filters.valuePlaceholder')}
                   />
 
                   <button
@@ -381,33 +384,33 @@ export default function CustomReportBuilder() {
         {/* Group By & Visualization */}
         <div className='mb-6 grid grid-cols-2 gap-4'>
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Groeperen per</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('reports.groupBy.label')}</label>
             <select
               value={config.groupBy}
               onChange={e => setConfig({ ...config, groupBy: e.target.value })}
               className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
             >
-              <option value='hour'>Uur</option>
-              <option value='day'>Dag</option>
-              <option value='week'>Week</option>
-              <option value='month'>Maand</option>
-              <option value='quarter'>Kwartaal</option>
-              <option value='year'>Jaar</option>
+              <option value='hour'>{t('reports.groupBy.hour')}</option>
+              <option value='day'>{t('reports.groupBy.day')}</option>
+              <option value='week'>{t('reports.groupBy.week')}</option>
+              <option value='month'>{t('reports.groupBy.month')}</option>
+              <option value='quarter'>{t('reports.groupBy.quarter')}</option>
+              <option value='year'>{t('reports.groupBy.year')}</option>
             </select>
           </div>
 
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Visualisatie</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('reports.visualization.label')}</label>
             <select
               value={config.visualization}
               onChange={e => setConfig({ ...config, visualization: e.target.value as any })}
               className='w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-emerald-500'
             >
-              <option value='table'>Tabel</option>
-              <option value='bar'>Bar Chart</option>
-              <option value='line'>Line Chart</option>
-              <option value='pie'>Pie Chart</option>
-              <option value='area'>Area Chart</option>
+              <option value='table'>{t('reports.visualization.table')}</option>
+              <option value='bar'>{t('reports.visualization.bar')}</option>
+              <option value='line'>{t('reports.visualization.line')}</option>
+              <option value='pie'>{t('reports.visualization.pie')}</option>
+              <option value='area'>{t('reports.visualization.area')}</option>
             </select>
           </div>
         </div>
@@ -419,7 +422,7 @@ export default function CustomReportBuilder() {
             disabled={isGenerating || config.metrics.length === 0}
             className='flex-1 rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300'
           >
-            {isGenerating ? 'Rapport genereren...' : 'Rapport Genereren'}
+            {isGenerating ? t('reports.generating') : t('reports.generate')}
           </button>
 
           {reportData && (
@@ -427,7 +430,7 @@ export default function CustomReportBuilder() {
               <button
                 onClick={() => exportReport('csv')}
                 className='rounded-lg border border-gray-300 px-4 py-3 transition-colors hover:bg-gray-50'
-                title='Export als CSV'
+                title={t('exportAs', { format: 'CSV' }) || 'Export as CSV'}
               >
                 <ArrowDownTrayIcon className='h-5 w-5 text-gray-600' />
               </button>
@@ -439,9 +442,9 @@ export default function CustomReportBuilder() {
       {/* Report Preview */}
       {reportData && (
         <div className='rounded-lg bg-white p-6 shadow'>
-          <h3 className='mb-4 text-lg font-semibold text-gray-900'>Rapport: {config.name}</h3>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>{t('reports.preview', { name: config.name })}</h3>
           {/* Report visualization hier */}
-          <div className='text-sm text-gray-600'>Rapport preview komt hier...</div>
+          <div className='text-sm text-gray-600'>{t('reports.previewPlaceholder')}</div>
         </div>
       )}
     </div>

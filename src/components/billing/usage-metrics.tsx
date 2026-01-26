@@ -1,3 +1,7 @@
+'use client'
+
+import { useTranslations } from '@/components/providers/translation-provider'
+
 interface UsageMetricsProps {
   usage: {
     users: {
@@ -20,6 +24,8 @@ interface UsageMetricsProps {
 }
 
 export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
+  const t = useTranslations('billing')
+
   const getUsagePercentage = (current: number, limit: number, unlimited: boolean) => {
     if (unlimited) return 0
     return Math.min((current / limit) * 100, 100)
@@ -32,12 +38,12 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
   }
 
   const formatLimit = (limit: number, unlimited: boolean) => {
-    return unlimited ? 'Unlimited' : limit.toLocaleString()
+    return unlimited ? t('usage.unlimited') : limit.toLocaleString()
   }
 
   const metrics = [
     {
-      name: 'Team Members',
+      name: t('usage.teamMembers'),
       current: usage.users.current,
       limit: usage.users.limit,
       unlimited: usage.users.unlimited,
@@ -53,7 +59,7 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
       ),
     },
     {
-      name: 'Contacts',
+      name: t('usage.contacts'),
       current: usage.contacts.current,
       limit: usage.contacts.limit,
       unlimited: usage.contacts.unlimited,
@@ -69,7 +75,7 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
       ),
     },
     {
-      name: 'Messages (This Month)',
+      name: t('usage.messagesThisMonth'),
       current: usage.messages.current,
       limit: usage.messages.limit,
       unlimited: usage.messages.unlimited,
@@ -89,8 +95,8 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
   return (
     <div className='rounded-lg bg-white shadow'>
       <div className='border-b border-gray-200 px-6 py-4'>
-        <h2 className='text-lg font-medium text-gray-900'>Usage This Month</h2>
-        <p className='text-sm text-gray-500'>Track your current usage against plan limits</p>
+        <h2 className='text-lg font-medium text-gray-900'>{t('usage.title')}</h2>
+        <p className='text-sm text-gray-500'>{t('usage.trackUsage')}</p>
       </div>
       <div className='p-6'>
         <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
@@ -125,7 +131,7 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
                 {!metric.unlimited && (
                   <div className='mt-4'>
                     <div className='mb-1 flex items-center justify-between text-sm text-gray-600'>
-                      <span>Usage</span>
+                      <span>{t('usage.usageLabel')}</span>
                       <span>{percentage.toFixed(0)}%</span>
                     </div>
                     <div className='h-2 w-full rounded-full bg-gray-200'>
@@ -140,7 +146,7 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
                 {metric.unlimited && (
                   <div className='mt-4'>
                     <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
-                      Unlimited
+                      {t('usage.unlimited')}
                     </span>
                   </div>
                 )}
@@ -148,7 +154,7 @@ export function UsageMetrics({ usage, plan }: UsageMetricsProps) {
                 {isNearLimit && (
                   <div className='mt-3 rounded-md bg-yellow-100 p-2'>
                     <p className='text-xs text-yellow-800'>
-                      You're approaching your limit. Consider upgrading your plan.
+                      {t('usage.approachingLimit')}
                     </p>
                   </div>
                 )}

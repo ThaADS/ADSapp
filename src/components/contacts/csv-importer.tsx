@@ -6,6 +6,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface CSVColumn {
   header: string
@@ -28,6 +29,7 @@ export function CSVImporter({
   optionalFields = ['email', 'company', 'notes'],
   className = '',
 }: CSVImporterProps) {
+  const t = useTranslations('contacts')
   const [file, setFile] = useState<File | null>(null)
   const [columns, setColumns] = useState<CSVColumn[]>([])
   const [preview, setPreview] = useState<string[][]>([])
@@ -38,7 +40,7 @@ export function CSVImporter({
   const parseCSV = useCallback((content: string) => {
     const lines = content.split('\n').filter((line) => line.trim())
     if (lines.length < 2) {
-      setError('CSV moet minimaal een header en één data rij bevatten')
+      setError(t('import.errors.minRows'))
       return
     }
 
@@ -62,7 +64,7 @@ export function CSVImporter({
     if (!selectedFile) return
 
     if (!selectedFile.name.endsWith('.csv')) {
-      setError('Alleen CSV bestanden zijn toegestaan')
+      setError(t('import.errors.invalidFormat'))
       return
     }
 
@@ -105,18 +107,18 @@ export function CSVImporter({
     <div className={`rounded-lg border bg-white ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between border-b p-4">
-        <h3 className="font-semibold">CSV Import</h3>
+        <h3 className="font-semibold">{t('import.title')}</h3>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span className={step === 'upload' ? 'text-emerald-600 font-medium' : ''}>
-            1. Upload
+            {t('import.steps.upload')}
           </span>
           <span>→</span>
           <span className={step === 'mapping' ? 'text-emerald-600 font-medium' : ''}>
-            2. Mapping
+            {t('import.steps.mapping')}
           </span>
           <span>→</span>
           <span className={step === 'preview' ? 'text-emerald-600 font-medium' : ''}>
-            3. Preview
+            {t('import.steps.preview')}
           </span>
         </div>
       </div>
@@ -144,13 +146,13 @@ export function CSVImporter({
               className="border-2 border-dashed border-gray-300 rounded-lg p-12 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors"
             >
               <div className="text-4xl mb-4">📄</div>
-              <p className="text-lg font-medium">Klik om CSV te uploaden</p>
+              <p className="text-lg font-medium">{t('import.upload.clickToUpload')}</p>
               <p className="text-sm text-gray-500 mt-2">
-                Of sleep je bestand hierheen
+                {t('import.upload.dragAndDrop')}
               </p>
             </div>
             <p className="text-xs text-gray-400 mt-4">
-              Ondersteunde velden: {allFields.join(', ')}
+              {t('import.upload.supportedFields')}: {allFields.join(', ')}
             </p>
           </div>
         )}
@@ -159,7 +161,7 @@ export function CSVImporter({
         {step === 'mapping' && (
           <div className="space-y-4">
             <p className="text-sm text-gray-600 mb-4">
-              Koppel de CSV kolommen aan de juiste velden:
+              {t('import.mapping.instruction')}
             </p>
             <div className="space-y-3">
               {columns.map((col, index) => (
@@ -174,7 +176,7 @@ export function CSVImporter({
                     onChange={(e) => handleMapping(index, e.target.value)}
                     className="px-3 py-2 border rounded-lg text-sm bg-white"
                   >
-                    <option value="">-- Niet importeren --</option>
+                    <option value="">{t('import.mapping.notImport')}</option>
                     {allFields.map((field) => (
                       <option key={field} value={field}>
                         {field} {requiredFields.includes(field) ? '*' : ''}
@@ -193,13 +195,13 @@ export function CSVImporter({
                 }}
                 className="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Terug
+                {t('actions.cancel')}
               </button>
               <button
                 onClick={() => setStep('preview')}
                 className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
               >
-                Volgende
+                {t('navigation.continue')}
               </button>
             </div>
           </div>
@@ -209,7 +211,7 @@ export function CSVImporter({
         {step === 'preview' && (
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Preview van de eerste {preview.length} rijen:
+              {t('import.preview.instruction', { count: preview.length })}
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
@@ -247,20 +249,20 @@ export function CSVImporter({
                 onClick={() => setStep('mapping')}
                 className="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Terug
+                {t('actions.cancel')}
               </button>
               <div className="flex gap-2">
                 <button
                   onClick={onCancel}
                   className="px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Annuleren
+                  {t('actions.cancel')}
                 </button>
                 <button
                   onClick={handleImport}
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                 >
-                  Importeren ({preview.length} rijen)
+                  {t('import.preview.importWithRows', { count: preview.length })}
                 </button>
               </div>
             </div>

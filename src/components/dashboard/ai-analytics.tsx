@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface AIUsageStats {
   period: {
@@ -52,6 +53,7 @@ interface AIAnalyticsProps {
 }
 
 export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
+  const t = useTranslations('analytics')
   const [stats, setStats] = useState<AIUsageStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -70,12 +72,12 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to load analytics')
+        throw new Error(data.error || t('errors.loadFailed'))
       }
 
       setStats(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load analytics')
+      setError(err instanceof Error ? err.message : t('errors.loadFailed'))
       console.error('Load analytics error:', err)
     } finally {
       setLoading(false)
@@ -83,6 +85,8 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
   }
 
   const formatCurrency = (amount: number) => {
+    // Ideally this should use the user's locale, but for now we default to Dutch formatting for USD
+    // matching the original implementation but customizable if needed
     return new Intl.NumberFormat('nl-NL', {
       style: 'currency',
       currency: 'USD',
@@ -96,14 +100,8 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
   }
 
   const getFeatureLabel = (feature: string) => {
-    const labels: Record<string, string> = {
-      draft: 'Concept Suggesties',
-      auto_response: 'Auto-Antwoorden',
-      sentiment: 'Sentiment Analyse',
-      summary: 'Samenvattingen',
-      template: 'Template Generatie',
-    }
-    return labels[feature] || feature
+    const key = `features.${feature}`
+    return t(key as any) || feature
   }
 
   const getFeatureIcon = (feature: string) => {
@@ -139,7 +137,7 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
           onClick={loadStats}
           className='mt-2 text-sm text-red-600 underline hover:text-red-800'
         >
-          Opnieuw proberen
+          {t('errors.retry')}
         </button>
       </div>
     )
@@ -154,17 +152,17 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       {/* Header with Period Selector */}
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-2xl font-bold text-gray-900'>AI Analytics</h2>
-          <p className='mt-1 text-sm text-gray-600'>Gebruik en kosten overzicht van AI features</p>
+          <h2 className='text-2xl font-bold text-gray-900'>{t('ai.title')}</h2>
+          <p className='mt-1 text-sm text-gray-600'>{t('aiDescription')}</p>
         </div>
         <select
           value={period}
           onChange={e => setPeriod(e.target.value)}
           className='rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500'
         >
-          <option value='7'>Laatste 7 dagen</option>
-          <option value='30'>Laatste 30 dagen</option>
-          <option value='90'>Laatste 90 dagen</option>
+          <option value='7'>{t('dateRange.last7Days')}</option>
+          <option value='30'>{t('dateRange.last30Days')}</option>
+          <option value='90'>{t('dateRange.last90Days', { defaultValue: 'Laatste 90 dagen' })}</option>
         </select>
       </div>
 
@@ -191,15 +189,17 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
               <h3
                 className={`text-sm font-medium ${stats.budgetStatus.isOverBudget ? 'text-red-800' : 'text-yellow-800'}`}
               >
-                {stats.budgetStatus.isOverBudget ? 'Budget overschreden' : 'Budget limiet bereikt'}
+                {stats.budgetStatus.isOverBudget ? t('budget.overBudget') : t('budget.limitReached')}
               </h3>
               <div
                 className={`mt-2 text-sm ${stats.budgetStatus.isOverBudget ? 'text-red-700' : 'text-yellow-700'}`}
               >
                 <p>
-                  Je hebt {formatCurrency(stats.budgetStatus.currentSpend)} van{' '}
-                  {formatCurrency(stats.budgetStatus.budget)} gebruikt (
-                  {stats.budgetStatus.percentUsed.toFixed(1)}%).
+                  {t('budget.spendDescription', {
+                    spend: formatCurrency(stats.budgetStatus.currentSpend),
+                    budget: formatCurrency(stats.budgetStatus.budget),
+                    percent: stats.budgetStatus.percentUsed.toFixed(1)
+                  })}
                 </p>
               </div>
             </div>
@@ -211,55 +211,55 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <div className='rounded-lg bg-white p-6 shadow'>
           <div className='flex items-center justify-between'>
-            <p className='text-sm font-medium text-gray-600'>Totaal Verzoeken</p>
+            <p className='text-sm font-medium text-gray-600'>{t('aiMetrics.totalRequests')}</p>
             <span className='text-2xl'>📊</span>
           </div>
           <p className='mt-2 text-3xl font-semibold text-gray-900'>
             {formatNumber(stats.summary.totalRequests)}
           </p>
-          <p className='mt-1 text-xs text-gray-500'>AI verzoeken afgelopen {period} dagen</p>
+          <p className='mt-1 text-xs text-gray-500'>{t('aiMetrics.requestsDescription', { days: period })}</p>
         </div>
 
         <div className='rounded-lg bg-white p-6 shadow'>
           <div className='flex items-center justify-between'>
-            <p className='text-sm font-medium text-gray-600'>Totale Kosten</p>
+            <p className='text-sm font-medium text-gray-600'>{t('aiMetrics.totalCost')}</p>
             <span className='text-2xl'>💰</span>
           </div>
           <p className='mt-2 text-3xl font-semibold text-gray-900'>
             {formatCurrency(stats.summary.totalCostUsd)}
           </p>
-          <p className='mt-1 text-xs text-gray-500'>API kosten afgelopen {period} dagen</p>
+          <p className='mt-1 text-xs text-gray-500'>{t('aiMetrics.costDescription', { days: period })}</p>
         </div>
 
         <div className='rounded-lg bg-white p-6 shadow'>
           <div className='flex items-center justify-between'>
-            <p className='text-sm font-medium text-gray-600'>Gem. Latency</p>
+            <p className='text-sm font-medium text-gray-600'>{t('aiMetrics.avgLatency')}</p>
             <span className='text-2xl'>⚡</span>
           </div>
           <p className='mt-2 text-3xl font-semibold text-gray-900'>
             {Math.round(stats.summary.avgLatencyMs)}ms
           </p>
-          <p className='mt-1 text-xs text-gray-500'>Gemiddelde response tijd</p>
+          <p className='mt-1 text-xs text-gray-500'>{t('aiMetrics.latencyDescription')}</p>
         </div>
 
         <div className='rounded-lg bg-white p-6 shadow'>
           <div className='flex items-center justify-between'>
-            <p className='text-sm font-medium text-gray-600'>Acceptatie</p>
+            <p className='text-sm font-medium text-gray-600'>{t('aiMetrics.acceptance')}</p>
             <span className='text-2xl'>✅</span>
           </div>
           <p className='mt-2 text-3xl font-semibold text-gray-900'>
             {stats.summary.acceptanceRate !== null
               ? `${stats.summary.acceptanceRate.toFixed(1)}%`
-              : 'N/A'}
+              : t('notAvailable') || 'N/A'}
           </p>
-          <p className='mt-1 text-xs text-gray-500'>Suggesties geaccepteerd</p>
+          <p className='mt-1 text-xs text-gray-500'>{t('aiMetrics.acceptanceDescription')}</p>
         </div>
       </div>
 
       {/* Feature Breakdown */}
       <div className='rounded-lg bg-white shadow'>
         <div className='border-b border-gray-200 px-6 py-4'>
-          <h3 className='text-lg font-medium text-gray-900'>Per Feature</h3>
+          <h3 className='text-lg font-medium text-gray-900'>{t('perFeature')}</h3>
         </div>
         <div className='p-6'>
           <div className='space-y-4'>
@@ -273,7 +273,7 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
                   <div>
                     <p className='font-medium text-gray-900'>{getFeatureLabel(feature)}</p>
                     <p className='text-sm text-gray-600'>
-                      {formatNumber(data.count)} verzoeken · {formatNumber(data.tokens)} tokens
+                      {formatNumber(data.count)} {t('requests')} · {formatNumber(data.tokens)} {t('tokens')}
                     </p>
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       {/* Usage Over Time Chart */}
       <div className='rounded-lg bg-white shadow'>
         <div className='border-b border-gray-200 px-6 py-4'>
-          <h3 className='text-lg font-medium text-gray-900'>Gebruik Over Tijd</h3>
+          <h3 className='text-lg font-medium text-gray-900'>{t('usageOverTime')}</h3>
         </div>
         <div className='p-6'>
           <div className='space-y-2'>
@@ -333,7 +333,7 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       {/* Model Usage */}
       <div className='rounded-lg bg-white shadow'>
         <div className='border-b border-gray-200 px-6 py-4'>
-          <h3 className='text-lg font-medium text-gray-900'>Model Gebruik</h3>
+          <h3 className='text-lg font-medium text-gray-900'>{t('modelUsage')}</h3>
         </div>
         <div className='p-6'>
           <div className='space-y-3'>
@@ -367,48 +367,47 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
       {stats.budgetStatus && (
         <div className='rounded-lg bg-white shadow'>
           <div className='border-b border-gray-200 px-6 py-4'>
-            <h3 className='text-lg font-medium text-gray-900'>Budget Status</h3>
+            <h3 className='text-lg font-medium text-gray-900'>{t('budget.status')}</h3>
           </div>
           <div className='p-6'>
             <div className='space-y-4'>
               <div className='flex items-center justify-between'>
-                <span className='text-sm text-gray-600'>Maandelijks Budget</span>
+                <span className='text-sm text-gray-600'>{t('budget.monthlyBudget')}</span>
                 <span className='font-semibold text-gray-900'>
                   {formatCurrency(stats.budgetStatus.budget)}
                 </span>
               </div>
               <div className='flex items-center justify-between'>
-                <span className='text-sm text-gray-600'>Huidig Verbruik</span>
+                <span className='text-sm text-gray-600'>{t('budget.currentSpend')}</span>
                 <span className='font-semibold text-gray-900'>
                   {formatCurrency(stats.budgetStatus.currentSpend)}
                 </span>
               </div>
               <div className='flex items-center justify-between'>
-                <span className='text-sm text-gray-600'>Resterend</span>
+                <span className='text-sm text-gray-600'>{t('budget.remaining')}</span>
                 <span
                   className={`font-semibold ${stats.budgetStatus.remaining < 0 ? 'text-red-600' : 'text-green-600'}`}
                 >
                   {formatCurrency(Math.abs(stats.budgetStatus.remaining))}
-                  {stats.budgetStatus.remaining < 0 && ' over budget'}
+                  {stats.budgetStatus.remaining < 0 && t('budget.overBudgetSuffix')}
                 </span>
               </div>
 
               <div className='border-t pt-4'>
                 <div className='mb-2 flex justify-between text-sm'>
-                  <span className='text-gray-600'>Voortgang</span>
+                  <span className='text-gray-600'>{t('budget.progress')}</span>
                   <span className='font-medium text-gray-900'>
                     {stats.budgetStatus.percentUsed.toFixed(1)}%
                   </span>
                 </div>
                 <div className='relative h-3 w-full overflow-hidden rounded-full bg-gray-200'>
                   <div
-                    className={`h-full rounded-full transition-all ${
-                      stats.budgetStatus.isOverBudget
-                        ? 'bg-red-600'
-                        : stats.budgetStatus.isNearLimit
-                          ? 'bg-yellow-500'
-                          : 'bg-green-600'
-                    }`}
+                    className={`h-full rounded-full transition-all ${stats.budgetStatus.isOverBudget
+                      ? 'bg-red-600'
+                      : stats.budgetStatus.isNearLimit
+                        ? 'bg-yellow-500'
+                        : 'bg-green-600'
+                      }`}
                     style={{ width: `${Math.min(stats.budgetStatus.percentUsed, 100)}%` }}
                   />
                   {/* Alert threshold marker */}
@@ -418,7 +417,7 @@ export function AIAnalytics({ organizationId }: AIAnalyticsProps) {
                   />
                 </div>
                 <p className='mt-2 text-xs text-gray-500'>
-                  Waarschuwing bij {stats.budgetStatus.alertThreshold}% van budget
+                  {t('budget.warningThreshold', { threshold: stats.budgetStatus.alertThreshold })}
                 </p>
               </div>
             </div>

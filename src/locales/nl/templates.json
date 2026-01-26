@@ -1,0 +1,47 @@
+{
+    "title": "Berichtsjablonen",
+    "subtitle": "Maak en beheer WhatsApp-berichtsjablonen voor je bedrijf.",
+    "actions": {
+        "create": "Sjabloon maken",
+        "edit": "Bewerken",
+        "delete": "Verwijderen",
+        "duplicate": "Dupliceren",
+        "preview": "Voorbeeld",
+        "save": "Opslaan",
+        "cancel": "Annuleren"
+    },
+    "form": {
+        "name": "Sjabloonnaam",
+        "namePlaceholder": "bijv. Welkomstbericht",
+        "category": "Categorie",
+        "language": "Taal",
+        "content": "Berichtinhoud",
+        "contentPlaceholder": "Typ je berichtsjabloon hier...",
+        "variables": "Variabelen",
+        "variablesHelp": "Gebruik {{1}}, {{2}}, etc. voor dynamische waarden",
+        "header": "Header",
+        "footer": "Footer",
+        "buttons": "Knoppen"
+    },
+    "categories": {
+        "marketing": "Marketing",
+        "utility": "Utilitair",
+        "authentication": "Authenticatie"
+    },
+    "status": {
+        "approved": "Goedgekeurd",
+        "pending": "In afwachting",
+        "rejected": "Afgewezen"
+    },
+    "list": {
+        "empty": "Nog geen sjablonen",
+        "emptyDescription": "Maak je eerste berichtsjabloon om te beginnen.",
+        "searchPlaceholder": "Zoek sjablonen..."
+    },
+    "toasts": {
+        "created": "Sjabloon succesvol aangemaakt",
+        "updated": "Sjabloon succesvol bijgewerkt",
+        "deleted": "Sjabloon succesvol verwijderd",
+        "error": "Er is een fout opgetreden"
+    }
+}

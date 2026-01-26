@@ -1,0 +1,122 @@
+{
+    "list": {
+        "title": "Broadcast Campagnes",
+        "createButton": "Nieuwe Broadcast Maken",
+        "filters": {
+            "all": "Alle",
+            "scheduled": "Gepland",
+            "running": "Bezig",
+            "completed": "Voltooid",
+            "draft": "Concept"
+        },
+        "empty": {
+            "title": "Geen campagnes gevonden",
+            "description": "Maak je eerste broadcast campagne aan om bulkberichten te versturen."
+        },
+        "stats": {
+            "targets": "Doelgroep",
+            "sent": "Verzonden",
+            "delivered": "Afgeleverd",
+            "deliveryRate": "Delivery Rate",
+            "openRate": "Open Rate",
+            "progress": "Voortgang",
+            "scheduledFor": "Gepland voor"
+        },
+        "status": {
+            "draft": "Concept",
+            "scheduled": "Gepland",
+            "running": "Bezig",
+            "completed": "Voltooid",
+            "failed": "Mislukt",
+            "cancelled": "Geannuleerd",
+            "paused": "Gepauzeerd"
+        }
+    },
+    "builder": {
+        "title": "Broadcast Campagne Builder",
+        "steps": {
+            "basicInfo": "Basis Informatie",
+            "audience": "Doelgroep",
+            "message": "Bericht",
+            "scheduling": "Planning",
+            "review": "Controleren"
+        },
+        "buttons": {
+            "previous": "Vorige",
+            "next": "Volgende",
+            "saveDraft": "Opslaan als Concept",
+            "saving": "Opslaan...",
+            "sendNow": "Verstuur Nu",
+            "schedule": "Plannen",
+            "scheduling": "Bezig...",
+            "processing": "Verwerken..."
+        },
+        "success": {
+            "saved": "Campagne opgeslagen",
+            "scheduled": "Campagne gepland"
+        },
+        "errors": {
+            "saveFailed": "Kon campagne niet opslaan",
+            "scheduleFailed": "Kon campagne niet plannen",
+            "generic": "Er is een fout opgetreden"
+        }
+    },
+    "common": {
+        "step": "Stap {step}"
+    },
+    "drip": {
+        "builder": {
+            "title": "Drip Campaign Builder",
+            "description": "Maak een reeks berichten die worden geactiveerd door specifieke gebeurtenissen. Totaal aantal stappen: {steps}",
+            "steps": {
+                "basicInfo": "Basis Info",
+                "trigger": "Trigger",
+                "sequence": "Reeks",
+                "review": "Controleren"
+            },
+            "buttons": {
+                "saveDraft": "Concept Opslaan",
+                "activate": "Opslaan & Activeren",
+                "activating": "Activeren..."
+            },
+            "triggers": {
+                "manual": "Handmatige Trigger",
+                "contact_created": "Contact Aangemaakt",
+                "tag_added": "Tag Toegevoegd",
+                "custom_event": "Aangepaste Gebeurtenis",
+                "api": "API Trigger"
+            },
+            "defaults": {
+                "welcomeMessage": "Welkomstbericht"
+            }
+        },
+        "list": {
+            "title": "Drip Campagnes",
+            "createButton": "Nieuwe Drip Campagne",
+            "empty": {
+                "title": "Geen drip campagnes gevonden",
+                "description": "Automatiseer je follow-ups met drip campagnes."
+            },
+            "filters": {
+                "all": "Alle",
+                "active": "Actief",
+                "paused": "Gepauzeerd",
+                "draft": "Concept",
+                "archived": "Gearchiveerd"
+            },
+            "stats": {
+                "enrolled": "ingeschreven",
+                "active": "actief",
+                "completed": "voltooid",
+                "conversion": "conversie"
+            },
+            "actions": {
+                "pause": "Pauzeren",
+                "activate": "Activeren",
+                "edit": "Bewerken",
+                "archive": "Archiveren",
+                "archiveConfirm": "Weet je zeker dat je \"{name}\" wilt archiveren?"
+            }
+        }
+    }
+}

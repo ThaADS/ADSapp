@@ -1,0 +1,45 @@
+{
+    "title": "Product Roadmap",
+    "subtitle": "Discover what we are working on and what's next for ADSapp.",
+    "status": {
+        "planned": "Planned",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "live": "Live"
+    },
+    "quarters": {
+        "q4_2025": "Q4 2025",
+        "q1_2026": "Q1 2026",
+        "q2_2026": "Q2 2026",
+        "future": "Future"
+    },
+    "categories": {
+        "core": "Core Platform",
+        "ai": "AI & Automation",
+        "integrations": "Integrations",
+        "analytics": "Analytics"
+    },
+    "items": {
+        "drip_campaigns": "Drip Campaigns",
+        "drip_campaigns_desc": "Automated message sequences triggered by events.",
+        "broadcast_campaigns": "Broadcast Campaigns",
+        "broadcast_campaigns_desc": "Send bulk messages to your contacts.",
+        "visual_workflow": "Visual Workflow Builder",
+        "visual_workflow_desc": "Drag-and-drop interface for creating complex automations.",
+        "crm_integrations": "CRM Integrations",
+        "crm_integrations_desc": "Two-way sync with HubSpot, Salesforce, and Pipedrive.",
+        "advanced_analytics": "Advanced Analytics",
+        "advanced_analytics_desc": "Custom reports, funnel analysis, and export capabilities.",
+        "whatsapp_widget": "WhatsApp Web Widget",
+        "whatsapp_widget_desc": "Embeddable chat widget for your website.",
+        "ai_enhancements": "AI Enhancements",
+        "ai_enhancements_desc": "Sentiment analysis, auto-categorization, and smart replies.",
+        "mobile_app": "Mobile App",
+        "mobile_app_desc": "Native iOS and Android apps for managing conversations on the go."
+    },
+    "feedback": {
+        "title": "Have a suggestion?",
+        "description": "We value your input! Let us know what features would help your business grow.",
+        "button": "Suggest a Feature"
+    }
+}

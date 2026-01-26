@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { PhotoIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface WhiteLabelBrandingProps {
   organizationId: string
@@ -17,6 +18,7 @@ export default function WhiteLabelBranding({
   primaryColor = '#10b981',
   secondaryColor = '#3b82f6',
 }: WhiteLabelBrandingProps) {
+  const t = useTranslations('settings')
   const [logoPreview, setLogoPreview] = useState<string | null>(currentLogoUrl || null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -40,13 +42,13 @@ export default function WhiteLabelBranding({
     // Validate file type
     const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']
     if (!validTypes.includes(file.type)) {
-      setUploadError('Please upload a PNG, JPG, or SVG file')
+      setUploadError(t('organization.branding.errorFileType'))
       return
     }
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      setUploadError('File size must be less than 2MB')
+      setUploadError(t('organization.branding.errorFileSize'))
       return
     }
 
@@ -80,7 +82,7 @@ export default function WhiteLabelBranding({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to upload logo')
+        throw new Error(data.error || t('organization.branding.errorUpload'))
       }
 
       setUploadSuccess(true)
@@ -90,7 +92,7 @@ export default function WhiteLabelBranding({
       setTimeout(() => setUploadSuccess(false), 3000)
     } catch (error: any) {
       console.error('Upload error:', error)
-      setUploadError(error.message || 'Failed to upload logo')
+      setUploadError(error.message || t('organization.branding.errorUpload'))
     } finally {
       setIsUploading(false)
     }
@@ -121,14 +123,14 @@ export default function WhiteLabelBranding({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to save colors')
+        throw new Error(data.error || t('organization.branding.errorSave'))
       }
 
       setColorsSaved(true)
       setTimeout(() => setColorsSaved(false), 3000)
     } catch (error: any) {
       console.error('Save colors error:', error)
-      setUploadError(error.message || 'Failed to save colors')
+      setUploadError(error.message || t('organization.branding.errorSave'))
     } finally {
       setIsSavingColors(false)
     }
@@ -141,10 +143,10 @@ export default function WhiteLabelBranding({
         <div className='border-b border-gray-200 px-6 py-4'>
           <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>
             <PhotoIcon className='h-5 w-5 text-emerald-600' />
-            Organization Logo
+            {t('organization.branding.logoTitle')}
           </h3>
           <p className='mt-1 text-sm text-gray-600'>
-            Upload your organization's logo. Recommended size: 512x512px (PNG, JPG, or SVG)
+            {t('organization.branding.logoDesc')}
           </p>
         </div>
 
@@ -155,7 +157,7 @@ export default function WhiteLabelBranding({
               <button
                 onClick={handleRemoveLogo}
                 className='absolute top-2 right-2 rounded-full bg-white p-1 shadow-lg transition-colors hover:bg-gray-100'
-                title='Remove logo'
+                title={t('organization.branding.removeLogo')}
               >
                 <XMarkIcon className='h-5 w-5 text-gray-600' />
               </button>
@@ -168,7 +170,7 @@ export default function WhiteLabelBranding({
           {/* Upload Input */}
           <div>
             <label className='block'>
-              <span className='sr-only'>Choose logo file</span>
+              <span className='sr-only'>{t('organization.branding.chooseFile')}</span>
               <input
                 ref={fileInputRef}
                 type='file'
@@ -177,7 +179,7 @@ export default function WhiteLabelBranding({
                 className='block w-full cursor-pointer text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100'
               />
             </label>
-            <p className='mt-2 text-xs text-gray-500'>PNG, JPG or SVG. Max size 2MB.</p>
+            <p className='mt-2 text-xs text-gray-500'>{t('organization.branding.fileTypeNote')}</p>
           </div>
 
           {/* Upload Error */}
@@ -191,7 +193,7 @@ export default function WhiteLabelBranding({
           {uploadSuccess && (
             <div className='flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3'>
               <CheckIcon className='h-5 w-5 text-green-600' />
-              <p className='text-sm text-green-800'>Logo uploaded successfully!</p>
+              <p className='text-sm text-green-800'>{t('organization.branding.successLogo')}</p>
             </div>
           )}
 
@@ -205,12 +207,12 @@ export default function WhiteLabelBranding({
               {isUploading ? (
                 <>
                   <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                  <span>Uploading...</span>
+                  <span>{t('organization.branding.uploading')}</span>
                 </>
               ) : (
                 <>
                   <PhotoIcon className='h-5 w-5' />
-                  <span>Upload Logo</span>
+                  <span>{t('organization.branding.uploadButton')}</span>
                 </>
               )}
             </button>
@@ -221,16 +223,16 @@ export default function WhiteLabelBranding({
       {/* Brand Colors Section */}
       <div className='overflow-hidden rounded-lg bg-white shadow'>
         <div className='border-b border-gray-200 px-6 py-4'>
-          <h3 className='text-lg font-semibold text-gray-900'>Brand Colors</h3>
+          <h3 className='text-lg font-semibold text-gray-900'>{t('organization.branding.colorsTitle')}</h3>
           <p className='mt-1 text-sm text-gray-600'>
-            Customize the primary and secondary colors for your organization's interface
+            {t('organization.branding.colorsDesc')}
           </p>
         </div>
 
         <div className='space-y-6 px-6 py-6'>
           {/* Primary Color */}
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Primary Color</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('organization.branding.primaryColor')}</label>
             <div className='flex items-center gap-4'>
               <input
                 type='color'
@@ -254,7 +256,7 @@ export default function WhiteLabelBranding({
 
           {/* Secondary Color */}
           <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700'>Secondary Color</label>
+            <label className='mb-2 block text-sm font-medium text-gray-700'>{t('organization.branding.secondaryColor')}</label>
             <div className='flex items-center gap-4'>
               <input
                 type='color'
@@ -280,7 +282,7 @@ export default function WhiteLabelBranding({
           {colorsSaved && (
             <div className='flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3'>
               <CheckIcon className='h-5 w-5 text-green-600' />
-              <p className='text-sm text-green-800'>Brand colors saved successfully!</p>
+              <p className='text-sm text-green-800'>{t('organization.branding.successColors')}</p>
             </div>
           )}
 
@@ -290,7 +292,7 @@ export default function WhiteLabelBranding({
             disabled={isSavingColors}
             className='w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300'
           >
-            {isSavingColors ? 'Saving...' : 'Save Brand Colors'}
+            {isSavingColors ? t('organization.branding.saving') : t('organization.branding.saveColors')}
           </button>
         </div>
       </div>

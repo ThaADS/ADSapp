@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export function ResetPasswordForm() {
+  const t = useTranslations('auth')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,13 +19,13 @@ export function ResetPasswordForm() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('passwordsDoNotMatch'))
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(t('passwordMin6Chars'))
       setLoading(false)
       return
     }
@@ -40,7 +42,7 @@ export function ResetPasswordForm() {
         router.push('/auth/signin?message=Password updated successfully')
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError(t('unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -51,7 +53,7 @@ export function ResetPasswordForm() {
       <div className='space-y-4'>
         <div>
           <label htmlFor='password' className='sr-only'>
-            New Password
+            {t('newPassword')}
           </label>
           <input
             id='password'
@@ -60,14 +62,14 @@ export function ResetPasswordForm() {
             autoComplete='new-password'
             required
             className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-            placeholder='New password'
+            placeholder={t('newPasswordPlaceholder')}
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
         </div>
         <div>
           <label htmlFor='confirmPassword' className='sr-only'>
-            Confirm Password
+            {t('confirmPassword')}
           </label>
           <input
             id='confirmPassword'
@@ -76,7 +78,7 @@ export function ResetPasswordForm() {
             autoComplete='new-password'
             required
             className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-            placeholder='Confirm new password'
+            placeholder={t('confirmPasswordPlaceholder')}
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
           />
@@ -95,7 +97,7 @@ export function ResetPasswordForm() {
           disabled={loading}
           className='group relative flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50'
         >
-          {loading ? 'Updating...' : 'Update password'}
+          {loading ? t('updating') : t('updatePassword')}
         </button>
       </div>
     </form>

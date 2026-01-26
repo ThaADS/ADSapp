@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Tag {
   id: string
@@ -58,6 +59,7 @@ export default function ContactForm({
   onCancel,
   isLoading = false,
 }: ContactFormProps) {
+  const t = useTranslations('contacts')
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     phone_number: '',
@@ -98,18 +100,17 @@ export default function ContactForm({
 
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
+      newErrors.name = t('form.validation.nameRequired')
     }
 
     // Phone number validation
     if (!formData.phone_number.trim()) {
-      newErrors.phone_number = 'Phone number is required'
+      newErrors.phone_number = t('form.validation.phoneRequired')
     } else {
       const phoneRegex = /^\+?[1-9]\d{1,14}$/
       const cleanPhone = formData.phone_number.replace(/[\s-()]/g, '')
       if (!phoneRegex.test(cleanPhone)) {
-        newErrors.phone_number =
-          'Invalid phone number format. Use international format (e.g., +1234567890)'
+        newErrors.phone_number = t('form.validation.phoneInvalid')
       }
     }
 
@@ -117,7 +118,7 @@ export default function ContactForm({
     if (formData.email && formData.email.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(formData.email)) {
-        newErrors.email = 'Invalid email format'
+        newErrors.email = t('form.validation.emailInvalid')
       }
     }
 
@@ -182,17 +183,16 @@ export default function ContactForm({
       {/* Name Field */}
       <div>
         <label htmlFor='name' className='mb-1 block text-sm font-medium text-gray-700'>
-          Full Name <span className='text-red-500'>*</span>
+          {t('form.labels.fullName')} <span className='text-red-500'>*</span>
         </label>
         <input
           type='text'
           id='name'
           value={formData.name}
           onChange={e => setFormData({ ...formData, name: e.target.value })}
-          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-            errors.name ? 'border-red-500' : 'border-gray-300'
-          }`}
-          placeholder='John Smith'
+          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.name ? 'border-red-500' : 'border-gray-300'
+            }`}
+          placeholder={t('form.placeholders.fullName')}
           disabled={isSubmitting || isLoading}
           aria-required='true'
           aria-invalid={!!errors.name}
@@ -208,17 +208,16 @@ export default function ContactForm({
       {/* Phone Number Field */}
       <div>
         <label htmlFor='phone_number' className='mb-1 block text-sm font-medium text-gray-700'>
-          Phone Number <span className='text-red-500'>*</span>
+          {t('form.labels.phone')} <span className='text-red-500'>*</span>
         </label>
         <input
           type='tel'
           id='phone_number'
           value={formData.phone_number}
           onChange={e => setFormData({ ...formData, phone_number: e.target.value })}
-          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-            errors.phone_number ? 'border-red-500' : 'border-gray-300'
-          }`}
-          placeholder='+1234567890'
+          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.phone_number ? 'border-red-500' : 'border-gray-300'
+            }`}
+          placeholder={t('form.placeholders.phone')}
           disabled={isSubmitting || isLoading || !!contact}
           aria-required='true'
           aria-invalid={!!errors.phone_number}
@@ -230,8 +229,8 @@ export default function ContactForm({
           </p>
         ) : (
           <p id='phone-help' className='mt-1 text-sm text-gray-500'>
-            Use international format with country code (e.g., +1234567890)
-            {contact && ' - Phone number cannot be changed'}
+            {t('form.help.phone')}
+            {contact && ` - ${t('form.help.phoneLocked')}`}
           </p>
         )}
       </div>
@@ -239,17 +238,16 @@ export default function ContactForm({
       {/* Email Field */}
       <div>
         <label htmlFor='email' className='mb-1 block text-sm font-medium text-gray-700'>
-          Email (Optional)
+          {t('form.labels.email')} ({t('form.help.emailOptional')})
         </label>
         <input
           type='email'
           id='email'
           value={formData.email}
           onChange={e => setFormData({ ...formData, email: e.target.value })}
-          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-            errors.email ? 'border-red-500' : 'border-gray-300'
-          }`}
-          placeholder='john.smith@example.com'
+          className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
+          placeholder={t('form.placeholders.email')}
           disabled={isSubmitting || isLoading}
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? 'email-error' : undefined}
@@ -263,7 +261,7 @@ export default function ContactForm({
 
       {/* Tags Selection */}
       <div>
-        <label className='mb-2 block text-sm font-medium text-gray-700'>Tags</label>
+        <label className='mb-2 block text-sm font-medium text-gray-700'>{t('form.labels.tags')}</label>
         {availableTags.length > 0 ? (
           <div className='flex flex-wrap gap-2'>
             {availableTags.map((tag, index) => (
@@ -272,11 +270,10 @@ export default function ContactForm({
                 type='button'
                 onClick={() => toggleTag(tag.id)}
                 disabled={isSubmitting || isLoading}
-                className={`rounded-full px-3 py-1 text-sm transition-colors ${
-                  formData.tags.includes(tag.id)
-                    ? getTagColor(tag, index)
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                } disabled:opacity-50`}
+                className={`rounded-full px-3 py-1 text-sm transition-colors ${formData.tags.includes(tag.id)
+                  ? getTagColor(tag, index)
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  } disabled:opacity-50`}
                 aria-pressed={formData.tags.includes(tag.id)}
               >
                 {tag.name}
@@ -293,7 +290,7 @@ export default function ContactForm({
       {/* Custom Fields */}
       <div>
         <div className='mb-2 flex items-center justify-between'>
-          <label className='block text-sm font-medium text-gray-700'>Custom Fields</label>
+          <label className='block text-sm font-medium text-gray-700'>{t('form.labels.customFields')}</label>
           <button
             type='button'
             onClick={addCustomField}
@@ -301,7 +298,7 @@ export default function ContactForm({
             className='flex items-center text-sm text-blue-600 hover:text-blue-700 disabled:opacity-50'
           >
             <PlusIcon className='mr-1 h-4 w-4' />
-            Add Field
+            {t('actions.addField')}
           </button>
         </div>
         <div className='space-y-2'>
@@ -311,7 +308,7 @@ export default function ContactForm({
                 type='text'
                 value={field.key}
                 onChange={e => updateCustomField(index, 'key', e.target.value)}
-                placeholder='Field name'
+                placeholder={t('form.placeholders.fieldName')}
                 disabled={isSubmitting || isLoading}
                 className='flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
                 aria-label={`Custom field ${index + 1} name`}
@@ -320,7 +317,7 @@ export default function ContactForm({
                 type='text'
                 value={field.value}
                 onChange={e => updateCustomField(index, 'value', e.target.value)}
-                placeholder='Value'
+                placeholder={t('form.placeholders.fieldValue')}
                 disabled={isSubmitting || isLoading}
                 className='flex-1 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
                 aria-label={`Custom field ${index + 1} value`}
@@ -330,7 +327,7 @@ export default function ContactForm({
                 onClick={() => removeCustomField(index)}
                 disabled={isSubmitting || isLoading}
                 className='p-2 text-red-600 hover:text-red-700 disabled:opacity-50'
-                aria-label={`Remove custom field ${index + 1}`}
+                aria-label={t('actions.removeField')}
               >
                 <TrashIcon className='h-5 w-5' />
               </button>
@@ -338,7 +335,7 @@ export default function ContactForm({
           ))}
           {customFields.length === 0 && (
             <p className='text-sm text-gray-500 italic'>
-              No custom fields added. Click "Add Field" to create one.
+              {t('form.help.noCustomFields')}
             </p>
           )}
         </div>
@@ -347,7 +344,7 @@ export default function ContactForm({
       {/* Notes Field */}
       <div>
         <label htmlFor='notes' className='mb-1 block text-sm font-medium text-gray-700'>
-          Notes
+          {t('form.labels.notes')}
         </label>
         <textarea
           id='notes'
@@ -355,7 +352,7 @@ export default function ContactForm({
           onChange={e => setFormData({ ...formData, notes: e.target.value })}
           rows={4}
           className='w-full resize-none rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
-          placeholder='Additional notes about this contact...'
+          placeholder={t('form.placeholders.notes')}
           disabled={isSubmitting || isLoading}
         />
       </div>
@@ -368,7 +365,7 @@ export default function ContactForm({
           disabled={isSubmitting || isLoading}
           className='rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'
         >
-          Cancel
+          {t('actions.cancel')}
         </button>
         <button
           type='submit'
@@ -397,15 +394,15 @@ export default function ContactForm({
                   d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                 ></path>
               </svg>
-              {contact ? 'Saving...' : 'Creating...'}
+              {contact ? t('actions.saving') : t('actions.creating')}
             </>
           ) : contact ? (
-            'Save Changes'
+            t('actions.save')
           ) : (
-            'Add Contact'
+            t('actions.add')
           )}
         </button>
       </div>
-    </form>
+    </form >
   )
 }

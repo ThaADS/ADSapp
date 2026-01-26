@@ -12,6 +12,7 @@
   "profile": "Profile",
   "help": "Help",
   "logout": "Logout",
+  "signOut": "Sign out",
   "navigation": "Navigation",
   "menu": "Menu",
   "home": "Home",
@@ -21,6 +22,15 @@
   "newTemplate": "New Template",
   "quickActions": "Quick Actions",
   "recentActivity": "Recent Activity",
+  "quickActionsSubtitle": "Get started with common tasks",
+  "actionNewConversationDesc": "Start a new WhatsApp conversation",
+  "actionAddContactDesc": "Add a new contact to your list",
+  "actionCreateTemplateDesc": "Create a new message template",
+  "setupAutomation": "Setup Automation",
+  "actionSetupAutomationDesc": "Configure automatic responses",
+  "openSidebar": "Open sidebar",
+  "viewNotifications": "View notifications",
+  "openUserMenu": "Open user menu",
   "notifications": "Notifications",
   "unreadMessages": "Unread Messages",
   "pendingTasks": "Pending Tasks",
@@ -57,5 +67,60 @@
   "theme": "Theme",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
-  "systemMode": "System"
+  "systemMode": "System",
+  "welcomeBack": "Welcome back, {name}. Here's what's happening with your WhatsApp inbox.",
+  "nav": {
+    "dashboard": "Dashboard",
+    "workflows": "Workflows",
+    "broadcast": "Broadcast",
+    "dripCampaigns": "Drip Campaigns",
+    "roadmap": "Roadmap"
+  },
+  "activity": {
+    "justNow": "just now",
+    "ago": "ago",
+    "noActivity": "No recent activity",
+    "noActivityDesc": "Recent messages will appear here.",
+    "newMessageFrom": "New message from",
+    "agentRepliedTo": "Agent replied to",
+    "unknown": "Unknown"
+  },
+  "status": {
+    "open": "Open",
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "common": {
+    "view": "View",
+    "viewAll": "View All"
+  },
+  "time": {
+    "m": "m",
+    "h": "h",
+    "d": "d"
+  },
+  "conversationList": {
+    "noConversationsTitle": "No conversations",
+    "startByConnecting": "Start by connecting your WhatsApp Business account.",
+    "viewAllConversations": "View all conversations",
+    "recentConversations": "Recent Conversations",
+    "recentSubtitle": "Your latest customer chats"
+  },
+  "stats": {
+    "totalConversations": "Total Conversations",
+    "messagesToday": "Messages Today",
+    "openConversations": "Open Conversations",
+    "totalContacts": "Total Contacts"
+  },
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening",
+    "user": "there"
+  },
+  "overview": {
+    "subtitle": "Here's what's happening with your business today"
+  },
+  "closeMenu": "Close menu"
 }

@@ -8,6 +8,7 @@ import {
   PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Organization {
   id: string
@@ -21,6 +22,7 @@ interface Organization {
 }
 
 export function OrganizationsManager() {
+  const t = useTranslations('admin')
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -33,12 +35,12 @@ export function OrganizationsManager() {
     try {
       const response = await fetch('/api/admin/organizations')
       if (!response.ok) {
-        throw new Error('Failed to fetch organizations')
+        throw new Error(t('errorLoadingOrganizations') || 'Failed to fetch organizations')
       }
       const data = await response.json()
       setOrganizations(data.organizations || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(err instanceof Error ? err.message : t('unknownError'))
     } finally {
       setLoading(false)
     }
@@ -50,11 +52,11 @@ export function OrganizationsManager() {
         method: 'POST',
       })
       if (!response.ok) {
-        throw new Error('Failed to suspend organization')
+        throw new Error(t('messages.suspendFailed'))
       }
       fetchOrganizations() // Refresh list
     } catch (err) {
-      alert('Failed to suspend organization')
+      alert(t('messages.suspendFailed'))
     }
   }
 
@@ -68,11 +70,11 @@ export function OrganizationsManager() {
         body: JSON.stringify({ status: 'active' }),
       })
       if (!response.ok) {
-        throw new Error('Failed to activate organization')
+        throw new Error(t('messages.activateFailed'))
       }
       fetchOrganizations() // Refresh list
     } catch (err) {
-      alert('Failed to activate organization')
+      alert(t('messages.activateFailed'))
     }
   }
 
@@ -82,10 +84,12 @@ export function OrganizationsManager() {
       suspended: 'bg-red-100 text-red-800',
       cancelled: 'bg-gray-100 text-gray-800',
       pending_setup: 'bg-yellow-100 text-yellow-800',
-    }
+      trial: 'bg-blue-100 text-blue-800',
+      past_due: 'bg-orange-100 text-orange-800',
+    } as const
 
-    // Handle null/undefined status
-    const statusText = status ? status.replace('_', ' ') : 'unknown'
+    const translationKey = `status.${status}`
+    const statusText = t(translationKey as any) || status?.replace('_', ' ') || 'unknown'
 
     return (
       <span
@@ -101,7 +105,7 @@ export function OrganizationsManager() {
       <div className='flex h-96 items-center justify-center'>
         <div className='text-center'>
           <div className='inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-600'></div>
-          <p className='mt-4 text-sm text-slate-600'>Loading organizations...</p>
+          <p className='mt-4 text-sm text-slate-600'>{t('loadingOrganizations')}</p>
         </div>
       </div>
     )
@@ -118,9 +122,9 @@ export function OrganizationsManager() {
   return (
     <div className='space-y-6'>
       <div>
-        <h2 className='text-2xl font-bold text-slate-900'>Organizations</h2>
+        <h2 className='text-2xl font-bold text-slate-900'>{t('organizations')}</h2>
         <p className='mt-2 text-sm text-slate-600'>
-          Manage all tenant organizations on the platform
+          {t('manageOrganizations')}
         </p>
       </div>
 
@@ -128,9 +132,9 @@ export function OrganizationsManager() {
         <div className='border-b border-slate-200 p-6'>
           <div className='sm:flex sm:items-center'>
             <div className='sm:flex-auto'>
-              <h3 className='text-lg font-semibold text-slate-900'>All Organizations</h3>
+              <h3 className='text-lg font-semibold text-slate-900'>{t('totalOrganizations')}</h3>
               <p className='mt-1 text-sm text-slate-600'>
-                A list of all organizations including their status and key metrics
+                {t('organizationDetails')}
               </p>
             </div>
           </div>
@@ -141,25 +145,25 @@ export function OrganizationsManager() {
             <thead className='bg-slate-50'>
               <tr>
                 <th className='py-3.5 pr-3 pl-6 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Organization
+                  {t('organizationName')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Status
+                  {t('organizationStatus')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Subscription
+                  {t('subscriptionPlan')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Users
+                  {t('users')}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Messages
+                  {t('messagesLabel') || 'Messages'}
                 </th>
                 <th className='px-3 py-3.5 text-left text-xs font-semibold tracking-wider text-slate-900 uppercase'>
-                  Created
+                  {t('createdDate')}
                 </th>
                 <th className='relative py-3.5 pr-6 pl-3'>
-                  <span className='sr-only'>Actions</span>
+                  <span className='sr-only'>{t('action')}</span>
                 </th>
               </tr>
             </thead>
@@ -198,7 +202,7 @@ export function OrganizationsManager() {
                     <div className='flex items-center justify-end gap-2'>
                       <button
                         type='button'
-                        title='View organization details'
+                        title={t('viewOrganization')}
                         className='rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50'
                       >
                         <EyeIcon className='h-4 w-4' />
@@ -206,7 +210,7 @@ export function OrganizationsManager() {
                       {org.status === 'active' ? (
                         <button
                           type='button'
-                          title='Suspend organization'
+                          title={t('suspendOrganization')}
                           onClick={() => handleSuspend(org.id)}
                           className='rounded-lg p-1.5 text-red-600 transition-colors hover:bg-red-50'
                         >
@@ -215,7 +219,7 @@ export function OrganizationsManager() {
                       ) : (
                         <button
                           type='button'
-                          title='Activate organization'
+                          title={t('activateOrganization')}
                           onClick={() => handleActivate(org.id)}
                           className='rounded-lg p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50'
                         >
@@ -232,8 +236,8 @@ export function OrganizationsManager() {
           {organizations.length === 0 && (
             <div className='py-12 text-center'>
               <BuildingOfficeIcon className='mx-auto h-12 w-12 text-slate-400' />
-              <h3 className='mt-2 text-sm font-medium text-slate-900'>No organizations</h3>
-              <p className='mt-1 text-sm text-slate-500'>No organizations have been created yet.</p>
+              <h3 className='mt-2 text-sm font-medium text-slate-900'>{t('noOrganizations')}</h3>
+              <p className='mt-1 text-sm text-slate-500'>{t('noOrganizationsDesc')}</p>
             </div>
           )}
         </div>

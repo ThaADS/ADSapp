@@ -33,6 +33,7 @@ import {
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
 import ContactForm from './contact-form'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 // Contact interface
 interface Contact {
@@ -77,6 +78,7 @@ interface ContactManagerProps {
 }
 
 export default function ContactManager({ organizationId }: ContactManagerProps) {
+  const t = useTranslations('contacts')
   const [contacts, setContacts] = useState<Contact[]>([])
   const [tags, setTags] = useState<Array<{ id: string; label: string; name: string; color: string; color_class?: string; color_hex?: string }>>([])
   const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string }>>([])
@@ -140,8 +142,8 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
       console.error('Error loading contacts:', error)
       addToast({
         type: 'error',
-        title: 'Error loading contacts',
-        message: 'Failed to load contacts from server',
+        title: t('toasts.loadError'),
+        message: t('toasts.loadError'),
       })
     }
   }
@@ -256,7 +258,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
   // Delete contacts
   const deleteContacts = useCallback((contactIds: string[]) => {
-    if (confirm(`Are you sure you want to delete ${contactIds.length} contact(s)?`)) {
+    if (confirm(t('actions.deleteConfirm', { count: contactIds.length }))) {
       setContacts(prev => prev.filter(contact => !contactIds.includes(contact.id)))
       setSelectedContacts([])
     }
@@ -341,8 +343,8 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
           addToast({
             type: 'success',
-            title: 'Contact updated',
-            message: 'Contact has been updated successfully',
+            title: t('toasts.updated'),
+            message: t('toasts.updated'),
           })
         } else {
           // Add new contact to the list
@@ -367,8 +369,8 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
 
           addToast({
             type: 'success',
-            title: 'Contact created',
-            message: 'New contact has been added successfully',
+            title: t('toasts.created'),
+            message: t('toasts.created'),
           })
         }
 
@@ -379,8 +381,8 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
         console.error('Error saving contact:', error)
         addToast({
           type: 'error',
-          title: 'Error',
-          message: error instanceof Error ? error.message : 'Failed to save contact',
+          title: t('common.error'),
+          message: error instanceof Error ? error.message : t('toasts.saveError'),
         })
       } finally {
         setIsLoadingForm(false)
@@ -484,8 +486,8 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
       </div>
 
       <div className='flex items-center justify-between text-xs text-gray-500'>
-        <span>{contact.totalMessages} messages</span>
-        <span>Last: {contact.lastContact}</span>
+        <span>{contact.totalMessages} {t('list.messages')}</span>
+        <span>{t('list.headers.lastContact')}: {contact.lastContact}</span>
       </div>
     </div>
   )
@@ -497,9 +499,9 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
         <div className='px-4 py-3 sm:px-6 sm:py-4'>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
             <div className='flex items-center gap-3'>
-              <h1 className='text-xl sm:text-2xl font-bold text-gray-900'>Contacts</h1>
+              <h1 className='text-xl sm:text-2xl font-bold text-gray-900'>{t('title')}</h1>
               <span className='text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full'>
-                {filteredContacts.length} of {contacts.length}
+                {t('list.count', { count: filteredContacts.length, total: contacts.length })}
               </span>
             </div>
 
@@ -510,7 +512,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                   type='button'
                   onClick={() => setViewMode('table')}
                   className={`p-2 min-h-[40px] min-w-[40px] ${viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
-                  aria-label='Table view'
+                  aria-label={t('list.view.table')}
                 >
                   <TableCellsIcon className='h-5 w-5' />
                 </button>
@@ -518,7 +520,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                   type='button'
                   onClick={() => setViewMode('grid')}
                   className={`p-2 min-h-[40px] min-w-[40px] ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
-                  aria-label='Grid view'
+                  aria-label={t('list.view.grid')}
                 >
                   <Bars3Icon className='h-5 w-5' />
                 </button>
@@ -530,7 +532,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 className='flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap min-h-[44px]'
               >
                 <DocumentArrowUpIcon className='h-5 w-5 sm:mr-2' />
-                <span className='hidden sm:inline'>Import</span>
+                <span className='hidden sm:inline'>{t('actions.import')}</span>
               </button>
 
               <button
@@ -539,7 +541,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 className='flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap min-h-[44px]'
               >
                 <DocumentArrowDownIcon className='h-5 w-5 sm:mr-2' />
-                <span className='hidden sm:inline'>Export</span>
+                <span className='hidden sm:inline'>{t('actions.export')}</span>
               </button>
 
               <button
@@ -551,7 +553,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 className='flex items-center rounded-lg border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 active:bg-blue-800 whitespace-nowrap min-h-[44px] shadow-sm'
               >
                 <UserPlusIcon className='h-5 w-5 sm:mr-2' />
-                <span className='hidden sm:inline'>Add Contact</span>
+                <span className='hidden sm:inline'>{t('actions.add')}</span>
               </button>
             </div>
           </div>
@@ -562,7 +564,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
               <MagnifyingGlassIcon className='absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400' />
               <input
                 type='text'
-                placeholder='Search contacts...'
+                placeholder={t('filters.search')}
                 value={filters.search}
                 onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
                 className='w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none min-h-[44px]'
@@ -572,24 +574,23 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
             <button
               type='button'
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium min-h-[44px] whitespace-nowrap transition-colors ${
-                showFilters
+              className={`flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium min-h-[44px] whitespace-nowrap transition-colors ${showFilters
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               <FunnelIcon className='h-5 w-5 mr-2' />
-              Filters
+              {t('filters.button')}
             </button>
 
             {selectedContacts.length > 0 && (
               <div className='flex items-center space-x-2'>
-                <span className='text-sm text-gray-600'>{selectedContacts.length} selected</span>
+                <span className='text-sm text-gray-600'>{t('list.selected', { count: selectedContacts.length })}</span>
                 <button
                   type='button'
                   onClick={() => deleteContacts(selectedContacts)}
                   className='text-red-600 hover:text-red-700'
-                  aria-label='Delete selected contacts'
+                  aria-label={t('actions.delete')}
                 >
                   <TrashIcon className='h-4 w-4' />
                 </button>
@@ -602,39 +603,39 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
             <div className='mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4'>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
                 <div>
-                  <label className='mb-1 block text-sm font-medium text-gray-700'>Status</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>{t('filters.status')}</label>
                   <select
                     title='Filter by contact status'
                     value={filters.status}
                     onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
                     className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value='all'>All Statuses</option>
-                    <option value='active'>Active</option>
-                    <option value='inactive'>Inactive</option>
-                    <option value='blocked'>Blocked</option>
+                    <option value='all'>{t('filters.allStatuses')}</option>
+                    <option value='active'>{t('status.active')}</option>
+                    <option value='inactive'>{t('status.inactive')}</option>
+                    <option value='blocked'>{t('status.blocked')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className='mb-1 block text-sm font-medium text-gray-700'>Source</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>{t('filters.source')}</label>
                   <select
                     title='Filter by contact source'
                     value={filters.source}
                     onChange={e => setFilters(prev => ({ ...prev, source: e.target.value }))}
                     className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value='all'>All Sources</option>
-                    <option value='whatsapp'>WhatsApp</option>
-                    <option value='manual'>Manual</option>
-                    <option value='import'>Import</option>
-                    <option value='api'>API</option>
+                    <option value='all'>{t('filters.allSources')}</option>
+                    <option value='whatsapp'>{t('source.whatsapp')}</option>
+                    <option value='manual'>{t('source.manual')}</option>
+                    <option value='import'>{t('source.import')}</option>
+                    <option value='api'>{t('source.api')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className='mb-1 block text-sm font-medium text-gray-700'>
-                    Assigned To
+                    {t('filters.assignedTo')}
                   </label>
                   <select
                     title='Filter by assigned team member'
@@ -642,7 +643,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                     onChange={e => setFilters(prev => ({ ...prev, assignedTo: e.target.value }))}
                     className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
                   >
-                    <option value='all'>All Team Members</option>
+                    <option value='all'>{t('filters.allTeamMembers')}</option>
                     {teamMembers.map(member => (
                       <option key={member.id} value={member.name}>
                         {member.name}
@@ -652,7 +653,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 </div>
 
                 <div>
-                  <label className='mb-1 block text-sm font-medium text-gray-700'>Tags</label>
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>{t('filters.tags')}</label>
                   <div className='flex flex-wrap gap-2'>
                     {tags.slice(0, 4).map(tag => (
                       <button
@@ -666,11 +667,10 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                               : [...prev.tags, tag.id],
                           }))
                         }}
-                        className={`rounded-full px-2 py-1 text-xs transition-colors ${
-                          filters.tags.includes(tag.id)
+                        className={`rounded-full px-2 py-1 text-xs transition-colors ${filters.tags.includes(tag.id)
                             ? tag.color
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         {tag.label}
                       </button>
@@ -693,7 +693,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                       }
                       className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                     />
-                    <span className='ml-2 text-sm text-gray-700'>Starred only</span>
+                    <span className='ml-2 text-sm text-gray-700'>{t('filters.starredOnly')}</span>
                   </label>
                 </div>
 
@@ -712,7 +712,7 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                   }
                   className='text-sm text-blue-600 hover:text-blue-700'
                 >
-                  Clear Filters
+                  {t('actions.clearFilters')}
                 </button>
               </div>
             </div>
@@ -741,25 +741,25 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                     />
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Contact
+                    {t('list.headers.contact')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Company
+                    {t('list.headers.company')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Contact Info
+                    {t('list.headers.info')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Tags
+                    {t('list.headers.tags')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Status
+                    {t('list.headers.status')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Last Contact
+                    {t('list.headers.lastContact')}
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase'>
-                    Actions
+                    {t('list.headers.actions')}
                   </th>
                 </tr>
               </thead>
@@ -831,13 +831,12 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                     </td>
                     <td className='px-6 py-4'>
                       <span
-                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                          contact.status === 'active'
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${contact.status === 'active'
                             ? 'bg-green-100 text-green-800'
                             : contact.status === 'inactive'
                               ? 'bg-gray-100 text-gray-800'
                               : 'bg-red-100 text-red-800'
-                        }`}
+                          }`}
                       >
                         {contact.status}
                       </span>
@@ -1033,14 +1032,14 @@ export default function ContactManager({ organizationId }: ContactManagerProps) 
                 contact={
                   editingContact
                     ? {
-                        id: editingContact.id,
-                        name: `${editingContact.firstName} ${editingContact.lastName}`,
-                        phone_number: editingContact.phone,
-                        email: editingContact.email,
-                        tags: editingContact.tags,
-                        notes: editingContact.notes,
-                        metadata: editingContact.customFields,
-                      }
+                      id: editingContact.id,
+                      name: `${editingContact.firstName} ${editingContact.lastName}`,
+                      phone_number: editingContact.phone,
+                      email: editingContact.email,
+                      tags: editingContact.tags,
+                      notes: editingContact.notes,
+                      metadata: editingContact.customFields,
+                    }
                     : null
                 }
                 availableTags={tags.map(t => ({

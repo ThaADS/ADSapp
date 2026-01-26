@@ -1,0 +1,157 @@
+{
+  "title": "Workflows",
+  "tabs": {
+    "workflows": {
+      "name": "Workflow Builder",
+      "description": "Visual drag-and-drop automation builder"
+    },
+    "capacity": {
+      "name": "Agent Capacity",
+      "description": "Real-time agent monitoring and load balancing"
+    },
+    "escalations": {
+      "name": "Escalation Rules",
+      "description": "Manage escalation policies and SLA monitoring"
+    }
+  },
+  "builder": {
+    "title": "Workflow Builder",
+    "newWorkflow": "New workflow",
+    "editWorkflow": "Edit workflow",
+    "duplicateWorkflow": "Duplicate workflow",
+    "deleteWorkflow": "Delete workflow",
+    "saveWorkflow": "Save workflow",
+    "testWorkflow": "Test workflow",
+    "publishWorkflow": "Publish workflow",
+    "unpublishWorkflow": "Deactivate workflow"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "draft": "Draft",
+    "testing": "Testing"
+  },
+  "components": {
+    "title": "Components",
+    "triggers": "Triggers",
+    "conditions": "Conditions",
+    "actions": "Actions",
+    "utilities": "Utilities"
+  },
+  "triggers": {
+    "title": "Triggers",
+    "newMessage": "New message",
+    "newMessageDescription": "Starts when a new message arrives",
+    "keywordMatch": "Keyword match",
+    "keywordMatchDescription": "Starts when a message contains specific words",
+    "newContact": "New contact",
+    "newContactDescription": "Starts when a new contact is created",
+    "tagAdded": "Tag added",
+    "tagAddedDescription": "Starts when a tag is added to a conversation",
+    "scheduled": "Scheduled",
+    "scheduledDescription": "Starts at a specific time",
+    "webhook": "Webhook",
+    "webhookDescription": "Starts when an external webhook is received"
+  },
+  "conditions": {
+    "title": "Conditions",
+    "if": "If",
+    "then": "Then",
+    "else": "Else",
+    "and": "And",
+    "or": "Or",
+    "contains": "Contains",
+    "equals": "Equals",
+    "notEquals": "Does not equal",
+    "startsWith": "Starts with",
+    "endsWith": "Ends with",
+    "isEmpty": "Is empty",
+    "isNotEmpty": "Is not empty",
+    "greaterThan": "Greater than",
+    "lessThan": "Less than",
+    "businessHours": "Within business hours",
+    "outsideBusinessHours": "Outside business hours"
+  },
+  "actions": {
+    "title": "Actions",
+    "sendMessage": "Send message",
+    "sendMessageDescription": "Send an automated message",
+    "sendTemplate": "Send template",
+    "sendTemplateDescription": "Send an approved WhatsApp template",
+    "assignAgent": "Assign to agent",
+    "assignAgentDescription": "Assign the conversation to a specific agent",
+    "addTag": "Add tag",
+    "addTagDescription": "Add a tag to the conversation",
+    "removeTag": "Remove tag",
+    "removeTagDescription": "Remove a tag from the conversation",
+    "setStatus": "Set status",
+    "setStatusDescription": "Change the conversation status",
+    "setPriority": "Set priority",
+    "setPriorityDescription": "Change the conversation priority",
+    "delay": "Delay",
+    "delayDescription": "Wait a certain time before continuing",
+    "webhook": "Call webhook",
+    "webhookDescription": "Send data to an external service",
+    "updateContact": "Update contact",
+    "updateContactDescription": "Modify contact details",
+    "aiResponse": "AI Response",
+    "aiResponseDescription": "Generate an AI-based response"
+  },
+  "templates": {
+    "title": "Workflow templates",
+    "useTemplate": "Use template",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "Automatically send a welcome message to new contacts",
+    "awayMessage": "Away message",
+    "awayMessageDescription": "Send a message outside business hours",
+    "leadQualification": "Lead qualification",
+    "leadQualificationDescription": "Qualify leads with a series of questions",
+    "appointmentReminder": "Appointment reminder",
+    "appointmentReminderDescription": "Send reminders for appointments",
+    "feedbackCollection": "Collect feedback",
+    "feedbackCollectionDescription": "Ask for feedback after a conversation"
+  },
+  "validation": {
+    "noTrigger": "Add at least one trigger",
+    "noActions": "Add at least one action",
+    "invalidConnection": "Invalid connection",
+    "missingRequired": "Required fields are missing",
+    "valid": "Workflow is valid",
+    "invalid": "Workflow has errors"
+  },
+  "canvas": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fitView": "Fit to screen",
+    "undo": "Undo",
+    "redo": "Redo",
+    "delete": "Delete",
+    "copy": "Copy",
+    "paste": "Paste",
+    "selectAll": "Select all",
+    "clearCanvas": "Clear canvas"
+  },
+  "settings": {
+    "title": "Workflow settings",
+    "name": "Name",
+    "namePlaceholder": "My workflow",
+    "description": "Description",
+    "descriptionPlaceholder": "What does this workflow do?",
+    "enabled": "Enabled",
+    "runOnce": "Run once per contact",
+    "schedule": "Schedule",
+    "triggers": "Triggers",
+    "notifications": "Error notifications"
+  },
+  "errors": {
+    "loadFailed": "Failed to load workflow",
+    "saveFailed": "Failed to save workflow",
+    "deleteFailed": "Failed to delete workflow",
+    "executionFailed": "Workflow execution failed"
+  },
+  "empty": {
+    "noWorkflows": "No workflows",
+    "noWorkflowsDescription": "Create your first workflow to automate tasks",
+    "createFirst": "Create first workflow"
+  }
+}

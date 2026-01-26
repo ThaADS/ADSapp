@@ -1,0 +1,255 @@
+{
+  "title": "Analytics",
+  "notAvailable": "N/A",
+  "overview": "Overview",
+  "dashboard": "Dashboard",
+  "navReports": "Reports",
+  "navExport": "Export",
+  "dateRange": {
+    "label": "Date Range",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "thisYear": "This year",
+    "last90Days": "Last 90 days",
+    "custom": "Custom"
+  },
+  "metrics": {
+    "totalConversations": "Total Conversations",
+    "activeConversations": "Active Conversations",
+    "newContacts": "New Contacts",
+    "messagesReceived": "Messages Received",
+    "messagesSent": "Messages Sent",
+    "avgResponseTime": "Avg Response Time",
+    "firstResponseTime": "First Response Time",
+    "resolutionTime": "Resolution Time",
+    "satisfactionScore": "Satisfaction Score",
+    "nps": "NPS Score",
+    "conversionRate": "Conversion Rate",
+    "automationRate": "Automation Rate"
+  },
+  "conversations": {
+    "title": "Conversations",
+    "total": "Total",
+    "open": "Open",
+    "resolved": "Resolved",
+    "pending": "Pending",
+    "byStatus": "By Status",
+    "byChannel": "By Channel",
+    "byAgent": "By Agent",
+    "byTag": "By Tag",
+    "trend": "Trend"
+  },
+  "messages": {
+    "title": "Messages",
+    "total": "Total",
+    "inbound": "Inbound",
+    "outbound": "Outbound",
+    "automated": "Automated",
+    "manual": "Manual",
+    "byHour": "By Hour",
+    "byDay": "By Day",
+    "byWeek": "By Week"
+  },
+  "team": {
+    "title": "Team Performance",
+    "agent": "Agent",
+    "conversationsHandled": "Conversations Handled",
+    "avgResponseTime": "Avg Response Time",
+    "satisfactionScore": "Satisfaction",
+    "messagesProcessed": "Messages Processed",
+    "leaderboard": "Leaderboard",
+    "performance": "Performance"
+  },
+  "customers": {
+    "title": "Customers",
+    "newCustomers": "New Customers",
+    "returningCustomers": "Returning Customers",
+    "topCustomers": "Top Customers",
+    "customerJourney": "Customer Journey",
+    "retention": "Retention"
+  },
+  "revenue": {
+    "title": "Revenue",
+    "totalRevenue": "Total Revenue",
+    "mrr": "Monthly Recurring Revenue",
+    "arpu": "Avg Revenue Per User",
+    "conversionRate": "Conversion Rate",
+    "byPlan": "By Plan",
+    "bySource": "By Source",
+    "growth": "Growth",
+    "cac": "Customer Acquisition Cost",
+    "ltv": "Customer Lifetime Value",
+    "paybackPeriod": "Payback Period"
+  },
+  "ai": {
+    "title": "AI Analytics",
+    "totalResponses": "Total AI Responses",
+    "automatedRate": "Automation Rate",
+    "accuracy": "Accuracy",
+    "sentimentAnalysis": "Sentiment Analysis",
+    "topIntents": "Top Intents",
+    "fallbackRate": "Fallback Rate"
+  },
+  "charts": {
+    "noData": "No data available",
+    "loading": "Loading...",
+    "error": "Failed to load chart"
+  },
+  "comparison": {
+    "vs": "vs",
+    "previousPeriod": "Previous period",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "noChange": "No change"
+  },
+  "exportSection": {
+    "title": "Export Report",
+    "format": "Format",
+    "pdf": "PDF",
+    "csv": "CSV",
+    "excel": "Excel",
+    "dateRange": "Date Range",
+    "includeCharts": "Include Charts",
+    "downloadReport": "Download Report",
+    "scheduleReport": "Schedule Report"
+  },
+  "filters": {
+    "title": "Filters",
+    "apply": "Apply",
+    "reset": "Reset",
+    "agent": "Agent",
+    "status": "Status",
+    "tag": "Tag",
+    "channel": "Channel"
+  },
+  "errors": {
+    "loadFailed": "Failed to load analytics",
+    "exportFailed": "Failed to export report",
+    "retry": "Retry",
+    "noPermission": "No access to analytics"
+  },
+  "usageOverTime": "Usage Over Time",
+  "modelUsage": "Model Usage",
+  "aiDescription": "Usage and cost overview of AI features",
+  "features": {
+    "draft": "Draft Suggestions",
+    "auto_response": "Auto-Responses",
+    "sentiment": "Sentiment Analysis",
+    "summary": "Summaries",
+    "template": "Template Generation"
+  },
+  "perFeature": "Per Feature",
+  "requests": "requests",
+  "tokens": "tokens",
+  "budget": {
+    "status": "Budget Status",
+    "monthlyBudget": "Monthly Budget",
+    "currentSpend": "Current Spend",
+    "remaining": "Remaining",
+    "overBudget": "Budget Exceeded",
+    "limitReached": "Budget Limit Reached",
+    "overBudgetSuffix": " over budget",
+    "progress": "Progress",
+    "warningThreshold": "Warning at {threshold}% of budget",
+    "spendDescription": "You have used {spend} of {budget} ({percent}%)."
+  },
+  "aiMetrics": {
+    "totalRequests": "Total Requests",
+    "totalCost": "Total Cost",
+    "avgLatency": "Avg Latency",
+    "acceptance": "Acceptance",
+    "requestsDescription": "AI requests last {days} days",
+    "costDescription": "API costs last {days} days",
+    "latencyDescription": "Average response time",
+    "acceptanceDescription": "Suggestions accepted"
+  },
+  "reports": {
+    "title": "Custom Report Builder",
+    "nameLabel": "Report Name",
+    "namePlaceholder": "Name your report...",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional description...",
+    "dateRange": "Date Range",
+    "from": "From",
+    "to": "To",
+    "selectMetrics": "Select Metrics",
+    "categories": {
+      "revenue": "💰 Revenue",
+      "conversations": "💬 Conversations",
+      "contacts": "👥 Contacts",
+      "automation": "🤖 Automation"
+    },
+    "metrics": {
+      "total_revenue": "Total Revenue",
+      "mrr": "MRR",
+      "avg_deal_size": "Avg Deal Size",
+      "conversion_rate": "Conversion Rate",
+      "total_conversations": "Total Conversations",
+      "avg_response_time": "Avg Response Time",
+      "resolved_rate": "Resolution Rate",
+      "total_contacts": "Total Contacts",
+      "new_contacts": "New Contacts",
+      "active_contacts": "Active Contacts",
+      "automation_triggers": "Automation Triggers",
+      "automation_success": "Automation Success"
+    },
+    "filters": {
+      "title": "Filters",
+      "add": "Add Filter",
+      "noFilters": "No filters applied - showing all data",
+      "fields": {
+        "status": "Status",
+        "amount": "Amount",
+        "plan": "Plan",
+        "source": "Source"
+      },
+      "operators": {
+        "equals": "Equals",
+        "contains": "Contains",
+        "greater": "Greater than",
+        "less": "Less than",
+        "between": "Between"
+      },
+      "valuePlaceholder": "Value..."
+    },
+    "groupBy": {
+      "label": "Group By",
+      "hour": "Hour",
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year"
+    },
+    "visualization": {
+      "label": "Visualization",
+      "table": "Table",
+      "bar": "Bar Chart",
+      "line": "Line Chart",
+      "pie": "Pie Chart",
+      "area": "Area Chart"
+    },
+    "generate": "Generate Report",
+    "generating": "Generating report...",
+    "preview": "Report: {name}",
+    "previewPlaceholder": "Report preview will appear here..."
+  },
+  "adminDashboard": {
+    "title": "Platform Analytics",
+    "description": "Comprehensive metrics and insights across all organizations",
+    "activeOrganizations": "Active Organizations",
+    "messageActivity": "Message Activity",
+    "chartPlaceholder": "Chart will be rendered here with recharts",
+    "daily": "Daily",
+    "monthly": "Monthly",
+    "revenueTrend": "Revenue Trend",
+    "revenueVisualization": "Revenue chart visualization",
+    "topOrganizations": "Top Organizations",
+    "topOrganizationsDesc": "Highest performing organizations by activity"
+  },
+  "exportAs": "Export as {format}"
+}

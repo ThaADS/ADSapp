@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import type { DraftSuggestion } from '@/lib/ai/types'
 
 interface DraftSuggestionsProps {
@@ -19,6 +20,7 @@ export function DraftSuggestions({
   onSelectDraft,
   onClose,
 }: DraftSuggestionsProps) {
+  const t = useTranslations('inbox')
   const [suggestions, setSuggestions] = useState<DraftSuggestion[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -101,6 +103,19 @@ export function DraftSuggestions({
     }
   }
 
+  const getToneLabel = (tone?: string) => {
+    switch (tone) {
+      case 'professional':
+        return t('drafts.tone.professional')
+      case 'friendly':
+        return t('drafts.tone.friendly')
+      case 'empathetic':
+        return t('drafts.tone.empathetic')
+      default:
+        return tone
+    }
+  }
+
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 0.8) return 'text-green-600'
     if (confidence >= 0.6) return 'text-yellow-600'
@@ -112,13 +127,14 @@ export function DraftSuggestions({
       {/* Header */}
       <div className='mb-4 flex items-center justify-between'>
         <div>
-          <h3 className='text-lg font-semibold text-gray-900'>AI Concept Suggesties</h3>
-          <p className='text-sm text-gray-600'>Kies een suggestie of pas aan naar wens</p>
+          <h3 className='text-lg font-semibold text-gray-900'>{t('drafts.title')}</h3>
+          <p className='text-sm text-gray-600'>{t('drafts.subtitle')}</p>
         </div>
         <button
+          type='button'
           onClick={onClose}
           className='text-gray-400 hover:text-gray-600'
-          aria-label='Sluiten'
+          aria-label={t('drafts.close')}
         >
           <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
             <path
@@ -142,7 +158,7 @@ export function DraftSuggestions({
       {loading && (
         <div className='flex flex-col items-center justify-center py-12'>
           <div className='mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
-          <p className='text-sm text-gray-600'>AI genereert suggesties...</p>
+          <p className='text-sm text-gray-600'>{t('drafts.generating')}</p>
         </div>
       )}
 
@@ -161,26 +177,21 @@ export function DraftSuggestions({
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getToneColor(suggestion.tone)}`}
                     >
-                      {suggestion.tone === 'professional'
-                        ? 'Professioneel'
-                        : suggestion.tone === 'friendly'
-                          ? 'Vriendelijk'
-                          : suggestion.tone === 'empathetic'
-                            ? 'Empathisch'
-                            : suggestion.tone}
+                      {getToneLabel(suggestion.tone)}
                     </span>
                   )}
                   <span
                     className={`text-xs font-medium ${getConfidenceColor(suggestion.confidence)}`}
                   >
-                    {Math.round(suggestion.confidence * 100)}% vertrouwen
+                    {t('drafts.confidence', { percent: Math.round(suggestion.confidence * 100) })}
                   </span>
                 </div>
                 <div className='flex space-x-2'>
                   <button
+                    type='button'
                     onClick={() => setImprovingIndex(improvingIndex === index ? null : index)}
                     className='text-sm text-gray-600 hover:text-gray-900'
-                    title='Verbeteren'
+                    title={t('drafts.improve')}
                   >
                     <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                       <path
@@ -192,10 +203,11 @@ export function DraftSuggestions({
                     </svg>
                   </button>
                   <button
+                    type='button'
                     onClick={() => onSelectDraft(suggestion.content)}
                     className='text-sm font-medium text-blue-600 hover:text-blue-800'
                   >
-                    Gebruiken
+                    {t('drafts.use')}
                   </button>
                 </div>
               </div>
@@ -207,7 +219,7 @@ export function DraftSuggestions({
               {suggestion.reasoning && (
                 <details className='text-xs text-gray-600'>
                   <summary className='cursor-pointer hover:text-gray-800'>
-                    Waarom deze suggestie?
+                    {t('drafts.whySuggestion')}
                   </summary>
                   <p className='mt-2 border-l-2 border-gray-200 pl-4'>{suggestion.reasoning}</p>
                 </details>
@@ -217,31 +229,33 @@ export function DraftSuggestions({
               {improvingIndex === index && (
                 <div className='mt-4 rounded-md bg-gray-50 p-3'>
                   <label className='mb-2 block text-sm font-medium text-gray-700'>
-                    Hoe wil je deze suggestie verbeteren?
+                    {t('drafts.howToImprove')}
                   </label>
                   <textarea
                     value={improvementFeedback}
                     onChange={e => setImprovementFeedback(e.target.value)}
-                    placeholder="Bijv: 'Maak het formeler' of 'Voeg een kortingsaanbieding toe'"
+                    placeholder={t('drafts.improvePlaceholder')}
                     rows={2}
                     className='block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500'
                   />
                   <div className='mt-2 flex justify-end space-x-2'>
                     <button
+                      type='button'
                       onClick={() => {
                         setImprovingIndex(null)
                         setImprovementFeedback('')
                       }}
                       className='px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900'
                     >
-                      Annuleren
+                      {t('drafts.cancel')}
                     </button>
                     <button
+                      type='button'
                       onClick={() => improveDraft(suggestion.content, improvementFeedback)}
                       disabled={!improvementFeedback.trim()}
                       className='rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300'
                     >
-                      Verbeteren
+                      {t('drafts.improve')}
                     </button>
                   </div>
                 </div>
@@ -267,15 +281,16 @@ export function DraftSuggestions({
               d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'
             />
           </svg>
-          <h3 className='mt-2 text-sm font-medium text-gray-900'>Geen suggesties</h3>
+          <h3 className='mt-2 text-sm font-medium text-gray-900'>{t('drafts.noSuggestions')}</h3>
           <p className='mt-1 text-sm text-gray-500'>
-            Kon geen concept suggesties genereren voor dit gesprek.
+            {t('drafts.couldNotGenerate')}
           </p>
           <button
+            type='button'
             onClick={generateSuggestions}
             className='mt-4 inline-flex items-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
           >
-            Opnieuw proberen
+            {t('drafts.tryAgain')}
           </button>
         </div>
       )}
@@ -284,6 +299,7 @@ export function DraftSuggestions({
       {!loading && suggestions.length > 0 && (
         <div className='mt-6 flex justify-between'>
           <button
+            type='button'
             onClick={generateSuggestions}
             disabled={loading}
             className='inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
@@ -296,7 +312,7 @@ export function DraftSuggestions({
                 d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
               />
             </svg>
-            Nieuwe Suggesties
+            {t('drafts.newSuggestions')}
           </button>
         </div>
       )}

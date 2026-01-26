@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { GoogleSignInButton } from './google-signin-button'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export function SignUpForm() {
+  const t = useTranslations('auth')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -39,14 +41,14 @@ export function SignUpForm() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || 'Registration failed. Please try again.')
+        setError(result.error || t('registrationFailed'))
         return
       }
 
       if (result.user) {
         // Registration successful
         if (result.confirmationRequired) {
-          setError('Please check your email to confirm your account')
+          setError(t('checkEmailConfirm'))
         } else {
           // Redirect to onboarding (not dashboard, as user has no organization yet)
           router.push(result.redirectTo || '/onboarding')
@@ -54,7 +56,7 @@ export function SignUpForm() {
         }
       }
     } catch (err) {
-      setError('Registration failed. Please try again.')
+      setError(t('registrationFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -82,7 +84,7 @@ export function SignUpForm() {
               d='M10 19l-7-7m0 0l7-7m-7 7h18'
             />
           </svg>
-          Back to homepage
+          {t('backToHomepage')}
         </Link>
       </div>
 
@@ -97,7 +99,7 @@ export function SignUpForm() {
           <div className='w-full border-t border-gray-300' />
         </div>
         <div className='relative flex justify-center text-sm'>
-          <span className='bg-white px-2 text-gray-500'>Or create account with email</span>
+          <span className='bg-white px-2 text-gray-500'>{t('orCreateAccountWithEmail')}</span>
         </div>
       </div>
 
@@ -105,7 +107,7 @@ export function SignUpForm() {
         <div className='space-y-4 rounded-md shadow-sm'>
           <div>
             <label htmlFor='full-name' className='sr-only'>
-              Full Name
+              {t('fullName')}
             </label>
             <input
               id='full-name'
@@ -113,14 +115,14 @@ export function SignUpForm() {
               type='text'
               required
               className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Full Name'
+              placeholder={t('fullName')}
               value={formData.fullName}
               onChange={handleInputChange}
             />
           </div>
           <div>
             <label htmlFor='email-address' className='sr-only'>
-              Email address
+              {t('email')}
             </label>
             <input
               id='email-address'
@@ -129,14 +131,14 @@ export function SignUpForm() {
               autoComplete='email'
               required
               className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Email address'
+              placeholder={t('email')}
               value={formData.email}
               onChange={handleInputChange}
             />
           </div>
           <div>
             <label htmlFor='password' className='sr-only'>
-              Password
+              {t('password')}
             </label>
             <input
               id='password'
@@ -146,14 +148,14 @@ export function SignUpForm() {
               required
               minLength={6}
               className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Password (min. 6 characters)'
+              placeholder={t('passwordMinLength')}
               value={formData.password}
               onChange={handleInputChange}
             />
           </div>
           <div>
             <label htmlFor='organization-name' className='sr-only'>
-              Organization Name
+              {t('organizationName')}
             </label>
             <input
               id='organization-name'
@@ -161,7 +163,7 @@ export function SignUpForm() {
               type='text'
               required
               className='relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:ring-green-500 focus:outline-none sm:text-sm'
-              placeholder='Organization Name'
+              placeholder={t('organizationName')}
               value={formData.organizationName}
               onChange={handleInputChange}
             />
@@ -172,7 +174,7 @@ export function SignUpForm() {
           <div className='rounded-md bg-red-50 p-4'>
             <div className='flex'>
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>Registration Error</h3>
+                <h3 className='text-sm font-medium text-red-800'>{t('registrationError')}</h3>
                 <div className='mt-2 text-sm text-red-700'>{error}</div>
               </div>
             </div>
@@ -188,19 +190,19 @@ export function SignUpForm() {
             {isLoading ? (
               <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
             ) : (
-              'Create Account'
+              t('createAccount')
             )}
           </button>
         </div>
 
         <div className='text-center text-xs text-gray-600'>
-          By creating an account, you agree to our{' '}
+          {t('agreementText')}{' '}
           <a href='#' className='text-green-600 hover:text-green-500'>
-            Terms of Service
+            {t('termsOfService')}
           </a>{' '}
-          and{' '}
+          {t('and')}{' '}
           <a href='#' className='text-green-600 hover:text-green-500'>
-            Privacy Policy
+            {t('privacyPolicy')}
           </a>
         </div>
       </form>

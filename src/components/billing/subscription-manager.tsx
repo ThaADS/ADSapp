@@ -55,6 +55,7 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export interface SubscriptionData {
   id: string
@@ -105,6 +106,7 @@ interface SubscriptionManagerProps {
 }
 
 export function SubscriptionManager({ organizationId }: SubscriptionManagerProps) {
+  const t = useTranslations('billing')
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null)
   const [availablePlans, setAvailablePlans] = useState<PlanData[]>([])
   const [usage, setUsage] = useState<UsageData | null>(null)
@@ -192,8 +194,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
       if (response.ok) {
         const result = await response.json()
         toast({
-          title: isUpgrade ? 'Plan Upgraded' : 'Plan Changed',
-          description: `Successfully ${isUpgrade ? 'upgraded' : 'changed'} to ${newPlanId} plan.`,
+          title: isUpgrade ? t('success.planUpgraded') : t('success.planChanged'),
+          description: t('success.planChangedDescription', { action: isUpgrade ? 'upgraded' : 'changed', plan: newPlanId }),
         })
         await fetchSubscriptionData()
         setShowPlanSelector(false)
@@ -202,8 +204,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to change plan. Please try again.',
+        title: t('errors.loadFailed'),
+        description: t('errors.changePlanFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -229,10 +231,10 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
 
       if (response.ok) {
         toast({
-          title: 'Subscription Cancelled',
+          title: t('success.subscriptionCancelled'),
           description: immediateCancel
-            ? 'Your subscription has been cancelled immediately.'
-            : 'Your subscription will be cancelled at the end of the current billing period.',
+            ? t('success.cancelledImmediate')
+            : t('success.cancelledPeriodEnd'),
         })
         await fetchSubscriptionData()
         setShowCancelDialog(false)
@@ -241,8 +243,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to cancel subscription. Please try again.',
+        title: t('errors.loadFailed'),
+        description: t('errors.cancelFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -266,8 +268,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
 
       if (response.ok) {
         toast({
-          title: 'Subscription Reactivated',
-          description: 'Your subscription has been successfully reactivated.',
+          title: t('success.subscriptionReactivated'),
+          description: t('success.reactivatedDescription'),
         })
         await fetchSubscriptionData()
       } else {
@@ -275,8 +277,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to reactivate subscription. Please try again.',
+        title: t('errors.loadFailed'),
+        description: t('errors.reactivateFailed'),
         variant: 'destructive',
       })
     } finally {
@@ -385,9 +387,9 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <CreditCard className='h-5 w-5' />
-            Current Subscription
+            {t('currentSubscription')}
           </CardTitle>
-          <CardDescription>Manage your subscription plan and billing</CardDescription>
+          <CardDescription>{t('manageSubscription')}</CardDescription>
         </CardHeader>
         <CardContent className='space-y-6'>
           {subscription ? (
@@ -412,7 +414,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <div>
-                  <Label className='text-sm font-medium'>Current Period</Label>
+                  <Label className='text-sm font-medium'>{t('subscription.currentPeriod')}</Label>
                   <p className='text-muted-foreground text-sm'>
                     {formatDate(subscription.currentPeriodStart)} -{' '}
                     {formatDate(subscription.currentPeriodEnd)}
@@ -421,7 +423,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
 
                 {subscription.trialEnd && (
                   <div>
-                    <Label className='text-sm font-medium'>Trial Ends</Label>
+                    <Label className='text-sm font-medium'>{t('subscription.trialEnds')}</Label>
                     <p className='text-muted-foreground text-sm'>
                       {formatDate(subscription.trialEnd)}
                     </p>
@@ -430,7 +432,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
 
                 {subscription.cancelAt && (
                   <div>
-                    <Label className='text-sm font-medium'>Cancels At</Label>
+                    <Label className='text-sm font-medium'>{t('subscription.cancelsAt')}</Label>
                     <p className='text-sm text-red-600'>{formatDate(subscription.cancelAt)}</p>
                   </div>
                 )}
@@ -441,48 +443,48 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                   <>
                     <Button onClick={() => setShowPlanSelector(true)} variant='outline'>
                       <TrendingUp className='mr-2 h-4 w-4' />
-                      Change Plan
+                      {t('plans.changePlan')}
                     </Button>
                     <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
                       <AlertDialogTrigger asChild>
                         <Button variant='outline'>
                           <XCircle className='mr-2 h-4 w-4' />
-                          Cancel Subscription
+                          {t('subscription.cancelSubscription')}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
+                          <AlertDialogTitle>{t('subscription.cancelTitle')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            We're sorry to see you go. Please let us know why you're cancelling.
+                            {t('subscription.cancelDescription')}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className='space-y-4'>
                           <div>
-                            <Label htmlFor='reason'>Reason for cancellation</Label>
+                            <Label htmlFor='reason'>{t('subscription.cancelReason')}</Label>
                             <Select value={cancelReason} onValueChange={setCancelReason}>
                               <SelectTrigger>
-                                <SelectValue placeholder='Select a reason' />
+                                <SelectValue placeholder={t('subscription.selectReason')} />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value='too_expensive'>Too expensive</SelectItem>
-                                <SelectItem value='not_using'>Not using enough</SelectItem>
-                                <SelectItem value='missing_features'>Missing features</SelectItem>
-                                <SelectItem value='poor_support'>Poor support</SelectItem>
+                                <SelectItem value='too_expensive'>{t('subscription.reasonTooExpensive')}</SelectItem>
+                                <SelectItem value='not_using'>{t('subscription.reasonNotUsing')}</SelectItem>
+                                <SelectItem value='missing_features'>{t('subscription.reasonMissingFeatures')}</SelectItem>
+                                <SelectItem value='poor_support'>{t('subscription.reasonPoorSupport')}</SelectItem>
                                 <SelectItem value='switching_service'>
-                                  Switching to another service
+                                  {t('subscription.reasonSwitching')}
                                 </SelectItem>
-                                <SelectItem value='other'>Other</SelectItem>
+                                <SelectItem value='other'>{t('subscription.reasonOther')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div>
-                            <Label htmlFor='feedback'>Additional feedback (optional)</Label>
+                            <Label htmlFor='feedback'>{t('subscription.additionalFeedback')}</Label>
                             <Textarea
                               id='feedback'
                               value={cancelFeedback}
                               onChange={e => setCancelFeedback(e.target.value)}
-                              placeholder='Help us improve by sharing your feedback...'
+                              placeholder={t('subscription.feedbackPlaceholder')}
                             />
                           </div>
                           <div className='flex items-center space-x-2'>
@@ -492,12 +494,12 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                               onCheckedChange={setImmediateCancel}
                             />
                             <Label htmlFor='immediate'>
-                              Cancel immediately (vs. at period end)
+                              {t('subscription.cancelImmediately')}
                             </Label>
                           </div>
                         </div>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+                          <AlertDialogCancel>{t('subscription.keepSubscription')}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={handleCancelSubscription}
                             disabled={!cancelReason || actionLoading}
@@ -506,7 +508,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                             {actionLoading ? (
                               <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
                             ) : null}
-                            Cancel Subscription
+                            {t('subscription.cancelSubscription')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -521,7 +523,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                     ) : (
                       <CheckCircle className='mr-2 h-4 w-4' />
                     )}
-                    Reactivate Subscription
+                    {t('subscription.reactivateSubscription')}
                   </Button>
                 )}
 
@@ -536,16 +538,16 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                     ) : (
                       <RefreshCw className='mr-2 h-4 w-4' />
                     )}
-                    Undo Cancellation
+                    {t('subscription.undoCancellation')}
                   </Button>
                 )}
               </div>
             </>
           ) : (
             <div className='py-8 text-center'>
-              <h3 className='mb-2 text-lg font-semibold'>No Active Subscription</h3>
-              <p className='text-muted-foreground mb-4'>Choose a plan to get started with ADSapp</p>
-              <Button onClick={() => setShowPlanSelector(true)}>Choose Plan</Button>
+              <h3 className='mb-2 text-lg font-semibold'>{t('subscription.noActive')}</h3>
+              <p className='text-muted-foreground mb-4'>{t('subscription.noActiveDescription')}</p>
+              <Button onClick={() => setShowPlanSelector(true)}>{t('plans.choosePlan')}</Button>
             </div>
           )}
         </CardContent>
@@ -557,9 +559,9 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
           <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <BarChart3 className='h-5 w-5' />
-              Usage Overview
+              {t('usage.overview')}
             </CardTitle>
-            <CardDescription>Track your current usage against plan limits</CardDescription>
+            <CardDescription>{t('usage.trackUsage')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
@@ -567,7 +569,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <MessageSquare className='h-4 w-4' />
-                    Messages
+                    {t('usage.messages')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {usage.messages.current.toLocaleString()} /{' '}
@@ -586,7 +588,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <Users className='h-4 w-4' />
-                    Users
+                    {t('usage.users')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {usage.users.current} / {usage.users.limit === -1 ? '∞' : usage.users.limit}
@@ -604,7 +606,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <Users className='h-4 w-4' />
-                    Contacts
+                    {t('usage.contacts')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {usage.contacts.current.toLocaleString()} /{' '}
@@ -623,7 +625,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <Zap className='h-4 w-4' />
-                    Automations
+                    {t('usage.automations')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {usage.automations.current} /{' '}
@@ -642,7 +644,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <DollarSign className='h-4 w-4' />
-                    API Calls
+                    {t('usage.apiCalls')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {usage.apiCalls.current.toLocaleString()} /{' '}
@@ -661,7 +663,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                 <div className='flex items-center justify-between'>
                   <Label className='flex items-center gap-2'>
                     <DollarSign className='h-4 w-4' />
-                    Storage
+                    {t('usage.storage')}
                   </Label>
                   <span className='text-sm font-medium'>
                     {(usage.storage.current / 1024).toFixed(1)} GB /{' '}
@@ -684,8 +686,8 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
       <Dialog open={showPlanSelector} onOpenChange={setShowPlanSelector}>
         <DialogContent className='max-w-4xl'>
           <DialogHeader>
-            <DialogTitle>Choose Your Plan</DialogTitle>
-            <DialogDescription>Select the plan that best fits your needs</DialogDescription>
+            <DialogTitle>{t('plans.choosePlan')}</DialogTitle>
+            <DialogDescription>{t('plans.description')}</DialogDescription>
           </DialogHeader>
           <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
             {availablePlans.map(plan => (
@@ -697,7 +699,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
               >
                 {plan.popular && (
                   <Badge className='absolute -top-2 left-1/2 -translate-x-1/2 transform bg-blue-600'>
-                    Most Popular
+                    {t('plans.mostPopular')}
                   </Badge>
                 )}
                 <CardHeader className='text-center'>
@@ -723,7 +725,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                         <span className={feature.included ? '' : 'text-gray-400'}>
                           {feature.name}
                           {feature.limit &&
-                            ` (${feature.limit === -1 ? 'Unlimited' : feature.limit})`}
+                            ` (${feature.limit === -1 ? t('usage.unlimited') : feature.limit})`}
                         </span>
                       </li>
                     ))}
@@ -740,7 +742,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
                     {actionLoading && selectedPlan === plan.id ? (
                       <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
                     ) : null}
-                    {plan.id === subscription?.planId ? 'Current Plan' : 'Select Plan'}
+                    {plan.id === subscription?.planId ? t('plans.currentPlan') : t('plans.selectPlan')}
                   </Button>
                 </CardContent>
               </Card>
@@ -748,7 +750,7 @@ export function SubscriptionManager({ organizationId }: SubscriptionManagerProps
           </div>
           <DialogFooter>
             <Button variant='outline' onClick={() => setShowPlanSelector(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>

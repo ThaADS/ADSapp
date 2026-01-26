@@ -12,6 +12,7 @@ import {
   Zap,
   Shield,
 } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import {
   WhatsAppBusinessAPI,
   WhatsAppSetupStep,
@@ -67,9 +68,8 @@ function SetupStep({ step, isActive, isCompleted }: StepProps) {
 
   return (
     <div
-      className={`flex items-start space-x-3 rounded-lg p-4 ${
-        isActive ? 'border border-blue-200 bg-blue-50' : 'bg-gray-50'
-      }`}
+      className={`flex items-start space-x-3 rounded-lg p-4 ${isActive ? 'border border-blue-200 bg-blue-50' : 'bg-gray-50'
+        }`}
     >
       <div className='mt-0.5 flex-shrink-0'>{getStatusIcon()}</div>
       <div className='flex-1'>
@@ -91,6 +91,7 @@ export default function WhatsAppSetupWizard({
   onComplete,
   onCancel,
 }: SetupWizardProps) {
+  const t = useTranslations('inbox')
   const [currentStep, setCurrentStep] = useState(0)
   const [config, setConfig] = useState<ConfigForm>({
     accessToken: '',
@@ -108,23 +109,23 @@ export default function WhatsAppSetupWizard({
 
   const steps = [
     {
-      title: 'Configuration',
-      description: 'Enter your WhatsApp Business API credentials',
+      title: t('setup.steps.configuration.title'),
+      description: t('setup.steps.configuration.description'),
       icon: Settings,
     },
     {
-      title: 'Verification',
-      description: 'Verify and test your configuration',
+      title: t('setup.steps.verification.title'),
+      description: t('setup.steps.verification.description'),
       icon: Shield,
     },
     {
-      title: 'Business Profile',
-      description: 'Set up your business profile',
+      title: t('setup.steps.profile.title'),
+      description: t('setup.steps.profile.description'),
       icon: MessageSquare,
     },
     {
-      title: 'Complete',
-      description: 'Your WhatsApp integration is ready',
+      title: t('setup.steps.complete.title'),
+      description: t('setup.steps.complete.description'),
       icon: Zap,
     },
   ]
@@ -132,12 +133,12 @@ export default function WhatsAppSetupWizard({
   const validateConfig = () => {
     const errors: string[] = []
 
-    if (!config.accessToken) errors.push('Access Token is required')
-    if (!config.appId) errors.push('App ID is required')
-    if (!config.appSecret) errors.push('App Secret is required')
-    if (!config.businessAccountId) errors.push('Business Account ID is required')
-    if (!config.phoneNumberId) errors.push('Phone Number ID is required')
-    if (!config.webhookVerifyToken) errors.push('Webhook Verify Token is required')
+    if (!config.accessToken) errors.push(t('setup.validation.accessTokenRequired'))
+    if (!config.appId) errors.push(t('setup.validation.appIdRequired'))
+    if (!config.appSecret) errors.push(t('setup.validation.appSecretRequired'))
+    if (!config.businessAccountId) errors.push(t('setup.validation.businessAccountIdRequired'))
+    if (!config.phoneNumberId) errors.push(t('setup.validation.phoneNumberIdRequired'))
+    if (!config.webhookVerifyToken) errors.push(t('setup.validation.webhookVerifyTokenRequired'))
 
     return errors
   }
@@ -145,7 +146,7 @@ export default function WhatsAppSetupWizard({
   const runSetup = async () => {
     const errors = validateConfig()
     if (errors.length > 0) {
-      alert(`Please fix the following errors:\n${errors.join('\n')}`)
+      alert(`${t('common.pleaseFixErrors')}:\n${errors.join('\n')}`)
       return
     }
 
@@ -165,7 +166,7 @@ export default function WhatsAppSetupWizard({
       }
     } catch (error) {
       console.error('Setup failed:', error)
-      alert(`Setup failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      alert(`${t('setup.messages.setupFailed')}: ${error instanceof Error ? error.message : t('common.unknownError')}`)
     } finally {
       setIsRunning(false)
     }
@@ -180,7 +181,7 @@ export default function WhatsAppSetupWizard({
       setBusinessProfile({ ...businessProfile, ...updates })
     } catch (error) {
       console.error('Failed to update business profile:', error)
-      alert('Failed to update business profile')
+      alert(t('setup.messages.updateProfileFailed'))
     }
   }
 
@@ -199,8 +200,8 @@ export default function WhatsAppSetupWizard({
           <div className='flex items-center space-x-3'>
             <MessageSquare className='h-8 w-8' />
             <div>
-              <h1 className='text-2xl font-bold'>WhatsApp Business Setup</h1>
-              <p className='text-green-100'>Configure your WhatsApp Business API integration</p>
+              <h1 className='text-2xl font-bold'>{t('setup.title')}</h1>
+              <p className='text-green-100'>{t('setup.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -211,9 +212,8 @@ export default function WhatsAppSetupWizard({
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={`flex-1 p-4 text-center ${
-                  index <= currentStep ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
-                }`}
+                className={`flex-1 p-4 text-center ${index <= currentStep ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+                  }`}
               >
                 <step.icon className='mx-auto mb-2 h-6 w-6' />
                 <div className='text-sm font-medium'>{step.title}</div>
@@ -229,55 +229,54 @@ export default function WhatsAppSetupWizard({
             <div className='space-y-6'>
               <div>
                 <h2 className='mb-4 text-xl font-semibold text-gray-900'>
-                  WhatsApp Business API Configuration
+                  {t('setup.configuration.title')}
                 </h2>
                 <p className='mb-6 text-gray-600'>
-                  Enter your WhatsApp Business API credentials. You can find these in your Meta for
-                  Developers account.
+                  {t('setup.configuration.description')}
                 </p>
               </div>
 
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 {/* Basic Configuration */}
                 <div className='space-y-4'>
-                  <h3 className='text-lg font-medium text-gray-900'>Basic Configuration</h3>
+                  <h3 className='text-lg font-medium text-gray-900'>{t('setup.configuration.basicTitle')}</h3>
 
                   <div>
                     <label className='mb-2 block text-sm font-medium text-gray-700'>
-                      Access Token *
+                      {t('setup.fields.accessToken')} *
                     </label>
                     <input
                       type='password'
                       value={config.accessToken}
                       onChange={e => setConfig({ ...config, accessToken: e.target.value })}
                       className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                      placeholder='Enter your access token'
+                      placeholder={t('setup.fields.accessTokenPlaceholder')}
                     />
                   </div>
 
                   <div>
                     <label className='mb-2 block text-sm font-medium text-gray-700'>
-                      Business Account ID *
+                      {t('setup.fields.businessAccountId')} *
                     </label>
                     <input
                       type='text'
                       value={config.businessAccountId}
                       onChange={e => setConfig({ ...config, businessAccountId: e.target.value })}
                       className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                      placeholder='Enter your business account ID'
+                      placeholder={t('setup.fields.businessAccountIdPlaceholder')}
                     />
                   </div>
 
                   <div>
                     <label className='mb-2 block text-sm font-medium text-gray-700'>
-                      Phone Number ID *
+                      {t('setup.fields.phoneNumberId')} *
                     </label>
                     <input
                       type='text'
                       value={config.phoneNumberId}
                       onChange={e => setConfig({ ...config, phoneNumberId: e.target.value })}
                       className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                      placeholder='Enter your phone number ID'
+                      placeholder={t('setup.fields.phoneNumberIdPlaceholder')}
                     />
                   </div>
                 </div>
@@ -285,12 +284,12 @@ export default function WhatsAppSetupWizard({
                 {/* Advanced Configuration */}
                 <div className='space-y-4'>
                   <div className='flex items-center justify-between'>
-                    <h3 className='text-lg font-medium text-gray-900'>Advanced Configuration</h3>
+                    <h3 className='text-lg font-medium text-gray-900'>{t('setup.configuration.advancedTitle')}</h3>
                     <button
                       onClick={() => setShowAdvanced(!showAdvanced)}
                       className='text-sm text-blue-600 hover:text-blue-800'
                     >
-                      {showAdvanced ? 'Hide' : 'Show'} Advanced
+                      {showAdvanced ? t('common.hide') : t('common.show')} {t('setup.configuration.advanced')}
                     </button>
                   </div>
 
@@ -298,33 +297,33 @@ export default function WhatsAppSetupWizard({
                     <>
                       <div>
                         <label className='mb-2 block text-sm font-medium text-gray-700'>
-                          App ID *
+                          {t('setup.fields.appId')} *
                         </label>
                         <input
                           type='text'
                           value={config.appId}
                           onChange={e => setConfig({ ...config, appId: e.target.value })}
                           className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                          placeholder='Enter your app ID'
+                          placeholder={t('setup.fields.appIdPlaceholder')}
                         />
                       </div>
 
                       <div>
                         <label className='mb-2 block text-sm font-medium text-gray-700'>
-                          App Secret *
+                          {t('setup.fields.appSecret')} *
                         </label>
                         <input
                           type='password'
                           value={config.appSecret}
                           onChange={e => setConfig({ ...config, appSecret: e.target.value })}
                           className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                          placeholder='Enter your app secret'
+                          placeholder={t('setup.fields.appSecretPlaceholder')}
                         />
                       </div>
 
                       <div>
                         <label className='mb-2 block text-sm font-medium text-gray-700'>
-                          Phone Number
+                          {t('setup.fields.phoneNumber')}
                         </label>
                         <input
                           type='text'
@@ -337,7 +336,7 @@ export default function WhatsAppSetupWizard({
 
                       <div>
                         <label className='mb-2 block text-sm font-medium text-gray-700'>
-                          Webhook Verify Token *
+                          {t('setup.fields.webhookVerifyToken')} *
                         </label>
                         <input
                           type='text'
@@ -346,7 +345,7 @@ export default function WhatsAppSetupWizard({
                             setConfig({ ...config, webhookVerifyToken: e.target.value })
                           }
                           className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                          placeholder='Enter webhook verify token'
+                          placeholder={t('setup.fields.webhookVerifyTokenPlaceholder')}
                         />
                       </div>
                     </>
@@ -359,7 +358,7 @@ export default function WhatsAppSetupWizard({
                   onClick={onCancel}
                   className='rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50'
                 >
-                  Cancel
+                  {t('actions.cancel')}
                 </button>
                 <button
                   onClick={() => {
@@ -369,7 +368,7 @@ export default function WhatsAppSetupWizard({
                   disabled={isRunning}
                   className='rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50'
                 >
-                  {isRunning ? 'Verifying...' : 'Continue'}
+                  {isRunning ? t('setup.actions.verifying') : t('navigation.continue')}
                 </button>
               </div>
             </div>
@@ -378,10 +377,9 @@ export default function WhatsAppSetupWizard({
           {currentStep === 1 && (
             <div className='space-y-6'>
               <div>
-                <h2 className='mb-4 text-xl font-semibold text-gray-900'>Verification & Testing</h2>
+                <h2 className='mb-4 text-xl font-semibold text-gray-900'>{t('setup.verification.title')}</h2>
                 <p className='mb-6 text-gray-600'>
-                  We're verifying your configuration and testing the connection to WhatsApp Business
-                  API.
+                  {t('setup.verification.description')}
                 </p>
               </div>
 
@@ -401,11 +399,11 @@ export default function WhatsAppSetupWizard({
                   <div className='flex items-center space-x-2'>
                     <Check className='h-5 w-5 text-green-600' />
                     <span className='font-medium text-green-800'>
-                      Verification completed successfully!
+                      {t('setup.verification.success')}
                     </span>
                   </div>
                   <p className='mt-1 text-sm text-green-700'>
-                    Your WhatsApp Business API is properly configured and ready to use.
+                    {t('setup.verification.successDesc')}
                   </p>
                 </div>
               )}
@@ -415,14 +413,14 @@ export default function WhatsAppSetupWizard({
                   onClick={() => setCurrentStep(0)}
                   className='rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50'
                 >
-                  Back
+                  {t('navigation.back')}
                 </button>
                 <button
                   onClick={() => setCurrentStep(2)}
                   disabled={!setupSteps.every(s => s.status === 'completed')}
                   className='rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50'
                 >
-                  Continue
+                  {t('navigation.continue')}
                 </button>
               </div>
             </div>
@@ -431,9 +429,9 @@ export default function WhatsAppSetupWizard({
           {currentStep === 2 && (
             <div className='space-y-6'>
               <div>
-                <h2 className='mb-4 text-xl font-semibold text-gray-900'>Business Profile Setup</h2>
+                <h2 className='mb-4 text-xl font-semibold text-gray-900'>{t('setup.profile.title')}</h2>
                 <p className='mb-6 text-gray-600'>
-                  Configure your business profile information that customers will see.
+                  {t('setup.profile.description')}
                 </p>
               </div>
 
@@ -442,52 +440,52 @@ export default function WhatsAppSetupWizard({
                   <div className='space-y-4'>
                     <div>
                       <label className='mb-2 block text-sm font-medium text-gray-700'>
-                        Business Name
+                        {t('setup.fields.businessName')}
                       </label>
                       <input
                         type='text'
                         value={businessProfile.name || ''}
                         onChange={e => updateBusinessProfile({ name: e.target.value })}
                         className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                        placeholder='Your business name'
+                        placeholder={t('setup.fields.businessNamePlaceholder')}
                       />
                     </div>
 
                     <div>
                       <label className='mb-2 block text-sm font-medium text-gray-700'>
-                        Category
+                        {t('setup.fields.category')}
                       </label>
                       <select
                         value={businessProfile.category || ''}
                         onChange={e => updateBusinessProfile({ category: e.target.value })}
                         className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
                       >
-                        <option value=''>Select category</option>
-                        <option value='Business'>Business</option>
-                        <option value='Retail'>Retail</option>
-                        <option value='Restaurant'>Restaurant</option>
-                        <option value='Health'>Health</option>
-                        <option value='Education'>Education</option>
+                        <option value=''>{t('setup.fields.selectCategory')}</option>
+                        <option value='Business'>{t('setup.categories.business')}</option>
+                        <option value='Retail'>{t('setup.categories.retail')}</option>
+                        <option value='Restaurant'>{t('setup.categories.restaurant')}</option>
+                        <option value='Health'>{t('setup.categories.health')}</option>
+                        <option value='Education'>{t('setup.categories.education')}</option>
                       </select>
                     </div>
 
                     <div>
                       <label className='mb-2 block text-sm font-medium text-gray-700'>
-                        Description
+                        {t('setup.fields.description')}
                       </label>
                       <textarea
                         value={businessProfile.description || ''}
                         onChange={e => updateBusinessProfile({ description: e.target.value })}
                         rows={3}
                         className='w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500'
-                        placeholder='Describe your business'
+                        placeholder={t('setup.fields.descriptionPlaceholder')}
                       />
                     </div>
                   </div>
 
                   <div className='space-y-4'>
                     <div>
-                      <label className='mb-2 block text-sm font-medium text-gray-700'>Email</label>
+                      <label className='mb-2 block text-sm font-medium text-gray-700'>{t('setup.fields.email')}</label>
                       <input
                         type='email'
                         value={businessProfile.email || ''}
@@ -499,7 +497,7 @@ export default function WhatsAppSetupWizard({
 
                     <div>
                       <label className='mb-2 block text-sm font-medium text-gray-700'>
-                        Website
+                        {t('setup.fields.website')}
                       </label>
                       <input
                         type='url'
@@ -518,13 +516,13 @@ export default function WhatsAppSetupWizard({
                   onClick={() => setCurrentStep(1)}
                   className='rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50'
                 >
-                  Back
+                  {t('navigation.back')}
                 </button>
                 <button
                   onClick={completeSetup}
                   className='rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
                 >
-                  Complete Setup
+                  {t('setup.actions.completeSetup')}
                 </button>
               </div>
             </div>
@@ -537,20 +535,19 @@ export default function WhatsAppSetupWizard({
               </div>
 
               <div>
-                <h2 className='mb-4 text-2xl font-bold text-gray-900'>Setup Complete!</h2>
+                <h2 className='mb-4 text-2xl font-bold text-gray-900'>{t('setup.complete.title')}</h2>
                 <p className='mb-6 text-gray-600'>
-                  Your WhatsApp Business API integration is now ready. You can start receiving and
-                  sending messages.
+                  {t('setup.complete.description')}
                 </p>
               </div>
 
               <div className='rounded-lg border border-blue-200 bg-blue-50 p-4'>
-                <h3 className='mb-2 font-medium text-blue-900'>What's Next?</h3>
+                <h3 className='mb-2 font-medium text-blue-900'>{t('setup.complete.whatsNext')}</h3>
                 <ul className='space-y-1 text-sm text-blue-800'>
-                  <li>• Start receiving WhatsApp messages in your inbox</li>
-                  <li>• Create message templates for faster responses</li>
-                  <li>• Set up automation rules for common inquiries</li>
-                  <li>• Invite team members to help manage conversations</li>
+                  <li>• {t('setup.complete.step1')}</li>
+                  <li>• {t('setup.complete.step2')}</li>
+                  <li>• {t('setup.complete.step3')}</li>
+                  <li>• {t('setup.complete.step4')}</li>
                 </ul>
               </div>
             </div>

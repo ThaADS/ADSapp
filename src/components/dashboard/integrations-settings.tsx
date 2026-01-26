@@ -57,7 +57,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
       const response = await fetch('/api/integrations/status')
 
       if (!response.ok) {
-        throw new Error('Failed to fetch integration status')
+        throw new Error(t('integrations.loadError'))
       }
 
       const data = await response.json()
@@ -117,7 +117,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
 
       setIntegrations(statusIntegrations)
     } catch (err) {
-      setError('Failed to load integrations')
+      setError(t('integrations.loadError'))
       console.error('Integration status error:', err)
     } finally {
       setLoading(false)
@@ -178,9 +178,9 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
       }
 
       setApiKeys([...apiKeys, newKey])
-      setMessage('API key generated successfully. Make sure to copy it now!')
+      setMessage(t('integrations.apiKeys.generatedSuccess'))
     } catch (err) {
-      setError('Failed to generate API key')
+      setError(t('integrations.apiKeys.generateError'))
     }
   }
 
@@ -189,22 +189,22 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
 
     try {
       setApiKeys(apiKeys.filter(k => k.id !== selectedKey.id))
-      setMessage('API key revoked successfully')
+      setMessage(t('integrations.apiKeys.revokedSuccess'))
       setShowDeleteKeyModal(false)
       setSelectedKey(null)
     } catch (err) {
-      setError('Failed to revoke API key')
+      setError(t('integrations.apiKeys.revokeError'))
     }
   }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    setMessage('Copied to clipboard')
+    setMessage(t('common.copied'))
     setTimeout(() => setMessage(''), 2000)
   }
 
   const formatDate = (date: string | null) => {
-    if (!date) return 'Never'
+    if (!date) return t('profile.never')
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -213,22 +213,22 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
   }
 
   const formatLastUsed = (date: string | null) => {
-    if (!date) return 'Never used'
+    if (!date) return t('integrations.apiKeys.neverUsed')
     const now = new Date()
     const lastUsed = new Date(date)
     const diff = now.getTime() - lastUsed.getTime()
     const hours = Math.floor(diff / (1000 * 60 * 60))
 
-    if (hours < 1) return 'Used just now'
-    if (hours < 24) return `Used ${hours}h ago`
-    if (hours < 48) return 'Used yesterday'
-    return `Used ${Math.floor(hours / 24)}d ago`
+    if (hours < 1) return t('integrations.apiKeys.usedJustNow')
+    if (hours < 24) return t('integrations.apiKeys.usedHoursAgo', { hours })
+    if (hours < 48) return t('integrations.apiKeys.usedYesterday')
+    return t('integrations.apiKeys.usedDaysAgo', { days: Math.floor(hours / 24) })
   }
 
   if (loading) {
     return (
       <div className='flex h-64 items-center justify-center'>
-        <div className='text-gray-500'>Loading integrations...</div>
+        <div className='text-gray-500'>{t('integrations.loading') || 'Loading integrations...'}</div>
       </div>
     )
   }
@@ -248,18 +248,17 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
         </div>
       )}
 
-      {/* Available Integrations */}
       <div>
         <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-lg font-medium text-gray-900'>Available Integrations</h2>
+          <h2 className='text-lg font-medium text-gray-900'>{t('integrations.title')}</h2>
           <button
             onClick={() => loadIntegrations()}
             disabled={refreshing}
             className='inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-            title='Refresh integration status'
+            title={t('integrations.refreshTitle')}
           >
             <ArrowPathIcon className={`mr-1.5 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('integrations.refresh')}
           </button>
         </div>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -289,29 +288,28 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                     {integration.status === 'connected' ? (
                       <>
                         <CheckCircleIcon className='mr-1 h-5 w-5 text-emerald-500' />
-                        <span className='text-sm font-medium text-emerald-700'>Connected</span>
+                        <span className='text-sm font-medium text-emerald-700'>{t('integrations.connected')}</span>
                       </>
                     ) : integration.status === 'error' ? (
                       <>
                         <XCircleIcon className='mr-1 h-5 w-5 text-red-500' />
-                        <span className='text-sm font-medium text-red-700'>Error</span>
+                        <span className='text-sm font-medium text-red-700'>{t('integrations.error')}</span>
                       </>
                     ) : (
                       <>
                         <XCircleIcon className='mr-1 h-5 w-5 text-gray-400' />
-                        <span className='text-sm font-medium text-gray-500'>Not Connected</span>
+                        <span className='text-sm font-medium text-gray-500'>{t('integrations.notConnected')}</span>
                       </>
                     )}
                   </div>
 
                   <button
-                    className={`rounded-md px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${
-                      integration.status === 'connected'
+                    className={`rounded-md px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${integration.status === 'connected'
                         ? 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-emerald-500'
                         : 'bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500'
-                    }`}
+                      }`}
                   >
-                    {integration.status === 'connected' ? 'Configure' : 'Connect'}
+                    {integration.status === 'connected' ? t('integrations.configure') : t('integrations.connect')}
                   </button>
                 </div>
               </div>
@@ -326,19 +324,19 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
           <div className='mb-4 flex items-center justify-between'>
             <div className='flex items-center'>
               <KeyIcon className='mr-2 h-6 w-6 text-emerald-600' />
-              <h3 className='text-lg font-semibold text-gray-900'>API Keys</h3>
+              <h3 className='text-lg font-semibold text-gray-900'>{t('integrations.apiKeys.title')}</h3>
             </div>
             <button
               onClick={() => setShowNewKeyModal(true)}
               className='inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
             >
               <PlusIcon className='mr-1 h-5 w-5' />
-              Generate New Key
+              {t('integrations.apiKeys.generate')}
             </button>
           </div>
 
           <p className='mb-4 text-sm text-gray-500'>
-            Use API keys to authenticate requests to the ADSapp API.
+            {t('integrations.apiKeys.description')}
           </p>
 
           <div className='space-y-3'>
@@ -356,7 +354,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                       <div className='text-sm font-medium text-gray-900'>{apiKey.name}</div>
                       <div className='font-mono text-sm text-gray-500'>{apiKey.key}</div>
                       <div className='mt-1 text-xs text-gray-500'>
-                        Created {formatDate(apiKey.createdAt)} • {formatLastUsed(apiKey.lastUsed)}
+                        {t('profile.createdAt') || 'Created'} {formatDate(apiKey.createdAt)} • {formatLastUsed(apiKey.lastUsed)}
                       </div>
                     </div>
                   </div>
@@ -387,8 +385,8 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
             {apiKeys.length === 0 && (
               <div className='py-8 text-center'>
                 <KeyIcon className='mx-auto h-12 w-12 text-gray-400' />
-                <p className='mt-2 text-sm text-gray-500'>No API keys yet</p>
-                <p className='text-xs text-gray-400'>Generate your first API key to get started</p>
+                <p className='mt-2 text-sm text-gray-500'>{t('integrations.apiKeys.noKeys')}</p>
+                <p className='text-xs text-gray-400'>{t('integrations.apiKeys.firstKey')}</p>
               </div>
             )}
           </div>
@@ -400,14 +398,14 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
         <div className='bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-gray-500'>
           <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
             <div className='border-b border-gray-200 px-6 py-4'>
-              <h3 className='text-lg font-medium text-gray-900'>Generate New API Key</h3>
+              <h3 className='text-lg font-medium text-gray-900'>{t('integrations.apiKeys.generate')}</h3>
             </div>
 
             {!generatedKey ? (
               <form onSubmit={handleGenerateKey} className='space-y-4 px-6 py-4'>
                 <div>
                   <label htmlFor='key-name' className='block text-sm font-medium text-gray-700'>
-                    Key Name
+                    {t('integrations.apiKeys.nameLabel')}
                   </label>
                   <input
                     type='text'
@@ -416,10 +414,10 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                     value={newKeyName}
                     onChange={e => setNewKeyName(e.target.value)}
                     className='mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 sm:text-sm'
-                    placeholder='e.g., Production API Key'
+                    placeholder={t('integrations.apiKeys.namePlaceholder')}
                   />
                   <p className='mt-1 text-xs text-gray-500'>
-                    Choose a descriptive name to identify this key
+                    {t('integrations.apiKeys.nameHelp')}
                   </p>
                 </div>
 
@@ -438,7 +436,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                     type='submit'
                     className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                   >
-                    Generate Key
+                    {t('integrations.apiKeys.generate')}
                   </button>
                 </div>
               </form>
@@ -446,11 +444,10 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
               <div className='space-y-4 px-6 py-4'>
                 <div className='rounded-lg border border-amber-200 bg-amber-50 p-4'>
                   <p className='mb-2 text-sm font-medium text-amber-800'>
-                    Important: Copy your API key now!
+                    {t('integrations.apiKeys.copyKey')}
                   </p>
                   <p className='text-xs text-amber-700'>
-                    For security reasons, you won't be able to see this key again. Store it
-                    securely.
+                    {t('integrations.apiKeys.securityWarning')}
                   </p>
                 </div>
 
@@ -468,6 +465,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                     <button
                       onClick={() => copyToClipboard(generatedKey)}
                       className='rounded-md border border-gray-300 p-2 hover:bg-gray-50'
+                      title={t('common.copy') || 'Copy'}
                     >
                       <ClipboardDocumentIcon className='h-5 w-5 text-gray-600' />
                     </button>
@@ -483,7 +481,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                     }}
                     className='rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'
                   >
-                    Done
+                    {t('integrations.apiKeys.done')}
                   </button>
                 </div>
               </div>
@@ -497,14 +495,12 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
         <div className='bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-gray-500'>
           <div className='mx-4 w-full max-w-md rounded-lg bg-white shadow-xl'>
             <div className='border-b border-gray-200 px-6 py-4'>
-              <h3 className='text-lg font-medium text-gray-900'>Revoke API Key</h3>
+              <h3 className='text-lg font-medium text-gray-900'>{t('integrations.apiKeys.revoke')}</h3>
             </div>
 
             <div className='px-6 py-4'>
               <p className='text-sm text-gray-500'>
-                Are you sure you want to revoke the API key{' '}
-                <span className='font-medium text-gray-900'>"{selectedKey.name}"</span>? Any
-                applications using this key will no longer be able to authenticate.
+                {t('integrations.apiKeys.revokeConfirm', { name: selectedKey.name })}
               </p>
 
               <div className='flex justify-end space-x-3 pt-6'>
@@ -521,7 +517,7 @@ function IntegrationsSettingsComponent({ profile }: IntegrationsSettingsProps) {
                   onClick={handleDeleteKey}
                   className='rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none'
                 >
-                  Revoke Key
+                  {t('integrations.apiKeys.revoke')}
                 </button>
               </div>
             </div>

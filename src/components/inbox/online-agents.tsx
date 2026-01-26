@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Circle, ChevronDown, ChevronUp, Eye } from 'lucide-react'
 import type { AgentPresence } from '@/hooks/usePresence'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface OnlineAgentsProps {
   agents: AgentPresence[]
@@ -20,6 +21,7 @@ export default function OnlineAgents({
   currentConversationId,
   className = '',
 }: OnlineAgentsProps) {
+  const t = useTranslations('inbox')
   const [isExpanded, setIsExpanded] = useState(true)
 
   const getStatusColor = (status: AgentPresence['status']) => {
@@ -38,13 +40,13 @@ export default function OnlineAgents({
   const getStatusText = (status: AgentPresence['status']) => {
     switch (status) {
       case 'online':
-        return 'Online'
+        return t('agents.online')
       case 'away':
-        return 'Away'
+        return t('agents.away')
       case 'busy':
-        return 'Busy'
+        return t('agents.busy')
       default:
-        return 'Offline'
+        return t('agents.offline')
     }
   }
 
@@ -60,13 +62,14 @@ export default function OnlineAgents({
     <div className={`border-b border-gray-200 bg-white ${className}`}>
       {/* Header */}
       <button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
       >
         <div className="flex items-center gap-2">
           <Circle className="h-3 w-3 fill-green-500 text-green-500" />
           <span className="text-sm font-medium text-gray-700">
-            Team ({onlineAgents.length} online)
+            {t('agents.teamOnline', { count: onlineAgents.length })}
           </span>
         </div>
         {isExpanded ? (
@@ -81,7 +84,7 @@ export default function OnlineAgents({
         <div className="max-h-48 overflow-y-auto px-2 pb-3">
           {onlineAgents.length === 0 ? (
             <p className="px-2 py-2 text-center text-sm text-gray-500">
-              No other agents online
+              {t('agents.noOthersOnline')}
             </p>
           ) : (
             <div className="space-y-1">
@@ -124,11 +127,11 @@ export default function OnlineAgents({
                         currentConversationId && (
                           <span className="flex items-center gap-1 text-xs text-blue-600">
                             <Eye className="h-3 w-3" />
-                            Viewing this chat
+                            {t('agents.viewingThisChat')}
                           </span>
                         )}
                       {agent.is_typing && (
-                        <span className="text-xs text-gray-500 italic">Typing...</span>
+                        <span className="text-xs text-gray-500 italic">{t('agents.typing')}</span>
                       )}
                       {!agent.current_conversation_id &&
                         !agent.is_typing && (
@@ -151,8 +154,8 @@ export default function OnlineAgents({
           <Eye className="h-3 w-3 text-blue-500" />
           <span className="text-xs text-blue-600">
             {agentsInSameConversation.length === 1
-              ? `${agentsInSameConversation[0].name} is viewing`
-              : `${agentsInSameConversation.length} others viewing`}
+              ? t('agents.isViewing', { name: agentsInSameConversation[0].name })
+              : t('agents.othersViewing', { count: agentsInSameConversation.length })}
           </span>
         </div>
       )}

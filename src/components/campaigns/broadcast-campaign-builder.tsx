@@ -18,14 +18,7 @@ import { BroadcastAudienceTargeting } from './builder-steps/broadcast-audience-t
 import { BroadcastMessageComposition } from './builder-steps/broadcast-message-composition'
 import { BroadcastScheduling } from './builder-steps/broadcast-scheduling'
 import { BroadcastReview } from './builder-steps/broadcast-review'
-
-const STEPS = [
-  { id: 1, name: 'Basis Informatie', icon: '📋' },
-  { id: 2, name: 'Doelgroep', icon: '👥' },
-  { id: 3, name: 'Bericht', icon: '💬' },
-  { id: 4, name: 'Planning', icon: '📅' },
-  { id: 5, name: 'Controleren', icon: '✅' },
-]
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export interface BroadcastCampaignData {
   name: string
@@ -76,8 +69,17 @@ export interface BroadcastCampaignData {
 
 export function BroadcastCampaignBuilder() {
   const router = useRouter()
+  const t = useTranslations('campaigns')
   const [currentStep, setCurrentStep] = useState(1)
   const [saving, setSaving] = useState(false)
+
+  const STEPS = [
+    { id: 1, name: t('builder.steps.basicInfo'), icon: '📋' },
+    { id: 2, name: t('builder.steps.audience'), icon: '👥' },
+    { id: 3, name: t('builder.steps.message'), icon: '💬' },
+    { id: 4, name: t('builder.steps.scheduling'), icon: '📅' },
+    { id: 5, name: t('builder.steps.review'), icon: '✅' },
+  ]
 
   const [campaignData, setCampaignData] = useState<BroadcastCampaignData>({
     name: '',
@@ -169,11 +171,11 @@ export function BroadcastCampaignBuilder() {
       if (response.ok) {
         router.push('/dashboard/broadcast')
       } else {
-        alert(`Fout: ${data.error || 'Kon campagne niet opslaan'}`)
+        alert(`${t('builder.errors.generic')}: ${data.error || t('builder.errors.saveFailed')}`)
       }
     } catch (error) {
       console.error('Error saving campaign:', error)
-      alert('Er is een fout opgetreden bij het opslaan')
+      alert(t('builder.errors.generic'))
     } finally {
       setSaving(false)
     }
@@ -203,11 +205,11 @@ export function BroadcastCampaignBuilder() {
 
         router.push('/dashboard/broadcast')
       } else {
-        alert(`Fout: ${data.error || 'Kon campagne niet plannen'}`)
+        alert(`${t('builder.errors.generic')}: ${data.error || t('builder.errors.scheduleFailed')}`)
       }
     } catch (error) {
       console.error('Error scheduling campaign:', error)
-      alert('Er is een fout opgetreden bij het plannen')
+      alert(t('builder.errors.generic'))
     } finally {
       setSaving(false)
     }
@@ -239,13 +241,12 @@ export function BroadcastCampaignBuilder() {
             <div key={step.id} className="flex items-center">
               <div className="flex items-center">
                 <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${
-                    currentStep > step.id
-                      ? 'bg-green-600 border-green-600 text-white'
-                      : currentStep === step.id
+                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${currentStep > step.id
+                    ? 'bg-green-600 border-green-600 text-white'
+                    : currentStep === step.id
                       ? 'bg-blue-600 border-blue-600 text-white'
                       : 'bg-white border-gray-300 text-gray-500'
-                  }`}
+                    }`}
                 >
                   {currentStep > step.id ? (
                     <CheckCircleIcon className="h-6 w-6" />
@@ -254,19 +255,17 @@ export function BroadcastCampaignBuilder() {
                   )}
                 </div>
                 <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    currentStep === step.id ? 'text-blue-600' : 'text-gray-900'
-                  }`}>
-                    Stap {step.id}
+                  <p className={`text-sm font-medium ${currentStep === step.id ? 'text-blue-600' : 'text-gray-900'
+                    }`}>
+                    {t('common.step', { step: step.id })}
                   </p>
                   <p className="text-xs text-gray-500">{step.name}</p>
                 </div>
               </div>
 
               {index < STEPS.length - 1 && (
-                <div className={`w-16 h-0.5 mx-4 ${
-                  currentStep > step.id ? 'bg-green-600' : 'bg-gray-300'
-                }`} />
+                <div className={`w-16 h-0.5 mx-4 ${currentStep > step.id ? 'bg-green-600' : 'bg-gray-300'
+                  }`} />
               )}
             </div>
           ))}
@@ -288,14 +287,14 @@ export function BroadcastCampaignBuilder() {
               className="flex items-center gap-2"
             >
               <ArrowLeftIcon className="h-4 w-4" />
-              Vorige
+              {t('builder.buttons.previous')}
             </Button>
           )}
         </div>
 
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Opslaan...' : 'Opslaan als Concept'}
+            {saving ? t('builder.buttons.saving') : t('builder.buttons.saveDraft')}
           </Button>
 
           {currentStep < STEPS.length ? (
@@ -304,7 +303,7 @@ export function BroadcastCampaignBuilder() {
               disabled={!canProceed()}
               className="flex items-center gap-2"
             >
-              Volgende
+              {t('builder.buttons.next')}
               <ArrowRightIcon className="h-4 w-4" />
             </Button>
           ) : (
@@ -313,10 +312,10 @@ export function BroadcastCampaignBuilder() {
               disabled={saving || !canProceed()}
             >
               {saving
-                ? 'Bezig...'
+                ? t('builder.buttons.scheduling')
                 : campaignData.schedulingType === 'immediate'
-                ? 'Verstuur Nu'
-                : 'Plannen'}
+                  ? t('builder.buttons.sendNow')
+                  : t('builder.buttons.schedule')}
             </Button>
           )}
         </div>

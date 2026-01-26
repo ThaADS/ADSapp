@@ -1,0 +1,136 @@
+{
+    "title": "Contacts",
+    "list": {
+        "count": "{count} of {total}",
+        "selected": "{count} selected",
+        "view": {
+            "table": "Table View",
+            "grid": "Grid View"
+        },
+        "headers": {
+            "contact": "Contact",
+            "company": "Company",
+            "info": "Contact Info",
+            "tags": "Tags",
+            "status": "Status",
+            "lastContact": "Last Contact",
+            "actions": "Actions"
+        },
+        "empty": "No contacts found",
+        "messages": "messages"
+    },
+    "actions": {
+        "add": "Add Contact",
+        "import": "Import",
+        "export": "Export",
+        "delete": "Delete",
+        "deleteConfirm": "Are you sure you want to delete {count} contact(s)?",
+        "edit": "Edit",
+        "viewDetails": "View Details",
+        "star": "Star",
+        "clearFilters": "Clear Filters",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+        "creating": "Creating...",
+        "addNote": "Add Note",
+        "addField": "Add Field",
+        "removeField": "Remove Field"
+    },
+    "filters": {
+        "search": "Search contacts...",
+        "button": "Filters",
+        "status": "Status",
+        "source": "Source",
+        "assignedTo": "Assigned To",
+        "tags": "Tags",
+        "starredOnly": "Starred only",
+        "allStatuses": "All Statuses",
+        "allSources": "All Sources",
+        "allTeamMembers": "All Team Members"
+    },
+    "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "blocked": "Blocked"
+    },
+    "source": {
+        "whatsapp": "WhatsApp",
+        "manual": "Manual",
+        "import": "Import",
+        "api": "API"
+    },
+    "form": {
+        "title": {
+            "add": "Add Contact",
+            "edit": "Edit Contact"
+        },
+        "labels": {
+            "fullName": "Full Name",
+            "phone": "Phone Number",
+            "email": "Email",
+            "tags": "Tags",
+            "customFields": "Custom Fields",
+            "notes": "Notes"
+        },
+        "placeholders": {
+            "fullName": "John Smith",
+            "phone": "+1234567890",
+            "email": "john@example.com",
+            "notes": "Additional notes about this contact...",
+            "fieldName": "Field name",
+            "fieldValue": "Value"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "phoneRequired": "Phone number is required",
+            "phoneInvalid": "Invalid phone number format. Use international format (e.g., +1234567890)",
+            "emailInvalid": "Invalid email format"
+        },
+        "help": {
+            "phone": "Use international format with country code",
+            "phoneLocked": "Phone number cannot be changed",
+            "noTags": "No tags available. Create tags in Settings → Tags.",
+            "noCustomFields": "No custom fields added. Click \"Add Field\" to create one.",
+            "emailOptional": "Optional"
+        }
+    },
+    "toasts": {
+        "loadError": "Error loading contacts",
+        "created": "Contact created successfully",
+        "updated": "Contact updated successfully",
+        "saveError": "Error saving contact",
+        "export": "Error exporting contacts",
+        "import": "Contacts imported successfully"
+    },
+    "navigation": {
+        "continue": "Continue",
+        "back": "Back",
+        "next": "Next"
+    },
+    "import": {
+        "title": "CSV Import",
+        "steps": {
+            "upload": "1. Upload",
+            "mapping": "2. Mapping",
+            "preview": "3. Preview"
+        },
+        "errors": {
+            "minRows": "CSV must contain at least a header and one data row",
+            "invalidFormat": "Only CSV files are allowed"
+        },
+        "upload": {
+            "clickToUpload": "Click to upload CSV",
+            "dragAndDrop": "Or drag and drop your file here",
+            "supportedFields": "Supported fields"
+        },
+        "mapping": {
+            "instruction": "Map CSS columns to the correct fields:",
+            "notImport": "-- Do not import --"
+        },
+        "preview": {
+            "instruction": "Preview of the first {count} rows:",
+            "importWithRows": "Import ({count} rows)"
+        }
+    }
+}

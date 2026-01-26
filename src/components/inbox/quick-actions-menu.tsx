@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, ReactNode } from 'react'
 import type { ConversationWithDetails } from '@/types'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface QuickAction {
   id: string
@@ -29,6 +30,7 @@ export function QuickActionsMenu({
   position,
   onActionComplete,
 }: QuickActionsMenuProps) {
+  const t = useTranslations('inbox')
   const menuRef = useRef<HTMLDivElement>(null)
   const [showConfirm, setShowConfirm] = useState<string | null>(null)
 
@@ -212,7 +214,7 @@ export function QuickActionsMenu({
   const actions: QuickAction[] = [
     {
       id: 'mark_read',
-      label: conversation.last_message?.is_read ? 'Mark as Unread' : 'Mark as Read',
+      label: conversation.last_message?.is_read ? t('actions.markAsUnread') : t('actions.markAsRead'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -227,7 +229,7 @@ export function QuickActionsMenu({
     },
     {
       id: 'assign',
-      label: 'Assign to Me',
+      label: t('assignment.assignToMe'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -242,7 +244,7 @@ export function QuickActionsMenu({
     },
     {
       id: 'archive',
-      label: 'Archive Conversation',
+      label: t('actions.archiveConversation'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -258,7 +260,7 @@ export function QuickActionsMenu({
     },
     {
       id: 'block',
-      label: 'Block Contact',
+      label: t('actions.blockContact'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -271,12 +273,12 @@ export function QuickActionsMenu({
       ),
       onClick: handleBlockContact,
       requireConfirm: true,
-      confirmMessage: `Block ${conversation.contact.name || conversation.contact.phone_number}? They won't be able to message you.`,
+      confirmMessage: t('confirm.blockContact', { name: conversation.contact.name || conversation.contact.phone_number }),
       variant: 'danger',
     },
     {
       id: 'delete',
-      label: 'Delete Conversation',
+      label: t('actions.deleteConversation'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -289,12 +291,12 @@ export function QuickActionsMenu({
       ),
       onClick: handleDelete,
       requireConfirm: true,
-      confirmMessage: 'Delete this conversation? This action cannot be undone.',
+      confirmMessage: t('confirm.deleteConversation'),
       variant: 'danger',
     },
     {
       id: 'export',
-      label: 'Export Chat',
+      label: t('actions.exportChat'),
       icon: (
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
@@ -361,25 +363,27 @@ export function QuickActionsMenu({
       {showConfirm && (
         <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
           <div className='mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl'>
-            <h3 className='mb-2 text-lg font-semibold text-gray-900'>Confirm Action</h3>
+            <h3 className='mb-2 text-lg font-semibold text-gray-900'>{t('actions.confirmAction')}</h3>
             <p className='mb-6 text-sm text-gray-600'>
               {actions.find(a => a.id === showConfirm)?.confirmMessage}
             </p>
             <div className='flex justify-end space-x-3'>
               <button
+                type='button'
                 onClick={() => setShowConfirm(null)}
                 className='rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none'
               >
-                Cancel
+                {t('actions.cancel')}
               </button>
               <button
+                type='button'
                 onClick={() => {
                   const action = actions.find(a => a.id === showConfirm)
                   if (action) handleConfirm(action)
                 }}
                 className='rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none'
               >
-                Confirm
+                {t('actions.confirm')}
               </button>
             </div>
           </div>
@@ -395,6 +399,7 @@ interface QuickActionsButtonProps {
 }
 
 export function QuickActionsButton({ conversation, onActionComplete }: QuickActionsButtonProps) {
+  const t = useTranslations('inbox')
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -413,8 +418,8 @@ export function QuickActionsButton({ conversation, onActionComplete }: QuickActi
         ref={buttonRef}
         onClick={handleClick}
         className='rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600'
-        aria-label='Quick actions'
-        title='Quick actions'
+        aria-label={t('actions.quickActions')}
+        title={t('actions.quickActions')}
       >
         <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path

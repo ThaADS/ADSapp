@@ -18,6 +18,7 @@ import { CampaignBasicInfo } from './builder-steps/campaign-basic-info'
 import { CampaignTriggerSetup } from './builder-steps/campaign-trigger-setup'
 import { CampaignStepsEditor } from './builder-steps/campaign-steps-editor'
 import { CampaignReview } from './builder-steps/campaign-review'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface CampaignData {
   // Basic Info
@@ -49,17 +50,18 @@ interface CampaignData {
   }>
 }
 
-const STEPS = [
-  { id: 1, name: 'Basis Informatie', icon: '📋' },
-  { id: 2, name: 'Trigger Instellen', icon: '⚡' },
-  { id: 3, name: 'Berichten Reeks', icon: '📨' },
-  { id: 4, name: 'Controleren & Activeren', icon: '✅' },
-]
-
 export function DripCampaignBuilder() {
   const router = useRouter()
+  const t = useTranslations('campaigns')
   const [currentStep, setCurrentStep] = useState(1)
   const [saving, setSaving] = useState(false)
+
+  const STEPS = [
+    { id: 1, name: t('drip.builder.steps.basicInfo'), icon: '📋' },
+    { id: 2, name: t('drip.builder.steps.trigger'), icon: '⚡' },
+    { id: 3, name: t('drip.builder.steps.sequence'), icon: '📨' },
+    { id: 4, name: t('drip.builder.steps.review'), icon: '✅' },
+  ]
 
   const [campaignData, setCampaignData] = useState<CampaignData>({
     name: '',
@@ -72,7 +74,7 @@ export function DripCampaignBuilder() {
     steps: [
       {
         stepOrder: 1,
-        name: 'Welkomstbericht',
+        name: t('drip.builder.defaults.welcomeMessage'),
         delayType: 'minutes',
         delayValue: 0,
         messageType: 'text',
@@ -140,7 +142,7 @@ export function DripCampaignBuilder() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create campaign')
+        throw new Error(data.error || t('builder.errors.saveFailed'))
       }
 
       // Save steps
@@ -155,7 +157,7 @@ export function DripCampaignBuilder() {
       router.push('/dashboard/drip-campaigns')
     } catch (error) {
       console.error('Error saving campaign:', error)
-      alert(error instanceof Error ? error.message : 'Er is een fout opgetreden')
+      alert(error instanceof Error ? error.message : t('builder.errors.generic'))
     } finally {
       setSaving(false)
     }
@@ -183,7 +185,7 @@ export function DripCampaignBuilder() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create campaign')
+        throw new Error(data.error || t('builder.errors.saveFailed'))
       }
 
       // Save steps
@@ -203,7 +205,7 @@ export function DripCampaignBuilder() {
       router.push('/dashboard/drip-campaigns')
     } catch (error) {
       console.error('Error saving campaign:', error)
-      alert(error instanceof Error ? error.message : 'Er is een fout opgetreden')
+      alert(error instanceof Error ? error.message : t('builder.errors.generic'))
     } finally {
       setSaving(false)
     }
@@ -225,10 +227,10 @@ export function DripCampaignBuilder() {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                   <SparklesIcon className="h-6 w-6 text-blue-600" />
-                  Nieuwe Drip Campagne
+                  {t('drip.builder.title')}
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  Maak een geautomatiseerde berichtenreeks in {STEPS.length} eenvoudige stappen
+                  {t('drip.builder.description', { steps: STEPS.length })}
                 </p>
               </div>
             </div>
@@ -246,28 +248,25 @@ export function DripCampaignBuilder() {
                   <div className="flex items-center">
                     {index !== 0 && (
                       <div
-                        className={`absolute left-0 right-0 top-4 h-0.5 -ml-4 ${
-                          currentStep > step.id ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
+                        className={`absolute left-0 right-0 top-4 h-0.5 -ml-4 ${currentStep > step.id ? 'bg-blue-600' : 'bg-gray-300'
+                          }`}
                         style={{ width: 'calc(100% - 2rem)', marginLeft: '-50%' }}
                       />
                     )}
                     <div
-                      className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-                        currentStep > step.id
-                          ? 'bg-blue-600 border-blue-600'
-                          : currentStep === step.id
+                      className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${currentStep > step.id
+                        ? 'bg-blue-600 border-blue-600'
+                        : currentStep === step.id
                           ? 'bg-white border-blue-600'
                           : 'bg-white border-gray-300'
-                      }`}
+                        }`}
                     >
                       {currentStep > step.id ? (
                         <CheckCircleIcon className="h-6 w-6 text-white" />
                       ) : (
                         <span
-                          className={`text-lg ${
-                            currentStep === step.id ? 'text-blue-600' : 'text-gray-400'
-                          }`}
+                          className={`text-lg ${currentStep === step.id ? 'text-blue-600' : 'text-gray-400'
+                            }`}
                         >
                           {step.icon}
                         </span>
@@ -276,9 +275,8 @@ export function DripCampaignBuilder() {
                   </div>
                   <div className="mt-2 text-center">
                     <p
-                      className={`text-xs font-medium ${
-                        currentStep >= step.id ? 'text-gray-900' : 'text-gray-500'
-                      }`}
+                      className={`text-xs font-medium ${currentStep >= step.id ? 'text-gray-900' : 'text-gray-500'
+                        }`}
                     >
                       {step.name}
                     </p>
@@ -313,17 +311,17 @@ export function DripCampaignBuilder() {
               className="flex items-center gap-2"
             >
               <ArrowLeftIcon className="h-4 w-4" />
-              Vorige
+              {t('builder.buttons.previous')}
             </Button>
 
             <div className="flex items-center gap-3">
               {currentStep === STEPS.length ? (
                 <>
                   <Button variant="outline" onClick={handleSaveDraft} disabled={saving}>
-                    {saving ? 'Opslaan...' : 'Opslaan als Draft'}
+                    {saving ? t('builder.buttons.saving') : t('drip.builder.buttons.saveDraft')}
                   </Button>
                   <Button onClick={handleSaveAndActivate} disabled={saving || !canProceed()}>
-                    {saving ? 'Activeren...' : 'Opslaan & Activeren'}
+                    {saving ? t('drip.builder.buttons.activating') : t('drip.builder.buttons.activate')}
                   </Button>
                 </>
               ) : (
@@ -332,7 +330,7 @@ export function DripCampaignBuilder() {
                   disabled={!canProceed()}
                   className="flex items-center gap-2"
                 >
-                  Volgende
+                  {t('builder.buttons.next')}
                   <ArrowRightIcon className="h-4 w-4" />
                 </Button>
               )}

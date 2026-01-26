@@ -1,0 +1,248 @@
+{
+  "title": "Welcome to ADSapp",
+  "subtitle": "Let's set up your WhatsApp Business Inbox in a few simple steps",
+  "steps": {
+    "organization": "Organization",
+    "whatsapp": "WhatsApp",
+    "profile": "Profile",
+    "team": "Team",
+    "complete": "Complete"
+  },
+  "stepsDescriptions": {
+    "organization": "Create your organization",
+    "whatsapp": "Connect WhatsApp Business",
+    "profile": "Complete your profile",
+    "team": "Invite your team"
+  },
+  "organization": {
+    "title": "Create Your Organization",
+    "description": "Let's start by setting up your organization details.",
+    "name": "Organization Name",
+    "nameRequired": "Organization Name *",
+    "namePlaceholder": "Acme Corporation",
+    "nameHelper": "This will be displayed in your WhatsApp messages",
+    "subdomain": "Subdomain",
+    "subdomainRequired": "Subdomain *",
+    "subdomainPlaceholder": "acme-corp",
+    "subdomainHelper": "This will be used to identify your organization (lowercase, numbers, and hyphens only)",
+    "industry": "Industry",
+    "industryPlaceholder": "Select your industry",
+    "size": "Company Size",
+    "sizePlaceholder": "Select company size",
+    "website": "Website (optional)",
+    "websitePlaceholder": "https://www.yourcompany.com",
+    "timezone": "Timezone",
+    "timezonePlaceholder": "Select timezone"
+  },
+  "profile": {
+    "title": "Complete Your Profile",
+    "description": "Tell us a bit about yourself.",
+    "email": "Email",
+    "fullName": "Full Name",
+    "fullNameRequired": "Full Name *",
+    "fullNamePlaceholder": "John Doe",
+    "role": "Your Role",
+    "roleRequired": "Your Role *",
+    "roles": {
+      "owner": "Owner - Full access and billing control",
+      "admin": "Admin - Manage team and settings",
+      "agent": "Agent - Handle conversations"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp Business Setup",
+    "description": "Connect your WhatsApp Business account in a few simple steps",
+    "provider": {
+      "title": "Connect WhatsApp",
+      "description": "Choose how you want to connect your WhatsApp Business account",
+      "cloudApi": {
+        "name": "WhatsApp Cloud API",
+        "description": "Direct Meta/Facebook integration - Recommended for businesses",
+        "features": ["Official API", "Best reliability", "Full features", "Direct support"]
+      },
+      "twilio": {
+        "name": "Twilio WhatsApp",
+        "description": "Via Twilio platform - For existing Twilio users",
+        "features": ["Twilio infrastructure", "Easy scaling", "Unified billing", "SMS fallback"]
+      },
+      "notSure": "Not sure which to choose?",
+      "recommendation": "For businesses: choose Cloud API for the official Meta integration with full features and best reliability."
+    },
+    "step1": {
+      "title": "Step 1: Phone Number ID",
+      "description": "Your Phone Number ID is found in the Meta Business Suite",
+      "whereToFind": "Where to find it:",
+      "instructions": [
+        "Go to Meta Business Suite (business.facebook.com)",
+        "Click on 'WhatsApp Manager' in the left sidebar",
+        "Select 'Phone Numbers'",
+        "Your Phone Number ID appears next to your phone number"
+      ],
+      "placeholder": "123456789012345",
+      "valid": "Valid",
+      "invalid": "Invalid"
+    },
+    "step2": {
+      "title": "Step 2: Business Account ID",
+      "description": "Your Business Account ID identifies your WhatsApp Business Account",
+      "whereToFind": "Where to find it:",
+      "instructions": [
+        "In Meta Business Suite, go to 'Business Settings'",
+        "Click on 'WhatsApp Accounts' in the left sidebar",
+        "Your Business Account ID appears under your account name"
+      ],
+      "placeholder": "123456789012345"
+    },
+    "step3": {
+      "title": "Step 3: Access Token",
+      "description": "Generate a permanent access token for API authentication",
+      "securityNotice": "Security Notice",
+      "securityWarning": "Keep your access token secure. Never share it publicly or commit it to version control.",
+      "howToGenerate": "How to generate:",
+      "instructions": [
+        "Go to Meta Business Suite → System Users",
+        "Create a new system user or select an existing one",
+        "Click 'Generate New Token'",
+        "Select your WhatsApp Business Account",
+        "Select permissions: whatsapp_business_messaging, whatsapp_business_management",
+        "Click 'Generate Token' and copy it immediately"
+      ],
+      "placeholder": "EAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "webhookToken": "Webhook Verify Token (Optional)",
+      "webhookTokenPlaceholder": "my_secure_verify_token_123",
+      "webhookTokenHelper": "A custom token to verify webhook requests. Leave empty to auto-generate."
+    },
+    "help": {
+      "title": "Need Help?",
+      "watchVideo": "Watch video tutorial (2 min)",
+      "readGuide": "Read detailed setup guide",
+      "chatSupport": "Chat with support"
+    }
+  },
+  "team": {
+    "title": "Invite Your Team",
+    "description": "Add team members to help manage your WhatsApp conversations",
+    "inviteMembers": "Invite Team Members",
+    "email": "Email Address",
+    "emailPlaceholder": "colleague@company.com",
+    "name": "Name",
+    "nameOptional": "optional",
+    "namePlaceholder": "John",
+    "role": "Role",
+    "roles": {
+      "admin": "Admin",
+      "adminDescription": "Can manage team, settings, and all conversations",
+      "agent": "Agent",
+      "agentDescription": "Can handle assigned conversations only",
+      "viewer": "Viewer",
+      "viewerDescription": "Read-only access to analytics and conversations"
+    },
+    "addAnother": "Add Another Team Member",
+    "removeButton": "Remove",
+    "sendInvites": "Send Invites",
+    "sendInvitation": "Send {count} Invitation",
+    "sendInvitations": "Send {count} Invitations",
+    "sending": "Sending...",
+    "continueButton": "Continue",
+    "skipForNow": "Skip for now - I'll invite team members later",
+    "rolePermissions": "Role Permissions",
+    "tip": "Tip:",
+    "tipMessage": "You can always invite more team members later from the Team Settings page. Invited users will receive an email with instructions to join your organization."
+  },
+  "complete": {
+    "title": "You're all set!",
+    "description": "Your WhatsApp Business Inbox has been successfully set up",
+    "whatNext": "What you can do now:",
+    "nextSteps": [
+      "Start conversations with your customers",
+      "Set up automated responses",
+      "Create message templates",
+      "View your analytics dashboard"
+    ],
+    "goToDashboard": "Go to Dashboard",
+    "setupMore": "Configure more settings"
+  },
+  "twilio": {
+    "title": "Connect via Twilio",
+    "description": "Use your existing Twilio account for WhatsApp messaging",
+    "step1": {
+      "title": "Step 1: Twilio Account Credentials",
+      "description": "Enter your Twilio Account SID and Auth Token from the Twilio Console",
+      "whereToFind": "Where to find these:",
+      "instructions": [
+        "Log in to your Twilio Console at console.twilio.com",
+        "Your Account SID and Auth Token are shown on the dashboard",
+        "Click the eye icon to reveal your Auth Token"
+      ],
+      "openConsole": "Open Twilio Console",
+      "accountSid": "Account SID",
+      "accountSidPlaceholder": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "accountSidHelper": "Starts with \"AC\" followed by 32 characters",
+      "authToken": "Auth Token"
+    },
+    "step2": {
+      "title": "Step 2: WhatsApp Phone Number",
+      "description": "Enter your Twilio WhatsApp-enabled phone number",
+      "sandboxNotice": "WhatsApp Sandbox vs Production",
+      "forTesting": "For testing:",
+      "testingInfo": "Use Twilio's WhatsApp Sandbox number (+14155238886)",
+      "forProduction": "For production:",
+      "productionInfo": "You need a Twilio phone number with WhatsApp enabled",
+      "learnMore": "Learn about WhatsApp on Twilio",
+      "phoneNumber": "WhatsApp Phone Number",
+      "phoneNumberPlaceholder": "+1234567890",
+      "phoneNumberHelper": "Include country code (e.g., +1 for US)",
+      "validating": "Validating credentials...",
+      "validSuccess": "Credentials validated successfully!",
+      "validationFailed": "Validation failed:"
+    },
+    "steps": {
+      "account": "Account",
+      "phoneNumber": "Phone Number"
+    },
+    "connectButton": "Connect Twilio",
+    "benefits": {
+      "title": "Why use Twilio for WhatsApp?",
+      "unifiedPlatform": "Unified Platform",
+      "unifiedPlatformDesc": "Manage SMS, WhatsApp, and Voice in one place",
+      "detailedAnalytics": "Detailed Analytics",
+      "detailedAnalyticsDesc": "Track message delivery and engagement",
+      "payAsYouGo": "Pay-as-you-go",
+      "payAsYouGoDesc": "Only pay for messages you send",
+      "enterpriseSecurity": "Enterprise Security",
+      "enterpriseSecurityDesc": "SOC 2, HIPAA, and GDPR compliant"
+    },
+    "noAccount": "Don't have a Twilio account?",
+    "signUpFree": "Sign up for free"
+  },
+  "provider": {
+    "backToSelection": "Back to provider selection",
+    "recommended": "Recommended",
+    "select": "Select"
+  },
+  "navigation": {
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "skip": "Skip - I'll set this up later",
+    "skipForNow": "Skip for now",
+    "finish": "Complete Setup",
+    "settingUp": "Setting up..."
+  },
+  "errors": {
+    "general": "An unexpected error occurred. Please try again.",
+    "onboardingFailed": "Onboarding failed. Please try again.",
+    "error": "Error"
+  },
+  "validation": {
+    "required": "This field is required",
+    "organizationNameRequired": "Organization name is required",
+    "subdomainRequired": "Subdomain is required",
+    "subdomainInvalid": "Subdomain can only contain lowercase letters, numbers, and hyphens",
+    "fullNameRequired": "Full name is required",
+    "roleRequired": "Role is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidUrl": "Please enter a valid URL"
+  }
+}

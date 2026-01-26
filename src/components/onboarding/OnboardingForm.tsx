@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from '@/components/providers/translation-provider'
 import { ProviderSelector, type WhatsAppCredentials, type WhatsAppProvider } from './ProviderSelector'
 import { TeamInvitationStep, type TeamInvitation } from './TeamInvitationStep'
 
@@ -30,18 +31,19 @@ interface OnboardingData {
   teamInvitations: TeamInvitation[]
 }
 
-const STEPS = [
-  { id: 1, name: 'Organization', description: 'Create your organization' },
-  { id: 2, name: 'WhatsApp', description: 'Connect WhatsApp Business' },
-  { id: 3, name: 'Profile', description: 'Complete your profile' },
-  { id: 4, name: 'Team', description: 'Invite your team' },
-]
-
 export function OnboardingForm({ userEmail }: { userEmail: string }) {
+  const t = useTranslations('onboarding')
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+
+  const STEPS = [
+    { id: 1, name: t('steps.organization'), description: t('stepsDescriptions.organization') },
+    { id: 2, name: t('steps.whatsapp'), description: t('stepsDescriptions.whatsapp') },
+    { id: 3, name: t('steps.profile'), description: t('stepsDescriptions.profile') },
+    { id: 4, name: t('steps.team'), description: t('stepsDescriptions.team') },
+  ]
 
   const [formData, setFormData] = useState<OnboardingData>({
     organizationName: '',
@@ -98,12 +100,12 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
     if (step === 1) {
       if (!formData.organizationName.trim()) {
-        errors.organizationName = 'Organization name is required'
+        errors.organizationName = t('validation.organizationNameRequired')
       }
       if (!formData.subdomain.trim()) {
-        errors.subdomain = 'Subdomain is required'
+        errors.subdomain = t('validation.subdomainRequired')
       } else if (!/^[a-z0-9-]+$/.test(formData.subdomain)) {
-        errors.subdomain = 'Subdomain can only contain lowercase letters, numbers, and hyphens'
+        errors.subdomain = t('validation.subdomainInvalid')
       }
     }
 
@@ -114,10 +116,10 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
     if (step === 3) {
       if (!formData.fullName.trim()) {
-        errors.fullName = 'Full name is required'
+        errors.fullName = t('validation.fullNameRequired')
       }
       if (!formData.role) {
-        errors.role = 'Role is required'
+        errors.role = t('validation.roleRequired')
       }
     }
 
@@ -159,7 +161,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || 'Onboarding failed. Please try again.')
+        setError(result.error || t('errors.onboardingFailed'))
         return
       }
 
@@ -168,7 +170,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
       router.refresh()
     } catch (err) {
       console.error('Onboarding error:', err)
-      setError('An unexpected error occurred. Please try again.')
+      setError(t('errors.general'))
     } finally {
       setIsLoading(false)
     }
@@ -238,10 +240,8 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
         {currentStep === 1 && (
           <div className='space-y-6'>
             <div>
-              <h2 className='mb-2 text-2xl font-bold text-gray-900'>Create Your Organization</h2>
-              <p className='text-gray-600'>
-                Let&apos;s start by setting up your organization details.
-              </p>
+              <h2 className='mb-2 text-2xl font-bold text-gray-900'>{t('organization.title')}</h2>
+              <p className='text-gray-600'>{t('organization.description')}</p>
             </div>
 
             <div>
@@ -249,7 +249,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 htmlFor='organizationName'
                 className='mb-1 block text-sm font-medium text-gray-700'
               >
-                Organization Name *
+                {t('organization.nameRequired')}
               </label>
               <input
                 type='text'
@@ -260,7 +260,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 className={`block w-full appearance-none border px-3 py-2 ${
                   validationErrors.organizationName ? 'border-red-300' : 'border-gray-300'
                 } rounded-md placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
-                placeholder='Acme Corporation'
+                placeholder={t('organization.namePlaceholder')}
               />
               {validationErrors.organizationName && (
                 <p className='mt-1 text-sm text-red-600'>{validationErrors.organizationName}</p>
@@ -269,7 +269,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
             <div>
               <label htmlFor='subdomain' className='mb-1 block text-sm font-medium text-gray-700'>
-                Subdomain *
+                {t('organization.subdomainRequired')}
               </label>
               <div className='mt-1 flex rounded-md shadow-sm'>
                 <input
@@ -281,13 +281,10 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                   className={`block w-full min-w-0 flex-1 rounded-md border px-3 py-2 ${
                     validationErrors.subdomain ? 'border-red-300' : 'border-gray-300'
                   } focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
-                  placeholder='acme-corp'
+                  placeholder={t('organization.subdomainPlaceholder')}
                 />
               </div>
-              <p className='mt-1 text-sm text-gray-500'>
-                This will be used to identify your organization (lowercase, numbers, and hyphens
-                only)
-              </p>
+              <p className='mt-1 text-sm text-gray-500'>{t('organization.subdomainHelper')}</p>
               {validationErrors.subdomain && (
                 <p className='mt-1 text-sm text-red-600'>{validationErrors.subdomain}</p>
               )}
@@ -328,12 +325,12 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
         {currentStep === 3 && (
           <div className='space-y-6'>
             <div>
-              <h2 className='mb-2 text-2xl font-bold text-gray-900'>Complete Your Profile</h2>
-              <p className='text-gray-600'>Tell us a bit about yourself.</p>
+              <h2 className='mb-2 text-2xl font-bold text-gray-900'>{t('profile.title')}</h2>
+              <p className='text-gray-600'>{t('profile.description')}</p>
             </div>
 
             <div>
-              <label className='mb-1 block text-sm font-medium text-gray-700'>Email</label>
+              <label className='mb-1 block text-sm font-medium text-gray-700'>{t('profile.email')}</label>
               <input
                 type='email'
                 value={userEmail}
@@ -344,7 +341,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
             <div>
               <label htmlFor='fullName' className='mb-1 block text-sm font-medium text-gray-700'>
-                Full Name *
+                {t('profile.fullNameRequired')}
               </label>
               <input
                 type='text'
@@ -355,7 +352,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 className={`block w-full appearance-none border px-3 py-2 ${
                   validationErrors.fullName ? 'border-red-300' : 'border-gray-300'
                 } rounded-md placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
-                placeholder='John Doe'
+                placeholder={t('profile.fullNamePlaceholder')}
               />
               {validationErrors.fullName && (
                 <p className='mt-1 text-sm text-red-600'>{validationErrors.fullName}</p>
@@ -364,7 +361,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
 
             <div>
               <label htmlFor='role' className='mb-1 block text-sm font-medium text-gray-700'>
-                Your Role *
+                {t('profile.roleRequired')}
               </label>
               <select
                 id='role'
@@ -375,9 +372,9 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                   validationErrors.role ? 'border-red-300' : 'border-gray-300'
                 } rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm`}
               >
-                <option value='owner'>Owner - Full access and billing control</option>
-                <option value='admin'>Admin - Manage team and settings</option>
-                <option value='agent'>Agent - Handle conversations</option>
+                <option value='owner'>{t('profile.roles.owner')}</option>
+                <option value='admin'>{t('profile.roles.admin')}</option>
+                <option value='agent'>{t('profile.roles.agent')}</option>
               </select>
               {validationErrors.role && (
                 <p className='mt-1 text-sm text-red-600'>{validationErrors.role}</p>
@@ -408,14 +405,14 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 })
                 const result = await response.json()
                 if (!response.ok) {
-                  setError(result.error || 'Onboarding failed. Please try again.')
+                  setError(result.error || t('errors.onboardingFailed'))
                   return
                 }
                 router.push('/dashboard')
                 router.refresh()
               } catch (err) {
                 console.error('Onboarding error:', err)
-                setError('An unexpected error occurred. Please try again.')
+                setError(t('errors.general'))
               } finally {
                 setIsLoading(false)
               }
@@ -432,14 +429,14 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 })
                 const result = await response.json()
                 if (!response.ok) {
-                  setError(result.error || 'Onboarding failed. Please try again.')
+                  setError(result.error || t('errors.onboardingFailed'))
                   return
                 }
                 router.push('/dashboard')
                 router.refresh()
               } catch (err) {
                 console.error('Onboarding error:', err)
-                setError('An unexpected error occurred. Please try again.')
+                setError(t('errors.general'))
               } finally {
                 setIsLoading(false)
               }
@@ -461,7 +458,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 </svg>
               </div>
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>Error</h3>
+                <h3 className='text-sm font-medium text-red-800'>{t('errors.error')}</h3>
                 <div className='mt-2 text-sm text-red-700'>{error}</div>
               </div>
             </div>
@@ -486,7 +483,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                     d='M15 19l-7-7 7-7'
                   />
                 </svg>
-                Back
+                {t('navigation.back')}
               </button>
             ) : (
               <div />
@@ -499,7 +496,7 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                 disabled={isLoading}
                 className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
               >
-                Next
+                {t('navigation.next')}
                 <svg className='ml-2 h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                   <path
                     strokeLinecap='round'
@@ -537,10 +534,10 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
                         d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                       ></path>
                     </svg>
-                    Setting up...
+                    {t('navigation.settingUp')}
                   </>
                 ) : (
-                  'Complete Setup'
+                  t('navigation.finish')
                 )}
               </button>
             )}

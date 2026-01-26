@@ -7,14 +7,13 @@ import {
   Pause,
   FileText,
   MapPin,
-  Clock,
   Check,
   CheckCheck,
   Image as ImageIcon,
   Video,
-  Mic,
 } from 'lucide-react'
 import { WhatsAppMediaHandler } from '@/lib/whatsapp/media-handler'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Message {
   id: string
@@ -63,9 +62,10 @@ interface MessageListProps {
 interface MediaMessageProps {
   message: Message
   onDownload?: (mediaId: string) => void
+  t: (key: string, params?: Record<string, string | number>) => string
 }
 
-function MediaMessage({ message, onDownload }: MediaMessageProps) {
+function MediaMessage({ message, onDownload, t }: MediaMessageProps) {
   const [playing, setPlaying] = useState(false)
   const [loading, setLoading] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -109,9 +109,14 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
   }
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
+    if (bytes === 0) return `0 ${t('media.fileSize.bytes') || 'Bytes'}`
     const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const sizes = [
+      t('media.fileSize.bytes') || 'Bytes',
+      t('media.fileSize.kb') || 'KB',
+      t('media.fileSize.mb') || 'MB',
+      t('media.fileSize.gb') || 'GB',
+    ]
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
@@ -123,10 +128,10 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
           {message.media?.url ? (
             <div className='group relative'>
               <img
-                src={message.media.thumbnailUrl || message.media.url}
-                alt='Shared image'
+                src={message.media?.thumbnailUrl || message.media?.url}
+                alt={t('media.image')}
                 className='max-h-64 w-auto cursor-pointer rounded-md'
-                onClick={() => window.open(message.media.url, '_blank')}
+                onClick={() => message.media?.url && window.open(message.media.url, '_blank')}
               />
               <div className='bg-opacity-0 group-hover:bg-opacity-20 absolute inset-0 flex items-center justify-center rounded-md bg-black transition-all duration-200'>
                 <button
@@ -142,8 +147,8 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
             <div className='flex items-center space-x-3 rounded-md bg-black/5 p-3'>
               <ImageIcon className='h-8 w-8 text-gray-400' />
               <div>
-                <p className='text-sm font-medium'>Image</p>
-                <p className='text-xs opacity-60'>Unable to load image</p>
+                <p className='text-sm font-medium'>{t('media.image')}</p>
+                <p className='text-xs opacity-60'>{t('media.unableToLoadImage')}</p>
               </div>
             </div>
           )}
@@ -173,8 +178,8 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
             <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
               <Video className='h-8 w-8 text-gray-400' />
               <div>
-                <p className='text-sm font-medium text-gray-900'>Video</p>
-                <p className='text-xs text-gray-500'>Unable to load video</p>
+                <p className='text-sm font-medium text-gray-900'>{t('media.video')}</p>
+                <p className='text-xs text-gray-500'>{t('media.unableToLoadVideo')}</p>
               </div>
             </div>
           )}
@@ -194,7 +199,7 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
             </button>
             <div className='flex-1'>
               <div className='flex items-center justify-between'>
-                <p className='text-sm font-medium text-gray-900'>Voice Message</p>
+                <p className='text-sm font-medium text-gray-900'>{t('media.voiceMessage')}</p>
                 <button
                   onClick={handleDownload}
                   disabled={loading}
@@ -227,7 +232,7 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
             <FileText className='h-8 w-8 flex-shrink-0 text-gray-400' />
             <div className='min-w-0 flex-1'>
               <p className='truncate text-sm font-medium text-gray-900'>
-                {message.media?.filename || 'Document'}
+                {message.media?.filename || t('media.document')}
               </p>
               {message.media && (
                 <p className='text-xs text-gray-500'>{formatFileSize(message.media.fileSize)}</p>
@@ -251,8 +256,8 @@ function MediaMessage({ message, onDownload }: MediaMessageProps) {
           <div className='flex items-center space-x-3 rounded-lg bg-gray-100 p-3'>
             <MapPin className='h-8 w-8 flex-shrink-0 text-red-500' />
             <div>
-              <p className='text-sm font-medium text-gray-900'>Location</p>
-              <p className='text-xs text-gray-500'>Tap to view on map</p>
+              <p className='text-sm font-medium text-gray-900'>{t('media.location')}</p>
+              <p className='text-xs text-gray-500'>{t('media.tapToView')}</p>
             </div>
           </div>
           {message.content && <p className='mt-2 text-sm text-gray-700'>{message.content}</p>}
@@ -277,6 +282,7 @@ export default function EnhancedMessageList({
   agentTextColor = 'text-white',
   contactTextColor = 'text-gray-900',
 }: MessageListProps) {
+  const t = useTranslations('inbox')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const mediaHandler = new WhatsAppMediaHandler('', '') // Would be initialized with proper tokens
 
@@ -371,9 +377,9 @@ export default function EnhancedMessageList({
     const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
 
     if (date.toDateString() === today.toDateString()) {
-      return 'Today'
+      return t('media.today')
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday'
+      return t('media.yesterday')
     } else {
       return date.toLocaleDateString()
     }
@@ -387,11 +393,12 @@ export default function EnhancedMessageList({
       {hasMore && (
         <div className='border-b border-gray-200 p-4 text-center'>
           <button
+            type='button'
             onClick={onLoadMore}
             disabled={loading}
             className='px-4 py-2 text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50'
           >
-            {loading ? 'Loading...' : 'Load older messages'}
+            {loading ? t('list.loading') : t('media.loadOlder')}
           </button>
         </div>
       )}
@@ -410,8 +417,8 @@ export default function EnhancedMessageList({
       >
         {messageGroups.length === 0 ? (
           <div className='py-8 text-center text-gray-500'>
-            <p className='mb-2 text-lg font-medium'>No messages yet</p>
-            <p className='text-sm'>Start the conversation by sending a message</p>
+            <p className='mb-2 text-lg font-medium'>{t('media.noMessagesYet')}</p>
+            <p className='text-sm'>{t('media.startConversation')}</p>
           </div>
         ) : (
           messageGroups.map((group, groupIndex) => (
@@ -452,19 +459,18 @@ export default function EnhancedMessageList({
                           <div className='mb-1 px-3'>
                             <span className='text-xs font-medium text-gray-700'>
                               {isContact
-                                ? 'Contact'
-                                : message.sender?.full_name || 'Agent'}
+                                ? t('media.contact')
+                                : message.sender?.full_name || t('agents.online')}
                             </span>
                           </div>
                         )}
 
                         {/* Message Bubble */}
                         <div
-                          className={`rounded-2xl shadow-sm ${
-                            isFromAgent
-                              ? `rounded-tr-sm ${agentBubbleColor} ${agentTextColor}`
-                              : `rounded-tl-sm border border-gray-200 ${contactBubbleColor} ${contactTextColor}`
-                          }`}
+                          className={`rounded-2xl shadow-sm ${isFromAgent
+                            ? `rounded-tr-sm ${agentBubbleColor} ${agentTextColor}`
+                            : `rounded-tl-sm border border-gray-200 ${contactBubbleColor} ${contactTextColor}`
+                            }`}
                           style={{
                             padding: message.message_type === 'text' ? '12px 16px' : '8px',
                             boxShadow: isFromAgent
@@ -472,14 +478,13 @@ export default function EnhancedMessageList({
                               : '0 1px 3px rgba(0, 0, 0, 0.08)',
                           }}
                         >
-                          <MediaMessage message={message} onDownload={handleMediaDownload} />
+                          <MediaMessage message={message} onDownload={handleMediaDownload} t={t} />
                         </div>
 
                         {/* Message Status and Time */}
                         <div
-                          className={`mt-1 flex items-center space-x-1 px-1 ${
-                            isFromAgent ? 'justify-end' : 'justify-start'
-                          }`}
+                          className={`mt-1 flex items-center space-x-1 px-1 ${isFromAgent ? 'justify-end' : 'justify-start'
+                            }`}
                         >
                           <span className='text-xs text-gray-500'>
                             {formatTime(message.created_at)}

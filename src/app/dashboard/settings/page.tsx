@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Settings as SettingsIcon,
 } from 'lucide-react'
+import { getTranslations } from '@/lib/i18n/server'
 
 interface SettingCardProps {
   href: string
@@ -17,7 +18,7 @@ interface SettingCardProps {
   title: string
   description: string
   available?: boolean
-  roleRequired?: string[]
+  badge?: string
 }
 
 function SettingCard({
@@ -26,7 +27,7 @@ function SettingCard({
   title,
   description,
   available = true,
-  roleRequired,
+  badge,
 }: SettingCardProps) {
   const card = (
     <div
@@ -42,14 +43,9 @@ function SettingCard({
           <div className='flex-1'>
             <h3 className='mb-1 text-lg font-semibold text-gray-900'>{title}</h3>
             <p className='text-sm text-gray-600'>{description}</p>
-            {!available && (
-              <span className='mt-2 inline-block rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-600'>
-                Coming Soon
-              </span>
-            )}
-            {roleRequired && (
-              <span className='mt-2 inline-block rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600'>
-                {roleRequired.join(' / ')} only
+            {badge && (
+              <span className={`mt-2 inline-block rounded px-2 py-1 text-xs font-medium ${!available ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'}`}>
+                {badge}
               </span>
             )}
           </div>
@@ -72,36 +68,36 @@ export const revalidate = 300
 export default async function SettingsPage() {
   const profile = await requireOrganization()
   const isOwnerOrAdmin = profile.role === 'owner' || profile.role === 'admin'
+  const { t } = await getTranslations('settings')
 
   return (
     <div className='space-y-6'>
       {/* Header */}
       <div>
-        <h1 className='text-2xl font-bold text-gray-900'>Settings</h1>
-        <p className='mt-1 text-sm text-gray-600'>
-          Manage your account, organization, and application preferences.
-        </p>
+        <h1 className='text-2xl font-bold text-gray-900'>{t('title')}</h1>
+        <p className='mt-1 text-sm text-gray-600'>{t('subtitle')}</p>
       </div>
 
       {/* Personal Settings */}
       <div>
         <h2 className='mb-3 text-sm font-semibold tracking-wider text-gray-500 uppercase'>
-          Personal Settings
+          {t('sections.personal')}
         </h2>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
           <SettingCard
             href='/dashboard/settings/profile'
             icon={<User className='h-6 w-6' />}
-            title='Profile'
-            description='Manage your personal information, avatar, and account details.'
+            title={t('cards.profile.title')}
+            description={t('cards.profile.description')}
           />
 
           <SettingCard
             href='/dashboard/settings/notifications'
             icon={<Bell className='h-6 w-6' />}
-            title='Notifications'
-            description='Configure email and in-app notification preferences.'
+            title={t('cards.notifications.title')}
+            description={t('cards.notifications.description')}
             available={false}
+            badge={t('badges.comingSoon')}
           />
         </div>
       </div>
@@ -110,24 +106,24 @@ export default async function SettingsPage() {
       {isOwnerOrAdmin && (
         <div>
           <h2 className='mb-3 text-sm font-semibold tracking-wider text-gray-500 uppercase'>
-            Organization Settings
+            {t('sections.organization')}
           </h2>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
             <SettingCard
               href='/dashboard/settings/organization'
               icon={<Building2 className='h-6 w-6' />}
-              title='Organization'
-              description='Manage organization details, branding, and general settings.'
-              roleRequired={['Owner', 'Admin']}
+              title={t('cards.organization.title')}
+              description={t('cards.organization.description')}
+              badge={t('badges.ownerAdminOnly')}
               available={true}
             />
 
             <SettingCard
               href='/dashboard/settings/team'
               icon={<Users className='h-6 w-6' />}
-              title='Team Management'
-              description='Invite team members, manage roles, and set permissions.'
-              roleRequired={['Owner', 'Admin']}
+              title={t('cards.team.title')}
+              description={t('cards.team.description')}
+              badge={t('badges.ownerAdminOnly')}
               available={true}
             />
           </div>
@@ -137,24 +133,24 @@ export default async function SettingsPage() {
       {/* Billing & Integrations */}
       <div>
         <h2 className='mb-3 text-sm font-semibold tracking-wider text-gray-500 uppercase'>
-          Billing & Integrations
+          {t('sections.billing')}
         </h2>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
           {profile.role === 'owner' && (
             <SettingCard
               href='/dashboard/settings/billing'
               icon={<CreditCard className='h-6 w-6' />}
-              title='Billing'
-              description='Manage your subscription, payment methods, and invoices.'
-              roleRequired={['Owner']}
+              title={t('cards.billing.title')}
+              description={t('cards.billing.description')}
+              badge={t('badges.ownerOnly')}
             />
           )}
 
           <SettingCard
             href='/dashboard/settings/integrations'
             icon={<Plug className='h-6 w-6' />}
-            title='Integrations'
-            description='Connect third-party apps and manage API integrations.'
+            title={t('cards.integrations.title')}
+            description={t('cards.integrations.description')}
             available={true}
           />
         </div>
@@ -167,17 +163,15 @@ export default async function SettingsPage() {
             <SettingsIcon className='h-5 w-5 text-emerald-600' />
           </div>
           <div className='flex-1'>
-            <h3 className='mb-1 text-sm font-semibold text-emerald-900'>Need Help?</h3>
-            <p className='mb-3 text-sm text-emerald-700'>
-              Can't find what you're looking for? Check our documentation or contact support.
-            </p>
+            <h3 className='mb-1 text-sm font-semibold text-emerald-900'>{t('help.title')}</h3>
+            <p className='mb-3 text-sm text-emerald-700'>{t('help.description')}</p>
             <div className='flex space-x-3'>
               <button className='text-sm font-medium text-emerald-700 hover:text-emerald-800'>
-                View Documentation
+                {t('help.viewDocs')}
               </button>
               <span className='text-emerald-300'>•</span>
               <button className='text-sm font-medium text-emerald-700 hover:text-emerald-800'>
-                Contact Support
+                {t('help.contactSupport')}
               </button>
             </div>
           </div>

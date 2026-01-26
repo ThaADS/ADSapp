@@ -3,6 +3,7 @@
 import { useState, useCallback, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { CommandPalette } from '@/components/search/command-palette'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 // ⚡ PERFORMANCE: Memoized icons
 const MenuIcon = memo(() => (
@@ -42,6 +43,7 @@ interface DashboardHeaderProps {
 }
 
 function DashboardHeaderInner({ profile, organizationId, onMenuClick }: DashboardHeaderProps) {
+  const t = useTranslations('dashboard')
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const router = useRouter()
 
@@ -71,7 +73,7 @@ function DashboardHeaderInner({ profile, organizationId, onMenuClick }: Dashboar
         onClick={onMenuClick}
         className='-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden'
       >
-        <span className='sr-only'>Open sidebar</span>
+        <span className='sr-only'>{t('openSidebar')}</span>
         <MenuIcon />
       </button>
 
@@ -86,7 +88,7 @@ function DashboardHeaderInner({ profile, organizationId, onMenuClick }: Dashboar
 
         <div className='flex items-center gap-x-4 lg:gap-x-6'>
           <button type='button' className='-m-2.5 p-2.5 text-gray-400 hover:text-gray-500'>
-            <span className='sr-only'>View notifications</span>
+            <span className='sr-only'>{t('viewNotifications')}</span>
             <BellIcon />
           </button>
 
@@ -97,7 +99,7 @@ function DashboardHeaderInner({ profile, organizationId, onMenuClick }: Dashboar
               className='-m-1.5 flex items-center p-1.5'
               onClick={toggleUserMenu}
             >
-              <span className='sr-only'>Open user menu</span>
+              <span className='sr-only'>{t('openUserMenu')}</span>
               <div className='flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500'>
                 <span className='text-sm font-medium text-white'>
                   {profile.full_name?.charAt(0).toUpperCase() || 'U'}
@@ -123,13 +125,13 @@ function DashboardHeaderInner({ profile, organizationId, onMenuClick }: Dashboar
                   href='/dashboard/settings/profile'
                   className='block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50'
                 >
-                  Profile
+                  {t('profile')}
                 </a>
                 <button
                   onClick={handleSignOut}
                   className='block w-full px-3 py-1 text-left text-sm leading-6 text-gray-900 hover:bg-gray-50'
                 >
-                  Sign out
+                  {t('signOut')}
                 </button>
               </div>
             )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { FileText, Plus, Edit, Trash2, Save, X } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface Note {
   id: string
@@ -23,6 +24,7 @@ export default function ConversationNotes({
   organizationId,
   currentUserId,
 }: ConversationNotesProps) {
+  const t = useTranslations('inbox')
   const [notes, setNotes] = useState<Note[]>([])
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
@@ -73,14 +75,14 @@ export default function ConversationNotes({
       setEditingNoteId(null)
     } catch (error) {
       console.error('Failed to save note:', error)
-      alert('Fout bij opslaan notitie')
+      alert(t('notes.saveError'))
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!confirm('Weet je zeker dat je deze notitie wilt verwijderen?')) return
+    if (!confirm(t('notes.deleteConfirm'))) return
 
     try {
       await fetch(`/api/conversations/${conversationId}/notes/${noteId}`, {
@@ -89,7 +91,7 @@ export default function ConversationNotes({
       await loadNotes()
     } catch (error) {
       console.error('Failed to delete note:', error)
-      alert('Fout bij verwijderen notitie')
+      alert(t('notes.deleteError'))
     }
   }
 
@@ -111,15 +113,16 @@ export default function ConversationNotes({
       <div className='flex items-center justify-between border-b px-4 py-3'>
         <h3 className='flex items-center gap-2 font-semibold'>
           <FileText className='h-5 w-5 text-gray-600' />
-          Notities
+          {t('notes.title')}
         </h3>
         {!isAddingNote && (
           <button
+            type='button'
             onClick={() => setIsAddingNote(true)}
             className='flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700'
           >
             <Plus className='h-4 w-4' />
-            Toevoegen
+            {t('notes.add')}
           </button>
         )}
       </div>
@@ -130,23 +133,26 @@ export default function ConversationNotes({
           <textarea
             value={noteContent}
             onChange={e => setNoteContent(e.target.value)}
-            placeholder='Schrijf een notitie...'
+            placeholder={t('notes.placeholder')}
             className='w-full resize-none rounded-lg border px-3 py-2 focus:ring-2 focus:ring-emerald-500'
             rows={3}
             autoFocus
           />
           <div className='mt-2 flex gap-2'>
             <button
+              type='button'
               onClick={handleSaveNote}
               disabled={isLoading || !noteContent.trim()}
               className='flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300'
             >
               <Save className='h-4 w-4' />
-              {isLoading ? 'Opslaan...' : editingNoteId ? 'Bijwerken' : 'Opslaan'}
+              {isLoading ? t('notes.saving') : editingNoteId ? t('notes.update') : t('notes.save')}
             </button>
             <button
+              type='button'
               onClick={handleCancelEdit}
               className='rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100'
+              title={t('actions.cancel')}
             >
               <X className='h-4 w-4' />
             </button>
@@ -159,8 +165,8 @@ export default function ConversationNotes({
         {notes.length === 0 ? (
           <div className='p-8 text-center text-gray-500'>
             <FileText className='mx-auto mb-2 h-12 w-12 text-gray-300' />
-            <p>Nog geen notities</p>
-            <p className='text-sm'>Voeg een notitie toe om belangrijke informatie vast te leggen</p>
+            <p>{t('notes.empty')}</p>
+            <p className='text-sm'>{t('notes.emptyDescription')}</p>
           </div>
         ) : (
           <div className='divide-y'>
@@ -172,27 +178,29 @@ export default function ConversationNotes({
                     <div className='mt-2 flex items-center gap-2 text-xs text-gray-500'>
                       <span>{note.created_by_name}</span>
                       <span>•</span>
-                      <span>{new Date(note.created_at).toLocaleString('nl-NL')}</span>
+                      <span>{new Date(note.created_at).toLocaleString()}</span>
                       {note.updated_at !== note.created_at && (
                         <>
                           <span>•</span>
-                          <span className='italic'>bewerkt</span>
+                          <span className='italic'>{t('notes.edited')}</span>
                         </>
                       )}
                     </div>
                   </div>
                   <div className='flex gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
                     <button
+                      type='button'
                       onClick={() => handleEditNote(note)}
                       className='rounded p-1 hover:bg-gray-200'
-                      title='Bewerken'
+                      title={t('notes.edit')}
                     >
                       <Edit className='h-4 w-4 text-gray-600' />
                     </button>
                     <button
+                      type='button'
                       onClick={() => handleDeleteNote(note.id)}
                       className='rounded p-1 hover:bg-red-100'
-                      title='Verwijderen'
+                      title={t('notes.delete')}
                     >
                       <Trash2 className='h-4 w-4 text-red-600' />
                     </button>

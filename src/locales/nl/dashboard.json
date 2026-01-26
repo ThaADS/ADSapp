@@ -12,6 +12,7 @@
   "profile": "Profiel",
   "help": "Help",
   "logout": "Uitloggen",
+  "signOut": "Uitloggen",
   "navigation": "Navigatie",
   "menu": "Menu",
   "home": "Home",
@@ -21,6 +22,15 @@
   "newTemplate": "Nieuw sjabloon",
   "quickActions": "Snelle acties",
   "recentActivity": "Recente activiteit",
+  "quickActionsSubtitle": "Ga aan de slag met veelvoorkomende taken",
+  "actionNewConversationDesc": "Start een nieuw WhatsApp-gesprek",
+  "actionAddContactDesc": "Voeg een nieuw contact toe aan je lijst",
+  "actionCreateTemplateDesc": "Maak een nieuw berichtsjabloon",
+  "setupAutomation": "Automatisering instellen",
+  "actionSetupAutomationDesc": "Configureer automatische antwoorden",
+  "openSidebar": "Open zijbalk",
+  "viewNotifications": "Bekijk meldingen",
+  "openUserMenu": "Open gebruikersmenu",
   "notifications": "Meldingen",
   "unreadMessages": "Ongelezen berichten",
   "pendingTasks": "Openstaande taken",
@@ -57,5 +67,60 @@
   "theme": "Thema",
   "darkMode": "Donkere modus",
   "lightMode": "Lichte modus",
-  "systemMode": "Systeem"
+  "systemMode": "Systeem",
+  "welcomeBack": "Welkom terug, {name}. Hier is wat er gebeurt met je WhatsApp-inbox.",
+  "nav": {
+    "dashboard": "Dashboard",
+    "workflows": "Workflows",
+    "broadcast": "Broadcast",
+    "dripCampaigns": "Drip Campagnes",
+    "roadmap": "Roadmap"
+  },
+  "activity": {
+    "justNow": "zojuist",
+    "ago": "geleden",
+    "noActivity": "Geen recente activiteit",
+    "noActivityDesc": "Recente berichten verschijnen hier.",
+    "newMessageFrom": "Nieuw bericht van",
+    "agentRepliedTo": "Agent reageerde op",
+    "unknown": "Onbekend"
+  },
+  "status": {
+    "open": "Open",
+    "pending": "In behandeling",
+    "resolved": "Opgelost",
+    "closed": "Gesloten"
+  },
+  "common": {
+    "view": "Bekijken",
+    "viewAll": "Alles bekijken"
+  },
+  "time": {
+    "m": "m",
+    "h": "u",
+    "d": "d"
+  },
+  "conversationList": {
+    "noConversationsTitle": "Geen gesprekken",
+    "startByConnecting": "Begin met het koppelen van je WhatsApp Business-account.",
+    "viewAllConversations": "Bekijk alle gesprekken",
+    "recentConversations": "Recente Gesprekken",
+    "recentSubtitle": "Je laatste klant chats"
+  },
+  "stats": {
+    "totalConversations": "Totaal gesprekken",
+    "messagesToday": "Berichten vandaag",
+    "openConversations": "Open gesprekken",
+    "totalContacts": "Totaal contacten"
+  },
+  "greeting": {
+    "morning": "Goedemorgen",
+    "afternoon": "Goedemiddag",
+    "evening": "Goedenavond",
+    "user": "daar"
+  },
+  "overview": {
+    "subtitle": "Dit is wat er vandaag gebeurt met je bedrijf"
+  },
+  "closeMenu": "Menu sluiten"
 }

@@ -2,15 +2,17 @@
 
 import { useRouter } from 'next/navigation'
 import { useDemo } from '@/contexts/demo-context'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 export function QuickActions() {
+  const t = useTranslations('dashboard')
   const router = useRouter()
   const { state } = useDemo()
 
   const actions = [
     {
-      name: 'New Conversation',
-      description: 'Start a new WhatsApp conversation',
+      name: t('newConversation'),
+      description: t('actionNewConversationDesc'),
       icon: (
         <svg fill='none' stroke='currentColor' viewBox='0 0 24 24' className='h-8 w-8'>
           <path
@@ -32,8 +34,8 @@ export function QuickActions() {
       },
     },
     {
-      name: 'Add Contact',
-      description: 'Add a new contact to your list',
+      name: t('newContact'),
+      description: t('actionAddContactDesc'),
       icon: (
         <svg fill='none' stroke='currentColor' viewBox='0 0 24 24' className='h-8 w-8'>
           <path
@@ -50,8 +52,8 @@ export function QuickActions() {
       },
     },
     {
-      name: 'Create Template',
-      description: 'Create a new message template',
+      name: t('newTemplate'),
+      description: t('actionCreateTemplateDesc'),
       icon: (
         <svg fill='none' stroke='currentColor' viewBox='0 0 24 24' className='h-8 w-8'>
           <path
@@ -68,8 +70,8 @@ export function QuickActions() {
       },
     },
     {
-      name: 'Setup Automation',
-      description: 'Configure automatic responses',
+      name: t('setupAutomation'),
+      description: t('actionSetupAutomationDesc'),
       icon: (
         <svg fill='none' stroke='currentColor' viewBox='0 0 24 24' className='h-8 w-8'>
           <path
@@ -90,8 +92,8 @@ export function QuickActions() {
   return (
     <div className='rounded-lg bg-white shadow-sm border border-gray-200'>
       <div className='border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4'>
-        <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>Quick Actions</h3>
-        <p className='mt-1 text-xs sm:text-sm text-gray-600'>Get started with common tasks</p>
+        <h3 className='text-base sm:text-lg leading-6 font-semibold text-gray-900'>{t('quickActions')}</h3>
+        <p className='mt-1 text-xs sm:text-sm text-gray-600'>{t('quickActionsSubtitle')}</p>
       </div>
       <div className='p-4 sm:p-6'>
         <div className='grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4'>

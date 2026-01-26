@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import {
   DocumentTextIcon,
   MagnifyingGlassIcon,
@@ -39,6 +40,7 @@ interface AuditLogsResponse {
 }
 
 export function AuditLogs() {
+  const t = useTranslations('admin')
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -105,7 +107,7 @@ export function AuditLogs() {
         className={`inline-flex items-center gap-x-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${badge.class}`}
       >
         <BadgeIcon className='h-3.5 w-3.5' />
-        {severity.charAt(0).toUpperCase() + severity.slice(1)}
+        {t(`auditLogs.severity${severity.charAt(0).toUpperCase() + severity.slice(1)}`)}
       </span>
     )
   }
@@ -123,7 +125,7 @@ export function AuditLogs() {
       <div className='flex h-96 items-center justify-center'>
         <div className='text-center'>
           <div className='inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-600'></div>
-          <p className='mt-4 text-sm text-slate-600'>Loading audit logs...</p>
+          <p className='mt-4 text-sm text-slate-600'>{t('auditLogs.loading')}</p>
         </div>
       </div>
     )
@@ -137,7 +139,7 @@ export function AuditLogs() {
             <ExclamationCircleIcon className='h-5 w-5 text-red-400' />
           </div>
           <div className='ml-3'>
-            <h3 className='text-sm font-medium text-red-800'>Error loading audit logs</h3>
+            <h3 className='text-sm font-medium text-red-800'>{t('auditLogs.errorLoading')}</h3>
             <div className='mt-2 text-sm text-red-700'>
               <p>{error}</p>
             </div>
@@ -151,9 +153,9 @@ export function AuditLogs() {
     <div className='space-y-6'>
       {/* Header */}
       <div>
-        <h2 className='text-2xl font-bold text-slate-900'>Audit Logs</h2>
+        <h2 className='text-2xl font-bold text-slate-900'>{t('auditLogs.title')}</h2>
         <p className='mt-2 text-sm text-slate-600'>
-          Complete activity trail across the platform for security and compliance
+          {t('auditLogs.subtitle')}
         </p>
       </div>
 
@@ -168,7 +170,7 @@ export function AuditLogs() {
               </div>
               <input
                 type='text'
-                placeholder='Search logs...'
+                placeholder={t('auditLogs.searchPlaceholder')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className='block w-full rounded-lg border-0 py-2.5 pr-3 pl-10 text-slate-900 ring-1 ring-slate-300 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-600 focus:ring-inset sm:text-sm'
@@ -183,11 +185,11 @@ export function AuditLogs() {
               onChange={e => setFilterSeverity(e.target.value)}
               className='block w-full rounded-lg border-0 py-2.5 pr-10 pl-3 text-slate-900 ring-1 ring-slate-300 ring-inset focus:ring-2 focus:ring-emerald-600 sm:text-sm'
             >
-              <option value='all'>All Severities</option>
-              <option value='info'>Info</option>
-              <option value='warning'>Warning</option>
-              <option value='error'>Error</option>
-              <option value='critical'>Critical</option>
+              <option value='all'>{t('auditLogs.allSeverities')}</option>
+              <option value='info'>{t('auditLogs.severityInfo')}</option>
+              <option value='warning'>{t('auditLogs.severityWarning')}</option>
+              <option value='error'>{t('auditLogs.severityError')}</option>
+              <option value='critical'>{t('auditLogs.severityCritical')}</option>
             </select>
           </div>
 
@@ -198,12 +200,12 @@ export function AuditLogs() {
               onChange={e => setFilterAction(e.target.value)}
               className='block w-full rounded-lg border-0 py-2.5 pr-10 pl-3 text-slate-900 ring-1 ring-slate-300 ring-inset focus:ring-2 focus:ring-emerald-600 sm:text-sm'
             >
-              <option value='all'>All Actions</option>
-              <option value='create'>Create</option>
-              <option value='update'>Update</option>
-              <option value='delete'>Delete</option>
-              <option value='login'>Login</option>
-              <option value='logout'>Logout</option>
+              <option value='all'>{t('auditLogs.allActions')}</option>
+              <option value='create'>{t('auditLogs.actionCreate')}</option>
+              <option value='update'>{t('auditLogs.actionUpdate')}</option>
+              <option value='delete'>{t('auditLogs.actionDelete')}</option>
+              <option value='login'>{t('auditLogs.actionLogin')}</option>
+              <option value='logout'>{t('auditLogs.actionLogout')}</option>
             </select>
           </div>
         </div>
@@ -213,7 +215,7 @@ export function AuditLogs() {
             <DocumentTextIcon className='h-5 w-5 text-slate-400' />
             <span className='text-slate-600'>
               <span className='font-semibold text-slate-900'>{totalLogs.toLocaleString()}</span>{' '}
-              total logs
+              {t('auditLogs.totalLogs')}
             </span>
           </div>
         </div>
@@ -285,11 +287,11 @@ export function AuditLogs() {
         {logs.length === 0 && (
           <div className='py-12 text-center'>
             <DocumentTextIcon className='mx-auto h-12 w-12 text-slate-400' />
-            <h3 className='mt-2 text-sm font-medium text-slate-900'>No audit logs found</h3>
+            <h3 className='mt-2 text-sm font-medium text-slate-900'>{t('auditLogs.noLogsFound')}</h3>
             <p className='mt-1 text-sm text-slate-500'>
               {searchQuery || filterSeverity !== 'all' || filterAction !== 'all'
-                ? 'Try adjusting your search or filters.'
-                : 'No audit logs have been recorded yet.'}
+                ? t('auditLogs.noLogsSearchAdjust')
+                : t('auditLogs.noLogsRecorded')}
             </p>
           </div>
         )}
@@ -303,22 +305,22 @@ export function AuditLogs() {
                 disabled={currentPage === 1}
                 className='relative inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
               >
-                Previous
+                {t('previous')}
               </button>
               <button
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={currentPage * 50 >= totalLogs}
                 className='relative ml-3 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
               >
-                Next
+                {t('next')}
               </button>
             </div>
             <div className='hidden sm:flex sm:flex-1 sm:items-center sm:justify-between'>
               <div>
                 <p className='text-sm text-slate-700'>
-                  Showing <span className='font-medium'>{(currentPage - 1) * 50 + 1}</span> to{' '}
-                  <span className='font-medium'>{Math.min(currentPage * 50, totalLogs)}</span> of{' '}
-                  <span className='font-medium'>{totalLogs}</span> logs
+                  {t('showing')} <span className='font-medium'>{(currentPage - 1) * 50 + 1}</span> {t('to')}{' '}
+                  <span className='font-medium'>{Math.min(currentPage * 50, totalLogs)}</span> {t('of')}{' '}
+                  <span className='font-medium'>{totalLogs}</span> {t('results')}
                 </p>
               </div>
               <div className='flex gap-2'>
@@ -327,14 +329,14 @@ export function AuditLogs() {
                   disabled={currentPage === 1}
                   className='relative inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
                 >
-                  Previous
+                  {t('previous')}
                 </button>
                 <button
                   onClick={() => setCurrentPage(p => p + 1)}
                   disabled={currentPage * 50 >= totalLogs}
                   className='relative inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50'
                 >
-                  Next
+                  {t('next')}
                 </button>
               </div>
             </div>

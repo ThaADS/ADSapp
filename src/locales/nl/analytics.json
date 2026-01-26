@@ -1,0 +1,255 @@
+{
+  "title": "Analyse",
+  "notAvailable": "N.v.t.",
+  "overview": "Overzicht",
+  "dashboard": "Dashboard",
+  "navReports": "Rapporten",
+  "navExport": "Exporteren",
+  "dateRange": {
+    "label": "Datumbereik",
+    "today": "Vandaag",
+    "yesterday": "Gisteren",
+    "last7Days": "Laatste 7 dagen",
+    "last30Days": "Laatste 30 dagen",
+    "thisMonth": "Deze maand",
+    "lastMonth": "Vorige maand",
+    "thisYear": "Dit jaar",
+    "last90Days": "Laatste 90 dagen",
+    "custom": "Aangepast"
+  },
+  "metrics": {
+    "totalConversations": "Totaal aantal gesprekken",
+    "activeConversations": "Actieve gesprekken",
+    "newContacts": "Nieuwe contacten",
+    "messagesReceived": "Berichten ontvangen",
+    "messagesSent": "Berichten verzonden",
+    "avgResponseTime": "Gem. reactietijd",
+    "firstResponseTime": "Eerste reactietijd",
+    "resolutionTime": "Oplostijd",
+    "satisfactionScore": "Tevredenheidsscore",
+    "nps": "NPS Score",
+    "conversionRate": "Conversieratio",
+    "automationRate": "Automatiseringsratio"
+  },
+  "conversations": {
+    "title": "Gesprekken",
+    "total": "Totaal",
+    "open": "Open",
+    "resolved": "Opgelost",
+    "pending": "In behandeling",
+    "byStatus": "Per status",
+    "byChannel": "Per kanaal",
+    "byAgent": "Per agent",
+    "byTag": "Per tag",
+    "trend": "Trend"
+  },
+  "messages": {
+    "title": "Berichten",
+    "total": "Totaal",
+    "inbound": "Inkomend",
+    "outbound": "Uitgaand",
+    "automated": "Geautomatiseerd",
+    "manual": "Handmatig",
+    "byHour": "Per uur",
+    "byDay": "Per dag",
+    "byWeek": "Per week"
+  },
+  "team": {
+    "title": "Teamprestaties",
+    "agent": "Agent",
+    "conversationsHandled": "Gesprekken afgehandeld",
+    "avgResponseTime": "Gem. reactietijd",
+    "satisfactionScore": "Tevredenheid",
+    "messagesProcessed": "Berichten verwerkt",
+    "leaderboard": "Leaderboard",
+    "performance": "Prestaties"
+  },
+  "customers": {
+    "title": "Klanten",
+    "newCustomers": "Nieuwe klanten",
+    "returningCustomers": "Terugkerende klanten",
+    "topCustomers": "Topklanten",
+    "customerJourney": "Klanttraject",
+    "retention": "Retentie"
+  },
+  "revenue": {
+    "title": "Omzet",
+    "totalRevenue": "Totale omzet",
+    "mrr": "Maandelijkse terugkerende omzet",
+    "arpu": "Gem. omzet per gebruiker",
+    "conversionRate": "Conversieratio",
+    "byPlan": "Per pakket",
+    "bySource": "Per bron",
+    "growth": "Groei",
+    "cac": "Klantacquisitiekosten",
+    "ltv": "Klantwaarde (LTV)",
+    "paybackPeriod": "Terugverdientijd"
+  },
+  "ai": {
+    "title": "AI Analyse",
+    "totalResponses": "Totaal aantal AI-reacties",
+    "automatedRate": "Automatiseringsratio",
+    "accuracy": "Nauwkeurigheid",
+    "sentimentAnalysis": "Sentimentanalyse",
+    "topIntents": "Top intenties",
+    "fallbackRate": "Fallback ratio"
+  },
+  "charts": {
+    "noData": "Geen gegevens beschikbaar",
+    "loading": "Laden...",
+    "error": "Laden van grafiek mislukt"
+  },
+  "comparison": {
+    "vs": "vs",
+    "previousPeriod": "Vorige periode",
+    "increase": "Toename",
+    "decrease": "Afname",
+    "noChange": "Geen verandering"
+  },
+  "exportSection": {
+    "title": "Rapport exporteren",
+    "format": "Formaat",
+    "pdf": "PDF",
+    "csv": "CSV",
+    "excel": "Excel",
+    "dateRange": "Datumbereik",
+    "includeCharts": "Inclusief grafieken",
+    "downloadReport": "Download rapport",
+    "scheduleReport": "Plan rapport"
+  },
+  "filters": {
+    "title": "Filters",
+    "apply": "Toepassen",
+    "reset": "Reset",
+    "agent": "Agent",
+    "status": "Status",
+    "tag": "Tag",
+    "channel": "Kanaal"
+  },
+  "errors": {
+    "loadFailed": "Laden van analyse mislukt",
+    "exportFailed": "Exporteren van rapport mislukt",
+    "retry": "Opnieuw proberen",
+    "noPermission": "Geen toegang tot analyse"
+  },
+  "usageOverTime": "Gebruik door de tijd heen",
+  "modelUsage": "Modelgebruik",
+  "aiDescription": "Gebruik- en kostenoverzicht van AI-functies",
+  "features": {
+    "draft": "Conceptsuggesties",
+    "auto_response": "Automatische antwoorden",
+    "sentiment": "Sentimentanalyse",
+    "summary": "Samenvattingen",
+    "template": "Template generatie"
+  },
+  "perFeature": "Per functie",
+  "requests": "verzoeken",
+  "tokens": "tokens",
+  "budget": {
+    "status": "Budgetstatus",
+    "monthlyBudget": "Maandelijks budget",
+    "currentSpend": "Huidige uitgaven",
+    "remaining": "Resterend",
+    "overBudget": "Budget overschreden",
+    "limitReached": "Budgetlimiet bereikt",
+    "overBudgetSuffix": " over budget",
+    "progress": "Voortgang",
+    "warningThreshold": "Waarschuwing bij {threshold}% van budget",
+    "spendDescription": "Je hebt {spend} van {budget} gebruikt ({percent}%)."
+  },
+  "aiMetrics": {
+    "totalRequests": "Totaal aantal verzoeken",
+    "totalCost": "Totale kosten",
+    "avgLatency": "Gem. latentie",
+    "acceptance": "Acceptatie",
+    "requestsDescription": "AI-verzoeken laatste {days} dagen",
+    "costDescription": "API-kosten laatste {days} dagen",
+    "latencyDescription": "Gemiddelde reactietijd",
+    "acceptanceDescription": "Suggesties geaccepteerd"
+  },
+  "reports": {
+    "title": "Aangepast rapport bouwen",
+    "nameLabel": "Rapportnaam",
+    "namePlaceholder": "Naam van je rapport...",
+    "descriptionLabel": "Omschrijving",
+    "descriptionPlaceholder": "Optionele omschrijving...",
+    "dateRange": "Datumbereik",
+    "from": "Van",
+    "to": "Tot",
+    "selectMetrics": "Selecteer statistieken",
+    "categories": {
+      "revenue": "💰 Omzet",
+      "conversations": "💬 Gesprekken",
+      "contacts": "👥 Contacten",
+      "automation": "🤖 Automatisering"
+    },
+    "metrics": {
+      "total_revenue": "Totale omzet",
+      "mrr": "MRR",
+      "avg_deal_size": "Gem. dealgrootte",
+      "conversion_rate": "Conversieratio",
+      "total_conversations": "Totaal aantal gesprekken",
+      "avg_response_time": "Gem. reactietijd",
+      "resolved_rate": "Oplossingsratio",
+      "total_contacts": "Totaal aantal contacten",
+      "new_contacts": "Nieuwe contacten",
+      "active_contacts": "Actieve contacten",
+      "automation_triggers": "Automatiserings triggers",
+      "automation_success": "Automatisering succes"
+    },
+    "filters": {
+      "title": "Filters",
+      "add": "Filter toevoegen",
+      "noFilters": "Geen filters toegepast - alle gegevens worden getoond",
+      "fields": {
+        "status": "Status",
+        "amount": "Bedrag",
+        "plan": "Pakket",
+        "source": "Bron"
+      },
+      "operators": {
+        "equals": "Gelijk aan",
+        "contains": "Bevat",
+        "greater": "Groter dan",
+        "less": "Kleiner dan",
+        "between": "Tussen"
+      },
+      "valuePlaceholder": "Waarde..."
+    },
+    "groupBy": {
+      "label": "Groeperen op",
+      "hour": "Uur",
+      "day": "Dag",
+      "week": "Week",
+      "month": "Maand",
+      "quarter": "Kwartaal",
+      "year": "Jaar"
+    },
+    "visualization": {
+      "label": "Visualisatie",
+      "table": "Tabel",
+      "bar": "Staafdiagram",
+      "line": "Lijndiagram",
+      "pie": "Cirkeldiagram",
+      "area": "Vlakdiagram"
+    },
+    "generate": "Rapport genereren",
+    "generating": "Rapport genereren...",
+    "preview": "Rapport: {name}",
+    "previewPlaceholder": "Rapportvoorbeeld verschijnt hier..."
+  },
+  "adminDashboard": {
+    "title": "Platform Analyse",
+    "description": "Uitgebreide statistieken en inzichten over alle organisaties",
+    "activeOrganizations": "Actieve organisaties",
+    "messageActivity": "Berichten activiteit",
+    "chartPlaceholder": "Grafiek wordt hier weergegeven met recharts",
+    "daily": "Dagelijks",
+    "monthly": "Maandelijks",
+    "revenueTrend": "Omzettrend",
+    "revenueVisualization": "Omzetgrafiek visualisatie",
+    "topOrganizations": "Top organisaties",
+    "topOrganizationsDesc": "Best presterende organisaties op basis van activiteit"
+  },
+  "exportAs": "Exporteren als {format}"
+}

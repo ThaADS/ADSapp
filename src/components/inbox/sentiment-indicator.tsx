@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react'
 import type { SentimentAnalysis } from '@/lib/ai/types'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface SentimentIndicatorProps {
   conversationId: string
@@ -21,6 +22,7 @@ export function SentimentIndicator({
   showDetails = true,
   autoAnalyze = false,
 }: SentimentIndicatorProps) {
+  const t = useTranslations('inbox')
   const [analysis, setAnalysis] = useState<SentimentAnalysis | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -127,18 +129,14 @@ export function SentimentIndicator({
       critical: 'bg-red-100 text-red-800',
     }
 
-    const labels = {
-      low: 'Laag',
-      medium: 'Normaal',
-      high: 'Hoog',
-      critical: 'Urgent',
-    }
+    const urgencyKey = urgency as 'low' | 'medium' | 'high' | 'critical'
+    const label = t(`sentiment.urgency.${urgencyKey}`)
 
     return (
       <span
-        className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${colors[urgency as keyof typeof colors] || colors.low}`}
+        className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${colors[urgencyKey] || colors.low}`}
       >
-        {labels[urgency as keyof typeof labels] || urgency}
+        {label}
       </span>
     )
   }
@@ -146,13 +144,13 @@ export function SentimentIndicator({
   const getSentimentLabel = (sentiment: string) => {
     switch (sentiment) {
       case 'positive':
-        return 'Positief'
+        return t('sentiment.positive')
       case 'negative':
-        return 'Negatief'
+        return t('sentiment.negative')
       case 'neutral':
-        return 'Neutraal'
+        return t('sentiment.neutral')
       case 'mixed':
-        return 'Gemengd'
+        return t('sentiment.mixed')
       default:
         return sentiment
     }
@@ -162,22 +160,23 @@ export function SentimentIndicator({
     return (
       <div className='flex items-center space-x-2 text-gray-500'>
         <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-gray-600'></div>
-        <span className='text-sm'>Analyseren...</span>
+        <span className='text-sm'>{t('sentiment.analyzing')}</span>
       </div>
     )
   }
 
   if (error) {
-    return <div className='text-sm text-red-600'>Sentiment analyse mislukt</div>
+    return <div className='text-sm text-red-600'>{t('sentiment.analysisFailed')}</div>
   }
 
   if (!analysis && !autoAnalyze) {
     return (
       <button
+        type='button'
         onClick={analyzeSentiment}
         className='text-sm text-blue-600 underline hover:text-blue-800'
       >
-        Sentiment analyseren
+        {t('sentiment.analyze')}
       </button>
     )
   }
@@ -210,7 +209,7 @@ export function SentimentIndicator({
           <div>
             <div className='text-sm font-medium'>{getSentimentLabel(analysis.sentiment)}</div>
             <div className='text-xs opacity-75'>
-              Score: {analysis.score.toFixed(2)} ({Math.round(analysis.confidence * 100)}% zeker)
+              {t('sentiment.score', { score: analysis.score.toFixed(2), confidence: Math.round(analysis.confidence * 100) })}
             </div>
           </div>
         </div>
@@ -225,9 +224,9 @@ export function SentimentIndicator({
           {/* Score Bar */}
           <div className='space-y-1'>
             <div className='flex justify-between text-xs text-gray-600'>
-              <span>Negatief</span>
-              <span>Neutraal</span>
-              <span>Positief</span>
+              <span>{t('sentiment.negativeLabel')}</span>
+              <span>{t('sentiment.neutralLabel')}</span>
+              <span>{t('sentiment.positiveLabel')}</span>
             </div>
             <div className='relative h-2 overflow-hidden rounded-full bg-gray-200'>
               <div
@@ -247,7 +246,7 @@ export function SentimentIndicator({
           {/* Topics */}
           {analysis.topics && analysis.topics.length > 0 && (
             <div>
-              <div className='mb-1 text-xs font-medium text-gray-700'>Onderwerpen:</div>
+              <div className='mb-1 text-xs font-medium text-gray-700'>{t('sentiment.topics')}</div>
               <div className='flex flex-wrap gap-1'>
                 {analysis.topics.map((topic, i) => (
                   <span
@@ -265,7 +264,7 @@ export function SentimentIndicator({
           {analysis.reasoning && (
             <details className='text-xs text-gray-600'>
               <summary className='cursor-pointer font-medium hover:text-gray-800'>
-                Analyse details
+                {t('sentiment.analysisDetails')}
               </summary>
               <p className='mt-2 rounded border border-gray-200 bg-gray-50 p-2'>
                 {analysis.reasoning}

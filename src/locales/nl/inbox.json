@@ -1,0 +1,538 @@
+{
+  "title": "Inbox",
+  "conversations": "Gesprekken",
+  "noConversations": "Geen gesprekken",
+  "noConversationsDescription": "Verbind je WhatsApp om berichten te ontvangen.",
+  "newConversation": "Nieuw gesprek",
+  "search": {
+    "placeholder": "Zoek gesprekken...",
+    "noResults": "Geen resultaten gevonden",
+    "searching": "Zoeken..."
+  },
+  "filters": {
+    "title": "Geavanceerde Filters",
+    "clearAll": "Alles wissen",
+    "all": "Alle",
+    "unread": "Ongelezen",
+    "assigned": "Toegewezen",
+    "unassigned": "Niet toegewezen",
+    "starred": "Met ster",
+    "archived": "Gearchiveerd",
+    "assignedAgent": "Toegewezen Agent",
+    "allAgents": "Alle agents",
+    "dateRange": "Datumbereik",
+    "activeSummary": {
+      "tags": "Tags",
+      "agent": "Agent",
+      "date": "Datum"
+    },
+    "reset": "Reset",
+    "apply": "Filters Toepassen",
+    "adjustFilters": "Pas je zoekopdracht of filters aan"
+  },
+  "status": {
+    "open": "Open",
+    "pending": "In behandeling",
+    "resolved": "Opgelost",
+    "closed": "Gesloten",
+    "changedTo": "Status gewijzigd naar {status}"
+  },
+  "priority": {
+    "label": "Prioriteit",
+    "low": "Laag",
+    "normal": "Normaal",
+    "high": "Hoog",
+    "urgent": "Urgent",
+    "suffix": "prioriteit"
+  },
+  "tags": {
+    "label": "Tags",
+    "add": "Tag toevoegen",
+    "noTags": "Geen tags",
+    "manage": "Tags beheren",
+    "remove": "Tag verwijderen",
+    "allAdded": "Alle tags zijn al toegevoegd",
+    "categories": "Categorieën",
+    "assignTo": "Toewijzen aan"
+  },
+  "assignment": {
+    "assignTo": "Toewijzen aan",
+    "assignToMe": "Aan mij toewijzen",
+    "unassign": "Toewijzing opheffen",
+    "assigned": "Toegewezen aan {name}",
+    "unassigned": "Niet toegewezen",
+    "assign": "Toewijzen"
+  },
+  "message": {
+    "placeholder": "Typ je bericht...",
+    "send": "Versturen",
+    "sending": "Verzenden...",
+    "sent": "Verzonden",
+    "delivered": "Afgeleverd",
+    "read": "Gelezen",
+    "failed": "Mislukt",
+    "retry": "Opnieuw proberen",
+    "attachment": "Bijlage",
+    "template": "Sjabloon",
+    "aiSuggestion": "AI",
+    "addAttachment": "Bijlage toevoegen",
+    "attachFile": "Bestand bijvoegen",
+    "useTemplate": "Sjabloon gebruiken",
+    "getAiSuggestion": "AI suggestie",
+    "emojiPicker": "Emoji kiezen",
+    "voiceMessage": "Spraakbericht",
+    "sendProduct": "Stuur product",
+    "quickReplies": "Snelle antwoorden",
+    "sendHint": "Druk Enter om te versturen, Shift+Enter voor nieuwe regel",
+    "you": "Jij"
+  },
+  "actions": {
+    "archive": "Archiveren",
+    "archiveConversation": "Gesprek archiveren",
+    "unarchive": "Uit archief halen",
+    "star": "Ster toevoegen",
+    "unstar": "Ster verwijderen",
+    "markAsRead": "Als gelezen markeren",
+    "markAsUnread": "Als ongelezen markeren",
+    "delete": "Verwijderen",
+    "deleteConversation": "Gesprek verwijderen",
+    "block": "Blokkeren",
+    "blockContact": "Contact blokkeren",
+    "export": "Exporteren",
+    "exportChat": "Chat exporteren",
+    "moreActions": "Meer acties",
+    "quickActions": "Snelle acties",
+    "confirm": "Bevestigen",
+    "cancel": "Annuleren",
+    "confirmAction": "Actie bevestigen",
+    "actionCompleted": "Actie voltooid",
+    "actionFailed": "Actie mislukt",
+    "pleaseTryAgain": "Probeer het opnieuw"
+  },
+  "contact": {
+    "info": "Contactinfo",
+    "details": "Contactgegevens",
+    "phone": "Telefoonnummer",
+    "email": "E-mail",
+    "name": "Naam",
+    "company": "Bedrijf",
+    "notes": "Notities",
+    "notesPlaceholder": "Voeg notities toe over dit contact...",
+    "saveNotes": "Notities opslaan",
+    "addNote": "Notitie toevoegen",
+    "editContact": "Contact bewerken",
+    "viewProfile": "Profiel bekijken",
+    "previousConversations": "Eerdere gesprekken",
+    "firstContact": "Eerste contact",
+    "firstContacted": "Eerste contact",
+    "unknown": "Onbekend contact",
+    "call": "Bel {phone}"
+  },
+  "quickReplies": {
+    "title": "Snelle antwoorden",
+    "noReplies": "Geen snelle antwoorden",
+    "add": "Snelle antwoord toevoegen",
+    "manage": "Snelle antwoorden beheren",
+    "templates": {
+      "thankYou": "Bedankt voor uw bericht!",
+      "howCanIHelp": "Hoe kan ik u vandaag helpen?",
+      "lookingInto": "Ik ga dit voor u uitzoeken.",
+      "anythingElse": "Kan ik u nog ergens anders mee helpen?"
+    }
+  },
+  "typing": {
+    "isTyping": "{name} is aan het typen...",
+    "multipleTyping": "Meerdere personen zijn aan het typen..."
+  },
+  "time": {
+    "now": "nu",
+    "minutesAgo": "{count}m",
+    "hoursAgo": "{count}u",
+    "daysAgo": "{count}d",
+    "yesterday": "Gisteren"
+  },
+  "errors": {
+    "loadFailed": "Kon gesprekken niet laden",
+    "sendFailed": "Kon bericht niet versturen",
+    "connectionLost": "Verbinding verloren. Opnieuw verbinden...",
+    "reconnected": "Verbinding hersteld",
+    "updateStatusFailed": "Kon status niet bijwerken"
+  },
+  "empty": {
+    "selectConversation": "Selecteer een gesprek",
+    "selectConversationDescription": "Kies een gesprek uit de lijst om berichten te bekijken"
+  },
+  "conversationInfo": {
+    "title": "Gespreksinfo",
+    "status": "Status",
+    "priority": "Prioriteit",
+    "assignedTo": "Toegewezen aan",
+    "created": "Aangemaakt",
+    "lastMessage": "Laatste bericht"
+  },
+  "ai": {
+    "summary": "Samenvatting",
+    "generateSummary": "AI samenvatting genereren",
+    "drafts": "AI Concepten",
+    "draftSuggestions": "AI Conceptsuggesties",
+    "draftInserted": "Concept ingevoegd",
+    "editBeforeSending": "Bewerk het concept voor verzending"
+  },
+  "product": {
+    "messageSent": "Productbericht verzonden",
+    "sendFailed": "Verzenden mislukt",
+    "tryAgain": "Probeer opnieuw"
+  },
+  "toasts": {
+    "markedAsRead": "Gesprek gemarkeerd als gelezen",
+    "assignedToYou": "Gesprek aan jou toegewezen",
+    "archived": "Gesprek gearchiveerd",
+    "deleted": "Gesprek verwijderd",
+    "blocked": "Contact succesvol geblokkeerd",
+    "exported": "Gesprek succesvol geëxporteerd"
+  },
+  "confirm": {
+    "blockContact": "{name} blokkeren? Ze kunnen je dan geen berichten meer sturen.",
+    "deleteConversation": "Dit gesprek verwijderen? Deze actie kan niet ongedaan worden gemaakt."
+  },
+  "messageList": {
+    "noMessages": "Nog geen berichten",
+    "startConversation": "Start het gesprek door een bericht te sturen.",
+    "orderReceived": "Bestelling ontvangen",
+    "total": "Totaal",
+    "productsShared": "Producten gedeeld ({count})",
+    "productShared": "Product gedeeld",
+    "more": "+{count} meer",
+    "sharedImage": "Gedeelde afbeelding",
+    "download": "Download {type}"
+  },
+  "templates": {
+    "title": "Templates",
+    "selectTemplate": "Kies een template om te gebruiken",
+    "close": "Sluiten",
+    "loading": "Templates laden...",
+    "noTemplates": "Geen templates gevonden",
+    "createFirst": "Maak eerst templates aan",
+    "preview": "Preview",
+    "approved": "Goedgekeurd",
+    "header": "Header",
+    "body": "Bericht",
+    "footer": "Footer",
+    "fillVariables": "Variabelen invullen",
+    "cancel": "Annuleren",
+    "sendTemplate": "Template Versturen",
+    "selectToPreview": "Selecteer een template",
+    "selectDescription": "Kies links een template om de preview te zien"
+  },
+  "attachments": {
+    "add": "Bijlage toevoegen",
+    "options": "Bijlage opties",
+    "photo": "Foto",
+    "document": "Document",
+    "audio": "Audio",
+    "video": "Video",
+    "uploadImage": "Afbeelding uploaden",
+    "uploadDocument": "Document uploaden",
+    "uploadAudio": "Audio uploaden",
+    "uploadVideo": "Video uploaden",
+    "validationFailed": "Bestandsvalidatie mislukt: {errors}"
+  },
+  "input": {
+    "typeMessage": "Typ een bericht",
+    "sendMessage": "Bericht versturen",
+    "send": "Verstuur",
+    "sendEnter": "Versturen (Enter)",
+    "template": "Template",
+    "chooseTemplate": "Template kiezen",
+    "showAiSuggestions": "AI suggesties tonen"
+  },
+  "header": {
+    "title": "WhatsApp Inbox",
+    "search": "Zoeken",
+    "settings": "Instellingen"
+  },
+  "stats": {
+    "conversations": "{count} gesprekken",
+    "unread": "{count} ongelezen",
+    "active": "{count} actief",
+    "responseRate": "{rate}% respons",
+    "total": "{count} totaal",
+    "rate": "{rate}% respons"
+  },
+  "mobile": {
+    "backToConversations": "Terug naar gesprekken",
+    "back": "Terug",
+    "showDetails": "Details tonen",
+    "closeDetails": "Details sluiten",
+    "details": "Details"
+  },
+  "welcome": {
+    "title": "Welkom bij WhatsApp Inbox",
+    "description": "Selecteer een gesprek uit de lijst om te beginnen met berichten naar je klanten"
+  },
+  "team": "Team",
+  "list": {
+    "noConversationsFound": "Geen gesprekken gevonden",
+    "loadMore": "Meer gesprekken laden",
+    "loading": "Laden...",
+    "conversationsCount": "{count} van {total} gesprekken"
+  },
+  "drafts": {
+    "title": "AI Concept Suggesties",
+    "subtitle": "Kies een suggestie of pas aan naar wens",
+    "close": "Sluiten",
+    "generating": "AI genereert suggesties...",
+    "noSuggestions": "Geen suggesties",
+    "couldNotGenerate": "Kon geen concept suggesties genereren voor dit gesprek.",
+    "tryAgain": "Opnieuw proberen",
+    "newSuggestions": "Nieuwe Suggesties",
+    "use": "Gebruiken",
+    "improve": "Verbeteren",
+    "whySuggestion": "Waarom deze suggestie?",
+    "howToImprove": "Hoe wil je deze suggestie verbeteren?",
+    "improvePlaceholder": "Bijv. 'Maak het formeler' of 'Voeg een kortingsaanbieding toe'",
+    "cancel": "Annuleren",
+    "confidence": "{percent}% vertrouwen",
+    "tone": {
+      "professional": "Professioneel",
+      "friendly": "Vriendelijk",
+      "empathetic": "Empathisch"
+    }
+  },
+  "notes": {
+    "title": "Notities",
+    "add": "Toevoegen",
+    "placeholder": "Schrijf een notitie...",
+    "save": "Opslaan",
+    "saving": "Opslaan...",
+    "update": "Bijwerken",
+    "empty": "Nog geen notities",
+    "emptyDescription": "Voeg een notitie toe om belangrijke informatie vast te leggen",
+    "edited": "bewerkt",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "saveError": "Fout bij opslaan notitie",
+    "deleteError": "Fout bij verwijderen notitie",
+    "deleteConfirm": "Weet je zeker dat je deze notitie wilt verwijderen?"
+  },
+  "messageSearch": {
+    "title": "Berichten doorzoeken",
+    "placeholder": "Zoek in berichten...",
+    "advancedFilters": "Geavanceerde filters",
+    "hideFilters": "Verberg filters",
+    "fromDate": "Van datum",
+    "toDate": "Tot datum",
+    "messageType": "Bericht type",
+    "allTypes": "Alle types",
+    "text": "Tekst",
+    "images": "Afbeeldingen",
+    "documents": "Documenten",
+    "audio": "Audio",
+    "video": "Video",
+    "search": "Zoeken",
+    "searching": "Zoeken...",
+    "clear": "Wissen",
+    "tips": "Zoektips:",
+    "tip1": "Gebruik meerdere woorden voor betere resultaten",
+    "tip2": "Datumfilters helpen bij het beperken van resultaten",
+    "tip3": "Combineer tekst met filters voor specifieke zoekopdrachten"
+  },
+  "media": {
+    "image": "Afbeelding",
+    "unableToLoadImage": "Kan afbeelding niet laden",
+    "video": "Video",
+    "unableToLoadVideo": "Kan video niet laden",
+    "voiceMessage": "Spraakbericht",
+    "document": "Document",
+    "location": "Locatie",
+    "tapToView": "Tik om op kaart te bekijken",
+    "today": "Vandaag",
+    "yesterday": "Gisteren",
+    "loadOlder": "Oudere berichten laden",
+    "noMessagesYet": "Nog geen berichten",
+    "startConversation": "Start het gesprek door een bericht te sturen",
+    "contact": "Contact",
+    "fileSize": {
+      "bytes": "Bytes",
+      "kb": "KB",
+      "mb": "MB",
+      "gb": "GB"
+    }
+  },
+  "agents": {
+    "teamOnline": "Team ({count} online)",
+    "noOthersOnline": "Geen andere agents online",
+    "viewingThisChat": "Bekijkt dit gesprek",
+    "typing": "Aan het typen...",
+    "online": "Online",
+    "away": "Afwezig",
+    "busy": "Bezet",
+    "offline": "Offline",
+    "isViewing": "{name} bekijkt",
+    "othersViewing": "{count} anderen bekijken"
+  },
+  "payment": {
+    "sendLink": "Betaallink versturen",
+    "title": "Betaallink versturen",
+    "close": "Sluiten",
+    "name": "Naam",
+    "namePlaceholder": "Bijv. Factuur #123",
+    "amount": "Bedrag (EUR)",
+    "description": "Omschrijving (optioneel)",
+    "descriptionPlaceholder": "Korte omschrijving...",
+    "cancel": "Annuleren",
+    "create": "Aanmaken",
+    "noLinksFound": "Geen betaallinks gevonden",
+    "timesSent": "{count} keer verstuurd",
+    "createNew": "Nieuwe betaallink aanmaken",
+    "personalMessage": "Persoonlijk bericht (optioneel)",
+    "personalMessagePlaceholder": "Voeg een persoonlijk bericht toe...",
+    "preview": "Preview",
+    "send": "Versturen",
+    "couldNotLoad": "Kon betaallinks niet laden"
+  },
+  "typingIndicator": {
+    "isTyping": "{name} is aan het typen",
+    "andTyping": "{name1} en {name2} zijn aan het typen",
+    "peopleTyping": "{count} personen zijn aan het typen"
+  },
+  "sentiment": {
+    "analyzing": "Analyseren...",
+    "analysisFailed": "Sentiment analyse mislukt",
+    "analyze": "Sentiment analyseren",
+    "positive": "Positief",
+    "negative": "Negatief",
+    "neutral": "Neutraal",
+    "mixed": "Gemengd",
+    "score": "Score: {score} ({confidence}% zeker)",
+    "negativeLabel": "Negatief",
+    "neutralLabel": "Neutraal",
+    "positiveLabel": "Positief",
+    "topics": "Onderwerpen:",
+    "analysisDetails": "Analyse details",
+    "urgency": {
+      "low": "Laag",
+      "medium": "Normaal",
+      "high": "Hoog",
+      "critical": "Urgent"
+    }
+  },
+  "bubbleColor": {
+    "title": "Bubble kleur",
+    "buttonTitle": "Chat bubble kleur",
+    "description": "Kies een pastel kleur voor de chat bubbles",
+    "preview": "Voorbeeld",
+    "infoText": "De kleur wordt toegepast op berichten van de klant in dit gesprek",
+    "colors": {
+      "blue": "Pastel Blauw",
+      "green": "Pastel Groen",
+      "purple": "Pastel Paars",
+      "pink": "Pastel Roze",
+      "orange": "Pastel Oranje",
+      "yellow": "Pastel Geel"
+    }
+  },
+  "common": {
+    "hide": "Verbergen",
+    "show": "Tonen",
+    "unknownError": "Onbekende fout"
+  },
+  "navigation": {
+    "back": "Terug",
+    "continue": "Doorgaan"
+  },
+  "setup": {
+    "title": "WhatsApp Business Setup",
+    "subtitle": "Configureer je WhatsApp Business API integratie",
+    "steps": {
+      "configuration": {
+        "title": "Configuratie",
+        "description": "Voer je WhatsApp Business API gegevens in"
+      },
+      "verification": {
+        "title": "Verificatie",
+        "description": "Verifieer en test je configuratie"
+      },
+      "profile": {
+        "title": "Bedrijfsprofiel",
+        "description": "Stel je bedrijfsprofiel in"
+      },
+      "complete": {
+        "title": "Voltooid",
+        "description": "Je WhatsApp integratie is gereed"
+      }
+    },
+    "configuration": {
+      "title": "WhatsApp Business API Configuratie",
+      "description": "Voer je WhatsApp Business API gegevens in. Deze kun je vinden in je Meta for Developers account.",
+      "basicTitle": "Basis Configuratie",
+      "advancedTitle": "Geavanceerde Configuratie",
+      "advanced": "Geavanceerd"
+    },
+    "fields": {
+      "accessToken": "Access Token",
+      "accessTokenPlaceholder": "Voer je access token in",
+      "businessAccountId": "Business Account ID",
+      "businessAccountIdPlaceholder": "Voer je business account ID in",
+      "phoneNumberId": "Phone Number ID",
+      "phoneNumberIdPlaceholder": "Voer je telefoonnummer ID in",
+      "appId": "App ID",
+      "appIdPlaceholder": "Voer je app ID in",
+      "appSecret": "App Secret",
+      "appSecretPlaceholder": "Voer je app secret in",
+      "phoneNumber": "Telefoonnummer",
+      "webhookVerifyToken": "Webhook Verify Token",
+      "webhookVerifyTokenPlaceholder": "Voer webhook verify token in",
+      "businessName": "Bedrijfsnaam",
+      "businessNamePlaceholder": "Je bedrijfsnaam",
+      "category": "Categorie",
+      "selectCategory": "Selecteer categorie",
+      "description": "Omschrijving",
+      "descriptionPlaceholder": "Beschrijf je bedrijf",
+      "email": "E-mail",
+      "website": "Website"
+    },
+    "categories": {
+      "business": "Zakelijk",
+      "retail": "Detailhandel",
+      "restaurant": "Restaurant",
+      "health": "Gezondheid",
+      "education": "Onderwijs"
+    },
+    "verification": {
+      "title": "Verificatie & Testen",
+      "description": "We verifiëren je configuratie en testen de verbinding met de WhatsApp Business API.",
+      "success": "Verificatie succesvol voltooid!",
+      "successDesc": "Je WhatsApp Business API is correct geconfigureerd en klaar voor gebruik."
+    },
+    "profile": {
+      "title": "Bedrijfsprofiel Instellen",
+      "description": "Configureer de bedrijfsprofiel informatie die klanten zullen zien."
+    },
+    "complete": {
+      "title": "Setup Voltooid!",
+      "description": "Je WhatsApp Business API integratie is nu gereed. Je kunt beginnen met het ontvangen en verzenden van berichten.",
+      "whatsNext": "Wat nu?",
+      "step1": "Begin met het ontvangen van WhatsApp berichten in je inbox",
+      "step2": "Maak berichtsjablonen voor snellere reacties",
+      "step3": "Stel automatiseringsregels in voor veelvoorkomende vragen",
+      "step4": "Nodig teamleden uit om te helpen bij het beheren van gesprekken"
+    },
+    "actions": {
+      "verifying": "Verifiëren...",
+      "completeSetup": "Setup Voltooien"
+    },
+    "messages": {
+      "setupFailed": "Setup mislukt",
+      "updateProfileFailed": "Fout bij bijwerken bedrijfsprofiel"
+    },
+    "validation": {
+      "accessTokenRequired": "Access Token is verplicht",
+      "appIdRequired": "App ID is verplicht",
+      "appSecretRequired": "App Secret is verplicht",
+      "businessAccountIdRequired": "Business Account ID is verplicht",
+      "phoneNumberIdRequired": "Phone Number ID is verplicht",
+      "webhookVerifyTokenRequired": "Webhook Verify Token is verplicht"
+    }
+  }
+}

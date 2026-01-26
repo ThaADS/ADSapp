@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import { WhatsAppSetupWizard } from './WhatsAppSetupWizard'
 import { TwilioSetup } from './TwilioSetup'
 
@@ -23,28 +24,39 @@ export interface WhatsAppCredentials {
   twilioPhoneNumber?: string
 }
 
-const PROVIDERS = [
-  {
-    id: 'cloud-api' as WhatsAppProvider,
-    name: 'WhatsApp Cloud API',
-    description: 'Direct Meta/Facebook integration - Recommended for businesses',
-    icon: '☁️',
-    features: ['Official API', 'Best reliability', 'Full features', 'Direct support'],
-    recommended: true,
-  },
-  {
-    id: 'twilio' as WhatsAppProvider,
-    name: 'Twilio WhatsApp',
-    description: 'Via Twilio platform - For existing Twilio users',
-    icon: '🔗',
-    features: ['Twilio infrastructure', 'Easy scaling', 'Unified billing', 'SMS fallback'],
-    recommended: false,
-  },
-]
-
 export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) {
+  const t = useTranslations('onboarding')
   const [selectedProvider, setSelectedProvider] = useState<WhatsAppProvider | null>(null)
   const [showSetup, setShowSetup] = useState(false)
+
+  const PROVIDERS = [
+    {
+      id: 'cloud-api' as WhatsAppProvider,
+      name: t('whatsapp.provider.cloudApi.name'),
+      description: t('whatsapp.provider.cloudApi.description'),
+      icon: '☁️',
+      features: [
+        t('whatsapp.provider.cloudApi.features.0'),
+        t('whatsapp.provider.cloudApi.features.1'),
+        t('whatsapp.provider.cloudApi.features.2'),
+        t('whatsapp.provider.cloudApi.features.3'),
+      ],
+      recommended: true,
+    },
+    {
+      id: 'twilio' as WhatsAppProvider,
+      name: t('whatsapp.provider.twilio.name'),
+      description: t('whatsapp.provider.twilio.description'),
+      icon: '🔗',
+      features: [
+        t('whatsapp.provider.twilio.features.0'),
+        t('whatsapp.provider.twilio.features.1'),
+        t('whatsapp.provider.twilio.features.2'),
+        t('whatsapp.provider.twilio.features.3'),
+      ],
+      recommended: false,
+    },
+  ]
 
   const handleProviderSelect = (provider: WhatsAppProvider) => {
     setSelectedProvider(provider)
@@ -70,10 +82,11 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
         return (
           <div>
             <button
+              type="button"
               onClick={handleBack}
               className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900"
             >
-              ← Back to provider selection
+              ← {t('provider.backToSelection')}
             </button>
             <WhatsAppSetupWizard
               onComplete={creds => handleComplete(creds)}
@@ -85,10 +98,11 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
         return (
           <div>
             <button
+              type="button"
               onClick={handleBack}
               className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900"
             >
-              ← Back to provider selection
+              ← {t('provider.backToSelection')}
             </button>
             <TwilioSetup
               onComplete={creds => handleComplete(creds)}
@@ -103,15 +117,14 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Connect WhatsApp</h2>
-        <p className="mt-2 text-gray-600">
-          Choose how you want to connect your WhatsApp Business account
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('whatsapp.provider.title')}</h2>
+        <p className="mt-2 text-gray-600">{t('whatsapp.provider.description')}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         {PROVIDERS.map(provider => (
           <button
+            type="button"
             key={provider.id}
             onClick={() => handleProviderSelect(provider.id)}
             className={`relative flex flex-col rounded-xl border-2 p-6 text-left transition-all hover:border-blue-500 hover:shadow-lg ${
@@ -122,7 +135,7 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
           >
             {provider.recommended && (
               <span className="absolute -top-3 left-4 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
-                Recommended
+                {t('provider.recommended')}
               </span>
             )}
 
@@ -143,7 +156,7 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
 
             <div className="mt-4 text-center">
               <span className="inline-flex items-center gap-1 text-sm font-medium text-blue-600">
-                Select →
+                {t('provider.select')} →
               </span>
             </div>
           </button>
@@ -152,25 +165,19 @@ export function ProviderSelector({ onComplete, onSkip }: ProviderSelectorProps) 
 
       <div className="text-center">
         <button
+          type="button"
           onClick={onSkip}
           className="text-sm text-gray-500 underline hover:text-gray-700"
         >
-          Skip for now - I'll set this up later
+          {t('navigation.skip')}
         </button>
       </div>
 
       {/* Help Section */}
       <div className="rounded-lg bg-gray-50 p-6">
-        <h4 className="mb-3 font-semibold text-gray-900">Not sure which to choose?</h4>
+        <h4 className="mb-3 font-semibold text-gray-900">{t('whatsapp.provider.notSure')}</h4>
         <div className="space-y-3 text-sm text-gray-600">
-          <p>
-            <strong>For businesses:</strong> Choose <span className="font-medium">Cloud API</span>{' '}
-            for the official Meta integration with full features and best reliability.
-          </p>
-          <p>
-            <strong>If you use Twilio:</strong> Choose <span className="font-medium">Twilio</span>{' '}
-            to leverage your existing Twilio account and unified billing.
-          </p>
+          <p>{t('whatsapp.provider.recommendation')}</p>
         </div>
       </div>
     </div>

@@ -3,7 +3,84 @@
   "dashboard": "Admin Dashboard",
   "organizations": "Organizations",
   "users": "Users",
-  "auditLogs": "Audit Logs",
+  "messagesLabel": "Messages",
+  "auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "Complete activity trail across the platform for security and compliance",
+    "loading": "Loading audit logs...",
+    "errorLoading": "Error loading audit logs",
+    "searchPlaceholder": "Search logs...",
+    "allSeverities": "All Severities",
+    "severityInfo": "Info",
+    "severityWarning": "Warning",
+    "severityError": "Error",
+    "severityCritical": "Critical",
+    "allActions": "All Actions",
+    "actionCreate": "Create",
+    "actionUpdate": "Update",
+    "actionDelete": "Delete",
+    "actionLogin": "Login",
+    "actionLogout": "Logout",
+    "totalLogs": "total logs",
+    "noLogsFound": "No audit logs found",
+    "noLogsSearchAdjust": "Try adjusting your search or filters.",
+    "noLogsRecorded": "No audit logs have been recorded yet."
+  },
+  "settings": {
+    "title": "Platform Settings",
+    "subtitle": "Configure platform-wide settings and preferences",
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Platform-wide configuration and preferences"
+      },
+      "security": {
+        "title": "Security & Authentication",
+        "description": "Security policies, authentication methods, and access control"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Configure system notifications and alerts"
+      },
+      "email": {
+        "title": "Email Configuration",
+        "description": "Email service settings and templates"
+      },
+      "api": {
+        "title": "API & Webhooks",
+        "description": "API rate limits, webhook configurations, and integrations"
+      },
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "Database, caching, and performance settings"
+      }
+    },
+    "fields": {
+      "platformName": "Platform Name",
+      "platformUrl": "Platform URL",
+      "maintenanceMode": "Maintenance Mode",
+      "maintenanceModeDesc": "Temporarily disable access for all users",
+      "signupsEnabled": "New Signups Enabled",
+      "signupsEnabledDesc": "Allow new organizations to sign up",
+      "enforceStrongPasswords": "Enforce Strong Passwords",
+      "enforceStrongPasswordsDesc": "Require minimum 12 characters with special characters",
+      "sessionTimeout": "Session Timeout (hours)",
+      "maxLoginAttempts": "Max Login Attempts",
+      "requireEmailVerification": "Require Email Verification",
+      "requireEmailVerificationDesc": "Users must verify email before accessing the platform",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsDesc": "Send system alerts via email",
+      "slackNotifications": "Slack Notifications",
+      "slackNotificationsDesc": "Send system alerts to Slack",
+      "slackWebhookUrl": "Slack Webhook URL"
+    },
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "This section is under development.",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "saveSuccess": "Settings saved successfully!",
+    "savePrompt": "Make changes and click Save to apply"
+  },
   "systemSettings": "System Settings",
   "systemHealth": "System Health",
   "monitoring": "Monitoring",
@@ -79,5 +156,39 @@
   "restoreDatabase": "Restore Database",
   "confirmAction": "Confirm Action",
   "dangerZone": "Danger Zone",
-  "irreversibleAction": "This action is irreversible"
+  "irreversibleAction": "This action is irreversible",
+  "loading": "Loading...",
+  "loadingOrganizations": "Loading organizations...",
+  "errorLoadingOrganizations": "Error loading organizations",
+  "loadingUsers": "Loading users...",
+  "noOrganizations": "No organizations found",
+  "noOrganizationsDesc": "No organizations have been created yet.",
+  "noUsers": "No users found",
+  "noUsersDesc": "Try adjusting your search or filters.",
+  "noUsersCreated": "No users have been created yet.",
+  "unknownError": "Unknown error",
+  "errorLoading": "Error loading data",
+  "errorLoadingUsers": "Error loading users",
+  "searchPlaceholder": "Search users by name or email...",
+  "allRoles": "All Roles",
+  "previous": "Previous",
+  "next": "Next",
+  "showing": "Showing",
+  "to": "to",
+  "of": "of",
+  "results": "results",
+  "status": {
+    "active": "Active",
+    "suspended": "Suspended",
+    "cancelled": "Cancelled",
+    "pending_setup": "Pending Setup",
+    "trial": "Trial",
+    "past_due": "Past Due"
+  },
+  "messages": {
+    "organizationSuspended": "Organization suspended successfully",
+    "organizationActivated": "Organization activated successfully",
+    "suspendFailed": "Failed to suspend organization",
+    "activateFailed": "Failed to activate organization"
+  }
 }

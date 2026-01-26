@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { ConversationWithDetails } from '@/types'
 import ConversationTagSelector from './conversation-tag-selector'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 // Simple time formatter
 function formatDateTime(date: Date) {
@@ -16,6 +17,7 @@ interface ConversationDetailsProps {
 }
 
 export function ConversationDetails({ conversation, profile, onClose }: ConversationDetailsProps) {
+  const t = useTranslations('inbox')
   const contact = conversation.contact
   const [conversationTags, setConversationTags] = useState<string[]>(
     conversation.tags || []
@@ -55,8 +57,8 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
     <div className='flex h-full flex-col bg-white'>
       {/* Header */}
       <div className='flex items-center justify-between border-b border-gray-200 p-4'>
-        <h3 className='text-lg font-medium text-gray-900'>Contact Details</h3>
-        <button onClick={onClose} className='p-1 text-gray-400 hover:text-gray-600'>
+        <h3 className='text-lg font-medium text-gray-900'>{t('contact.details')}</h3>
+        <button type='button' onClick={onClose} className='p-1 text-gray-400 hover:text-gray-600'>
           <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
             <path
               strokeLinecap='round'
@@ -81,7 +83,7 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
             </div>
             <div>
               <h4 className='text-lg font-medium text-gray-900'>
-                {contact.name || 'Unknown Contact'}
+                {contact.name || t('contact.unknown')}
               </h4>
               <p className='text-sm text-gray-500'>{contact.phone_number}</p>
             </div>
@@ -100,7 +102,7 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
 
         {/* Contact Actions */}
         <div className='space-y-2'>
-          <button className='flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
+          <button type='button' className='flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
             <svg
               className='mr-3 h-4 w-4 text-gray-400'
               fill='none'
@@ -114,10 +116,10 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
                 d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'
               />
             </svg>
-            Call {contact.phone_number}
+            {t('contact.call', { phone: contact.phone_number })}
           </button>
 
-          <button className='flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
+          <button type='button' className='flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
             <svg
               className='mr-3 h-4 w-4 text-gray-400'
               fill='none'
@@ -131,13 +133,13 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
                 d='M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'
               />
             </svg>
-            Block Contact
+            {t('actions.blockContact')}
           </button>
         </div>
 
         {/* Tags */}
         <div>
-          <h5 className='mb-2 text-sm font-medium text-gray-900'>Tags</h5>
+          <h5 className='mb-2 text-sm font-medium text-gray-900'>{t('tags.label')}</h5>
           <div className='flex flex-wrap gap-2'>
             <ConversationTagSelector
               conversationId={conversation.id}
@@ -151,49 +153,49 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
 
         {/* Notes */}
         <div>
-          <h5 className='mb-2 text-sm font-medium text-gray-900'>Notes</h5>
+          <h5 className='mb-2 text-sm font-medium text-gray-900'>{t('contact.notes')}</h5>
           <textarea
             defaultValue={contact.notes || ''}
-            placeholder='Add notes about this contact...'
+            placeholder={t('contact.notesPlaceholder')}
             className='w-full resize-none rounded-md border border-gray-300 p-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none'
             rows={4}
           />
-          <button className='mt-2 rounded bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700'>
-            Save Notes
+          <button type='button' className='mt-2 rounded bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700'>
+            {t('contact.saveNotes')}
           </button>
         </div>
 
         {/* Conversation Stats */}
         <div>
-          <h5 className='mb-2 text-sm font-medium text-gray-900'>Conversation Info</h5>
+          <h5 className='mb-2 text-sm font-medium text-gray-900'>{t('conversationInfo.title')}</h5>
           <dl className='text-sm'>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>Status</dt>
-              <dd className='font-medium text-gray-900'>{conversation.status}</dd>
+              <dt className='text-gray-500'>{t('conversationInfo.status')}</dt>
+              <dd className='font-medium text-gray-900'>{t(`status.${conversation.status}`)}</dd>
             </div>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>Priority</dt>
-              <dd className='font-medium text-gray-900'>{conversation.priority}</dd>
+              <dt className='text-gray-500'>{t('conversationInfo.priority')}</dt>
+              <dd className='font-medium text-gray-900'>{t(`priority.${conversation.priority}`)}</dd>
             </div>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>Assigned to</dt>
+              <dt className='text-gray-500'>{t('conversationInfo.assignedTo')}</dt>
               <dd className='text-gray-900'>
-                {conversation.assigned_agent?.full_name || 'Unassigned'}
+                {conversation.assigned_agent?.full_name || t('assignment.unassigned')}
               </dd>
             </div>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>Created</dt>
+              <dt className='text-gray-500'>{t('conversationInfo.created')}</dt>
               <dd className='text-gray-900'>{formatDateTime(new Date(conversation.created_at))}</dd>
             </div>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>Last message</dt>
+              <dt className='text-gray-500'>{t('conversationInfo.lastMessage')}</dt>
               <dd className='text-gray-900'>
                 {conversation.last_message_at &&
                   formatDateTime(new Date(conversation.last_message_at))}
               </dd>
             </div>
             <div className='flex justify-between py-2'>
-              <dt className='text-gray-500'>First contacted</dt>
+              <dt className='text-gray-500'>{t('contact.firstContacted')}</dt>
               <dd className='text-gray-900'>
                 {contact.created_at && formatDateTime(new Date(contact.created_at))}
               </dd>
@@ -203,11 +205,11 @@ export function ConversationDetails({ conversation, profile, onClose }: Conversa
 
         {/* Actions */}
         <div className='space-y-2'>
-          <button className='w-full rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50'>
-            Delete Conversation
+          <button type='button' className='w-full rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50'>
+            {t('actions.deleteConversation')}
           </button>
-          <button className='w-full rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
-            Export Chat History
+          <button type='button' className='w-full rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50'>
+            {t('actions.exportChat')}
           </button>
         </div>
       </div>

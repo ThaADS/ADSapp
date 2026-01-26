@@ -1,3 +1,5 @@
+import { useTranslations } from '@/components/providers/translation-provider'
+
 interface DashboardStatsProps {
   stats: {
     totalConversations: number
@@ -8,9 +10,11 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ stats }: DashboardStatsProps) {
+  const t = useTranslations('dashboard')
+
   const statItems = [
     {
-      name: 'Total Conversations',
+      name: t('stats.totalConversations'),
       value: stats.totalConversations,
       icon: (
         <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -25,7 +29,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       color: 'text-blue-600 bg-blue-100',
     },
     {
-      name: 'Messages Today',
+      name: t('stats.messagesToday'),
       value: stats.todayMessages,
       icon: (
         <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -40,7 +44,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       color: 'text-emerald-600 bg-emerald-100',
     },
     {
-      name: 'Total Contacts',
+      name: t('stats.totalContacts'),
       value: stats.totalContacts,
       icon: (
         <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -55,7 +59,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       color: 'text-purple-600 bg-purple-100',
     },
     {
-      name: 'Open Conversations',
+      name: t('stats.openConversations'),
       value: stats.openConversations,
       icon: (
         <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

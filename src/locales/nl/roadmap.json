@@ -1,0 +1,45 @@
+{
+    "title": "Product Roadmap",
+    "subtitle": "Ontdek waar we aan werken en wat de toekomst brengt voor ADSapp.",
+    "status": {
+        "planned": "Gepland",
+        "in_progress": "In Ontwikkeling",
+        "completed": "Voltooid",
+        "live": "Live"
+    },
+    "quarters": {
+        "q4_2025": "Q4 2025",
+        "q1_2026": "Q1 2026",
+        "q2_2026": "Q2 2026",
+        "future": "Toekomst"
+    },
+    "categories": {
+        "core": "Kernplatform",
+        "ai": "AI & Automatisering",
+        "integrations": "Integraties",
+        "analytics": "Analytics"
+    },
+    "items": {
+        "drip_campaigns": "Drip Campagnes",
+        "drip_campaigns_desc": "Geautomatiseerde berichtenreeksen getriggerd door events.",
+        "broadcast_campaigns": "Broadcast Campagnes",
+        "broadcast_campaigns_desc": "Verstuur bulkberichten naar je contacten.",
+        "visual_workflow": "Visuele Workflow Builder",
+        "visual_workflow_desc": "Drag-and-drop interface voor complexe automatiseringen.",
+        "crm_integrations": "CRM Integraties",
+        "crm_integrations_desc": "Tweerichtingssynchronisatie met HubSpot, Salesforce en Pipedrive.",
+        "advanced_analytics": "Geavanceerde Analytics",
+        "advanced_analytics_desc": "Aangepaste rapporten, funnel analyse en exportmogelijkheden.",
+        "whatsapp_widget": "WhatsApp Web Widget",
+        "whatsapp_widget_desc": "Embedbare chat widget voor je website.",
+        "ai_enhancements": "AI Verbeteringen",
+        "ai_enhancements_desc": "Sentimentanalyse, auto-categorisatie en slimme antwoorden.",
+        "mobile_app": "Mobiele App",
+        "mobile_app_desc": "Native iOS en Android apps voor beheer onderweg."
+    },
+    "feedback": {
+        "title": "Heb je een suggestie?",
+        "description": "We waarderen je feedback! Laat ons weten welke functies jouw bedrijf kunnen helpen groeien.",
+        "button": "Functie Suggereren"
+    }
+}

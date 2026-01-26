@@ -8,16 +8,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  PlayIcon,
-  PauseIcon,
-  PencilIcon,
-  TrashIcon,
-  UserGroupIcon,
   ChartBarIcon,
+  UserGroupIcon,
   CheckCircleIcon,
-  XCircleIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface BroadcastCampaign {
   id: string
@@ -41,6 +37,7 @@ interface BroadcastCampaign {
 
 export function BroadcastCampaignsList() {
   const router = useRouter()
+  const t = useTranslations('campaigns')
   const [campaigns, setCampaigns] = useState<BroadcastCampaign[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
@@ -79,19 +76,12 @@ export function BroadcastCampaignsList() {
       paused: 'bg-orange-100 text-orange-700',
     }
 
-    const labels: Record<string, string> = {
-      draft: 'Draft',
-      scheduled: 'Gepland',
-      running: 'Bezig',
-      completed: 'Voltooid',
-      failed: 'Mislukt',
-      cancelled: 'Geannuleerd',
-      paused: 'Gepauzeerd',
-    }
+    const labelKey = `list.status.${status}`
+    const label = t(labelKey as any) || status
 
     return (
       <span className={`px-2 py-1 text-xs rounded-full ${styles[status] || styles.draft}`}>
-        {labels[status] || status}
+        {label}
       </span>
     )
   }
@@ -101,7 +91,7 @@ export function BroadcastCampaignsList() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Campagnes laden...</p>
+          <p className="mt-4 text-gray-500">{t('builder.buttons.processing', { defaultValue: 'Laden...' })}</p>
         </div>
       </div>
     )
@@ -115,13 +105,12 @@ export function BroadcastCampaignsList() {
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === status
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
-            {status === 'all' ? 'Alle' : status.charAt(0).toUpperCase() + status.slice(1)}
+            {t(`list.filters.${status}` as any)}
           </button>
         ))}
       </div>
@@ -130,12 +119,12 @@ export function BroadcastCampaignsList() {
       {campaigns.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <ChartBarIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900">Geen campagnes gevonden</h3>
+          <h3 className="mt-4 text-lg font-medium text-gray-900">{t('list.empty.title')}</h3>
           <p className="mt-2 text-sm text-gray-500">
-            Maak je eerste broadcast campagne aan om bulkberichten te versturen.
+            {t('list.empty.description')}
           </p>
           <Button onClick={() => router.push('/dashboard/broadcast/new')} className="mt-4">
-            Nieuwe Broadcast Maken
+            {t('list.createButton')}
           </Button>
         </div>
       ) : (
@@ -160,7 +149,7 @@ export function BroadcastCampaignsList() {
                   {/* Statistics */}
                   <div className="grid grid-cols-5 gap-4 mt-4">
                     <div>
-                      <p className="text-xs text-gray-500">Doelgroep</p>
+                      <p className="text-xs text-gray-500">{t('list.stats.targets')}</p>
                       <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
                         <UserGroupIcon className="h-4 w-4 text-gray-400" />
                         {campaign.statistics.totalTargets}
@@ -168,14 +157,14 @@ export function BroadcastCampaignsList() {
                     </div>
 
                     <div>
-                      <p className="text-xs text-gray-500">Verzonden</p>
+                      <p className="text-xs text-gray-500">{t('list.stats.sent')}</p>
                       <p className="text-lg font-semibold text-blue-600">
                         {campaign.statistics.messagesSent}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-xs text-gray-500">Afgeleverd</p>
+                      <p className="text-xs text-gray-500">{t('list.stats.delivered')}</p>
                       <div className="flex items-center gap-1">
                         <CheckCircleIcon className="h-4 w-4 text-green-600" />
                         <p className="text-lg font-semibold text-green-600">
@@ -185,14 +174,14 @@ export function BroadcastCampaignsList() {
                     </div>
 
                     <div>
-                      <p className="text-xs text-gray-500">Delivery Rate</p>
+                      <p className="text-xs text-gray-500">{t('list.stats.deliveryRate')}</p>
                       <p className="text-lg font-semibold text-gray-900">
                         {campaign.statistics.deliveryRate.toFixed(1)}%
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-xs text-gray-500">Open Rate</p>
+                      <p className="text-xs text-gray-500">{t('list.stats.openRate')}</p>
                       <p className="text-lg font-semibold text-gray-900">
                         {campaign.statistics.readRate.toFixed(1)}%
                       </p>
@@ -203,7 +192,7 @@ export function BroadcastCampaignsList() {
                   {campaign.status === 'running' && (
                     <div className="mt-4">
                       <div className="flex justify-between text-xs text-gray-600 mb-1">
-                        <span>Voortgang</span>
+                        <span>{t('list.stats.progress')}</span>
                         <span>
                           {campaign.statistics.messagesSent} / {campaign.statistics.totalTargets}
                         </span>
@@ -212,11 +201,10 @@ export function BroadcastCampaignsList() {
                         <div
                           className="bg-blue-600 h-2 rounded-full transition-all"
                           style={{
-                            width: `${
-                              (campaign.statistics.messagesSent /
-                                campaign.statistics.totalTargets) *
+                            width: `${(campaign.statistics.messagesSent /
+                              campaign.statistics.totalTargets) *
                               100
-                            }%`,
+                              }%`,
                           }}
                         />
                       </div>
@@ -225,7 +213,7 @@ export function BroadcastCampaignsList() {
 
                   {campaign.scheduling.scheduledAt && (
                     <p className="mt-2 text-xs text-gray-500">
-                      Gepland voor:{' '}
+                      {t('list.stats.scheduledFor')}:{' '}
                       {new Date(campaign.scheduling.scheduledAt).toLocaleString('nl-NL')}
                     </p>
                   )}
@@ -237,7 +225,7 @@ export function BroadcastCampaignsList() {
                     variant="outline"
                     size="sm"
                     onClick={() => router.push(`/dashboard/broadcast/${campaign.id}/analytics`)}
-                    title="Analytics"
+                    title={t('analytics', { defaultValue: 'Analytics' })}
                   >
                     <ChartBarIcon className="h-4 w-4" />
                   </Button>

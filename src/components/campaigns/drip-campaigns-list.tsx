@@ -16,6 +16,7 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from '@/components/providers/translation-provider'
 
 interface DripCampaign {
   id: string
@@ -36,6 +37,7 @@ interface DripCampaign {
 
 export function DripCampaignsList() {
   const router = useRouter()
+  const t = useTranslations('campaigns')
   const [campaigns, setCampaigns] = useState<DripCampaign[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
@@ -78,16 +80,16 @@ export function DripCampaignsList() {
         await fetchCampaigns()
       } else {
         const data = await response.json()
-        alert(`Fout: ${data.error}`)
+        alert(`${t('builder.errors.generic')}: ${data.error}`)
       }
     } catch (error) {
       console.error('Error toggling campaign:', error)
-      alert('Er is een fout opgetreden')
+      alert(t('builder.errors.generic'))
     }
   }
 
   const handleDeleteCampaign = async (campaignId: string, campaignName: string) => {
-    if (!confirm(`Weet je zeker dat je "${campaignName}" wilt archiveren?`)) return
+    if (!confirm(t('drip.list.actions.archiveConfirm', { name: campaignName }) || `Are you sure you want to archive "${campaignName}"?`)) return
 
     try {
       const response = await fetch(`/api/drip-campaigns/${campaignId}`, {
@@ -102,35 +104,28 @@ export function DripCampaignsList() {
       }
     } catch (error) {
       console.error('Error deleting campaign:', error)
-      alert('Er is een fout opgetreden')
+      alert(t('builder.errors.generic'))
     }
   }
 
   const getStatusBadge = (status: string, isActive: boolean) => {
     if (status === 'draft') {
-      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">Draft</span>
+      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{t('list.status.draft')}</span>
     }
     if (isActive) {
-      return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Actief</span>
+      return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">{t('drip.list.stats.active')}</span> // Or specific status badge
     }
     if (status === 'paused') {
-      return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">Gepauzeerd</span>
+      return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">{t('list.status.paused')}</span>
     }
     if (status === 'archived') {
-      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500">Gearchiveerd</span>
+      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500">{t('drip.list.actions.archive')}</span> // Reusing archive text or creating new status
     }
     return null
   }
 
   const getTriggerTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      manual: 'Handmatig',
-      contact_created: 'Nieuw Contact',
-      tag_added: 'Tag Toegevoegd',
-      custom_event: 'Custom Event',
-      api: 'API Trigger',
-    }
-    return labels[type] || type
+    return t(`drip.builder.triggers.${type}` as any) || type
   }
 
   if (loading) {
@@ -138,7 +133,7 @@ export function DripCampaignsList() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Campagnes laden...</p>
+          <p className="mt-4 text-gray-500">{t('builder.buttons.processing', { defaultValue: 'Laden...' })}</p>
         </div>
       </div>
     )
@@ -152,13 +147,12 @@ export function DripCampaignsList() {
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === status
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
-            {status === 'all' ? 'Alle' : status.charAt(0).toUpperCase() + status.slice(1)}
+            {t(`list.filters.${status}` as any)}
           </button>
         ))}
       </div>
@@ -167,15 +161,15 @@ export function DripCampaignsList() {
       {campaigns.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <ChartBarIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900">Geen campagnes gevonden</h3>
+          <h3 className="mt-4 text-lg font-medium text-gray-900">{t('drip.list.empty.title')}</h3>
           <p className="mt-2 text-sm text-gray-500">
-            Maak je eerste drip campagne aan om geautomatiseerde berichtenreeksen te versturen.
+            {t('drip.list.empty.description')}
           </p>
           <Button
             onClick={() => router.push('/dashboard/drip-campaigns/new')}
             className="mt-4"
           >
-            Nieuwe Campagne Maken
+            {t('drip.createButton')}
           </Button>
         </div>
       ) : (
@@ -201,22 +195,22 @@ export function DripCampaignsList() {
                     <div className="flex items-center gap-1">
                       <UserGroupIcon className="h-4 w-4" />
                       <span>
-                        {campaign.statistics.totalEnrolled} geënroleerd
+                        {campaign.statistics.totalEnrolled} {t('drip.list.stats.enrolled')}
                       </span>
                     </div>
                     <div>
-                      {campaign.statistics.activeContacts} actief
+                      {campaign.statistics.activeContacts} {t('drip.list.stats.active')}
                     </div>
                     <div>
-                      {campaign.statistics.completedContacts} voltooid
+                      {campaign.statistics.completedContacts} {t('drip.list.stats.completed')}
                     </div>
                     <div className="font-medium">
-                      {campaign.statistics.averageCompletionRate.toFixed(1)}% conversie
+                      {campaign.statistics.averageCompletionRate.toFixed(1)}% {t('drip.list.stats.conversion')}
                     </div>
                   </div>
 
                   <div className="mt-2 text-xs text-gray-500">
-                    Trigger: {getTriggerTypeLabel(campaign.triggerType)}
+                    {t('drip.builder.steps.trigger')}: {getTriggerTypeLabel(campaign.triggerType)}
                   </div>
                 </div>
 
@@ -228,7 +222,7 @@ export function DripCampaignsList() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleToggleCampaign(campaign.id, campaign.isActive)}
-                        title={campaign.isActive ? 'Pauzeren' : 'Activeren'}
+                        title={campaign.isActive ? t('drip.list.actions.pause') : t('drip.list.actions.activate')}
                       >
                         {campaign.isActive ? (
                           <PauseIcon className="h-4 w-4" />
@@ -241,7 +235,7 @@ export function DripCampaignsList() {
                         variant="outline"
                         size="sm"
                         onClick={() => router.push(`/dashboard/drip-campaigns/${campaign.id}`)}
-                        title="Bewerken"
+                        title={t('drip.list.actions.edit')}
                       >
                         <PencilIcon className="h-4 w-4" />
                       </Button>
@@ -263,7 +257,7 @@ export function DripCampaignsList() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
-                    title="Archiveren"
+                    title={t('drip.list.actions.archive')}
                     className="text-red-600 hover:text-red-700 hover:border-red-600"
                   >
                     <TrashIcon className="h-4 w-4" />

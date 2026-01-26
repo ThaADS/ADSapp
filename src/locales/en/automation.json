@@ -1,0 +1,48 @@
+{
+    "title": "Intelligent Automation",
+    "subtitle": "Create powerful automated workflows, monitor agent capacity, and manage escalations.",
+    "tabs": {
+        "rules": "Automation Rules",
+        "capacity": "Agent Capacity",
+        "escalation": "Escalation Management"
+    },
+    "rules": {
+        "title": "Automation Rules",
+        "description": "Set up rules for automatic actions based on triggers.",
+        "create": "Create Rule",
+        "empty": "No automation rules yet",
+        "emptyDescription": "Create your first automation rule to automatically route conversations."
+    },
+    "capacity": {
+        "title": "Agent Capacity",
+        "description": "Manage your team's workload and availability.",
+        "available": "Available",
+        "busy": "Busy",
+        "offline": "Offline",
+        "maxConversations": "Max conversations"
+    },
+    "escalation": {
+        "title": "Escalation Management",
+        "description": "Configure when and how conversations are escalated.",
+        "timeoutMinutes": "Timeout (minutes)",
+        "escalateTo": "Escalate to"
+    },
+    "triggers": {
+        "newConversation": "New conversation",
+        "messageReceived": "Message received",
+        "noResponse": "No response",
+        "keyword": "Keyword detected"
+    },
+    "actions": {
+        "assignAgent": "Assign agent",
+        "sendMessage": "Send message",
+        "addTag": "Add tag",
+        "escalate": "Escalate"
+    },
+    "toasts": {
+        "created": "Rule created successfully",
+        "updated": "Rule updated successfully",
+        "deleted": "Rule deleted successfully",
+        "error": "An error occurred"
+    }
+}

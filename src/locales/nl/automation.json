@@ -1,0 +1,48 @@
+{
+    "title": "Intelligente Automatisering",
+    "subtitle": "Maak krachtige geautomatiseerde workflows, monitor agentcapaciteit en beheer escalaties.",
+    "tabs": {
+        "rules": "Automatiseringsregels",
+        "capacity": "Agentcapaciteit",
+        "escalation": "Escalatiebeheer"
+    },
+    "rules": {
+        "title": "Automatiseringsregels",
+        "description": "Stel regels in voor automatische acties op basis van triggers.",
+        "create": "Regel maken",
+        "empty": "Nog geen automatiseringsregels",
+        "emptyDescription": "Maak je eerste automatiseringsregel om gesprekken automatisch te routeren."
+    },
+    "capacity": {
+        "title": "Agentcapaciteit",
+        "description": "Beheer de werkbelasting en beschikbaarheid van je team.",
+        "available": "Beschikbaar",
+        "busy": "Bezet",
+        "offline": "Offline",
+        "maxConversations": "Max gesprekken"
+    },
+    "escalation": {
+        "title": "Escalatiebeheer",
+        "description": "Configureer wanneer en hoe gesprekken worden geëscaleerd.",
+        "timeoutMinutes": "Timeout (minuten)",
+        "escalateTo": "Escaleren naar"
+    },
+    "triggers": {
+        "newConversation": "Nieuw gesprek",
+        "messageReceived": "Bericht ontvangen",
+        "noResponse": "Geen reactie",
+        "keyword": "Trefwoord gedetecteerd"
+    },
+    "actions": {
+        "assignAgent": "Wijs agent toe",
+        "sendMessage": "Stuur bericht",
+        "addTag": "Voeg tag toe",
+        "escalate": "Escaleer"
+    },
+    "toasts": {
+        "created": "Regel succesvol aangemaakt",
+        "updated": "Regel succesvol bijgewerkt",
+        "deleted": "Regel succesvol verwijderd",
+        "error": "Er is een fout opgetreden"
+    }
+}

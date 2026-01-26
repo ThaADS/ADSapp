@@ -10,6 +10,7 @@ import DraftSuggestions from '@/components/ai/draft-suggestions'
 import SentimentBadge from '@/components/ai/sentiment-badge'
 import ProductMessageComposer from '@/components/messaging/ProductMessageComposer'
 import { FileText, Sparkles } from 'lucide-react'
+import { useTranslations } from '@/components/providers/translation-provider'
 import type { ConversationWithDetails, MessageWithSender } from '@/types'
 import type { SendProductMessageRequest, SendProductListMessageRequest, WhatsAppCatalog } from '@/types/whatsapp-catalog'
 
@@ -33,6 +34,7 @@ export function ChatWindow({
   showDetails,
   onConversationUpdate,
 }: ChatWindowProps) {
+  const t = useTranslations('inbox')
   const [messages, setMessages] = useState<MessageWithSender[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
@@ -100,26 +102,26 @@ export function ChatWindow({
     } catch (error) {
       addToast({
         type: 'error',
-        title: 'Failed to send message',
-        message: error instanceof Error ? error.message : 'Please try again',
+        title: t('errors.sendFailed'),
+        message: error instanceof Error ? error.message : t('actions.pleaseTryAgain'),
       })
     }
   }
 
   const handleActionComplete = (action: string, success: boolean) => {
     if (success) {
-      const messages: Record<string, string> = {
-        mark_as_read: 'Conversation marked as read',
-        assign_to_me: 'Conversation assigned to you',
-        status_closed: 'Conversation archived',
-        delete: 'Conversation deleted',
-        block: 'Contact blocked successfully',
-        export: 'Conversation exported successfully',
+      const toastMessages: Record<string, string> = {
+        mark_as_read: t('toasts.markedAsRead'),
+        assign_to_me: t('toasts.assignedToYou'),
+        status_closed: t('toasts.archived'),
+        delete: t('toasts.deleted'),
+        block: t('toasts.blocked'),
+        export: t('toasts.exported'),
       }
 
       addToast({
         type: 'success',
-        title: messages[action] || 'Action completed',
+        title: toastMessages[action] || t('actions.actionCompleted'),
       })
 
       // Trigger refresh
@@ -127,8 +129,8 @@ export function ChatWindow({
     } else {
       addToast({
         type: 'error',
-        title: 'Action failed',
-        message: 'Please try again',
+        title: t('actions.actionFailed'),
+        message: t('actions.pleaseTryAgain'),
       })
     }
   }
@@ -154,8 +156,8 @@ export function ChatWindow({
     setShowDraftSuggestions(false)
     addToast({
       type: 'success',
-      title: 'Draft inserted',
-      message: 'Edit the draft before sending',
+      title: t('ai.draftInserted'),
+      message: t('ai.editBeforeSending'),
     })
   }
 
@@ -188,19 +190,19 @@ export function ChatWindow({
 
       addToast({
         type: 'success',
-        title: 'Product bericht verzonden',
+        title: t('product.messageSent'),
       })
 
       setShowProductComposer(false)
     } catch (error) {
       addToast({
         type: 'error',
-        title: 'Verzenden mislukt',
-        message: error instanceof Error ? error.message : 'Probeer opnieuw',
+        title: t('product.sendFailed'),
+        message: error instanceof Error ? error.message : t('product.tryAgain'),
       })
       throw error // Re-throw so the composer can handle it
     }
-  }, [addToast])
+  }, [addToast, t])
 
   return (
     <div className='flex h-full flex-col'>
@@ -220,7 +222,7 @@ export function ChatWindow({
             <div>
               <div className='flex items-center space-x-2'>
                 <h2 className='text-lg font-semibold text-gray-900'>
-                  {conversation.contact.name || 'Unknown Contact'}
+                  {conversation.contact.name || t('contact.unknown')}
                 </h2>
                 {/* Sentiment Badge */}
                 <SentimentBadge
@@ -235,7 +237,7 @@ export function ChatWindow({
                   <>
                     <span>•</span>
                     <span className={`font-medium ${getPriorityColor(conversation.priority)}`}>
-                      {conversation.priority} priority
+                      {t(`priority.${conversation.priority}`)} {t('priority.suffix')}
                     </span>
                   </>
                 )}
@@ -259,48 +261,50 @@ export function ChatWindow({
                   })
                   if (response.ok) {
                     onConversationUpdate?.()
-                    addToast({ type: 'success', title: `Status changed to ${newStatus}` })
+                    addToast({ type: 'success', title: t('status.changedTo', { status: t(`status.${newStatus}`) }) })
                   }
                 } catch {
-                  addToast({ type: 'error', title: 'Failed to update status' })
+                  addToast({ type: 'error', title: t('errors.updateStatusFailed') })
                 }
               }}
             >
-              <option value='open'>Open</option>
-              <option value='pending'>Pending</option>
-              <option value='resolved'>Resolved</option>
-              <option value='closed'>Closed</option>
+              <option value='open'>{t('status.open')}</option>
+              <option value='pending'>{t('status.pending')}</option>
+              <option value='resolved'>{t('status.resolved')}</option>
+              <option value='closed'>{t('status.closed')}</option>
             </select>
 
             {/* Assign Button */}
-            <button className='rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:text-gray-900'>
+            <button type='button' className='rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-600 hover:text-gray-900'>
               {conversation.assigned_agent
-                ? `Assigned to ${conversation.assigned_agent.full_name}`
-                : 'Assign'}
+                ? t('assignment.assigned', { name: conversation.assigned_agent.full_name })
+                : t('assignment.assign')}
             </button>
 
             {/* AI Summary Button */}
             <button
+              type='button'
               onClick={() => setShowSummary(true)}
               className='flex items-center space-x-1 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1 text-sm text-emerald-700 hover:bg-emerald-100'
-              title='Generate AI Summary'
+              title={t('ai.generateSummary')}
             >
               <FileText className='h-4 w-4' />
-              <span>Summary</span>
+              <span>{t('ai.summary')}</span>
             </button>
 
             {/* AI Draft Suggestions Toggle */}
             <button
+              type='button'
               onClick={() => setShowDraftSuggestions(!showDraftSuggestions)}
               className={`flex items-center space-x-1 rounded-md border px-3 py-1 text-sm ${
                 showDraftSuggestions
                   ? 'border-purple-300 bg-purple-100 text-purple-700'
                   : 'border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100'
               }`}
-              title='AI Draft Suggestions'
+              title={t('ai.draftSuggestions')}
             >
               <Sparkles className='h-4 w-4' />
-              <span>AI Drafts</span>
+              <span>{t('ai.drafts')}</span>
             </button>
 
             {/* Quick Actions */}
@@ -311,6 +315,7 @@ export function ChatWindow({
 
             {/* Details Toggle */}
             <button
+              type='button'
               onClick={onShowDetails}
               className={`rounded-md p-2 hover:bg-gray-100 ${
                 showDetails ? 'bg-green-100 text-green-600' : 'text-gray-600'
