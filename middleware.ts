@@ -139,16 +139,32 @@ export async function middleware(request: NextRequest) {
 
     // Detect and set locale (safe, non-blocking)
     try {
-      const locale = getLocale(request)
+      let locale: Locale = getLocale(request) // Default to existing cookie/browser logic
 
-      // Set locale cookie if not already set (for client-side access)
-      if (!request.cookies.get(LOCALE_COOKIE)) {
-        sessionResponse.cookies.set(LOCALE_COOKIE, locale, {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 365, // 1 year
-          sameSite: 'lax',
-        })
+      // For authenticated users, check database preference first
+      if (user) {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('preferred_language')
+            .eq('id', user.id)
+            .single()
+
+          if (profile?.preferred_language && isValidLocale(profile.preferred_language)) {
+            locale = profile.preferred_language as Locale
+          }
+        } catch (profileError) {
+          // Profile lookup failed, use cookie/browser fallback
+          console.warn('Profile locale lookup failed:', profileError)
+        }
       }
+
+      // Set locale cookie (always, to keep it in sync with DB preference)
+      sessionResponse.cookies.set(LOCALE_COOKIE, locale, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      })
 
       // Add locale header for server components to access
       sessionResponse.headers.set('x-locale', locale)
