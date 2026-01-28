@@ -13,6 +13,7 @@ export const namespaces = [
   'common',
   'dashboard',
   'billing',
+  'emails',
   'onboarding',
   'inbox',
   'workflow',

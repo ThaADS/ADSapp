@@ -6,6 +6,7 @@ import campaigns from './campaigns.json'
 import common from './common.json'
 import contacts from './contacts.json'
 import dashboard from './dashboard.json'
+import emails from './emails.json'
 import inbox from './inbox.json'
 import onboarding from './onboarding.json'
 import roadmap from './roadmap.json'
@@ -21,6 +22,7 @@ const en = {
   common,
   contacts,
   dashboard,
+  emails,
   inbox,
   onboarding,
   roadmap,

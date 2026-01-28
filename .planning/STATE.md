@@ -234,10 +234,10 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | Plan | Wave | Description | Status |
 |------|------|-------------|--------|
 | 10.5-01 | 1 | TranslationProvider gap fix + database schema | ✅ COMPLETE |
-| 10.5-02 | 2 | Settings UI for language preference | 📋 Planned |
-| 10.5-03 | 2 | Server-side locale detection with DB | 📋 Planned |
+| 10.5-02 | 2 | Database-backed locale detection | ✅ COMPLETE |
+| 10.5-03 | 2 | Settings UI for language preference | 📋 Planned |
 
-**Progress:** 33% (1/3 plans complete)
+**Progress:** 67% (2/3 plans complete)
 
 **Key Deliverables:**
 
@@ -247,12 +247,18 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ TypeScript types: preferred_language in profiles table (7178166)
 - ✅ Fixes "ik zie de sleutels" bug (translation keys showing)
 
+**Plan 10.5-02 (Complete):**
+- ✅ getServerLocaleWithUser function with database priority (3a46937)
+- ✅ Middleware database preference check for authenticated users (7ddc769)
+- ✅ Language priority chain: DB > Cookie > Browser > Default
+- ✅ Graceful fallback for database query failures
+
 **Success Criteria:**
 1. ✅ Onboarding pages display translated text (not keys)
 2. 📋 User can set language preference in settings
-3. 📋 Server-side locale detection checks database preference
+3. ✅ Server-side locale detection checks database preference
 
-**Next Action:** Plan 10.5-02 (Settings UI for language preference)
+**Next Action:** Plan 10.5-03 (Settings UI for language preference)
 
 ## Accumulated Context
 
@@ -261,6 +267,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-28]: Always set locale cookie even for DB-preference users to keep cookie in sync
+- [2026-01-28]: Reuse existing Supabase client in middleware to avoid new connections
+- [2026-01-28]: Graceful error handling with fallback to cookie/browser detection for locale
 - [2026-01-28]: Nullable preferred_language column (NULL = fallback to cookie/browser detection)
 - [2026-01-28]: Database-level CHECK constraint for language values ('nl' or 'en')
 - [2026-01-28]: Partial index on preferred_language (non-null values only)
@@ -297,7 +306,7 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 10.5 plan 01 complete
+Stopped at: Phase 10.5 plan 02 complete
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
