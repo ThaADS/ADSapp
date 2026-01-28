@@ -1,0 +1,57 @@
+{
+  "common": {
+    "greeting": "Hallo",
+    "greetingWithName": "Hallo {name}",
+    "regards": "Met vriendelijke groet",
+    "team": "Het ADSapp Team",
+    "footer": "Deze e-mail is verzonden door ADSapp. Heb je vragen? Neem contact op via support@adsapp.com",
+    "securityNotice": "Als je dit niet hebt aangevraagd, kun je deze e-mail veilig negeren.",
+    "linkExpiry": "Deze link verloopt over {hours} uur."
+  },
+  "confirmation": {
+    "subject": "Bevestig je e-mailadres",
+    "title": "Welkom bij ADSapp!",
+    "body": "Bedankt voor je aanmelding. Bevestig je e-mailadres om te beginnen met je WhatsApp Business Inbox.",
+    "button": "E-mailadres Bevestigen",
+    "linkText": "Of kopieer deze link naar je browser:",
+    "notYou": "Als je geen account hebt aangemaakt bij ADSapp, kun je deze e-mail veilig negeren."
+  },
+  "passwordReset": {
+    "subject": "Wachtwoord resetten",
+    "title": "Wachtwoord Reset Aanvraag",
+    "body": "We hebben een verzoek ontvangen om het wachtwoord van je ADSapp-account te resetten. Klik op de knop hieronder om een nieuw wachtwoord te kiezen.",
+    "button": "Wachtwoord Resetten",
+    "linkText": "Of kopieer deze link naar je browser:",
+    "expiry": "Deze link verloopt over 24 uur.",
+    "notYou": "Als je geen wachtwoord reset hebt aangevraagd, kun je deze e-mail veilig negeren. Je wachtwoord blijft ongewijzigd."
+  },
+  "magicLink": {
+    "subject": "Je inloglink",
+    "title": "Inloggen bij ADSapp",
+    "body": "Klik op de knop hieronder om in te loggen bij je ADSapp-account. Geen wachtwoord nodig!",
+    "button": "Inloggen",
+    "linkText": "Of kopieer deze link naar je browser:",
+    "expiry": "Deze link verloopt over 1 uur en kan maar één keer worden gebruikt.",
+    "notYou": "Als je niet hebt geprobeerd in te loggen, kun je deze e-mail veilig negeren."
+  },
+  "invitation": {
+    "subject": "Je bent uitgenodigd voor {organizationName}",
+    "title": "Team Uitnodiging",
+    "body": "{inviterName} heeft je uitgenodigd om deel te nemen aan hun team op ADSapp, een WhatsApp Business Inbox platform.",
+    "details": {
+      "organization": "Organisatie",
+      "role": "Rol",
+      "invitedBy": "Uitgenodigd door"
+    },
+    "button": "Uitnodiging Accepteren",
+    "linkText": "Of kopieer deze link naar je browser:",
+    "expiry": "Deze uitnodiging verloopt over {days} dagen.",
+    "notYou": "Als je niet weet wie deze uitnodiging heeft gestuurd, kun je deze e-mail veilig negeren."
+  },
+  "roles": {
+    "owner": "Eigenaar",
+    "admin": "Beheerder",
+    "agent": "Agent",
+    "viewer": "Viewer"
+  }
+}
