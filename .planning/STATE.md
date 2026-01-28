@@ -262,15 +262,16 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ All auth email types: confirmation, password reset, magic link, invitation
 - ✅ Parameterized strings with {param} syntax for dynamic content
 
-**Plan 10.5-04 (Complete):**
+**Plan 10.5-04 (Complete - Gaps Resolved):**
 - ✅ Email template components: generateConfirmationEmail, generatePasswordResetEmail, generateMagicLinkEmail (acc0399)
 - ✅ Email sending functions: sendConfirmationEmail, sendPasswordResetEmail, sendMagicLinkEmail (bb1e5fa)
 - ✅ Dynamic translation loading with locale fallback
 - ✅ Branded HTML with ADSapp logo and colors
 - ✅ Resend integration with email tags (category, locale)
 - ✅ getUserLocale and getLocaleForNewUser utilities
-- ⏳ Integration deferred: Current auth uses Supabase built-in emails (not localized)
-- 📝 Ready for future migration: Functions created, awaiting custom auth flow implementation
+- ✅ Signup route now uses admin.generateLink + sendConfirmationEmail (gap resolved)
+- ✅ Password reset route created with sendPasswordResetEmail (gap resolved)
+- ✅ Forgot password form updated to use API route
 
 **Plan 10.5-05 (Complete):**
 - ✅ LanguageSettings component: Client component with radio buttons and database save (4f48bcf)
@@ -302,7 +303,8 @@ Recent decisions affecting v2.0 work:
 - [2026-01-28]: Language settings placed in profile page (natural UX location)
 - [2026-01-28]: Use inline HTML strings instead of react-email library for email templates (avoid dependencies)
 - [2026-01-28]: Email domain heuristic for new user locale (.nl domains get Dutch, else English)
-- [2026-01-28]: Current auth uses Supabase built-in emails - localized functions ready for future migration
+- [2026-01-28]: Auth emails now use admin.generateLink + localized email functions (gap resolved)
+- [2026-01-28]: Middleware refactored with SessionResult interface for proper variable scoping
 - [2026-01-28]: Email translations use nested JSON structure with common reusable elements
 - [2026-01-28]: Parameterized strings use {param} syntax for dynamic content injection
 - [2026-01-28]: Role translations included in emails namespace for self-contained email context
@@ -345,8 +347,22 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 10.5 complete (all 5 plans)
+Stopped at: Phase 10.5 gaps resolved (all verification criteria met)
 Resume file: None
+
+### Gap Resolution Summary (2026-01-28)
+
+**Gap 1: Middleware Scope Bug** ✅ RESOLVED
+- Issue: Lines 145-147 referenced `user` and `supabase` outside their declaration scope
+- Fix: Created `SessionResult` interface, `updateSession` returns `{ response, user, supabase }`
+- Files: `middleware.ts`
+
+**Gap 2: Auth Emails Not Integrated** ✅ RESOLVED
+- Issue: Email functions existed but weren't called from auth routes
+- Fix:
+  - Updated `src/app/api/auth/signup/route.ts` to use `admin.generateLink` + `sendConfirmationEmail`
+  - Created `src/app/api/auth/forgot-password/route.ts` with `sendPasswordResetEmail`
+  - Updated `src/components/auth/forgot-password-form.tsx` to use API route
 
 ### Phase 8 Completion Summary (2026-01-24)
 

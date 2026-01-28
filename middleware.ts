@@ -50,12 +50,19 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 //   ? createTenantMiddleware({ supabaseUrl, supabaseKey: supabaseServiceKey, mainDomain })
 //   : null
 
+// Type for session result including user info
+interface SessionResult {
+  response: NextResponse
+  user: { id: string } | null
+  supabase: ReturnType<typeof createServerClient> | null
+}
+
 // Supabase session handler
-async function updateSession(request: NextRequest): Promise<NextResponse> {
+async function updateSession(request: NextRequest): Promise<SessionResult> {
   let supabaseResponse = NextResponse.next({ request })
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    return supabaseResponse
+    return { response: supabaseResponse, user: null, supabase: null }
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -86,10 +93,10 @@ async function updateSession(request: NextRequest): Promise<NextResponse> {
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/signin'
-    return NextResponse.redirect(url)
+    return { response: NextResponse.redirect(url), user: null, supabase: null }
   }
 
-  return supabaseResponse
+  return { response: supabaseResponse, user, supabase }
 }
 
 /**
@@ -130,7 +137,7 @@ export async function middleware(request: NextRequest) {
 
   try {
     // First, handle Supabase session
-    const sessionResponse = await updateSession(request)
+    const { response: sessionResponse, user, supabase } = await updateSession(request)
 
     // If session handler returned a redirect, return it
     if (sessionResponse.status === 307 || sessionResponse.status === 308) {
@@ -142,7 +149,7 @@ export async function middleware(request: NextRequest) {
       let locale: Locale = getLocale(request) // Default to existing cookie/browser logic
 
       // For authenticated users, check database preference first
-      if (user) {
+      if (user && supabase) {
         try {
           const { data: profile } = await supabase
             .from('profiles')

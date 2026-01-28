@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from '@/components/providers/translation-provider'
 
 export function ForgotPasswordForm() {
@@ -18,13 +17,19 @@ export function ForgotPasswordForm() {
     setMessage('')
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+      // Use API route for localized password reset emails
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || t('unexpectedError'))
       } else {
         setMessage(t('checkEmailReset'))
       }
