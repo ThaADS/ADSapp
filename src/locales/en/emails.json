@@ -1,0 +1,57 @@
+{
+  "common": {
+    "greeting": "Hello",
+    "greetingWithName": "Hello {name}",
+    "regards": "Best regards",
+    "team": "The ADSapp Team",
+    "footer": "This email was sent by ADSapp. If you have questions, contact support@adsapp.com",
+    "securityNotice": "If you didn't request this, you can safely ignore this email.",
+    "linkExpiry": "This link expires in {hours} hours."
+  },
+  "confirmation": {
+    "subject": "Confirm your email address",
+    "title": "Welcome to ADSapp!",
+    "body": "Thank you for signing up. Please confirm your email address to get started with your WhatsApp Business Inbox.",
+    "button": "Confirm Email Address",
+    "linkText": "Or copy this link into your browser:",
+    "notYou": "If you didn't create an account on ADSapp, you can safely ignore this email."
+  },
+  "passwordReset": {
+    "subject": "Reset your password",
+    "title": "Password Reset Request",
+    "body": "We received a request to reset your password for your ADSapp account. Click the button below to choose a new password.",
+    "button": "Reset Password",
+    "linkText": "Or copy this link into your browser:",
+    "expiry": "This link expires in 24 hours.",
+    "notYou": "If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged."
+  },
+  "magicLink": {
+    "subject": "Your sign-in link",
+    "title": "Sign in to ADSapp",
+    "body": "Click the button below to sign in to your ADSapp account. No password needed!",
+    "button": "Sign In",
+    "linkText": "Or copy this link into your browser:",
+    "expiry": "This link expires in 1 hour and can only be used once.",
+    "notYou": "If you didn't request to sign in, you can safely ignore this email."
+  },
+  "invitation": {
+    "subject": "You've been invited to join {organizationName}",
+    "title": "Team Invitation",
+    "body": "{inviterName} has invited you to join their team on ADSapp, a WhatsApp Business Inbox platform.",
+    "details": {
+      "organization": "Organization",
+      "role": "Role",
+      "invitedBy": "Invited by"
+    },
+    "button": "Accept Invitation",
+    "linkText": "Or copy this link into your browser:",
+    "expiry": "This invitation expires in {days} days.",
+    "notYou": "If you don't know who sent this invitation, you can safely ignore this email."
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Administrator",
+    "agent": "Agent",
+    "viewer": "Viewer"
+  }
+}
