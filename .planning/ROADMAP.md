@@ -586,6 +586,31 @@ v1.0 Phases 1-7 (sequential)
 
 ---
 
+## Phase 10.5: i18n Completion (Urgent)
+
+**Goal:** Complete the existing i18n infrastructure so all user-facing text displays correctly in Dutch or English based on user preference
+**Depends on:** Phase 10 (Zapier Integration complete)
+**Type:** Urgent maintenance phase inserted to fix production bug ("ik zie de sleutels")
+**Plans:** 5 plans
+
+Plans:
+- [ ] 10.5-01-PLAN.md — Onboarding TranslationProvider + database migration for preferred_language
+- [ ] 10.5-02-PLAN.md — Middleware/server locale detection with database priority
+- [ ] 10.5-03-PLAN.md — Email translation files (EN/NL) + namespace registration
+- [ ] 10.5-04-PLAN.md — Localized auth email templates via Resend
+- [ ] 10.5-05-PLAN.md — Language preference settings UI
+
+**Success Criteria:**
+1. Onboarding pages display translated text (not translation keys)
+2. Language preference persists to database for logged-in users
+3. Priority chain: Database > Cookie > Browser detection
+4. Auth emails (confirmation, reset, magic link) sent in user's preferred language
+5. User can change language preference in profile settings
+
+**NOT in scope:** Additional languages beyond NL/EN (Phase 20), SEO landing pages (Phase 20), translation of user-generated content.
+
+---
+
 ## v2.1 International Expansion (i18n + SEO)
 
 **Milestone Goal:** Expand ADSapp to 11 languages with 550-880 SEO-optimized landing pages targeting niche markets
@@ -632,4 +657,5 @@ v1.0 Phases 1-7 (sequential)
 *Roadmap created: 2026-01-21*
 *v2.0 phases added: 2026-01-23*
 *v2.1 milestone added: 2026-01-24*
-*Last updated: 2026-01-25*
+*Phase 10.5 (i18n Completion) added: 2026-01-28*
+*Last updated: 2026-01-28*
