@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline'
 import MFAEnrollment from '@/components/auth/mfa-enrollment'
 import { useTranslations } from '@/components/providers/translation-provider'
+import { LanguageSettings } from '@/components/settings/language-settings'
 
 interface Profile {
   id: string
@@ -21,6 +22,7 @@ interface Profile {
   full_name?: string
   phone?: string
   avatar_url?: string
+  preferred_language?: string | null
   organization?: {
     name: string
     slug: string
@@ -550,6 +552,16 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
           <p className='mt-4 text-xs text-gray-500'>
             {t('profile.sessionDescription')}
           </p>
+        </div>
+      </div>
+
+      {/* Language Settings */}
+      <div className='rounded-lg border border-gray-200 bg-white shadow-sm'>
+        <div className='p-6'>
+          <LanguageSettings
+            userId={profile.id}
+            currentPreference={profile.preferred_language as 'nl' | 'en' | null}
+          />
         </div>
       </div>
 
