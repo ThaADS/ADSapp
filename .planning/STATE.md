@@ -1,6 +1,6 @@
 # Project State: ADSapp
 
-**Updated:** 2026-01-25
+**Updated:** 2026-01-28
 
 ## Project Reference
 
@@ -29,8 +29,8 @@ v2.0 Paused: Awaiting market feedback before continuing
 
 ### v2.0 Feature Gap Implementation
 - **Phases:** 8-19 (12 phases total)
-- **Status:** Phase 8, 9, 10 complete
-- **Progress:** ~33% (17/60 estimated plans across 12 phases)
+- **Status:** Phase 8, 9, 10 complete; Phase 10.5 in progress (1/3 plans)
+- **Progress:** ~35% (18/60 estimated plans across 12 phases)
 - **Requirements:** 73 total, all mapped
 
 ### v2.1 International Expansion (Planned)
@@ -138,6 +138,7 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | 8 | Foundation Layer | 5/5 | ✅ Complete |
 | 9 | WhatsApp Catalog | 6/6 | ✅ Complete |
 | 10 | Zapier Integration | 6/6 | ✅ Complete |
+| 10.5 | i18n Completion | 1/3 | 🔄 In Progress |
 | 11 | Team Collaboration | TBD | Not started |
 | 12 | Shopify Integration | TBD | Not started |
 | 13 | Instagram DM | TBD | Not started |
@@ -223,6 +224,36 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 
 **Next Action:** Phase 10 complete. Ready for Phase 11 (Team Collaboration).
 
+## Phase 10.5: i18n Completion 🔄 IN PROGRESS
+
+**Goal:** Complete internationalization system with language preferences and missing translations
+**Requirements:** Fix onboarding translation keys bug, add language settings UI, implement server-side detection
+**Started:** 2026-01-28
+
+**Plans:**
+| Plan | Wave | Description | Status |
+|------|------|-------------|--------|
+| 10.5-01 | 1 | TranslationProvider gap fix + database schema | ✅ COMPLETE |
+| 10.5-02 | 2 | Settings UI for language preference | 📋 Planned |
+| 10.5-03 | 2 | Server-side locale detection with DB | 📋 Planned |
+
+**Progress:** 33% (1/3 plans complete)
+
+**Key Deliverables:**
+
+**Plan 10.5-01 (Complete):**
+- ✅ Onboarding layout with TranslationProvider (3489ffe)
+- ✅ Database migration: preferred_language column with CHECK constraint (9bf5804)
+- ✅ TypeScript types: preferred_language in profiles table (7178166)
+- ✅ Fixes "ik zie de sleutels" bug (translation keys showing)
+
+**Success Criteria:**
+1. ✅ Onboarding pages display translated text (not keys)
+2. 📋 User can set language preference in settings
+3. 📋 Server-side locale detection checks database preference
+
+**Next Action:** Plan 10.5-02 (Settings UI for language preference)
+
 ## Accumulated Context
 
 ### Decisions
@@ -230,6 +261,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-28]: Nullable preferred_language column (NULL = fallback to cookie/browser detection)
+- [2026-01-28]: Database-level CHECK constraint for language values ('nl' or 'en')
+- [2026-01-28]: Partial index on preferred_language (non-null values only)
 - [2026-01-25]: Zapier CLI app registration deferred for human action (requires developer.zapier.com account)
 - [2026-01-25]: Fire-and-forget webhook delivery to avoid blocking event emission
 - [2026-01-25]: Auto-create contact/conversation when sending message to unknown phone number
@@ -262,8 +296,8 @@ None yet for v2.0.
 
 ## Session Continuity
 
-Last session: 2026-01-25
-Stopped at: Phase 10 complete (all 6 plans)
+Last session: 2026-01-28
+Stopped at: Phase 10.5 plan 01 complete
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
