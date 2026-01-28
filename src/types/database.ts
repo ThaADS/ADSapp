@@ -3590,6 +3590,7 @@ export type Database = {
           mfa_enrolled_at: string | null
           mfa_secret: string | null
           organization_id: string | null
+          preferred_language: string | null
           role: string | null
           updated_at: string | null
         }
@@ -3611,6 +3612,7 @@ export type Database = {
           mfa_enrolled_at?: string | null
           mfa_secret?: string | null
           organization_id?: string | null
+          preferred_language?: string | null
           role?: string | null
           updated_at?: string | null
         }
@@ -3632,6 +3634,7 @@ export type Database = {
           mfa_enrolled_at?: string | null
           mfa_secret?: string | null
           organization_id?: string | null
+          preferred_language?: string | null
           role?: string | null
           updated_at?: string | null
         }
