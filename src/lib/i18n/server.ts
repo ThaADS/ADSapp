@@ -29,6 +29,36 @@ export async function getServerLocale(): Promise<Locale> {
 }
 
 /**
+ * Get locale with database priority for authenticated users
+ * Priority: 1. Database (preferred_language) 2. Cookie 3. Header 4. Default
+ */
+export async function getServerLocaleWithUser(userId?: string): Promise<Locale> {
+  // If we have a user ID, check database first
+  if (userId) {
+    try {
+      const { createClient } = await import('@/lib/supabase/server')
+      const supabase = await createClient()
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('preferred_language')
+        .eq('id', userId)
+        .single()
+
+      if (profile?.preferred_language && locales.includes(profile.preferred_language as Locale)) {
+        return profile.preferred_language as Locale
+      }
+    } catch (error) {
+      // Database lookup failed, fall back to cookie/header
+      console.warn('Failed to get language preference from database:', error)
+    }
+  }
+
+  // Fall back to existing logic
+  return getServerLocale()
+}
+
+/**
  * Load translations for a specific namespace
  */
 export async function getTranslations(namespace?: string) {
