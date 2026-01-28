@@ -272,6 +272,13 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ⏳ Integration deferred: Current auth uses Supabase built-in emails (not localized)
 - 📝 Ready for future migration: Functions created, awaiting custom auth flow implementation
 
+**Plan 10.5-05 (Complete):**
+- ✅ LanguageSettings component: Client component with radio buttons and database save (4f48bcf)
+- ✅ Language settings translations: EN and NL settings.language namespace (9aea957)
+- ✅ Profile page integration: LanguageSettings section added to profile settings (1c0f7bf)
+- ✅ Page reload on language change: Ensures full UI refresh with new locale
+- ✅ Database update: profiles.preferred_language via Supabase client
+
 **Success Criteria:**
 1. ✅ Onboarding pages display translated text (not keys)
 2. ✅ Email translations available for auth emails
@@ -279,8 +286,10 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 4. ✅ Auth email templates generate branded HTML with translations
 5. ✅ Email sending functions load locale-specific translations
 6. ✅ Resend integration with proper tags
+7. ✅ Language preference UI in profile settings
+8. ✅ User can change language preference and see immediate effect
 
-**Next Action:** Phase 10.5 complete. Ready for Phase 11 (Team Collaboration).
+**Next Action:** Phase 10.5 complete (all 5 plans). Ready for Phase 11 (Team Collaboration).
 
 ## Accumulated Context
 
@@ -289,6 +298,8 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-28]: Page reload after language change for full UI refresh (guarantees consistency)
+- [2026-01-28]: Language settings placed in profile page (natural UX location)
 - [2026-01-28]: Use inline HTML strings instead of react-email library for email templates (avoid dependencies)
 - [2026-01-28]: Email domain heuristic for new user locale (.nl domains get Dutch, else English)
 - [2026-01-28]: Current auth uses Supabase built-in emails - localized functions ready for future migration
@@ -334,7 +345,7 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 10.5 complete (all 4 plans)
+Stopped at: Phase 10.5 complete (all 5 plans)
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
