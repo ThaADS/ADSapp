@@ -236,8 +236,10 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | 10.5-01 | 1 | TranslationProvider gap fix + database schema | ✅ COMPLETE |
 | 10.5-02 | 2 | Database-backed locale detection | ✅ COMPLETE |
 | 10.5-03 | 2 | Email translations (EN and NL) | ✅ COMPLETE |
+| 10.5-04 | 3 | Localized auth email templates | ✅ COMPLETE |
+| 10.5-05 | 3 | Language preference settings UI | ✅ COMPLETE |
 
-**Progress:** 100% (3/3 plans complete)
+**Progress:** 100% (5/5 plans complete)
 
 **Key Deliverables:**
 
@@ -260,10 +262,23 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ All auth email types: confirmation, password reset, magic link, invitation
 - ✅ Parameterized strings with {param} syntax for dynamic content
 
+**Plan 10.5-04 (Complete):**
+- ✅ Email template components: generateConfirmationEmail, generatePasswordResetEmail, generateMagicLinkEmail (acc0399)
+- ✅ Email sending functions: sendConfirmationEmail, sendPasswordResetEmail, sendMagicLinkEmail (bb1e5fa)
+- ✅ Dynamic translation loading with locale fallback
+- ✅ Branded HTML with ADSapp logo and colors
+- ✅ Resend integration with email tags (category, locale)
+- ✅ getUserLocale and getLocaleForNewUser utilities
+- ⏳ Integration deferred: Current auth uses Supabase built-in emails (not localized)
+- 📝 Ready for future migration: Functions created, awaiting custom auth flow implementation
+
 **Success Criteria:**
 1. ✅ Onboarding pages display translated text (not keys)
 2. ✅ Email translations available for auth emails
 3. ✅ Server-side locale detection checks database preference
+4. ✅ Auth email templates generate branded HTML with translations
+5. ✅ Email sending functions load locale-specific translations
+6. ✅ Resend integration with proper tags
 
 **Next Action:** Phase 10.5 complete. Ready for Phase 11 (Team Collaboration).
 
@@ -274,6 +289,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-28]: Use inline HTML strings instead of react-email library for email templates (avoid dependencies)
+- [2026-01-28]: Email domain heuristic for new user locale (.nl domains get Dutch, else English)
+- [2026-01-28]: Current auth uses Supabase built-in emails - localized functions ready for future migration
 - [2026-01-28]: Email translations use nested JSON structure with common reusable elements
 - [2026-01-28]: Parameterized strings use {param} syntax for dynamic content injection
 - [2026-01-28]: Role translations included in emails namespace for self-contained email context
@@ -316,7 +334,7 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 10.5 complete (all 3 plans)
+Stopped at: Phase 10.5 complete (all 4 plans)
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
