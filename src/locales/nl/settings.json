@@ -243,5 +243,14 @@
         }
     },
     "saving": "Opslaan...",
-    "saveChanges": "Wijzigingen opslaan"
+    "saveChanges": "Wijzigingen opslaan",
+    "language": {
+        "title": "Taalvoorkeur",
+        "description": "Kies je voorkeurstaal voor de ADSapp interface.",
+        "save": "Voorkeur Opslaan",
+        "saving": "Opslaan...",
+        "saved": "Taalvoorkeur opgeslagen!",
+        "error": "Opslaan mislukt. Probeer het opnieuw.",
+        "note": "De pagina wordt opnieuw geladen om je nieuwe taalvoorkeur toe te passen."
+    }
 }

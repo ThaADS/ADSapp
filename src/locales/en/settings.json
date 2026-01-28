@@ -243,5 +243,14 @@
         }
     },
     "saving": "Saving...",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "language": {
+        "title": "Language Preference",
+        "description": "Choose your preferred language for the ADSapp interface.",
+        "save": "Save Preference",
+        "saving": "Saving...",
+        "saved": "Language preference saved!",
+        "error": "Failed to save. Please try again.",
+        "note": "The page will reload to apply your new language preference."
+    }
 }
