@@ -29,8 +29,8 @@ v2.0 Paused: Awaiting market feedback before continuing
 
 ### v2.0 Feature Gap Implementation
 - **Phases:** 8-19 (12 phases total)
-- **Status:** Phase 8, 9, 10 complete; Phase 10.5 in progress (1/3 plans)
-- **Progress:** ~35% (18/60 estimated plans across 12 phases)
+- **Status:** Phase 8, 9, 10, 10.5 complete
+- **Progress:** ~37% (21/60 estimated plans across 12 phases)
 - **Requirements:** 73 total, all mapped
 
 ### v2.1 International Expansion (Planned)
@@ -138,7 +138,7 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 | 8 | Foundation Layer | 5/5 | ✅ Complete |
 | 9 | WhatsApp Catalog | 6/6 | ✅ Complete |
 | 10 | Zapier Integration | 6/6 | ✅ Complete |
-| 10.5 | i18n Completion | 1/3 | 🔄 In Progress |
+| 10.5 | i18n Completion | 3/3 | ✅ Complete |
 | 11 | Team Collaboration | TBD | Not started |
 | 12 | Shopify Integration | TBD | Not started |
 | 13 | Instagram DM | TBD | Not started |
@@ -224,7 +224,7 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 
 **Next Action:** Phase 10 complete. Ready for Phase 11 (Team Collaboration).
 
-## Phase 10.5: i18n Completion 🔄 IN PROGRESS
+## Phase 10.5: i18n Completion ✅ COMPLETE
 
 **Goal:** Complete internationalization system with language preferences and missing translations
 **Requirements:** Fix onboarding translation keys bug, add language settings UI, implement server-side detection
@@ -235,9 +235,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 |------|------|-------------|--------|
 | 10.5-01 | 1 | TranslationProvider gap fix + database schema | ✅ COMPLETE |
 | 10.5-02 | 2 | Database-backed locale detection | ✅ COMPLETE |
-| 10.5-03 | 2 | Settings UI for language preference | 📋 Planned |
+| 10.5-03 | 2 | Email translations (EN and NL) | ✅ COMPLETE |
 
-**Progress:** 67% (2/3 plans complete)
+**Progress:** 100% (3/3 plans complete)
 
 **Key Deliverables:**
 
@@ -253,12 +253,19 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 - ✅ Language priority chain: DB > Cookie > Browser > Default
 - ✅ Graceful fallback for database query failures
 
+**Plan 10.5-03 (Complete):**
+- ✅ English email translations: src/locales/en/emails.json (7d268c2)
+- ✅ Dutch email translations: src/locales/nl/emails.json (b5cfa47)
+- ✅ emails namespace registered in i18n system (371b1d1)
+- ✅ All auth email types: confirmation, password reset, magic link, invitation
+- ✅ Parameterized strings with {param} syntax for dynamic content
+
 **Success Criteria:**
 1. ✅ Onboarding pages display translated text (not keys)
-2. 📋 User can set language preference in settings
+2. ✅ Email translations available for auth emails
 3. ✅ Server-side locale detection checks database preference
 
-**Next Action:** Plan 10.5-03 (Settings UI for language preference)
+**Next Action:** Phase 10.5 complete. Ready for Phase 11 (Team Collaboration).
 
 ## Accumulated Context
 
@@ -267,6 +274,9 @@ All 7 phases of v1.0 Technical Debt Cleanup are complete:
 Decisions logged in PROJECT.md Key Decisions table.
 Recent decisions affecting v2.0 work:
 
+- [2026-01-28]: Email translations use nested JSON structure with common reusable elements
+- [2026-01-28]: Parameterized strings use {param} syntax for dynamic content injection
+- [2026-01-28]: Role translations included in emails namespace for self-contained email context
 - [2026-01-28]: Always set locale cookie even for DB-preference users to keep cookie in sync
 - [2026-01-28]: Reuse existing Supabase client in middleware to avoid new connections
 - [2026-01-28]: Graceful error handling with fallback to cookie/browser detection for locale
@@ -306,7 +316,7 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 10.5 plan 02 complete
+Stopped at: Phase 10.5 complete (all 3 plans)
 Resume file: None
 
 ### Phase 8 Completion Summary (2026-01-24)
