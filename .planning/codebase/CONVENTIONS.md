@@ -1,81 +1,103 @@
-# Code Conventions
+# Coding Conventions
 
-**Analysis Date:** 2026-01-23
+**Analysis Date:** 2026-01-28
 
 ## Language & Style
 
 ### TypeScript
-- **Strict Mode:** Disabled (`strict: false`, `noImplicitAny: false`)
+- **Strict Mode:** Enabled (`strict: true` in tsconfig.json)
 - **Path Aliases:** `@/*` → `./src/*`
 - **Module Resolution:** Bundler mode
-- **Rationale:** Intentionally relaxed to support legacy migration; enforcing incrementally
+- **Note:** Despite strict mode enabled, many files use `@ts-nocheck` comments due to database type mismatches during Supabase schema migrations
 
 ### Formatting
-- **Tool:** Prettier with Tailwind plugin (v3.1.1)
-- **Config:** `.prettierrc`
+- **Tool:** Prettier with Tailwind CSS plugin
+- **Config:** `.prettierrc` (Prettier 3.1.1+)
 - **Git Hooks:** Husky + lint-staged for pre-commit formatting
 - **Key Settings:**
   - No semicolons: `"semi": false`
-  - Single quotes: `"singleQuote": true`, `"jsxSingleQuote": true`
-  - Print width: 100 characters
+  - Single quotes for JS/TS and JSX: `"singleQuote": true`, `"jsxSingleQuote": true`
+  - Print width: 100 characters (printWidth: 100)
   - Tab width: 2 spaces (NO tabs)
-  - Trailing commas: ES5 style
-  - Arrow function parens: Omitted when single param
+  - Trailing commas: ES5 style (trailingComma: "es5")
+  - Arrow function parens: Omitted when single param (arrowParens: "avoid")
+  - Bracket spacing: true - `{ key: value }`
+  - Tailwind class sorting: enabled via prettier-plugin-tailwindcss
+
+**Run:**
+```bash
+npm run format           # Auto-format with Prettier
+npm run format:check    # Check formatting without changes
+```
 
 ### Linting
-- **Tool:** ESLint 9 with Next.js config
-- **Config:** `eslint.config.mjs` (flat config format)
+- **Tool:** ESLint 9 with Next.js config (flat config format: `eslint.config.mjs`)
 - **Extends:** `next/core-web-vitals` and `next/typescript`
-- **Plugin Security:** `eslint-plugin-security` enabled
-- **Auto-fix:** `npm run lint:fix`
-- **Rules (warnings for migration):**
+- **Rules (warnings for legacy migration):**
   - `@typescript-eslint/ban-ts-comment`: warn
   - `@typescript-eslint/no-explicit-any`: warn
   - `@typescript-eslint/no-unused-vars`: warn
   - `react/no-unescaped-entities`: warn
   - `react-hooks/rules-of-hooks`: warn
+  - `prefer-const`: warn
+  - `react/jsx-no-undef`: warn
+
+**Run:**
+```bash
+npm run lint            # Check for linting issues
+npm run lint:fix        # Auto-fix where possible
+npm run type-check      # TypeScript validation
+```
 
 ## Naming Conventions
 
 ### Files
 | Type | Convention | Example |
 |------|------------|---------|
-| Components | camelCase | `dashboardHeader.tsx` (or PascalCase: `DashboardHeader.tsx`) |
-| Pages/Routes | route file in directory | `src/app/api/contacts/route.ts` |
-| Utilities | camelCase | `api-utils.ts`, `input-validation.ts` |
-| Types | camelCase | `workflow.ts`, `database.ts` |
-| Tests | `.test.ts` or `.spec.ts` | `input-validation.test.ts` |
-| Config | *.config.ts | `jest.config.js`, `eslint.config.mjs` |
+| Components | PascalCase | `WhatsAppInbox.tsx`, `MessageInputWithTyping.tsx` |
+| Pages/Routes | kebab-case route files | `forgot-password/page.tsx`, `api/contacts/route.ts` |
+| Utilities/Helpers | camelCase | `input-validation.ts`, `audit-service.ts`, `api-utils.ts` |
+| Types | camelCase | `database.ts`, `workflow.ts`, `channels.ts` |
+| Tests | Test suffix pattern | `contact-dedup.test.ts`, `01-landing-page.spec.ts` |
+| Config | *.config.ts/js | `jest.config.js`, `eslint.config.mjs` |
+| Stores | -store.ts suffix | `workflow-store.ts` |
 
 ### Code Naming
 | Type | Convention | Example |
 |------|------------|---------|
-| Components | PascalCase | `DashboardHeader`, `OnboardingForm` |
-| Functions | camelCase | `validateEmail()`, `createClient()`, `handleSignOut()` |
-| Constants | UPPER_SNAKE_CASE | `VALIDATION_ERROR_CODES`, `MAX_ATTEMPTS`, `PATTERNS` |
-| Variables | camelCase | `organizationId`, `phoneNumber`, `isValidating` |
-| Booleans | is/has/should/can prefix | `isValid`, `hasError`, `shouldRefresh`, `canUpdate` |
-| Types/Interfaces | PascalCase | `ValidationResult`, `WorkflowNodeType`, `User` |
-| Enums | PascalCase | `UserRole`, `MessageStatus` |
-| Const Enums (objects) | UPPER_SNAKE_CASE | `ValidationErrorCodes`, `TRIGGER_EVENTS` |
+| Components | PascalCase | `WhatsAppInbox`, `OnboardingForm`, `DashboardHeader` |
+| Functions | camelCase | `validateEmail()`, `createClient()`, `normalizePhoneNumber()` |
+| Event handlers | on[EventName] | `onNodesChange()`, `onConnect()`, `onSuspend()` |
+| Factory functions | create[Type] / generate[Type] | `createMockUser()`, `generateMockConversations()` |
+| Boolean functions | is[State] / has[Property] / can[Action] | `isUUID()`, `hasErrors()`, `canDelete()` |
+| Constants | UPPER_SNAKE_CASE | `SQL_INJECTION_PATTERNS`, `SENSITIVE_KEYS`, `MAX_DEPTH` |
+| Variables | camelCase | `organizationId`, `phoneNumber`, `mockConversations` |
+| Boolean variables | is[State] / has[Property] | `isValidating`, `isDirty`, `hasError` |
+| Types/Interfaces | PascalCase | `ValidationResult`, `Conversation`, `ApiException` |
+| Enums | PascalCase (type) + UPPER_SNAKE_CASE (values) | `type Role = 'OWNER' \| 'ADMIN'` |
 
-**Files with @ts-nocheck:**
-- `src/types/workflow.ts` - React Flow type compatibility
-- `src/stores/workflow-store.ts` - Zustand middleware type issues
-- `src/lib/api-utils.ts` - Database type regeneration pending
+**Files with `@ts-nocheck`:**
+- Many files during migration phase due to database type mismatches
+- Temporary while running: `npx supabase gen types typescript --linked > src/types/database.ts`
 
 ## Component Patterns
 
 ### React Component Structure
 ```typescript
-// 1. Imports (order: React → Next → external → internal → types)
+// 1. Imports (order: React → Next → external → internal)
 import { useState, useCallback, memo } from 'react'
 import { useRouter } from 'next/navigation'
-import { CommandPalette } from '@/components/search/command-palette'
+import Image from 'next/image'
+import { Settings, Trash2 } from 'lucide-react'
+import EnhancedConversationList from './enhanced-conversation-list'
+import { createClient } from '@/lib/supabase/client'
+import type { Conversation } from '@/types/database'
 
 // 2. Types (if not in separate file)
 interface Props {
   organizationId: string
+  currentUserId: string
+  userRole: 'owner' | 'admin' | 'agent'
   onMenuClick?: () => void
 }
 
@@ -108,7 +130,7 @@ ComponentName.displayName = 'ComponentName'
 
 ### Client Components
 ```typescript
-'use client'  // Mark at top
+'use client'  // Mark at top for client-side features
 
 import { createClient } from '@/lib/supabase/client'
 
@@ -125,101 +147,119 @@ export function ClientComponent() {
 import { createClient } from '@/lib/supabase/server'
 
 export default async function ServerComponent() {
-  const supabase = await createClient()  // Must await
+  const supabase = await createClient()  // MUST await
   // ...
 }
 ```
 
 ## API Route Patterns
 
-### Standard Structure (Example: `src/app/api/contacts/route.ts`)
+### Standard Structure (Example: `src/app/api/conversations/[id]/tags/route.ts`)
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { requireAuthenticatedUser, getUserOrganization } from '@/lib/api-utils'
 
-export async function GET(request: NextRequest) {
+export const dynamic = 'force-dynamic'
+
+// Helper to check if a string is a valid UUID
+function isUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  return uuidRegex.test(str)
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    // 1. Authentication
-    const user = await requireAuthenticatedUser()
-    const userOrg = await getUserOrganization(user.id)
-    const organizationId = userOrg.organization_id
-
-    // 2. Parse & validate inputs
-    const { searchParams } = new URL(request.url)
-    const search = searchParams.get('search')
-    const { page, limit, offset } = validatePagination(request)
-
-    // 3. Check cache (if applicable)
-    const cacheKey = generateApiCacheKey(organizationId, 'contacts', request)
-    const cached = await getCachedApiResponse(cacheKey, CacheConfigs.contacts)
-    if (cached) {
-      const headers = new Headers(getCacheHeaders(CacheConfigs.contacts.ttl))
-      return NextResponse.json(cached.data, { headers })
-    }
-
-    // 4. Execute query (RLS auto-filters by organization_id)
     const supabase = await createClient()
-    let query = supabase
-      .from('contacts')
-      .select(...)
-      .eq('organization_id', organizationId)
 
-    if (search) {
-      query = query.ilike('name', `%${search}%`)
+    // 1. Verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { data, error, count } = await query.limit(limit).offset(offset)
+    // 2. Get user's organization context
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
 
-    if (error) throw error
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'No organization found' }, { status: 403 })
+    }
 
-    // 5. Cache & return response
-    await cacheApiResponse(cacheKey, { data, count }, CacheConfigs.contacts)
-    return NextResponse.json({ data, pagination: { total: count, page, limit } })
+    // 3. Parse & validate inputs
+    const { id: conversationId } = await params
+    const { tagId, tagName } = await request.json()
 
+    if (!tagId && !tagName) {
+      return NextResponse.json({ error: 'Tag ID or name is required' }, { status: 400 })
+    }
+
+    // 4. Validate inputs with QueryValidators
+    // 5. Execute query (RLS auto-filters by organization_id)
+    // 6. Return response
+
+    return NextResponse.json({ data })
   } catch (error) {
-    console.error('Error fetching contacts:', error)
-    return createErrorResponse(error)
+    console.error('API Error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 ```
 
 ### Admin Routes (Service Role - `src/app/api/admin/*`)
 ```typescript
-// ONLY in /api/admin/* routes
+// ONLY in /api/admin/* routes - bypasses RLS
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
-  // 1. Verify super admin first
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  try {
+    const supabase = await createClient()
 
-  // 2. Check super admin role
-  const isSuperAdmin = await checkSuperAdminStatus(user.id)
-  if (!isSuperAdmin) {
-    return Response.json({ error: 'Forbidden' }, { status: 403 })
+    // 1. Verify super admin first
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // 2. Check super admin role or admin status
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id, role')
+      .eq('id', user.id)
+      .single()
+
+    // 3. Then use service role ONLY for cross-tenant admin operations
+    const serviceSupabase = createServiceRoleClient()
+    const { data } = await serviceSupabase
+      .from('organizations')
+      .select('*')  // No RLS filtering
+
+    return Response.json({ data })
+  } catch (error) {
+    console.error('Admin API Error:', error)
+    return Response.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  // 3. Then use service role for cross-tenant operations
-  const serviceSupabase = createServiceRoleClient()
-  const { data } = await serviceSupabase
-    .from('organizations')
-    .select('*')  // No RLS filtering
 }
 ```
 
 ## Error Handling
 
-### Try-Catch Pattern with ApiException
+### Try-Catch Pattern with Proper Status Codes
 ```typescript
-import { ApiException, createErrorResponse } from '@/lib/api-utils'
-
-try {
-  const result = await operation()
-  return createSuccessResponse(result)
-} catch (error) {
-  console.error('Operation failed:', error)
-  return createErrorResponse(error)
+export async function POST(request: NextRequest) {
+  try {
+    // ... operation code
+    return NextResponse.json({ data })
+  } catch (error) {
+    console.error('Operation failed:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
 ```
 
@@ -241,19 +281,17 @@ export class ApiException extends Error {
 throw new ApiException('Resource not found', 404, 'NOT_FOUND')
 ```
 
-### Validation Errors
+### Input Validation Errors
 ```typescript
-import { QueryValidators, ValidationErrorCodes } from '@/lib/security/input-validation'
+import { QueryValidators, ValidationErrorCodes, detectSQLInjection } from '@/lib/security/input-validation'
 
-const validation = QueryValidators.uuid(id)
-if (!validation.isValid) {
-  return NextResponse.json(
-    { error: validation.error, code: validation.errorCode },
-    { status: 400 }
-  )
+// Validate UUID
+const orgValidation = QueryValidators.uuid(organizationId)
+if (!orgValidation.isValid) {
+  return NextResponse.json({ error: orgValidation.error }, { status: 400 })
 }
 
-// SQL injection detection
+// Detect SQL injection
 if (detectSQLInjection(userInput)) {
   return NextResponse.json(
     { error: 'Invalid input', code: ValidationErrorCodes.SQL_INJECTION_DETECTED },
@@ -269,9 +307,10 @@ if (detectSQLInjection(userInput)) {
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-interface State {
+interface WorkflowState {
   workflow: Workflow | null
   nodes: WorkflowNode[]
+  edges: WorkflowEdge[]
   isValidating: boolean
 
   // Actions
@@ -280,12 +319,13 @@ interface State {
   validateWorkflow: () => Promise<ValidationResult>
 }
 
-export const useWorkflowStore = create<State>(
+export const useWorkflowStore = create<WorkflowState>(
   devtools(
     persist(
       (set) => ({
         workflow: null,
         nodes: [],
+        edges: [],
         isValidating: false,
 
         setWorkflow: (workflow) => set({ workflow }),
@@ -305,11 +345,194 @@ export const useWorkflowStore = create<State>(
 )
 ```
 
+## Import Organization
+
+### Order
+1. React and Next.js imports
+2. Third-party library imports (alphabetical)
+3. Internal components (`@/components/`)
+4. Internal hooks (`@/hooks/`)
+5. Internal utilities and lib (`@/lib/`, `@/utils/`)
+6. Internal types (`@/types/`)
+7. Styles/CSS imports
+
+### Example
+```typescript
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { Settings, Trash2 } from 'lucide-react'
+
+import { clsx } from 'clsx'
+
+import EnhancedConversationList from './enhanced-conversation-list'
+import ConversationTagSelector from './conversation-tag-selector'
+import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from '@/components/providers/translation-provider'
+import type { Conversation, Message } from '@/types/database'
+```
+
+## Comments & Documentation
+
+### When to Comment
+- Complex business logic or algorithms
+- Security-critical decisions (marked with 🔒)
+- Performance optimizations (marked with ⚡)
+- Non-obvious algorithmic approaches
+- Workarounds or hacks (marked with 🔧)
+- TODO items for deferred work
+- Migration notes explaining `@ts-nocheck` usage
+
+### Section Dividers
+```typescript
+// ============================================================================
+// AUTHENTICATION & VALIDATION
+// ============================================================================
+```
+
+### JSDoc Format
+```typescript
+/**
+ * Creates a Supabase server client with cookie handling for Next.js 15 App Router.
+ * This function MUST be awaited in server components and API routes.
+ *
+ * @example
+ * ```typescript
+ * const supabase = await createClient()
+ * const { data } = await supabase.from('table').select()
+ * ```
+ */
+export async function createClient() {
+  // ... implementation
+}
+```
+
+### Security Comments
+```typescript
+/**
+ * Input Validation Library for SQL Injection Prevention
+ *
+ * Provides comprehensive validation and sanitization functions for all user inputs
+ * that will be used in database queries. This library follows a whitelist-first
+ * approach and ensures that all inputs meet strict security criteria before
+ * being passed to RPC functions or database queries.
+ *
+ * Security Standards:
+ * - OWASP Top 10 Compliance
+ * - Parameterized query enforcement
+ * - Strict type validation
+ * - Whitelist-based validation
+ */
+```
+
+### Performance Comments
+```typescript
+// ⚡ PERFORMANCE: Memoized icons to prevent recreation on render
+const MenuIcon = memo(() => <svg>...</svg>)
+
+// ⚡ PERFORMANCE: Cache key from request parameters to avoid repeated computation
+const cacheKey = generateApiCacheKey(organizationId, 'contacts', request)
+```
+
+### Workaround Comments
+```typescript
+// 🔧 FIX: Query organization directly instead of relying on middleware headers
+// Root cause: Next.js 15 doesn't propagate headers when middleware returns null
+const userOrg = await getUserOrganization(user.id)
+```
+
+### Security Risk Markers
+```typescript
+// 🔒 SECURITY: Service role key logging removed
+// Previously logged service role key prefix - security risk in production
+// Service role client creation should be minimal and secure
+```
+
+## Logging
+
+### Framework
+Custom `logger` utility in `src/lib/security/logger.ts`
+
+**Features:**
+- Automatic PII/sensitive data redaction (passwords, tokens, SSN, emails, phone numbers)
+- Structured logging format
+- Environment-aware verbosity
+- Security event tracking
+
+### Patterns
+- **DO NOT use:** `console.log()`, `console.error()`, `console.warn()` in new code
+- **Use instead:** `logger.debug()`, `logger.info()`, `logger.warn()`, `logger.error()`, `logger.security()`
+- Always include context: `{ userId, organizationId, requestId }`
+- Sensitive keys are automatically redacted
+
+**Note:** Console methods appear in legacy code and API routes for compatibility. Gradually migrate to logger utility.
+
+### Example
+```typescript
+import { logger } from '@/lib/security/logger'
+
+// ✅ Correct - uses logger with context
+logger.info('User login successful', {
+  userId: user.id,
+  organizationId: org.id,
+  requestId: req.id,
+})
+
+// Sensitive data is automatically redacted:
+logger.info('Request received', {
+  userId: 'user-123',
+  password: 'secret123',  // Will be [REDACTED_SECRET]
+  email: 'user@example.com',  // Will be masked as u***@example.com
+})
+```
+
+## Function Design
+
+**Size Guidelines:**
+- Aim for functions under 50 lines
+- Single responsibility principle - one job per function
+- Extract complex logic into separate named functions
+
+**Parameters:**
+- Maximum 3-4 parameters; use object destructuring for more
+- Type all parameters explicitly
+- Use options objects for optional parameters
+
+**Return Values:**
+- Always explicit return type in TypeScript
+- Use discriminated unions for success/error patterns
+- Return early to reduce nesting
+
+**Example:**
+```typescript
+// ✅ Good - clear, single purpose
+function normalizePhoneNumber(input: string): string {
+  return input
+    .trim()
+    .replace(/[\s\-().\/]/g, '')
+    .replace(/^(?!\+)/, '+')
+}
+
+// ✅ Better with object destructuring
+function processUser({
+  id,
+  email,
+  role,
+  organization,
+  onComplete,
+}: UserProcessingOptions) {
+  // ...
+}
+```
+
 ## Real-Time Subscriptions
 
 ### Supabase Realtime Pattern
 ```typescript
 'use client'
+
+import { useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 useEffect(() => {
   const supabase = createClient()
@@ -334,163 +557,44 @@ useEffect(() => {
 }, [organizationId])
 ```
 
-## Import Organization
+## Multi-Tenant Security
 
-### Order
-1. React/Next.js imports
-2. Third-party packages
-3. Internal components (`@/components/`)
-4. Internal lib (`@/lib/`)
-5. Types (`@/types/`)
-6. Styles
+**Critical:** All database queries must include organization context.
 
-### Example
 ```typescript
-import { useState, useEffect, memo } from 'react'
-import { useRouter } from 'next/navigation'
-
-import { clsx } from 'clsx'
-import { framerMotion } from 'framer-motion'
-
-import { DashboardHeader } from '@/components/dashboard/header'
-import { createClient } from '@/lib/supabase/client'
-import { validateEmail } from '@/lib/security/input-validation'
-import type { Organization } from '@/types/database'
-```
-
-## Comments & Documentation
-
-### When to Comment
-- Security-critical logic (input validation, RLS policies)
-- Complex business logic or algorithms (workflow engine, CRM sync)
-- Migration notes: `// @ts-nocheck` with reason
-- Performance optimizations: `// ⚡ PERFORMANCE:`
-- Workarounds/hacks: `// 🔧 FIX:`
-- TODO items: `// TODO:` (tracked as tech debt)
-
-### JSDoc Format
-```typescript
-/**
- * Validates user input for SQL injection patterns
- * @param input - User-provided string to check
- * @returns true if injection detected, false otherwise
- * @throws Error if validation fails unexpectedly
- */
-export function detectSQLInjection(input: string): boolean {
-  // Implementation
-}
-
-// Single-line for simple functions
-// Sanitizes HTML to prevent XSS attacks
-export function sanitizeHTML(html: string): string {
-  // Implementation
-}
-```
-
-### Performance Optimization Comments
-```typescript
-// ⚡ PERFORMANCE: Memoized icons to prevent recreation on render
-const MenuIcon = memo(() => <svg>...</svg>)
-
-// ⚡ PERFORMANCE: Cache key from request parameters
-const cacheKey = generateApiCacheKey(organizationId, 'contacts', request)
-```
-
-### Fix/Workaround Comments
-```typescript
-// 🔧 FIX: Query organization directly instead of relying on middleware headers
-// Root cause: Next.js 15 doesn't propagate headers when middleware returns null
-const userOrg = await getUserOrganization(user.id)
-```
-
-## Testing Conventions
-
-### Unit Tests (Jest)
-```typescript
-describe('functionName', () => {
-  beforeEach(() => {
-    // Setup
-    jest.clearAllMocks()
-  })
-
-  it('should do expected behavior', () => {
-    const result = functionName(input)
-    expect(result).toBe(expected)
-  })
-
-  it('should handle edge case', () => {
-    expect(() => functionName(invalid)).toThrow()
-  })
-
-  it('should handle async operation', async () => {
-    const result = await asyncFunction()
-    expect(result).toBeDefined()
-  })
-})
-```
-
-### E2E Tests (Playwright)
-```typescript
-import { test, expect } from '@playwright/test'
-
-test.describe('User Flow', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-  })
-
-  test('should complete flow', async ({ page }) => {
-    // Arrange
-    await page.goto('/path')
-
-    // Act
-    await page.click('[data-testid="start-button"]')
-    await page.fill('[name="email"]', 'test@example.com')
-    await page.click('[type="submit"]')
-
-    // Assert
-    await expect(page.locator('.success')).toBeVisible()
-    await page.screenshot({ path: 'test-results/success.png' })
-  })
-})
-```
-
-## Database/ORM Patterns
-
-### Supabase Query Pattern
-```typescript
-// Server component - RLS-enforced
+// Server component - RLS-enforced auto-filtering
 const supabase = await createClient()
-const { data, error } = await supabase
+const { data } = await supabase
   .from('contacts')
   .select('id, name, phone_number')
   .eq('organization_id', organizationId)  // ALWAYS include org_id
-  .order('created_at', { ascending: false })
-  .limit(10)
 
-if (error) throw error
-
-// Client component
-const supabase = createClient()  // Synchronous
+// Client component - same pattern
+const supabase = createClient()
 const { data } = await supabase
   .from('contacts')
   .select()
   .eq('organization_id', organizationId)
 ```
 
-### Multi-Tenant Isolation
-All queries must include `organization_id` filter:
+**RLS (Row Level Security):**
 - Prevents data leaks between organizations
-- Enforced via Row Level Security (RLS) policies
-- RLS-enabled client automatically filters (use in server routes)
-- Service role client bypasses RLS (admin routes only)
+- Server client automatically enforces via RLS policies
+- Service role client bypasses RLS (admin routes only in `/api/admin/*`)
 
-## Performance Markers & Optimization
+## Current State Notes
 
-Inline comments for intentional optimizations:
-- `// ⚡ PERFORMANCE: description` - Performance optimization reason
-- `// 🔧 FIX: description` - Workaround or fix reason
-- `// @ts-nocheck` - Type checking relaxation justification
+**TypeScript Strict Migration:**
+- Strict mode is ENABLED (`strict: true`)
+- Many files have `@ts-nocheck` comments due to database type mismatches
+- This is temporary - regenerate types with: `npx supabase gen types typescript --linked > src/types/database.ts`
+- Target: eliminate `@ts-nocheck` comments within next phase
+
+**Legacy Rules Relaxed:**
+- ESLint warnings (not errors) allow gradual migration
+- Refactoring components should add explicit types
+- Reducing type errors reduces reliance on `@ts-nocheck`
 
 ---
 
-*Convention analysis: 2026-01-23*
+*Convention analysis: 2026-01-28*
