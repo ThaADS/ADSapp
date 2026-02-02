@@ -480,12 +480,12 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
         <div className='p-6'>
           <div className='mb-4 flex items-center'>
             <PaintBrushIcon className='mr-2 h-6 w-6 text-emerald-600' />
-            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.branding')}</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>{t('organization.branding.title')}</h3>
           </div>
 
           <div className='space-y-6'>
             <div>
-              <label className='block text-sm font-medium text-gray-700'>{t('organization.logo')}</label>
+              <label className='block text-sm font-medium text-gray-700'>{t('organization.branding.logo')}</label>
               <div className='mt-1 flex items-center space-x-4'>
                 <div className='flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-gray-200'>
                   {logoUrl ? (
@@ -500,7 +500,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                 </div>
                 <div className='flex space-x-2'>
                   <label className='cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none'>
-                    {uploadingLogo ? t('organization.uploading') : t('organization.uploadLogo')}
+                    {uploadingLogo ? t('organization.branding.uploading') : t('organization.branding.uploadLogo')}
                     <input
                       type='file'
                       accept='image/jpeg,image/jpg,image/png,image/webp,image/svg+xml'
@@ -521,14 +521,14 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
                 </div>
               </div>
               <p className='mt-2 text-xs text-gray-500'>
-                {t('organization.logoHelp')}
+                {t('organization.branding.logoHelp')}
               </p>
             </div>
 
             <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
               <div>
                 <label htmlFor='primaryColor' className='block text-sm font-medium text-gray-700'>
-                  {t('organization.primaryColor')}
+                  {t('organization.branding.primaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -550,7 +550,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
 
               <div>
                 <label htmlFor='secondaryColor' className='block text-sm font-medium text-gray-700'>
-                  {t('organization.secondaryColor')}
+                  {t('organization.branding.secondaryColor')}
                 </label>
                 <div className='mt-1 flex items-center space-x-3'>
                   <input
@@ -578,7 +578,7 @@ function OrganizationSettingsComponent({ profile }: OrganizationSettingsProps) {
 
             {/* Preview */}
             <div className='border-t border-gray-200 pt-4'>
-              <h4 className='mb-3 text-sm font-medium text-gray-700'>{t('organization.preview')}</h4>
+              <h4 className='mb-3 text-sm font-medium text-gray-700'>{t('organization.branding.preview')}</h4>
               <div className='flex space-x-3'>
                 <div
                   className='rounded-md px-4 py-2 text-sm font-medium text-white'

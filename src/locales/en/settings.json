@@ -102,13 +102,13 @@
         "title": "Organization Settings",
         "basicInfo": "Basic Information",
         "days": {
-            "Monday": "Monday",
-            "Tuesday": "Tuesday",
-            "Wednesday": "Wednesday",
-            "Thursday": "Thursday",
-            "Friday": "Friday",
-            "Saturday": "Saturday",
-            "Sunday": "Sunday"
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday"
         },
         "name": "Organization Name",
         "enterName": "Enter organization name",
@@ -140,6 +140,7 @@
         "ownerOnly": "Note: Some settings can only be modified by the organization owner.",
         "branding": {
             "title": "Branding",
+            "preview": "Preview",
             "logo": "Logo Upload",
             "uploadLogo": "Upload Logo",
             "logoHelp": "PNG, JPG up to 2MB. Recommended size: 200x200px",

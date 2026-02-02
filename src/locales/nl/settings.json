@@ -102,13 +102,13 @@
         "title": "Organisatie-instellingen",
         "basicInfo": "Basis Informatie",
         "days": {
-            "Monday": "Maandag",
-            "Tuesday": "Dinsdag",
-            "Wednesday": "Woensdag",
-            "Thursday": "Donderdag",
-            "Friday": "Vrijdag",
-            "Saturday": "Zaterdag",
-            "Sunday": "Zondag"
+            "monday": "Maandag",
+            "tuesday": "Dinsdag",
+            "wednesday": "Woensdag",
+            "thursday": "Donderdag",
+            "friday": "Vrijdag",
+            "saturday": "Zaterdag",
+            "sunday": "Zondag"
         },
         "name": "Organisatienaam",
         "enterName": "Voer organisatienaam in",
@@ -140,6 +140,7 @@
         "ownerOnly": "Opmerking: Sommige instellingen kunnen alleen door de eigenaar worden gewijzigd.",
         "branding": {
             "title": "Huisstijl",
+            "preview": "Voorbeeld",
             "logo": "Logo uploaden",
             "uploadLogo": "Upload Logo",
             "logoHelp": "PNG, JPG tot 2MB. Aanbevolen: 200x200px",
