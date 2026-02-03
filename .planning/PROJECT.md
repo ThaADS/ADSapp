@@ -48,13 +48,30 @@ See: `.planning/REQUIREMENTS-v2.md` for complete list (73 requirements)
 - On-premise deployment (SaaS-only)
 - Telegram/LINE/Viber (focus on Meta ecosystem + SMS first)
 
-## Current Milestone: v2.0 Feature Gap Implementation
+## Current Milestone: v2.3 Twilio WhatsApp Integration
+
+**Goal:** Add Twilio as alternative WhatsApp provider with full feature parity to Cloud API
+
+**Target features:**
+- Twilio WhatsApp webhook handler and message processing
+- Send/receive text, media, and template messages via Twilio
+- Conversation sync and real-time updates
+- Status tracking (sent, delivered, read, failed)
+- Full integration with existing ChannelAdapter architecture
+
+**Phases:** 21-24 (4 phases)
+**Requirements:** 12
+**Status:** Defining requirements
+
+---
+
+## Previous Milestone: v2.0 Feature Gap Implementation
 
 **Goal:** Expand ADSapp from WhatsApp-only to full omnichannel messaging platform
 
 **Phases:** 8-19 (12 phases total)
 **Requirements:** 73
-**Status:** Roadmap created
+**Status:** Complete (97%)
 
 ### Phase Summary
 
@@ -108,6 +125,7 @@ The platform has 200+ files with `@ts-nocheck`, TypeScript strict mode disabled,
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Twilio WhatsApp as alternative provider | User already connected via Twilio, full parity with Cloud API | 2026-02-03 |
 | Build UnifiedMessageRouter FIRST | All channels depend on unified routing | 2026-01-23 |
 | ADSapp as OAuth PROVIDER for Zapier | Zapier needs to authorize against ADSapp | 2026-01-23 |
 | Single Meta webhook with page_id routing | Simpler than per-page webhooks | 2026-01-23 |
@@ -119,4 +137,4 @@ The platform has 200+ files with `@ts-nocheck`, TypeScript strict mode disabled,
 | Incremental strict mode | Avoid big-bang migration | 2026-01-21 |
 
 ---
-*Last updated: 2026-01-23 after v2.0 roadmap creation*
+*Last updated: 2026-02-03 after v2.3 milestone start*

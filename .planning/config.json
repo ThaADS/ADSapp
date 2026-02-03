@@ -1,8 +1,38 @@
 {
   "project_name": "ADSapp",
-  "milestone": "v1.0 - Technical Debt Cleanup",
+  "milestone": "v2.3 - Twilio WhatsApp Integration",
   "model_profile": "balanced",
   "commit_docs": true,
   "created": "2026-01-21",
-  "current_phase": 1
+  "current_phase": 21,
+  "agents_marketplace": "claude-code-workflows",
+  "agents_config": ".planning/AGENTS.md",
+  "enabled_agent_plugins": [
+    "javascript-typescript",
+    "backend-development",
+    "database-design",
+    "payment-processing",
+    "security-scanning",
+    "backend-api-security",
+    "unit-testing",
+    "code-review-ai",
+    "frontend-mobile-development",
+    "llm-application-dev",
+    "full-stack-orchestration",
+    "tdd-workflows"
+  ],
+  "phase_agent_mapping": {
+    "1-7": ["typescript-pro", "code-reviewer", "test-automator", "security-auditor"],
+    "8": ["backend-architect", "database-architect", "security-auditor"],
+    "9": ["backend-architect", "frontend-developer"],
+    "10": ["backend-architect", "security-auditor"],
+    "11": ["frontend-developer", "backend-architect"],
+    "12": ["backend-architect", "payment-integration"],
+    "13-14": ["backend-architect", "frontend-developer"],
+    "15": ["backend-architect", "security-auditor"],
+    "16-17": ["mobile-developer", "frontend-developer"],
+    "18": ["backend-architect", "performance-engineer"],
+    "19": ["ai-engineer", "database-architect"],
+    "21-24": ["backend-architect", "security-auditor", "test-automator"]
+  }
 }

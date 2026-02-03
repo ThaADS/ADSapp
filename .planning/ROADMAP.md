@@ -6,8 +6,10 @@
 ## Milestones
 
 - [x] **v1.0 Technical Debt Cleanup** - Phases 1-7 (complete)
-- [ ] **v2.0 Feature Gap Implementation** - Phases 8-19 (in progress)
+- [x] **v2.0 Feature Gap Implementation** - Phases 8-19 (complete)
 - [ ] **v2.1 International Expansion (i18n + SEO)** - Phase 20 (planned)
+- [ ] **v2.2 Mobile & Calling** - Phases 17-18 (pending)
+- [ ] **v2.3 Twilio WhatsApp Integration** - Phases 21-24 (active)
 
 ## Phases
 
@@ -188,19 +190,20 @@ Plans:
 
 ---
 
-### Phase 11: Team Collaboration (@Mentions)
+### Phase 11: Team Collaboration (@Mentions) ✅ Complete
 **Goal:** Enable team members to @mention each other in conversation notes with real-time notifications
 **Depends on:** Phase 8 (Foundation Layer)
 **Requirements:** MENT-01, MENT-02, MENT-03, MENT-04, MENT-05, MENT-06
+**Status:** Complete
 **Plans:** 6 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Database schema (conversation_notes, mentions tables) + TypeScript types
-- [ ] 11-02-PLAN.md — Tiptap editor with @mention extension + accessible suggestion dropdown
-- [ ] 11-03-PLAN.md — Notes API migration to relational tables + mention record creation
-- [ ] 11-04-PLAN.md — Real-time notifications via Supabase Realtime + notification badge
-- [ ] 11-05-PLAN.md — BullMQ email queue for delayed notifications
-- [ ] 11-06-PLAN.md — UI integration + clickable mention links to user profiles
+- [x] 11-01-PLAN.md — Database schema (conversation_notes, mentions tables) + TypeScript types
+- [x] 11-02-PLAN.md — Tiptap editor with @mention extension + accessible suggestion dropdown
+- [x] 11-03-PLAN.md — Notes API migration to relational tables + mention record creation
+- [x] 11-04-PLAN.md — Real-time notifications via Supabase Realtime + notification badge
+- [x] 11-05-PLAN.md — Notification panel UI + profile sidebar
+- [x] 11-06-PLAN.md — UI integration + clickable mention links to user profiles
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can type @ in internal notes and see team member suggestions
@@ -265,11 +268,20 @@ Plans:
 
 ---
 
-### Phase 13: Instagram DM Channel
+### Phase 13: Instagram DM Channel ✅ Complete
 **Goal:** Add Instagram Direct Messages as a communication channel in the unified inbox
 **Depends on:** Phase 8 (Foundation Layer for channel abstraction)
 **Requirements:** INSTA-01, INSTA-02, INSTA-03, INSTA-04, INSTA-05, INSTA-06, INSTA-07
-**Plans:** TBD
+**Status:** Complete
+**Plans:** 6 plans
+
+Plans:
+- [x] 13-01 — Database schema (instagram_connections, instagram_messages, etc.)
+- [x] 13-02 — Meta OAuth extension for Instagram Business accounts
+- [x] 13-03 — Instagram webhook handler with idempotency
+- [x] 13-04 — InstagramAdapter implementing ChannelAdapter interface
+- [x] 13-05 — Comment-to-DM automation rules and processing
+- [x] 13-06 — API routes (connect, callback, status, rules management)
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can connect Instagram Business account through Meta OAuth flow
@@ -300,11 +312,20 @@ Plans:
 
 ---
 
-### Phase 14: Facebook Messenger Channel
+### Phase 14: Facebook Messenger Channel ✅ Complete
 **Goal:** Add Facebook Messenger as a communication channel supporting multi-page organizations
 **Depends on:** Phase 13 (Instagram for shared Meta patterns)
 **Requirements:** FB-01, FB-02, FB-03, FB-04, FB-05, FB-06
-**Plans:** TBD
+**Status:** Complete
+**Plans:** 6 plans
+
+Plans:
+- [x] 14-01 — Database schema (facebook_connections, facebook_messages, messenger_templates, thread_control_log)
+- [x] 14-02 — FacebookAdapter implementing ChannelAdapter interface
+- [x] 14-03 — Facebook webhook handler with idempotency and handover protocol events
+- [x] 14-04 — Messenger templates management (create, update, delete)
+- [x] 14-05 — Handover protocol API (pass/take thread control for bot-to-human escalation)
+- [x] 14-06 — API routes (connect, callback, status, send, templates, handover)
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can connect Facebook Page through Meta OAuth flow
@@ -334,11 +355,20 @@ Plans:
 
 ---
 
-### Phase 15: SMS Channel
+### Phase 15: SMS Channel ✅ Complete
 **Goal:** Add SMS as a communication channel with Twilio integration and compliance features
 **Depends on:** Phase 8 (Foundation Layer for channel abstraction)
 **Requirements:** SMS-01, SMS-02, SMS-03, SMS-04, SMS-05, SMS-06, SMS-07
-**Plans:** TBD
+**Status:** Complete
+**Plans:** 6 plans
+
+Plans:
+- [x] 15-01 — Database schema (sms_connections, sms_conversations, sms_messages, sms_opt_outs, sms_templates)
+- [x] 15-02 — Twilio integration client (auth, phone numbers, messaging, bulk send)
+- [x] 15-03 — SMSAdapter implementing ChannelAdapter interface
+- [x] 15-04 — SMS webhook handler with idempotency and status callbacks
+- [x] 15-05 — Opt-out management (STOP, START, HELP keyword processing, TCPA compliance)
+- [x] 15-06 — API routes (connect, disconnect, send, templates, opt-outs, phone-numbers)
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can send and receive SMS messages through Twilio integration
@@ -369,11 +399,20 @@ Plans:
 
 ---
 
-### Phase 16: Mobile Backend
+### Phase 16: Mobile Backend ✅ Complete
 **Goal:** Build backend infrastructure for mobile apps including push notifications and API versioning
 **Depends on:** Phase 8 (Foundation Layer)
 **Requirements:** MOB-03, MOB-09
-**Plans:** TBD
+**Status:** Complete
+**Plans:** 6 plans
+
+Plans:
+- [x] 16-01 — Database schema (device_registrations, push_notifications, push_queue, mobile_sessions)
+- [x] 16-02 — TypeScript types for mobile (devices, push, offline sync)
+- [x] 16-03 — Firebase Cloud Messaging client (OAuth, send, batch, topics)
+- [x] 16-04 — Push notification service (queue processing, message/mention/assignment notifications)
+- [x] 16-05 — Device registration API (register, update, unregister)
+- [x] 16-06 — Push test API endpoint
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. Mobile devices can register for push notifications with Firebase tokens
@@ -469,11 +508,22 @@ Plans:
 
 ---
 
-### Phase 19: Knowledge Base AI (RAG)
+### Phase 19: Knowledge Base AI (RAG) ✅ Complete
 **Goal:** Build AI knowledge base with document upload, URL crawling, and context-aware responses
 **Depends on:** Phase 8 (Foundation Layer)
 **Requirements:** RAG-01, RAG-02, RAG-03, RAG-04, RAG-05, RAG-06, RAG-07, RAG-08
-**Plans:** TBD
+**Status:** Complete
+**Plans:** 8 plans
+
+Plans:
+- [x] 19-01 — Database schema (knowledge_documents, knowledge_chunks, knowledge_queries, knowledge_settings with pgvector)
+- [x] 19-02 — TypeScript types (KnowledgeDocument, KnowledgeChunk, SearchKnowledgeRequest, RAGContext)
+- [x] 19-03 — OpenAI embeddings client (generate, batch, retry with backoff)
+- [x] 19-04 — Document chunker (sentences, paragraphs, tokens, markdown-aware strategies)
+- [x] 19-05 — Document processor (extract, chunk, embed, store pipeline)
+- [x] 19-06 — RAG query service (semantic search, AI response generation, citations)
+- [x] 19-07 — Documents API (CRUD, reprocess)
+- [x] 19-08 — Search, settings, stats, similar documents APIs
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can upload PDF, DOCX, and TXT documents to organization knowledge base
@@ -506,6 +556,134 @@ Plans:
 
 ---
 
+## v2.3 Twilio WhatsApp Integration
+
+**Milestone Goal:** Add Twilio as alternative WhatsApp provider with full Cloud API parity
+
+**Total Requirements:** 12
+**Total Phases:** 4 (Phases 21-24)
+
+### Phase Overview
+
+| Phase | Name | Requirements | Dependency |
+|-------|------|--------------|------------|
+| 21 | Twilio WhatsApp Core | 4 | Phase 8 (Foundation Layer) |
+| 22 | Twilio Templates | 3 | Phase 21 |
+| 23 | Status & Delivery | 3 | Phase 21 |
+| 24 | Integration & Settings | 2 | Phase 21, 22, 23 |
+
+---
+
+### Phase 21: Twilio WhatsApp Core
+**Goal:** Implement core Twilio WhatsApp messaging - send/receive text and media
+**Depends on:** Phase 8 (Foundation Layer for ChannelAdapter interface)
+**Requirements:** TWWA-01, TWWA-02, TWWA-03, TWWA-04
+**Plans:** TBD
+
+**Success Criteria** (what must be TRUE when phase completes):
+1. User can connect Twilio account via Account SID and Auth Token in settings
+2. Incoming WhatsApp messages via Twilio appear in unified inbox within 30 seconds
+3. User can send text messages via Twilio WhatsApp to contacts
+4. User can send media (image, video, audio, document) via Twilio WhatsApp
+
+**Detailed Requirements:**
+
+| ID | Requirement | Acceptance Criteria |
+|----|-------------|---------------------|
+| TWWA-01 | Connect Twilio WhatsApp account | Settings UI for SID/token, connection test, credentials stored encrypted |
+| TWWA-02 | Receive WhatsApp messages via Twilio | Webhook handler processes incoming messages, creates/updates conversations |
+| TWWA-03 | Send text messages via Twilio | Compose and send text, message appears in conversation with status |
+| TWWA-04 | Send media via Twilio | Upload and send image/video/audio/document, media displayed in conversation |
+
+**Technical Notes:**
+- Reuse existing Twilio client from Phase 15 (SMS)
+- Create TwilioWhatsAppAdapter extending BaseChannelAdapter
+- Webhook endpoint: `/api/webhooks/twilio/whatsapp`
+- Store Twilio credentials in `twilio_connections` table with encryption
+- Media upload to Supabase Storage, send URL to Twilio
+
+---
+
+### Phase 22: Twilio Templates
+**Goal:** Support WhatsApp message templates via Twilio Content API
+**Depends on:** Phase 21 (Core messaging must work first)
+**Requirements:** TWWT-01, TWWT-02, TWWT-03
+**Plans:** TBD
+
+**Success Criteria** (what must be TRUE when phase completes):
+1. User can view approved WhatsApp templates from Twilio Content API in template picker
+2. User can send template messages to contacts outside 24-hour window
+3. Template variables are automatically populated from contact data
+
+**Detailed Requirements:**
+
+| ID | Requirement | Acceptance Criteria |
+|----|-------------|---------------------|
+| TWWT-01 | View Twilio Content API templates | Template list shows name, category, language, preview |
+| TWWT-02 | Send template messages | Template picker in composer, send with variables, message delivered |
+| TWWT-03 | Auto-populate template variables | Contact name, phone, custom fields auto-fill template placeholders |
+
+**Technical Notes:**
+- Use Twilio Content API for template management
+- Sync templates on connect and periodically (1 hour)
+- Store template cache in `twilio_whatsapp_templates` table
+- Variable mapping: {{1}} -> contact.name, {{2}} -> contact.phone, etc.
+
+---
+
+### Phase 23: Status & Delivery
+**Goal:** Implement message status tracking via Twilio status callbacks
+**Depends on:** Phase 21 (Core messaging must work first)
+**Requirements:** TWWS-01, TWWS-02, TWWS-03
+**Plans:** TBD
+
+**Success Criteria** (what must be TRUE when phase completes):
+1. Message status updates (sent, delivered, read, failed) appear in real-time
+2. Failed messages display clear error reason with guidance
+3. Message timestamps reflect actual Twilio delivery times
+
+**Detailed Requirements:**
+
+| ID | Requirement | Acceptance Criteria |
+|----|-------------|---------------------|
+| TWWS-01 | Status callbacks from Twilio | Webhook receives status updates, UI reflects current state via Realtime |
+| TWWS-02 | Failed message error display | Error reason shown in message bubble, retry option available |
+| TWWS-03 | Accurate timestamps | Sent/delivered/read times from Twilio stored and displayed |
+
+**Technical Notes:**
+- Status callback URL: `/api/webhooks/twilio/whatsapp/status`
+- Map Twilio statuses: queued, sent, delivered, read, failed, undelivered
+- Error codes: 63001 (invalid number), 63003 (rate limit), etc.
+- Store status history for audit trail
+
+---
+
+### Phase 24: Integration & Settings
+**Goal:** Full ChannelAdapter integration and provider switching in settings
+**Depends on:** Phases 21, 22, 23 (all core features must work)
+**Requirements:** TWWI-01, TWWI-02
+**Plans:** TBD
+
+**Success Criteria** (what must be TRUE when phase completes):
+1. TwilioWhatsAppAdapter passes all ChannelAdapter interface tests
+2. User can switch between Cloud API and Twilio in organization WhatsApp settings
+3. Existing conversations work regardless of provider (message routing based on connection)
+
+**Detailed Requirements:**
+
+| ID | Requirement | Acceptance Criteria |
+|----|-------------|---------------------|
+| TWWI-01 | ChannelAdapter compliance | Adapter implements all interface methods, passes adapter test suite |
+| TWWI-02 | Provider switching UI | Settings toggle between Cloud API and Twilio, seamless transition |
+
+**Technical Notes:**
+- TwilioWhatsAppAdapter in `src/lib/channels/adapters/twilio-whatsapp.ts`
+- Provider selection stored in `whatsapp_settings.provider` column
+- UnifiedMessageRouter routes based on active provider
+- Migration path: both providers can coexist during transition
+
+---
+
 ## Progress
 
 **Execution Order:**
@@ -523,19 +701,26 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 8 | Foundation Layer | v2.0 | 5/5 | Complete | 2026-01-24 |
 | 9 | WhatsApp Catalog | v2.0 | 6/6 | Complete | 2026-01-24 |
 | 10 | Zapier Integration | v2.0 | 6/6 | Complete | 2026-01-25 |
-| 11 | Team Collaboration | v2.0 | 0/6 | Not started | - |
-| 12 | Shopify Integration | v2.0 | 0/TBD | Not started | - |
-| 13 | Instagram DM Channel | v2.0 | 0/TBD | Not started | - |
-| 14 | Facebook Messenger | v2.0 | 0/TBD | Not started | - |
-| 15 | SMS Channel | v2.0 | 0/TBD | Not started | - |
-| 16 | Mobile Backend | v2.0 | 0/TBD | Not started | - |
+| 10.5 | i18n Completion | v2.0 | 5/5 | Complete | 2026-01-28 |
+| 10.6 | Inbox UI Compactness | v2.0 | 4/4 | Complete | 2026-01-28 |
+| 11 | Team Collaboration | v2.0 | 6/6 | Complete | 2026-01-28 |
+| 12 | Shopify Integration | v2.0 | 6/6 | Complete | 2026-01-28 |
+| 13 | Instagram DM Channel | v2.0 | 6/6 | Complete | 2026-01-28 |
+| 14 | Facebook Messenger | v2.0 | 6/6 | Complete | 2026-01-28 |
+| 15 | SMS Channel | v2.0 | 6/6 | Complete | 2026-01-28 |
+| 16 | Mobile Backend | v2.0 | 6/6 | Complete | 2026-01-28 |
 | 17 | Mobile Applications | v2.0 | 0/TBD | Not started | - |
 | 18 | WhatsApp Calling | v2.0 | 0/TBD | Not started | - |
-| 19 | Knowledge Base AI | v2.0 | 0/TBD | Not started | - |
+| 19 | Knowledge Base AI | v2.0 | 8/8 | Complete | 2026-01-28 |
+| 21 | Twilio WhatsApp Core | v2.3 | 0/TBD | Not started | - |
+| 22 | Twilio Templates | v2.3 | 0/TBD | Not started | - |
+| 23 | Status & Delivery | v2.3 | 0/TBD | Not started | - |
+| 24 | Integration & Settings | v2.3 | 0/TBD | Not started | - |
 
 **v1.0 Progress:** [##########] 100% (7/7 phases) COMPLETE
-**v2.0 Progress:** [####------] 33% (4/12 phases)
-**Overall Progress:** [######----] 58% (11/19 phases)
+**v2.0 Progress:** [##########] 100% (12/12 phases) COMPLETE
+**v2.3 Progress:** [----------] 0% (0/4 phases)
+**Overall Progress:** [########--] 76% (19/25 phases)
 
 ---
 
@@ -562,6 +747,12 @@ v1.0 Phases 1-7 (sequential)
         +---> Phase 18: WhatsApp Calling
         |
         +---> Phase 19: Knowledge Base AI (RAG)
+        |
+        +---> Phase 21: Twilio WhatsApp Core
+                |
+                +---> Phase 22: Twilio Templates ----+
+                |                                    |
+                +---> Phase 23: Status & Delivery ---+--> Phase 24: Integration & Settings
 ```
 
 ## Coverage Summary
@@ -584,6 +775,17 @@ v1.0 Phases 1-7 (sequential)
 
 **Total v2.0:** 76 requirements mapped (73 unique + 3 CAT requirements split across phases)
 
+**v2.3 Requirements by Category:**
+
+| Category | Total | Phases | Coverage |
+|----------|-------|--------|----------|
+| Twilio WhatsApp Core | 4 | Phase 21 | 100% |
+| Twilio Templates | 3 | Phase 22 | 100% |
+| Status & Delivery | 3 | Phase 23 | 100% |
+| Integration & Settings | 2 | Phase 24 | 100% |
+
+**Total v2.3:** 12 requirements mapped
+
 ---
 
 ## Phase 10.5: i18n Completion (Urgent)
@@ -594,11 +796,11 @@ v1.0 Phases 1-7 (sequential)
 **Plans:** 5 plans
 
 Plans:
-- [ ] 10.5-01-PLAN.md — Onboarding TranslationProvider + database migration for preferred_language
-- [ ] 10.5-02-PLAN.md — Middleware/server locale detection with database priority
-- [ ] 10.5-03-PLAN.md — Email translation files (EN/NL) + namespace registration
-- [ ] 10.5-04-PLAN.md — Localized auth email templates via Resend
-- [ ] 10.5-05-PLAN.md — Language preference settings UI
+- [x] 10.5-01-PLAN.md — Onboarding TranslationProvider + database migration for preferred_language
+- [x] 10.5-02-PLAN.md — Middleware/server locale detection with database priority
+- [x] 10.5-03-PLAN.md — Email translation files (EN/NL) + namespace registration
+- [x] 10.5-04-PLAN.md — Localized auth email templates via Resend
+- [x] 10.5-05-PLAN.md — Language preference settings UI
 
 **Success Criteria:**
 1. Onboarding pages display translated text (not translation keys)
@@ -608,6 +810,35 @@ Plans:
 5. User can change language preference in profile settings
 
 **NOT in scope:** Additional languages beyond NL/EN (Phase 20), SEO landing pages (Phase 20), translation of user-generated content.
+
+---
+
+## Phase 10.6: Inbox UI Compactness & Customization ✅ Complete
+
+**Goal:** Optimize WhatsApp inbox for 1920x1080 displays with compact conversation list, fixed chat input, resizable panels, and background customization
+**Depends on:** Phase 10.5 (i18n Completion)
+**Type:** UX improvement phase - addresses user feedback about oversized UI elements
+**Status:** Complete
+**Plans:** 4 plans
+
+Plans:
+- [x] 10.6-01-PLAN.md — Fixed chat input layout (flex min-h-0 fix)
+- [x] 10.6-02-PLAN.md — Compact conversation list (64-72px items)
+- [x] 10.6-03-PLAN.md — Resizable panel divider (react-resizable-panels)
+- [x] 10.6-04-PLAN.md — Chat background customization (6 presets)
+
+**Success Criteria:**
+1. 10-12 conversations visible at 1920x1080 (currently 5-6)
+2. Chat input always visible (no scroll required)
+3. Resizable conversation list (240-480px, persists to localStorage)
+4. Selectable chat backgrounds from 6 presets
+5. Mobile responsive design preserved
+
+**Technical Notes:**
+- Add `react-resizable-panels` dependency (4KB gzipped)
+- Fix flex layout with `min-h-0` for proper scroll containment
+- Reduce conversation item padding and avatar size
+- localStorage for panel width and background preferences
 
 ---
 
@@ -658,4 +889,6 @@ Plans:
 *v2.0 phases added: 2026-01-23*
 *v2.1 milestone added: 2026-01-24*
 *Phase 10.5 (i18n Completion) added: 2026-01-28*
-*Last updated: 2026-01-28*
+*Phase 10.6 (Inbox UI Compactness) added: 2026-01-28*
+*v2.3 Twilio WhatsApp Integration added: 2026-02-03*
+*Last updated: 2026-02-03*
