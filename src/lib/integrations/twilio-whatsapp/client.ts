@@ -6,6 +6,7 @@
 
 import crypto from 'crypto'
 import { createClient } from '@/lib/supabase/server'
+import type { TwilioContentApiTemplate } from '@/types/twilio-whatsapp'
 
 // Environment variable for encryption
 const ENCRYPTION_KEY = process.env.TWILIO_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || ''
@@ -155,6 +156,103 @@ export class TwilioWhatsAppClient {
       body: caption,
       mediaUrl,
     })
+  }
+
+  /**
+   * Send a template message using Content SID
+   */
+  async sendTemplateMessage(
+    to: string,
+    contentSid: string,
+    contentVariables?: Record<string, string>
+  ): Promise<TwilioMessageResponse> {
+    return this.sendMessage({
+      to,
+      contentSid,
+      contentVariables,
+    })
+  }
+
+  /**
+   * List all content templates from Twilio Content API
+   */
+  async listContentTemplates(): Promise<{
+    success: boolean
+    data?: TwilioContentApiTemplate[]
+    error?: string
+  }> {
+    try {
+      const url = 'https://content.twilio.com/v1/Content'
+      const auth = Buffer.from(`${this.accountSid}:${this.authToken}`).toString('base64')
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        return {
+          success: false,
+          error: errorData.message || `HTTP ${response.status}`,
+        }
+      }
+
+      const data = await response.json()
+      return {
+        success: true,
+        data: data.contents || [],
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
+  }
+
+  /**
+   * Get a specific content template
+   */
+  async getContentTemplate(contentSid: string): Promise<{
+    success: boolean
+    data?: TwilioContentApiTemplate
+    error?: string
+  }> {
+    try {
+      const url = `https://content.twilio.com/v1/Content/${contentSid}`
+      const auth = Buffer.from(`${this.accountSid}:${this.authToken}`).toString('base64')
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        return {
+          success: false,
+          error: errorData.message || `HTTP ${response.status}`,
+        }
+      }
+
+      const data = await response.json()
+      return {
+        success: true,
+        data,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
   }
 
   /**
