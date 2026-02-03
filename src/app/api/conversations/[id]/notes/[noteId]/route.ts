@@ -6,15 +6,74 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/lib/api-utils'
+import {
+  stripHtml,
+  sanitizeNoteHtml,
+} from '@/lib/mentions/parser'
+import type { ConversationNote } from '@/types/mentions'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * GET /api/conversations/[id]/notes/[noteId]
+ * Fetch a single note by ID
+ */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; noteId: string }> }
+) {
+  try {
+    const { id: conversationId, noteId } = await params
+    const user = await requireAuthenticatedUser()
+    const userOrg = await getUserOrganization(user.id)
+    const organizationId = userOrg.organization_id
+
+    const supabase = await createClient()
+
+    // Fetch note with creator profile
+    const { data: note, error: noteError } = await supabase
+      .from('conversation_notes')
+      .select(`
+        id,
+        conversation_id,
+        organization_id,
+        content,
+        content_plain,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:created_by (
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq('id', noteId)
+      .eq('conversation_id', conversationId)
+      .eq('organization_id', organizationId)
+      .single()
+
+    if (noteError || !note) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 })
+    }
+
+    return createSuccessResponse({ note })
+  } catch (error) {
+    console.error('Error fetching note:', error)
+    return createErrorResponse(error)
+  }
+}
+
+/**
+ * PUT /api/conversations/[id]/notes/[noteId]
+ * Update a note's content (only creator can update)
+ * Note: Mentions are not updated - they are immutable once created
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; noteId: string }> }
 ) {
   try {
-    const { id, noteId } = await params
+    const { id: conversationId, noteId } = await params
     const user = await requireAuthenticatedUser()
     const userOrg = await getUserOrganization(user.id)
     const organizationId = userOrg.organization_id
@@ -28,79 +87,107 @@ export async function PUT(
 
     const supabase = await createClient()
 
-    // Get conversation
-    const { data: conversation } = await supabase
-      .from('conversations')
-      .select('id, organization_id, notes')
-      .eq('id', id)
+    // Verify note exists and user is the creator
+    const { data: existingNote } = await supabase
+      .from('conversation_notes')
+      .select('id, created_by')
+      .eq('id', noteId)
+      .eq('conversation_id', conversationId)
       .eq('organization_id', organizationId)
       .single()
 
-    if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+    if (!existingNote) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 })
     }
+
+    if (existingNote.created_by !== user.id) {
+      return NextResponse.json({ error: 'You can only edit your own notes' }, { status: 403 })
+    }
+
+    // Parse and sanitize content
+    const sanitizedContent = sanitizeNoteHtml(content)
+    const plainText = stripHtml(sanitizedContent)
 
     // Update note
-    const updatedNotes = (conversation.notes || []).map((note: any) =>
-      note.id === noteId
-        ? { ...note, content: content.trim(), updated_at: new Date().toISOString() }
-        : note
-    )
+    const { data: updatedNote, error: updateError } = await supabase
+      .from('conversation_notes')
+      .update({
+        content: sanitizedContent,
+        content_plain: plainText,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', noteId)
+      .select(`
+        id,
+        conversation_id,
+        organization_id,
+        content,
+        content_plain,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:created_by (
+          full_name,
+          avatar_url
+        )
+      `)
+      .single()
 
-    // Save updated notes
-    const { error } = await supabase
-      .from('conversations')
-      .update({ notes: updatedNotes })
-      .eq('id', id)
-
-    if (error) {
-      throw error
+    if (updateError) {
+      console.error('Error updating note:', updateError)
+      throw updateError
     }
 
-    const updatedNote = updatedNotes.find((n: any) => n.id === noteId)
-
-    return createSuccessResponse({ note: updatedNote })
+    return createSuccessResponse({ note: updatedNote as ConversationNote })
   } catch (error) {
     console.error('Error updating note:', error)
     return createErrorResponse(error)
   }
 }
 
+/**
+ * DELETE /api/conversations/[id]/notes/[noteId]
+ * Delete a note (only creator can delete)
+ * Associated mention records are cascade-deleted automatically
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; noteId: string }> }
 ) {
   try {
-    const { id, noteId } = await params
+    const { id: conversationId, noteId } = await params
     const user = await requireAuthenticatedUser()
     const userOrg = await getUserOrganization(user.id)
     const organizationId = userOrg.organization_id
 
     const supabase = await createClient()
 
-    // Get conversation
-    const { data: conversation } = await supabase
-      .from('conversations')
-      .select('id, organization_id, notes')
-      .eq('id', id)
+    // Verify note exists and user is the creator
+    const { data: existingNote } = await supabase
+      .from('conversation_notes')
+      .select('id, created_by')
+      .eq('id', noteId)
+      .eq('conversation_id', conversationId)
       .eq('organization_id', organizationId)
       .single()
 
-    if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+    if (!existingNote) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 })
     }
 
-    // Remove note
-    const updatedNotes = (conversation.notes || []).filter((note: any) => note.id !== noteId)
+    if (existingNote.created_by !== user.id) {
+      return NextResponse.json({ error: 'You can only delete your own notes' }, { status: 403 })
+    }
 
-    // Save updated notes
-    const { error } = await supabase
-      .from('conversations')
-      .update({ notes: updatedNotes })
-      .eq('id', id)
+    // Delete note (mentions are cascade-deleted via FK constraint)
+    const { error: deleteError } = await supabase
+      .from('conversation_notes')
+      .delete()
+      .eq('id', noteId)
 
-    if (error) {
-      throw error
+    if (deleteError) {
+      console.error('Error deleting note:', deleteError)
+      throw deleteError
     }
 
     return createSuccessResponse({ message: 'Note deleted successfully' })

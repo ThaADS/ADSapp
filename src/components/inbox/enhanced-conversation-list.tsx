@@ -529,105 +529,76 @@ export default function EnhancedConversationList({
             </p>
           </div>
         ) : (
-          <div className='flex flex-col gap-2 p-2'>
+          <div className='flex flex-col gap-1 p-1.5'>
             {conversations.map(conversation => (
               <div
                 key={conversation.id}
                 onClick={() => onConversationSelect(conversation)}
                 className={`
-                  cursor-pointer rounded-lg border-2 p-3 transition-all
+                  group cursor-pointer rounded-lg border px-2.5 py-2 transition-all
                   ${selectedConversationId === conversation.id
-                    ? 'border-blue-500 bg-blue-50 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-transparent bg-white hover:bg-gray-50'
                   }
                 `}
               >
-                <div className='flex items-start space-x-3'>
-                  {/* Contact Avatar */}
-                  <div className='relative'>
+                <div className='flex items-center gap-2.5'>
+                  {/* Contact Avatar - Compact 32px */}
+                  <div className='relative flex-shrink-0'>
                     {conversation.contact.profile_picture_url ? (
                       <img
                         src={conversation.contact.profile_picture_url}
                         alt={conversation.contact.name}
-                        className='h-10 w-10 rounded-full'
+                        className='h-8 w-8 rounded-full object-cover'
                       />
                     ) : (
-                      <div className='flex h-10 w-10 items-center justify-center rounded-full bg-green-500'>
-                        <span className='text-sm font-medium text-white'>
+                      <div className='flex h-8 w-8 items-center justify-center rounded-full bg-green-500'>
+                        <span className='text-xs font-medium text-white'>
                           {conversation.contact.name?.charAt(0).toUpperCase() ||
                             conversation.contact.phone_number.slice(-2)}
                         </span>
                       </div>
                     )}
                     {conversation.unread_count > 0 && (
-                      <div className='absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white'>
+                      <div className='absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-medium text-white'>
                         {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
                       </div>
                     )}
                   </div>
 
-                  {/* Conversation Details */}
+                  {/* Conversation Details - Compact layout */}
                   <div className='min-w-0 flex-1'>
-                    {/* Name and Status Row */}
-                    <div className='mb-1 flex items-center space-x-2'>
-                      <h3
-                        className={`truncate text-sm font-medium text-gray-900 ${conversation.unread_count > 0 ? 'font-semibold' : ''
-                          }`}
-                      >
-                        {conversation.contact.name || conversation.contact.phone_number}
-                      </h3>
-                      {getStatusIcon(conversation.status)}
-                      {conversation.priority !== 'medium' && (
-                        <span
-                          className={`flex-shrink-0 rounded border px-1.5 py-0.5 text-xs font-medium ${getPriorityColor(conversation.priority)}`}
+                    {/* Row 1: Name + Time inline */}
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex items-center gap-1.5 min-w-0'>
+                        <h3
+                          className={`truncate text-sm text-gray-900 ${conversation.unread_count > 0 ? 'font-semibold' : 'font-medium'}`}
                         >
-                          {t(`priority.${conversation.priority}`)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Date Below Name */}
-                    <div className='mb-2'>
-                      <span className='text-xs text-gray-500'>
+                          {conversation.contact.name || conversation.contact.phone_number}
+                        </h3>
+                        {getStatusIcon(conversation.status)}
+                        {conversation.priority !== 'medium' && conversation.priority !== 'low' && (
+                          <span
+                            className={`flex-shrink-0 rounded px-1 py-0.5 text-[10px] font-medium ${getPriorityColor(conversation.priority)}`}
+                          >
+                            {conversation.priority === 'urgent' ? '!' : conversation.priority === 'high' ? '↑' : ''}
+                          </span>
+                        )}
+                      </div>
+                      <span className='flex-shrink-0 text-[11px] text-gray-400'>
                         {formatTime(conversation.last_message_at)}
                       </span>
                     </div>
 
-                    {/* Tags Row */}
-                    {conversation.tags && conversation.tags.length > 0 && (
-                      <div className='mb-2 flex flex-wrap gap-1'>
-                        {conversation.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={tag}
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${index === 0 ? 'bg-blue-100 text-blue-800' :
-                                index === 1 ? 'bg-purple-100 text-purple-800' :
-                                  'bg-pink-100 text-pink-800'
-                              }`}
-                          >
-                            <Tag className='mr-1 h-3 w-3' />
-                            {tag}
-                          </span>
-                        ))}
-                        {conversation.tags.length > 3 && (
-                          <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600'>
-                            +{conversation.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Last Message */}
+                    {/* Row 2: Message preview (single line) */}
                     {conversation.last_message && (
-                      <div className='mb-2 flex items-start space-x-1'>
-                        <div className='flex-shrink-0 mt-0.5'>
-                          {getMessageTypeIcon(conversation.last_message.message_type)}
-                        </div>
+                      <div className='flex items-center gap-1 mt-0.5'>
+                        {getMessageTypeIcon(conversation.last_message.message_type)}
                         <p
-                          className={`line-clamp-2 text-sm text-gray-600 ${conversation.unread_count > 0 ? 'font-medium text-gray-800' : ''
-                            }`}
+                          className={`line-clamp-1 text-xs ${conversation.unread_count > 0 ? 'text-gray-700' : 'text-gray-500'}`}
                         >
                           {conversation.last_message.sender_type === 'agent' && (
-                            <span className='mr-1 text-blue-600'>{t('message.you')}:</span>
+                            <span className='text-blue-500'>{t('message.you')}: </span>
                           )}
                           {conversation.last_message.message_type === 'text'
                             ? conversation.last_message.content
@@ -636,29 +607,23 @@ export default function EnhancedConversationList({
                       </div>
                     )}
 
-                    {/* Assigned Agent */}
-                    {conversation.assigned_agent && (
-                      <div className='flex items-center space-x-1'>
-                        {conversation.assigned_agent.avatar_url ? (
-                          <img
-                            src={conversation.assigned_agent.avatar_url}
-                            alt={conversation.assigned_agent.full_name}
-                            className='h-4 w-4 rounded-full'
-                          />
-                        ) : (
-                          <User className='h-4 w-4 text-gray-400' />
+                    {/* Tags - Only show on hover or when selected */}
+                    {conversation.tags && conversation.tags.length > 0 && (
+                      <div className={`mt-1 flex flex-wrap gap-1 ${selectedConversationId === conversation.id ? 'block' : 'hidden group-hover:flex'}`}>
+                        {conversation.tags.slice(0, 2).map((tag, index) => (
+                          <span
+                            key={tag}
+                            className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${index === 0 ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                        {conversation.tags.length > 2 && (
+                          <span className='text-[10px] text-gray-400'>+{conversation.tags.length - 2}</span>
                         )}
-                        <span className='truncate text-xs text-gray-500'>
-                          {conversation.assigned_agent.full_name}
-                        </span>
                       </div>
                     )}
                   </div>
-
-                  {/* More Options */}
-                  <button type='button' className='rounded p-1 text-gray-400 hover:text-gray-600'>
-                    <MoreVertical className='h-4 w-4' />
-                  </button>
                 </div>
               </div>
             ))}

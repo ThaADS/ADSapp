@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations, useLocale, useSetLocale } from '@/lib/i18n/client'
+import { useTranslations, useLocale } from '@/components/providers/translation-provider'
 import { createClient } from '@/lib/supabase/client'
 
 interface LanguageSettingsProps {
@@ -12,10 +12,9 @@ interface LanguageSettingsProps {
 export function LanguageSettings({ userId, currentPreference }: LanguageSettingsProps) {
   const t = useTranslations('settings')
   const locale = useLocale()
-  const setLocale = useSetLocale()
 
   const [selectedLanguage, setSelectedLanguage] = useState<'nl' | 'en'>(
-    currentPreference || locale
+    currentPreference || locale as 'nl' | 'en'
   )
   const [isSaving, setIsSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -37,8 +36,8 @@ export function LanguageSettings({ userId, currentPreference }: LanguageSettings
 
       setSaveStatus('success')
 
-      // Update the locale in client state
-      setLocale(selectedLanguage)
+      // Set locale cookie for the new language
+      document.cookie = `NEXT_LOCALE=${selectedLanguage}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`
 
       // Reload page to apply new language throughout the app
       setTimeout(() => {

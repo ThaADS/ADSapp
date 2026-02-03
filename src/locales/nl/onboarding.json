@@ -38,6 +38,8 @@
     "title": "Voltooi je Profiel",
     "description": "Vertel ons iets over jezelf.",
     "email": "E-mail",
+    "notYou": "Niet jij? Uitloggen",
+    "emailLocked": "E-mail is gekoppeld aan je account en kan hier niet gewijzigd worden.",
     "fullName": "Volledige naam",
     "fullNameRequired": "Volledige naam *",
     "fullNamePlaceholder": "Jan Jansen",

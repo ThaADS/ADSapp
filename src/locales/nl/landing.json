@@ -1,0 +1,518 @@
+{
+  "meta": {
+    "title": "ADSapp - Professionele WhatsApp Business Inbox | Multi-Tenant SaaS Platform",
+    "description": "Transformeer je WhatsApp zakelijke communicatie met ADSapp's professionele inbox. Beheer gesprekken, automatiseer reacties en schaal je klantenservice met ons enterprise-grade platform."
+  },
+  "nav": {
+    "features": "Functies",
+    "pricing": "Prijzen",
+    "demo": "Demo",
+    "faq": "FAQ",
+    "signIn": "Inloggen",
+    "startTrial": "Start Gratis Proefperiode"
+  },
+  "hero": {
+    "title1": "Transformeer Je",
+    "title2": "WhatsApp Business",
+    "title3": "Tot Een Krachtpatser",
+    "description": "De enige professionele WhatsApp Business inbox die je nodig hebt. Beheer gesprekken, automatiseer reacties en schaal je klantenservice met enterprise-grade functies ontworpen voor moderne bedrijven.",
+    "cta": "Start Gratis Proefperiode",
+    "ctaDemo": "Probeer Interactieve Demo",
+    "benefit1": "14 dagen gratis proberen",
+    "benefit2": "Geen creditcard nodig",
+    "benefit3": "Setup in 5 minuten"
+  },
+  "socialProof": {
+    "trustedBy": "Vertrouwd door 2.500+ bedrijven wereldwijd",
+    "uptime": "Uptime garantie",
+    "messages": "Berichten verwerkt per dag",
+    "fasterResponse": "Snellere reactietijden"
+  },
+  "features": {
+    "title": "Alles Wat Je Nodig Hebt Om Je WhatsApp Business Te Schalen",
+    "description": "Van startups tot enterprises, ADSapp biedt de tools en infrastructuur om uitzonderlijke klantervaringen op schaal te leveren.",
+    "inbox": {
+      "title": "Gedeelde Team Inbox",
+      "description": "Centraliseer alle WhatsApp Business gesprekken in één krachtig dashboard ontworpen voor teamwork.",
+      "benefit1": "Multi-agent ondersteuning",
+      "benefit2": "Realtime samenwerking",
+      "benefit3": "Gesprekstoewijzing",
+      "benefit4": "Interne notities & tags"
+    },
+    "automation": {
+      "title": "Intelligente Automatisering",
+      "description": "Automatiseer repetitieve taken met slimme workflows die leren van de reacties van je team en steeds beter worden.",
+      "benefit1": "Auto-reacties",
+      "benefit2": "Slimme routing",
+      "benefit3": "Workflow triggers",
+      "benefit4": "AI-gestuurde suggesties"
+    },
+    "analytics": {
+      "title": "Geavanceerde Analytics",
+      "description": "Krijg diepgaande inzichten in klantinteracties, teamprestaties en bedrijfsimpact met uitgebreide rapportages.",
+      "benefit1": "Reactietijd metrics",
+      "benefit2": "Klanttevredenheid tracking",
+      "benefit3": "Team prestatie analytics",
+      "benefit4": "Aangepaste dashboards"
+    },
+    "security": {
+      "title": "Enterprise Beveiliging",
+      "description": "Bank-niveau beveiliging met end-to-end encryptie, compliance certificeringen en volledige data soevereiniteit.",
+      "benefit1": "SOC 2 Type II gecertificeerd",
+      "benefit2": "AVG/GDPR compliant",
+      "benefit3": "End-to-end encryptie",
+      "benefit4": "Regelmatige security audits"
+    },
+    "multiTenant": {
+      "title": "Multi-Tenant Architectuur",
+      "description": "Speciaal gebouwd voor bureaus en enterprises die meerdere merken of klanten beheren met volledige data isolatie.",
+      "benefit1": "Klant isolatie",
+      "benefit2": "White-label opties",
+      "benefit3": "Branded interfaces",
+      "benefit4": "Gecentraliseerde facturatie"
+    },
+    "integrations": {
+      "title": "Naadloze Integraties",
+      "description": "Verbind met je bestaande CRM, helpdesk en bedrijfstools voor een uniforme klantervaring.",
+      "benefit1": "CRM integraties",
+      "benefit2": "API toegang",
+      "benefit3": "Webhook ondersteuning",
+      "benefit4": "Aangepaste integraties"
+    }
+  },
+  "testimonials": {
+    "title": "Geliefd Bij Teams Wereldwijd",
+    "description": "Bekijk wat onze klanten zeggen over hun ADSapp ervaring",
+    "quote1": "ADSapp heeft onze klantenservice getransformeerd. We hebben de reactietijden met 60% verminderd en onze klanttevredenheidscores zijn nog nooit zo hoog geweest.",
+    "author1": "Sarah Chen",
+    "title1": "Hoofd Klantsucces",
+    "company1": "TechFlow Solutions",
+    "quote2": "Alleen al de automatiseringsfuncties bespaarden ons 20 uur per week. Ons team kan zich nu richten op complexe klantvragen terwijl ADSapp de routinematige vragen afhandelt.",
+    "author2": "Marcus Rodriguez",
+    "title2": "Operations Manager",
+    "company2": "Global Commerce Ltd",
+    "quote3": "Eindelijk een WhatsApp-oplossing gebouwd voor enterprise. De multi-tenant architectuur en beveiligingsfuncties geven ons volledig vertrouwen.",
+    "author3": "Elena Petrov",
+    "title3": "CTO",
+    "company3": "FinanceFirst Group"
+  },
+  "pricing": {
+    "title": "Eenvoudige, Transparante Prijzen",
+    "description": "Kies het plan dat past bij je bedrijfsgrootte en behoeften. Alle plannen bevatten een 14-daagse gratis proefperiode.",
+    "starter": {
+      "name": "Starter",
+      "price": "€29",
+      "period": "maand",
+      "description": "Perfect voor kleine bedrijven die beginnen met WhatsApp Business",
+      "feature1": "Tot 3 teamleden",
+      "feature2": "1.000 gesprekken/maand",
+      "feature3": "Basis automatisering",
+      "feature4": "Standaard ondersteuning",
+      "feature5": "Mobiele & web apps",
+      "feature6": "Basis analytics",
+      "cta": "Start Gratis Proefperiode"
+    },
+    "professional": {
+      "name": "Professional",
+      "price": "€99",
+      "period": "maand",
+      "description": "Ideaal voor groeiende bedrijven die geavanceerde functies en hogere limieten nodig hebben",
+      "feature1": "Tot 15 teamleden",
+      "feature2": "10.000 gesprekken/maand",
+      "feature3": "Geavanceerde automatisering",
+      "feature4": "Prioriteit ondersteuning",
+      "feature5": "Aangepaste workflows",
+      "feature6": "Geavanceerde analytics",
+      "feature7": "API toegang",
+      "feature8": "Aangepaste integraties",
+      "cta": "Start Gratis Proefperiode",
+      "popular": "Meest Populair"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Op maat",
+      "period": "maand",
+      "description": "Voor grote organisaties die onbeperkte schaal en aangepaste oplossingen nodig hebben",
+      "feature1": "Onbeperkt teamleden",
+      "feature2": "Onbeperkte gesprekken",
+      "feature3": "Enterprise automatisering",
+      "feature4": "Dedicated success manager",
+      "feature5": "White-label opties",
+      "feature6": "Aangepaste analytics",
+      "feature7": "Premium integraties",
+      "feature8": "SLA garanties",
+      "feature9": "On-premise deployment",
+      "cta": "Neem Contact Op"
+    },
+    "trialNote": "Alle plannen bevatten een 14-daagse gratis proefperiode. Geen creditcard nodig.",
+    "customSolution": "Een oplossing op maat nodig?",
+    "contactSales": "Neem contact op met ons sales team"
+  },
+  "demo": {
+    "title": "Bekijk ADSapp In Actie",
+    "description": "Ervaar de kracht van professioneel WhatsApp Business beheer. Ontdek hoe ADSapp klantgesprekken transformeert in bedrijfsgroei.",
+    "benefit1": "Live demo met voorbeeldgesprekken",
+    "benefit2": "Gepersonaliseerde setup consultatie",
+    "benefit3": "Vraag & antwoord met onze productexperts",
+    "cta": "Probeer Interactieve Demo",
+    "ctaBook": "Boek Live Demo",
+    "previewTitle": "Interactieve Demo",
+    "previewDescription": "Ervaar de volledige WhatsApp Business Inbox",
+    "previewCta": "Probeer Demo Gratis"
+  },
+  "security": {
+    "title": "Enterprise-Grade Beveiliging & Compliance",
+    "description": "De veiligheid van je data is onze hoogste prioriteit. ADSapp voldoet aan de hoogste industriestandaarden.",
+    "soc2": "SOC 2",
+    "soc2Desc": "Type II Gecertificeerd",
+    "gdpr": "AVG/GDPR",
+    "gdprDesc": "Compliant",
+    "iso": "ISO 27001",
+    "isoDesc": "Gecertificeerd",
+    "uptime": "99,9%",
+    "uptimeDesc": "Uptime SLA",
+    "encryption": "Data Encryptie",
+    "encryptionDesc": "End-to-end encryptie voor alle data tijdens verzending en opslag met AES-256 standaarden.",
+    "accessControl": "Toegangscontrole",
+    "accessControlDesc": "Rolgebaseerde rechten, single sign-on (SSO) en multi-factor authenticatie (MFA).",
+    "audits": "Regelmatige Audits",
+    "auditsDesc": "Continue beveiligingsmonitoring en regelmatige beveiligingsbeoordelingen door derden."
+  },
+  "faq": {
+    "title": "Veelgestelde Vragen",
+    "description": "Heb je vragen? Bekijk onze uitgebreide FAQ voor antwoorden op al je vragen over ADSapp.",
+    "q1": "Hoe integreert ADSapp met WhatsApp Business?",
+    "a1": "ADSapp maakt direct verbinding met de officiële WhatsApp Business Cloud API, wat volledige naleving van WhatsApp's servicevoorwaarden garandeert. Dit biedt realtime berichtsynchronisatie, bezorgstatusupdates en toegang tot alle WhatsApp Business functies inclusief rich media, templates en interactieve berichten.",
+    "q2": "Kunnen meerdere teamleden hetzelfde WhatsApp-nummer beheren?",
+    "a2": "Ja! ADSapp is gebouwd voor teamsamenwerking. Meerdere medewerkers kunnen gelijktijdig gesprekken beheren vanaf hetzelfde WhatsApp Business nummer met functies zoals gesprekstoewijzing, interne notities en realtime samenwerkingstools.",
+    "q3": "Is mijn klantdata veilig en privé?",
+    "a3": "Absoluut. We implementeren beveiliging op bankniveau met end-to-end encryptie, SOC 2 Type II compliance en AVG/GDPR compliance. Je data wordt opgeslagen in beveiligde, geo-gedistribueerde datacenters met regelmatige beveiligingsaudits en volledige data soevereiniteit.",
+    "q4": "Bieden jullie een gratis proefperiode?",
+    "a4": "Ja, alle plannen bevatten een 14-daagse gratis proefperiode met volledige toegang tot functies. Geen creditcard nodig om te beginnen, en je kunt op elk moment tijdens de proefperiode opzeggen.",
+    "q5": "Kan ik ADSapp gebruiken voor meerdere bedrijven of klanten?",
+    "a5": "Ja! Onze multi-tenant architectuur is perfect voor bureaus en enterprises die meerdere merken of klanten beheren. Elke tenant heeft volledige data isolatie, branded interfaces en aparte facturatie.",
+    "q6": "Wat voor ondersteuning bieden jullie?",
+    "a6": "We bieden uitgebreide ondersteuning inclusief gedetailleerde documentatie, video tutorials, e-mail support en prioriteitsondersteuning voor Professional en Enterprise plannen. Enterprise klanten krijgen ook een dedicated success manager.",
+    "viewAll": "Bekijk Alle FAQ's",
+    "orContact": "Of",
+    "contactSupport": "neem contact op met ons support team"
+  },
+  "cta": {
+    "title": "Klaar Om Je WhatsApp Business Te Transformeren?",
+    "description": "Sluit je aan bij duizenden bedrijven die al ADSapp gebruiken om uitzonderlijke klantervaringen te leveren.",
+    "startTrial": "Start Gratis Proefperiode",
+    "tryDemo": "Probeer Demo",
+    "trialNote": "14 dagen gratis • Geen creditcard nodig • Setup in 5 minuten"
+  },
+  "extendedFeatures": {
+    "title": "Ontdek Alle Mogelijkheden",
+    "description": "ADSapp biedt een complete suite aan functies voor professioneel WhatsApp Business beheer",
+    "categories": {
+      "ai": {
+        "title": "AI & Intelligentie",
+        "description": "Slimme AI-functies die je team ondersteunen",
+        "features": {
+          "smartDrafts": {
+            "title": "AI Concept Berichten",
+            "description": "Laat AI automatisch professionele antwoorden opstellen op basis van conversatiecontext"
+          },
+          "sentiment": {
+            "title": "Sentiment Analyse",
+            "description": "Detecteer automatisch klantemoties en prioriteer urgente gesprekken"
+          },
+          "summarization": {
+            "title": "Gesprek Samenvattingen",
+            "description": "Krijg instant AI-samenvattingen van lange conversaties voor snelle context"
+          },
+          "categorization": {
+            "title": "Automatische Categorisatie",
+            "description": "AI categoriseert berichten automatisch (verkoop, support, klacht, etc.)"
+          }
+        }
+      },
+      "communication": {
+        "title": "Communicatie",
+        "description": "Alles voor effectieve klantcommunicatie",
+        "features": {
+          "templates": {
+            "title": "Bericht Templates",
+            "description": "Maak en beheer goedgekeurde WhatsApp templates voor consistente communicatie"
+          },
+          "richMedia": {
+            "title": "Rich Media Support",
+            "description": "Verzend afbeeldingen, video's, documenten en locaties direct via WhatsApp"
+          },
+          "quickReplies": {
+            "title": "Snelle Antwoorden",
+            "description": "Reageer razendsnel met voorgedefinieerde antwoorden en sneltoetsen"
+          },
+          "scheduling": {
+            "title": "Bericht Planning",
+            "description": "Plan berichten vooruit voor optimale bezorgtijden"
+          }
+        }
+      },
+      "campaigns": {
+        "title": "Campagnes & Broadcasts",
+        "description": "Bereik je klanten op schaal",
+        "features": {
+          "broadcasts": {
+            "title": "Broadcast Berichten",
+            "description": "Stuur gepersonaliseerde berichten naar duizenden contacten tegelijk"
+          },
+          "drip": {
+            "title": "Drip Campagnes",
+            "description": "Automatiseer follow-up sequences voor lead nurturing"
+          },
+          "segmentation": {
+            "title": "Klant Segmentatie",
+            "description": "Segmenteer contacten op basis van tags, gedrag en eigenschappen"
+          },
+          "abTesting": {
+            "title": "A/B Testing",
+            "description": "Test verschillende berichten om de beste resultaten te behalen"
+          }
+        }
+      },
+      "workflows": {
+        "title": "Automatisering & Workflows",
+        "description": "Automatiseer je klantenservice",
+        "features": {
+          "autoReplies": {
+            "title": "Auto-Reacties",
+            "description": "Reageer automatisch buiten kantooruren of bij drukte"
+          },
+          "smartRouting": {
+            "title": "Intelligente Routing",
+            "description": "Wijs gesprekken automatisch toe aan de juiste medewerker"
+          },
+          "escalation": {
+            "title": "Escalatie Regels",
+            "description": "Automatische escalatie bij onbeantwoorde berichten of negatief sentiment"
+          },
+          "workflowBuilder": {
+            "title": "Visuele Workflow Builder",
+            "description": "Bouw complexe automatiseringen met drag-and-drop interface"
+          }
+        }
+      },
+      "analytics": {
+        "title": "Analytics & Rapportage",
+        "description": "Data-gedreven inzichten",
+        "features": {
+          "realtime": {
+            "title": "Realtime Dashboard",
+            "description": "Zie live statistieken over gesprekken, responstijden en teamprestaties"
+          },
+          "performance": {
+            "title": "Team Prestatie Metrics",
+            "description": "Meet individuele en team KPI's met gedetailleerde rapporten"
+          },
+          "customerInsights": {
+            "title": "Klant Inzichten",
+            "description": "Analyseer klantgedrag, voorkeuren en interactiepatronen"
+          },
+          "customReports": {
+            "title": "Aangepaste Rapporten",
+            "description": "Bouw en exporteer rapporten op maat voor je organisatie"
+          }
+        }
+      },
+      "team": {
+        "title": "Team Management",
+        "description": "Beheer je team effectief",
+        "features": {
+          "roles": {
+            "title": "Rollen & Rechten",
+            "description": "Definieer gedetailleerde toegangsrechten per rol (eigenaar, admin, agent, viewer)"
+          },
+          "teams": {
+            "title": "Team Structuur",
+            "description": "Organiseer medewerkers in teams voor betere workflow management"
+          },
+          "workload": {
+            "title": "Workload Balancing",
+            "description": "Verdeel gesprekken eerlijk over beschikbare teamleden"
+          },
+          "availability": {
+            "title": "Beschikbaarheidsstatus",
+            "description": "Beheer online/offline status en kantooruren per medewerker"
+          }
+        }
+      },
+      "contacts": {
+        "title": "Contact Management",
+        "description": "Beheer je klantrelaties",
+        "features": {
+          "profiles": {
+            "title": "Rijke Klantprofielen",
+            "description": "Bewaar uitgebreide klantinformatie met custom velden"
+          },
+          "history": {
+            "title": "Volledige Interactiegeschiedenis",
+            "description": "Bekijk alle eerdere gesprekken en interacties per contact"
+          },
+          "import": {
+            "title": "Bulk Import/Export",
+            "description": "Importeer contacten uit CSV of exporteer voor andere systemen"
+          },
+          "duplicates": {
+            "title": "Duplicaat Detectie",
+            "description": "Automatische detectie en samenvoeging van dubbele contacten"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integraties",
+        "description": "Verbind met je bestaande tools",
+        "features": {
+          "crm": {
+            "title": "CRM Integraties",
+            "description": "Sync met Salesforce, HubSpot, Pipedrive en meer"
+          },
+          "webhooks": {
+            "title": "Webhooks",
+            "description": "Ontvang realtime notificaties in je eigen systemen"
+          },
+          "api": {
+            "title": "REST API",
+            "description": "Volledig gedocumenteerde API voor custom integraties"
+          },
+          "zapier": {
+            "title": "Zapier/Make",
+            "description": "Verbind met 5.000+ apps via no-code platforms"
+          }
+        }
+      },
+      "security": {
+        "title": "Beveiliging & Compliance",
+        "description": "Enterprise-grade bescherming",
+        "features": {
+          "encryption": {
+            "title": "End-to-End Encryptie",
+            "description": "AES-256 encryptie voor alle data in transit en opslag"
+          },
+          "audit": {
+            "title": "Audit Logging",
+            "description": "Volledige logging van alle acties voor compliance"
+          },
+          "sso": {
+            "title": "Single Sign-On",
+            "description": "Integreer met je bestaande identity provider (SAML, OAuth)"
+          },
+          "mfa": {
+            "title": "Multi-Factor Authenticatie",
+            "description": "Extra beveiligingslaag met 2FA voor alle accounts"
+          }
+        }
+      }
+    }
+  },
+  "useCases": {
+    "title": "Ideaal Voor Elke Branche",
+    "description": "Ontdek hoe bedrijven in verschillende sectoren ADSapp gebruiken",
+    "ecommerce": {
+      "title": "E-commerce & Retail",
+      "description": "Verhoog conversies met persoonlijke klantservice",
+      "benefits": ["Order status updates", "Verlaten winkelwagen berichten", "Product aanbevelingen", "Klantfeedback verzameling"]
+    },
+    "healthcare": {
+      "title": "Gezondheidszorg",
+      "description": "Verbeter patiëntcommunicatie met veilige messaging",
+      "benefits": ["Afspraak herinneringen", "Medicatie notificaties", "Lab resultaat updates", "HIPAA-compliant communicatie"]
+    },
+    "finance": {
+      "title": "Financiële Diensten",
+      "description": "Veilige communicatie voor banken en verzekeraars",
+      "benefits": ["Transactie alerts", "Fraude notificaties", "Document verificatie", "Klantenservice escalatie"]
+    },
+    "travel": {
+      "title": "Reizen & Hospitality",
+      "description": "Verbeter de gastervaring met instant support",
+      "benefits": ["Boekingsbevestigingen", "Check-in reminders", "Reisupdate alerts", "24/7 concierge service"]
+    },
+    "education": {
+      "title": "Onderwijs",
+      "description": "Betrek studenten en ouders effectief",
+      "benefits": ["Rooster updates", "Aanwezigheid notificaties", "Huiswerk reminders", "Ouder communicatie"]
+    },
+    "agencies": {
+      "title": "Marketing Agencies",
+      "description": "Beheer meerdere klanten vanuit één platform",
+      "benefits": ["Multi-tenant beheer", "White-label opties", "Klant rapportages", "Gecentraliseerde facturatie"]
+    }
+  },
+  "comparison": {
+    "title": "Waarom ADSapp Kiezen?",
+    "description": "Vergelijk ADSapp met andere oplossingen",
+    "features": {
+      "multiTenant": "Multi-Tenant Architectuur",
+      "aiFeatures": "AI-Gestuurde Functies",
+      "unlimitedAgents": "Onbeperkt Agenten",
+      "customWorkflows": "Aangepaste Workflows",
+      "apiAccess": "API Toegang",
+      "whiteLabel": "White-Label Opties",
+      "dataOwnership": "Volledige Data Eigendom",
+      "support247": "24/7 Support"
+    },
+    "adsapp": "ADSapp",
+    "competitor1": "Concurrent A",
+    "competitor2": "Concurrent B",
+    "included": "Inbegrepen",
+    "notIncluded": "Niet beschikbaar",
+    "limited": "Beperkt",
+    "extra": "Extra kosten"
+  },
+  "howItWorks": {
+    "title": "Hoe Het Werkt",
+    "description": "In 4 simpele stappen aan de slag",
+    "step1": {
+      "title": "Account Aanmaken",
+      "description": "Registreer je gratis en koppel je WhatsApp Business nummer in minder dan 5 minuten"
+    },
+    "step2": {
+      "title": "Team Uitnodigen",
+      "description": "Voeg teamleden toe en configureer rollen en rechten voor optimale samenwerking"
+    },
+    "step3": {
+      "title": "Workflows Instellen",
+      "description": "Configureer automatiseringen, templates en routing regels voor efficiënte afhandeling"
+    },
+    "step4": {
+      "title": "Start Met Chatten",
+      "description": "Begin met het professioneel afhandelen van klantgesprekken en zie je metrics verbeteren"
+    }
+  },
+  "stats": {
+    "title": "ADSapp in Cijfers",
+    "businesses": "Actieve Bedrijven",
+    "businessesValue": "2.500+",
+    "messages": "Berichten Per Dag",
+    "messagesValue": "1M+",
+    "countries": "Landen",
+    "countriesValue": "45+",
+    "uptime": "Uptime",
+    "uptimeValue": "99,9%",
+    "satisfaction": "Klanttevredenheid",
+    "satisfactionValue": "4.9/5"
+  },
+  "footer": {
+    "description": "De professionele WhatsApp Business inbox voor moderne teams. Transformeer je klantcommunicatie met enterprise-grade functies en ongeëvenaarde betrouwbaarheid.",
+    "product": "Product",
+    "features": "Functies",
+    "pricing": "Prijzen",
+    "demo": "Demo",
+    "integrations": "Integraties",
+    "api": "API",
+    "company": "Bedrijf",
+    "about": "Over Ons",
+    "careers": "Vacatures",
+    "blog": "Blog",
+    "press": "Pers",
+    "contact": "Contact",
+    "copyright": "© 2024 ADSapp. Alle rechten voorbehouden.",
+    "privacy": "Privacybeleid",
+    "terms": "Servicevoorwaarden",
+    "security": "Beveiliging"
+  }
+}

@@ -325,3 +325,47 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 - **Root cause**: Run `npx supabase gen types typescript --linked > src/types/database.ts` to fix type mismatches
 
 See `.planning/codebase/CONCERNS.md` for full technical debt tracking.
+
+## Agent Integration (wshobson/agents)
+
+This project uses specialized agents from the `claude-code-workflows` marketplace for enhanced development workflows.
+
+### Enabled Plugins
+
+| Plugin | Use Case |
+|--------|----------|
+| javascript-typescript | TypeScript/Next.js development |
+| backend-development | API routes, architecture |
+| database-design | Supabase schema, RLS |
+| payment-processing | Stripe integration |
+| security-scanning | Security audits, RLS validation |
+| unit-testing | Jest/Playwright tests |
+| full-stack-orchestration | Multi-agent feature development |
+| llm-application-dev | AI features (Phase 19) |
+
+### Key Agents
+
+- **typescript-pro**: TypeScript strict mode migration
+- **backend-architect**: API design, Supabase patterns
+- **database-architect**: RLS policies, migrations
+- **security-auditor**: Multi-tenant security
+- **test-automator**: Test generation
+- **ai-engineer**: AI features implementation
+
+### Agent Commands
+
+```bash
+# Full-stack feature development
+/full-stack-orchestration:full-stack-feature "feature name"
+
+# Security scan
+/security-scanning:security-sast
+
+# Code review
+/code-review-ai:review
+
+# Generate tests
+/unit-testing:generate-tests
+```
+
+See `.planning/AGENTS.md` for complete agent configuration and GSD/Ralph Loop integration.

@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Helper to check if a string is a valid UUID
+function isUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  return uuidRegex.test(str)
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -35,7 +41,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')?.split(',').filter(Boolean)
     const priority = searchParams.get('priority')?.split(',').filter(Boolean)
     const assignedTo = searchParams.get('assigned_to')?.split(',').filter(Boolean)
-    const tags = searchParams.get('tags')?.split(',').filter(Boolean)
+    const rawTags = searchParams.get('tags')?.split(',').filter(Boolean)
     const hasUnread = searchParams.get('has_unread')
     const messageType = searchParams.get('message_type')?.split(',').filter(Boolean)
     const contactId = searchParams.get('contact_id')?.split(',').filter(Boolean)
@@ -47,6 +53,37 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
     const includeAggregations = searchParams.get('include_aggregations') === 'true'
+
+    // Resolve tag names to UUIDs if needed
+    let tags: string[] | undefined
+    if (rawTags?.length) {
+      const tagUUIDs: string[] = []
+      const tagNames: string[] = []
+
+      // Separate UUIDs from names
+      for (const tag of rawTags) {
+        if (isUUID(tag)) {
+          tagUUIDs.push(tag)
+        } else {
+          tagNames.push(tag)
+        }
+      }
+
+      // Look up tag names to get their UUIDs
+      if (tagNames.length > 0) {
+        const { data: foundTags } = await supabase
+          .from('tags')
+          .select('id, name')
+          .eq('organization_id', organizationId)
+          .in('name', tagNames)
+
+        if (foundTags) {
+          tagUUIDs.push(...foundTags.map(t => t.id))
+        }
+      }
+
+      tags = tagUUIDs.length > 0 ? tagUUIDs : undefined
+    }
 
     // Build the query
     let query = supabase

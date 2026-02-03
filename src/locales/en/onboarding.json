@@ -38,6 +38,8 @@
     "title": "Complete Your Profile",
     "description": "Tell us a bit about yourself.",
     "email": "Email",
+    "notYou": "Not you? Sign out",
+    "emailLocked": "Email is linked to your account and cannot be changed here.",
     "fullName": "Full Name",
     "fullNameRequired": "Full Name *",
     "fullNamePlaceholder": "John Doe",

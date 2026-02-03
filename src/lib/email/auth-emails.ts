@@ -1,9 +1,9 @@
 /**
  * Auth Email Service
- * Sends localized authentication emails via Resend
+ * Sends localized authentication emails via SMTP (nodemailer)
  */
 
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 import type { Locale } from '@/../i18n.config'
 import {
   generateConfirmationEmail,
@@ -14,9 +14,37 @@ import {
   type MagicLinkTranslations,
 } from './email-templates'
 
-// Initialize Resend (gracefully handles missing API key)
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-const fromEmail = process.env.RESEND_FROM_EMAIL || 'ADSapp <noreply@adsapp.com>'
+// SMTP Configuration
+const smtpConfig = {
+  host: process.env.SMTP_HOST || 'mail.zxcs.nl',
+  port: parseInt(process.env.SMTP_PORT || '465'),
+  secure: process.env.SMTP_SECURE !== 'false', // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+}
+
+// Check if SMTP is configured
+const isSmtpConfigured = !!(smtpConfig.auth.user && smtpConfig.auth.pass)
+
+// Create transporter (lazy initialization)
+let transporter: nodemailer.Transporter | null = null
+
+function getTransporter(): nodemailer.Transporter | null {
+  if (!isSmtpConfigured) {
+    return null
+  }
+  if (!transporter) {
+    transporter = nodemailer.createTransport(smtpConfig)
+  }
+  return transporter
+}
+
+// From email address
+const fromName = process.env.SMTP_FROM_NAME || 'ADSapp'
+const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'noreply@adsapp.nl'
+const fromAddress = `${fromName} <${fromEmail}>`
 
 /**
  * Load email translations for a locale
@@ -46,8 +74,10 @@ export async function sendConfirmationEmail({
   locale,
   confirmationUrl,
 }: SendConfirmationEmailParams): Promise<void> {
-  if (!resend) {
-    console.warn('RESEND_API_KEY not configured. Skipping confirmation email to:', to)
+  const transport = getTransporter()
+  if (!transport) {
+    console.warn('SMTP not configured. Skipping confirmation email to:', to)
+    console.warn('Set SMTP_USER and SMTP_PASS environment variables to enable email sending.')
     return
   }
 
@@ -57,20 +87,14 @@ export async function sendConfirmationEmail({
     const html = generateConfirmationEmail(translations, locale, confirmationUrl)
     const subject = translations.confirmation?.subject || 'Confirm your email address'
 
-    const { error } = await resend.emails.send({
-      from: fromEmail,
+    await transport.sendMail({
+      from: fromAddress,
       to,
       subject,
       html,
-      tags: [
-        { name: 'category', value: 'auth-confirmation' },
-        { name: 'locale', value: locale },
-      ],
     })
 
-    if (error) {
-      throw new Error(`Failed to send confirmation email: ${error.message}`)
-    }
+    console.log(`Confirmation email sent to ${to} in ${locale}`)
   } catch (error) {
     console.error('Error sending confirmation email:', error)
     throw error
@@ -91,8 +115,10 @@ export async function sendPasswordResetEmail({
   locale,
   resetUrl,
 }: SendPasswordResetEmailParams): Promise<void> {
-  if (!resend) {
-    console.warn('RESEND_API_KEY not configured. Skipping password reset email to:', to)
+  const transport = getTransporter()
+  if (!transport) {
+    console.warn('SMTP not configured. Skipping password reset email to:', to)
+    console.warn('Set SMTP_USER and SMTP_PASS environment variables to enable email sending.')
     return
   }
 
@@ -102,20 +128,14 @@ export async function sendPasswordResetEmail({
     const html = generatePasswordResetEmail(translations, locale, resetUrl)
     const subject = translations.passwordReset?.subject || 'Reset your password'
 
-    const { error } = await resend.emails.send({
-      from: fromEmail,
+    await transport.sendMail({
+      from: fromAddress,
       to,
       subject,
       html,
-      tags: [
-        { name: 'category', value: 'auth-password-reset' },
-        { name: 'locale', value: locale },
-      ],
     })
 
-    if (error) {
-      throw new Error(`Failed to send password reset email: ${error.message}`)
-    }
+    console.log(`Password reset email sent to ${to} in ${locale}`)
   } catch (error) {
     console.error('Error sending password reset email:', error)
     throw error
@@ -136,8 +156,10 @@ export async function sendMagicLinkEmail({
   locale,
   magicLinkUrl,
 }: SendMagicLinkEmailParams): Promise<void> {
-  if (!resend) {
-    console.warn('RESEND_API_KEY not configured. Skipping magic link email to:', to)
+  const transport = getTransporter()
+  if (!transport) {
+    console.warn('SMTP not configured. Skipping magic link email to:', to)
+    console.warn('Set SMTP_USER and SMTP_PASS environment variables to enable email sending.')
     return
   }
 
@@ -147,20 +169,14 @@ export async function sendMagicLinkEmail({
     const html = generateMagicLinkEmail(translations, locale, magicLinkUrl)
     const subject = translations.magicLink?.subject || 'Your sign-in link'
 
-    const { error } = await resend.emails.send({
-      from: fromEmail,
+    await transport.sendMail({
+      from: fromAddress,
       to,
       subject,
       html,
-      tags: [
-        { name: 'category', value: 'auth-magic-link' },
-        { name: 'locale', value: locale },
-      ],
     })
 
-    if (error) {
-      throw new Error(`Failed to send magic link email: ${error.message}`)
-    }
+    console.log(`Magic link email sent to ${to} in ${locale}`)
   } catch (error) {
     console.error('Error sending magic link email:', error)
     throw error
@@ -209,4 +225,25 @@ export async function getLocaleForNewUser(email: string): Promise<Locale> {
   }
 
   return 'en'
+}
+
+/**
+ * Verify SMTP connection
+ * Useful for health checks and debugging
+ */
+export async function verifySmtpConnection(): Promise<boolean> {
+  const transport = getTransporter()
+  if (!transport) {
+    console.warn('SMTP not configured')
+    return false
+  }
+
+  try {
+    await transport.verify()
+    console.log('SMTP connection verified successfully')
+    return true
+  } catch (error) {
+    console.error('SMTP connection verification failed:', error)
+    return false
+  }
 }

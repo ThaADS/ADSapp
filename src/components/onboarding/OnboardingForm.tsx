@@ -330,13 +330,32 @@ export function OnboardingForm({ userEmail }: { userEmail: string }) {
             </div>
 
             <div>
-              <label className='mb-1 block text-sm font-medium text-gray-700'>{t('profile.email')}</label>
-              <input
-                type='email'
-                value={userEmail}
-                disabled
-                className='block w-full cursor-not-allowed appearance-none rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 shadow-sm sm:text-sm'
-              />
+              <label htmlFor='profileEmail' className='mb-1 block text-sm font-medium text-gray-700'>{t('profile.email')}</label>
+              <div className='flex items-center gap-3'>
+                <input
+                  type='email'
+                  id='profileEmail'
+                  name='profileEmail'
+                  value={userEmail}
+                  disabled
+                  aria-label={t('profile.email')}
+                  title={t('profile.email')}
+                  className='block w-full cursor-not-allowed appearance-none rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 shadow-sm sm:text-sm'
+                />
+                <button
+                  type='button'
+                  onClick={async () => {
+                    await fetch('/api/auth/signout', { method: 'POST' })
+                    window.location.href = '/auth/signin'
+                  }}
+                  className='whitespace-nowrap text-sm text-blue-600 hover:text-blue-800 hover:underline'
+                >
+                  {t('profile.notYou') || 'Not you? Sign out'}
+                </button>
+              </div>
+              <p className='mt-1 text-xs text-gray-500'>
+                {t('profile.emailLocked') || 'Email is linked to your account and cannot be changed here.'}
+              </p>
             </div>
 
             <div>

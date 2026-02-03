@@ -23,10 +23,13 @@ import EnhancedMessageList from './enhanced-message-list'
 import MessageInputWithTyping from './message-input-with-typing'
 import ConversationTagSelector from './conversation-tag-selector'
 import BubbleColorPicker from './bubble-color-picker'
+import { ChatBackgroundPicker, CHAT_BACKGROUNDS, getBackgroundStyle, type ChatBackground } from './chat-background-picker'
 import { WhatsAppService } from '@/lib/whatsapp/service'
 import ConversationSummary from '@/components/ai/conversation-summary'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from '@/components/providers/translation-provider'
+// Note: react-resizable-panels was planned for Phase 10.6 but is not yet installed
+// Using standard flexbox layout until package is added
 
 interface Conversation {
   id: string
@@ -390,6 +393,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
     bubble: 'bg-white',
     text: 'text-gray-900',
   })
+  const [chatBackground, setChatBackground] = useState<ChatBackground>(CHAT_BACKGROUNDS[0])
   const [whatsappService, setWhatsappService] = useState<WhatsAppService | null>(null)
   const [userName, setUserName] = useState<string>('Agent')
 
@@ -427,7 +431,9 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
       if (serviceResult.status === 'fulfilled' && serviceResult.value) {
         setWhatsappService(serviceResult.value)
       } else {
-        console.error('Failed to initialize WhatsApp service:', serviceResult.status === 'rejected' ? serviceResult.reason : 'Unknown error')
+        // WhatsApp not configured - this is OK for development/testing
+        const reason = serviceResult.status === 'rejected' ? serviceResult.reason?.message || serviceResult.reason : 'Unknown'
+        console.info(`[WhatsApp] Service not available: ${reason}. Configure WHATSAPP_ACCESS_TOKEN to enable.`)
         setWhatsappService(null)
       }
 
@@ -770,24 +776,70 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
 
       {/* Main Content */}
       <div className='flex flex-1 overflow-hidden'>
-        {/* Conversation List - Full width on mobile when no conversation selected, hidden when selected */}
-        <div className={`${selectedConversation ? 'hidden md:block md:w-80' : 'w-full md:w-80'} flex-shrink-0`}>
-          <EnhancedConversationList
-            organizationId={organizationId}
-            currentUserId={currentUserId}
-            onConversationSelect={handleConversationSelect}
-            selectedConversationId={selectedConversation?.id}
-            initialConversationId={conversationIdFromUrl}
-            onConversationsLoaded={() => setConversationsLoaded(true)}
-          />
+        {/* Mobile Layout - Show/hide based on selection */}
+        <div className='md:hidden flex-1 flex'>
+          {/* Conversation List - Full width on mobile when no conversation selected */}
+          <div className={`${selectedConversation ? 'hidden' : 'w-full'}`}>
+            <EnhancedConversationList
+              organizationId={organizationId}
+              currentUserId={currentUserId}
+              onConversationSelect={handleConversationSelect}
+              selectedConversationId={selectedConversation?.id}
+              initialConversationId={conversationIdFromUrl}
+              onConversationsLoaded={() => setConversationsLoaded(true)}
+            />
+          </div>
+          {/* Chat Area - Full width on mobile when conversation selected */}
+          <div className={`flex flex-1 flex-col min-h-0 ${!selectedConversation ? 'hidden' : 'w-full'}`}>
+            {selectedConversation && (
+              <>
+                {/* Messages - min-h-0 required for flex scroll to work properly */}
+                <div className='flex-1 overflow-hidden min-h-0' style={getBackgroundStyle(chatBackground)}>
+                  <EnhancedMessageList
+                    conversationId={selectedConversation.id}
+                    messages={messages}
+                    currentUserId={currentUserId}
+                    onMessageRead={handleMessageRead}
+                    loading={isLoading}
+                    contactBubbleColor={globalBubbleColor.bubble}
+                    contactTextColor={globalBubbleColor.text}
+                  />
+                </div>
+
+                {/* Message Input with Typing Indicators */}
+                <MessageInputWithTyping
+                  conversationId={selectedConversation.id}
+                  organizationId={organizationId}
+                  currentUserId={currentUserId}
+                  userName={userName}
+                  contactName={selectedConversation.contact.name || 'Contact'}
+                  onSendMessage={handleSendMessage}
+                />
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Chat Area - Full width on mobile, flex on desktop */}
-        <div className={`flex flex-1 flex-col ${!selectedConversation ? 'hidden md:flex' : 'w-full md:w-auto'}`}>
+        {/* Desktop Layout */}
+        <div className="hidden md:flex flex-1">
+          {/* Conversation List */}
+          <div className="w-80 flex-shrink-0 border-r border-gray-200">
+            <EnhancedConversationList
+              organizationId={organizationId}
+              currentUserId={currentUserId}
+              onConversationSelect={handleConversationSelect}
+              selectedConversationId={selectedConversation?.id}
+              initialConversationId={conversationIdFromUrl}
+              onConversationsLoaded={() => setConversationsLoaded(true)}
+            />
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col min-h-0">
           {selectedConversation ? (
             <>
               {/* Chat Header - Desktop only (mobile header is above) */}
-              <div className='hidden md:block border-b border-gray-200 bg-white px-6 py-4'>
+              <div className='hidden md:block flex-shrink-0 border-b border-gray-200 bg-white px-6 py-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-3'>
                     {selectedConversation.contact.profile_picture_url ? (
@@ -837,6 +889,11 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                       onColorChange={handleColorChange}
                     />
 
+                    {/* Chat Background Picker */}
+                    <ChatBackgroundPicker
+                      onBackgroundChange={setChatBackground}
+                    />
+
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-medium ${
                         selectedConversation.status === 'open'
@@ -876,8 +933,8 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
                 </div>
               </div>
 
-              {/* Messages */}
-              <div className='flex-1 overflow-hidden'>
+              {/* Messages - min-h-0 required for flex scroll to work properly */}
+              <div className='flex-1 overflow-hidden min-h-0' style={getBackgroundStyle(chatBackground)}>
                 <EnhancedMessageList
                   conversationId={selectedConversation.id}
                   messages={messages}
@@ -913,6 +970,7 @@ export default function WhatsAppInbox({ organizationId, currentUserId }: WhatsAp
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Conversation Details - Modal on mobile, sidebar on desktop */}

@@ -6,12 +6,22 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from '@/lib/api-utils'
+import {
+  extractMentionIds,
+  stripHtml,
+  sanitizeNoteHtml,
+} from '@/lib/mentions/parser'
+import type { ConversationNote, CreateNoteResponse } from '@/types/mentions'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * GET /api/conversations/[id]/notes
+ * Fetch all notes for a conversation from the conversation_notes table
+ */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
+    const { id: conversationId } = await params
     const user = await requireAuthenticatedUser()
     const userOrg = await getUserOrganization(user.id)
     const organizationId = userOrg.organization_id
@@ -21,8 +31,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Verify conversation belongs to organization
     const { data: conversation } = await supabase
       .from('conversations')
-      .select('id, organization_id, notes')
-      .eq('id', id)
+      .select('id')
+      .eq('id', conversationId)
       .eq('organization_id', organizationId)
       .single()
 
@@ -30,19 +40,47 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
-    // Get notes from metadata or dedicated notes table if exists
-    const notes = conversation.notes || []
+    // Fetch notes from conversation_notes table with creator profile
+    const { data: notes, error: notesError } = await supabase
+      .from('conversation_notes')
+      .select(`
+        id,
+        conversation_id,
+        organization_id,
+        content,
+        content_plain,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:created_by (
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq('conversation_id', conversationId)
+      .eq('organization_id', organizationId)
+      .order('created_at', { ascending: false })
 
-    return createSuccessResponse({ notes })
+    if (notesError) {
+      console.error('Error fetching notes:', notesError)
+      throw notesError
+    }
+
+    return createSuccessResponse({ notes: notes || [] })
   } catch (error) {
     console.error('Error fetching conversation notes:', error)
     return createErrorResponse(error)
   }
 }
 
+/**
+ * POST /api/conversations/[id]/notes
+ * Create a new note with @mention support
+ * Extracts mentions from HTML content and creates mention records
+ */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
+    const { id: conversationId } = await params
     const user = await requireAuthenticatedUser()
     const userOrg = await getUserOrganization(user.id)
     const organizationId = userOrg.organization_id
@@ -59,8 +97,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Verify conversation belongs to organization
     const { data: conversation } = await supabase
       .from('conversations')
-      .select('id, organization_id, notes')
-      .eq('id', id)
+      .select('id')
+      .eq('id', conversationId)
       .eq('organization_id', organizationId)
       .single()
 
@@ -68,30 +106,90 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
     }
 
-    // Create new note
-    const newNote = {
-      id: `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      content: content.trim(),
-      created_by: user.id,
-      created_by_name: userOrg.full_name || user.email,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    // Parse and sanitize content
+    const sanitizedContent = sanitizeNoteHtml(content)
+    const plainText = stripHtml(sanitizedContent)
+    const mentionedUserIds = extractMentionIds(sanitizedContent)
+
+    // Insert note into conversation_notes table
+    const { data: note, error: noteError } = await supabase
+      .from('conversation_notes')
+      .insert({
+        conversation_id: conversationId,
+        organization_id: organizationId,
+        content: sanitizedContent,
+        content_plain: plainText,
+        created_by: user.id,
+      })
+      .select(`
+        id,
+        conversation_id,
+        organization_id,
+        content,
+        content_plain,
+        created_by,
+        created_at,
+        updated_at,
+        profiles:created_by (
+          full_name,
+          avatar_url
+        )
+      `)
+      .single()
+
+    if (noteError) {
+      console.error('Error creating note:', noteError)
+      throw noteError
     }
 
-    // Append to existing notes
-    const updatedNotes = [...(conversation.notes || []), newNote]
+    // Create mention records (skip self-mentions)
+    let mentionsCreated = 0
+    const mentionErrors: string[] = []
 
-    // Update conversation with new notes
-    const { error } = await supabase
-      .from('conversations')
-      .update({ notes: updatedNotes })
-      .eq('id', id)
+    for (const mentionedUserId of mentionedUserIds) {
+      // Skip self-mention
+      if (mentionedUserId === user.id) {
+        continue
+      }
 
-    if (error) {
-      throw error
+      // Verify mentioned user is in the same organization
+      const { data: mentionedUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', mentionedUserId)
+        .eq('organization_id', organizationId)
+        .single()
+
+      if (!mentionedUser) {
+        mentionErrors.push(`User ${mentionedUserId} not found in organization`)
+        continue
+      }
+
+      // Create mention record
+      const { error: mentionError } = await supabase
+        .from('mentions')
+        .insert({
+          note_id: note.id,
+          conversation_id: conversationId,
+          organization_id: organizationId,
+          mentioned_user_id: mentionedUserId,
+          mentioning_user_id: user.id,
+        })
+
+      if (mentionError) {
+        console.error('Error creating mention:', mentionError)
+        mentionErrors.push(`Failed to create mention for ${mentionedUserId}`)
+      } else {
+        mentionsCreated++
+      }
     }
 
-    return createSuccessResponse({ note: newNote }, 201)
+    const response: CreateNoteResponse = {
+      note: note as ConversationNote,
+      mentions_created: mentionsCreated,
+    }
+
+    return createSuccessResponse(response, 201)
   } catch (error) {
     console.error('Error creating note:', error)
     return createErrorResponse(error)

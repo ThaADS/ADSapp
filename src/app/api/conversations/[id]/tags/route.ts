@@ -3,6 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+// Helper to check if a string is a valid UUID
+function isUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  return uuidRegex.test(str)
+}
+
 // Add tag to conversation
 export async function POST(
   request: NextRequest,
@@ -23,10 +29,51 @@ export async function POST(
 
     // Next.js 15: params is now a Promise
     const { id: conversationId } = await params
-    const { tagId } = await request.json()
+    const { tagId, tagName } = await request.json()
 
-    if (!tagId) {
-      return NextResponse.json({ error: 'Tag ID is required' }, { status: 400 })
+    if (!tagId && !tagName) {
+      return NextResponse.json({ error: 'Tag ID or name is required' }, { status: 400 })
+    }
+
+    // Get user's organization for tag lookup
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.organization_id) {
+      return NextResponse.json({ error: 'No organization found' }, { status: 403 })
+    }
+
+    // Resolve tag ID - accept either UUID or name
+    let resolvedTagId = tagId
+    if (tagId && !isUUID(tagId)) {
+      // tagId is actually a name, look it up
+      const { data: tag } = await supabase
+        .from('tags')
+        .select('id')
+        .eq('organization_id', profile.organization_id)
+        .eq('name', tagId)
+        .single()
+
+      if (!tag) {
+        return NextResponse.json({ error: `Tag "${tagId}" not found` }, { status: 404 })
+      }
+      resolvedTagId = tag.id
+    } else if (tagName && !tagId) {
+      // Look up by name
+      const { data: tag } = await supabase
+        .from('tags')
+        .select('id')
+        .eq('organization_id', profile.organization_id)
+        .eq('name', tagName)
+        .single()
+
+      if (!tag) {
+        return NextResponse.json({ error: `Tag "${tagName}" not found` }, { status: 404 })
+      }
+      resolvedTagId = tag.id
     }
 
     // Get current conversation
@@ -42,8 +89,8 @@ export async function POST(
 
     // Add tag to array if not already present
     const currentTags = conversation.tags || []
-    if (!currentTags.includes(tagId)) {
-      const updatedTags = [...currentTags, tagId]
+    if (!currentTags.includes(resolvedTagId)) {
+      const updatedTags = [...currentTags, resolvedTagId]
 
       const { error: updateError } = await supabase
         .from('conversations')
@@ -55,7 +102,7 @@ export async function POST(
       }
     }
 
-    return NextResponse.json({ success: true, tags: [...currentTags, tagId] })
+    return NextResponse.json({ success: true, tags: [...currentTags, resolvedTagId] })
   } catch (error) {
     console.error('Error adding tag to conversation:', error)
     return NextResponse.json(
