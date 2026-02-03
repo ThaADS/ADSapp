@@ -17,7 +17,7 @@ Deployed: Vercel (live)
 v1.0 Core: Complete (WhatsApp inbox, billing, automation, AI)
 v2.0 Progress: Complete (97% - Phases 8-16, 19 done)
 v2.3 Active: Twilio WhatsApp Integration (Phases 21-24)
-Current Phase: 21 (Twilio WhatsApp Core) - Not started
+Current Phase: 21 (Twilio WhatsApp Core) - Planned (5 plans ready)
 ```
 
 ## Milestone Overview
@@ -353,12 +353,41 @@ None yet for v2.0.
 - Tests in `tests/_deferred/` need fixes (mocking issues, missing deps)
 - Rate limiter uses in-memory storage (single instance only - needs Redis for multi-instance)
 
+## Phase 21: Twilio WhatsApp Core - PLANNED
+
+**Goal:** Implement core Twilio WhatsApp messaging - send/receive text and media
+**Requirements:** TWWA-01, TWWA-02, TWWA-03, TWWA-04
+**Status:** Planned (5 plans ready for execution)
+
+**Plans:**
+| Plan | Wave | Description | Status |
+|------|------|-------------|--------|
+| 21-01 | 1 | Database schema migration | ⏳ Pending |
+| 21-02 | 2 | Twilio WhatsApp client library | ⏳ Pending |
+| 21-03 | 2 | Webhook handler | ⏳ Pending |
+| 21-04 | 3 | TwilioWhatsAppAdapter | ⏳ Pending |
+| 21-05 | 3 | API routes | ⏳ Pending |
+
+**Progress:** 0% (0/5 plans complete)
+
+**Files to Create:**
+- `supabase/migrations/20260203_twilio_whatsapp.sql`
+- `src/lib/integrations/twilio-whatsapp/client.ts`
+- `src/lib/integrations/twilio-whatsapp/webhook-handler.ts`
+- `src/lib/channels/adapters/twilio-whatsapp.ts`
+- `src/types/twilio-whatsapp.ts`
+- `src/app/api/webhooks/twilio-whatsapp/route.ts`
+- `src/app/api/integrations/twilio-whatsapp/connect/route.ts`
+- `src/app/api/integrations/twilio-whatsapp/verify/route.ts`
+
+**Research:** `.planning/phases/21-twilio-whatsapp-core/21-RESEARCH.md`
+
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Milestone v2.3 initialized - Twilio WhatsApp Integration
+Stopped at: Phase 21 planning complete - 5 plans created
 Resume file: None
-Next action: `/gsd:plan-phase 21` to plan Twilio WhatsApp Core
+Next action: `/gsd:execute-phase 21` to execute the plans
 
 ### Gap Resolution Summary (2026-01-28)
 
