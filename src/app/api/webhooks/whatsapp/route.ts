@@ -16,6 +16,8 @@ import {
   validateWebhookVerification,
 } from '@/lib/middleware/whatsapp-webhook-validator'
 import { handleCartOrder } from '@/lib/whatsapp/order-handler'
+import { processMessageTrigger } from '@/lib/workflow/trigger-service'
+import { DripTriggerHandler, DripCampaignEngine } from '@/lib/whatsapp/drip-campaigns'
 
 // Channel abstraction layer imports
 import { UnifiedMessageRouter, ChannelType } from '@/lib/channels'
@@ -362,6 +364,15 @@ async function processIncomingMessage(
       incrementMessageCount(supabase, organizationId, 'inbound'),
     ])
 
+    // Track campaign replies - check if this is a reply to a campaign message
+    await trackCampaignReply(supabase, contactData.id, organizationId, message.context?.id)
+
+    // Track drip campaign replies (for stop-on-reply feature)
+    await trackDripCampaignReply(supabase, contactData.id, organizationId)
+
+    // Trigger workflow automations for incoming messages
+    await triggerWorkflowsForMessage(contactData.id, organizationId, messageData.content, message.type)
+
     // Process any errors in the message
     if (message.errors && message.errors.length > 0) {
       await logMessageErrors(supabase, message.id, message.errors, organizationId)
@@ -372,24 +383,474 @@ async function processIncomingMessage(
   }
 }
 
+/**
+ * Tracks campaign replies by checking if the incoming message is a response
+ * to a campaign message (either directly via context or within a time window)
+ */
+async function trackCampaignReply(
+  supabase: SupabaseClient,
+  contactId: string,
+  organizationId: string,
+  contextMessageId?: string
+) {
+  try {
+    // Check if there's a recent campaign message to this contact
+    // that could be the campaign they're replying to
+    const replyWindow = 72 * 60 * 60 * 1000 // 72 hours in milliseconds
+    const cutoffTime = new Date(Date.now() - replyWindow).toISOString()
+
+    // First, try to find campaign by context message ID (direct reply)
+    let campaignJob = null
+
+    if (contextMessageId) {
+      const { data: contextJob } = await supabase
+        .from('bulk_message_jobs')
+        .select('id, campaign_id')
+        .eq('message_id', contextMessageId)
+        .single()
+
+      campaignJob = contextJob
+    }
+
+    // If no direct reply, check for recent campaign messages to this contact
+    if (!campaignJob) {
+      const { data: recentJob } = await supabase
+        .from('bulk_message_jobs')
+        .select('id, campaign_id')
+        .eq('contact_id', contactId)
+        .in('status', ['sent', 'delivered', 'read'])
+        .gte('sent_at', cutoffTime)
+        .order('sent_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      campaignJob = recentJob
+    }
+
+    if (!campaignJob) {
+      return // No campaign to attribute this reply to
+    }
+
+    // Mark the job as having received a reply
+    await supabase
+      .from('bulk_message_jobs')
+      .update({
+        replied_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', campaignJob.id)
+      .is('replied_at', null) // Only update if not already marked as replied
+
+    // Update campaign reply statistics
+    await updateCampaignReplyStats(supabase, campaignJob.campaign_id)
+  } catch (error) {
+    console.error('Error tracking campaign reply:', error)
+  }
+}
+
+/**
+ * Updates campaign statistics with reply count
+ */
+async function updateCampaignReplyStats(
+  supabase: SupabaseClient,
+  campaignId: string
+) {
+  try {
+    // Count jobs with replies
+    const { count: replyCount } = await supabase
+      .from('bulk_message_jobs')
+      .select('id', { count: 'exact', head: true })
+      .eq('campaign_id', campaignId)
+      .not('replied_at', 'is', null)
+
+    // Get current campaign stats
+    const { data: campaign } = await supabase
+      .from('bulk_campaigns')
+      .select('statistics')
+      .eq('id', campaignId)
+      .single()
+
+    if (!campaign) return
+
+    const statistics = campaign.statistics || {}
+    const messagesSent = statistics.messagesSent || 0
+
+    // Update reply stats
+    const updatedStats = {
+      ...statistics,
+      replies: replyCount || 0,
+      replyRate: messagesSent > 0 ? ((replyCount || 0) / messagesSent) * 100 : 0,
+    }
+
+    await supabase
+      .from('bulk_campaigns')
+      .update({
+        statistics: updatedStats,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', campaignId)
+  } catch (error) {
+    console.error('Error updating campaign reply stats:', error)
+  }
+}
+
+/**
+ * Triggers workflow automations for incoming messages
+ * This checks for workflows with 'contact_replied' triggers and executes them
+ */
+async function triggerWorkflowsForMessage(
+  contactId: string,
+  organizationId: string,
+  messageContent: string | null,
+  messageType: string
+): Promise<void> {
+  try {
+    // Fire-and-forget workflow triggers (don't block message processing)
+    processMessageTrigger(organizationId, contactId, {
+      content: messageContent,
+      type: messageType,
+      timestamp: new Date().toISOString(),
+    }).catch((error) => {
+      console.error('[Webhook] Workflow trigger error:', error)
+    })
+  } catch (error) {
+    // Don't fail message processing if workflow triggers fail
+    console.error('[Webhook] Failed to trigger workflows:', error)
+  }
+}
+
+/**
+ * Handles drip campaign engagement tracking for incoming messages.
+ * This marks active enrollments as "replied" for stop-on-reply feature.
+ */
+async function trackDripCampaignReply(
+  supabase: SupabaseClient,
+  contactId: string,
+  organizationId: string
+): Promise<void> {
+  try {
+    const engine = new DripCampaignEngine(organizationId)
+    const triggerHandler = new DripTriggerHandler(engine)
+
+    // Fire-and-forget - don't block message processing
+    triggerHandler.handleMessageReceived(contactId).catch((error) => {
+      console.error('[Webhook] Drip campaign reply tracking error:', error)
+    })
+  } catch (error) {
+    // Don't fail message processing if drip tracking fails
+    console.error('[Webhook] Failed to track drip campaign reply:', error)
+  }
+}
+
 async function processMessageStatus(status: MessageStatusUpdate, organizationId: string) {
   const supabase = await createClient()
 
   // Update message delivery/read status
   const updates: Record<string, string | boolean> = {}
+  const timestamp = new Date(parseInt(status.timestamp) * 1000).toISOString()
 
   switch (status.status) {
+    case 'sent':
+      updates.sent_at = timestamp
+      break
     case 'delivered':
-      updates.delivered_at = new Date(parseInt(status.timestamp) * 1000).toISOString()
+      updates.delivered_at = timestamp
       break
     case 'read':
-      updates.read_at = new Date(parseInt(status.timestamp) * 1000).toISOString()
+      updates.read_at = timestamp
       updates.is_read = true
+      break
+    case 'failed':
+      updates.failed_at = timestamp
       break
   }
 
   if (Object.keys(updates).length > 0) {
     await supabase.from('messages').update(updates).eq('whatsapp_message_id', status.id)
+  }
+
+  // Update bulk campaign job status if this message belongs to a campaign
+  await updateBulkCampaignJobStatus(supabase, status.id, status.status, timestamp)
+
+  // Update drip campaign message logs and A/B variant assignments
+  await updateDripMessageStatus(supabase, status.id, status.status, timestamp)
+}
+
+/**
+ * Updates bulk campaign job status when message status changes
+ * Also updates campaign statistics for real-time progress tracking
+ */
+async function updateBulkCampaignJobStatus(
+  supabase: SupabaseClient,
+  whatsappMessageId: string,
+  status: string,
+  timestamp: string
+) {
+  try {
+    // Find the bulk message job by message_id
+    const { data: job, error: jobError } = await supabase
+      .from('bulk_message_jobs')
+      .select('id, campaign_id, status')
+      .eq('message_id', whatsappMessageId)
+      .single()
+
+    if (jobError || !job) {
+      // Not a campaign message, skip
+      return
+    }
+
+    // Map WhatsApp status to job status
+    const jobUpdates: Record<string, string> = {}
+
+    switch (status) {
+      case 'sent':
+        if (job.status === 'pending') {
+          jobUpdates.status = 'sent'
+          jobUpdates.sent_at = timestamp
+        }
+        break
+      case 'delivered':
+        if (['pending', 'sent'].includes(job.status)) {
+          jobUpdates.status = 'delivered'
+          jobUpdates.delivered_at = timestamp
+        }
+        break
+      case 'read':
+        if (['pending', 'sent', 'delivered'].includes(job.status)) {
+          jobUpdates.status = 'read'
+          jobUpdates.read_at = timestamp
+        }
+        break
+      case 'failed':
+        jobUpdates.status = 'failed'
+        jobUpdates.error = 'Message delivery failed'
+        break
+    }
+
+    if (Object.keys(jobUpdates).length > 0) {
+      jobUpdates.updated_at = new Date().toISOString()
+
+      await supabase
+        .from('bulk_message_jobs')
+        .update(jobUpdates)
+        .eq('id', job.id)
+
+      // Trigger campaign statistics recalculation
+      await recalculateCampaignStatistics(supabase, job.campaign_id)
+    }
+  } catch (error) {
+    console.error('Error updating bulk campaign job status:', error)
+  }
+}
+
+/**
+ * Recalculates campaign statistics based on current job statuses
+ */
+async function recalculateCampaignStatistics(
+  supabase: SupabaseClient,
+  campaignId: string
+) {
+  try {
+    // Get job status counts
+    const { data: jobs, error } = await supabase
+      .from('bulk_message_jobs')
+      .select('status')
+      .eq('campaign_id', campaignId)
+
+    if (error || !jobs) return
+
+    const totalTargets = jobs.length
+    const messagesSent = jobs.filter(j => ['sent', 'delivered', 'read'].includes(j.status)).length
+    const messagesDelivered = jobs.filter(j => ['delivered', 'read'].includes(j.status)).length
+    const messagesRead = jobs.filter(j => j.status === 'read').length
+    const messagesFailed = jobs.filter(j => j.status === 'failed').length
+
+    const statistics = {
+      totalTargets,
+      messagesSent,
+      messagesDelivered,
+      messagesRead,
+      messagesFailed,
+      optOuts: 0,
+      replies: 0, // Will be updated by reply tracking
+      deliveryRate: messagesSent > 0 ? (messagesDelivered / messagesSent) * 100 : 0,
+      readRate: messagesSent > 0 ? (messagesRead / messagesSent) * 100 : 0,
+      replyRate: 0,
+      failureRate: totalTargets > 0 ? (messagesFailed / totalTargets) * 100 : 0,
+    }
+
+    await supabase
+      .from('bulk_campaigns')
+      .update({
+        statistics,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', campaignId)
+
+    // Check if campaign is complete
+    const pendingJobs = jobs.filter(j => j.status === 'pending').length
+    if (pendingJobs === 0 && totalTargets > 0) {
+      const { data: campaign } = await supabase
+        .from('bulk_campaigns')
+        .select('status')
+        .eq('id', campaignId)
+        .single()
+
+      if (campaign?.status === 'running') {
+        await supabase
+          .from('bulk_campaigns')
+          .update({
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', campaignId)
+      }
+    }
+  } catch (error) {
+    console.error('Error recalculating campaign statistics:', error)
+  }
+}
+
+/**
+ * Updates drip campaign message logs and A/B variant assignments when message status changes.
+ * This ensures drip campaign analytics track real delivery/read status from WhatsApp.
+ */
+async function updateDripMessageStatus(
+  supabase: SupabaseClient,
+  whatsappMessageId: string,
+  status: string,
+  timestamp: string
+) {
+  try {
+    // Find the drip message log by message_id
+    const { data: messageLog, error: logError } = await supabase
+      .from('drip_message_logs')
+      .select('id, enrollment_id, step_id, status')
+      .eq('message_id', whatsappMessageId)
+      .single()
+
+    if (logError || !messageLog) {
+      // Not a drip campaign message, skip
+      return
+    }
+
+    // Map WhatsApp status to drip message log status
+    const logUpdates: Record<string, string> = {}
+
+    switch (status) {
+      case 'sent':
+        if (messageLog.status === 'pending') {
+          logUpdates.status = 'sent'
+          logUpdates.sent_at = timestamp
+        }
+        break
+      case 'delivered':
+        if (['pending', 'sent'].includes(messageLog.status)) {
+          logUpdates.status = 'delivered'
+          logUpdates.delivered_at = timestamp
+        }
+        break
+      case 'read':
+        if (['pending', 'sent', 'delivered'].includes(messageLog.status)) {
+          logUpdates.status = 'read'
+          logUpdates.read_at = timestamp
+        }
+        break
+      case 'failed':
+        logUpdates.status = 'failed'
+        logUpdates.error = 'Message delivery failed'
+        break
+    }
+
+    if (Object.keys(logUpdates).length > 0) {
+      logUpdates.updated_at = new Date().toISOString()
+
+      await supabase
+        .from('drip_message_logs')
+        .update(logUpdates)
+        .eq('id', messageLog.id)
+    }
+
+    // Update A/B variant assignment if this message is part of an A/B test
+    await updateABVariantAssignment(supabase, messageLog.enrollment_id, messageLog.step_id, status, timestamp)
+  } catch (error) {
+    console.error('Error updating drip message status:', error)
+  }
+}
+
+/**
+ * Updates A/B variant assignment metrics when message status changes.
+ * This enables real-time A/B test metrics based on actual delivery/read status.
+ */
+async function updateABVariantAssignment(
+  supabase: SupabaseClient,
+  enrollmentId: string,
+  stepId: string,
+  status: string,
+  timestamp: string
+) {
+  try {
+    // Find the variant assignment for this enrollment and step
+    const { data: assignment, error: assignmentError } = await supabase
+      .from('drip_variant_assignments')
+      .select(`
+        id,
+        test_id,
+        variant_id,
+        delivered_at,
+        read_at,
+        replied_at
+      `)
+      .eq('enrollment_id', enrollmentId)
+      .single()
+
+    if (assignmentError || !assignment) {
+      // No A/B test assignment for this enrollment
+      return
+    }
+
+    // Check if the test is for this step
+    const { data: test } = await supabase
+      .from('drip_ab_tests')
+      .select('id, step_id, status')
+      .eq('id', assignment.test_id)
+      .eq('step_id', stepId)
+      .eq('status', 'running')
+      .single()
+
+    if (!test) {
+      // Test not running or not for this step
+      return
+    }
+
+    // Update assignment based on status
+    const assignmentUpdates: Record<string, string> = {}
+
+    switch (status) {
+      case 'delivered':
+        if (!assignment.delivered_at) {
+          assignmentUpdates.delivered_at = timestamp
+        }
+        break
+      case 'read':
+        if (!assignment.read_at) {
+          assignmentUpdates.read_at = timestamp
+        }
+        break
+    }
+
+    if (Object.keys(assignmentUpdates).length > 0) {
+      // The database trigger will automatically update variant metrics
+      await supabase
+        .from('drip_variant_assignments')
+        .update(assignmentUpdates)
+        .eq('id', assignment.id)
+
+      console.log(`[Webhook] Updated A/B variant assignment ${assignment.id} with ${status} status`)
+    }
+  } catch (error) {
+    console.error('Error updating A/B variant assignment:', error)
   }
 }
 
