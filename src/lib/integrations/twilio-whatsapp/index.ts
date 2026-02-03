@@ -22,3 +22,16 @@ export type {
   TwilioWhatsAppMessage,
   TwilioMessageResponse,
 } from './client'
+
+// Webhook handler exports
+export {
+  handleTwilioWhatsAppWebhook,
+  processIncomingMessage,
+  processStatusCallback,
+  parseWebhookPayload,
+  generateEmptyTwiML,
+  generateTwiMLResponse,
+} from './webhook-handler'
+
+// Type exports from webhook handler
+export type { WebhookProcessResult } from './webhook-handler'
