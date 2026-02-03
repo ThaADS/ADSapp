@@ -77,10 +77,18 @@ export interface StatisticalResult {
 // ============================================================================
 
 export class DripABTestingService {
-  private supabase: SupabaseClient
+  private _supabase: SupabaseClient | null = null
+  private _providedSupabase: SupabaseClient | undefined
 
   constructor(supabase?: SupabaseClient) {
-    this.supabase = supabase || createServiceRoleClient()
+    this._providedSupabase = supabase
+  }
+
+  private getSupabase(): SupabaseClient {
+    if (!this._supabase) {
+      this._supabase = this._providedSupabase || createServiceRoleClient()
+    }
+    return this._supabase
   }
 
   /**
@@ -111,7 +119,7 @@ export class DripABTestingService {
         updated_at: new Date().toISOString(),
       }
 
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('drip_ab_tests')
         .insert(testData)
         .select()
@@ -169,7 +177,7 @@ export class DripABTestingService {
         created_at: new Date().toISOString(),
       }
 
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('drip_ab_variants')
         .insert(variantData)
         .select()
@@ -193,7 +201,7 @@ export class DripABTestingService {
   async startTest(testId: string): Promise<boolean> {
     try {
       // Validate test has at least 2 variants
-      const { data: variants } = await this.supabase
+      const { data: variants } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('id')
         .eq('test_id', testId)
@@ -204,7 +212,7 @@ export class DripABTestingService {
       }
 
       // Validate traffic allocation sums to 100%
-      const { data: allocations } = await this.supabase
+      const { data: allocations } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('traffic_allocation')
         .eq('test_id', testId)
@@ -215,7 +223,7 @@ export class DripABTestingService {
         return false
       }
 
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('drip_ab_tests')
         .update({
           status: 'running',
@@ -238,7 +246,7 @@ export class DripABTestingService {
   async selectVariantForContact(testId: string, contactId: string): Promise<ABTestVariant | null> {
     try {
       // Get all variants for this test
-      const { data: variants, error } = await this.supabase
+      const { data: variants, error } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('*')
         .eq('test_id', testId)
@@ -275,7 +283,7 @@ export class DripABTestingService {
    */
   async recordImpression(variantId: string): Promise<void> {
     try {
-      const { data: variant } = await this.supabase
+      const { data: variant } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('metrics')
         .eq('id', variantId)
@@ -286,7 +294,7 @@ export class DripABTestingService {
       const metrics = variant.metrics as VariantMetrics
       metrics.impressions++
 
-      await this.supabase
+      await this.getSupabase()
         .from('drip_ab_variants')
         .update({ metrics })
         .eq('id', variantId)
@@ -344,7 +352,7 @@ export class DripABTestingService {
    */
   async getTest(testId: string): Promise<ABTest | null> {
     try {
-      const { data: test, error: testError } = await this.supabase
+      const { data: test, error: testError } = await this.getSupabase()
         .from('drip_ab_tests')
         .select('*')
         .eq('id', testId)
@@ -354,7 +362,7 @@ export class DripABTestingService {
         return null
       }
 
-      const { data: variants, error: variantError } = await this.supabase
+      const { data: variants, error: variantError } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('*')
         .eq('test_id', testId)
@@ -376,7 +384,7 @@ export class DripABTestingService {
    */
   async getActiveTestForStep(stepId: string): Promise<ABTest | null> {
     try {
-      const { data: test, error } = await this.supabase
+      const { data: test, error } = await this.getSupabase()
         .from('drip_ab_tests')
         .select('*')
         .eq('step_id', stepId)
@@ -495,13 +503,13 @@ export class DripABTestingService {
   async declareWinner(testId: string, winnerId: string): Promise<boolean> {
     try {
       // Mark the winner
-      await this.supabase
+      await this.getSupabase()
         .from('drip_ab_variants')
         .update({ is_winner: true })
         .eq('id', winnerId)
 
       // Complete the test
-      await this.supabase
+      await this.getSupabase()
         .from('drip_ab_tests')
         .update({
           status: 'completed',
@@ -512,20 +520,20 @@ export class DripABTestingService {
         .eq('id', testId)
 
       // Update the step with the winning variant's content
-      const { data: test } = await this.supabase
+      const { data: test } = await this.getSupabase()
         .from('drip_ab_tests')
         .select('step_id')
         .eq('id', testId)
         .single()
 
-      const { data: winner } = await this.supabase
+      const { data: winner } = await this.getSupabase()
         .from('drip_ab_variants')
         .select('message_content, template_id, template_variables')
         .eq('id', winnerId)
         .single()
 
       if (test && winner) {
-        await this.supabase
+        await this.getSupabase()
           .from('drip_campaign_steps')
           .update({
             message_content: winner.message_content,
@@ -548,7 +556,7 @@ export class DripABTestingService {
    */
   async pauseTest(testId: string): Promise<boolean> {
     try {
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('drip_ab_tests')
         .update({
           status: 'paused',
@@ -568,7 +576,7 @@ export class DripABTestingService {
   // ========================================================================
 
   private async updateMetric(variantId: string, metricKey: keyof VariantMetrics): Promise<void> {
-    const { data: variant } = await this.supabase
+    const { data: variant } = await this.getSupabase()
       .from('drip_ab_variants')
       .select('metrics')
       .eq('id', variantId)
@@ -589,7 +597,7 @@ export class DripABTestingService {
       metrics.clickRate = (metrics.clicked / metrics.delivered) * 100
     }
 
-    await this.supabase
+    await this.getSupabase()
       .from('drip_ab_variants')
       .update({ metrics })
       .eq('id', variantId)

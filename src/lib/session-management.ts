@@ -115,12 +115,18 @@ export interface SecurityEvent {
 
 // Session Manager Class
 export class SessionManager {
-  private supabase: any
+  private _supabase: any = null
   private ipApiKey: string
 
   constructor() {
-    this.supabase = createClient()
     this.ipApiKey = process.env.IP_API_KEY || ''
+  }
+
+  private async getSupabase() {
+    if (!this._supabase) {
+      this._supabase = await createClient()
+    }
+    return this._supabase
   }
 
   // Session Creation and Management
@@ -148,7 +154,7 @@ export class SessionManager {
     const expiresAt = new Date(Date.now() + config.sessionTimeoutMinutes * 60 * 1000)
 
     // Create session record
-    const { data: session, error } = await this.supabase
+    const { data: session, error } = await (await this.getSupabase())
       .from('user_sessions')
       .insert({
         user_id: userId,
@@ -203,7 +209,7 @@ export class SessionManager {
   }
 
   async validateSession(sessionToken: string): Promise<UserSession | null> {
-    const { data: session, error } = await this.supabase
+    const { data: session, error } = await (await this.getSupabase())
       .from('user_sessions')
       .select('*')
       .eq('session_token', sessionToken)
@@ -222,7 +228,7 @@ export class SessionManager {
   }
 
   async updateSessionActivity(sessionId: string): Promise<void> {
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_sessions')
       .update({
         last_activity: new Date().toISOString(),
@@ -231,13 +237,13 @@ export class SessionManager {
   }
 
   async terminateSession(sessionId: string, reason: string = 'user_logout'): Promise<void> {
-    const { data: session } = await this.supabase
+    const { data: session } = await (await this.getSupabase())
       .from('user_sessions')
       .select('user_id, organization_id')
       .eq('id', sessionId)
       .single()
 
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_sessions')
       .update({
         status: 'terminated',
@@ -263,7 +269,8 @@ export class SessionManager {
   }
 
   async terminateAllUserSessions(userId: string, exceptSessionId?: string): Promise<number> {
-    let query = this.supabase
+    const supabase = await this.getSupabase()
+    let query = supabase
       .from('user_sessions')
       .update({
         status: 'terminated',
@@ -289,7 +296,7 @@ export class SessionManager {
     deviceInfo: DeviceInfo,
     trustDevice: boolean = false
   ): Promise<DeviceInfo> {
-    const { data: existingDevice } = await this.supabase
+    const { data: existingDevice } = await (await this.getSupabase())
       .from('user_devices')
       .select('*')
       .eq('user_id', userId)
@@ -298,7 +305,7 @@ export class SessionManager {
 
     if (existingDevice) {
       // Update existing device
-      await this.supabase
+      await (await this.getSupabase())
         .from('user_devices')
         .update({
           device_name: deviceInfo.deviceName,
@@ -318,7 +325,7 @@ export class SessionManager {
     }
 
     // Create new device
-    await this.supabase.from('user_devices').insert({
+    await (await this.getSupabase()).from('user_devices').insert({
       user_id: userId,
       device_id: deviceInfo.deviceId,
       device_name: deviceInfo.deviceName,
@@ -337,7 +344,7 @@ export class SessionManager {
   }
 
   async getUserDevices(userId: string): Promise<DeviceInfo[]> {
-    const { data: devices, error } = await this.supabase
+    const { data: devices, error } = await (await this.getSupabase())
       .from('user_devices')
       .select('*')
       .eq('user_id', userId)
@@ -362,7 +369,7 @@ export class SessionManager {
   }
 
   async trustDevice(userId: string, deviceId: string): Promise<void> {
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_devices')
       .update({ is_trusted: true })
       .eq('user_id', userId)
@@ -370,7 +377,7 @@ export class SessionManager {
   }
 
   async untrustDevice(userId: string, deviceId: string): Promise<void> {
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_devices')
       .update({ is_trusted: false })
       .eq('user_id', userId)
@@ -379,7 +386,7 @@ export class SessionManager {
 
   async removeDevice(userId: string, deviceId: string): Promise<void> {
     // Terminate all sessions from this device
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_sessions')
       .update({
         status: 'terminated',
@@ -391,7 +398,7 @@ export class SessionManager {
       .contains('device_info', { deviceId })
 
     // Remove device record
-    await this.supabase
+    await (await this.getSupabase())
       .from('user_devices')
       .delete()
       .eq('user_id', userId)
@@ -400,7 +407,8 @@ export class SessionManager {
 
   // Session Queries
   async getUserSessions(userId: string, includeExpired: boolean = false): Promise<UserSession[]> {
-    let query = this.supabase.from('user_sessions').select('*').eq('user_id', userId)
+    const supabase = await this.getSupabase()
+    let query = supabase.from('user_sessions').select('*').eq('user_id', userId)
 
     if (!includeExpired) {
       query = query.in('status', ['active', 'suspicious'])
@@ -416,7 +424,7 @@ export class SessionManager {
     organizationId: string,
     limit: number = 100
   ): Promise<UserSession[]> {
-    const { data: sessions, error } = await this.supabase
+    const { data: sessions, error } = await (await this.getSupabase())
       .from('user_sessions')
       .select(
         `
@@ -434,7 +442,7 @@ export class SessionManager {
   }
 
   async getSuspiciousSessions(organizationId: string): Promise<UserSession[]> {
-    const { data: sessions, error } = await this.supabase
+    const { data: sessions, error } = await (await this.getSupabase())
       .from('user_sessions')
       .select('*')
       .eq('organization_id', organizationId)
@@ -548,7 +556,7 @@ export class SessionManager {
   }
 
   private async isUnusualLocation(userId: string, location: LocationInfo): Promise<boolean> {
-    const { data: recentSessions } = await this.supabase
+    const { data: recentSessions } = await (await this.getSupabase())
       .from('user_sessions')
       .select('location')
       .eq('user_id', userId)
@@ -564,7 +572,7 @@ export class SessionManager {
   }
 
   private async getRecentLoginFailures(userId: string): Promise<number> {
-    const { data } = await this.supabase
+    const { data } = await (await this.getSupabase())
       .from('login_attempts')
       .select('failure_count')
       .eq('user_id', userId)
@@ -576,7 +584,7 @@ export class SessionManager {
 
   // Configuration Management
   async getSessionConfiguration(organizationId: string): Promise<SessionConfiguration> {
-    const { data: config, error } = await this.supabase
+    const { data: config, error } = await (await this.getSupabase())
       .from('session_configurations')
       .select('*')
       .eq('organization_id', organizationId)
@@ -652,7 +660,7 @@ export class SessionManager {
 
   // Cleanup and Maintenance
   async cleanupExpiredSessions(): Promise<number> {
-    const { data: expiredSessions, error } = await this.supabase
+    const { data: expiredSessions, error } = await (await this.getSupabase())
       .from('user_sessions')
       .update({ status: 'expired' })
       .eq('status', 'active')
@@ -666,7 +674,7 @@ export class SessionManager {
   async cleanupInactiveSessions(): Promise<number> {
     const inactivityThreshold = new Date(Date.now() - 24 * 60 * 60 * 1000) // 24 hours
 
-    const { data: inactiveSessions, error } = await this.supabase
+    const { data: inactiveSessions, error } = await (await this.getSupabase())
       .from('user_sessions')
       .update({ status: 'expired' })
       .eq('status', 'active')
@@ -703,7 +711,7 @@ export class SessionManager {
 
   // Security Event Logging
   private async logSecurityEvent(event: Omit<SecurityEvent, 'id' | 'createdAt'>): Promise<void> {
-    await this.supabase.from('security_events').insert({
+    await (await this.getSupabase()).from('security_events').insert({
       user_id: event.userId,
       organization_id: event.organizationId,
       session_id: event.sessionId,
@@ -735,7 +743,7 @@ export class SessionManager {
 
   private async addSessionFlags(sessionId: string, flags: SessionFlag[]): Promise<void> {
     for (const flag of flags) {
-      await this.supabase.from('session_flags').insert({
+      await (await this.getSupabase()).from('session_flags').insert({
         session_id: sessionId,
         flag_type: flag.type,
         severity: flag.severity,
