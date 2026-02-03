@@ -24,7 +24,14 @@ export class EnhancedWorkflowEngine extends WorkflowExecutionEngine {
   private logger: WorkflowExecutionLogger | null = null
   private retryHandler: WorkflowRetryHandler
   private enableLogging: boolean
-  private supabase = createServiceRoleClient()
+  private _supabase: ReturnType<typeof createServiceRoleClient> | null = null
+
+  private getSupabase() {
+    if (!this._supabase) {
+      this._supabase = createServiceRoleClient()
+    }
+    return this._supabase
+  }
 
   constructor(
     workflow: Workflow,
@@ -52,7 +59,7 @@ export class EnhancedWorkflowEngine extends WorkflowExecutionEngine {
 
     // Initialize logger
     if (this.enableLogging) {
-      this.logger = createExecutionLogger(context.executionId, organizationId, this.supabase)
+      this.logger = createExecutionLogger(context.executionId, organizationId, this.getSupabase())
     }
 
     return context
@@ -235,7 +242,7 @@ export class EnhancedWorkflowEngine extends WorkflowExecutionEngine {
 
     try {
       // Fetch actual contact data
-      const { data: contact } = await this.supabase
+      const { data: contact } = await this.getSupabase()
         .from('contacts')
         .select('tags, custom_fields, status, source, last_message_at')
         .eq('id', context.contactId)

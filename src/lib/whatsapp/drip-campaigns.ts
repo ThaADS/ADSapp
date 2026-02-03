@@ -10,7 +10,6 @@
  * - Comprehensive analytics
  */
 
-import { createClient } from '@/lib/supabase/server'
 import { WhatsAppClient } from './client'
 import { WhatsAppTemplateManager } from './templates'
 import { SupabaseClient } from '@supabase/supabase-js'
@@ -149,8 +148,11 @@ export class DripCampaignEngine {
   private supabase: TypedSupabaseClient
   private templateManager: WhatsAppTemplateManager
 
-  constructor(supabase?: TypedSupabaseClient) {
-    this.supabase = (supabase || createClient()) as TypedSupabaseClient
+  constructor(supabase: TypedSupabaseClient) {
+    if (!supabase) {
+      throw new Error('DripCampaignEngine requires a Supabase client instance')
+    }
+    this.supabase = supabase
     this.templateManager = new WhatsAppTemplateManager()
   }
 

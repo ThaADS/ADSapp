@@ -61,8 +61,22 @@ export interface SchedulerResult {
 // ============================================================================
 
 export class WorkflowScheduler {
-  private supabase = createServiceRoleClient()
-  private retryHandler = createRetryHandler()
+  private _supabase: ReturnType<typeof createServiceRoleClient> | null = null
+  private _retryHandler: ReturnType<typeof createRetryHandler> | null = null
+
+  private getSupabase() {
+    if (!this._supabase) {
+      this._supabase = createServiceRoleClient()
+    }
+    return this._supabase
+  }
+
+  private getRetryHandler() {
+    if (!this._retryHandler) {
+      this._retryHandler = createRetryHandler()
+    }
+    return this._retryHandler
+  }
 
   /**
    * Process all due scheduled workflows
@@ -76,7 +90,7 @@ export class WorkflowScheduler {
 
     try {
       // Get all active schedules that are due
-      const { data: dueSchedules, error } = await this.supabase
+      const { data: dueSchedules, error } = await this.getSupabase()
         .from('workflow_schedules')
         .select('*')
         .eq('is_active', true)
@@ -129,7 +143,7 @@ export class WorkflowScheduler {
    */
   private async executeScheduledWorkflow(schedule: WorkflowSchedule): Promise<boolean> {
     // Get the workflow
-    const { data: workflowData, error: workflowError } = await this.supabase
+    const { data: workflowData, error: workflowError } = await this.getSupabase()
       .from('workflows')
       .select('*')
       .eq('id', schedule.workflowId)
@@ -168,7 +182,7 @@ export class WorkflowScheduler {
     }
 
     // Get organization WhatsApp credentials
-    const { data: orgSettings } = await this.supabase
+    const { data: orgSettings } = await this.getSupabase()
       .from('organizations')
       .select('whatsapp_access_token, whatsapp_phone_number_id')
       .eq('id', schedule.organizationId)
@@ -204,7 +218,7 @@ export class WorkflowScheduler {
         )
 
         // Save execution
-        await this.supabase.from('workflow_executions').insert({
+        await this.getSupabase().from('workflow_executions').insert({
           id: executionContext.executionId,
           workflow_id: workflow.id,
           contact_id: contact.id,
@@ -238,7 +252,7 @@ export class WorkflowScheduler {
     const triggerNode = nodes.find((n: any) => n.type === 'trigger')
     const triggerConfig = triggerNode?.data?.triggerConfig || {}
 
-    let query = this.supabase
+    let query = this.getSupabase()
       .from('contacts')
       .select('id, phone_number, name, email, tags, custom_fields')
       .eq('organization_id', schedule.organizationId)
@@ -289,7 +303,7 @@ export class WorkflowScheduler {
       updates.next_execution_at = null
     }
 
-    await this.supabase
+    await this.getSupabase()
       .from('workflow_schedules')
       .update(updates)
       .eq('id', schedule.id)
@@ -417,7 +431,7 @@ export class WorkflowScheduler {
    * Mark schedule execution as failed
    */
   private async markScheduleFailed(scheduleId: string, error: string): Promise<void> {
-    await this.supabase
+    await this.getSupabase()
       .from('workflow_schedules')
       .update({
         last_execution_status: 'failed',
@@ -469,7 +483,7 @@ export class WorkflowScheduler {
       return null
     }
 
-    const { data, error } = await this.supabase
+    const { data, error } = await this.getSupabase()
       .from('workflow_schedules')
       .insert({
         workflow_id: workflowId,
@@ -498,7 +512,7 @@ export class WorkflowScheduler {
    * Deactivate a schedule
    */
   async deactivateSchedule(scheduleId: string): Promise<boolean> {
-    const { error } = await this.supabase
+    const { error } = await this.getSupabase()
       .from('workflow_schedules')
       .update({
         is_active: false,

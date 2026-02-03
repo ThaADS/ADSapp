@@ -35,7 +35,14 @@ export interface TriggerEvaluationResult {
 // ============================================================================
 
 export class WorkflowTriggerService {
-  private supabase = createServiceRoleClient()
+  private supabase: ReturnType<typeof createServiceRoleClient> | null = null
+
+  private getSupabase() {
+    if (!this.supabase) {
+      this.supabase = createServiceRoleClient()
+    }
+    return this.supabase
+  }
 
   /**
    * Evaluate all active workflows for a trigger event
@@ -45,7 +52,7 @@ export class WorkflowTriggerService {
 
     try {
       // Get all active workflows for this organization
-      const { data: workflows, error } = await this.supabase
+      const { data: workflows, error } = await this.getSupabase()
         .from('workflows')
         .select('*')
         .eq('organization_id', event.organizationId)
@@ -211,7 +218,7 @@ export class WorkflowTriggerService {
   ): Promise<boolean> {
     try {
       // Check for existing executions
-      const { data: existingExecutions, error } = await this.supabase
+      const { data: existingExecutions, error } = await this.getSupabase()
         .from('workflow_executions')
         .select('id, status')
         .eq('workflow_id', workflowId)
@@ -269,7 +276,7 @@ export class WorkflowTriggerService {
   ): Promise<void> {
     try {
       // Get contact information
-      const { data: contact, error: contactError } = await this.supabase
+      const { data: contact, error: contactError } = await this.getSupabase()
         .from('contacts')
         .select('id, phone_number, name, email, tags, custom_fields')
         .eq('id', event.contactId)
@@ -281,7 +288,7 @@ export class WorkflowTriggerService {
       }
 
       // Get organization's WhatsApp credentials
-      const { data: orgSettings, error: settingsError } = await this.supabase
+      const { data: orgSettings, error: settingsError } = await this.getSupabase()
         .from('organizations')
         .select('whatsapp_access_token, whatsapp_phone_number_id')
         .eq('id', event.organizationId)
@@ -315,7 +322,7 @@ export class WorkflowTriggerService {
       )
 
       // Save execution to database
-      const { error: saveError } = await this.supabase
+      const { error: saveError } = await this.getSupabase()
         .from('workflow_executions')
         .insert({
           id: executionContext.executionId,

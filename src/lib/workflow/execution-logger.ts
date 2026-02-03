@@ -45,15 +45,23 @@ export interface ExecutionLogSummary {
 // ============================================================================
 
 export class WorkflowExecutionLogger {
-  private supabase: SupabaseClient
+  private _supabase: SupabaseClient | null = null
+  private _providedSupabase: SupabaseClient | undefined
   private executionId: string
   private organizationId: string
   private pendingLogs: Map<string, ExecutionLogEntry> = new Map()
 
+  private getSupabase(): SupabaseClient {
+    if (!this._supabase) {
+      this._supabase = this._providedSupabase || createServiceRoleClient()
+    }
+    return this._supabase
+  }
+
   constructor(executionId: string, organizationId: string, supabase?: SupabaseClient) {
     this.executionId = executionId
     this.organizationId = organizationId
-    this.supabase = supabase || createServiceRoleClient()
+    this._providedSupabase = supabase
   }
 
   /**
@@ -79,7 +87,7 @@ export class WorkflowExecutionLogger {
 
     // Save to database
     try {
-      await this.supabase.from('workflow_execution_logs').insert({
+      await this.getSupabase().from('workflow_execution_logs').insert({
         execution_id: this.executionId,
         organization_id: this.organizationId,
         node_id: nodeId,
@@ -106,7 +114,7 @@ export class WorkflowExecutionLogger {
 
     try {
       // Update the log entry
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('workflow_execution_logs')
         .update({
           status: 'completed',
@@ -120,7 +128,7 @@ export class WorkflowExecutionLogger {
 
       if (error) {
         // Insert new entry if update failed (entry might not exist)
-        await this.supabase.from('workflow_execution_logs').insert({
+        await this.getSupabase().from('workflow_execution_logs').insert({
           execution_id: this.executionId,
           organization_id: this.organizationId,
           node_id: nodeId,
@@ -155,7 +163,7 @@ export class WorkflowExecutionLogger {
 
     try {
       // Update the log entry
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('workflow_execution_logs')
         .update({
           status: 'failed',
@@ -170,7 +178,7 @@ export class WorkflowExecutionLogger {
 
       if (error) {
         // Insert new entry if update failed
-        await this.supabase.from('workflow_execution_logs').insert({
+        await this.getSupabase().from('workflow_execution_logs').insert({
           execution_id: this.executionId,
           organization_id: this.organizationId,
           node_id: nodeId,
@@ -201,7 +209,7 @@ export class WorkflowExecutionLogger {
     reason?: string
   ): Promise<void> {
     try {
-      await this.supabase.from('workflow_execution_logs').insert({
+      await this.getSupabase().from('workflow_execution_logs').insert({
         execution_id: this.executionId,
         organization_id: this.organizationId,
         node_id: nodeId,
@@ -221,7 +229,7 @@ export class WorkflowExecutionLogger {
    */
   async getExecutionSummary(): Promise<ExecutionLogSummary | null> {
     try {
-      const { data: logs, error } = await this.supabase
+      const { data: logs, error } = await this.getSupabase()
         .from('workflow_execution_logs')
         .select('*')
         .eq('execution_id', this.executionId)

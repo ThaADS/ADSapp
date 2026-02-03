@@ -67,7 +67,14 @@ export const DEFAULT_RETRY_CONFIG: RetryConfig = {
 
 export class WorkflowRetryHandler {
   private config: RetryConfig
-  private supabase = createServiceRoleClient()
+  private _supabase: ReturnType<typeof createServiceRoleClient> | null = null
+
+  private getSupabase() {
+    if (!this._supabase) {
+      this._supabase = createServiceRoleClient()
+    }
+    return this._supabase
+  }
 
   constructor(config: Partial<RetryConfig> = {}) {
     this.config = { ...DEFAULT_RETRY_CONFIG, ...config }
@@ -157,7 +164,7 @@ export class WorkflowRetryHandler {
   ): Promise<void> {
     try {
       // Update execution record
-      await this.supabase
+      await this.getSupabase()
         .from('workflow_executions')
         .update({
           retry_count: retryCount,
@@ -170,7 +177,7 @@ export class WorkflowRetryHandler {
 
       // If scheduling retry, update metadata
       if (nextAttemptAt) {
-        await this.supabase
+        await this.getSupabase()
           .from('workflow_executions')
           .update({
             metadata: {
@@ -192,7 +199,7 @@ export class WorkflowRetryHandler {
     try {
       const now = new Date().toISOString()
 
-      let query = this.supabase
+      let query = this.getSupabase()
         .from('workflow_executions')
         .select('id, current_node_id, retry_count, error_message, metadata, updated_at')
         .eq('status', 'waiting')
@@ -261,7 +268,7 @@ export class WorkflowRetryHandler {
     nodeId?: string
   ): Promise<void> {
     try {
-      await this.supabase
+      await this.getSupabase()
         .from('workflow_executions')
         .update({
           status: 'failed' as WorkflowExecutionStatus,
@@ -281,7 +288,7 @@ export class WorkflowRetryHandler {
    */
   async markAsResumed(executionId: string): Promise<void> {
     try {
-      await this.supabase
+      await this.getSupabase()
         .from('workflow_executions')
         .update({
           status: 'running' as WorkflowExecutionStatus,
