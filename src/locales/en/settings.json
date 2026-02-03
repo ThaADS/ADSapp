@@ -253,5 +253,42 @@
         "saved": "Language preference saved!",
         "error": "Failed to save. Please try again.",
         "note": "The page will reload to apply your new language preference."
+    },
+    "whatsapp": {
+        "provider": {
+            "title": "WhatsApp Provider",
+            "description": "Choose which WhatsApp provider to use for sending and receiving messages.",
+            "cloudApi": {
+                "name": "Meta Cloud API",
+                "description": "Direct integration with Meta's WhatsApp Business Cloud API. Best for high-volume messaging."
+            },
+            "twilio": {
+                "name": "Twilio",
+                "description": "Send and receive WhatsApp messages through Twilio. Includes advanced features like templates and delivery tracking."
+            },
+            "status": {
+                "healthy": "Connected",
+                "unhealthy": "Connection Error",
+                "notConfigured": "Not Configured",
+                "checking": "Checking..."
+            },
+            "fallback": {
+                "title": "Fallback Provider",
+                "description": "Automatically switch to this provider if the primary provider is unavailable.",
+                "enabled": "Fallback enabled",
+                "disabled": "No fallback configured"
+            },
+            "saved": "Provider settings saved successfully",
+            "saveError": "Failed to save provider settings",
+            "loadError": "Failed to load provider settings",
+            "readonly": "Only organization owners and admins can change provider settings.",
+            "noProviders": "No WhatsApp providers configured. Please configure at least one provider in Integrations."
+        }
+    },
+    "common": {
+        "saving": "Saving...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "loading": "Loading..."
     }
 }

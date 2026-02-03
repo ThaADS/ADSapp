@@ -253,5 +253,42 @@
         "saved": "Taalvoorkeur opgeslagen!",
         "error": "Opslaan mislukt. Probeer het opnieuw.",
         "note": "De pagina wordt opnieuw geladen om je nieuwe taalvoorkeur toe te passen."
+    },
+    "whatsapp": {
+        "provider": {
+            "title": "WhatsApp Provider",
+            "description": "Kies welke WhatsApp provider je wilt gebruiken voor het verzenden en ontvangen van berichten.",
+            "cloudApi": {
+                "name": "Meta Cloud API",
+                "description": "Directe integratie met Meta's WhatsApp Business Cloud API. Ideaal voor grote volumes berichten."
+            },
+            "twilio": {
+                "name": "Twilio",
+                "description": "Verstuur en ontvang WhatsApp berichten via Twilio. Inclusief geavanceerde functies zoals templates en bezorgingstracking."
+            },
+            "status": {
+                "healthy": "Verbonden",
+                "unhealthy": "Verbindingsfout",
+                "notConfigured": "Niet geconfigureerd",
+                "checking": "Controleren..."
+            },
+            "fallback": {
+                "title": "Reserve Provider",
+                "description": "Schakel automatisch over naar deze provider als de primaire provider niet beschikbaar is.",
+                "enabled": "Reserve ingeschakeld",
+                "disabled": "Geen reserve geconfigureerd"
+            },
+            "saved": "Provider instellingen succesvol opgeslagen",
+            "saveError": "Opslaan van provider instellingen mislukt",
+            "loadError": "Laden van provider instellingen mislukt",
+            "readonly": "Alleen organisatie-eigenaren en beheerders kunnen provider instellingen wijzigen.",
+            "noProviders": "Geen WhatsApp providers geconfigureerd. Configureer ten minste één provider bij Integraties."
+        }
+    },
+    "common": {
+        "saving": "Opslaan...",
+        "save": "Opslaan",
+        "cancel": "Annuleren",
+        "loading": "Laden..."
     }
 }

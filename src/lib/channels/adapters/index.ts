@@ -4,6 +4,7 @@
  * Date: 2026-01-24
  * Updated: 2026-01-28 - Added Instagram, Facebook, and SMS adapters
  * Updated: 2026-02-03 - Added Twilio WhatsApp adapter
+ * Updated: 2026-02-03 - Added provider-aware WhatsApp adapter factory (Phase 24)
  */
 
 import { ChannelType, ChannelAdapter } from '@/types/channels'
@@ -12,6 +13,7 @@ import { InstagramAdapter } from './instagram'
 import { FacebookAdapter } from './facebook'
 import { SMSAdapter } from './sms'
 import { TwilioWhatsAppAdapter } from './twilio-whatsapp'
+import { getWhatsAppAdapter as getProviderAwareAdapter } from '@/lib/integrations/whatsapp/provider-service'
 
 // ============================================================================
 // Re-export Adapter Classes
@@ -30,13 +32,26 @@ export { TwilioWhatsAppAdapter } from './twilio-whatsapp'
 
 /**
  * Creates a WhatsApp adapter for a specific organization.
- * Uses the organization's stored and decrypted credentials.
+ * Automatically selects between Cloud API and Twilio based on organization's provider settings.
  *
  * @param organizationId - The organization ID to create adapter for
- * @returns A configured WhatsAppAdapter instance
+ * @returns A configured WhatsApp adapter (either Cloud API or Twilio)
  * @throws Error if WhatsApp credentials are not found for the organization
  */
-export async function createWhatsAppAdapter(organizationId: string): Promise<WhatsAppAdapter> {
+export async function createWhatsAppAdapter(organizationId: string): Promise<ChannelAdapter> {
+  // Use provider-aware factory that respects organization's provider settings
+  return getProviderAwareAdapter(organizationId)
+}
+
+/**
+ * Creates a WhatsApp Cloud API adapter explicitly (ignoring provider settings).
+ * Use this when you specifically need the Cloud API adapter.
+ *
+ * @param organizationId - The organization ID to create adapter for
+ * @returns A configured WhatsAppAdapter instance (Cloud API)
+ * @throws Error if Cloud API credentials are not found
+ */
+export async function createCloudApiWhatsAppAdapter(organizationId: string): Promise<WhatsAppAdapter> {
   return WhatsAppAdapter.createForOrganization(organizationId)
 }
 
