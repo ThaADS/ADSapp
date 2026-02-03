@@ -443,3 +443,156 @@ export interface TwilioContentAction {
   url?: string
   phone?: string
 }
+
+// =============================================================================
+// Message Status Types (Phase 23)
+// =============================================================================
+
+/**
+ * Message status history entry
+ */
+export interface TwilioMessageStatusHistory {
+  id: string
+  organizationId: string
+  messageId: string | null
+  channelMessageId: string
+  status: TwilioWhatsAppMessageStatus
+  previousStatus: TwilioWhatsAppMessageStatus | null
+  errorCode: string | null
+  errorMessage: string | null
+  twilioTimestamp: Date | null
+  createdAt: Date
+}
+
+/**
+ * Database row for status history
+ */
+export interface TwilioMessageStatusHistoryRow {
+  id: string
+  organization_id: string
+  message_id: string | null
+  channel_message_id: string
+  status: string
+  previous_status: string | null
+  error_code: string | null
+  error_message: string | null
+  twilio_timestamp: string | null
+  raw_payload: unknown
+  created_at: string
+}
+
+/**
+ * Twilio error code information
+ */
+export interface TwilioErrorInfo {
+  code: string
+  message: string
+  userMessage: string
+  retryable: boolean
+  retryAfterSeconds: number | null
+  category: 'invalid_number' | 'rate_limit' | 'policy' | 'network' | 'unknown'
+}
+
+/**
+ * Database row for error codes
+ */
+export interface TwilioErrorCodeRow {
+  code: string
+  message: string
+  user_message: string
+  retryable: boolean
+  retry_after_seconds: number | null
+  category: string
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Message status response for API
+ */
+export interface MessageStatusResponse {
+  messageId: string
+  channelMessageId: string
+  currentStatus: TwilioWhatsAppMessageStatus
+  timestamps: {
+    created: string
+    sent: string | null
+    delivered: string | null
+    read: string | null
+  }
+  error: {
+    code: string
+    message: string
+    userMessage: string
+    retryable: boolean
+  } | null
+  history: Array<{
+    status: TwilioWhatsAppMessageStatus
+    timestamp: string
+    errorCode?: string
+  }>
+}
+
+/**
+ * Retry message request
+ */
+export interface RetryMessageRequest {
+  messageId: string
+}
+
+/**
+ * Retry message response
+ */
+export interface RetryMessageResponse {
+  success: boolean
+  newMessageId?: string
+  newChannelMessageId?: string
+  error?: string
+}
+
+/**
+ * Bulk retry response
+ */
+export interface BulkRetryResponse {
+  retried: number
+  failed: number
+  skipped: number
+  results: Array<{
+    originalMessageId: string
+    newMessageId?: string
+    success: boolean
+    error?: string
+  }>
+}
+
+/**
+ * Convert status history row to object
+ */
+export function rowToStatusHistory(row: TwilioMessageStatusHistoryRow): TwilioMessageStatusHistory {
+  return {
+    id: row.id,
+    organizationId: row.organization_id,
+    messageId: row.message_id,
+    channelMessageId: row.channel_message_id,
+    status: row.status as TwilioWhatsAppMessageStatus,
+    previousStatus: row.previous_status as TwilioWhatsAppMessageStatus | null,
+    errorCode: row.error_code,
+    errorMessage: row.error_message,
+    twilioTimestamp: row.twilio_timestamp ? new Date(row.twilio_timestamp) : null,
+    createdAt: new Date(row.created_at),
+  }
+}
+
+/**
+ * Convert error code row to object
+ */
+export function rowToErrorInfo(row: TwilioErrorCodeRow): TwilioErrorInfo {
+  return {
+    code: row.code,
+    message: row.message,
+    userMessage: row.user_message,
+    retryable: row.retryable,
+    retryAfterSeconds: row.retry_after_seconds,
+    category: row.category as TwilioErrorInfo['category'],
+  }
+}
