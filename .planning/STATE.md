@@ -17,7 +17,7 @@ Deployed: Vercel (live)
 v1.0 Core: Complete (WhatsApp inbox, billing, automation, AI)
 v2.0 Progress: Complete (97% - Phases 8-16, 19 done)
 v2.3 Active: Twilio WhatsApp Integration (Phases 21-24)
-Current Phase: 21 (Twilio WhatsApp Core) - Planned (5 plans ready)
+Current Phase: 21 (Twilio WhatsApp Core) - In Progress (4/5 plans complete)
 ```
 
 ## Milestone Overview
@@ -37,8 +37,8 @@ Current Phase: 21 (Twilio WhatsApp Core) - Planned (5 plans ready)
 
 ### v2.3 Twilio WhatsApp Integration ACTIVE
 - **Phases:** 21-24 (4 phases total)
-- **Status:** Starting Phase 21
-- **Progress:** 0% (0/4 phases)
+- **Status:** Phase 21 in progress (4/5 plans complete)
+- **Progress:** 20% (Phase 21: 80% complete)
 - **Requirements:** 12 total, all mapped
 - **Goal:** Add Twilio as alternative WhatsApp provider with full Cloud API parity
 
@@ -353,22 +353,50 @@ None yet for v2.0.
 - Tests in `tests/_deferred/` need fixes (mocking issues, missing deps)
 - Rate limiter uses in-memory storage (single instance only - needs Redis for multi-instance)
 
-## Phase 21: Twilio WhatsApp Core - PLANNED
+## Phase 21: Twilio WhatsApp Core - IN PROGRESS
 
 **Goal:** Implement core Twilio WhatsApp messaging - send/receive text and media
 **Requirements:** TWWA-01, TWWA-02, TWWA-03, TWWA-04
-**Status:** Planned (5 plans ready for execution)
+**Status:** In Progress (4/5 plans complete)
 
 **Plans:**
 | Plan | Wave | Description | Status |
 |------|------|-------------|--------|
-| 21-01 | 1 | Database schema migration | ⏳ Pending |
-| 21-02 | 2 | Twilio WhatsApp client library | ⏳ Pending |
-| 21-03 | 2 | Webhook handler | ⏳ Pending |
-| 21-04 | 3 | TwilioWhatsAppAdapter | ⏳ Pending |
-| 21-05 | 3 | API routes | ⏳ Pending |
+| 21-01 | 1 | Database schema migration | ✅ COMPLETE |
+| 21-02 | 2 | Twilio WhatsApp client library | ✅ COMPLETE |
+| 21-03 | 2 | Webhook handler | ✅ COMPLETE |
+| 21-04 | 3 | Channel adapter | ⏳ Pending |
+| 21-05 | 3 | API routes | ✅ COMPLETE |
 
-**Progress:** 0% (0/5 plans complete)
+**Progress:** 80% (4/5 plans complete)
+
+**Plan 21-01 Deliverables:**
+- ✅ Database migration: `20260203_twilio_whatsapp.sql` (a550517)
+- ✅ `twilio_whatsapp_connections` table with RLS policies
+- ✅ `twilio_whatsapp_webhook_events` table for idempotency
+- ✅ Indexes for performance optimization
+
+**Plan 21-02 Deliverables:**
+- ✅ TwilioWhatsAppClient class: `src/lib/integrations/twilio-whatsapp/client.ts` (5ffc194)
+- ✅ Credential encryption/decryption utilities (XOR pattern)
+- ✅ Webhook signature validation (SHA1 HMAC)
+- ✅ Factory functions: getTwilioWhatsAppClient, saveTwilioWhatsAppCredentials
+- ✅ Type definitions: `src/types/twilio-whatsapp.ts`
+
+**Plan 21-03 Deliverables:**
+- ✅ Webhook handler: `src/lib/integrations/twilio-whatsapp/webhook-handler.ts` (a0e15ce)
+- ✅ Message and status callback processing
+- ✅ Idempotency via twilio_whatsapp_webhook_events table
+- ✅ Automatic contact/conversation creation
+- ✅ TwiML response helpers
+
+**Plan 21-05 Deliverables:**
+- ✅ Webhook route: `src/app/api/webhooks/twilio-whatsapp/route.ts` (de0d00c)
+- ✅ Connect route: `src/app/api/integrations/twilio-whatsapp/connect/route.ts`
+- ✅ Verify route: `src/app/api/integrations/twilio-whatsapp/verify/route.ts`
+- ✅ POST/GET webhook endpoints with TwiML response
+- ✅ POST/GET/DELETE connect endpoints with role checks
+- ✅ POST verify endpoint for credential testing
 
 **Files to Create:**
 - `supabase/migrations/20260203_twilio_whatsapp.sql`
@@ -385,9 +413,9 @@ None yet for v2.0.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Phase 21 planning complete - 5 plans created
+Stopped at: Phase 21 plan 21-05 complete - Twilio WhatsApp API routes created
 Resume file: None
-Next action: `/gsd:execute-phase 21` to execute the plans
+Next action: Execute plan 21-04 (Channel adapter)
 
 ### Gap Resolution Summary (2026-01-28)
 
