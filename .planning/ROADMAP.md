@@ -1,7 +1,7 @@
 # Roadmap: ADSapp
 
 **Created:** 2026-01-21
-**Updated:** 2026-01-25
+**Updated:** 2026-02-03
 
 ## Milestones
 
@@ -581,11 +581,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 21-01-PLAN.md — Database schema migration (twilio_whatsapp_connections, webhook_events)
-- [ ] 21-02-PLAN.md — Twilio WhatsApp client library (encryption, send, verify)
-- [ ] 21-03-PLAN.md — Webhook handler (incoming messages, status callbacks, idempotency)
-- [ ] 21-04-PLAN.md — TwilioWhatsAppAdapter implementing ChannelAdapter interface
-- [ ] 21-05-PLAN.md — API routes (webhook, connect, verify, status)
+- [x] 21-01-PLAN.md — Database schema migration (twilio_whatsapp_connections, webhook_events)
+- [x] 21-02-PLAN.md — Twilio WhatsApp client library (encryption, send, verify)
+- [x] 21-03-PLAN.md — Webhook handler (incoming messages, status callbacks, idempotency)
+- [x] 21-04-PLAN.md — TwilioWhatsAppAdapter implementing ChannelAdapter interface
+- [x] 21-05-PLAN.md — API routes (webhook, connect, verify, status)
 
 **Success Criteria** (what must be TRUE when phase completes):
 1. User can connect Twilio account via Account SID and Auth Token in settings
@@ -719,15 +719,15 @@ Phase 8 must complete first. Then streams can execute in parallel.
 | 17 | Mobile Applications | v2.0 | 0/TBD | Not started | - |
 | 18 | WhatsApp Calling | v2.0 | 0/TBD | Not started | - |
 | 19 | Knowledge Base AI | v2.0 | 8/8 | Complete | 2026-01-28 |
-| 21 | Twilio WhatsApp Core | v2.3 | 0/5 | Planned | - |
+| 21 | Twilio WhatsApp Core | v2.3 | 5/5 | Complete | 2026-02-03 |
 | 22 | Twilio Templates | v2.3 | 0/TBD | Not started | - |
 | 23 | Status & Delivery | v2.3 | 0/TBD | Not started | - |
 | 24 | Integration & Settings | v2.3 | 0/TBD | Not started | - |
 
 **v1.0 Progress:** [##########] 100% (7/7 phases) COMPLETE
 **v2.0 Progress:** [##########] 100% (12/12 phases) COMPLETE
-**v2.3 Progress:** [----------] 0% (0/4 phases)
-**Overall Progress:** [########--] 76% (19/25 phases)
+**v2.3 Progress:** [###-------] 25% (1/4 phases)
+**Overall Progress:** [########--] 80% (20/25 phases)
 
 ---
 
