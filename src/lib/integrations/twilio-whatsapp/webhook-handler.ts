@@ -376,9 +376,12 @@ export async function processIncomingMessage(
 
 /**
  * Process status callback (sent, delivered, read, failed)
+ * Enhanced to record status history for audit trail (Phase 23)
  */
 export async function processStatusCallback(
-  statusUpdate: TwilioWhatsAppStatusUpdate
+  statusUpdate: TwilioWhatsAppStatusUpdate,
+  organizationId?: string,
+  rawPayload?: Record<string, string>
 ): Promise<WebhookProcessResult> {
   const supabase = createServiceRoleClient()
 
@@ -397,10 +400,25 @@ export async function processStatusCallback(
 
     const mappedStatus = statusMap[statusUpdate.status] || 'pending'
 
+    // Get current message status before update
+    const { data: currentMessage } = await supabase
+      .from('messages')
+      .select('id, organization_id, status')
+      .eq('channel_message_id', statusUpdate.messageSid)
+      .single()
+
+    const previousStatus = currentMessage?.status || null
+    const messageOrgId = currentMessage?.organization_id || organizationId
+
     // Update message status
     const updateData: Record<string, unknown> = {
       status: mappedStatus,
       updated_at: new Date().toISOString(),
+    }
+
+    // Set sent_at for sent status
+    if (statusUpdate.status === 'sent') {
+      updateData.sent_at = statusUpdate.timestamp.toISOString()
     }
 
     if (mappedStatus === 'delivered') {
@@ -420,8 +438,23 @@ export async function processStatusCallback(
       .from('messages')
       .update(updateData)
       .eq('channel_message_id', statusUpdate.messageSid)
-      .select('id')
+      .select('id, organization_id')
       .single()
+
+    // Record status history (even if message update fails for race condition)
+    if (messageOrgId) {
+      await recordStatusHistory(supabase, {
+        organizationId: messageOrgId,
+        messageId: data?.id || currentMessage?.id,
+        channelMessageId: statusUpdate.messageSid,
+        status: statusUpdate.status,
+        previousStatus: previousStatus as TwilioWhatsAppMessageStatus | null,
+        errorCode: statusUpdate.errorCode,
+        errorMessage: statusUpdate.errorMessage,
+        twilioTimestamp: statusUpdate.timestamp,
+        rawPayload,
+      })
+    }
 
     if (error) {
       // Message might not exist yet (race condition) or already deleted
@@ -440,6 +473,41 @@ export async function processStatusCallback(
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     }
+  }
+}
+
+/**
+ * Record status change in history table for audit trail
+ */
+async function recordStatusHistory(
+  supabase: ReturnType<typeof createServiceRoleClient>,
+  params: {
+    organizationId: string
+    messageId?: string
+    channelMessageId: string
+    status: TwilioWhatsAppMessageStatus
+    previousStatus: TwilioWhatsAppMessageStatus | null
+    errorCode?: string
+    errorMessage?: string
+    twilioTimestamp: Date
+    rawPayload?: Record<string, string>
+  }
+): Promise<void> {
+  try {
+    await supabase.from('twilio_whatsapp_message_status_history').insert({
+      organization_id: params.organizationId,
+      message_id: params.messageId || null,
+      channel_message_id: params.channelMessageId,
+      status: params.status,
+      previous_status: params.previousStatus,
+      error_code: params.errorCode || null,
+      error_message: params.errorMessage || null,
+      twilio_timestamp: params.twilioTimestamp.toISOString(),
+      raw_payload: params.rawPayload || null,
+    })
+  } catch (error) {
+    // Log but don't fail the main operation
+    console.error('Failed to record status history:', error)
   }
 }
 
@@ -511,7 +579,12 @@ export async function handleTwilioWhatsAppWebhook(
     if (isStatusCallback) {
       const statusUpdate = parseStatusUpdate(payload)
       if (statusUpdate) {
-        result = await processStatusCallback(statusUpdate)
+        // Pass organizationId and raw params for status history
+        result = await processStatusCallback(
+          statusUpdate,
+          connection.organizationId,
+          params
+        )
       } else {
         result = { success: true } // No status to process
       }
