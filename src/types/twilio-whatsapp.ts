@@ -318,3 +318,128 @@ export function isSuccessStatus(status: TwilioWhatsAppMessageStatus): boolean {
 export function isFailureStatus(status: TwilioWhatsAppMessageStatus): boolean {
   return ['failed', 'undelivered'].includes(status)
 }
+
+// =============================================================================
+// Template Types
+// =============================================================================
+
+export interface TwilioWhatsAppTemplate {
+  id: string
+  organizationId: string
+  connectionId: string
+  contentSid: string
+  friendlyName: string
+  language: string
+  templateType: TwilioTemplateType
+  body: string | null
+  variables: TwilioTemplateVariable[]
+  mediaUrl: string | null
+  mediaType: string | null
+  actions: TwilioTemplateAction[]
+  approvalStatus: 'approved' | 'pending' | 'rejected'
+  lastSyncedAt: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type TwilioTemplateType =
+  | 'twilio/text'
+  | 'twilio/media'
+  | 'twilio/quick-reply'
+  | 'twilio/call-to-action'
+  | 'twilio/list-picker'
+  | 'twilio/card'
+
+export interface TwilioTemplateVariable {
+  key: string        // e.g., "1", "2", "3"
+  name?: string      // Optional friendly name
+  defaultValue?: string
+}
+
+export interface TwilioTemplateAction {
+  type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER'
+  title: string
+  url?: string
+  phoneNumber?: string
+}
+
+export interface TwilioTemplateSend {
+  id: string
+  organizationId: string
+  templateId: string
+  messageId: string | null
+  conversationId: string | null
+  contactId: string | null
+  variablesUsed: Record<string, string>
+  twilioMessageSid: string | null
+  status: 'pending' | 'sent' | 'delivered' | 'failed'
+  errorCode: string | null
+  errorMessage: string | null
+  sentAt: Date
+  deliveredAt: Date | null
+  createdAt: Date
+}
+
+// Database row types
+export interface TwilioWhatsAppTemplateRow {
+  id: string
+  organization_id: string
+  connection_id: string
+  content_sid: string
+  friendly_name: string
+  language: string
+  template_type: string
+  body: string | null
+  variables: TwilioTemplateVariable[]
+  media_url: string | null
+  media_type: string | null
+  actions: TwilioTemplateAction[]
+  approval_status: string
+  last_synced_at: string
+  raw_response: unknown
+  created_at: string
+  updated_at: string
+}
+
+export interface TwilioTemplateSendRow {
+  id: string
+  organization_id: string
+  template_id: string
+  message_id: string | null
+  conversation_id: string | null
+  contact_id: string | null
+  variables_used: Record<string, string>
+  twilio_message_sid: string | null
+  status: string
+  error_code: string | null
+  error_message: string | null
+  sent_at: string
+  delivered_at: string | null
+  created_at: string
+}
+
+// Content API response types
+export interface TwilioContentApiTemplate {
+  sid: string
+  account_sid: string
+  friendly_name: string
+  language: string
+  variables: Record<string, string>
+  types: Record<string, TwilioContentType>
+  url: string
+  date_created: string
+  date_updated: string
+}
+
+export interface TwilioContentType {
+  body?: string
+  media?: string[]
+  actions?: TwilioContentAction[]
+}
+
+export interface TwilioContentAction {
+  type: string
+  title: string
+  url?: string
+  phone?: string
+}
