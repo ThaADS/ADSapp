@@ -82,10 +82,18 @@ export interface TimeSeriesMetric {
 // ============================================================================
 
 export class DripFunnelAnalytics {
-  private supabase: SupabaseClient
+  private _supabase: SupabaseClient | null = null
+  private _providedSupabase: SupabaseClient | undefined
 
   constructor(supabase?: SupabaseClient) {
-    this.supabase = supabase || createServiceRoleClient()
+    this._providedSupabase = supabase
+  }
+
+  private getSupabase(): SupabaseClient {
+    if (!this._supabase) {
+      this._supabase = this._providedSupabase || createServiceRoleClient()
+    }
+    return this._supabase
   }
 
   /**
@@ -94,7 +102,7 @@ export class DripFunnelAnalytics {
   async getCampaignFunnel(campaignId: string): Promise<FunnelAnalytics | null> {
     try {
       // Get campaign details
-      const { data: campaign, error: campaignError } = await this.supabase
+      const { data: campaign, error: campaignError } = await this.getSupabase()
         .from('drip_campaigns')
         .select('id, name, statistics')
         .eq('id', campaignId)
@@ -106,7 +114,7 @@ export class DripFunnelAnalytics {
       }
 
       // Get all steps for the campaign
-      const { data: steps, error: stepsError } = await this.supabase
+      const { data: steps, error: stepsError } = await this.getSupabase()
         .from('drip_campaign_steps')
         .select('id, step_order, name')
         .eq('campaign_id', campaignId)
@@ -118,7 +126,7 @@ export class DripFunnelAnalytics {
       }
 
       // Get enrollment statistics
-      const { data: enrollments, error: enrollmentError } = await this.supabase
+      const { data: enrollments, error: enrollmentError } = await this.getSupabase()
         .from('drip_enrollments')
         .select('id, status, current_step_order, enrolled_at, completed_at, dropped_reason, replied')
         .eq('campaign_id', campaignId)
@@ -129,7 +137,7 @@ export class DripFunnelAnalytics {
       }
 
       // Get message logs for engagement metrics
-      const { data: messageLogs, error: logsError } = await this.supabase
+      const { data: messageLogs, error: logsError } = await this.getSupabase()
         .from('drip_message_logs')
         .select('id, step_id, status, scheduled_at, sent_at, delivered_at, read_at')
         .in('enrollment_id', (enrollments || []).map(e => e.id))
@@ -275,7 +283,7 @@ export class DripFunnelAnalytics {
       startDate.setDate(startDate.getDate() - days)
 
       // Get enrollments grouped by date
-      const { data: enrollments, error } = await this.supabase
+      const { data: enrollments, error } = await this.getSupabase()
         .from('drip_enrollments')
         .select('id, enrolled_at, completed_at, status')
         .eq('campaign_id', campaignId)
@@ -345,7 +353,7 @@ export class DripFunnelAnalytics {
   ): Promise<TimeSeriesMetric[]> {
     try {
       // Get daily enrollment counts
-      const { data: enrollments, error: enrollError } = await this.supabase
+      const { data: enrollments, error: enrollError } = await this.getSupabase()
         .from('drip_enrollments')
         .select('enrolled_at, completed_at, status, dropped_reason, replied')
         .eq('campaign_id', campaignId)
@@ -359,7 +367,7 @@ export class DripFunnelAnalytics {
 
       // Get message logs for the same period
       const enrollmentIds = (enrollments || []).map(e => e.enrolled_at) // Need to get IDs differently
-      const { data: messageLogs, error: logsError } = await this.supabase
+      const { data: messageLogs, error: logsError } = await this.getSupabase()
         .from('drip_message_logs')
         .select('scheduled_at, sent_at, delivered_at, read_at, status')
         .gte('scheduled_at', startDate.toISOString())
@@ -461,7 +469,7 @@ export class DripFunnelAnalytics {
   }>> {
     try {
       // Get all active campaigns for the organization
-      const { data: campaigns, error: campaignError } = await this.supabase
+      const { data: campaigns, error: campaignError } = await this.getSupabase()
         .from('drip_campaigns')
         .select('id, name')
         .eq('organization_id', organizationId)
